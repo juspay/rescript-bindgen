@@ -127,18 +127,19 @@ npx rescript-bindgen --pkg @mui/material --out generated --report
 ## How it works
 
 ```
-INPUT          RESOLVE         EXTRACT          MAP             EMIT            VERIFY
-.d.ts / pkg → locate types → TS type-checker → mapping table → ReScript 12 → rescript build
-                              → IR              (config-driven) emitter         + report
+INPUT          RESOLVE         EXTRACT          MAP             EMIT            REPORT
+.d.ts / pkg → locate types → TS type-checker → mapping table → ReScript 12 → _REPORT.md
+                              → IR             (fixed table)   emitter        (--report)
 ```
 
-1. **Resolve** — find the declaration entry for a file / dir / npm package.
-2. **Extract** — the TypeScript **type-checker** resolves `Omit`, intersections,
-   `RefAttributes`, generics and indexed-access into a flat prop list (the IR).
-3. **Map** — each TS type maps to ReScript via a fixed table (below).
-4. **Emit** — render the IR to ReScript 12 (`@as` variants, `@unboxed` variants,
-   nested sub-component modules, records, the `external make`).
-5. **Verify** — optional `rescript build`, plus a per-prop report.
+1. **Resolve** (`resolve.mjs`) — find the declaration entry for a file / dir / npm package.
+2. **Extract** (`extract.mjs`) — the TypeScript **type-checker** resolves `Omit`,
+   intersections, `RefAttributes`, generics and indexed-access into a flat prop list (the IR).
+3. **Map** (`extract.mjs` + `emit.mjs`) — each TS type maps to ReScript via a fixed table (below).
+4. **Emit** (`emit.mjs`) — render the IR to ReScript 12: `@as` variants, `@unboxed`
+   variants, records, and the `@module @react.component external make` binding.
+5. **Report** (`report.mjs`) — with `--report`, write a per-component `_REPORT.md`
+   bucketing props into ready / loose / review / defect.
 
 ---
 
@@ -175,7 +176,7 @@ tool refuses to guess: it emits a `string` placeholder with an inline
 
 ## The report
 
-Every run writes `_REPORT.md` — a checklist of components:
+Add `--report` to write `_REPORT.md` next to the bindings — a checklist of components:
 
 - `[x]` **ready to use** — every prop bound type-safely
 - `[~]` **needs human review** — a multi-type prop couldn't be auto-discriminated
@@ -183,7 +184,11 @@ Every run writes `_REPORT.md` — a checklist of components:
 - `(n loose)` — props widened to `string` (compile and work, just loosely typed)
 
 This separates *what won't work* (defects) from *what needs a decision* (review) from
-*what's done* (ready).
+*what's done* (ready). Each flagged prop is listed with its original TypeScript.
+
+```bash
+npx rescript-bindgen --pkg @mui/material --out generated --report
+```
 
 ---
 
@@ -197,7 +202,8 @@ const code = emit(ir)              // ReScript source string
 const { defects, review, loose } = report(ir)
 ```
 
-Types are shipped in `types.d.ts`.
+Exports: `extractComponent`, `extractModule`, `emit`, `report`, `resolveInput`,
+`writeReport`. Full type definitions ship in `types.d.ts`.
 
 ---
 
