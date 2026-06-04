@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Smoke test
+        run: npm test
+
+  # Integration: actually generate blend bindings and compile them on ReScript 12.
+  # Informational — uses the published latest blend; does not block on flaky network.
+  integration:
+    name: Generate + compile (blend latest)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install ReScript sandbox deps
+        run: npm --prefix test/sandbox ci || npm --prefix test/sandbox install
+
+      - name: Generate blend bindings and compile-check
+        run: npm run gen:blend -- @juspay/blend-design-system@latest --out generated/ci --compile
