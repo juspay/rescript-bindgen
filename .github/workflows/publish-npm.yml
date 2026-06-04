@@ -1,0 +1,53 @@
+name: Publish to npm
+
+# Publishes when you push a version tag, e.g.:
+#   npm version patch        # bumps package.json + creates the v1.0.1 tag
+#   git push --follow-tags   # pushes the commit AND the tag -> triggers this
+on:
+  push:
+    tags: ['v*']
+
+concurrency:
+  group: publish-npm
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # required for npm OIDC trusted publishing
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 24 ships npm >= 11.5.1, the floor for OIDC trusted publishing.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+          cache: npm
+
+      - name: Ensure npm supports OIDC
+        run: npm --version
+
+      - run: npm ci
+
+      - name: Smoke test
+        run: npm test
+
+      - name: Verify tag matches package.json version
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          PKG=$(node -p "require('./package.json').version")
+          if [ "$TAG" != "$PKG" ]; then
+            echo "Tag $TAG does not match package.json version $PKG"
+            exit 1
+          fi
+          echo "Publishing version $PKG"
+
+      # OIDC trusted publishing — no NPM_TOKEN. Configure a trusted publisher on
+      # npmjs.com for this package pointing at this repo + publish-npm.yml.
+      - name: Publish
+        run: npm publish --access public --provenance
