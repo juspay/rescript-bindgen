@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>rescript-bindgen — how it works</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --line:#30363d;
+    --txt:#e6edf3; --muted:#8b949e; --acc:#58a6ff; --grn:#3fb950; --yel:#d29922;
+    --red:#f85149; --pur:#bc8cff; --orng:#ffa657;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.55}
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 80px}
+  h1{font-size:30px;margin:0 0 4px}
+  h2{font-size:21px;margin:46px 0 14px;display:flex;align-items:center;gap:10px}
+  h2 .num{background:var(--acc);color:#04111f;border-radius:7px;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex:none}
+  .sub{color:var(--muted);font-size:15px;margin:0 0 8px}
+  .lead{color:var(--muted);font-size:16px;max-width:760px}
+  code{font-family:var(--mono)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+  pre{background:#0a0e14;border:1px solid var(--line);border-radius:9px;padding:14px;overflow:auto;font-family:var(--mono);font-size:13px;margin:0;white-space:pre}
+  .pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:12px;color:var(--muted);font-family:var(--mono)}
+  .kw{color:var(--pur)} .str{color:var(--grn)} .ty{color:var(--orng)} .cm{color:var(--muted)} .at{color:var(--yel)} .fn{color:var(--acc)}
+  /* pipeline */
+  .pipe{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch}
+  .stage{flex:1;min-width:150px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px;cursor:pointer;transition:.15s;position:relative}
+  .stage:hover{border-color:var(--acc);transform:translateY(-2px)}
+  .stage .ic{font-size:22px}
+  .stage .nm{font-weight:700;margin-top:6px}
+  .stage .fl{font-family:var(--mono);font-size:11px;color:var(--acc);margin-top:3px}
+  .stage .ds{font-size:12.5px;color:var(--muted);margin-top:6px}
+  .arrow{align-self:center;color:var(--muted);font-size:20px}
+  /* tabs */
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0}
+  .tab{background:var(--panel2);border:1px solid var(--line);border-bottom:none;border-radius:8px 8px 0 0;padding:8px 14px;cursor:pointer;font-size:13px;color:var(--muted)}
+  .tab.on{background:#0a0e14;color:var(--txt);border-color:var(--acc)}
+  .panes{border:1px solid var(--line);border-radius:0 9px 9px 9px;overflow:hidden}
+  .pane{display:none} .pane.on{display:block}
+  .note{font-size:13px;color:var(--muted);padding:9px 14px;background:var(--panel2);border-top:1px solid var(--line)}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600}
+  td code{color:var(--orng)}
+  .stat{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+  .stat .b{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 16px;text-align:center;flex:1;min-width:110px}
+  .stat .b .n{font-size:26px;font-weight:800}
+  .stat .b .l{font-size:12px;color:var(--muted)}
+  .files-tbl td:first-child code{color:var(--acc)}
+  .ok{color:var(--grn)} .rv{color:var(--yel)} .bk{color:var(--red)}
+  .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--mono);font-size:13px}
+  .flow .box{background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:6px 10px}
+  details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:0 16px;margin:10px 0}
+  summary{cursor:pointer;padding:13px 0;font-weight:600}
+  details[open] summary{border-bottom:1px solid var(--line);margin-bottom:12px}
+  .tag{font-size:11px;padding:1px 7px;border-radius:5px;font-family:var(--mono)}
+  .tag.api{background:#1f3a5f;color:#79c0ff} .tag.us{background:#1f4030;color:#7ee787}
+  footer{margin-top:50px;color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <span class="pill">@juspay/rescript-bindgen · v1.0.0 · demo</span>
+  <h1>How <span style="color:var(--acc)">rescript-bindgen</span> works</h1>
+  <p class="lead">It reads a package's TypeScript types (<code>.d.ts</code>) and writes type-safe ReScript bindings — no AI, no unsafe casts. This page walks through the whole pipeline, every file, and a live example.</p>
+
+  <div class="stat">
+    <div class="b"><div class="n ok">71</div><div class="l">blend components compile</div></div>
+    <div class="b"><div class="n">6</div><div class="l">pipeline stages</div></div>
+    <div class="b"><div class="n ok">0</div><div class="l">AI calls · %identity</div></div>
+    <div class="b"><div class="n">1</div><div class="l">dependency (typescript)</div></div>
+  </div>
+
+  <!-- ============ PIPELINE ============ -->
+  <h2><span class="num">1</span> The pipeline (click a stage)</h2>
+  <p class="sub">Input goes left → right. Each stage is one file. Click to see what it does.</p>
+  <div class="pipe" id="pipe">
+    <div class="stage" data-k="resolve"><div class="ic">📍</div><div class="nm">Resolve</div><div class="fl">resolve.mjs</div><div class="ds">Find / install the .d.ts</div></div>
+    <div class="arrow">→</div>
+    <div class="stage" data-k="extract"><div class="ic">🧠</div><div class="nm">Extract</div><div class="fl">extract.mjs</div><div class="ds">TS compiler → IR</div></div>
+    <div class="arrow">→</div>
+    <div class="stage" data-k="map"><div class="ic">🔀</div><div class="nm">Map</div><div class="fl">extract+emit</div><div class="ds">TS type → ReScript type</div></div>
+    <div class="arrow">→</div>
+    <div class="stage" data-k="emit"><div class="ic">✍️</div><div class="nm">Emit</div><div class="fl">emit.mjs</div><div class="ds">IR → ReScript text</div></div>
+    <div class="arrow">→</div>
+    <div class="stage" data-k="verify"><div class="ic">✅</div><div class="nm">Verify</div><div class="fl">sandbox</div><div class="ds">rescript build</div></div>
+    <div class="arrow">→</div>
+    <div class="stage" data-k="report"><div class="ic">📄</div><div class="nm">Report</div><div class="fl">blend.mjs</div><div class="ds">ready / review / broken</div></div>
+  </div>
+  <div class="card" id="stageInfo" style="min-height:80px"></div>
+
+  <!-- ============ FILES ============ -->
+  <h2><span class="num">2</span> Every file, what it does</h2>
+  <div class="card" style="padding:6px 20px">
+    <table class="files-tbl">
+      <tr><th>File</th><th>Role</th><th>Kind</th></tr>
+      <tr><td><code>src/extract.mjs</code></td><td>The brain. Uses the TypeScript compiler API to turn a <code>.d.ts</code> into a clean data structure (the IR) of props + types.</td><td><span class="tag api">core</span></td></tr>
+      <tr><td><code>src/emit.mjs</code></td><td>The writer. Turns the IR into ReScript source — variants, <code>@unboxed</code> types, the <code>external make</code> binding. Also builds the report.</td><td><span class="tag api">core</span></td></tr>
+      <tr><td><code>src/resolve.mjs</code></td><td>The locator. Given a file / folder / npm package, finds the <code>.d.ts</code> entry (installs from npm into a cache if needed).</td><td><span class="tag api">core</span></td></tr>
+      <tr><td><code>src/blend.mjs</code></td><td>Blend command. Installs a pinned blend version, loops every component, writes the <code>.res</code> files + <code>_REPORT.md</code>.</td><td><span class="tag us">cli</span></td></tr>
+      <tr><td><code>src/cli.mjs</code></td><td>General command. Same engine, but for any npm package (<code>--pkg</code>/<code>--file</code>/<code>--dir</code>).</td><td><span class="tag us">cli</span></td></tr>
+      <tr><td><code>src/index.mjs</code></td><td>Library entry — re-exports <code>extractComponent</code>, <code>emit</code>, <code>report</code> so other code can import the engine.</td><td><span class="tag api">lib</span></td></tr>
+      <tr><td><code>types.d.ts</code></td><td>TypeScript types for the library API (the IR shape, function signatures).</td><td><span class="tag api">lib</span></td></tr>
+      <tr><td><code>test/smoke.mjs</code></td><td>Self-contained test — generates from a tiny fixture and asserts the output is correct (no %identity, untagged variants, etc.).</td><td><span class="tag us">test</span></td></tr>
+      <tr><td><code>test/sandbox/</code></td><td>A real ReScript 12 project used to <i>compile-check</i> generated bindings (the <code>--compile</code> flag).</td><td><span class="tag us">test</span></td></tr>
+    </table>
+  </div>
+
+  <!-- ============ LIVE EXAMPLE ============ -->
+  <h2><span class="num">3</span> Live example — the Button component</h2>
+  <p class="sub">Watch one prop bundle travel through the tool. Click the tabs ↓</p>
+  <div class="tabs">
+    <div class="tab on" data-p="in">① Input (.d.ts)</div>
+    <div class="tab" data-p="resolve">② Checker resolves</div>
+    <div class="tab" data-p="ir">③ IR (data)</div>
+    <div class="tab" data-p="out">④ ReScript output</div>
+  </div>
+  <div class="panes">
+    <div class="pane on" data-p="in">
+<pre><span class="cm">// What blend ships in Button.d.ts — full of references:</span>
+<span class="kw">declare const</span> Button: ForwardRefExoticComponent&lt;{
+  buttonType?: <span class="ty">ButtonType</span>;        <span class="cm">// imported from './types'</span>
+  text?: <span class="ty">string</span>;
+  width?: <span class="ty">string | number</span>;       <span class="cm">// a multi-type prop</span>
+  onClick?: (e: <span class="ty">MouseEvent</span>) =&gt; void;
+} &amp; <span class="at">Omit</span>&lt;ButtonHTMLAttributes&lt;HTMLButtonElement&gt;, <span class="str">"style"</span>&gt;&gt;;</pre>
+      <div class="note">😖 Regex tools choke here: they can't follow <code>Omit&lt;…&gt;</code> into React's files, or the <code>ButtonType</code> import. They drop those props.</div>
+    </div>
+    <div class="pane" data-p="resolve">
+<pre><span class="cm">// We don't read text — we ASK the TypeScript type-checker.</span>
+<span class="kw">const</span> <span class="fn">checker</span> = program.getTypeChecker()
+<span class="kw">const</span> props  = checker.<span class="fn">getPropertiesOfType</span>(buttonProps)
+
+<span class="cm">// The checker hands back ONE flat, fully-resolved list:</span>
+buttonType   → enum "primary" | "secondary" | "danger" | "success"
+text         → string
+width        → string | number
+onClick      → (MouseEvent) =&gt; void
+<span class="cm">// …PLUS everything Omit pulled in from React, already merged:</span>
+id, name, form, tabIndex, aria-label, onBlur, onFocus …  <span class="cm">(57 more)</span></pre>
+      <div class="note">✨ <code>getPropertiesOfType</code> resolved <code>Omit</code>, the import, and the intersection <b>for free</b>. This is the whole advantage.</div>
+    </div>
+    <div class="pane" data-p="ir">
+<pre><span class="cm">// extract.mjs turns each prop into a small, neutral data object (the IR):</span>
+{
+  enums: [
+    { name: <span class="str">"buttonType"</span>, members: [
+      { as: <span class="str">"primary"</span>, ctor: <span class="str">"Primary"</span> }, … ] }
+  ],
+  unboxed: [
+    { name: <span class="str">"widthValue"</span>, members: [
+      { ctor: <span class="str">"Str"</span>, type:{kind:<span class="str">"string"</span>} },
+      { ctor: <span class="str">"Num"</span>, type:{kind:<span class="str">"number"</span>} } ] }
+  ],
+  props: [
+    { name:<span class="str">"buttonType"</span>, type:{kind:<span class="str">"typeRef"</span>,to:<span class="str">"buttonType"</span>}, optional:<span class="kw">true</span> },
+    { name:<span class="str">"width"</span>,      type:{kind:<span class="str">"typeRef"</span>,to:<span class="str">"widthValue"</span>}, optional:<span class="kw">true</span> },
+    { name:<span class="str">"onClick"</span>,    type:{kind:<span class="str">"callback"</span>,arg:<span class="str">"ReactEvent.Mouse.t"</span>} } …
+  ]
+}</pre>
+      <div class="note">The IR is generator-neutral — just facts about the types. <code>emit.mjs</code> reads it next.</div>
+    </div>
+    <div class="pane" data-p="out">
+<pre><span class="kw">type</span> <span class="ty">buttonType</span> =
+  | <span class="at">@as</span>(<span class="str">"primary"</span>) Primary
+  | <span class="at">@as</span>(<span class="str">"secondary"</span>) Secondary
+  | <span class="at">@as</span>(<span class="str">"danger"</span>) Danger
+  | <span class="at">@as</span>(<span class="str">"success"</span>) Success
+
+<span class="at">@unboxed</span> <span class="kw">type</span> <span class="ty">widthValue</span> = Str(<span class="ty">string</span>) | Num(<span class="ty">float</span>)
+
+<span class="at">@module</span>(<span class="str">"@juspay/blend-design-system"</span>) <span class="at">@react.component</span>
+<span class="kw">external</span> make: (
+  ~buttonType: <span class="ty">buttonType</span>=?,
+  ~text: <span class="ty">string</span>=?,
+  ~width: <span class="ty">widthValue</span>=?,
+  ~onClick: <span class="ty">ReactEvent.Mouse.t</span> =&gt; unit=?,
+  ~id: <span class="ty">string</span>=?,
+  <span class="at">@as</span>(<span class="str">"aria-label"</span>) ~ariaLabel: <span class="ty">string</span>=?,
+) =&gt; React.element = <span class="str">"Button"</span></pre>
+      <div class="note">✅ Compiles on ReScript 12. <code>width=Num(5.0)</code> sends raw <code>5</code> to blend; <code>width=Str("100%")</code> sends <code>"100%"</code>.</div>
+    </div>
+  </div>
+
+  <!-- ============ COMPILER STEPS ============ -->
+  <h2><span class="num">4</span> The 6 compiler-API steps (in extract.mjs)</h2>
+  <details open><summary>📍 1 — Load the file <i>and everything it imports</i></summary>
+    <pre><span class="fn">ts.createProgram</span>([entryFile], options)   <span class="cm">// also pulls in ./types, ../Skeleton, react</span></pre>
+    <p class="sub">TypeScript's real loader follows every import. Nothing skipped.</p></details>
+  <details><summary>🧠 2 — Get the "brain" (type-checker)</summary>
+    <pre><span class="kw">const</span> checker = program.<span class="fn">getTypeChecker</span>()</pre>
+    <p class="sub">Ask it anything about a type, it answers with the fully-resolved truth.</p></details>
+  <details><summary>🔎 3 — Find the component export</summary>
+    <pre>checker.<span class="fn">getExportsOfModule</span>(moduleSymbol)  <span class="cm">// → Button (default / first Capitalized)</span></pre></details>
+  <details><summary>🎯 4 — Get the props type</summary>
+    <pre>compType.<span class="fn">getCallSignatures</span>()[0].parameters[0]  <span class="cm">// a component is "a fn you call with props"</span></pre></details>
+  <details><summary>✨ 5 — The magic line: flatten all props</summary>
+    <pre>checker.<span class="fn">getPropertiesOfType</span>(propsType)  <span class="cm">// Omit/intersection/imports already resolved</span></pre>
+    <p class="sub">This is what regex can't do. One call → the complete, flat prop list.</p></details>
+  <details><summary>🗺️ 6 — Resolve & map each prop</summary>
+    <pre><span class="kw">for</span> (<span class="kw">const</span> p <span class="kw">of</span> props) {
+  <span class="kw">const</span> t = checker.<span class="fn">getTypeOfSymbolAtLocation</span>(p)  <span class="cm">// real type</span>
+  <span class="fn">classify</span>(t)   <span class="cm">// → IR → ReScript</span>
+}</pre></details>
+
+  <!-- ============ MAPPING ============ -->
+  <h2><span class="num">5</span> The type mapping</h2>
+  <div class="card" style="padding:6px 20px">
+    <table>
+      <tr><th>TypeScript</th><th>ReScript</th><th>note</th></tr>
+      <tr><td><code>'a' | 'b'</code> / enum</td><td><code>@as variant</code></td><td>Primary, Secondary…</td></tr>
+      <tr><td><code>string | number</code></td><td><code>@unboxed Str | Num</code></td><td>type-safe + raw value to JS</td></tr>
+      <tr><td><code>number</code></td><td><code>int</code> / <code>float</code></td><td>name heuristic</td></tr>
+      <tr><td><code>ReactNode</code></td><td><code>React.element</code></td><td></td></tr>
+      <tr><td><code>MouseEvent</code></td><td><code>ReactEvent.Mouse.t</code></td><td></td></tr>
+      <tr><td><code>Record&lt;k,v&gt;</code> / <code>x[]</code></td><td><code>Dict.t&lt;v&gt;</code> / <code>array&lt;x&gt;</code></td><td></td></tr>
+      <tr><td><code>unknown</code> / <code>any</code></td><td class="bk">flagged defect</td><td>never guessed</td></tr>
+      <tr><td>2 object shapes union</td><td class="rv">flagged review</td><td>can't auto-discriminate</td></tr>
+    </table>
+  </div>
+
+  <!-- ============ UNBOXED SPOTLIGHT ============ -->
+  <h2><span class="num">6</span> Why <code>@unboxed</code> matters (the key trick)</h2>
+  <div class="grid g2">
+    <div class="card">
+      <b class="bk">❌ Tagged variant (wrong)</b>
+      <pre><span class="kw">type</span> width = Str(string) | Num(float)</pre>
+      <div class="flow"><span class="box">Str("100%")</span> → <span class="box bk">{TAG:"Str",_0:"100%"}</span></div>
+      <p class="sub" style="margin-top:8px">Blend gets a wrapper object, not the value. Broken at runtime.</p>
+    </div>
+    <div class="card">
+      <b class="ok">✅ Untagged (@unboxed)</b>
+      <pre><span class="at">@unboxed</span> <span class="kw">type</span> width = Str(string) | Num(float)</pre>
+      <div class="flow"><span class="box">Str("100%")</span> → <span class="box ok">"100%"</span></div>
+      <p class="sub" style="margin-top:8px">Wrapper erased at compile time. Blend gets the raw value. Type-safe + correct.</p>
+    </div>
+  </div>
+
+  <!-- ============ REPORT ============ -->
+  <h2><span class="num">7</span> The output report</h2>
+  <p class="sub">Every run writes <code>_REPORT.md</code> — a checklist sorting components into three buckets:</p>
+  <div class="grid g3">
+    <div class="card"><div class="n ok" style="font-size:30px;font-weight:800">60</div><b class="ok">[x] Ready</b><p class="sub">Every prop bound type-safely. Use it.</p></div>
+    <div class="card"><div class="n rv" style="font-size:30px;font-weight:800">10</div><b class="rv">[~] Review</b><p class="sub">A multi-type prop we won't hack — needs a human. Flagged with a comment.</p></div>
+    <div class="card"><div class="n bk" style="font-size:30px;font-weight:800">1</div><b class="bk">[ ] Broken</b><p class="sub">unknown/any props (generics). Fix upstream in blend.</p></div>
+  </div>
+  <p class="sub" style="margin-top:10px">Numbers shown for <code>@juspay/blend-design-system@0.0.37-beta.4</code>.</p>
+
+  <footer>rescript-bindgen · deterministic TypeScript → ReScript · no AI, no %identity · MIT © Juspay</footer>
+</div>
+
+<script>
+  const STAGES = {
+    resolve:{t:"📍 Resolve — src/resolve.mjs",d:"Figures out WHERE the TypeScript types live. You give it a package name, a file, or a folder. If it's an npm package that isn't installed, it installs that exact version into a scratch cache and finds the package's .d.ts entry. Output: a path to the declaration file."},
+    extract:{t:"🧠 Extract — src/extract.mjs",d:"The heart of the tool. It boots the real TypeScript compiler, loads the .d.ts plus every file it imports, and asks the type-checker for the fully-resolved list of props and their types. It turns that into a neutral data structure called the IR (intermediate representation)."},
+    map:{t:"🔀 Map — extract.mjs (classify) + emit.mjs (renderType)",d:"Each resolved TypeScript type is mapped to its ReScript equivalent: string-literal unions → @as variants, string|number → @unboxed untagged variants, events → ReactEvent.*, unknown → flagged. This is a fixed lookup table — fully deterministic."},
+    emit:{t:"✍️ Emit — src/emit.mjs",d:"Reads the IR and writes actual ReScript source text: the variant type declarations, the @unboxed types, and the `@module @react.component external make` binding with one labeled argument per prop."},
+    verify:{t:"✅ Verify — test/sandbox/",d:"Optional (the --compile flag). The generated .res files are dropped into a real ReScript 12 project and compiled with `rescript build`. If they don't compile, the run fails. This is the proof the output is valid."},
+    report:{t:"📄 Report — src/blend.mjs",d:"Writes _REPORT.md: a checklist marking each component ready / needs-review / broken, with the original TypeScript for anything that couldn't be bound type-safely. This is your hand-off list."}
+  };
+  const info = document.getElementById('stageInfo');
+  function showStage(k){
+    const s=STAGES[k]; info.innerHTML='<b style="font-size:16px">'+s.t+'</b><p class="sub" style="margin:8px 0 0">'+s.d+'</p>';
+    document.querySelectorAll('.stage').forEach(e=>e.style.borderColor = e.dataset.k===k?'var(--acc)':'var(--line)');
+  }
+  document.querySelectorAll('.stage').forEach(e=>e.onclick=()=>showStage(e.dataset.k));
+  showStage('extract');
+
+  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('.pane').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+    document.querySelector('.pane[data-p="'+t.dataset.p+'"]').classList.add('on');
+  });
+</script>
+</body>
+</html>
