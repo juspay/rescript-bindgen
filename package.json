@@ -12,14 +12,10 @@
     }
   },
   "bin": {
-    "rescript-bindgen": "src/cli.mjs",
-    "rescript-bindgen-blend": "src/blend.mjs"
+    "rescript-bindgen": "src/cli.mjs"
   },
   "scripts": {
-    "gen:blend": "node src/blend.mjs",
-    "gen": "node test/gen-by-name.mjs",
-    "batch": "node test/batch.mjs",
-    "validate": "node test/validate.mjs",
+    "gen": "node src/cli.mjs",
     "test": "node test/smoke.mjs"
   },
   "files": [

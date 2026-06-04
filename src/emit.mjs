@@ -116,7 +116,7 @@ export function emit(ir, options = {}) {
         const ty = renderType(p.type, p.name, cfg)
         // Flag non-inherited props we couldn't bind type-safely (no %identity hack).
         if (p.type.kind === 'review' && !p.inherited) {
-            lines.push(`  // ⚠️ REVIEW: \`${p.name}\` is \`${p.type.text}\` — multi-type that can't be auto-discriminated; emitted as \`${cfg.opaqueFallback}\` placeholder. Bind by hand or raise with blend.`)
+            lines.push(`  // ⚠️ REVIEW: \`${p.name}\` is \`${p.type.text}\` — multi-type that can't be auto-discriminated; emitted as \`${cfg.opaqueFallback}\` placeholder. Bind by hand or fix upstream.`)
         }
         lines.push(`  ${asPrefix}~${id}: ${ty}${p.optional ? '=?' : ''},`)
     }

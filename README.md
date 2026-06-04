@@ -80,35 +80,21 @@ Requires Node ≥ 20. ReScript 12 is recommended for the generated output.
 
 ## Usage
 
-### Generate bindings for blend at a specific version (primary use)
+### Generate bindings for any typed React package
 
-The version you pass is the exact npm spec — it is installed into a scratch cache and
-read from there, so output is reproducible and version-pinned.
-
-```bash
-# stable / beta / pkg.pr.new — whatever you'd give to `npm install`
-npx rescript-bindgen-blend @juspay/blend-design-system@0.0.37-beta.4 --out generated --compile
-
-# one component, printed to stdout
-npx rescript-bindgen-blend @juspay/blend-design-system@latest --only Button --stdout
-```
-
-| Flag | Meaning |
-|------|---------|
-| `<package-spec>` | full npm spec, e.g. `@juspay/blend-design-system@0.0.36` or a pkg.pr.new URL |
-| `--out <dir>` | output directory (default `generated`) |
-| `--only <Comp>` | generate just one component |
-| `--compile` | compile-check the output with ReScript 12 |
-| `--stdout` | print to stdout instead of writing files |
-
-Each run also writes **`_REPORT.md`** to the output dir (see [The report](#the-report)).
-
-### Generate for any typed React package
+The package spec is the exact one you'd give to `npm install` (`name`, `name@1.2.3`,
+a beta, or a pkg.pr.new URL). It's installed into a scratch cache and read from there,
+so output is reproducible and version-pinned.
 
 ```bash
+# a published package (any version)
 npx rescript-bindgen --pkg react-day-picker --out generated
-npx rescript-bindgen --pkg @mui/material --only Button --out generated
+npx rescript-bindgen --pkg @mui/material@5.16.0 --only Button --out generated
+
+# a single .d.ts file, printed to stdout
 npx rescript-bindgen --file ./types/Foo.d.ts --stdout
+
+# a local folder containing an index.d.ts
 npx rescript-bindgen --dir ./node_modules/some-lib --out generated
 ```
 
@@ -117,9 +103,24 @@ npx rescript-bindgen --dir ./node_modules/some-lib --out generated
 | `--pkg <name[@ver]>` | npm package (auto-installed to a scratch cache if absent) |
 | `--file <path.d.ts>` | a single declaration file (one component) |
 | `--dir <folder>` | a folder containing `index.d.ts` |
-| `--out`, `--only`, `--from`, `--stdout`, `--no-install` | see `--help` |
+| `--out <dir>` | output directory (default `generated`) |
+| `--only <Comp>` | generate just one component |
+| `--report` | **also** write `_REPORT.md` — the ready / loose / review / defect summary |
+| `--from <name>` | override the `@module(...)` import name |
+| `--stdout` | print to stdout instead of writing files (single component) |
+| `--no-install` | don't auto-install a missing `--pkg` |
 
 > Untyped JS packages produce only loose skeleton bindings — the tool is type-driven.
+
+### Get the report
+
+Add `--report` to also emit `_REPORT.md` next to the bindings — a checklist of which
+components are ready, which props were widened to `string` (loose), which need human
+review, and which are broken (`unknown`/`any`):
+
+```bash
+npx rescript-bindgen --pkg @mui/material --out generated --report
+```
 
 ---
 
@@ -216,11 +217,12 @@ Types are shipped in `types.d.ts`.
 
 ```bash
 npm test                # self-contained smoke test
-npm run gen:blend -- @juspay/blend-design-system@latest --compile
-npm run validate        # generate all blend components and compile-check them
+npm run gen -- --pkg <some-package> --out generated --report
+node test/ts-demo.mjs   # live TypeScript compiler-API walkthrough (see test/DEMOS.md)
 ```
 
-The ReScript compile sandbox lives in `test/sandbox/`.
+The ReScript compile sandbox lives in `test/sandbox/` (used to compile-check
+generated output during development).
 
 ---
 

@@ -13,11 +13,12 @@
 import { extractComponent, extractModule } from './extract.mjs'
 import { emit, report } from './emit.mjs'
 import { resolveInput } from './resolve.mjs'
+import { writeReport } from './report.mjs'
 import { writeFileSync, mkdirSync, existsSync } from 'fs'
-import { join, resolve as pathResolve } from 'path'
+import { join, resolve as pathResolve, basename } from 'path'
 
 function parseArgs(argv) {
-    const o = { out: 'generated', install: true }
+    const o = { out: 'generated', install: true, report: false }
     for (let i = 0; i < argv.length; i++) {
         const a = argv[i]
         if (a === '--pkg' || a === '-p') o.pkg = argv[++i]
@@ -27,6 +28,7 @@ function parseArgs(argv) {
         else if (a === '--from') o.from = argv[++i]
         else if (a === '--only') o.only = argv[++i]
         else if (a === '--no-install') o.install = false
+        else if (a === '--report') o.report = true
         else if (a === '--stdout') o.stdout = true
         else if (a === '--node-modules') o.nm = argv[++i]
         else if (a === '--help' || a === '-h') o.help = true
@@ -49,8 +51,12 @@ Options:
   --from        @module import name to emit (default: inferred from pkg/file)
   --only        only emit the component with this export name
   --stdout      print to stdout instead of writing files (single component)
+  --report      ALSO write _REPORT.md to --out (ready / loose / review / defects)
   --no-install  do not auto-install a missing --pkg
   --node-modules <dir>  extra node_modules root to resolve --pkg from
+
+Add --report to also generate _REPORT.md alongside the bindings: a checklist of
+which components are ready, which props were loosely typed, and which need review.
 `
 
 async function main() {
@@ -68,7 +74,7 @@ async function main() {
         file: opts.file, dir: opts.dir, pkg: opts.pkg,
         install: opts.install, nodeModulesRoots: roots,
     })
-    const from = opts.from || resolvedFrom || '@juspay/blend-design-system'
+    const from = opts.from || resolvedFrom || basename(entry).replace(/\.d\.ts$/, '')
     console.error(`[bindgen] entry: ${entry}`)
     console.error(`[bindgen] @module("${from}")`)
     if (untyped) console.error('[bindgen] note: using @types/* — package shipped no own types')
@@ -101,21 +107,30 @@ async function main() {
     const outDir = pathResolve(opts.out)
     if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true })
 
-    let totalLoose = 0, totalDefects = 0
-    const rows = []
+    let totalDefects = 0
+    const rows = []      // counts per component
+    const reports = []   // per-prop detail, for --report
     for (const { name, ir } of units) {
         const code = emit(ir)
         const rep = report(ir)
-        totalLoose += rep.loose.length
         totalDefects += rep.defects.length
         writeFileSync(join(outDir, `${name}.res`), code)
-        rows.push({ name, props: ir.props.length, enums: ir.enums.length, loose: rep.loose.length, defects: rep.defects.length })
+        rows.push({ name, props: ir.props.length, enums: ir.enums.length, loose: rep.loose.length, defects: rep.defects.length, review: rep.review.length })
+        if (rep.loose.length || rep.defects.length || rep.review.length) reports.push({ name, ...rep })
     }
 
     console.error(`\n[bindgen] wrote ${units.length} binding(s) to ${outDir}`)
-    for (const r of rows) console.error(`  ${r.name.padEnd(24)} props=${String(r.props).padStart(3)} enums=${String(r.enums).padStart(2)} loose=${String(r.loose).padStart(2)} defects=${r.defects}`)
+    for (const r of rows) console.error(`  ${r.name.padEnd(24)} props=${String(r.props).padStart(3)} enums=${String(r.enums).padStart(2)} loose=${String(r.loose).padStart(2)} review=${r.review} defects=${r.defects}`)
     if (skipped.length) console.error(`\n[bindgen] skipped ${skipped.length} non-component export(s): ${skipped.slice(0, 15).map((s) => s.name).join(', ')}${skipped.length > 15 ? '…' : ''}`)
-    if (totalDefects) console.error(`\n[bindgen] ⚠ ${totalDefects} unknown/any prop(s) flagged as upstream type defects — review.`)
+    if (totalDefects) console.error(`\n[bindgen] ⚠ ${totalDefects} unknown/any prop(s) flagged as defects — review.`)
+
+    if (opts.report) {
+        const reportPath = join(outDir, '_REPORT.md')
+        writeReport(reportPath, opts.pkg || from, rows, reports)
+        console.error(`[bindgen] 📄 report written to ${reportPath}`)
+    } else {
+        console.error(`[bindgen] (add --report to also write _REPORT.md)`)
+    }
 }
 
 main().catch((e) => { console.error('[bindgen] error: ' + e.message); process.exit(1) })

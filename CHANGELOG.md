@@ -24,11 +24,10 @@ First stable release.
   `// ⚠️ REVIEW` comment, and a report entry — never an unsafe cast.
 - Defect flagging: `unknown`/`any` props are reported as upstream type defects, never
   silently typed.
-- `rescript-bindgen-blend` — pinned-version generator for
-  `@juspay/blend-design-system` (installs the exact npm spec, reads its `dist`).
-- `rescript-bindgen` — general CLI for any typed React package (`--pkg`/`--file`/`--dir`).
-- `_REPORT.md` output: a component checklist (ready / needs-review / broken) with the
-  original TypeScript for each flagged prop.
+- `rescript-bindgen` — CLI for any typed React package (`--pkg`/`--file`/`--dir`),
+  with version-pinned install of `--pkg name@version` into a scratch cache.
+- `--report` flag → writes `_REPORT.md`: a component checklist (ready / loose /
+  needs-review / broken) with the original TypeScript for each flagged prop.
 - Library API (`extractComponent`, `extractModule`, `emit`, `report`) with TypeScript
   types in `types.d.ts`.
 - `--compile` flag and a ReScript 12 sandbox to verify generated output builds.

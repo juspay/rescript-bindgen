@@ -140,7 +140,7 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     return { module: importName, import: { from, name: importName }, kind: 'react-component', enums, records, unboxed, props }
 }
 
-// Single-component entry (a per-component .d.ts like blend's Button/Button.d.ts).
+// Single-component entry (a per-component .d.ts that default-exports the component).
 export function extractComponent(entryFile, opts = {}) {
     const program = makeProgram(entryFile)
     const checker = program.getTypeChecker()
@@ -157,7 +157,7 @@ export function extractComponent(entryFile, opts = {}) {
     if (!exp) throw new Error(`No exported component found in ${entryFile}`)
 
     const importName = opts.importName || (exp.getName() === 'default' ? guessName(entryFile) : exp.getName())
-    const from = opts.from || '@juspay/blend-design-system'
+    const from = opts.from || importName
     return buildComponentIR(checker, exp, source, importName, from, opts)
 }
 
