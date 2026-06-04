@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+
+# scratch install cache (versions fetched from npm for generation)
+.bindgen-cache/
+
+# generated bindings output
+generated/
+
+# ReScript compile sandbox build artifacts
+test/sandbox/lib/
+test/sandbox/.bsb.lock
+test/sandbox/src/*.res.mjs
+test/sandbox/src/*.res
+test/sandbox/node_modules/
+
+# misc
+*.log
+.DS_Store
