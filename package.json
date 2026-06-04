@@ -1,0 +1,59 @@
+{
+  "name": "@juspay/rescript-bindgen",
+  "version": "1.0.0",
+  "description": "Deterministic TypeScript -> ReScript binding generator. Reads .d.ts via the TypeScript compiler API and emits type-safe @react.component bindings — no AI, no %identity.",
+  "type": "module",
+  "main": "src/index.mjs",
+  "types": "types.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types.d.ts",
+      "import": "./src/index.mjs"
+    }
+  },
+  "bin": {
+    "rescript-bindgen": "src/cli.mjs",
+    "rescript-bindgen-blend": "src/blend.mjs"
+  },
+  "scripts": {
+    "gen:blend": "node src/blend.mjs",
+    "gen": "node test/gen-by-name.mjs",
+    "batch": "node test/batch.mjs",
+    "validate": "node test/validate.mjs",
+    "test": "node test/smoke.mjs"
+  },
+  "files": [
+    "src/",
+    "types.d.ts",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "rescript",
+    "typescript",
+    "bindings",
+    "codegen",
+    "react",
+    "d.ts",
+    "interop",
+    "blend-design-system",
+    "juspay"
+  ],
+  "author": "Juspay Technologies",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juspay/rescript-bindgen.git"
+  },
+  "bugs": {
+    "url": "https://github.com/juspay/rescript-bindgen/issues"
+  },
+  "homepage": "https://github.com/juspay/rescript-bindgen#readme",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "typescript": "^5.6.0"
+  }
+}
