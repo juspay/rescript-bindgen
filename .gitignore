@@ -17,3 +17,7 @@ test/sandbox/node_modules/
 # misc
 *.log
 .DS_Store
+
+# generated demo outputs (recreated by generate.mjs)
+test/binding-compare/Card.d.ts
+test/binding-compare/Card.*.res
