@@ -1,14 +1,19 @@
 #!/usr/bin/env node
-// rescript-bindgen — generate ReScript bindings from a TS type surface.
+// ============================================================================
+// cli.mjs — the `rescript-bindgen` command. Orchestrates the whole pipeline:
+//   resolve (find the .d.ts) -> extract (TS -> IR) -> emit (IR -> ReScript)
+//   -> write .res files (+ optional _REPORT.md with --report).
+// This file is thin: it parses args and wires the four src/ modules together.
 //
-//   rescript-bindgen --pkg <name[@ver]>   [--out dir] [--from importName]
-//   rescript-bindgen --file <path.d.ts>   [--out dir]
+//   rescript-bindgen --pkg <name[@ver]>   [--out dir] [--report] [--from name]
+//   rescript-bindgen --file <path.d.ts>   [--out dir] [--stdout]
 //   rescript-bindgen --dir  <folder>      [--out dir]
 //
 // Examples:
-//   rescript-bindgen --pkg @mui/material --out generated
+//   rescript-bindgen --pkg @mui/material --out generated --report
 //   rescript-bindgen --pkg react-day-picker
-//   rescript-bindgen --file ./types/Button.d.ts
+//   rescript-bindgen --file ./types/Button.d.ts --stdout
+// ============================================================================
 
 import { extractComponent, extractModule } from './extract.mjs'
 import { emit, report } from './emit.mjs'
@@ -17,6 +22,11 @@ import { writeReport } from './report.mjs'
 import { writeFileSync, mkdirSync, existsSync } from 'fs'
 import { join, resolve as pathResolve, basename } from 'path'
 
+/**
+ * Parse `process.argv` flags into an options object.
+ * @param {string[]} argv  args after `node cli.mjs`
+ * @returns {{out:string, install:boolean, report:boolean, pkg?:string, file?:string, dir?:string, from?:string, only?:string, stdout?:boolean, nm?:string, help?:boolean}}
+ */
 function parseArgs(argv) {
     const o = { out: 'generated', install: true, report: false }
     for (let i = 0; i < argv.length; i++) {
@@ -59,6 +69,11 @@ Add --report to also generate _REPORT.md alongside the bindings: a checklist of
 which components are ready, which props were loosely typed, and which need review.
 `
 
+/**
+ * Entry point. Resolves the input, extracts each component, emits ReScript,
+ * writes the `.res` files, and (with `--report`) writes `_REPORT.md`.
+ * @returns {Promise<void>}
+ */
 async function main() {
     const opts = parseArgs(process.argv.slice(2))
     if (opts.help || (!opts.pkg && !opts.file && !opts.dir)) {

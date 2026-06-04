@@ -1,10 +1,22 @@
-// report.mjs — write a human-readable _REPORT.md for a generated set of bindings.
-//
-// rows:    [{ name, props, enums, loose, defects, review }]   (counts)
-// reports: [{ name, loose:[], defects:[], review:[] }]         (per-prop detail)
-// label:   what was generated, e.g. "some-pkg@1.2.3" or "Button.d.ts"
+// ============================================================================
+// report.mjs — write the human-readable _REPORT.md for a generated set of
+// bindings. Pure presentation: it takes the per-component counts and the
+// per-prop detail (both produced by emit.report) and renders a markdown
+// checklist sorting components into ready / needs-review / broken.
+// ============================================================================
 import { writeFileSync } from 'fs'
 
+/**
+ * Write `_REPORT.md` summarising a batch of generated bindings.
+ *
+ * @param {string} path     output path for the markdown file
+ * @param {string} label    what was generated (e.g. `"some-pkg@1.2.3"` or a file name)
+ * @param {Array<{name:string, props:number, enums:number, loose:number, defects:number, review:number}>} rows
+ *   one entry per generated component (counts)
+ * @param {Array<{name:string, loose:object[], defects:object[], review:object[]}>} reports
+ *   per-prop detail, only for components that have something flagged
+ * @returns {void}
+ */
 export function writeReport(path, label, rows, reports) {
     const detailByName = new Map(reports.map((r) => [r.name, r]))
     const broken = rows.filter((r) => r.defects > 0).map((r) => r.name)

@@ -1,5 +1,16 @@
-// emit.mjs — IR -> ReScript 12 source (house style from juspay-portal bindings)
+// ============================================================================
+// emit.mjs — STAGE 3 of the pipeline: IR  ->  ReScript 12 source code.
+//
+// Takes the neutral data object (the IR) produced by extract.mjs and prints
+// actual ReScript text in the house style of the juspay-portal bindings:
+//   - string-literal unions / enums  ->  `@as` variants
+//   - multi-type props               ->  `@unboxed` untagged variants
+//   - the component itself           ->  `@module @react.component external make`
+// `emit()` returns the source string; `report()` summarises the unmapped props.
+// This file knows ReScript but nothing about TypeScript — the split is deliberate.
+// ============================================================================
 
+/** ReScript keywords that can't be used bare as identifiers/labels (we suffix `_`). */
 const RESERVED = new Set([
     'type', 'and', 'as', 'open', 'let', 'rec', 'in', 'switch', 'if', 'else',
     'for', 'while', 'fun', 'mutable', 'try', 'catch', 'exception', 'module',
@@ -7,18 +18,36 @@ const RESERVED = new Set([
     'constraint', 'private', 'of', 'to', 'downto',
 ])
 
-// number props whose name implies a count/index -> int (else float).
+/**
+ * Prop names whose `number` type should become ReScript `int` (counts/indices),
+ * not `float`. TypeScript has only `number`, so this is a best-effort heuristic.
+ */
 const INT_BY_NAME = new Set([
     'width', 'height', 'size', 'count', 'index', 'length', 'offset', 'zIndex',
     'tabIndex', 'maxLength', 'minLength', 'duration', 'rows', 'cols', 'span',
     'colSpan', 'rowSpan', 'level', 'step', 'min', 'max',
 ])
 
+/**
+ * Convert a kebab-case name to camelCase, e.g. `aria-label` -> `ariaLabel`.
+ * @param {string} name
+ * @returns {string}
+ */
 function camelFromKebab(name) {
     return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()).replace(/-/g, '')
 }
 
-// returns { as: string|null, id: string }
+/**
+ * Turn a TypeScript prop name into a valid ReScript labelled-argument identifier,
+ * plus an optional `@as("...")` to preserve the real JS prop name.
+ *
+ * Examples: `text` -> `{as:null, id:"text"}` ·
+ * `type` (reserved) -> `{as:"type", id:"type_"}` ·
+ * `aria-label` -> `{as:"aria-label", id:"ariaLabel"}`.
+ *
+ * @param {string} name  the original prop name from the .d.ts
+ * @returns {{ as: string | null, id: string }}  `as` = the `@as` value (or null), `id` = the ReScript identifier
+ */
 function label(name) {
     const isPlainIdent = /^[a-z_][a-zA-Z0-9_]*$/.test(name)
     if (isPlainIdent && !RESERVED.has(name)) return { as: null, id: name }
@@ -32,11 +61,24 @@ function label(name) {
     return { as: name, id }
 }
 
+/**
+ * Pick `int` or `float` for a `number` prop, using the name heuristic above.
+ * @param {string} propName
+ * @returns {'int' | 'float'}
+ */
 function numberType(propName) {
     return INT_BY_NAME.has(propName) ? 'int' : 'float'
 }
 
-// render an IR type node -> ReScript type string
+/**
+ * Render one IR type node into a ReScript type string (recursively).
+ * This is the inverse of extract.mjs's `classify` — IR kind -> ReScript syntax.
+ *
+ * @param {object} t        an IR type node, e.g. `{kind:'array', of:{kind:'string'}}`
+ * @param {string} propName the owning prop's name (used for the int/float heuristic)
+ * @param {{refType:string, opaqueFallback:string}} cfg  emission config
+ * @returns {string}        e.g. `"array<string>"`, `"ReactEvent.Mouse.t => unit"`
+ */
 function renderType(t, propName, cfg) {
     switch (t.kind) {
         case 'string': return 'string'
@@ -71,6 +113,21 @@ function renderType(t, propName, cfg) {
     }
 }
 
+/**
+ * Render a whole component IR into ReScript 12 source text.
+ *
+ * Emits, in order: enum (`@as`) type declarations, `@unboxed` untagged-variant
+ * declarations (for multi-type props), record type declarations (for nested
+ * objects), then the `@module @react.component external make(...)` binding with
+ * one labelled argument per prop. Props that couldn't be bound type-safely get an
+ * inline `// ⚠️ REVIEW` comment above them.
+ *
+ * @param {import('../types').ComponentIR} ir  the IR from extractComponent/extractModule
+ * @param {{ refType?: string, opaqueFallback?: string }} [options]
+ *   refType — ReScript type for DOM refs (default `React.ref<Nullable.t<Dom.element>>`);
+ *   opaqueFallback — type for un-modellable props (default `"string"`).
+ * @returns {string}  the ReScript source for one `.res` file
+ */
 export function emit(ir, options = {}) {
     const cfg = {
         from: ir.import.from,
@@ -126,8 +183,17 @@ export function emit(ir, options = {}) {
     return lines.join('\n')
 }
 
-// report which props fell back to loose / are flagged as defects.
-// Returns detailed items: { prop, kind, tsType, declText, emittedAs }.
+/**
+ * Bucket a component's props by how well they could be bound. Drives `_REPORT.md`.
+ *
+ * - **defects** — props that resolved to `unknown`/`any` (won't work as typed)
+ * - **review**  — multi-type unions we refuse to bind unsafely (need a human)
+ * - **loose**   — real types widened to `string` (compile & work, just loosely typed)
+ *
+ * @param {import('../types').ComponentIR} ir
+ * @returns {{ loose: object[], defects: object[], review: object[] }}
+ *   each item: `{ prop, kind, tsType, declText }`
+ */
 export function report(ir) {
     const loose = []
     const defects = []

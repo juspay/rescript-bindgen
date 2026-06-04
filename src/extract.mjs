@@ -1,11 +1,27 @@
-// extract.mjs — TypeScript Compiler API -> normalized IR
-// The type-CHECKER (not the AST) is what resolves Omit / intersection /
-// RefAttributes / indexed-access / generics into a flat property list.
+// ============================================================================
+// extract.mjs — STAGE 2 of the pipeline (the "brain"): a .d.ts -> normalized IR.
+//
+// It boots the real TypeScript compiler and uses the type-CHECKER (not the raw
+// syntax tree) to read types. The checker is what resolves `Omit`, intersections,
+// `RefAttributes`, indexed-access, imports, and generics into a flat, fully-
+// computed property list — things a regex/text approach can never see.
+//
+// Output is the IR: a neutral data object describing the component's props and
+// the types they need (enums, @unboxed variants, records). emit.mjs turns the IR
+// into ReScript. The two never share concerns: this file knows TS, not ReScript.
+//
+// Mental model for classify(): get a Type -> ask which category it is (.flags)
+// -> if it's a container (array/union/object/function), recurse into the inner
+// type(s). See test/DEMOS.md for a hands-on walkthrough of these compiler calls.
+// ============================================================================
 
 import ts from 'typescript'
 import { dirname } from 'path'
 
-// Well-known type names we special-case (matched via alias/symbol name).
+/**
+ * React/DOM event types -> their ReScript equivalents. Matched by the type's
+ * name so a callback param like `MouseEvent` becomes `ReactEvent.Mouse.t`.
+ */
 const REACT_EVENTS = {
     MouseEvent: 'ReactEvent.Mouse.t',
     ChangeEvent: 'ReactEvent.Form.t',
@@ -40,6 +56,14 @@ const DEFAULT_HTML_ALLOWLIST = [
     'aria-live', 'aria-required', 'aria-invalid',
 ]
 
+/**
+ * Boot a TypeScript Program over one entry `.d.ts`. The compiler automatically
+ * loads every file it imports (its types, `react`, etc.), so the checker can
+ * resolve cross-file references. `skipLibCheck`/`strict:false` keep it fast since
+ * we only READ types, never type-check the program.
+ * @param {string} entryFile  absolute path to the `.d.ts`
+ * @returns {ts.Program}
+ */
 function makeProgram(entryFile) {
     const options = {
         target: ts.ScriptTarget.ES2020,
@@ -55,8 +79,13 @@ function makeProgram(entryFile) {
     return ts.createProgram([entryFile], options)
 }
 
-// Best-effort name for a type: alias name first (ReactNode, CSSProperties…),
-// then the symbol name (Date, ButtonType, HTMLButtonElement…).
+/**
+ * Best-effort readable name for a resolved type. Prefers the alias name
+ * (`ReactNode`, `CSSProperties`) then the symbol name (`Date`, `ButtonType`,
+ * `HTMLButtonElement`). Used to special-case well-known types.
+ * @param {ts.Type} type
+ * @returns {string | undefined}
+ */
 function typeName(type) {
     if (type.aliasSymbol) return type.aliasSymbol.getName()
     const s = type.getSymbol() || type.symbol
@@ -64,6 +93,13 @@ function typeName(type) {
     return undefined
 }
 
+/**
+ * Make a valid ReScript variant CONSTRUCTOR name from a raw value.
+ * `"primary"` -> `Primary`, `"icon-only"` -> `IconOnly`, `"2xl"` -> `V2xl`
+ * (constructors must start with an uppercase letter, so digit-leading get a `V`).
+ * @param {string|number} raw
+ * @returns {string}
+ */
 function pascal(raw) {
     const cleaned = String(raw).replace(/[^a-zA-Z0-9]+/g, ' ').trim()
     if (!cleaned) return 'Value'
@@ -77,8 +113,15 @@ function pascal(raw) {
     return out
 }
 
-// Does this type look like a React component? (FC, ForwardRefExoticComponent,
-// or any callable whose first param is an object of props.)
+/**
+ * Heuristic: does this type look like a React component? True for `FC`,
+ * `ForwardRefExoticComponent`, `ComponentType`, or any callable whose return
+ * type looks element-ish (`ReactNode`/`JSX.Element`). Used by `extractModule`
+ * to pick which exports of a package to bind.
+ * @param {ts.Type} type
+ * @param {ts.TypeChecker} checker
+ * @returns {boolean}
+ */
 function isReactComponent(type, checker) {
     const n = typeName(type) || ''
     if (/ExoticComponent|FunctionComponent|^FC$|ComponentType|ComponentClass/.test(n)) return true
@@ -91,7 +134,22 @@ function isReactComponent(type, checker) {
     return false
 }
 
-// Build the props IR for one component symbol.
+/**
+ * Build the IR for one component symbol — the core of the brain.
+ *
+ * Steps: resolve the symbol's type -> take the first call-signature parameter
+ * (the props object) -> `getPropertiesOfType` to flatten it (Omit/intersection/
+ * imports resolved) -> drop `ref`/`key`, keep own props + an allowlist of common
+ * inherited HTML/ARIA props -> `classify` each prop's type into IR.
+ *
+ * @param {ts.TypeChecker} checker
+ * @param {ts.Symbol} sym         the component export symbol
+ * @param {ts.SourceFile} source  the entry file (used as a fallback location)
+ * @param {string} importName     the `make = "..."` JS name to bind
+ * @param {string} from           the `@module(...)` package name
+ * @param {{htmlAllowlist?: string[]}} opts
+ * @returns {import('../types').ComponentIR}
+ */
 function buildComponentIR(checker, sym, source, importName, from, opts) {
     if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
     const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0]) || source
@@ -140,7 +198,17 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     return { module: importName, import: { from, name: importName }, kind: 'react-component', enums, records, unboxed, props }
 }
 
-// Single-component entry (a per-component .d.ts that default-exports the component).
+/**
+ * Extract ONE component from a per-component `.d.ts` (one that default-exports,
+ * or first-capitalized-exports, the component). Use this for a single file.
+ *
+ * @param {string} entryFile  path to the `.d.ts`
+ * @param {{from?: string, importName?: string, htmlAllowlist?: string[]}} [opts]
+ *   from — `@module(...)` name (defaults to the component name);
+ *   importName — override the export/JS name.
+ * @returns {import('../types').ComponentIR}
+ * @throws if no exported component is found
+ */
 export function extractComponent(entryFile, opts = {}) {
     const program = makeProgram(entryFile)
     const checker = program.getTypeChecker()
@@ -161,8 +229,16 @@ export function extractComponent(entryFile, opts = {}) {
     return buildComponentIR(checker, exp, source, importName, from, opts)
 }
 
-// Whole-module entry (a package's main index.d.ts) — enumerate every exported
-// React component and build an IR for each. Returns { components: [{name, ir}], skipped: [{name, reason}] }.
+/**
+ * Extract EVERY exported React component from a package's entry `.d.ts` (e.g.
+ * its `index.d.ts`). Non-component exports (types, hooks, constants) are skipped
+ * with a reason. Use this for a whole package (`--pkg`).
+ *
+ * @param {string} entryFile  path to the package's entry `.d.ts`
+ * @param {{from?: string, htmlAllowlist?: string[]}} [opts]
+ * @returns {{ components: Array<{name:string, ir:import('../types').ComponentIR}>,
+ *            skipped: Array<{name:string, reason:string}> }}
+ */
 export function extractModule(entryFile, opts = {}) {
     const program = makeProgram(entryFile)
     const checker = program.getTypeChecker()
@@ -204,14 +280,32 @@ export function extractModule(entryFile, opts = {}) {
     return { components, skipped }
 }
 
+/**
+ * Derive a component name from a file path: `.../Button.d.ts` -> `Button`.
+ * @param {string} file
+ * @returns {string}
+ */
 function guessName(file) {
     const base = file.split('/').pop().replace(/\.d\.ts$/, '').replace(/\.tsx?$/, '')
     return base
 }
 
+/** Max recursion depth for classify (complex library types are deeply nested). */
 const MAX_DEPTH = 6
 
-// classify: TS type -> IR type node. ctx accumulates named enums/records.
+/**
+ * Map one resolved TypeScript type to an IR type node — the central decision
+ * tree. Checks categories most-specific first (unknown, primitives, well-known
+ * names, enum, array, Record, function, union, object) and recurses into
+ * containers. `ctx` accumulates the named enum/record/@unboxed declarations the
+ * type references, plus depth/cycle guards.
+ *
+ * @param {ts.Type} type
+ * @param {{checker: ts.TypeChecker, decl: ts.Node, enums:any[], records:any[], unboxed:any[], visiting?:Set<number>}} ctx
+ * @param {string} [propName]  owning prop name (used to name inline enums/unions)
+ * @param {number} [depth]
+ * @returns {object}  an IR type node, e.g. `{kind:'string'}` or `{kind:'typeRef', to:'size'}`
+ */
 function classify(type, ctx, propName = '', depth = 0) {
     const { checker } = ctx
     const flags = type.flags
@@ -289,6 +383,14 @@ function classify(type, ctx, propName = '', depth = 0) {
     return { kind: 'opaque', text: checker.typeToString(type) }
 }
 
+/**
+ * Turn an enum / string-literal-union type into an `@as` variant declaration,
+ * register it on `ctx.enums` (deduped), and return a reference to it.
+ * @param {ts.Type} type
+ * @param {object} ctx
+ * @param {string} propName
+ * @returns {{kind:'typeRef', to:string, _enum:true}}
+ */
 function enumNode(type, ctx, propName) {
     const { checker } = ctx
     const ename = typeName(type) || pascal(propName)
@@ -317,6 +419,12 @@ const RESCRIPT_RESERVED = new Set([
     'when', 'with', 'lazy', 'assert', 'true', 'false', 'include', 'of', 'to',
 ])
 
+/**
+ * Make a valid lowercase ReScript TYPE name (types must start lowercase, can't
+ * be reserved words or start with a digit). `Size` -> `size`, `type` -> `type_`.
+ * @param {string} s
+ * @returns {string}
+ */
 function lower(s) {
     let n = s.charAt(0).toLowerCase() + s.slice(1)
     n = n.replace(/[^a-zA-Z0-9_]/g, '_')
@@ -324,6 +432,18 @@ function lower(s) {
     return n
 }
 
+/**
+ * Handle a union type `A | B`. In order: all string-literals -> `@as` variant;
+ * all booleans -> `bool`; a genuine multi-runtime-type union (e.g. string|number,
+ * string|string[]) -> an `@unboxed` untagged variant IF every member has a
+ * distinct runtime type; otherwise flag for human `review` (structured) or fall
+ * back to `opaque`/string (CSS-ish unions).
+ * @param {ts.Type} type
+ * @param {object} ctx
+ * @param {string} propName
+ * @param {number} [depth]
+ * @returns {object}  an IR type node
+ */
 function unionNode(type, ctx, propName, depth = 0) {
     const { checker } = ctx
     // strip null/undefined (handled by optional)
@@ -385,7 +505,13 @@ function unionNode(type, ctx, propName, depth = 0) {
     return { kind: 'opaque', text: checker.typeToString(type) }
 }
 
-// Is `t` an Array / ReadonlyArray? Return the element type or null.
+/**
+ * If `t` is an `Array<X>` / `ReadonlyArray<X>`, return its element type `X`,
+ * else null.
+ * @param {ts.Type} t
+ * @param {ts.TypeChecker} checker
+ * @returns {ts.Type | null}
+ */
 function asArray(t, checker) {
     if (checker.isArrayType && checker.isArrayType(t)) return checker.getTypeArguments(t)[0]
     const n = typeName(t)
@@ -396,8 +522,17 @@ function asArray(t, checker) {
     return null
 }
 
-// Map one union member to an untagged-variant constructor.
-// rt = runtime kind used to check discriminability (no two members may share it).
+/**
+ * Map one union member to an `@unboxed` variant constructor, or null if it can't
+ * be one (objects/functions). `rt` is the runtime kind (`string`/`number`/
+ * `boolean`/`array`) used to check discriminability — two members may NOT share
+ * an `rt`, because untagged variants discriminate via JS `typeof`/`Array.isArray`.
+ * @param {ts.Type} t
+ * @param {object} ctx
+ * @param {string} propName
+ * @param {number} depth
+ * @returns {{ctor:string, rt:string, type:object} | null}
+ */
 function memberOf(t, ctx, propName, depth) {
     const c = ctx.checker
     if (t.flags & (ts.TypeFlags.String | ts.TypeFlags.StringLiteral)) return { ctor: 'Str', rt: 'string', type: { kind: 'string' } }
@@ -413,6 +548,16 @@ function memberOf(t, ctx, propName, depth) {
     return null // objects / functions / etc. — not auto-discriminable
 }
 
+/**
+ * Map a function/callback type to an IR callback node. A single React-event
+ * parameter becomes `ReactEvent.X.t => unit`; otherwise the first arg is
+ * classified normally. Return type is always treated as `unit`.
+ * @param {ts.Signature} sig  the call signature
+ * @param {object} ctx
+ * @param {string} propName
+ * @param {number} [depth]
+ * @returns {{kind:'callback', arg:object, ret:object}}
+ */
 function functionNode(sig, ctx, propName, depth = 0) {
     const { checker } = ctx
     const params = sig.getParameters()
@@ -431,6 +576,16 @@ function functionNode(sig, ctx, propName, depth = 0) {
     }
 }
 
+/**
+ * Turn an inline object type `{ a, b }` (a nested object prop) into a ReScript
+ * record declaration, register it on `ctx.records` (deduped), and return a
+ * reference. Each field is classified recursively. Cycle-guarded via `ctx.visiting`.
+ * @param {ts.Type} type
+ * @param {object} ctx
+ * @param {string} propName  used to name the record (e.g. `footer` -> `footerConfig`)
+ * @param {number} [depth]
+ * @returns {{kind:'typeRef', to:string}}
+ */
 function recordNode(type, ctx, propName, depth = 0) {
     const { checker } = ctx
     if (type.id != null) ctx.visiting?.add(type.id)
