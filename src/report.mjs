@@ -45,6 +45,34 @@ export function writeReport(path, label, rows, reports) {
     }
     L.push(``)
 
+    // ── ⚪ LOOSELY TYPED (widened to string) ───────────────────
+    // Aggregated across all components and grouped by the resolved TS type, so
+    // each distinct pattern is reviewed once (aria/CSS props repeat everywhere).
+    const allLoose = reports.flatMap((r) => (r.loose || []).map((l) => ({ ...l, component: r.name })))
+    L.push(`## ⚪ Loosely typed (widened to \`string\`)`)
+    L.push(``)
+    L.push(`These resolved to a real but complex type and were widened to \`string\` (they compile and work). Grouped by type so you can review each pattern once — confirm \`string\` is acceptable, or it may deserve a tighter mapping.`)
+    L.push(``)
+    if (allLoose.length) {
+        const groups = new Map()
+        for (const l of allLoose) {
+            const key = (l.tsType || l.declText || '').replace(/\s+/g, ' ').trim()
+            if (!groups.has(key)) groups.set(key, [])
+            groups.get(key).push(l)
+        }
+        const sorted = [...groups.entries()].sort((a, b) => b[1].length - a[1].length)
+        L.push(`| Resolved TypeScript type | → emitted | count | example props |`)
+        L.push(`|--------------------------|-----------|-------|---------------|`)
+        for (const [type, items] of sorted) {
+            const props = [...new Set(items.map((i) => i.prop))].slice(0, 4).join(', ')
+            L.push(`| \`${type.replace(/\|/g, '\\|') || '(anonymous)'}\` | \`string\` | ${items.length} | ${props}${items.length > 4 ? ' …' : ''} |`)
+        }
+        L.push(``)
+    } else {
+        L.push(`_(none)_`)
+        L.push(``)
+    }
+
     // ── 🔍 NEEDS REVIEW (middle) ───────────────────────────────
     L.push(`## 🔍 Needs review`)
     L.push(``)

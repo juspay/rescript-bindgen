@@ -36,6 +36,27 @@ const REACT_EVENTS = {
     AnimationEvent: 'ReactEvent.Animation.t',
 }
 
+// React `*EventHandler<T>` alias types -> their ReScript event. These often don't
+// expose a call signature (the "bivariance hack" in @types/react), so we map them
+// by NAME to a proper callback instead of letting them fall back to `string`.
+const EVENT_HANDLERS = {
+    MouseEventHandler: 'ReactEvent.Mouse.t',
+    ChangeEventHandler: 'ReactEvent.Form.t',
+    FormEventHandler: 'ReactEvent.Form.t',
+    InputEventHandler: 'ReactEvent.Form.t',
+    SubmitEventHandler: 'ReactEvent.Form.t',
+    FocusEventHandler: 'ReactEvent.Focus.t',
+    KeyboardEventHandler: 'ReactEvent.Keyboard.t',
+    ClipboardEventHandler: 'ReactEvent.Clipboard.t',
+    DragEventHandler: 'ReactEvent.Mouse.t',
+    TouchEventHandler: 'ReactEvent.Touch.t',
+    WheelEventHandler: 'ReactEvent.Wheel.t',
+    UIEventHandler: 'ReactEvent.UI.t',
+    AnimationEventHandler: 'ReactEvent.Animation.t',
+    PointerEventHandler: 'ReactEvent.Mouse.t',
+    ReactEventHandler: 'ReactEvent.Synthetic.t',
+}
+
 // Common HTML/ARIA attributes worth keeping on inherited (DOM-spread) props.
 // Everything else from HTMLAttributes is dropped to match the canonical style.
 const DEFAULT_HTML_ALLOWLIST = [
@@ -338,6 +359,12 @@ function classify(type, ctx, propName = '', depth = 0) {
         return { kind: 'domRef' }
     if (name && /Element$/.test(name) && /^(HTML|SVG|Dom)/.test(name)) return { kind: 'domElement' }
 
+    // React `*EventHandler` alias (e.g. InputEventHandler<T>) -> a typed callback.
+    // Handled here because these often expose no call signature to fall through to.
+    if (name && EVENT_HANDLERS[name]) {
+        return { kind: 'callback', arg: { kind: 'event', res: EVENT_HANDLERS[name] }, ret: { kind: 'unit' } }
+    }
+
     // enum (real TS enum used as a type)
     if (flags & ts.TypeFlags.EnumLike) {
         return enumNode(type, ctx, propName)
@@ -392,7 +419,6 @@ function classify(type, ctx, propName = '', depth = 0) {
  * @returns {{kind:'typeRef', to:string, _enum:true}}
  */
 function enumNode(type, ctx, propName) {
-    const { checker } = ctx
     const ename = typeName(type) || pascal(propName)
     const members = []
     const constituents = type.isUnion?.() ? type.types : [type]
