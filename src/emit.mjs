@@ -82,6 +82,8 @@ function numberType(propName) {
 function renderType(t, propName, cfg) {
     switch (t.kind) {
         case 'string': return 'string'
+        // verbatim ReScript type (e.g. aria poly variants from JsxDOM) — passed through as-is
+        case 'raw': return t.res
         // untagged-variant members force float (JS can't untag int vs float)
         case 'number': return t._float ? 'float' : numberType(propName)
         case 'boolean': return 'bool'
