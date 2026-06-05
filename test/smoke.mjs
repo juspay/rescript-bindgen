@@ -18,6 +18,8 @@ export declare const Widget: (props: {
   size?: 'sm' | 'md' | 'lg';
   width?: string | number;
   tags?: string | string[];
+  "aria-checked"?: boolean | "false" | "mixed" | "true";
+  "aria-disabled"?: boolean | "false" | "true";
 }) => JsxElement;
 export default Widget;
 `)
@@ -31,6 +33,8 @@ const checks = [
   ['count number -> int (name heuristic)', /~count: int=\?/.test(code)],
   ['string|number -> @unboxed (structural name)', /@unboxed type stringOrNumber = Str\(string\) \| Num\(float\)/.test(code)],
   ['string|string[] -> @unboxed (structural name)', /@unboxed type stringOrStringArray = Str\(string\) \| StrArr\(array<string>\)/.test(code)],
+  ['aria-checked -> JsxDOM poly variant', /~ariaChecked: \[#"true" \| #"false" \| #mixed\]=\?/.test(code)],
+  ['aria-disabled -> bool', /~ariaDisabled: bool=\?/.test(code)],
   ['external make binding', /@module\("demo"\) @react\.component/.test(code)],
   ['no %identity anywhere', !/%identity/.test(code)],
   ['no defects', rep.defects.length === 0],

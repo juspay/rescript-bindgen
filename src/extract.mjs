@@ -36,6 +36,40 @@ const REACT_EVENTS = {
     AnimationEvent: 'ReactEvent.Animation.t',
 }
 
+// HTML aria-* / role attributes -> the EXACT ReScript types the official
+// @rescript/react JsxDOM module uses (node_modules/@rescript/runtime/.../JsxDOM.res).
+// Mapped by name (aria names are standardised) so they get precise types instead of
+// being widened to `string`. Poly variants here are structurally shared in ReScript.
+const ARIA_TYPES = {
+    // tri-state / enum -> polymorphic variants (verbatim from JsxDOM.res)
+    'aria-checked': '[#"true" | #"false" | #mixed]',
+    'aria-pressed': '[#"true" | #"false" | #mixed]',
+    'aria-current': '[#page | #step | #location | #date | #time | #"true" | #"false"]',
+    'aria-haspopup': '[#menu | #listbox | #tree | #grid | #dialog | #"true" | #"false"]',
+    'aria-invalid': '[#grammar | #"false" | #spelling | #"true"]',
+    'aria-autocomplete': '[#inline | #list | #both | #none]',
+    'aria-orientation': '[#horizontal | #vertical | #undefined]',
+    'aria-live': '[#off | #polite | #assertive | #rude]',
+    'aria-dropeffect': '[#copy | #move | #link | #execute | #popup | #none]',
+    // boolean aria
+    'aria-disabled': 'bool', 'aria-hidden': 'bool', 'aria-expanded': 'bool',
+    'aria-modal': 'bool', 'aria-multiline': 'bool', 'aria-multiselectable': 'bool',
+    'aria-readonly': 'bool', 'aria-required': 'bool', 'aria-selected': 'bool',
+    'aria-atomic': 'bool', 'aria-busy': 'bool', 'aria-grabbed': 'bool',
+    // numeric aria
+    'aria-level': 'int', 'aria-colcount': 'int', 'aria-colindex': 'int',
+    'aria-colspan': 'int', 'aria-posinset': 'int', 'aria-rowcount': 'int',
+    'aria-rowindex': 'int', 'aria-rowspan': 'int', 'aria-setsize': 'int',
+    'aria-valuemax': 'float', 'aria-valuemin': 'float', 'aria-valuenow': 'float',
+    // string aria / role
+    'role': 'string', 'aria-label': 'string', 'aria-describedby': 'string',
+    'aria-labelledby': 'string', 'aria-controls': 'string', 'aria-details': 'string',
+    'aria-keyshortcuts': 'string', 'aria-roledescription': 'string',
+    'aria-placeholder': 'string', 'aria-sort': 'string', 'aria-valuetext': 'string',
+    'aria-relevant': 'string', 'aria-activedescendant': 'string',
+    'aria-errormessage': 'string', 'aria-flowto': 'string', 'aria-owns': 'string',
+}
+
 // React `*EventHandler<T>` alias types -> their ReScript event. These often don't
 // expose a call signature (the "bivariance hack" in @types/react), so we map them
 // by NAME to a proper callback instead of letting them fall back to `string`.
@@ -202,14 +236,17 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
         .filter((p) => !['ref', 'key'].includes(p.getName()))
         .filter((p) => !isInherited(p) || allow.has(p.getName()))
         .map((p) => {
+            const name = p.getName()
             const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0
             const t = checker.getTypeOfSymbolAtLocation(p, decl)
             const d = p.declarations && p.declarations[0]
+            // aria-* / role -> the exact JsxDOM type (verbatim), bypassing classify.
+            const aria = ARIA_TYPES[name]
             return {
-                name: p.getName(),
+                name,
                 optional,
                 inherited: isInherited(p),
-                type: classify(t, ctx, p.getName()),
+                type: aria ? { kind: 'raw', res: aria } : classify(t, ctx, name),
                 // raw TS info, used by the report to describe unmapped props
                 tsType: checker.typeToString(t).replace(/\s+/g, ' ').slice(0, 200),
                 declText: (d ? d.getText() : '').replace(/\s+/g, ' ').trim().slice(0, 200),
