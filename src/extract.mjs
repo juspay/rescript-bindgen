@@ -135,6 +135,21 @@ function makeProgram(entryFile) {
 }
 
 /**
+ * Does this type come from the `csstype` package? Those are CSS property values
+ * (e.g. `Width<number | (string & {})>`, `JustifyContent`) which are correctly
+ * `string` in ReScript — a precise mapping, not a loose fallback. Detected by the
+ * declaration's source file path.
+ * @param {ts.Type} type
+ * @returns {boolean}
+ */
+function isCssType(type) {
+    const sym = type.aliasSymbol || (type.getSymbol && type.getSymbol()) || type.symbol
+    const decl = sym && sym.getDeclarations && sym.getDeclarations()[0]
+    const file = decl && decl.getSourceFile().fileName
+    return !!(file && /[\\/]csstype[\\/]/.test(file))
+}
+
+/**
  * Best-effort readable name for a resolved type. Prefers the alias name
  * (`ReactNode`, `CSSProperties`) then the symbol name (`Date`, `ButtonType`,
  * `HTMLButtonElement`). Used to special-case well-known types.
@@ -384,6 +399,9 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (flags & ts.TypeFlags.String) return { kind: 'string' }
     if (flags & ts.TypeFlags.Number) return { kind: 'number' }
     if (flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) return { kind: 'boolean' }
+
+    // CSS property values (csstype) are correctly `string`, not a loose fallback.
+    if (isCssType(type)) return { kind: 'string' }
 
     const name = typeName(type)
 
