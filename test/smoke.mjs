@@ -29,8 +29,8 @@ const rep = report(ir)
 const checks = [
   ['string-literal union -> variant', /@as\("sm"\) Sm/.test(code)],
   ['count number -> int (name heuristic)', /~count: int=\?/.test(code)],
-  ['string|number -> @unboxed', /@unboxed type widthValue = (Str\(string\) \| Num\(float\)|Num\(float\) \| Str\(string\))/.test(code)],
-  ['string|string[] -> @unboxed', /@unboxed type tagsValue = Str\(string\) \| StrArr\(array<string>\)/.test(code)],
+  ['string|number -> @unboxed (structural name)', /@unboxed type stringOrNumber = Str\(string\) \| Num\(float\)/.test(code)],
+  ['string|string[] -> @unboxed (structural name)', /@unboxed type stringOrStringArray = Str\(string\) \| StrArr\(array<string>\)/.test(code)],
   ['external make binding', /@module\("demo"\) @react\.component/.test(code)],
   ['no %identity anywhere', !/%identity/.test(code)],
   ['no defects', rep.defects.length === 0],

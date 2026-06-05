@@ -482,7 +482,10 @@ function unionNode(type, ctx, propName, depth = 0) {
         members.push({ ctor: m.ctor, type: m.type })
     }
     if (discriminable) {
-        const name = lower(pascal(propName)) + 'Value'
+        // Name the untagged variant by its STRUCTURE, not the prop, so identical
+        // unions (e.g. defaultValue/value/onValueChange all `string | string[]`)
+        // collapse into ONE shared type instead of one per prop.
+        const name = unboxedName(members)
         if (!ctx.seenUnboxed.has(name)) {
             ctx.seenUnboxed.set(name, true)
             ctx.unboxed.push({ name, members })
@@ -546,6 +549,28 @@ function memberOf(t, ctx, propName, depth) {
         return { ctor, rt: 'array', type: { kind: 'array', of: elemType } }
     }
     return null // objects / functions / etc. — not auto-discriminable
+}
+
+/**
+ * Derive a STRUCTURAL name for an untagged variant from its members, so two
+ * unions with the same shape get the same name (and are deduped into one type).
+ * e.g. `string | string[]` -> `stringOrStringArray`, `string | number` -> `stringOrNumber`.
+ * @param {Array<{ctor:string, type:object}>} members
+ * @returns {string}
+ */
+function unboxedName(members) {
+    const tok = (t) => {
+        switch (t.kind) {
+            case 'string': return 'String'
+            case 'number': return 'Number'
+            case 'boolean': return 'Bool'
+            case 'array': return tok(t.of) + 'Array'
+            case 'reactElement': return 'Element'
+            case 'typeRef': return pascal(t.to)
+            default: return 'Value'
+        }
+    }
+    return lower(members.map((m) => tok(m.type)).join('Or'))
 }
 
 /**
