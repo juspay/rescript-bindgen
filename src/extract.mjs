@@ -468,6 +468,18 @@ function unionNode(type, ctx, propName, depth = 0) {
     if (parts.every((t) => t.flags & (ts.TypeFlags.BooleanLiteral | ts.TypeFlags.Boolean)))
         return { kind: 'boolean' }
 
+    // ReactElement | ReactElement[]  (a "children"-style union) -> React.element.
+    // In ReScript, React.element already represents one node OR a list (via React.array),
+    // so this is the correct, type-safe single mapping.
+    const isReactish = (t) => {
+        const n = typeName(t)
+        if (n && /ReactElement|ReactNode/.test(n)) return true
+        const elem = asArray(t, checker)
+        const en = elem && typeName(elem)
+        return !!(en && /ReactElement|ReactNode/.test(en))
+    }
+    if (parts.every(isReactish)) return { kind: 'reactElement' }
+
     // Genuine multi-runtime-type union (string|number, string|string[], …).
     // Emit a ReScript 11 UNTAGGED variant — type-safe AND zero-cost (the raw
     // value reaches JS, no %identity, no wrapper). Only possible when every
