@@ -175,7 +175,13 @@ export function emit(ir, options = {}) {
         if (p.type.kind === 'review' && !p.inherited) {
             lines.push(`  // ⚠️ REVIEW: \`${p.name}\` is \`${p.type.text}\` — multi-type that can't be auto-discriminated; emitted as \`${cfg.opaqueFallback}\` placeholder. Bind by hand or fix upstream.`)
         }
-        lines.push(`  ${asPrefix}~${id}: ${ty}${p.optional ? '=?' : ''},`)
+        // Mark LOOSELY-typed props inline so they're visible in the .res: a real
+        // but complex type widened to the fallback. Shows the original TS type.
+        const isLoose = p.type.kind === 'opaque' || (p.type.kind === 'review' && p.inherited)
+        const trailing = isLoose
+            ? `  // ⚪ loose — was \`${(p.tsType || p.type.text || '').slice(0, 90)}\``
+            : ''
+        lines.push(`  ${asPrefix}~${id}: ${ty}${p.optional ? '=?' : ''},${trailing}`)
     }
     lines.push(`) => React.element = ${JSON.stringify(ir.import.name)}`)
     lines.push('')
