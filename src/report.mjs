@@ -19,78 +19,80 @@ import { writeFileSync } from 'fs'
  */
 export function writeReport(path, label, rows, reports) {
     const detailByName = new Map(reports.map((r) => [r.name, r]))
-    const broken = rows.filter((r) => r.defects > 0).map((r) => r.name)
-    const needsReview = rows.filter((r) => r.defects === 0 && r.review > 0).map((r) => r.name)
-    const clean = rows.filter((r) => r.defects === 0 && r.review === 0)
+    const byName = (a, b) => a.name.localeCompare(b.name)
+
+    // Three buckets, most-serious wins: broken (has defects) > review > ready.
+    const ready = rows.filter((r) => r.defects === 0 && r.review === 0).sort(byName)
+    const review = rows.filter((r) => r.defects === 0 && r.review > 0).sort(byName)
+    const broken = rows.filter((r) => r.defects > 0).sort(byName)
 
     const L = []
     L.push(`# Binding report — \`${label}\``)
     L.push(``)
-    L.push(`- **${rows.length}** components generated`)
-    L.push(`- **${clean.length}** ✅ ready to use (no broken props, no review needed)`)
-    L.push(`- **${needsReview.length}** 🔍 need human review (a multi-type prop couldn't be auto-bound)`)
-    L.push(`- **${broken.length}** 🛑 have broken props that WON'T WORK${broken.length ? `: ${broken.join(', ')}` : ''}`)
+    L.push(`**${rows.length}** components · ✅ **${ready.length}** usable · 🔍 **${review.length}** need review · 🛑 **${broken.length}** broken`)
     L.push(``)
 
-    // ── Checklist ──────────────────────────────────────────────
-    L.push(`## Components`)
+    // ── ✅ USABLE (top) ────────────────────────────────────────
+    L.push(`## ✅ Usable`)
     L.push(``)
-    L.push(`\`[x]\` ready · \`[~]\` needs review · \`[ ]\` broken · "(n loose)" = n props widened to \`string\` but still usable`)
+    L.push(`These compile and every prop is bound type-safely — use them directly.`)
+    L.push(`_(n loose)_ = some props widened to \`string\`; they still work, just loosely typed.`)
     L.push(``)
-    for (const r of rows.slice().sort((a, b) => a.name.localeCompare(b.name))) {
-        const looseNote = r.loose ? `  _(${r.loose} loose)_` : ''
-        if (r.defects > 0) L.push(`- [ ] **${r.name}** — 🛑 ${r.defects} broken${r.review ? `, 🔍 ${r.review} review` : ''}${looseNote}`)
-        else if (r.review > 0) L.push(`- [~] **${r.name}** — 🔍 ${r.review} to review${looseNote}`)
-        else L.push(`- [x] ${r.name}${looseNote}`)
+    if (ready.length) {
+        for (const r of ready) L.push(`- ${r.name}${r.loose ? `  _(${r.loose} loose)_` : ''}`)
+    } else {
+        L.push(`_(none)_`)
     }
     L.push(``)
 
-    // ── 🛑 Broken (unknown/any) ────────────────────────────────
-    if (broken.length) {
-        L.push(`## 🛑 Broken props (won't work as typed)`)
-        L.push(``)
-        L.push(`Resolved to \`unknown\`/\`any\` (often a generic \`T\`). Emitted as a placeholder so the component compiles, but **these props will not work** — fix them concretely upstream, or add generic support.`)
-        L.push(``)
-        for (const name of broken) {
-            const r = detailByName.get(name)
-            if (!r || !r.defects.length) continue
-            L.push(`### ${name}`)
-            L.push(``)
-            L.push(`| Prop | Real TypeScript | Why it won't work |`)
-            L.push(`|------|-----------------|-------------------|`)
-            for (const d of r.defects) {
-                const decl = (d.declText || d.tsType || '').replace(/\|/g, '\\|')
-                const why = /\(.*\)\s*=>/.test(d.declText || '')
-                    ? "It's a **callback** typed `unknown` → emitted as `string`; passing a string does nothing."
-                    : "Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly."
-                L.push(`| \`${d.prop}\` | \`${decl}\` | ${why} |`)
-            }
-            L.push(``)
-        }
-    }
-
-    // ── 🔍 Needs review (multi-type) ───────────────────────────
-    if (needsReview.length) {
-        L.push(`## 🔍 Needs human review (multi-type, not auto-discriminable)`)
-        L.push(``)
-        L.push(`Unions of types we can't tell apart at runtime (e.g. two object shapes), so an \`@unboxed\` variant won't work and we **refuse to use \`%identity\`/unsafe casts**. Emitted as a \`string\` placeholder + an inline \`// ⚠️ REVIEW\` comment. Bind by hand or fix upstream.`)
-        L.push(``)
-        for (const name of needsReview) {
-            const r = detailByName.get(name)
-            if (!r || !r.review.length) continue
-            L.push(`### ${name}`)
+    // ── 🔍 NEEDS REVIEW (middle) ───────────────────────────────
+    L.push(`## 🔍 Needs review`)
+    L.push(``)
+    L.push(`A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object shapes), so an \`@unboxed\` variant won't work and we **refuse to use \`%identity\`/unsafe casts**. The prop is emitted as a \`string\` placeholder with an inline \`// ⚠️ REVIEW\` comment — bind it by hand or fix the type upstream.`)
+    L.push(``)
+    if (review.length) {
+        for (const r of review) {
+            const d = detailByName.get(r.name)
+            L.push(`### ${r.name}${r.loose ? `  _(${r.loose} loose)_` : ''}`)
             L.push(``)
             L.push(`| Prop | Real TypeScript |`)
             L.push(`|------|-----------------|`)
-            for (const d of r.review) L.push(`| \`${d.prop}\` | \`${(d.declText || d.tsType || '').replace(/\|/g, '\\|')}\` |`)
+            for (const x of (d?.review || [])) L.push(`| \`${x.prop}\` | \`${(x.declText || x.tsType || '').replace(/\|/g, '\\|')}\` |`)
             L.push(``)
         }
+    } else {
+        L.push(`_(none)_`)
+        L.push(``)
     }
 
-    if (!broken.length && !needsReview.length) {
-        L.push(`## 🎉 All clear`)
+    // ── 🛑 BROKEN / SERIOUS CHANGES (bottom) ───────────────────
+    L.push(`## 🛑 Broken — needs serious component change`)
+    L.push(``)
+    L.push(`These props resolved to \`unknown\`/\`any\` (usually a generic \`T\`). They're emitted as a placeholder so the file still compiles, but **the props will not work as typed** — they need a concrete type upstream, or generic-binding support.`)
+    L.push(``)
+    if (broken.length) {
+        for (const r of broken) {
+            const d = detailByName.get(r.name)
+            const extras = []
+            if (r.review) extras.push(`also 🔍 ${r.review} to review`)
+            if (r.loose) extras.push(`${r.loose} loose`)
+            L.push(`### ${r.name}${extras.length ? `  _(${extras.join(', ')})_` : ''}`)
+            L.push(``)
+            L.push(`| Prop | Real TypeScript | Why it won't work |`)
+            L.push(`|------|-----------------|-------------------|`)
+            for (const x of (d?.defects || [])) {
+                const decl = (x.declText || x.tsType || '').replace(/\|/g, '\\|')
+                const why = /\(.*\)\s*=>/.test(x.declText || '')
+                    ? "It's a **callback** typed `unknown` → emitted as `string`; passing a string does nothing."
+                    : "Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly."
+                L.push(`| \`${x.prop}\` | \`${decl}\` | ${why} |`)
+            }
+            L.push(``)
+        }
+    } else {
+        L.push(`_(none)_ 🎉`)
         L.push(``)
-        L.push(`Every prop is bound type-safely (multi-types via \`@unboxed\` variants). Nothing needs fixing.`)
     }
+
     writeFileSync(path, L.join('\n') + '\n')
 }
