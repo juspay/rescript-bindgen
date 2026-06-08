@@ -88,6 +88,8 @@ function renderType(t, propName, cfg) {
         case 'number': return t._float ? 'float' : numberType(propName)
         case 'boolean': return 'bool'
         case 'reactElement': return 'React.element'
+        // a component-valued prop: `React.component<propsRecord>`
+        case 'reactComponent': return `React.component<${renderType(t.of, propName, cfg)}>`
         case 'style': return 'JsxDOM.style'
         case 'date': return 'Date.t'
         case 'domElement': return 'Dom.element'

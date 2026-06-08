@@ -96,6 +96,21 @@ function homeOf(type, ctx) {
     return homeModuleOf(declFileOf(unwrapUtility(type)) || ctx.sourceFile)
 }
 
+/** A generic type argument that's really a "fill-in-anything" placeholder — the export
+ *  erased a `<T>` by instantiating it to `unknown` / `any` / `{}` / `Record<string, unknown>`.
+ *  Such args are recovered as ReScript type variables, not bound concretely.
+ *  A real shape (named props) or a typed record (`Record<string, string>`) returns false. */
+function isPlaceholderArg(t, checker) {
+    if (t.flags & (ts.TypeFlags.Unknown | ts.TypeFlags.Any)) return true
+    if (t.flags & ts.TypeFlags.Object) {
+        if (t.getProperties().length) return false // a concrete shape, not a placeholder
+        const idx = checker.getIndexInfoOfType(t, ts.IndexKind.String)
+        if (!idx) return true // bare `{}`
+        return !!(idx.type.flags & (ts.TypeFlags.Unknown | ts.TypeFlags.Any)) // Record<string, unknown>
+    }
+    return false
+}
+
 /** A globally-unique ReScript type name (suffix on collision) so two domains that
  *  merge into one module via SCC never clash. */
 function uniqueName(base, shared) {
@@ -360,9 +375,34 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     // `external make` is polymorphic (the `extends` constraint is dropped, as in juspay's
     // hand-written DataTable binding).
     const typeVars = new Map()
-    const tparams = (sigs.length && sigs[0].typeParameters) || []
     const TV = ['a', 'b', 'c', 'd', 'e', 'f']
+    const tparams = (sigs.length && sigs[0].typeParameters) || []
     tparams.forEach((tp, i) => { if (tp.symbol) typeVars.set(tp.symbol, "'" + (TV[i] || `t${i}`)) })
+
+    // Erased generic: a `forwardRef`/`memo` export pins a generic props alias to a
+    // placeholder type argument (e.g. `DataTableProps<Record<string, unknown>>`), so the
+    // call signature above is monomorphic and every `T` would surface as the placeholder.
+    // Recover the generic: find the aliased props member, map each placeholder type-param
+    // back to a ReScript type variable, and re-bind against the *generic declared* props so
+    // `T` reappears as a TypeParameter — classify then yields `'a` and records parameterize
+    // themselves (the same machinery the VirtualList<T> path uses).
+    if (typeVars.size === 0) {
+        const inter = (propsType.flags & ts.TypeFlags.Intersection) ? propsType.types : [propsType]
+        for (const m of inter) {
+            const aliasSym = m.aliasSymbol
+            const args = m.aliasTypeArguments || []
+            const tpNodes = (aliasSym && aliasSym.declarations && aliasSym.declarations[0] && aliasSym.declarations[0].typeParameters) || []
+            if (!aliasSym || !args.length || !tpNodes.length) continue
+            let n = 0, hit = false
+            args.forEach((arg, i) => {
+                if (isPlaceholderArg(arg, checker) && tpNodes[i] && tpNodes[i].symbol) {
+                    typeVars.set(tpNodes[i].symbol, "'" + (TV[n++] || `t${i}`))
+                    hit = true
+                }
+            })
+            if (hit) { propsType = checker.getDeclaredTypeOfSymbol(aliasSym); break }
+        }
+    }
 
     const enums = []
     const records = []
@@ -548,8 +588,11 @@ function classify(type, ctx, propName = '', depth = 0) {
         }
     }
 
-    // unknown / any -> flagged defect, never mapped.
-    if (flags & ts.TypeFlags.Unknown) return { kind: 'unknown' }
+    // `unknown` -> `JSON.t`: an opaque value the consumer builds/decodes. This is the
+    // honest mapping for a genuinely-unknown value (a callback-supplied id, an opaque
+    // filter) — unlike a type variable, which would be unsound in callback position.
+    // `any` stays a flagged defect (it means "untyped", not "opaque value").
+    if (flags & ts.TypeFlags.Unknown) return { kind: 'raw', res: 'JSON.t' }
     if (flags & ts.TypeFlags.Any) return { kind: 'any' }
 
     // A generic type parameter `T` -> the ReScript type variable it was mapped to ('a).
@@ -593,6 +636,17 @@ function classify(type, ctx, propName = '', depth = 0) {
     // Handled here because these often expose no call signature to fall through to.
     if (name && EVENT_HANDLERS[name]) {
         return { kind: 'callback', arg: { kind: 'event', res: EVENT_HANDLERS[name] }, ret: { kind: 'unit' } }
+    }
+
+    // A component-VALUED prop (`ComponentType<P>`, `FC<P>`, `FunctionComponent<P>`,
+    // `ComponentClass<P>`) -> `React.component<p>`, where `p` is the bound props record.
+    // Only used when the props argument classifies cleanly; otherwise we fall through.
+    if (name && /^(ComponentType|ComponentClass|FunctionComponent|FC)$/.test(name)) {
+        const pArg = (type.aliasTypeArguments || checker.getTypeArguments?.(type) || [])[0]
+        const props = pArg ? classify(pArg, ctx, propName, depth + 1) : null
+        if (props && !['opaque', 'review', 'unknown', 'any'].includes(props.kind)) {
+            return { kind: 'reactComponent', of: props }
+        }
     }
 
     // `ReactNode & (string | number)` etc. — a children-style intersection. The
