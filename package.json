@@ -16,7 +16,11 @@
   },
   "scripts": {
     "gen": "node src/cli.mjs",
-    "test": "node test/smoke.mjs"
+    "test": "node test/smoke.mjs && node test/golden.mjs",
+    "test:smoke": "node test/smoke.mjs",
+    "test:golden": "node test/golden.mjs",
+    "test:golden:update": "node test/golden.mjs --update",
+    "test:compile": "node test/golden-compile.mjs"
   },
   "files": [
     "src/",

@@ -1,0 +1,11 @@
+type size =
+  | @as("sm") Sm
+  | @as("md") Md
+  | @as("lg") Lg
+type variant =
+  | @as("primary") Primary
+  | @as("secondary") Secondary
+type htmlInputTypeAttribute =
+  | @as("text") Text
+  | @as("password") Password
+  | @as("email") Email
