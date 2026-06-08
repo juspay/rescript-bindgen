@@ -634,8 +634,10 @@ function classify(type, ctx, propName = '', depth = 0) {
 
     // React `*EventHandler` alias (e.g. InputEventHandler<T>) -> a typed callback.
     // Handled here because these often expose no call signature to fall through to.
+    // Uses `params` (not `arg`) so emit's callback renderer picks it up — an `arg`
+    // here renders as `unit => unit` (the event payload is silently dropped).
     if (name && EVENT_HANDLERS[name]) {
-        return { kind: 'callback', arg: { kind: 'event', res: EVENT_HANDLERS[name] }, ret: { kind: 'unit' } }
+        return { kind: 'callback', params: [{ kind: 'event', res: EVENT_HANDLERS[name] }], ret: { kind: 'unit' } }
     }
 
     // A component-VALUED prop (`ComponentType<P>`, `FC<P>`, `FunctionComponent<P>`,

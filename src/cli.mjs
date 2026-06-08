@@ -19,8 +19,8 @@ import { extractComponent, extractModule } from './extract.mjs'
 import { emit, report, planSharedModules, emitSharedModule, makeResolveRef } from './emit.mjs'
 import { resolveInput } from './resolve.mjs'
 import { writeReport } from './report.mjs'
-import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs'
-import { join, resolve as pathResolve, basename, dirname } from 'path'
+import { writeFileSync, mkdirSync, existsSync, readFileSync, readdirSync, unlinkSync } from 'fs'
+import { join, resolve as pathResolve, basename, dirname, relative } from 'path'
 import { createInterface } from 'readline'
 
 /**
@@ -95,6 +95,7 @@ function parseArgs(argv) {
         else if (a === '--webapi') o.webapi = true
         else if (a === '--no-webapi') o.webapi = false
         else if (a === '--yes' || a === '-y') o.yes = true
+        else if (a === '--clean') o.clean = true
         else if (a === '--help' || a === '-h') o.help = true
     }
     return o
@@ -123,6 +124,13 @@ Options:
   --webapi       force-emit rescript-webapi types (File -> Webapi.File.t)
   --no-webapi    never emit rescript-webapi types (File props stay flagged)
   --yes, -y      assume "yes" to dependency prompts (non-interactive)
+  --clean        remove existing *.res / *.resi / _REPORT.md in --out before
+                 generating (avoids stale "orphan" files from a previous run or a
+                 different generator). Use only when --out is entirely generated.
+
+Each run writes a .bindgen-manifest.json in --out listing the files it generated.
+The next run automatically removes only those previously-generated files it no longer
+produces — hand-written files (never in the manifest) are always left untouched.
 
 Add --report to also generate _REPORT.md alongside the bindings: a checklist of
 which components are ready, which props were loosely typed, and which need review.
@@ -242,10 +250,29 @@ async function main() {
     const typesDir = opts.typesDir ? join(outDir, opts.typesDir) : outDir
     if (plan && !existsSync(typesDir)) mkdirSync(typesDir, { recursive: true })
 
+    // --clean: remove prior generated artifacts so a stale file from a previous run (or a
+    // different generator) can't linger and shadow/duplicate the fresh output. Only touches
+    // `.res`/`.resi`/`_REPORT.md` in the output dir(s) — never .gitignore, configs, or JS.
+    if (opts.clean) {
+        let removed = 0
+        for (const dir of new Set([outDir, typesDir])) {
+            for (const f of readdirSync(dir)) {
+                if (/\.resi?$/.test(f) || f === '_REPORT.md') { try { unlinkSync(join(dir, f)); removed++ } catch { /* ignore */ } }
+            }
+        }
+        console.error(`[bindgen] --clean: removed ${removed} prior file(s) from ${outDir}`)
+    }
+
+    // Every `.res` this run writes, relative to outDir — recorded in a manifest so the
+    // NEXT run can delete only the files WE previously generated (never hand-written ones).
+    const written = new Set()
+
     // Write the shared `*Types.res` modules once.
     if (plan) {
         for (const [mod, entries] of plan.byModule) {
-            writeFileSync(join(typesDir, `${mod}.res`), emitSharedModule(mod, entries, plan.finalOf))
+            const p = join(typesDir, `${mod}.res`)
+            writeFileSync(p, emitSharedModule(mod, entries, plan.finalOf))
+            written.add(relative(outDir, p))
         }
         console.error(`[bindgen] wrote ${plan.byModule.size} shared type module(s) (${shared.entries.length} unique types) to ${typesDir}`)
     }
@@ -258,9 +285,29 @@ async function main() {
         const rep = report(ir)
         totalDefects += rep.defects.length
         writeFileSync(join(outDir, `${name}.res`), code)
+        written.add(`${name}.res`)
         rows.push({ name, props: ir.props.length, enums: ir.enums.length, loose: rep.loose.length, defects: rep.defects.length, review: rep.review.length })
         if (rep.loose.length || rep.defects.length || rep.review.length) reports.push({ name, ...rep })
     }
+
+    // Manifest-based orphan cleanup: remove files a PREVIOUS bindgen run wrote that this run
+    // no longer produces (e.g. a component renamed/dropped upstream). Only ever touches files
+    // recorded in our own manifest — hand-written files are never listed, so never deleted.
+    const manifestPath = join(outDir, '.bindgen-manifest.json')
+    let staleRemoved = 0
+    if (existsSync(manifestPath)) {
+        try {
+            const prior = JSON.parse(readFileSync(manifestPath, 'utf-8')).files || []
+            for (const rel of prior) {
+                if (!written.has(rel)) {
+                    const p = join(outDir, rel)
+                    if (existsSync(p)) { try { unlinkSync(p); staleRemoved++ } catch { /* ignore */ } }
+                }
+            }
+        } catch { /* corrupt manifest — ignore, it'll be overwritten */ }
+    }
+    writeFileSync(manifestPath, JSON.stringify({ files: [...written].sort() }, null, 2) + '\n')
+    if (staleRemoved) console.error(`[bindgen] removed ${staleRemoved} stale binding(s) from a previous run (per .bindgen-manifest.json)`)
 
     console.error(`\n[bindgen] wrote ${units.length} binding(s) to ${outDir}`)
     for (const r of rows) console.error(`  ${r.name.padEnd(24)} props=${String(r.props).padStart(3)} enums=${String(r.enums).padStart(2)} loose=${String(r.loose).padStart(2)} review=${r.review} defects=${r.defects}`)

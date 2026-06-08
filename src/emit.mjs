@@ -48,6 +48,40 @@ function camelFromKebab(name) {
  * @param {string} name  the original prop name from the .d.ts
  * @returns {{ as: string | null, id: string }}  `as` = the `@as` value (or null), `id` = the ReScript identifier
  */
+/** True when a `type rec A = {…} and B = {…}` mutually-recursive group contains two records
+ *  that share a field label — the exact trigger for ReScript's warning 30. (Independent
+ *  `type` declarations sharing a label do NOT warn; only same-rec-group members do.) When this
+ *  happens we prepend `@@warning("-30")` to the file: the duplicate labels are intentional and
+ *  every value is explicitly typed, so the ambiguity warning is pure noise for consumers.
+ *  Mirrors the SCC grouping in `emitOrderedTypes` so it flags exactly the files that warn. */
+function hasRecGroupLabelCollision(records, objUnboxed, opaque, idOf, depsOf) {
+    const items = [
+        ...records.map((r) => ({ kind: 'record', node: r, id: idOf(r) })),
+        ...(objUnboxed || []).map((u) => ({ kind: 'unboxed', node: u, id: idOf(u) })),
+        ...(opaque || []).map((o) => ({ kind: 'opaque', node: o, id: idOf(o) })),
+    ]
+    if (!items.length) return false
+    const byId = new Map(items.map((it) => [it.id, it]))
+    const edges = new Map()
+    for (const it of items) {
+        const ds = new Set()
+        for (const d of depsOf(it.node)) if (byId.has(d) && d !== it.id) ds.add(d)
+        edges.set(it.id, ds)
+    }
+    for (const comp of tarjanSCC([...byId.keys()], edges)) {
+        const recs = comp.map((id) => byId.get(id)).filter((m) => m.kind === 'record').map((m) => m.node)
+        if (recs.length < 2) continue // a single record can't collide with itself
+        const seen = new Set()
+        for (const r of recs) {
+            for (const id of new Set((r.fields || []).map((f) => label(f.name).id))) {
+                if (seen.has(id)) return true
+                seen.add(id)
+            }
+        }
+    }
+    return false
+}
+
 function label(name) {
     const isPlainIdent = /^[a-z_][a-zA-Z0-9_]*$/.test(name)
     if (isPlainIdent && !RESERVED.has(name)) return { as: null, id: name }
@@ -157,14 +191,17 @@ export function emit(ir, options = {}) {
     // `type rec` group (syntax error), so we order by dependency instead.
     const prim = (ir.unboxed || []).filter((u) => !isObjectUnboxed(u))
     const obj = (ir.unboxed || []).filter(isObjectUnboxed)
-    renderEnums(ir.enums, lines)
-    renderUnboxed(prim, lines, cfg) // primitive variants before records that reference them
-    emitOrderedTypes(ir.records || [], obj, [], (n) => n.name, (n) => {
+    const idOf = (n) => n.name
+    const depsOf = (n) => {
         const out = new Set()
         ;(n.fields || []).forEach((f) => collectRefNames(f.type, out))
         ;(n.members || []).forEach((m) => collectRefNames(m.type, out))
         return out
-    }, lines, cfg)
+    }
+    if (hasRecGroupLabelCollision(ir.records || [], obj, [], idOf, depsOf)) lines.push('@@warning("-30")', '') // silence duplicate-label noise
+    renderEnums(ir.enums, lines)
+    renderUnboxed(prim, lines, cfg) // primitive variants before records that reference them
+    emitOrderedTypes(ir.records || [], obj, [], idOf, depsOf, lines, cfg)
 
     if (lines.length) lines.push('')
 
@@ -480,9 +517,14 @@ export function emitSharedModule(mod, entries, finalOf, options = {}) {
     const lines = []
     const unboxed = entries.filter((e) => e.kind === 'unboxed')
     const records = entries.filter((e) => e.kind === 'record')
+    const objUnboxed = unboxed.filter(isObjectUnboxed)
+    const opaque = entries.filter((e) => e.kind === 'opaque')
+    const idOf = (e) => e.key
+    const depsOf = (e) => e.deps || []
+    if (hasRecGroupLabelCollision(records, objUnboxed, opaque, idOf, depsOf)) lines.push('@@warning("-30")', '') // silence duplicate-label noise
     renderEnums(entries.filter((e) => e.kind === 'enum'), lines)
     renderUnboxed(unboxed.filter((u) => !isObjectUnboxed(u)), lines, cfg) // primitive: before records
     // records + object-bearing variants + opaque-type modules in dependency order
-    emitOrderedTypes(records, unboxed.filter(isObjectUnboxed), entries.filter((e) => e.kind === 'opaque'), (e) => e.key, (e) => e.deps || [], lines, cfg)
+    emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg)
     return lines.join('\n') + '\n'
 }

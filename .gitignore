@@ -21,3 +21,6 @@ test/sandbox/node_modules/
 # generated demo outputs (recreated by generate.mjs)
 test/binding-compare/Card.d.ts
 test/binding-compare/Card.*.res
+
+# scratch manifest from sandbox generation runs
+test/sandbox/src/.bindgen-manifest.json
