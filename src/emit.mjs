@@ -157,7 +157,7 @@ export function emit(ir, options = {}) {
     const obj = (ir.unboxed || []).filter(isObjectUnboxed)
     renderEnums(ir.enums, lines)
     renderUnboxed(prim, lines, cfg) // primitive variants before records that reference them
-    emitOrderedTypes(ir.records || [], obj, (n) => n.name, (n) => {
+    emitOrderedTypes(ir.records || [], obj, [], (n) => n.name, (n) => {
         const out = new Set()
         ;(n.fields || []).forEach((f) => collectRefNames(f.type, out))
         ;(n.members || []).forEach((m) => collectRefNames(m.type, out))
@@ -186,8 +186,10 @@ export function emit(ir, options = {}) {
         } else if (imp === 'opaque') {
             lines.push(`  ${asPrefix}~${id}: ${cfg.opaqueFallback}${p.optional ? '=?' : ''},  // ⚪ loose — was \`${realTs}\``)
         } else {
-            // exact match
-            lines.push(`  ${asPrefix}~${id}: ${renderType(p.type, p.name, cfg)}${p.optional ? '=?' : ''},`)
+            // exact match — but an approximate mapping (e.g. DOM union -> Dom.element) may
+            // carry a `note` so the consumer knows what isn't covered.
+            const note = findNote(p.type)
+            lines.push(`  ${asPrefix}~${id}: ${renderType(p.type, p.name, cfg)}${p.optional ? '=?' : ''},${note ? `  // ⓘ ${note}` : ''}`)
         }
     }
     lines.push(`) => React.element = ${JSON.stringify(ir.import.name)}`)
@@ -248,10 +250,11 @@ function collectRefNames(t, out) {
  * group. Mutually-recursive records collapse into one `type rec … and …` group.
  * `idOf(node)` and `depsOf(node)→iterable<id>` identify each type and its references.
  */
-function emitOrderedTypes(records, objUnboxed, idOf, depsOf, lines, cfg) {
+function emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg) {
     const items = [
         ...records.map((r) => ({ kind: 'record', node: r, id: idOf(r) })),
         ...objUnboxed.map((u) => ({ kind: 'unboxed', node: u, id: idOf(u) })),
+        ...opaque.map((o) => ({ kind: 'opaque', node: o, id: idOf(o) })),
     ]
     if (!items.length) return
     const byId = new Map(items.map((it) => [it.id, it]))
@@ -262,21 +265,51 @@ function emitOrderedTypes(records, objUnboxed, idOf, depsOf, lines, cfg) {
         edges.set(it.id, ds)
     }
     // Tarjan yields SCCs in reverse-topological order (a type's dependencies first) —
-    // exactly the define-before-use order ReScript needs.
+    // exactly the define-before-use order ReScript needs (records, the opaque modules they
+    // use, and the records that use those opaque modules all interleave correctly).
     for (const comp of tarjanSCC([...byId.keys()], edges)) {
         const members = comp.map((id) => byId.get(id))
-        const recs = members.filter((m) => m.kind === 'record').map((m) => m.node)
+        const recItems = members.filter((m) => m.kind === 'record')
+        const recs = recItems.map((m) => m.node)
         const ubs = members.filter((m) => m.kind === 'unboxed').map((m) => m.node)
-        if (recs.length) renderRecordGroup(recs, lines, cfg)
-        if (ubs.length) renderUnboxed(ubs, lines, cfg) // mixed SCC (rare) → records first, then unboxed
+        const ops = members.filter((m) => m.kind === 'opaque').map((m) => m.node)
+        // `rec` only when actually recursive: a mutual group (>1) or a self-referencing record.
+        const selfRec = recItems.some((it) => { for (const d of depsOf(it.node)) if (d === it.id) return true; return false })
+        if (recs.length) renderRecordGroup(recs, lines, cfg, recs.length > 1 || selfRec)
+        if (ops.length) ops.forEach((o) => renderOpaque(o, lines, cfg))
+        if (ubs.length) renderUnboxed(ubs, lines, cfg)
     }
 }
 
-/** Append records as ONE `type rec … and …` group (handles self/mutual recursion). */
-function renderRecordGroup(records, lines, cfg) {
+/** Append an opaque-type module for a multi-object union (the idiomatic ReScript pattern,
+ *  like `React.element` + `React.string`): an abstract `t` plus a zero-cost `%identity`
+ *  `from*` constructor per member. The prop is typed `Module.t`; the consumer builds a typed
+ *  value and `->fromX`-casts it (compiles to the raw value). */
+function renderOpaque(t, lines, cfg) {
+    const titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1)
+    const pascalName = (s) => String(s).replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('')
+    const fromName = (m) => m.name
+        ? 'from' + pascalName(m.name) // explicit hint: Element -> fromElement, Files -> fromFiles
+        : 'from' + titleCase(m.type.kind === 'typeRef' ? m.type.to.replace(/\.t$/, '') : (m.type.res || m.type.kind || 'value'))
+    lines.push(`module ${t.name} = {`)
+    lines.push(`  type t`)
+    const seen = new Set()
+    for (const m of t.members) {
+        const fn = fromName(m)
+        if (seen.has(fn)) continue
+        seen.add(fn)
+        lines.push(`  external ${fn}: ${renderType(m.type, '', cfg)} => t = "%identity"`)
+    }
+    lines.push(`}`)
+}
+
+/** Append a record group. `isRec` (self- or mutually-recursive group) selects `type rec`;
+ *  a plain non-recursive record is just `type x = {…}` (no needless `rec`). */
+function renderRecordGroup(records, lines, cfg, isRec) {
     ;(records || []).forEach((r, i) => {
         const tp = r.tparams && r.tparams.length ? `<${r.tparams.join(', ')}>` : '' // generic: foo<'a>
-        lines.push(`${i === 0 ? 'type rec' : 'and'} ${r.name}${tp} = {`)
+        const kw = i === 0 ? (isRec ? 'type rec' : 'type') : 'and'
+        lines.push(`${kw} ${r.name}${tp} = {`)
         if (r.spread) lines.push(`  ...${r.spread},`) // e.g. ...JsxDOM.domProps (the HTML attrs)
         const seenIds = new Set()
         for (const f of r.fields) {
@@ -289,6 +322,16 @@ function renderRecordGroup(records, lines, cfg) {
         }
         lines.push('}')
     })
+}
+
+/** Return the first `note` (an "approximate mapping, here's the caveat" message) anywhere
+ *  in a prop's IR type tree, or null. */
+function findNote(t) {
+    if (!t || typeof t !== 'object') return null
+    if (t.note) return t.note
+    for (const k of ['of', 'ret', 'arg']) { if (t[k]) { const n = findNote(t[k]); if (n) return n } }
+    if (Array.isArray(t.params)) for (const p of t.params) { const n = findNote(p); if (n) return n }
+    return null
 }
 
 /**
@@ -437,7 +480,7 @@ export function emitSharedModule(mod, entries, finalOf, options = {}) {
     const records = entries.filter((e) => e.kind === 'record')
     renderEnums(entries.filter((e) => e.kind === 'enum'), lines)
     renderUnboxed(unboxed.filter((u) => !isObjectUnboxed(u)), lines, cfg) // primitive: before records
-    // records + object-bearing variants in dependency order (define-before-use)
-    emitOrderedTypes(records, unboxed.filter(isObjectUnboxed), (e) => e.key, (e) => e.deps || [], lines, cfg)
+    // records + object-bearing variants + opaque-type modules in dependency order
+    emitOrderedTypes(records, unboxed.filter(isObjectUnboxed), entries.filter((e) => e.kind === 'opaque'), (e) => e.key, (e) => e.deps || [], lines, cfg)
     return lines.join('\n') + '\n'
 }

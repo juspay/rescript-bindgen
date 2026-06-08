@@ -719,6 +719,80 @@ function registerNamed(ctx, type, kind, base, data) {
     return refTo(entry)
 }
 
+/**
+ * The "logical" members of a union, re-grouping flattened enum literals back into their
+ * enum type. TS represents `DateRangePreset | Foo` as `(CUSTOM | TODAY | … | Foo)` (the
+ * enum is spread into its literals); this collapses each enum's literals back to the one
+ * enum type. Null/undefined are dropped. Deduped by type id.
+ * @returns {ts.Type[]}
+ */
+function unionMembers(checker, u) {
+    const out = [], seen = new Set(), seenEnum = new Set()
+    for (const t of (u.types || [])) {
+        if (t.flags & (ts.TypeFlags.Null | ts.TypeFlags.Undefined)) continue
+        const sym = t.symbol
+        if ((t.flags & ts.TypeFlags.EnumLiteral) && sym && sym.parent) {
+            if (seenEnum.has(sym.parent)) continue
+            seenEnum.add(sym.parent)
+            const et = checker.getDeclaredTypeOfSymbol(sym.parent)
+            if (et && et.id != null && !seen.has(et.id)) { seen.add(et.id); out.push(et) }
+            continue
+        }
+        if (t.id != null && !seen.has(t.id)) { seen.add(t.id); out.push(t) }
+    }
+    return out
+}
+
+/**
+ * A union of MULTIPLE object shapes (e.g. `PresetsConfig = DateRangePreset |
+ * CustomPresetConfig | CustomPresetDefinition`) can't be an `@unboxed` variant (ReScript
+ * allows at most one object case). Bind it as an OPAQUE-type module (the idiomatic ReScript
+ * pattern — like `React.element` + `React.string`/`React.int`): an abstract `t` plus a
+ * zero-cost `%identity` `from*` constructor per member. The prop type is `Module.t` (kept
+ * TYPED), and the consumer builds a typed value and `->fromX`-casts it (compiles to the raw
+ * value). Returns the prop's typeRef (`<Module>.t`), or null if any member can't be cleanly
+ * typed (then the caller keeps it flagged).
+ * @returns {{kind:'typeRef', to:string, home:string, key:string} | null}
+ */
+function opaqueUnion(ctx, type, memberTypes, propName, depth) {
+    if (!ctx.shared) return null // module mode only
+    const key = 't:' + type.id
+    // carry the entry's `note` (how to construct the opaque value) onto each ref so
+    // emit can surface it inline on the prop — even on a memoized cache-hit.
+    const ref = (e) => ({ kind: 'typeRef', to: e.name + '.t', home: e.home, key: e.key, ...(e.note ? { note: e.note } : {}) })
+    if (ctx.shared.byKey.has(key)) return ref(ctx.shared.byKey.get(key))
+    const { checker } = ctx
+    const members = []
+    for (const mt of memberTypes) {
+        const node = classify(mt, ctx, propName, depth + 1)
+        if (!node || ['opaque', 'review', 'unknown', 'any'].includes(node.kind)) return null
+        // Constructor-name hint so emit produces clean `from*` names regardless of
+        // how the member renders: `Element` -> fromElement, `Element[]` ->
+        // fromElements (plural of the element's name), `File`/`File[]` ->
+        // fromFile/fromFiles. Falls back in emit when no hint is available.
+        const elem = asArray(mt, checker)
+        const name = elem ? (typeName(elem) ? typeName(elem) + 's' : undefined) : typeName(mt)
+        members.push({ type: node, name })
+    }
+    if (members.length < 2) return null
+    const name = uniqueName(pascal(typeName(type) || propName), ctx.shared) // a MODULE name
+    const deps = new Set()
+    for (const m of members) collectRefKeys(m.type, deps)
+    // Sit with the records it references (first dep's home); else the prop's own
+    // domain module (so anonymous prop-unions land in <Component>Types, not Common).
+    let home = homeOf(type, ctx)
+    if (deps.size) { const d = ctx.shared.byKey.get([...deps][0]); if (d && d.home) home = d.home }
+    // Note telling the caller how to build this opaque value (the `from*` ctors),
+    // since the prop only shows `<Module>.t`. Mirrors the Dom-node note convention.
+    const note = members.every((m) => m.name)
+        ? `was \`${checker.typeToString(type).replace(/ \| (null|undefined)\b/g, '')}\` — opaque; build with ${members.map((m) => `${name}.from${pascal(m.name)}`).join(' / ')}`
+        : undefined
+    const entry = { key, kind: 'opaque', name, home, members, deps, note }
+    ctx.shared.byKey.set(key, entry)
+    ctx.shared.entries.push(entry)
+    return ref(entry)
+}
+
 const RESCRIPT_RESERVED = new Set([
     'type', 'and', 'as', 'open', 'let', 'rec', 'in', 'switch', 'if', 'else',
     'for', 'while', 'fun', 'mutable', 'try', 'exception', 'module', 'external',
@@ -820,6 +894,44 @@ function unionNode(type, ctx, propName, depth = 0) {
     }
     if (parts.some(isReactish)) return { kind: 'reactElement' }
 
+    // A union of DOM node/element/fragment types (e.g. a portal `container?: Element |
+    // DocumentFragment`) -> `Dom.element` (the ergonomic portal-target type). A note is
+    // attached so the consumer knows a fragment / shadow-root target isn't covered.
+    const isDomNodeType = (t) => {
+        const n = typeName(t)
+        return !!(n && (/Element$/.test(n) || n === 'Node' || n === 'DocumentFragment' || n === 'ShadowRoot'))
+    }
+    if (parts.every(isDomNodeType)) {
+        const note = parts.some((t) => { const n = typeName(t); return n === 'DocumentFragment' || n === 'ShadowRoot' })
+            ? `was \`${checker.typeToString(type).replace(/\s+/g, ' ')}\` — bound to Dom.element; a DocumentFragment/ShadowRoot target is not supported`
+            : undefined
+        return note ? { kind: 'raw', res: 'Dom.element', note } : { kind: 'raw', res: 'Dom.element' }
+    }
+
+    // Union of ARRAY types (e.g. `PresetsConfig = A[] | B[] | (A|B|C)[]`) -> `array<E>`.
+    // If every member's element is the SAME type, E is that element; otherwise the element
+    // is heterogeneous (often multiple object shapes that can't be discriminated) -> JSON.t,
+    // so the prop is usable (`array<JSON.t>`) rather than a flagged string placeholder.
+    const arrElems = parts.map((p) => asArray(p, checker))
+    if (arrElems.every(Boolean)) {
+        const sameElem = arrElems.every((e) => e.id != null && e.id === arrElems[0].id)
+        if (sameElem) return { kind: 'array', of: classify(arrElems[0], ctx, propName, depth + 1) }
+        // Heterogeneous elements (e.g. PresetsConfig's `A[] | B[] | (A|B|C)[]`): collect the
+        // distinct element types and bind as a tagged-variant + converter; else `array<JSON.t>`.
+        // Collect the distinct element types. A genuine union element `(A|B|C)` expands to
+        // its logical members (enum literals re-grouped to their enum); an enum element or a
+        // single type stays as one.
+        const elemTypes = []
+        for (const e of arrElems) {
+            if (e.isUnion && e.isUnion() && !(e.flags & ts.TypeFlags.EnumLike)) elemTypes.push(...unionMembers(checker, e))
+            else elemTypes.push(e)
+        }
+        const seen = new Set(), distinct = []
+        for (const e of elemTypes) { if (e.id != null && !seen.has(e.id)) { seen.add(e.id); distinct.push(e) } }
+        const opaque = distinct.length >= 2 ? opaqueUnion(ctx, type, distinct, propName, depth) : null
+        return { kind: 'array', of: opaque || { kind: 'raw', res: 'JSON.t' } }
+    }
+
     // Genuine multi-runtime-type union (string|number, string|string[],
     // boolean|"indeterminate", …). Emit a ReScript UNTAGGED (@unboxed) variant —
     // type-safe AND zero-cost (the raw value reaches JS, no %identity, no wrapper).
@@ -907,7 +1019,24 @@ function unionNode(type, ctx, propName, depth = 0) {
         if ((t.flags & ts.TypeFlags.Object) && s && s.getName() !== '__type' && t.getProperties().length) return true // named object
         return false
     }
-    if (parts.some(isStructured)) return { kind: 'review', text: checker.typeToString(type) }
+    if (parts.some(isStructured)) {
+        // ≥2 "structured" members that can't be discriminated by an @unboxed
+        // variant (abstract objects / arrays) -> an opaque-type module with
+        // zero-cost `from*` constructors. Two shapes qualify: multiple named
+        // object types (e.g. customPresets), OR object | array<object> (e.g.
+        // `Element | Element[]`, `File | File[]`) — the array is structured too,
+        // so we count it. A single object alone still falls through to review.
+        const structuredParts = parts.filter((t) => {
+            if (asArray(t, checker)) return true
+            const s = t.getSymbol && t.getSymbol()
+            return (t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) && s && t.getProperties().length
+        })
+        if (structuredParts.length >= 2) {
+            const opaque = opaqueUnion(ctx, type, unionMembers(checker, type), propName, depth)
+            if (opaque) return opaque
+        }
+        return { kind: 'review', text: checker.typeToString(type) }
+    }
     return { kind: 'opaque', text: checker.typeToString(type) }
 }
 
