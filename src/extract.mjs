@@ -584,9 +584,10 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (name === 'Element') return { kind: 'domElement' }
     if (name === 'Node') return { kind: 'raw', res: 'Dom.node' }
 
-    // File / FileList -> rescript-webapi, only if the project depends on it (ctx.webapi).
+    // File / FileList / FormData -> rescript-webapi, only if the project depends on it (ctx.webapi).
     if (name === 'File') return ctx.webapi ? { kind: 'raw', res: 'Webapi.File.t' } : { kind: 'opaque', text: 'File' }
     if (name === 'FileList') return ctx.webapi ? { kind: 'raw', res: 'Webapi.FileList.t' } : { kind: 'opaque', text: 'FileList' }
+    if (name === 'FormData') return ctx.webapi ? { kind: 'raw', res: 'Webapi.FormData.t' } : { kind: 'opaque', text: 'FormData' }
 
     // React `*EventHandler` alias (e.g. InputEventHandler<T>) -> a typed callback.
     // Handled here because these often expose no call signature to fall through to.
@@ -731,7 +732,10 @@ const RESCRIPT_RESERVED = new Set([
  * @returns {string}
  */
 function lower(s) {
-    let n = s.charAt(0).toLowerCase() + s.slice(1)
+    // de-acronym a leading uppercase run so `HTMLInputTypeAttribute` -> `htmlInputTypeAttribute`
+    // (not `hTMLInput…`); a plain name just gets its first char lowercased.
+    let n = s.replace(/^([A-Z]+)([A-Z][a-z])/, (_, run, next) => run.toLowerCase() + next)
+    if (n === s) n = s.charAt(0).toLowerCase() + s.slice(1)
     n = n.replace(/[^a-zA-Z0-9_]/g, '_')
     if (RESCRIPT_RESERVED.has(n) || /^[0-9]/.test(n)) n = n + '_'
     return n
@@ -778,9 +782,15 @@ function unionNode(type, ctx, propName, depth = 0) {
         return { kind: prims[0] === 'boolean' ? 'boolean' : prims[0] === 'number' ? 'number' : 'string' }
     }
 
-    // all string literals -> @as variant
-    if (parts.every((t) => t.isStringLiteral && t.isStringLiteral())) {
-        const members = parts.map((t) => ({ as: t.value, ctor: pascal(t.value) }))
+    // String-literal union -> `@as` variant. Also covers the `"a" | "b" | (string & {})`
+    // open-ended-literal idiom (e.g. `HTMLInputTypeAttribute`): the `string & {}` autocomplete
+    // escape is dropped so the binding is a clean shared variant of the known literals
+    // (deduped by type.id into one `*Types.res` module, referenced everywhere).
+    const isLit = (t) => t.isStringLiteral && t.isStringLiteral()
+    const isStrBrand = (t) => (t.flags & ts.TypeFlags.Intersection) && (t.types || []).some((x) => x.flags & ts.TypeFlags.String)
+    const litParts = parts.filter(isLit)
+    if (litParts.length >= 2 && parts.every((t) => isLit(t) || isStrBrand(t))) {
+        const members = litParts.map((t) => ({ as: t.value, ctor: pascal(t.value) }))
         if (ctx.shared) return registerNamed(ctx, type, 'enum', lower(typeName(type) || pascal(propName)), { members })
         const key = lower(pascal(propName))
         if (!ctx.seenEnums.has(key)) {
@@ -853,35 +863,36 @@ function unionNode(type, ctx, propName, depth = 0) {
         for (const m of others) { if (!claim(m.rt)) { buildable = false; break } members.push({ ctor: uniqueCtor(m.ctor), type: m.type }) }
 
         if (buildable && members.length >= 2) {
-            // Name the untagged variant by its STRUCTURE, not the prop, so identical
-            // unions (e.g. defaultValue/value/onValueChange all `string | string[]`)
-            // collapse into ONE shared type instead of one per prop.
-            const sname = unboxedName(members)
+            // Name by STRUCTURE so identical unions share one type — EXCEPT function-bearing
+            // ones (a signature has no short structural token), which are named after the
+            // prop (`formAction`, `virtualItemHeight`). A member using a type variable (a
+            // sync-or-async `=> 'a` return) makes the variant generic (`formAction<'a>`).
+            const hasFn = members.some((m) => m.type && m.type.kind === 'callback')
+            const sname = hasFn ? lower(pascal(propName)) : unboxedName(members)
+            const tvars = new Set()
+            for (const m of members) collectTypeVars(m.type, tvars)
+            const tparams = tvars.size ? [...tvars] : undefined
             if (ctx.shared) {
-                // Primitive-only variants have no TS source -> home `CommonTypes`. An
-                // object-bearing variant (a record member) instead lives WITH that record
-                // (its home) so it never adds a `CommonTypes -> domain` edge (which could
-                // drag CommonTypes into an SCC merge). Deduped structurally via `u:` key.
+                // Primitive-only variants have no TS source -> home `CommonTypes`. A variant
+                // referencing a record/enum (object payload, or a fn over `menuItemType`)
+                // lives WITH that type's module so `CommonTypes` stays a dependency-free sink
+                // and never gets SCC-merged. Deduped via the `u:` key.
                 const key = 'u:' + sname
                 if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
                 const deps = new Set()
                 for (const m of members) collectRefKeys(m.type, deps)
-                // A variant that references registered types (an object payload, or an
-                // array of an enum/record) lives WITH them — the first referenced type's
-                // module — so `CommonTypes` stays a dependency-free sink and never gets
-                // SCC-merged into a domain. Pure-primitive variants -> CommonTypes.
                 let home = 'CommonTypes'
                 if (deps.size) { const d = ctx.shared.byKey.get([...deps][0]); if (d && d.home) home = d.home }
-                const entry = { key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), home, members, deps }
+                const entry = { key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), home, members, deps, tparams }
                 ctx.shared.byKey.set(key, entry)
                 ctx.shared.entries.push(entry)
                 return refTo(entry)
             }
             if (!ctx.seenUnboxed.has(sname)) {
                 ctx.seenUnboxed.set(sname, true)
-                ctx.unboxed.push({ name: sname, members })
+                ctx.unboxed.push({ name: sname, members, tparams })
             }
-            return { kind: 'typeRef', to: sname, _unboxed: true }
+            return tparams ? { kind: 'typeRef', to: sname, _unboxed: true, tparams } : { kind: 'typeRef', to: sname, _unboxed: true }
         }
     }
 
@@ -940,6 +951,13 @@ function memberOf(t, ctx, propName, depth) {
         const elemType = inner ? inner.type : classify(elem, ctx, propName, depth + 1)
         return { ctor, rt: 'array', type: { kind: 'array', of: elemType } }
     }
+    // A single function member -> runtime `typeof "function"` (distinct from string/number/
+    // boolean/object/array). Only ONE allowed (`claim('function')` enforces it). Enables
+    // `string | (fn)` (formAction) and `number | (fn)` (virtualItemHeight) as @unboxed.
+    if (t.getCallSignatures && t.getCallSignatures().length) {
+        return { ctor: 'Fn', rt: 'function', type: functionNode(t.getCallSignatures()[0], ctx, propName, depth) }
+    }
+
     // A single ANONYMOUS inline-object member (e.g. `string | { key, color }`) -> runtime
     // `typeof "object"` (distinct from string/number/boolean/array). Only ONE is allowed
     // (two objects can't be discriminated); `claim('object')` in unionNode enforces that.
@@ -1001,8 +1019,19 @@ function functionNode(sig, ctx, propName, depth = 0) {
         return classify(pt, ctx, propName, depth + 1)
     })
     const retType = sig.getReturnType()
-    const retVoid = !!(retType.flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined))
-    const ret = retVoid ? { kind: 'unit' } : classify(retType, ctx, propName, depth + 1)
+    // `void | Promise<void>` (a handler that may be sync OR async, e.g. formAction) -> a
+    // polymorphic return `'a`: it accepts both `=> unit` and `=> promise<unit>` handlers,
+    // with `'a` inferred per call site. (Makes the enclosing variant generic.)
+    let ret
+    if (retType.isUnion && retType.isUnion()) {
+        const hasVoid = retType.types.some((t) => t.flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined))
+        const hasPromise = retType.types.some((t) => typeName(t) === 'Promise')
+        if (hasVoid && hasPromise) ret = { kind: 'typeVar', name: "'a" }
+    }
+    if (!ret) {
+        const retVoid = !!(retType.flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined))
+        ret = retVoid ? { kind: 'unit' } : classify(retType, ctx, propName, depth + 1)
+    }
     return { kind: 'callback', params, ret }
 }
 

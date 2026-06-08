@@ -206,22 +206,28 @@ function renderEnums(enums, lines) {
     }
 }
 
-/** An `@unboxed` variant is "object-bearing" if a member's payload is a record typeRef
- *  (e.g. `string | {key,color}`). Such variants must be emitted AFTER their record;
- *  primitive-only ones (`string | number`) BEFORE records that reference them. */
+/** An `@unboxed` variant must be emitted AFTER any record it references (so it's defined
+ *  before use). True if a member's type tree contains ANY `typeRef` — directly
+ *  (`string | {key,color}`) or nested (a `Fn` over `menuItemType`). Primitive-only ones
+ *  (`string | number`) emit BEFORE records that reference them. */
 function isObjectUnboxed(u) {
-    return (u.members || []).some((m) => m.type && m.type.kind === 'typeRef')
+    return (u.members || []).some((m) => {
+        const refs = new Set()
+        collectRefNames(m.type, refs)
+        return refs.size > 0
+    })
 }
 
-/** Append one `@unboxed type x = Str(string) | @as("…") Lit | …` per untagged variant. */
+/** Append one `@unboxed type x<'a> = Str(string) | Fn(… => 'a) | @as("…") Lit | …`. */
 function renderUnboxed(unboxed, lines, cfg) {
     for (const u of unboxed || []) {
+        const tp = u.tparams && u.tparams.length ? `<${u.tparams.join(', ')}>` : '' // generic: foo<'a>
         const ctors = u.members.map((m) =>
             m.as !== undefined
                 ? `@as(${m._num ? m.as : JSON.stringify(m.as)}) ${m.ctor}`
                 : `${m.ctor}(${renderType(m.type, '', cfg)})`
         ).join(' | ')
-        lines.push(`@unboxed type ${u.name} = ${ctors}`)
+        lines.push(`@unboxed type ${u.name}${tp} = ${ctors}`)
     }
 }
 
