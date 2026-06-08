@@ -1,8 +1,11 @@
 name: Publish to npm
 
 # Publishes when you push a version tag, e.g.:
-#   npm version patch        # bumps package.json + creates the v1.0.1 tag
-#   git push --follow-tags   # pushes the commit AND the tag -> triggers this
+#   npm version patch                     # 1.0.1        -> dist-tag `latest`
+#   npm version prerelease --preid=beta   # 1.0.1-beta.0 -> dist-tag `beta`
+#   git push --follow-tags                # pushes the commit AND the tag -> triggers this
+# The npm dist-tag is derived from the version: a prerelease (`-beta.`, `-rc.`, …)
+# publishes under that pre-id so it never displaces `latest`.
 on:
   push:
     tags: ['v*']
@@ -47,7 +50,22 @@ jobs:
           fi
           echo "Publishing version $PKG"
 
+      # Derive the npm dist-tag from the version. A prerelease (`1.2.3-beta.0`)
+      # publishes under its pre-id (`beta`) so it never becomes the default `latest`;
+      # a plain release (`1.2.3`) goes to `latest`.
+      - name: Determine npm dist-tag
+        run: |
+          PKG=$(node -p "require('./package.json').version")
+          if [[ "$PKG" == *-* ]]; then
+            PRE="${PKG#*-}"            # 1.2.3-beta.0 -> beta.0
+            DIST_TAG="${PRE%%.*}"      # beta.0       -> beta
+          else
+            DIST_TAG="latest"
+          fi
+          echo "DIST_TAG=$DIST_TAG" >> "$GITHUB_ENV"
+          echo "version $PKG -> npm dist-tag '$DIST_TAG'"
+
       # OIDC trusted publishing — no NPM_TOKEN. Configure a trusted publisher on
       # npmjs.com for this package pointing at this repo + publish-npm.yml.
       - name: Publish
-        run: npm publish --access public --provenance
+        run: npm publish --access public --provenance --tag "$DIST_TAG"

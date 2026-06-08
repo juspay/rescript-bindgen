@@ -68,12 +68,28 @@ GitHub repo → **Settings → Secrets and variables → Actions** → add secre
 
 ## Release flow (after setup — for everyone)
 
+### Stable release → npm dist-tag `latest`
 ```bash
 npm version patch          # or minor / major — bumps package.json + creates the v-tag
 git push --follow-tags     # pushes the commit AND the tag → publish-npm.yml runs → npm
 ```
 
-That's it: **bump → push tag → it ships itself.**
+### Prerelease → npm dist-tag `beta` (or `rc`, `alpha`, …)
+```bash
+npm version prerelease --preid=beta   # 1.0.0 -> 1.0.1-beta.0 (re-run -> -beta.1, …)
+git push --follow-tags                # tag v1.0.1-beta.0 → publishes under `beta`
+```
+Consumers then opt in with `npm i @juspay/rescript-bindgen@beta`, while
+`npm i @juspay/rescript-bindgen` keeps installing the latest **stable**.
+
+The workflow derives the dist-tag from the version automatically: a `-beta.`/`-rc.`/`-alpha.`
+prerelease publishes under that pre-id; a plain `x.y.z` publishes to `latest`. So a beta tag
+**never displaces the stable release**.
+
+To later promote a beta to stable, just cut a normal release (`npm version patch` →
+`x.y.z` → `latest`), or move the tag on npm: `npm dist-tag add @juspay/rescript-bindgen@1.0.1-beta.3 latest`.
+
+That's it: **bump → push tag → it ships itself**, to the right channel.
 
 ---
 
@@ -85,3 +101,7 @@ That's it: **bump → push tag → it ships itself.**
   If you fork/rename the repo, update the trusted publisher.
 - `--provenance` adds a signed link between the npm release and the GitHub Actions
   run (supply-chain transparency). It needs the public repo + OIDC, both set up here.
+- **dist-tags:** the workflow publishes a prerelease version under its pre-id
+  (`1.2.3-beta.0` → `beta`) and a plain version under `latest` — automatically, from the
+  version string. So you never accidentally ship a beta as the default install. Mint
+  prereleases with `npm version prerelease --preid=beta` (then `-beta.1`, `-beta.2`, … on re-run).
