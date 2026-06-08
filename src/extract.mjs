@@ -109,6 +109,7 @@ function uniqueName(base, shared) {
  *  qualify it by the entry's final (post-SCC) module. */
 function refTo(entry) {
     const r = { kind: 'typeRef', to: entry.name, key: entry.key, home: entry.home }
+    if (entry.tparams && entry.tparams.length) r.tparams = entry.tparams // generic record -> name<'a>
     if (entry.kind === 'enum') r._enum = true
     if (entry.kind === 'unboxed') r._unboxed = true
     return r
@@ -122,6 +123,19 @@ function collectRefKeys(t, out) {
     if (t.ret) collectRefKeys(t.ret, out)
     if (t.arg) collectRefKeys(t.arg, out)
     if (Array.isArray(t.params)) t.params.forEach((p) => collectRefKeys(p, out))
+}
+
+/** Collect the ReScript type-variable names ('a, 'b) an IR type tree uses, so a record
+ *  containing them can be emitted parameterized (`type foo<'a> = {…}`). */
+function collectTypeVars(t, out) {
+    if (!t || typeof t !== 'object') return
+    if (t.kind === 'typeVar' && t.name) out.add(t.name)
+    if (t.kind === 'typeRef' && Array.isArray(t.tparams)) t.tparams.forEach((x) => out.add(x))
+    if (t.of) collectTypeVars(t.of, out)
+    if (t.ret) collectTypeVars(t.ret, out)
+    if (t.arg) collectTypeVars(t.arg, out)
+    if (Array.isArray(t.params)) t.params.forEach((p) => collectTypeVars(p, out))
+    if (Array.isArray(t.fields)) t.fields.forEach((f) => collectTypeVars(f.type, out))
 }
 
 /**
@@ -340,6 +354,16 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
         propsType = args[0] || compType
     }
 
+    // Generic component (e.g. `VirtualList<T extends VirtualListItem>`): map each of the
+    // signature's type parameters to a ReScript type variable ('a, 'b, …). classify turns
+    // a `T` prop into `{kind:'typeVar'}`, so `items: T[]` becomes `array<'a>` and the
+    // `external make` is polymorphic (the `extends` constraint is dropped, as in juspay's
+    // hand-written DataTable binding).
+    const typeVars = new Map()
+    const tparams = (sigs.length && sigs[0].typeParameters) || []
+    const TV = ['a', 'b', 'c', 'd', 'e', 'f']
+    tparams.forEach((tp, i) => { if (tp.symbol) typeVars.set(tp.symbol, "'" + (TV[i] || `t${i}`)) })
+
     const enums = []
     const records = []
     const unboxed = []
@@ -351,6 +375,7 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
         checker, decl, enums, records, unboxed, webapi: !!opts.webapi,
         seenEnums: new Map(), seenRecords: new Map(), seenUnboxed: new Map(),
         shared: opts.shared || null,
+        typeVars,
         sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
     }
     const allow = new Set(opts.htmlAllowlist || DEFAULT_HTML_ALLOWLIST)
@@ -526,6 +551,14 @@ function classify(type, ctx, propName = '', depth = 0) {
     // unknown / any -> flagged defect, never mapped.
     if (flags & ts.TypeFlags.Unknown) return { kind: 'unknown' }
     if (flags & ts.TypeFlags.Any) return { kind: 'any' }
+
+    // A generic type parameter `T` -> the ReScript type variable it was mapped to ('a).
+    // An unmapped param (e.g. from a nested generic not on the component signature) is
+    // flagged rather than silently widened.
+    if (flags & ts.TypeFlags.TypeParameter) {
+        const tv = ctx.typeVars && ctx.typeVars.get(type.symbol)
+        return tv ? { kind: 'typeVar', name: tv } : { kind: 'unknown' }
+    }
 
     // primitives
     if (flags & ts.TypeFlags.String) return { kind: 'string' }
@@ -1004,6 +1037,10 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         entry.spread = built.spread
         entry.fields = built.fields
         for (const f of built.fields) collectRefKeys(f.type, entry.deps)
+        // generic record (uses a type variable) -> parameterize: `type foo<'a> = {…}`
+        const tvars = new Set()
+        for (const f of built.fields) collectTypeVars(f.type, tvars)
+        if (tvars.size) entry.tparams = [...tvars]
         return refTo(entry)
     }
 
@@ -1014,8 +1051,11 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
     if (type.id != null) ctx.visiting?.add(type.id)
     const built = buildRecordFields(type, ctx, depth)
     if (type.id != null) ctx.visiting?.delete(type.id)
-    ctx.records.push({ name: rname, spread: built.spread, fields: built.fields })
-    return { kind: 'typeRef', to: rname }
+    const tvars = new Set()
+    for (const f of built.fields) collectTypeVars(f.type, tvars)
+    const tparams = tvars.size ? [...tvars] : undefined
+    ctx.records.push({ name: rname, spread: built.spread, fields: built.fields, tparams })
+    return tparams ? { kind: 'typeRef', to: rname, tparams } : { kind: 'typeRef', to: rname }
 }
 
 /**

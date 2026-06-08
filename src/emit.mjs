@@ -92,9 +92,15 @@ function renderType(t, propName, cfg) {
         case 'date': return 'Date.t'
         case 'domElement': return 'Dom.element'
         case 'domRef': return cfg.refType
+        // a ReScript type variable from a generic component (`T` -> `'a`)
+        case 'typeVar': return t.name
         // typeRef: in module mode `cfg.resolveRef` qualifies it by its final module
         // (e.g. `MenuTypes.menuItemType`); single-file mode emits the bare local name.
-        case 'typeRef': return cfg.resolveRef ? cfg.resolveRef(t) : t.to
+        // A generic record carries `tparams` -> `name<'a>`.
+        case 'typeRef': {
+            const base = cfg.resolveRef ? cfg.resolveRef(t) : t.to
+            return t.tparams && t.tparams.length ? `${base}<${t.tparams.join(', ')}>` : base
+        }
         case 'stringOrNumber': return '[#String(string) | #Number(float)]'
         case 'array': return `array<${renderType(t.of, propName, cfg)}>`
         case 'dict': return `Dict.t<${renderType(t.of, propName, cfg)}>`
@@ -263,7 +269,8 @@ function emitOrderedTypes(records, objUnboxed, idOf, depsOf, lines, cfg) {
 /** Append records as ONE `type rec … and …` group (handles self/mutual recursion). */
 function renderRecordGroup(records, lines, cfg) {
     ;(records || []).forEach((r, i) => {
-        lines.push(`${i === 0 ? 'type rec' : 'and'} ${r.name} = {`)
+        const tp = r.tparams && r.tparams.length ? `<${r.tparams.join(', ')}>` : '' // generic: foo<'a>
+        lines.push(`${i === 0 ? 'type rec' : 'and'} ${r.name}${tp} = {`)
         if (r.spread) lines.push(`  ...${r.spread},`) // e.g. ...JsxDOM.domProps (the HTML attrs)
         const seenIds = new Set()
         for (const f of r.fields) {
