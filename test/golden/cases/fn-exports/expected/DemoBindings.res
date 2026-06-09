@@ -1,0 +1,5 @@
+@module("demo") external add: (float, float) => float = "add"
+@module("demo") external greet: (string) => string = "greet"
+@module("demo") external now: unit => float = "now"
+@module("demo") external forEach: (array<float>, (float, float) => unit) => unit = "forEach"
+@module("demo") external translate: (FnExportsTypes.point, float, float) => FnExportsTypes.point = "translate"

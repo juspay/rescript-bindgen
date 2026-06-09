@@ -139,6 +139,14 @@ function renderType(t, propName, cfg) {
         case 'domRef': return cfg.refType
         // a ReScript type variable from a generic component (`T` -> `'a`)
         case 'typeVar': return t.name
+        // a reference to an exported class instance -> the abstract type in the `InstanceTypes`
+        // sink (qualified via resolveRef, e.g. `InstanceTypes.counter`). A self-reference may
+        // render as bare `t` ONLY when emitted inside the class's own file (cfg.allowSelfT) —
+        // a self-ref that lands in a SHARED record module has no local `t`, so it uses the sink.
+        case 'classRef': {
+            if (t.self && cfg.allowSelfT) return 't'
+            return cfg.resolveRef ? cfg.resolveRef(t) : t.to
+        }
         // typeRef: in module mode `cfg.resolveRef` qualifies it by its final module
         // (e.g. `MenuTypes.menuItemType`); single-file mode emits the bare local name.
         // A generic record carries `tparams` -> `name<'a>`.
@@ -149,6 +157,9 @@ function renderType(t, propName, cfg) {
         case 'stringOrNumber': return '[#String(string) | #Number(float)]'
         case 'array': return `array<${renderType(t.of, propName, cfg)}>`
         case 'dict': return `Dict.t<${renderType(t.of, propName, cfg)}>`
+        // JS Map/Set -> ReScript stdlib container types
+        case 'map': return `Map.t<${renderType(t.mapKey, propName, cfg)}, ${renderType(t.mapVal, propName, cfg)}>`
+        case 'set': return `Set.t<${renderType(t.of, propName, cfg)}>`
         case 'callback': {
             // an optional param `reason?: T` -> `option<T>` (None = the arg omitted)
             const render1 = (p) => {
@@ -219,6 +230,7 @@ export function emit(ir, options = {}) {
     if (lines.length) lines.push('')
 
     // 3. the external binding
+    if (ir.import.isDefault) lines.push(defaultExportNote(ir.import.name))
     lines.push(`@module(${JSON.stringify(cfg.from)}) @react.component`)
     lines.push(`external make: (`)
     for (const p of ir.props) {
@@ -244,8 +256,176 @@ export function emit(ir, options = {}) {
             lines.push(`  ${asPrefix}~${id}: ${renderType(p.type, p.name, cfg)}${p.optional ? '=?' : ''},${note ? `  // ⓘ ${note}` : ''}`)
         }
     }
-    lines.push(`) => React.element = ${JSON.stringify(ir.import.name)}`)
+    lines.push(`) => React.element = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
     lines.push('')
+
+    return lines.join('\n')
+}
+
+/**
+ * Render a standalone function-export IR (from extractModule's `functions`) into a
+ * ReScript `@module external` binding. Mirrors `emit()`'s local-type prologue — empty
+ * in module mode, where the types live in the shared `*Types.res` and params reference
+ * them qualified via `cfg.resolveRef`. The signature is emitted POSITIONAL (uncurried):
+ *   `@module("pkg") external add: (float, float) => float = "add"`
+ * Zero-arg functions get `unit => ret` (a ReScript external can't have an empty arg
+ * list). Params/return that can't be typed exactly fall back to the flagged placeholder
+ * with a leading comment (flag-don't-fake) — same buckets the component path uses.
+ *
+ * @param {import('../types').FunctionIR} ir
+ * @param {{ refType?: string, opaqueFallback?: string, resolveRef?: Function }} [options]
+ * @returns {string}  ReScript source for one function binding (no trailing blank line)
+ */
+export function emitFunction(ir, options = {}) {
+    const cfg = {
+        from: ir.import.from,
+        refType: options.refType || 'React.ref<Nullable.t<Dom.element>>',
+        opaqueFallback: options.opaqueFallback || 'string',
+        resolveRef: options.resolveRef || null,
+    }
+    const lines = []
+
+    // Local type prologue — identical ordering to emit() so a single-file function binding
+    // stays self-contained. In module mode these arrays are empty (types are shared).
+    const prim = (ir.unboxed || []).filter((u) => !isObjectUnboxed(u))
+    const obj = (ir.unboxed || []).filter(isObjectUnboxed)
+    const idOf = (n) => n.name
+    const depsOf = (n) => {
+        const out = new Set()
+        ;(n.fields || []).forEach((f) => collectRefNames(f.type, out))
+        ;(n.members || []).forEach((m) => collectRefNames(m.type, out))
+        return out
+    }
+    if (hasRecGroupLabelCollision(ir.records || [], obj, [], idOf, depsOf)) lines.push('@@warning("-30")', '')
+    renderEnums(ir.enums, lines)
+    renderUnboxed(prim, lines, cfg)
+    emitOrderedTypes(ir.records || [], obj, [], idOf, depsOf, lines, cfg)
+    if (lines.length) lines.push('')
+
+    // `label` gives a safe ReScript id (the original JS name stays in the `= "…"` string),
+    // so a reserved/Capitalized export name still binds cleanly.
+    const { id } = label(ir.import.name)
+    const render1 = (p) => (p.type.kind === 'event' ? p.type.res : renderType(p.type, p.name, cfg))
+    const params = ir.sig.params || []
+    // Required params stay POSITIONAL (idiomatic for plain functions); optional params bind as
+    // labeled `~name=?` (a positional external can't express a trailing optional). A trailing
+    // `unit` sentinel is added when any param is optional, so the optional can be omitted.
+    const segs = []
+    let hasOpt = false
+    for (const p of params) {
+        if (p.optional) { hasOpt = true; segs.push(`~${label(p.name).id}: ${render1(p)}=?`) }
+        else segs.push(render1(p))
+    }
+    if (hasOpt) segs.push('unit')
+    const paramStr = segs.length ? `(${segs.join(', ')})` : 'unit'
+    const ret = renderType(ir.sig.ret || { kind: 'unit' }, '', cfg)
+
+    // flag-don't-fake: surface the WORST imperfection across return + params above the line.
+    const imps = [ir.sig.ret, ...params.map((p) => p.type)].map(imperfection).filter(Boolean)
+    if (imps.includes('unknown') || imps.includes('any')) {
+        lines.push(`// 🛑 BROKEN: \`${ir.import.name}\` has an \`unknown\`/\`any\` in its signature — emitted with \`${cfg.opaqueFallback}\` placeholder(s) and WON'T WORK. Needs a concrete type upstream.`)
+    } else if (imps.includes('review')) {
+        lines.push(`// ⚠️ REVIEW: \`${ir.import.name}\` couldn't be auto-typed exactly — \`${cfg.opaqueFallback}\` placeholder(s) emitted. Match the real type by hand.`)
+    } else if (imps.includes('opaque')) {
+        lines.push(`// ⚪ loose: \`${ir.import.name}\` has a param/return widened to \`${cfg.opaqueFallback}\`.`)
+    }
+    if (ir.import.isDefault) lines.push(defaultExportNote(ir.import.name))
+    lines.push(`@module(${JSON.stringify(cfg.from)}) external ${id}: ${paramStr} => ${ret} = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
+
+    return lines.join('\n')
+}
+
+/** Flag for a default export: we bind `= "default"` (correct for ESM / esModuleInterop), but a
+ *  package that does `module.exports = fn` (plain CJS) exposes the value as the module itself —
+ *  `require("pkg").default` is then undefined. Surfaced so the consumer verifies at runtime. */
+function defaultExportNote(name) {
+    return `// ⚠️ \`${name}\` is a DEFAULT export — bound as \`= "default"\`. If the package does \`module.exports = ${name}\` (CJS), this may need a hand-adjustment; verify the import at runtime.`
+}
+
+/**
+ * Render a class-export IR (from extractModule's `classes`) into a ReScript module — the
+ * canonical "JS class = module with an abstract `type t`" pattern. Emitted into its OWN
+ * `<ClassName>.res` file, so the file *is* the module and a cross-class reference resolves
+ * as `OtherClass.t` across files with no ordering concerns. Layout:
+ *   type t
+ *   @new @module("pkg") external make: (~a: float, ~b: float=?, unit) => t = "ClassName"
+ *   @send external method: (t, ~x: float) => t = "method"
+ *   @get  external prop: t => float = "prop"
+ * Params bind as LABELED args (so optionals work, with the `unit` sentinel ReScript needs
+ * when the last arg is optional). Imperfect types get a leading flag comment (flag-don't-fake).
+ *
+ * @param {import('../types').ClassIR} ir
+ * @param {{ refType?: string, opaqueFallback?: string, resolveRef?: Function }} [options]
+ * @returns {string}  ReScript source for one class module (no trailing blank line)
+ */
+export function emitClass(ir, options = {}) {
+    const cfg = {
+        from: ir.import.from,
+        refType: options.refType || 'React.ref<Nullable.t<Dom.element>>',
+        opaqueFallback: options.opaqueFallback || 'string',
+        resolveRef: options.resolveRef || null,
+        allowSelfT: true, // we're inside the class's own file -> a self-classRef may be bare `t`
+    }
+    const lines = []
+
+    // Local type prologue — identical ordering to emit(); empty in module mode (types shared).
+    const prim = (ir.unboxed || []).filter((u) => !isObjectUnboxed(u))
+    const obj = (ir.unboxed || []).filter(isObjectUnboxed)
+    const idOf = (n) => n.name
+    const depsOf = (n) => {
+        const out = new Set()
+        ;(n.fields || []).forEach((f) => collectRefNames(f.type, out))
+        ;(n.members || []).forEach((m) => collectRefNames(m.type, out))
+        return out
+    }
+    if (hasRecGroupLabelCollision(ir.records || [], obj, [], idOf, depsOf)) lines.push('@@warning("-30")', '')
+    renderEnums(ir.enums, lines)
+    renderUnboxed(prim, lines, cfg)
+    emitOrderedTypes(ir.records || [], obj, [], idOf, depsOf, lines, cfg)
+    if (lines.length) lines.push('')
+
+    // `type t` aliases the class's abstract instance type in the sink module, so the sink
+    // is the single canonical definition everything points at (breaks class↔types cycles).
+    const sinkSelf = cfg.resolveRef && ir.sinkName ? cfg.resolveRef({ to: ir.sinkName, home: 'InstanceTypes' }) : null
+    lines.push(sinkSelf ? `type t = ${sinkSelf}` : 'type t')
+
+    // Labeled-arg segment for a param list: `~id: type` (+ `=?` when optional), plus a
+    // trailing `unit` sentinel when the LAST param is optional (ReScript requires it so the
+    // optional can be omitted at the call site).
+    const render1 = (p) => (p.type.kind === 'event' ? p.type.res : renderType(p.type, p.name, cfg))
+    const argSegs = (params) => {
+        const segs = params.map((p) => `~${label(p.name).id}: ${render1(p)}${p.optional ? '=?' : ''}`)
+        if (params.length && params[params.length - 1].optional) segs.push('unit')
+        return segs
+    }
+    // Worst imperfection across a member's types -> a leading flag comment (or null).
+    const flag = (memberName, types) => {
+        const imps = types.map(imperfection).filter(Boolean)
+        if (imps.includes('unknown') || imps.includes('any')) return `// 🛑 BROKEN: \`${memberName}\` has an \`unknown\`/\`any\` — emitted with \`${cfg.opaqueFallback}\` placeholder(s) and WON'T WORK. Needs a concrete type upstream.`
+        if (imps.includes('review')) return `// ⚠️ REVIEW: \`${memberName}\` couldn't be auto-typed exactly — \`${cfg.opaqueFallback}\` placeholder(s) emitted. Match the real type by hand.`
+        if (imps.includes('opaque')) return `// ⚪ loose: \`${memberName}\` has a param/return widened to \`${cfg.opaqueFallback}\`.`
+        return null
+    }
+
+    if (ir.ctor) {
+        const c = flag('make', ir.ctor.params.map((p) => p.type))
+        if (c) lines.push(c)
+        if (ir.import.isDefault) lines.push(defaultExportNote(ir.import.name))
+        const segs = argSegs(ir.ctor.params)
+        const paramStr = segs.length ? `(${segs.join(', ')})` : 'unit'
+        lines.push(`@new @module(${JSON.stringify(cfg.from)}) external make: ${paramStr} => t = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
+    }
+    for (const m of ir.methods) {
+        const c = flag(m.jsName, [m.ret, ...m.params.map((p) => p.type)])
+        if (c) lines.push(c)
+        const args = ['t', ...argSegs(m.params)]
+        lines.push(`@send external ${label(m.jsName).id}: (${args.join(', ')}) => ${renderType(m.ret, '', cfg)} = ${JSON.stringify(m.jsName)}`)
+    }
+    for (const g of ir.getters) {
+        const c = flag(g.jsName, [g.type])
+        if (c) lines.push(c)
+        lines.push(`@get external ${label(g.jsName).id}: t => ${renderType(g.type, '', cfg)} = ${JSON.stringify(g.jsName)}`)
+    }
 
     return lines.join('\n')
 }
@@ -306,6 +486,8 @@ function collectRefNames(t, out) {
     if (t.of) collectRefNames(t.of, out)
     if (t.ret) collectRefNames(t.ret, out)
     if (t.arg) collectRefNames(t.arg, out)
+    if (t.mapKey) collectRefNames(t.mapKey, out)
+    if (t.mapVal) collectRefNames(t.mapVal, out)
     if (Array.isArray(t.params)) t.params.forEach((p) => collectRefNames(p, out))
     if (Array.isArray(t.fields)) t.fields.forEach((f) => collectRefNames(f.type, out))
 }
@@ -385,7 +567,11 @@ function renderOpaque(t, lines, cfg) {
         const fn = fromName(m)
         if (seen.has(fn)) continue
         seen.add(fn)
-        lines.push(`  external ${fn}: ${renderType(m.type, '', cfg)} => t = "%identity"`)
+        // A function-typed member (`(e) => void` -> `string => unit`) must be parenthesized as
+        // the constructor's arg, else `string => unit => t` misparses as `string => (unit => t)`.
+        const rendered = renderType(m.type, '', cfg)
+        const arg = m.type.kind === 'callback' ? `(${rendered})` : rendered
+        lines.push(`  external ${fn}: ${arg} => t = "%identity"`)
     }
     lines.push(`}`)
 }
@@ -416,7 +602,7 @@ function renderRecordGroup(records, lines, cfg, isRec) {
 function findNote(t) {
     if (!t || typeof t !== 'object') return null
     if (t.note) return t.note
-    for (const k of ['of', 'ret', 'arg']) { if (t[k]) { const n = findNote(t[k]); if (n) return n } }
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) { if (t[k]) { const n = findNote(t[k]); if (n) return n } }
     if (Array.isArray(t.params)) for (const p of t.params) { const n = findNote(p); if (n) return n }
     return null
 }
@@ -441,6 +627,8 @@ function imperfection(t) {
     if (t.of) consider(t.of)
     if (t.ret) consider(t.ret)
     if (t.arg) consider(t.arg)
+    if (t.mapKey) consider(t.mapKey)
+    if (t.mapVal) consider(t.mapVal)
     if (t.params) t.params.forEach(consider)
     return worst
 }
@@ -570,6 +758,8 @@ export function emitSharedModule(mod, entries, finalOf, options = {}) {
     const idOf = (e) => e.key
     const depsOf = (e) => e.deps || []
     if (hasRecGroupLabelCollision(records, objUnboxed, opaque, idOf, depsOf)) lines.push('@@warning("-30")', '') // silence duplicate-label noise
+    // Abstract instance types for class exports — `type counter` (no deps; the dependency sink).
+    for (const n of entries.filter((e) => e.kind === 'nominal')) lines.push(`type ${n.name}`)
     renderEnums(entries.filter((e) => e.kind === 'enum'), lines)
     renderUnboxed(unboxed.filter((u) => !isObjectUnboxed(u)), lines, cfg) // primitive: before records
     // records + object-bearing variants + opaque-type modules in dependency order

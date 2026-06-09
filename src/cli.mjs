@@ -16,7 +16,7 @@
 // ============================================================================
 
 import { extractComponent, extractModule } from './extract.mjs'
-import { emit, report, planSharedModules, emitSharedModule, makeResolveRef } from './emit.mjs'
+import { emit, emitFunction, emitClass, report, planSharedModules, emitSharedModule, makeResolveRef } from './emit.mjs'
 import { resolveInput } from './resolve.mjs'
 import { writeReport } from './report.mjs'
 import { writeFileSync, mkdirSync, existsSync, readFileSync, readdirSync, unlinkSync } from 'fs'
@@ -58,6 +58,19 @@ function collectWebapiFallbacks(t, out) {
     if (t.kind === 'opaque' && (t.text === 'File' || t.text === 'FileList')) out.add(t.text)
     for (const k of ['of', 'ret', 'arg']) if (t[k]) collectWebapiFallbacks(t[k], out)
     if (Array.isArray(t.params)) for (const p of t.params) collectWebapiFallbacks(p, out)
+}
+
+/**
+ * Derive the ReScript module name for the bundled function-bindings file from the
+ * `@module` name: strip an npm scope, split on non-alphanumerics, PascalCase, suffix
+ * `Bindings`. `hono` -> `HonoBindings`, `@scope/date-fns` -> `DateFnsBindings`.
+ * @param {string} from
+ * @returns {string}
+ */
+function bindingsModuleName(from) {
+    const base = String(from).replace(/^@[^/]+\//, '').split(/[^a-zA-Z0-9]+/).filter(Boolean)
+    const pascal = base.map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('')
+    return (pascal || 'Module') + 'Bindings'
 }
 
 /** Ask a yes/no question on the terminal; resolves to boolean. Non-TTY -> defaultVal. */
@@ -181,7 +194,9 @@ async function main() {
 
     // --file => single component; --pkg/--dir => whole module (many components)
     const single = !!opts.file
-    let units // [{ name, ir }]
+    let units // [{ name, ir }]  — React components
+    let functions = [] // [{ name, ir }] — standalone function/const-fn exports (generic TS)
+    let classes = []   // [{ name, ir }] — class exports -> `@new`/`@send`/`@get` modules
     let skipped = []
     let shared = null // module-level shared-type registry (multi-component runs only)
     if (single) {
@@ -190,13 +205,19 @@ async function main() {
     } else {
         const res = extractModule(entry, { from, webapi })
         units = res.components
+        functions = res.functions || []
+        classes = res.classes || []
         skipped = res.skipped
         shared = res.shared
-        if (opts.only) units = units.filter((u) => u.name === opts.only)
+        if (opts.only) {
+            units = units.filter((u) => u.name === opts.only)
+            functions = functions.filter((f) => f.name === opts.only)
+            classes = classes.filter((c) => c.name === opts.only)
+        }
     }
 
-    if (!units.length) {
-        console.error('[bindgen] No React components found to generate.')
+    if (!units.length && !functions.length && !classes.length) {
+        console.error('[bindgen] No React components, functions, or classes found to generate.')
         if (skipped.length) console.error('[bindgen] skipped: ' + skipped.slice(0, 20).map((s) => `${s.name}(${s.reason})`).join(', '))
         process.exit(1)
     }
@@ -290,6 +311,25 @@ async function main() {
         if (rep.loose.length || rep.defects.length || rep.review.length) reports.push({ name, ...rep })
     }
 
+    // Standalone function exports (generic TS): all `@module external` bindings for a
+    // package go into ONE `<Pkg>Bindings.res` file, referencing the shared `*Types.res`
+    // qualified via the same resolveRef the component files use.
+    const fnFile = functions.length ? `${bindingsModuleName(from)}.res` : null
+    if (fnFile) {
+        const body = functions.map(({ ir }) => emitFunction(ir, compRef)).join('\n')
+        writeFileSync(join(outDir, fnFile), body + '\n')
+        written.add(fnFile)
+        console.error(`[bindgen] wrote ${functions.length} function binding(s) to ${fnFile}`)
+    }
+
+    // Class exports: one `<ClassName>.res` module per class (the file IS the module, so
+    // cross-class `Other.t` references resolve across files with no ordering concerns).
+    for (const { name, ir } of classes) {
+        writeFileSync(join(outDir, `${name}.res`), emitClass(ir, compRef) + '\n')
+        written.add(`${name}.res`)
+    }
+    if (classes.length) console.error(`[bindgen] wrote ${classes.length} class module(s): ${classes.map((c) => `${c.name}.res`).join(', ')}`)
+
     // Manifest-based orphan cleanup: remove files a PREVIOUS bindgen run wrote that this run
     // no longer produces (e.g. a component renamed/dropped upstream). Only ever touches files
     // recorded in our own manifest — hand-written files are never listed, so never deleted.
@@ -309,7 +349,7 @@ async function main() {
     writeFileSync(manifestPath, JSON.stringify({ files: [...written].sort() }, null, 2) + '\n')
     if (staleRemoved) console.error(`[bindgen] removed ${staleRemoved} stale binding(s) from a previous run (per .bindgen-manifest.json)`)
 
-    console.error(`\n[bindgen] wrote ${units.length} binding(s) to ${outDir}`)
+    console.error(`\n[bindgen] wrote ${units.length} component + ${functions.length} function + ${classes.length} class binding(s) to ${outDir}`)
     for (const r of rows) console.error(`  ${r.name.padEnd(24)} props=${String(r.props).padStart(3)} enums=${String(r.enums).padStart(2)} loose=${String(r.loose).padStart(2)} review=${r.review} defects=${r.defects}`)
     if (skipped.length) console.error(`\n[bindgen] skipped ${skipped.length} non-component export(s): ${skipped.slice(0, 15).map((s) => s.name).join(', ')}${skipped.length > 15 ? '…' : ''}`)
     if (totalDefects) console.error(`\n[bindgen] ⚠ ${totalDefects} unknown/any prop(s) flagged as defects — review.`)
@@ -325,7 +365,9 @@ async function main() {
     if (opts.report) {
         const reportPath = join(outDir, '_REPORT.md')
         const sharedInfo = plan ? { modules: plan.byModule.size, types: shared.entries.length } : null
-        writeReport(reportPath, opts.pkg || from, rows, reports, depSummary, sharedInfo)
+        const fnInfo = fnFile ? { file: fnFile, names: functions.map((f) => f.name) } : null
+        const classInfo = classes.length ? classes.map((c) => ({ name: c.name, methods: c.ir.methods.length, getters: c.ir.getters.length, ctor: !!c.ir.ctor })) : null
+        writeReport(reportPath, opts.pkg || from, rows, reports, depSummary, sharedInfo, fnInfo, classInfo)
         console.error(`[bindgen] 📄 report written to ${reportPath}`)
     } else {
         console.error(`[bindgen] (add --report to also write _REPORT.md)`)
