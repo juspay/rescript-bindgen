@@ -49,11 +49,6 @@ On **npmjs.com** → the package → **Settings** → **Trusted Publisher** (a.k
 
 Save. From now on, every `v*` tag push publishes automatically via OIDC.
 
-### Step 3 — (optional) Enable Claude PR reviews
-GitHub repo → **Settings → Secrets and variables → Actions** → add secret
-`ANTHROPIC_API_KEY` (from console.anthropic.com). Without it, the
-`Claude Auto Review` workflow simply no-ops.
-
 ---
 
 ## Admin checklist
@@ -61,7 +56,6 @@ GitHub repo → **Settings → Secrets and variables → Actions** → add secre
 - [ ] npm account is an `@juspay` member with publish rights
 - [ ] `npm publish --access public` once to bootstrap v1.0.0
 - [ ] Configure Trusted Publisher → `juspay/rescript-bindgen` + `publish-npm.yml`
-- [ ] (optional) add `ANTHROPIC_API_KEY` repo secret
 - [ ] Verify: bump version, push tag, confirm the workflow publishes
 
 ---
