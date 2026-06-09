@@ -161,7 +161,11 @@ function renderType(t, propName, cfg) {
         case 'map': return `Map.t<${renderType(t.mapKey, propName, cfg)}, ${renderType(t.mapVal, propName, cfg)}>`
         case 'set': return `Set.t<${renderType(t.of, propName, cfg)}>`
         case 'callback': {
-            const render1 = (p) => (p.kind === 'event' ? p.res : renderType(p, propName, cfg))
+            // an optional param `reason?: T` -> `option<T>` (None = the arg omitted)
+            const render1 = (p) => {
+                const base = p.kind === 'event' ? p.res : renderType(p, propName, cfg)
+                return p.optional ? `option<${base}>` : base
+            }
             const ps = !t.params || t.params.length === 0 ? 'unit' : t.params.map(render1).join(', ')
             const ret = renderType(t.ret || { kind: 'unit' }, propName, cfg)
             return (t.params && t.params.length > 1) ? `(${ps}) => ${ret}` : `${ps} => ${ret}`
@@ -537,6 +541,20 @@ function emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg)
  *  `from*` constructor per member. The prop is typed `Module.t`; the consumer builds a typed
  *  value and `->fromX`-casts it (compiles to the raw value). */
 function renderOpaque(t, lines, cfg) {
+    // Overloaded function: a module of zero-cost `%identity` ACCESSOR views (opaque -> concrete),
+    // one per call signature — `external asReason: t => (option<…> => unit) = "%identity"`.
+    if (t.variant === 'overload') {
+        lines.push(`module ${t.name} = {`)
+        lines.push(`  type t`)
+        const seen = new Set()
+        for (const s of t.sigs) {
+            if (seen.has(s.accessor)) continue
+            seen.add(s.accessor)
+            lines.push(`  external ${s.accessor}: t => (${renderType(s.fn, '', cfg)}) = "%identity"`)
+        }
+        lines.push(`}`)
+        return
+    }
     const titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1)
     const pascalName = (s) => String(s).replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('')
     const fromName = (m) => m.name

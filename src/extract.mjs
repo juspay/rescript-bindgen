@@ -445,11 +445,17 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
             // hasOwnProperty guard: a prop literally named `toString`/`valueOf`/`constructor`/…
             // would otherwise pick up an inherited Object.prototype member (a native function).
             const aria = Object.prototype.hasOwnProperty.call(ARIA_TYPES, name) ? ARIA_TYPES[name] : undefined
+            // `LiteralUnion | string` (e.g. `ToastPosition | string`) collapses to bare `string` in
+            // the resolved type, so recover the known literals from the SYNTACTIC node -> an @unboxed
+            // variant with a `Custom(string)` catch-all (typo-safe known values + open escape hatch).
+            const litOpen = !aria && d && literalUnionOpen(d.type, checker)
             return {
                 name,
                 optional,
                 inherited: isInherited(p),
-                type: aria ? { kind: 'raw', res: aria } : classify(t, ctx, name),
+                type: aria ? { kind: 'raw', res: aria }
+                    : litOpen ? literalUnionOpenNode(litOpen, unionRefName(d.type), ctx, name)
+                    : classify(t, ctx, name),
                 // raw TS info, used by the report to describe unmapped props
                 tsType: checker.typeToString(t).replace(/\s+/g, ' ').slice(0, 200),
                 declText: (d ? d.getText() : '').replace(/\s+/g, ' ').trim().slice(0, 200),
@@ -1030,6 +1036,14 @@ function classify(type, ctx, propName = '', depth = 0) {
     // functions / callbacks
     const callSigs = type.getCallSignatures()
     if (callSigs.length) {
+        // Overloaded function — ≥2 call signatures (a TS intersection of call sigs `A & B`,
+        // or a multi-call-signature interface). No native ReScript overload type, so model it
+        // as an opaque module with one zero-cost `%identity` accessor VIEW per signature (so
+        // NEITHER overload is dropped). Falls back to 🔍 review if it can't be modelled cleanly.
+        if (callSigs.length > 1) {
+            const ov = overloadModule(ctx, type, callSigs, propName, depth)
+            return ov || { kind: 'review', note: `overloaded function (${callSigs.length} call signatures) — no single ReScript type` }
+        }
         return functionNode(callSigs[0], ctx, propName, depth)
     }
 
@@ -1100,6 +1114,65 @@ function enumNode(type, ctx, propName) {
         ctx.enums.push({ name: key, members })
     }
     return { kind: 'typeRef', to: key, _enum: true }
+}
+
+/**
+ * Detect the LiteralUnion idiom `'a' | 'b' | string` from the SYNTACTIC type node. TS collapses
+ * this to bare `string` in the resolved type (the literals are gone), so we read the AST node
+ * pre-collapse. Returns the literal string values, or null. Skips the `(string & {})` brand form
+ * (its member isn't a `string` keyword, so it bails) — that stays a closed enum via the type path.
+ * @returns {string[] | null}
+ */
+function literalUnionOpen(typeNode, checker) {
+    if (!typeNode || !ts.isUnionTypeNode(typeNode)) return null
+    let hasString = false
+    const literals = []
+    for (const member of typeNode.types) {
+        if (member.kind === ts.SyntaxKind.StringKeyword) { hasString = true; continue }
+        const mt = checker.getTypeFromTypeNode(member)
+        const parts = mt.isUnion && mt.isUnion() ? mt.types : [mt]
+        for (const p of parts) {
+            if (p.isStringLiteral && p.isStringLiteral()) literals.push(p.value)
+            else return null // a non-string-literal, non-`string` member -> not this idiom
+        }
+    }
+    if (!hasString || !literals.length) return null
+    return [...new Set(literals)] // dedupe, preserve order
+}
+
+/** First TypeReference name in a union node (`ToastPosition | string` -> "ToastPosition"), for naming. */
+function unionRefName(typeNode) {
+    for (const m of typeNode.types) if (ts.isTypeReferenceNode(m)) return m.typeName.getText()
+    return null
+}
+
+/**
+ * Build the `LiteralUnion | string` mapping: an `@unboxed` variant with the known literals as
+ * `@as` arms PLUS a `Custom(string)` catch-all (the `| string` escape hatch). Zero-cost, typo-safe
+ * on the known values, still accepts any other string. Registered like any other `@unboxed` variant.
+ * @returns {{kind:'typeRef', to:string, _unboxed:true}}
+ */
+function literalUnionOpenNode(literals, baseName, ctx, propName) {
+    const members = literals.map((v) => ({ ctor: pascal(String(v)), as: String(v) }))
+    members.push({ ctor: 'Custom', type: { kind: 'string' } }) // the `| string` escape hatch
+    // `<base>OrString` (matches the `boolOrString` / `stringOrNumber` convention) — the `OrString`
+    // signals the open `Custom(string)` arm and leaves the bare name free for the closed enum.
+    const sname = lower(pascal(baseName || propName)) + 'OrString'
+    if (ctx.shared) {
+        // Key by the literal SET (NOT the collapsed `string` type.id, which every `| string`
+        // prop shares) so distinct literal sets get distinct types and identical ones dedupe.
+        const key = 'lu:' + sname + ':' + literals.join('|')
+        if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
+        const entry = { key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), home: 'CommonTypes', members, deps: new Set() }
+        ctx.shared.byKey.set(key, entry)
+        ctx.shared.entries.push(entry)
+        return refTo(entry)
+    }
+    if (!ctx.seenUnboxed.has(sname)) {
+        ctx.seenUnboxed.set(sname, true)
+        ctx.unboxed.push({ name: sname, members })
+    }
+    return { kind: 'typeRef', to: sname, _unboxed: true }
 }
 
 /**
@@ -1186,6 +1259,64 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth) {
         ? `was \`${checker.typeToString(type).replace(/ \| (null|undefined)\b/g, '')}\` — opaque; build with ${members.map((m) => `${name}.from${pascal(m.name)}`).join(' / ')}`
         : undefined
     const entry = { key, kind: 'opaque', name, home, members, deps, note }
+    ctx.shared.byKey.set(key, entry)
+    ctx.shared.entries.push(entry)
+    return ref(entry)
+}
+
+/** True if a callback/type node tree contains anything we won't fake (unknown/any/review/opaque). */
+function nodeImperfect(t) {
+    if (!t || typeof t !== 'object') return false
+    if (['unknown', 'any', 'review', 'opaque'].includes(t.kind)) return true
+    if (t.of && nodeImperfect(t.of)) return true
+    if (t.ret && nodeImperfect(t.ret)) return true
+    if (t.arg && nodeImperfect(t.arg)) return true
+    if (Array.isArray(t.params)) return t.params.some(nodeImperfect)
+    return false
+}
+
+/**
+ * An overloaded function (≥2 call signatures) has no native ReScript type. Model it as an
+ * opaque-type module with one zero-cost `%identity` ACCESSOR per signature —
+ * `external asReason: t => (option<…> => unit) = "%identity"` — so EVERY overload stays
+ * callable with no runtime cost (the value passes straight through, unchanged). The fidelity
+ * fallback for "can't @unboxed". Module mode only. Returns the prop's `<Module>.t` typeRef,
+ * or null if it can't be modelled cleanly (the caller then flags it 🔍 review).
+ * @returns {{kind:'typeRef', to:string, home:string, key:string} | null}
+ */
+function overloadModule(ctx, type, callSigs, propName, depth) {
+    if (!ctx.shared) return null // needs the shared-type registry (module mode)
+    const key = 't:' + type.id
+    const ref = (e) => ({ kind: 'typeRef', to: e.name + '.t', home: e.home, key: e.key, ...(e.note ? { note: e.note } : {}) })
+    if (ctx.shared.byKey.has(key)) return ref(ctx.shared.byKey.get(key))
+    // Build a callback node per signature; bail (→ review) if any param/return can't be typed.
+    const sigs = []
+    const used = new Set()
+    for (const s of callSigs) {
+        const fn = functionNode(s, ctx, propName, depth + 1)
+        if (nodeImperfect(fn)) return null
+        // accessor name: `as` + the first param's NAME when descriptive (reason -> asReason);
+        // else the React-event type (e: MouseEvent -> asMouse); else a no-arg `asThunk`.
+        const p0 = s.getParameters()[0]
+        const pname = p0 && p0.getName()
+        const ev = fn.params && fn.params[0] && fn.params[0].kind === 'event' ? /ReactEvent\.(\w+)\.t/.exec(fn.params[0].res) : null
+        let base = pname && pname.length > 1 ? 'as' + pascal(pname)
+            : ev ? 'as' + pascal(ev[1])
+            : !fn.params || fn.params.length === 0 ? 'asThunk'
+            : pname ? 'as' + pascal(pname) : 'asFn'
+        let accessor = base, n = 2
+        while (used.has(accessor)) accessor = base + n++
+        used.add(accessor)
+        sigs.push({ accessor, fn })
+    }
+    if (sigs.length < 2) return null
+    const name = uniqueName(pascal(typeName(type) || propName), ctx.shared) // a MODULE name
+    const deps = new Set()
+    for (const s of sigs) collectRefKeys(s.fn, deps)
+    let home = homeOf(type, ctx)
+    if (deps.size) { const d = ctx.shared.byKey.get([...deps][0]); if (d && d.home) home = d.home }
+    const note = `was overloaded \`${typeName(type) || 'function'}\` (${callSigs.length} call signatures) — opaque; view with ${sigs.map((s) => `${name}.${s.accessor}`).join(' / ')}`
+    const entry = { key, kind: 'opaque', variant: 'overload', name, home, sigs, deps, note }
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
     return ref(entry)
@@ -1540,12 +1671,21 @@ function unboxedName(members) {
 function functionNode(sig, ctx, propName, depth = 0) {
     const { checker } = ctx
     const params = sig.getParameters().map((pp) => {
-        const pt = checker.getTypeOfSymbolAtLocation(pp, ctx.decl)
+        // An optional param `reason?: T` (or one with a default) -> `option<T>` (emit wraps it).
+        // Parameter symbols don't carry SymbolFlags.Optional reliably, so read the declaration's
+        // `?`/initializer. Strip any `| undefined` the checker folds in so the inner type stays exact.
+        const pdecl = pp.valueDeclaration
+        const optional = (pp.getFlags() & ts.SymbolFlags.Optional) !== 0 ||
+            !!(pdecl && ts.isParameter(pdecl) && (pdecl.questionToken || pdecl.initializer))
+        let pt = checker.getTypeOfSymbolAtLocation(pp, ctx.decl)
+        if (optional) pt = checker.getNonNullableType(pt)
         const n = typeName(pt)
         // hasOwnProperty guard: a param whose type resolves to a name like `toString`/`valueOf`
         // must not match an inherited Object.prototype member (which would be a native function).
-        if (n && Object.prototype.hasOwnProperty.call(REACT_EVENTS, n)) return { kind: 'event', res: REACT_EVENTS[n] }
-        return classify(pt, ctx, propName, depth + 1)
+        const node = (n && Object.prototype.hasOwnProperty.call(REACT_EVENTS, n))
+            ? { kind: 'event', res: REACT_EVENTS[n] }
+            : classify(pt, ctx, propName, depth + 1)
+        return optional ? { ...node, optional: true } : node
     })
     const retType = sig.getReturnType()
     // `void | Promise<void>` (a handler that may be sync OR async, e.g. formAction) -> a
