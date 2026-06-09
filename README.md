@@ -141,7 +141,7 @@ so output is reproducible and version-pinned.
 ```bash
 # a published package (any version)
 npx @juspay/rescript-bindgen --pkg react-day-picker --out generated
-npx @juspay/rescript-bindgen --pkg @mui/material@5.16.0 --only Button --out generated
+npx @juspay/rescript-bindgen --pkg @mui/material@7.0.0 --only Button --out generated
 
 # a single .d.ts file, printed to stdout
 npx @juspay/rescript-bindgen --file ./types/Foo.d.ts --stdout
