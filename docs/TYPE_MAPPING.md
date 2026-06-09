@@ -145,14 +145,26 @@ Fixture: [`records`](../test/golden/cases/records)
 In module mode these live in per-domain `*Types.res` modules, deduplicated by type identity and
 referenced qualified (`MenuTypes.menuItemType`); cyclic groups merge via SCC.
 
-**Warning 30 (duplicate labels).** When a mutually-recursive `type rec A = {…} and B = {…}` group
-holds two records that share a field label (common in generated graph types — Highcharts
-`tooltip`/`legend`/`point`/`series` all have `chart`/`options`/`update`), ReScript emits *warning 30*.
-The generator prepends **`@@warning("-30")`** to exactly those files: the duplication is intentional
-and every value is explicitly typed, so the ambiguity warning is pure noise. Independent `type`
-declarations sharing a label do **not** warn, so they get no pragma. Fixture:
-[`dup-labels`](../test/golden/cases/dup-labels); the compile runner asserts generated output is
-warning-free.
+**`@unboxed` inside a record cycle.** A field like `labelGrid?: string | ((…, Options) => string)`
+becomes an object-bearing `@unboxed`, and if its function arm references back into the record cycle
+(`Labels → Options → Locale → Labels`) the `@unboxed` is genuinely part of the recursion. It can't be
+a separate declaration (forward reference either way), so it's **folded into the `type rec … and …`
+group** as `@unboxed and labelGrid = Str(string) | Fn(…)`. Fixture:
+[`unboxed-in-record-cycle`](../test/golden/cases/unboxed-in-record-cycle).
+
+**Warning 30 (duplicate labels/constructors).** When a mutually-recursive `type rec A = {…} and B = {…}`
+group holds two members that share a **name** — a record field label (Highcharts
+`tooltip`/`legend`/`point`/`series` all have `chart`/`options`/`update`), or a variant constructor of a
+folded `@unboxed` (several label unions all using `Str`/`Fn`) — ReScript emits *warning 30*. The
+generator prepends **`@@warning("-30")`** to exactly those files: the duplication is intentional and
+every value is explicitly typed, so the ambiguity warning is pure noise. Independent `type`
+declarations sharing a name do **not** warn, so they get no pragma. Fixtures:
+[`dup-labels`](../test/golden/cases/dup-labels), [`unboxed-in-record-cycle`](../test/golden/cases/unboxed-in-record-cycle);
+the compile runner asserts generated output is warning-free.
+
+**Prototype-safe name lookups.** Props/params named after `Object.prototype` members (`toString`,
+`valueOf`, `hasOwnProperty`, …) are looked up in the event/aria maps with own-property guards, so they
+never pick up an inherited native function. Fixture: [`proto-named-method`](../test/golden/cases/proto-named-method).
 
 ---
 

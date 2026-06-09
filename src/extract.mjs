@@ -436,7 +436,9 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
             const t = checker.getTypeOfSymbolAtLocation(p, decl)
             const d = p.declarations && p.declarations[0]
             // aria-* / role -> the exact JsxDOM type (verbatim), bypassing classify.
-            const aria = ARIA_TYPES[name]
+            // hasOwnProperty guard: a prop literally named `toString`/`valueOf`/`constructor`/…
+            // would otherwise pick up an inherited Object.prototype member (a native function).
+            const aria = Object.prototype.hasOwnProperty.call(ARIA_TYPES, name) ? ARIA_TYPES[name] : undefined
             return {
                 name,
                 optional,
@@ -636,7 +638,7 @@ function classify(type, ctx, propName = '', depth = 0) {
     // Handled here because these often expose no call signature to fall through to.
     // Uses `params` (not `arg`) so emit's callback renderer picks it up — an `arg`
     // here renders as `unit => unit` (the event payload is silently dropped).
-    if (name && EVENT_HANDLERS[name]) {
+    if (name && Object.prototype.hasOwnProperty.call(EVENT_HANDLERS, name)) {
         return { kind: 'callback', params: [{ kind: 'event', res: EVENT_HANDLERS[name] }], ret: { kind: 'unit' } }
     }
 
@@ -1200,7 +1202,9 @@ function functionNode(sig, ctx, propName, depth = 0) {
     const params = sig.getParameters().map((pp) => {
         const pt = checker.getTypeOfSymbolAtLocation(pp, ctx.decl)
         const n = typeName(pt)
-        if (n && REACT_EVENTS[n]) return { kind: 'event', res: REACT_EVENTS[n] }
+        // hasOwnProperty guard: a param whose type resolves to a name like `toString`/`valueOf`
+        // must not match an inherited Object.prototype member (which would be a native function).
+        if (n && Object.prototype.hasOwnProperty.call(REACT_EVENTS, n)) return { kind: 'event', res: REACT_EVENTS[n] }
         return classify(pt, ctx, propName, depth + 1)
     })
     const retType = sig.getReturnType()
