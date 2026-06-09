@@ -48,6 +48,40 @@ function camelFromKebab(name) {
  * @param {string} name  the original prop name from the .d.ts
  * @returns {{ as: string | null, id: string }}  `as` = the `@as` value (or null), `id` = the ReScript identifier
  */
+/** True when a `type rec A = {…} and B = {…}` mutually-recursive group contains two records
+ *  that share a field label — the exact trigger for ReScript's warning 30. (Independent
+ *  `type` declarations sharing a label do NOT warn; only same-rec-group members do.) When this
+ *  happens we prepend `@@warning("-30")` to the file: the duplicate labels are intentional and
+ *  every value is explicitly typed, so the ambiguity warning is pure noise for consumers.
+ *  Mirrors the SCC grouping in `emitOrderedTypes` so it flags exactly the files that warn. */
+function hasRecGroupLabelCollision(records, objUnboxed, opaque, idOf, depsOf) {
+    const items = [
+        ...records.map((r) => ({ kind: 'record', node: r, id: idOf(r) })),
+        ...(objUnboxed || []).map((u) => ({ kind: 'unboxed', node: u, id: idOf(u) })),
+        ...(opaque || []).map((o) => ({ kind: 'opaque', node: o, id: idOf(o) })),
+    ]
+    if (!items.length) return false
+    const byId = new Map(items.map((it) => [it.id, it]))
+    const edges = new Map()
+    for (const it of items) {
+        const ds = new Set()
+        for (const d of depsOf(it.node)) if (byId.has(d) && d !== it.id) ds.add(d)
+        edges.set(it.id, ds)
+    }
+    for (const comp of tarjanSCC([...byId.keys()], edges)) {
+        const recs = comp.map((id) => byId.get(id)).filter((m) => m.kind === 'record').map((m) => m.node)
+        if (recs.length < 2) continue // a single record can't collide with itself
+        const seen = new Set()
+        for (const r of recs) {
+            for (const id of new Set((r.fields || []).map((f) => label(f.name).id))) {
+                if (seen.has(id)) return true
+                seen.add(id)
+            }
+        }
+    }
+    return false
+}
+
 function label(name) {
     const isPlainIdent = /^[a-z_][a-zA-Z0-9_]*$/.test(name)
     if (isPlainIdent && !RESERVED.has(name)) return { as: null, id: name }
@@ -88,20 +122,29 @@ function renderType(t, propName, cfg) {
         case 'number': return t._float ? 'float' : numberType(propName)
         case 'boolean': return 'bool'
         case 'reactElement': return 'React.element'
+        // a component-valued prop: `React.component<propsRecord>`
+        case 'reactComponent': return `React.component<${renderType(t.of, propName, cfg)}>`
         case 'style': return 'JsxDOM.style'
         case 'date': return 'Date.t'
         case 'domElement': return 'Dom.element'
         case 'domRef': return cfg.refType
-        case 'typeRef': return t.to
+        // a ReScript type variable from a generic component (`T` -> `'a`)
+        case 'typeVar': return t.name
+        // typeRef: in module mode `cfg.resolveRef` qualifies it by its final module
+        // (e.g. `MenuTypes.menuItemType`); single-file mode emits the bare local name.
+        // A generic record carries `tparams` -> `name<'a>`.
+        case 'typeRef': {
+            const base = cfg.resolveRef ? cfg.resolveRef(t) : t.to
+            return t.tparams && t.tparams.length ? `${base}<${t.tparams.join(', ')}>` : base
+        }
         case 'stringOrNumber': return '[#String(string) | #Number(float)]'
         case 'array': return `array<${renderType(t.of, propName, cfg)}>`
         case 'dict': return `Dict.t<${renderType(t.of, propName, cfg)}>`
         case 'callback': {
-            const arg =
-                t.arg.kind === 'event' ? t.arg.res
-                : t.arg.kind === 'unit' ? 'unit'
-                : renderType(t.arg, propName, cfg)
-            return `${arg} => unit`
+            const render1 = (p) => (p.kind === 'event' ? p.res : renderType(p, propName, cfg))
+            const ps = !t.params || t.params.length === 0 ? 'unit' : t.params.map(render1).join(', ')
+            const ret = renderType(t.ret || { kind: 'unit' }, propName, cfg)
+            return (t.params && t.params.length > 1) ? `(${ps}) => ${ret}` : `${ps} => ${ret}`
         }
         case 'unit': return 'unit'
         // loose fallback — compiles & is usable, flagged in the report.
@@ -135,34 +178,30 @@ export function emit(ir, options = {}) {
         from: ir.import.from,
         refType: options.refType || 'React.ref<Nullable.t<Dom.element>>',
         opaqueFallback: options.opaqueFallback || 'string',
+        // module mode: qualify typeRefs by their final module. Absent in single-file mode.
+        resolveRef: options.resolveRef || null,
     }
     const lines = []
 
-    // 1. enum (variant) type declarations
-    for (const e of ir.enums) {
-        lines.push(`type ${e.name} =`)
-        for (const m of e.members) {
-            lines.push(`  | @as(${JSON.stringify(m.as)}) ${m.ctor}`)
-        }
+    // Local type declarations (single-file mode). In module mode these arrays are
+    // empty — the types live in the shared `*Types.res` modules and props reference
+    // them qualified via cfg.resolveRef. Order matters: primitive `@unboxed` variants
+    // come BEFORE records (records may reference e.g. `stringOrNumber`); object-bearing
+    // `@unboxed` variants come AFTER (they wrap a record). `@unboxed` can't sit in a
+    // `type rec` group (syntax error), so we order by dependency instead.
+    const prim = (ir.unboxed || []).filter((u) => !isObjectUnboxed(u))
+    const obj = (ir.unboxed || []).filter(isObjectUnboxed)
+    const idOf = (n) => n.name
+    const depsOf = (n) => {
+        const out = new Set()
+        ;(n.fields || []).forEach((f) => collectRefNames(f.type, out))
+        ;(n.members || []).forEach((m) => collectRefNames(m.type, out))
+        return out
     }
-
-    // 1b. untagged (@unboxed) variant declarations — type-safe multi-type props
-    for (const u of ir.unboxed || []) {
-        const ctors = u.members.map((m) => `${m.ctor}(${renderType(m.type, '', cfg)})`).join(' | ')
-        lines.push(`@unboxed type ${u.name} = ${ctors}`)
-    }
-
-    // 2. record type declarations
-    for (const r of ir.records) {
-        lines.push(`type ${r.name} = {`)
-        for (const f of r.fields) {
-            const { as, id } = label(f.name)
-            const asPrefix = as ? `@as(${JSON.stringify(as)}) ` : ''
-            const ty = renderType(f.type, f.name, cfg)
-            lines.push(`  ${asPrefix}${id}${f.optional ? '?' : ''}: ${ty},`)
-        }
-        lines.push('}')
-    }
+    if (hasRecGroupLabelCollision(ir.records || [], obj, [], idOf, depsOf)) lines.push('@@warning("-30")', '') // silence duplicate-label noise
+    renderEnums(ir.enums, lines)
+    renderUnboxed(prim, lines, cfg) // primitive variants before records that reference them
+    emitOrderedTypes(ir.records || [], obj, [], idOf, depsOf, lines, cfg)
 
     if (lines.length) lines.push('')
 
@@ -172,23 +211,190 @@ export function emit(ir, options = {}) {
     for (const p of ir.props) {
         const { as, id } = label(p.name)
         const asPrefix = as ? `@as(${JSON.stringify(as)}) ` : ''
-        const ty = renderType(p.type, p.name, cfg)
-        // Flag non-inherited props we couldn't bind type-safely (no %identity hack).
-        if (p.type.kind === 'review' && !p.inherited) {
-            lines.push(`  // ⚠️ REVIEW: \`${p.name}\` is \`${p.type.text}\` — multi-type that can't be auto-discriminated; emitted as \`${cfg.opaqueFallback}\` placeholder. Bind by hand or fix upstream.`)
+        // A prop is emitted EXACTLY only if its whole type tree maps cleanly. If any
+        // part is opaque/review/unknown, we don't emit a half-correct type — we emit
+        // a `string` placeholder + a flag showing the real TS, so it's hand-matched.
+        const imp = imperfection(p.type)
+        const realTs = (p.tsType || p.type.text || '').replace(/\s+/g, ' ').slice(0, 110)
+        if (imp === 'unknown' || imp === 'any') {
+            lines.push(`  // 🛑 BROKEN: \`${p.name}\` is \`${realTs}\` — contains \`${imp}\`; emitted as \`${cfg.opaqueFallback}\` placeholder and WON'T WORK. Needs a concrete type upstream.`)
+            lines.push(`  ${asPrefix}~${id}: ${cfg.opaqueFallback}${p.optional ? '=?' : ''},`)
+        } else if (imp === 'review') {
+            lines.push(`  // ⚠️ REVIEW: \`${p.name}\` is \`${realTs}\` — couldn't be auto-typed exactly; emitted as \`${cfg.opaqueFallback}\` placeholder. Match the real type by hand.`)
+            lines.push(`  ${asPrefix}~${id}: ${cfg.opaqueFallback}${p.optional ? '=?' : ''},`)
+        } else if (imp === 'opaque') {
+            lines.push(`  ${asPrefix}~${id}: ${cfg.opaqueFallback}${p.optional ? '=?' : ''},  // ⚪ loose — was \`${realTs}\``)
+        } else {
+            // exact match — but an approximate mapping (e.g. DOM union -> Dom.element) may
+            // carry a `note` so the consumer knows what isn't covered.
+            const note = findNote(p.type)
+            lines.push(`  ${asPrefix}~${id}: ${renderType(p.type, p.name, cfg)}${p.optional ? '=?' : ''},${note ? `  // ⓘ ${note}` : ''}`)
         }
-        // Mark LOOSELY-typed props inline so they're visible in the .res: a real
-        // but complex type widened to the fallback. Shows the original TS type.
-        const isLoose = p.type.kind === 'opaque' || (p.type.kind === 'review' && p.inherited)
-        const trailing = isLoose
-            ? `  // ⚪ loose — was \`${(p.tsType || p.type.text || '').slice(0, 90)}\``
-            : ''
-        lines.push(`  ${asPrefix}~${id}: ${ty}${p.optional ? '=?' : ''},${trailing}`)
     }
     lines.push(`) => React.element = ${JSON.stringify(ir.import.name)}`)
     lines.push('')
 
     return lines.join('\n')
+}
+
+// ── Type-declaration renderers (shared by single-file `emit` and module emit) ──
+
+/** Append `type x = | @as("a") A | …` declarations for each enum. */
+function renderEnums(enums, lines) {
+    for (const e of enums || []) {
+        lines.push(`type ${e.name} =`)
+        for (const m of e.members) lines.push(`  | @as(${JSON.stringify(m.as)}) ${m.ctor}`)
+    }
+}
+
+/** An `@unboxed` variant must be emitted AFTER any record it references (so it's defined
+ *  before use). True if a member's type tree contains ANY `typeRef` — directly
+ *  (`string | {key,color}`) or nested (a `Fn` over `menuItemType`). Primitive-only ones
+ *  (`string | number`) emit BEFORE records that reference them. */
+function isObjectUnboxed(u) {
+    return (u.members || []).some((m) => {
+        const refs = new Set()
+        collectRefNames(m.type, refs)
+        return refs.size > 0
+    })
+}
+
+/** Append one `@unboxed type x<'a> = Str(string) | Fn(… => 'a) | @as("…") Lit | …`. */
+function renderUnboxed(unboxed, lines, cfg) {
+    for (const u of unboxed || []) {
+        const tp = u.tparams && u.tparams.length ? `<${u.tparams.join(', ')}>` : '' // generic: foo<'a>
+        const ctors = u.members.map((m) =>
+            m.as !== undefined
+                ? `@as(${m._num ? m.as : JSON.stringify(m.as)}) ${m.ctor}`
+                : `${m.ctor}(${renderType(m.type, '', cfg)})`
+        ).join(' | ')
+        lines.push(`@unboxed type ${u.name}${tp} = ${ctors}`)
+    }
+}
+
+/** Collect the typeRef target NAMES an IR type tree references (single-file dep graph). */
+function collectRefNames(t, out) {
+    if (!t || typeof t !== 'object') return
+    if (t.kind === 'typeRef' && t.to) out.add(t.to)
+    if (t.of) collectRefNames(t.of, out)
+    if (t.ret) collectRefNames(t.ret, out)
+    if (t.arg) collectRefNames(t.arg, out)
+    if (Array.isArray(t.params)) t.params.forEach((p) => collectRefNames(p, out))
+    if (Array.isArray(t.fields)) t.fields.forEach((f) => collectRefNames(f.type, out))
+}
+
+/**
+ * Emit a module's records + object-bearing `@unboxed` variants in DEPENDENCY order
+ * (a type before anything that uses it), since `@unboxed` can't live in a `type rec`
+ * group. Mutually-recursive records collapse into one `type rec … and …` group.
+ * `idOf(node)` and `depsOf(node)→iterable<id>` identify each type and its references.
+ */
+function emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg) {
+    const items = [
+        ...records.map((r) => ({ kind: 'record', node: r, id: idOf(r) })),
+        ...objUnboxed.map((u) => ({ kind: 'unboxed', node: u, id: idOf(u) })),
+        ...opaque.map((o) => ({ kind: 'opaque', node: o, id: idOf(o) })),
+    ]
+    if (!items.length) return
+    const byId = new Map(items.map((it) => [it.id, it]))
+    const edges = new Map()
+    for (const it of items) {
+        const ds = new Set()
+        for (const d of depsOf(it.node)) if (byId.has(d) && d !== it.id) ds.add(d)
+        edges.set(it.id, ds)
+    }
+    // Tarjan yields SCCs in reverse-topological order (a type's dependencies first) —
+    // exactly the define-before-use order ReScript needs (records, the opaque modules they
+    // use, and the records that use those opaque modules all interleave correctly).
+    for (const comp of tarjanSCC([...byId.keys()], edges)) {
+        const members = comp.map((id) => byId.get(id))
+        const recItems = members.filter((m) => m.kind === 'record')
+        const recs = recItems.map((m) => m.node)
+        const ubs = members.filter((m) => m.kind === 'unboxed').map((m) => m.node)
+        const ops = members.filter((m) => m.kind === 'opaque').map((m) => m.node)
+        // `rec` only when actually recursive: a mutual group (>1) or a self-referencing record.
+        const selfRec = recItems.some((it) => { for (const d of depsOf(it.node)) if (d === it.id) return true; return false })
+        if (recs.length) renderRecordGroup(recs, lines, cfg, recs.length > 1 || selfRec)
+        if (ops.length) ops.forEach((o) => renderOpaque(o, lines, cfg))
+        if (ubs.length) renderUnboxed(ubs, lines, cfg)
+    }
+}
+
+/** Append an opaque-type module for a multi-object union (the idiomatic ReScript pattern,
+ *  like `React.element` + `React.string`): an abstract `t` plus a zero-cost `%identity`
+ *  `from*` constructor per member. The prop is typed `Module.t`; the consumer builds a typed
+ *  value and `->fromX`-casts it (compiles to the raw value). */
+function renderOpaque(t, lines, cfg) {
+    const titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1)
+    const pascalName = (s) => String(s).replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('')
+    const fromName = (m) => m.name
+        ? 'from' + pascalName(m.name) // explicit hint: Element -> fromElement, Files -> fromFiles
+        : 'from' + titleCase(m.type.kind === 'typeRef' ? m.type.to.replace(/\.t$/, '') : (m.type.res || m.type.kind || 'value'))
+    lines.push(`module ${t.name} = {`)
+    lines.push(`  type t`)
+    const seen = new Set()
+    for (const m of t.members) {
+        const fn = fromName(m)
+        if (seen.has(fn)) continue
+        seen.add(fn)
+        lines.push(`  external ${fn}: ${renderType(m.type, '', cfg)} => t = "%identity"`)
+    }
+    lines.push(`}`)
+}
+
+/** Append a record group. `isRec` (self- or mutually-recursive group) selects `type rec`;
+ *  a plain non-recursive record is just `type x = {…}` (no needless `rec`). */
+function renderRecordGroup(records, lines, cfg, isRec) {
+    ;(records || []).forEach((r, i) => {
+        const tp = r.tparams && r.tparams.length ? `<${r.tparams.join(', ')}>` : '' // generic: foo<'a>
+        const kw = i === 0 ? (isRec ? 'type rec' : 'type') : 'and'
+        lines.push(`${kw} ${r.name}${tp} = {`)
+        if (r.spread) lines.push(`  ...${r.spread},`) // e.g. ...JsxDOM.domProps (the HTML attrs)
+        const seenIds = new Set()
+        for (const f of r.fields) {
+            const { as, id } = label(f.name)
+            if (seenIds.has(id)) continue // dedupe fields that collapse to the same id (e.g. two -> as_)
+            seenIds.add(id)
+            const asPrefix = as ? `@as(${JSON.stringify(as)}) ` : ''
+            const ty = renderType(f.type, f.name, cfg)
+            lines.push(`  ${asPrefix}${id}${f.optional ? '?' : ''}: ${ty},`)
+        }
+        lines.push('}')
+    })
+}
+
+/** Return the first `note` (an "approximate mapping, here's the caveat" message) anywhere
+ *  in a prop's IR type tree, or null. */
+function findNote(t) {
+    if (!t || typeof t !== 'object') return null
+    if (t.note) return t.note
+    for (const k of ['of', 'ret', 'arg']) { if (t[k]) { const n = findNote(t[k]); if (n) return n } }
+    if (Array.isArray(t.params)) for (const p of t.params) { const n = findNote(p); if (n) return n }
+    return null
+}
+
+/**
+ * Walk a prop's IR type tree and return the WORST imperfection found anywhere
+ * (nested in arrays, dicts, callbacks, records-by-ref are already named so safe),
+ * or null if the whole tree maps exactly. Priority: unknown/any > review > opaque.
+ * @param {object} t
+ * @returns {'unknown'|'any'|'review'|'opaque'|null}
+ */
+function imperfection(t) {
+    if (!t) return null
+    if (t.kind === 'unknown') return 'unknown'
+    if (t.kind === 'any') return 'any'
+    const rank = { unknown: 3, any: 3, review: 2, opaque: 1 }
+    let worst = t.kind === 'review' ? 'review' : t.kind === 'opaque' ? 'opaque' : null
+    const consider = (x) => {
+        const r = imperfection(x)
+        if (r && (!worst || rank[r] > rank[worst])) worst = r
+    }
+    if (t.of) consider(t.of)
+    if (t.ret) consider(t.ret)
+    if (t.arg) consider(t.arg)
+    if (t.params) t.params.forEach(consider)
+    return worst
 }
 
 /**
@@ -206,22 +412,119 @@ export function report(ir) {
     const loose = []
     const defects = []
     const review = []
-    const verdict = (t) => {
-        if (!t) return null
-        if (t.kind === 'unknown' || t.kind === 'any') return t.kind
-        if (t.kind === 'opaque') return 'opaque'
-        if (t.kind === 'review') return 'review'
-        if (t.of) return verdict(t.of)
-        if (t.arg) return verdict(t.arg)
-        return null
-    }
     for (const p of ir.props) {
-        const v = verdict(p.type)
+        const v = imperfection(p.type) // same recursion the emitter uses — report ⇔ code agree
         if (!v) continue
         const item = { prop: p.name, kind: v, tsType: p.tsType, declText: p.declText }
         if (v === 'unknown' || v === 'any') defects.push(item)
-        else if (v === 'review' && !p.inherited) review.push(item) // needs human, multi-type
-        else { item.emittedAs = 'string'; loose.push(item) } // opaque, or inherited review
+        else if (v === 'review') review.push(item)
+        else { item.emittedAs = 'string'; loose.push(item) } // opaque
     }
     return { loose, defects, review }
+}
+
+// ── Module mode: group the shared-type registry into per-domain `*Types.res` ──
+// modules, merging dependency cycles (e.g. Sidebar ⇄ Topbar) into one module.
+
+/**
+ * A typeRef resolver for module mode: maps a typeRef's home domain to its FINAL
+ * module (post-SCC) and qualifies it — `MenuTypes.menuItemType`. When emitting a
+ * type module, same-module refs stay bare; for component files pass `currentModule`
+ * = null so everything is qualified.
+ * @param {Map<string,string>} finalOf  home-domain -> final module name
+ * @param {string|null} currentModule
+ * @returns {(t:object)=>string}
+ */
+export function makeResolveRef(finalOf, currentModule) {
+    return (t) => {
+        const fm = finalOf.get(t.home) || t.home || 'CommonTypes'
+        return currentModule && fm === currentModule ? t.to : `${fm}.${t.to}`
+    }
+}
+
+/** Tarjan's strongly-connected-components over a node list + adjacency map. */
+function tarjanSCC(nodes, edges) {
+    let index = 0
+    const idx = new Map(), low = new Map(), onStack = new Set(), stack = []
+    const sccs = []
+    const strongconnect = (v) => {
+        idx.set(v, index); low.set(v, index); index++
+        stack.push(v); onStack.add(v)
+        for (const w of (edges.get(v) || [])) {
+            if (!idx.has(w)) { strongconnect(w); low.set(v, Math.min(low.get(v), low.get(w))) }
+            else if (onStack.has(w)) { low.set(v, Math.min(low.get(v), idx.get(w))) }
+        }
+        if (low.get(v) === idx.get(v)) {
+            const comp = []
+            let w
+            do { w = stack.pop(); onStack.delete(w); comp.push(w) } while (w !== v)
+            sccs.push(comp)
+        }
+    }
+    for (const v of nodes) if (!idx.has(v)) strongconnect(v)
+    return sccs
+}
+
+/**
+ * Plan the per-domain type modules from the registry: build the domain dependency
+ * graph from each type's reference edges, run SCC to collapse cyclic groups into one
+ * module, and bucket every type into its FINAL module.
+ * @param {{byKey:Map, entries:Array}} shared  the registry from extractModule
+ * @returns {{ finalOf: Map<string,string>, byModule: Map<string, Array> }}
+ */
+export function planSharedModules(shared) {
+    const { byKey, entries } = shared
+    const nodes = [...new Set(entries.map((e) => e.home))]
+    const edges = new Map(nodes.map((n) => [n, new Set()]))
+    for (const e of entries) {
+        for (const depKey of e.deps || []) {
+            const dep = byKey.get(depKey)
+            if (dep && dep.home !== e.home) edges.get(e.home).add(dep.home)
+        }
+    }
+    const finalOf = new Map()
+    for (const comp of tarjanSCC(nodes, edges)) {
+        // singleton -> its own module; cycle -> merge members into one module
+        const fm = comp.length === 1
+            ? comp[0]
+            : comp.map((h) => h.replace(/Types$/, '')).sort().join('') + 'Types'
+        for (const h of comp) finalOf.set(h, fm)
+    }
+    const byModule = new Map()
+    for (const e of entries) {
+        const fm = finalOf.get(e.home)
+        if (!byModule.has(fm)) byModule.set(fm, [])
+        byModule.get(fm).push(e)
+    }
+    return { finalOf, byModule }
+}
+
+/**
+ * Render one shared `*Types.res` module: its enums, then `@unboxed` variants, then
+ * records (one `type rec … and …` group). Cross-module references are qualified.
+ * @param {string} mod         the final module name (e.g. `MenuTypes`)
+ * @param {Array} entries      the registry entries whose final module is `mod`
+ * @param {Map<string,string>} finalOf
+ * @param {{refType?:string, opaqueFallback?:string}} [options]
+ * @returns {string}
+ */
+export function emitSharedModule(mod, entries, finalOf, options = {}) {
+    const cfg = {
+        refType: options.refType || 'React.ref<Nullable.t<Dom.element>>',
+        opaqueFallback: options.opaqueFallback || 'string',
+        resolveRef: makeResolveRef(finalOf, mod),
+    }
+    const lines = []
+    const unboxed = entries.filter((e) => e.kind === 'unboxed')
+    const records = entries.filter((e) => e.kind === 'record')
+    const objUnboxed = unboxed.filter(isObjectUnboxed)
+    const opaque = entries.filter((e) => e.kind === 'opaque')
+    const idOf = (e) => e.key
+    const depsOf = (e) => e.deps || []
+    if (hasRecGroupLabelCollision(records, objUnboxed, opaque, idOf, depsOf)) lines.push('@@warning("-30")', '') // silence duplicate-label noise
+    renderEnums(entries.filter((e) => e.kind === 'enum'), lines)
+    renderUnboxed(unboxed.filter((u) => !isObjectUnboxed(u)), lines, cfg) // primitive: before records
+    // records + object-bearing variants + opaque-type modules in dependency order
+    emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg)
+    return lines.join('\n') + '\n'
 }

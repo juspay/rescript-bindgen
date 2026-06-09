@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   test:
-    name: Test
+    name: Test (smoke + golden snapshot)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,11 +26,35 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Smoke test
+      # Smoke test + golden snapshot diff (generated output vs committed goldens).
+      # Deterministic and offline — blocking. See docs/TYPE_MAPPING.md.
+      - name: Smoke + golden snapshot
         run: npm test
 
-  # Integration: actually generate blend bindings and compile them on ReScript 12.
-  # Informational — uses the published latest blend; does not block on flaky network.
+  # Compile every golden fixture's output on ReScript 12 — proves the bindings are
+  # valid, not just shape-matched. Deterministic and offline — blocking.
+  compile:
+    name: Golden compile (ReScript 12)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install ReScript sandbox deps
+        run: npm --prefix test/sandbox ci || npm --prefix test/sandbox install
+
+      - name: Compile goldens
+        run: npm run test:compile
+
+  # Integration: generate bindings for the latest published blend and compile them.
+  # Informational — depends on npm + the published package, so it must not block CI.
   integration:
     name: Generate + compile (blend latest)
     runs-on: ubuntu-latest
@@ -49,5 +73,10 @@ jobs:
       - name: Install ReScript sandbox deps
         run: npm --prefix test/sandbox ci || npm --prefix test/sandbox install
 
-      - name: Generate blend bindings and compile-check
-        run: npm run gen:blend -- @juspay/blend-design-system@latest --out generated/ci --compile
+      - name: Generate blend bindings
+        run: npm run gen -- --pkg @juspay/blend-design-system@latest --out test/sandbox/src --from "@juspay/blend-design-system" --webapi --yes
+
+      - name: Compile-check generated bindings
+        run: |
+          printf 'module File = {\n  type t\n}\nmodule FileList = {\n  type t\n}\nmodule FormData = {\n  type t\n}\n' > test/sandbox/src/Webapi.res
+          npx --prefix test/sandbox rescript build || (cd test/sandbox && npx rescript build)

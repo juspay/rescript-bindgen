@@ -17,6 +17,141 @@
 
 import ts from 'typescript'
 import { dirname } from 'path'
+import { DOM_ELEMENT_BY_LOWER, DOM_PROPS_FIELDS } from './stdlib-types.mjs'
+
+/** Map a TS DOM element name to the exact built-in Dom type, e.g.
+ *  `HTMLDivElement` -> `Dom.htmlDivElement`; falls back to `Dom.element`. */
+function domElementType(name) {
+    const specific = DOM_ELEMENT_BY_LOWER.get(String(name).toLowerCase())
+    return specific ? `Dom.${specific}` : 'Dom.element'
+}
+
+/** Is this type declared in a known library (not first-party)? Used to avoid
+ *  generating records for React/DOM/csstype/styled-components library objects. */
+function isLibraryType(type) {
+    const sym = type.aliasSymbol || (type.getSymbol && type.getSymbol()) || type.symbol
+    const decl = sym && sym.getDeclarations && sym.getDeclarations()[0]
+    const file = (decl && decl.getSourceFile().fileName) || ''
+    return /node_modules\/(@types|typescript|csstype|styled-components|@floating-ui)\//.test(file) ||
+        /\/lib\.(dom|es|scripthost)/.test(file)
+}
+
+// TS utility-type aliases that WRAP another type: the alias itself lives in lib.es5,
+// but the CONTENT is the inner type arg. We "see through" them so `Partial<MenuProps>`
+// (and nested `Partial<Omit<…>>`) still resolves to its first-party object instead of
+// being rejected as a "library" type. `Record` is handled earlier (as a dict) and
+// `Exclude`/`Extract` resolve to unions, so neither belongs here.
+const UTILITY_ALIASES = new Set(['Partial', 'Required', 'Readonly', 'Pick', 'Omit', 'NonNullable'])
+
+/** Recursively descend `Partial<Omit<X, …>>` → `X` by following the first alias type
+ *  argument while the alias is a known utility wrapper. Returns the innermost type
+ *  (or the input unchanged if it isn't a utility wrap). */
+function unwrapUtility(type) {
+    let t = type
+    for (let i = 0; i < 8; i++) {
+        const a = t.aliasSymbol && t.aliasSymbol.getName()
+        if (!a || !UTILITY_ALIASES.has(a)) break
+        const inner = t.aliasTypeArguments && t.aliasTypeArguments[0]
+        if (!inner) break
+        t = inner
+    }
+    return t
+}
+
+// ── Shared-type registry (module mode) ──────────────────────────────────────
+// When generating a whole package, every named/anonymous type is registered ONCE
+// in a module-level `shared` registry (keyed by `type.id`), assigned a HOME module
+// derived from its source `.d.ts`, and referenced from there — so `tooltipSide`
+// isn't redeclared in 8 files. emit.mjs groups these by home, merges cyclic groups
+// (SCC), and emits one `*Types.res` per module. Single-file mode doesn't use this.
+
+/** The declaring `.d.ts` file of a type (via its alias/symbol), or null. */
+function declFileOf(type) {
+    const sym = (type.aliasSymbol) || (type.getSymbol && type.getSymbol()) || type.symbol
+    const decl = sym && sym.getDeclarations && sym.getDeclarations()[0]
+    return decl ? decl.getSourceFile().fileName : null
+}
+
+/** Derive a ReScript type-module name from a source path:
+ *  `.../components/Tooltip/types.d.ts` -> `TooltipTypes`; non-component or
+ *  unknown sources fall back to the parent dir, else `CommonTypes`. */
+function homeModuleOf(file) {
+    if (!file) return 'CommonTypes'
+    const cm = file.match(/\/components\/([^/]+)\//)
+    let base
+    if (cm) base = cm[1]
+    else {
+        const parts = file.replace(/\.d\.ts$/, '').split('/')
+        base = parts[parts.length - 2] || parts[parts.length - 1] || 'Common'
+    }
+    base = base.replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(/\s+/)
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('')
+    if (!/^[A-Z]/.test(base)) base = 'M' + base
+    return base + 'Types'
+}
+
+/** Home module for a generated type — by its (unwrapped) declaration file,
+ *  falling back to the current component's source file for anonymous types. */
+function homeOf(type, ctx) {
+    return homeModuleOf(declFileOf(unwrapUtility(type)) || ctx.sourceFile)
+}
+
+/** A generic type argument that's really a "fill-in-anything" placeholder — the export
+ *  erased a `<T>` by instantiating it to `unknown` / `any` / `{}` / `Record<string, unknown>`.
+ *  Such args are recovered as ReScript type variables, not bound concretely.
+ *  A real shape (named props) or a typed record (`Record<string, string>`) returns false. */
+function isPlaceholderArg(t, checker) {
+    if (t.flags & (ts.TypeFlags.Unknown | ts.TypeFlags.Any)) return true
+    if (t.flags & ts.TypeFlags.Object) {
+        if (t.getProperties().length) return false // a concrete shape, not a placeholder
+        const idx = checker.getIndexInfoOfType(t, ts.IndexKind.String)
+        if (!idx) return true // bare `{}`
+        return !!(idx.type.flags & (ts.TypeFlags.Unknown | ts.TypeFlags.Any)) // Record<string, unknown>
+    }
+    return false
+}
+
+/** A globally-unique ReScript type name (suffix on collision) so two domains that
+ *  merge into one module via SCC never clash. */
+function uniqueName(base, shared) {
+    let n = base, i = 2
+    while (shared.names.has(n)) n = base + i++
+    shared.names.add(n)
+    return n
+}
+
+/** Build an IR typeRef from a registry entry, carrying its key + home so emit can
+ *  qualify it by the entry's final (post-SCC) module. */
+function refTo(entry) {
+    const r = { kind: 'typeRef', to: entry.name, key: entry.key, home: entry.home }
+    if (entry.tparams && entry.tparams.length) r.tparams = entry.tparams // generic record -> name<'a>
+    if (entry.kind === 'enum') r._enum = true
+    if (entry.kind === 'unboxed') r._unboxed = true
+    return r
+}
+
+/** Collect the registry keys an IR type tree references (for the module graph). */
+function collectRefKeys(t, out) {
+    if (!t || typeof t !== 'object') return
+    if (t.key) out.add(t.key)
+    if (t.of) collectRefKeys(t.of, out)
+    if (t.ret) collectRefKeys(t.ret, out)
+    if (t.arg) collectRefKeys(t.arg, out)
+    if (Array.isArray(t.params)) t.params.forEach((p) => collectRefKeys(p, out))
+}
+
+/** Collect the ReScript type-variable names ('a, 'b) an IR type tree uses, so a record
+ *  containing them can be emitted parameterized (`type foo<'a> = {…}`). */
+function collectTypeVars(t, out) {
+    if (!t || typeof t !== 'object') return
+    if (t.kind === 'typeVar' && t.name) out.add(t.name)
+    if (t.kind === 'typeRef' && Array.isArray(t.tparams)) t.tparams.forEach((x) => out.add(x))
+    if (t.of) collectTypeVars(t.of, out)
+    if (t.ret) collectTypeVars(t.ret, out)
+    if (t.arg) collectTypeVars(t.arg, out)
+    if (Array.isArray(t.params)) t.params.forEach((p) => collectTypeVars(p, out))
+    if (Array.isArray(t.fields)) t.fields.forEach((f) => collectTypeVars(f.type, out))
+}
 
 /**
  * React/DOM event types -> their ReScript equivalents. Matched by the type's
@@ -234,10 +369,55 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
         propsType = args[0] || compType
     }
 
+    // Generic component (e.g. `VirtualList<T extends VirtualListItem>`): map each of the
+    // signature's type parameters to a ReScript type variable ('a, 'b, …). classify turns
+    // a `T` prop into `{kind:'typeVar'}`, so `items: T[]` becomes `array<'a>` and the
+    // `external make` is polymorphic (the `extends` constraint is dropped, as in juspay's
+    // hand-written DataTable binding).
+    const typeVars = new Map()
+    const TV = ['a', 'b', 'c', 'd', 'e', 'f']
+    const tparams = (sigs.length && sigs[0].typeParameters) || []
+    tparams.forEach((tp, i) => { if (tp.symbol) typeVars.set(tp.symbol, "'" + (TV[i] || `t${i}`)) })
+
+    // Erased generic: a `forwardRef`/`memo` export pins a generic props alias to a
+    // placeholder type argument (e.g. `DataTableProps<Record<string, unknown>>`), so the
+    // call signature above is monomorphic and every `T` would surface as the placeholder.
+    // Recover the generic: find the aliased props member, map each placeholder type-param
+    // back to a ReScript type variable, and re-bind against the *generic declared* props so
+    // `T` reappears as a TypeParameter — classify then yields `'a` and records parameterize
+    // themselves (the same machinery the VirtualList<T> path uses).
+    if (typeVars.size === 0) {
+        const inter = (propsType.flags & ts.TypeFlags.Intersection) ? propsType.types : [propsType]
+        for (const m of inter) {
+            const aliasSym = m.aliasSymbol
+            const args = m.aliasTypeArguments || []
+            const tpNodes = (aliasSym && aliasSym.declarations && aliasSym.declarations[0] && aliasSym.declarations[0].typeParameters) || []
+            if (!aliasSym || !args.length || !tpNodes.length) continue
+            let n = 0, hit = false
+            args.forEach((arg, i) => {
+                if (isPlaceholderArg(arg, checker) && tpNodes[i] && tpNodes[i].symbol) {
+                    typeVars.set(tpNodes[i].symbol, "'" + (TV[n++] || `t${i}`))
+                    hit = true
+                }
+            })
+            if (hit) { propsType = checker.getDeclaredTypeOfSymbol(aliasSym); break }
+        }
+    }
+
     const enums = []
     const records = []
     const unboxed = []
-    const ctx = { checker, decl, enums, records, unboxed, seenEnums: new Map(), seenRecords: new Map(), seenUnboxed: new Map() }
+    // `shared` (module mode) routes all generated types into ONE module-level registry
+    // deduped by type.id; absent (single-file mode) -> the local enums/records/unboxed
+    // arrays are used and the file stays self-contained. `sourceFile` is the home
+    // fallback for anonymous types with no declaration symbol.
+    const ctx = {
+        checker, decl, enums, records, unboxed, webapi: !!opts.webapi,
+        seenEnums: new Map(), seenRecords: new Map(), seenUnboxed: new Map(),
+        shared: opts.shared || null,
+        typeVars,
+        sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
+    }
     const allow = new Set(opts.htmlAllowlist || DEFAULT_HTML_ALLOWLIST)
 
     const isInherited = (p) => {
@@ -323,6 +503,11 @@ export function extractModule(entryFile, opts = {}) {
     const exports = checker.getExportsOfModule(moduleSymbol)
     const from = opts.from
 
+    // Module-level registry: every generated type lives here ONCE, keyed by type.id
+    // (structural name for synthesized @unboxed), with a home module + reference edges.
+    // emit.mjs groups these by home, SCC-merges cycles, and writes one `*Types.res` each.
+    const shared = { byKey: new Map(), entries: [], names: new Set() }
+
     const components = []
     const skipped = []
     const seen = new Set()
@@ -342,7 +527,7 @@ export function extractModule(entryFile, opts = {}) {
         try { type = checker.getTypeOfSymbolAtLocation(sym, decl) } catch { skipped.push({ name, reason: 'type-error' }); continue }
         if (!isReactComponent(type, checker)) { skipped.push({ name, reason: 'not-a-component' }); continue }
         try {
-            const ir = buildComponentIR(checker, sym, source, name, from, opts)
+            const ir = buildComponentIR(checker, sym, source, name, from, { ...opts, shared })
             seen.add(name)
             if (ir.props.length) components.push({ name, ir })
             else skipped.push({ name, reason: 'no-props' })
@@ -350,7 +535,7 @@ export function extractModule(entryFile, opts = {}) {
             skipped.push({ name, reason: 'extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
         }
     }
-    return { components, skipped }
+    return { components, skipped, shared }
 }
 
 /**
@@ -388,12 +573,35 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (depth > MAX_DEPTH) return { kind: 'opaque', text: checker.typeToString(type) }
     if (type.id != null) {
         if (!ctx.visiting) ctx.visiting = new Set()
-        if (ctx.visiting.has(type.id)) return { kind: 'opaque', text: checker.typeToString(type) }
+        if (ctx.visiting.has(type.id)) {
+            // A back-reference into a record we're still building (e.g. MenuItemType's
+            // `subMenu?: MenuItemType[]`): resolve to that record's typeRef instead of a
+            // lossy `opaque`/string. The name was registered early in recordNode.
+            if (ctx.shared) {
+                const e = ctx.shared.byKey.get('id:' + type.id)
+                if (e) return refTo(e)
+            }
+            const nm = typeName(type)
+            const k = nm && lower(nm)
+            if (k && ctx.seenRecords.has(k)) return { kind: 'typeRef', to: k }
+            return { kind: 'opaque', text: checker.typeToString(type) }
+        }
     }
 
-    // unknown / any -> flagged defect, never mapped.
-    if (flags & ts.TypeFlags.Unknown) return { kind: 'unknown' }
+    // `unknown` -> `JSON.t`: an opaque value the consumer builds/decodes. This is the
+    // honest mapping for a genuinely-unknown value (a callback-supplied id, an opaque
+    // filter) — unlike a type variable, which would be unsound in callback position.
+    // `any` stays a flagged defect (it means "untyped", not "opaque value").
+    if (flags & ts.TypeFlags.Unknown) return { kind: 'raw', res: 'JSON.t' }
     if (flags & ts.TypeFlags.Any) return { kind: 'any' }
+
+    // A generic type parameter `T` -> the ReScript type variable it was mapped to ('a).
+    // An unmapped param (e.g. from a nested generic not on the component signature) is
+    // flagged rather than silently widened.
+    if (flags & ts.TypeFlags.TypeParameter) {
+        const tv = ctx.typeVars && ctx.typeVars.get(type.symbol)
+        return tv ? { kind: 'typeVar', name: tv } : { kind: 'unknown' }
+    }
 
     // primitives
     if (flags & ts.TypeFlags.String) return { kind: 'string' }
@@ -412,12 +620,43 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (name === 'CSSProperties') return { kind: 'style' }
     if (name === 'Ref' || name === 'RefObject' || name === 'MutableRefObject' || name === 'LegacyRef')
         return { kind: 'domRef' }
-    if (name && /Element$/.test(name) && /^(HTML|SVG|Dom)/.test(name)) return { kind: 'domElement' }
+    // Specific DOM elements -> Dom.htmlDivElement etc. (built-in, no dep);
+    // generic Element/Node -> Dom.element/Dom.node.
+    if (name && /Element$/.test(name) && /^(HTML|SVG|Dom)/.test(name))
+        return { kind: 'raw', res: domElementType(name) }
+    if (name === 'Element') return { kind: 'domElement' }
+    if (name === 'Node') return { kind: 'raw', res: 'Dom.node' }
+
+    // File / FileList / FormData -> rescript-webapi, only if the project depends on it (ctx.webapi).
+    if (name === 'File') return ctx.webapi ? { kind: 'raw', res: 'Webapi.File.t' } : { kind: 'opaque', text: 'File' }
+    if (name === 'FileList') return ctx.webapi ? { kind: 'raw', res: 'Webapi.FileList.t' } : { kind: 'opaque', text: 'FileList' }
+    if (name === 'FormData') return ctx.webapi ? { kind: 'raw', res: 'Webapi.FormData.t' } : { kind: 'opaque', text: 'FormData' }
 
     // React `*EventHandler` alias (e.g. InputEventHandler<T>) -> a typed callback.
     // Handled here because these often expose no call signature to fall through to.
+    // Uses `params` (not `arg`) so emit's callback renderer picks it up — an `arg`
+    // here renders as `unit => unit` (the event payload is silently dropped).
     if (name && EVENT_HANDLERS[name]) {
-        return { kind: 'callback', arg: { kind: 'event', res: EVENT_HANDLERS[name] }, ret: { kind: 'unit' } }
+        return { kind: 'callback', params: [{ kind: 'event', res: EVENT_HANDLERS[name] }], ret: { kind: 'unit' } }
+    }
+
+    // A component-VALUED prop (`ComponentType<P>`, `FC<P>`, `FunctionComponent<P>`,
+    // `ComponentClass<P>`) -> `React.component<p>`, where `p` is the bound props record.
+    // Only used when the props argument classifies cleanly; otherwise we fall through.
+    if (name && /^(ComponentType|ComponentClass|FunctionComponent|FC)$/.test(name)) {
+        const pArg = (type.aliasTypeArguments || checker.getTypeArguments?.(type) || [])[0]
+        const props = pArg ? classify(pArg, ctx, propName, depth + 1) : null
+        if (props && !['opaque', 'review', 'unknown', 'any'].includes(props.kind)) {
+            return { kind: 'reactComponent', of: props }
+        }
+    }
+
+    // `ReactNode & (string | number)` etc. — a children-style intersection. The
+    // `& ReactNode` is noise the component wrapper adds; treat the whole thing as
+    // `React.element` (which already covers strings/numbers as renderable nodes).
+    if ((flags & ts.TypeFlags.Intersection) &&
+        (type.types || []).some((p) => /ReactElement|ReactNode/.test(typeName(p) || ''))) {
+        return { kind: 'reactElement' }
     }
 
     // enum (real TS enum used as a type)
@@ -431,10 +670,19 @@ function classify(type, ctx, propName = '', depth = 0) {
         return { kind: 'array', of: classify(elem, ctx, propName, depth + 1) }
     }
 
-    // Record<K,V> / index-signature dicts
+    // Record<K,V> -> `Dict.t<V>`. A mapped `Record<>` isn't a TypeReference, so
+    // `getTypeArguments` is empty; read the value type from the alias args, falling
+    // back to the string index signature.
     if (name === 'Record') {
-        const args = checker.getTypeArguments(type)
-        return { kind: 'dict', of: args[1] ? classify(args[1], ctx, propName, depth + 1) : { kind: 'opaque', text: 'JSON.t' } }
+        const args = type.aliasTypeArguments || checker.getTypeArguments(type) || []
+        let val = args[1]
+        if (!val) { const si = checker.getIndexInfoOfType?.(type, ts.IndexKind.String); val = si && si.type }
+        return { kind: 'dict', of: val ? classify(val, ctx, propName, depth + 1) : { kind: 'opaque', text: 'JSON.t' } }
+    }
+    // `{ [k: string]: V }` — a string-index map with no named props -> `Dict.t<V>`.
+    const strIndex = checker.getIndexInfoOfType?.(type, ts.IndexKind.String)
+    if (strIndex && type.getProperties().length === 0) {
+        return { kind: 'dict', of: classify(strIndex.type, ctx, propName, depth + 1) }
     }
 
     // functions / callbacks
@@ -448,17 +696,34 @@ function classify(type, ctx, propName = '', depth = 0) {
         return unionNode(type, ctx, propName, depth)
     }
 
-    // anonymous object literal -> inline record.
-    // Only genuine anonymous literals (symbol "__type") become records;
-    // named/complex library objects are emitted opaque to avoid deep graphs.
-    const sym = type.getSymbol() || type.symbol
-    const isAnonObject =
-        flags & ts.TypeFlags.Object &&
-        type.getProperties().length > 0 &&
-        sym &&
-        sym.getName() === '__type'
-    if (isAnonObject) {
-        return recordNode(type, ctx, propName, depth)
+    // object / intersection types -> records (the checker flattens `A & B`):
+    //  - anonymous literals (symbol "__type") -> inline record named after the prop
+    //  - first-party NAMED interface (AvatarData) or alias-to-intersection (ButtonProps)
+    //    -> a record named after the type, spreading JsxDOM.domProps for the HTML part
+    //  - utility-wrapped first-party object (Partial<MenuProps>, Omit<TagProps,…>,
+    //    nested Partial<Omit<…>>) -> "see through" the wrapper: judge library-ness by
+    //    the unwrapped core, and name the record after the PROP (the wrapped shape
+    //    differs from the bare type, so it must be its own distinct record).
+    const core = unwrapUtility(type)
+    const isUtilityWrap = core !== type
+    const libCore = isUtilityWrap ? core : type
+    // `Omit<ButtonHTMLAttributes,"type">` (and bare `*HTMLAttributes`) = "all HTML attrs".
+    // The core is a library (@types/react) type, but it maps cleanly to a record that
+    // spreads `JsxDOM.domProps`, so allow it through the library gate. (Scoped to
+    // /HTMLAttributes/ so no other library type becomes a record.)
+    const isHtmlAttrs = /HTMLAttributes/.test(typeName(libCore) || '')
+    const isObjectish = flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)
+    if (isObjectish && type.getProperties().length > 0 && (!isLibraryType(libCore) || isHtmlAttrs)) {
+        const sym = type.getSymbol() || type.symbol
+        const symName = sym && sym.getName()
+        const cap = (n) => (n && /^[A-Z]/.test(n) ? n : null)
+        const named = isUtilityWrap
+            ? null
+            : cap(type.aliasSymbol && type.aliasSymbol.getName()) ||
+              cap(symName && symName !== '__type' ? symName : null)
+        if (named || isUtilityWrap || isHtmlAttrs || symName === '__type' || (flags & ts.TypeFlags.Intersection)) {
+            return recordNode(type, ctx, propName, depth, named)
+        }
     }
 
     // give up -> opaque, flagged for review
@@ -486,12 +751,102 @@ function enumNode(type, ctx, propName) {
             members.push({ as: String(value), ctor: pascal(basis) })
         }
     }
+    if (ctx.shared) return registerNamed(ctx, type, 'enum', lower(ename), { members })
     const key = lower(ename)
     if (!ctx.seenEnums.has(key)) {
         ctx.seenEnums.set(key, true)
         ctx.enums.push({ name: key, members })
     }
     return { kind: 'typeRef', to: key, _enum: true }
+}
+
+/**
+ * Register a NAMED type (enum/record) in the module-level registry, deduped by
+ * `type.id`. Returns its typeRef. For records, `data` is filled by the caller AFTER
+ * this returns the entry (so self-references resolve during field building).
+ * @returns {object} the typeRef (when reused) — see registerEntry for new ones
+ */
+function registerNamed(ctx, type, kind, base, data) {
+    const key = 'id:' + type.id
+    if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
+    const entry = { key, kind, name: uniqueName(base, ctx.shared), home: homeOf(type, ctx), deps: new Set(), ...data }
+    ctx.shared.byKey.set(key, entry)
+    ctx.shared.entries.push(entry)
+    return refTo(entry)
+}
+
+/**
+ * The "logical" members of a union, re-grouping flattened enum literals back into their
+ * enum type. TS represents `DateRangePreset | Foo` as `(CUSTOM | TODAY | … | Foo)` (the
+ * enum is spread into its literals); this collapses each enum's literals back to the one
+ * enum type. Null/undefined are dropped. Deduped by type id.
+ * @returns {ts.Type[]}
+ */
+function unionMembers(checker, u) {
+    const out = [], seen = new Set(), seenEnum = new Set()
+    for (const t of (u.types || [])) {
+        if (t.flags & (ts.TypeFlags.Null | ts.TypeFlags.Undefined)) continue
+        const sym = t.symbol
+        if ((t.flags & ts.TypeFlags.EnumLiteral) && sym && sym.parent) {
+            if (seenEnum.has(sym.parent)) continue
+            seenEnum.add(sym.parent)
+            const et = checker.getDeclaredTypeOfSymbol(sym.parent)
+            if (et && et.id != null && !seen.has(et.id)) { seen.add(et.id); out.push(et) }
+            continue
+        }
+        if (t.id != null && !seen.has(t.id)) { seen.add(t.id); out.push(t) }
+    }
+    return out
+}
+
+/**
+ * A union of MULTIPLE object shapes (e.g. `PresetsConfig = DateRangePreset |
+ * CustomPresetConfig | CustomPresetDefinition`) can't be an `@unboxed` variant (ReScript
+ * allows at most one object case). Bind it as an OPAQUE-type module (the idiomatic ReScript
+ * pattern — like `React.element` + `React.string`/`React.int`): an abstract `t` plus a
+ * zero-cost `%identity` `from*` constructor per member. The prop type is `Module.t` (kept
+ * TYPED), and the consumer builds a typed value and `->fromX`-casts it (compiles to the raw
+ * value). Returns the prop's typeRef (`<Module>.t`), or null if any member can't be cleanly
+ * typed (then the caller keeps it flagged).
+ * @returns {{kind:'typeRef', to:string, home:string, key:string} | null}
+ */
+function opaqueUnion(ctx, type, memberTypes, propName, depth) {
+    if (!ctx.shared) return null // module mode only
+    const key = 't:' + type.id
+    // carry the entry's `note` (how to construct the opaque value) onto each ref so
+    // emit can surface it inline on the prop — even on a memoized cache-hit.
+    const ref = (e) => ({ kind: 'typeRef', to: e.name + '.t', home: e.home, key: e.key, ...(e.note ? { note: e.note } : {}) })
+    if (ctx.shared.byKey.has(key)) return ref(ctx.shared.byKey.get(key))
+    const { checker } = ctx
+    const members = []
+    for (const mt of memberTypes) {
+        const node = classify(mt, ctx, propName, depth + 1)
+        if (!node || ['opaque', 'review', 'unknown', 'any'].includes(node.kind)) return null
+        // Constructor-name hint so emit produces clean `from*` names regardless of
+        // how the member renders: `Element` -> fromElement, `Element[]` ->
+        // fromElements (plural of the element's name), `File`/`File[]` ->
+        // fromFile/fromFiles. Falls back in emit when no hint is available.
+        const elem = asArray(mt, checker)
+        const name = elem ? (typeName(elem) ? typeName(elem) + 's' : undefined) : typeName(mt)
+        members.push({ type: node, name })
+    }
+    if (members.length < 2) return null
+    const name = uniqueName(pascal(typeName(type) || propName), ctx.shared) // a MODULE name
+    const deps = new Set()
+    for (const m of members) collectRefKeys(m.type, deps)
+    // Sit with the records it references (first dep's home); else the prop's own
+    // domain module (so anonymous prop-unions land in <Component>Types, not Common).
+    let home = homeOf(type, ctx)
+    if (deps.size) { const d = ctx.shared.byKey.get([...deps][0]); if (d && d.home) home = d.home }
+    // Note telling the caller how to build this opaque value (the `from*` ctors),
+    // since the prop only shows `<Module>.t`. Mirrors the Dom-node note convention.
+    const note = members.every((m) => m.name)
+        ? `was \`${checker.typeToString(type).replace(/ \| (null|undefined)\b/g, '')}\` — opaque; build with ${members.map((m) => `${name}.from${pascal(m.name)}`).join(' / ')}`
+        : undefined
+    const entry = { key, kind: 'opaque', name, home, members, deps, note }
+    ctx.shared.byKey.set(key, entry)
+    ctx.shared.entries.push(entry)
+    return ref(entry)
 }
 
 const RESCRIPT_RESERVED = new Set([
@@ -507,7 +862,10 @@ const RESCRIPT_RESERVED = new Set([
  * @returns {string}
  */
 function lower(s) {
-    let n = s.charAt(0).toLowerCase() + s.slice(1)
+    // de-acronym a leading uppercase run so `HTMLInputTypeAttribute` -> `htmlInputTypeAttribute`
+    // (not `hTMLInput…`); a plain name just gets its first char lowercased.
+    let n = s.replace(/^([A-Z]+)([A-Z][a-z])/, (_, run, next) => run.toLowerCase() + next)
+    if (n === s) n = s.charAt(0).toLowerCase() + s.slice(1)
     n = n.replace(/[^a-zA-Z0-9_]/g, '_')
     if (RESCRIPT_RESERVED.has(n) || /^[0-9]/.test(n)) n = n + '_'
     return n
@@ -533,11 +891,38 @@ function unionNode(type, ctx, propName, depth = 0) {
     )
     if (parts.length === 1) return classify(parts[0], ctx, propName, depth + 1)
 
-    // all string literals -> @as variant
-    if (parts.every((t) => t.isStringLiteral && t.isStringLiteral())) {
-        const ename = pascal(propName)
-        const members = parts.map((t) => ({ as: t.value, ctor: pascal(t.value) }))
-        const key = lower(ename)
+    // Collapse `T | (T & X)` to `T`. e.g. blend declares `value: string`, but the
+    // component wrapper intersects it with React's `value?: string | number | readonly
+    // string[]`, which TS distributes to `string | (string & readonly string[])`. The
+    // `string & readonly string[]` part is uninhabitable (no value is both), so the type
+    // is exactly `string` — emit it cleanly (not a flagged loose fallback). An
+    // intersection counts as primitive `T` when one of its parts is that primitive.
+    const primOf = (t) => {
+        if (t.flags & ts.TypeFlags.String) return 'string'
+        if (t.flags & ts.TypeFlags.Number) return 'number'
+        if (t.flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) return 'boolean'
+        if (t.flags & ts.TypeFlags.Intersection) {
+            const p = (t.types || []).map(primOf).find(Boolean)
+            if (p) return p
+        }
+        return null
+    }
+    const prims = parts.map(primOf)
+    if (prims.every(Boolean) && new Set(prims).size === 1) {
+        return { kind: prims[0] === 'boolean' ? 'boolean' : prims[0] === 'number' ? 'number' : 'string' }
+    }
+
+    // String-literal union -> `@as` variant. Also covers the `"a" | "b" | (string & {})`
+    // open-ended-literal idiom (e.g. `HTMLInputTypeAttribute`): the `string & {}` autocomplete
+    // escape is dropped so the binding is a clean shared variant of the known literals
+    // (deduped by type.id into one `*Types.res` module, referenced everywhere).
+    const isLit = (t) => t.isStringLiteral && t.isStringLiteral()
+    const isStrBrand = (t) => (t.flags & ts.TypeFlags.Intersection) && (t.types || []).some((x) => x.flags & ts.TypeFlags.String)
+    const litParts = parts.filter(isLit)
+    if (litParts.length >= 2 && parts.every((t) => isLit(t) || isStrBrand(t))) {
+        const members = litParts.map((t) => ({ as: t.value, ctor: pascal(t.value) }))
+        if (ctx.shared) return registerNamed(ctx, type, 'enum', lower(typeName(type) || pascal(propName)), { members })
+        const key = lower(pascal(propName))
         if (!ctx.seenEnums.has(key)) {
             ctx.seenEnums.set(key, true)
             ctx.enums.push({ name: key, members })
@@ -549,41 +934,134 @@ function unionNode(type, ctx, propName, depth = 0) {
     if (parts.every((t) => t.flags & (ts.TypeFlags.BooleanLiteral | ts.TypeFlags.Boolean)))
         return { kind: 'boolean' }
 
-    // ReactElement | ReactElement[]  (a "children"-style union) -> React.element.
-    // In ReScript, React.element already represents one node OR a list (via React.array),
-    // so this is the correct, type-safe single mapping.
+    // Any renderable-React union -> React.element. Covers `ReactElement | ReactElement[]`
+    // AND `children: ReactNode & (string | number)` which TS distributes into
+    // `string | number | (ReactElement & string) | …` (the reactish parts are
+    // intersections, so we detect those too). If React content is allowed at all,
+    // React.element is the correct ReScript type (it covers strings/numbers as nodes).
     const isReactish = (t) => {
         const n = typeName(t)
         if (n && /ReactElement|ReactNode/.test(n)) return true
+        if ((t.flags & ts.TypeFlags.Intersection) &&
+            (t.types || []).some((x) => /ReactElement|ReactNode/.test(typeName(x) || ''))) return true
         const elem = asArray(t, checker)
         const en = elem && typeName(elem)
         return !!(en && /ReactElement|ReactNode/.test(en))
     }
-    if (parts.every(isReactish)) return { kind: 'reactElement' }
+    if (parts.some(isReactish)) return { kind: 'reactElement' }
 
-    // Genuine multi-runtime-type union (string|number, string|string[], …).
-    // Emit a ReScript 11 UNTAGGED variant — type-safe AND zero-cost (the raw
-    // value reaches JS, no %identity, no wrapper). Only possible when every
-    // member has a DISTINCT runtime type (typeof/Array.isArray can discriminate).
-    const members = []
-    const usedRt = new Set()
-    let discriminable = parts.length >= 2
-    for (const p of parts) {
-        const m = memberOf(p, ctx, propName, depth)
-        if (!m || usedRt.has(m.rt)) { discriminable = false; break }
-        usedRt.add(m.rt)
-        members.push({ ctor: m.ctor, type: m.type })
+    // A union of DOM node/element/fragment types (e.g. a portal `container?: Element |
+    // DocumentFragment`) -> `Dom.element` (the ergonomic portal-target type). A note is
+    // attached so the consumer knows a fragment / shadow-root target isn't covered.
+    const isDomNodeType = (t) => {
+        const n = typeName(t)
+        return !!(n && (/Element$/.test(n) || n === 'Node' || n === 'DocumentFragment' || n === 'ShadowRoot'))
     }
-    if (discriminable) {
-        // Name the untagged variant by its STRUCTURE, not the prop, so identical
-        // unions (e.g. defaultValue/value/onValueChange all `string | string[]`)
-        // collapse into ONE shared type instead of one per prop.
-        const name = unboxedName(members)
-        if (!ctx.seenUnboxed.has(name)) {
-            ctx.seenUnboxed.set(name, true)
-            ctx.unboxed.push({ name, members })
+    if (parts.every(isDomNodeType)) {
+        const note = parts.some((t) => { const n = typeName(t); return n === 'DocumentFragment' || n === 'ShadowRoot' })
+            ? `was \`${checker.typeToString(type).replace(/\s+/g, ' ')}\` — bound to Dom.element; a DocumentFragment/ShadowRoot target is not supported`
+            : undefined
+        return note ? { kind: 'raw', res: 'Dom.element', note } : { kind: 'raw', res: 'Dom.element' }
+    }
+
+    // Union of ARRAY types (e.g. `PresetsConfig = A[] | B[] | (A|B|C)[]`) -> `array<E>`.
+    // If every member's element is the SAME type, E is that element; otherwise the element
+    // is heterogeneous (often multiple object shapes that can't be discriminated) -> JSON.t,
+    // so the prop is usable (`array<JSON.t>`) rather than a flagged string placeholder.
+    const arrElems = parts.map((p) => asArray(p, checker))
+    if (arrElems.every(Boolean)) {
+        const sameElem = arrElems.every((e) => e.id != null && e.id === arrElems[0].id)
+        if (sameElem) return { kind: 'array', of: classify(arrElems[0], ctx, propName, depth + 1) }
+        // Heterogeneous elements (e.g. PresetsConfig's `A[] | B[] | (A|B|C)[]`): collect the
+        // distinct element types and bind as a tagged-variant + converter; else `array<JSON.t>`.
+        // Collect the distinct element types. A genuine union element `(A|B|C)` expands to
+        // its logical members (enum literals re-grouped to their enum); an enum element or a
+        // single type stays as one.
+        const elemTypes = []
+        for (const e of arrElems) {
+            if (e.isUnion && e.isUnion() && !(e.flags & ts.TypeFlags.EnumLike)) elemTypes.push(...unionMembers(checker, e))
+            else elemTypes.push(e)
         }
-        return { kind: 'typeRef', to: name, _unboxed: true }
+        const seen = new Set(), distinct = []
+        for (const e of elemTypes) { if (e.id != null && !seen.has(e.id)) { seen.add(e.id); distinct.push(e) } }
+        const opaque = distinct.length >= 2 ? opaqueUnion(ctx, type, distinct, propName, depth) : null
+        return { kind: 'array', of: opaque || { kind: 'raw', res: 'JSON.t' } }
+    }
+
+    // Genuine multi-runtime-type union (string|number, string|string[],
+    // boolean|"indeterminate", …). Emit a ReScript UNTAGGED (@unboxed) variant —
+    // type-safe AND zero-cost (the raw value reaches JS, no %identity, no wrapper).
+    // Sound only when members are runtime-discriminable: at most ONE broad type per
+    // JS `typeof` bucket (string/number/boolean/array), but several distinct string/
+    // number LITERALS may coexist as bare `@as("…")` constructors (distinct constant
+    // values) — e.g. `boolean | "indeterminate"` -> Bool(bool) | @as("indeterminate") Indeterminate.
+    // TS expands `boolean` into `true | false`, so collapse those into one `bool`.
+    let hasBool = false, hasString = false, hasNumber = false
+    const strLits = [], numLits = [], others = []
+    let buildable = true
+    for (const p of parts) {
+        if (p.flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) hasBool = true
+        else if (p.flags & ts.TypeFlags.StringLiteral) strLits.push(p)
+        else if (p.flags & ts.TypeFlags.NumberLiteral) numLits.push(p)
+        else if (p.flags & ts.TypeFlags.String) hasString = true
+        else if (p.flags & ts.TypeFlags.Number) hasNumber = true
+        else {
+            const m = memberOf(p, ctx, propName, depth)
+            if (!m) { buildable = false; break }
+            others.push(m)
+        }
+    }
+    if (buildable) {
+        const members = []
+        const usedRt = new Set()
+        const usedCtor = new Set()
+        const uniqueCtor = (base) => { let c = base, i = 2; while (usedCtor.has(c)) c = base + i++; usedCtor.add(c); return c }
+        const claim = (rt) => { if (usedRt.has(rt)) return false; usedRt.add(rt); return true }
+        // Stable order so structurally-identical unions get one shared name: bool,
+        // string (broad OR literals), number (broad OR literals), then arrays/others.
+        if (hasBool && claim('boolean')) members.push({ ctor: uniqueCtor('Bool'), type: { kind: 'boolean' } })
+        if (hasString) { if (claim('string')) members.push({ ctor: uniqueCtor('Str'), type: { kind: 'string' } }) }
+        else if (strLits.length && claim('string')) {
+            for (const l of strLits) members.push({ ctor: uniqueCtor(pascal(String(l.value))), as: String(l.value) })
+        }
+        if (hasNumber) { if (claim('number')) members.push({ ctor: uniqueCtor('Num'), type: { kind: 'number', _float: true } }) }
+        else if (numLits.length && claim('number')) {
+            for (const l of numLits) members.push({ ctor: uniqueCtor('N' + String(l.value).replace(/[^0-9a-zA-Z]/g, '_')), as: l.value, _num: true })
+        }
+        for (const m of others) { if (!claim(m.rt)) { buildable = false; break } members.push({ ctor: uniqueCtor(m.ctor), type: m.type }) }
+
+        if (buildable && members.length >= 2) {
+            // Name by STRUCTURE so identical unions share one type — EXCEPT function-bearing
+            // ones (a signature has no short structural token), which are named after the
+            // prop (`formAction`, `virtualItemHeight`). A member using a type variable (a
+            // sync-or-async `=> 'a` return) makes the variant generic (`formAction<'a>`).
+            const hasFn = members.some((m) => m.type && m.type.kind === 'callback')
+            const sname = hasFn ? lower(pascal(propName)) : unboxedName(members)
+            const tvars = new Set()
+            for (const m of members) collectTypeVars(m.type, tvars)
+            const tparams = tvars.size ? [...tvars] : undefined
+            if (ctx.shared) {
+                // Primitive-only variants have no TS source -> home `CommonTypes`. A variant
+                // referencing a record/enum (object payload, or a fn over `menuItemType`)
+                // lives WITH that type's module so `CommonTypes` stays a dependency-free sink
+                // and never gets SCC-merged. Deduped via the `u:` key.
+                const key = 'u:' + sname
+                if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
+                const deps = new Set()
+                for (const m of members) collectRefKeys(m.type, deps)
+                let home = 'CommonTypes'
+                if (deps.size) { const d = ctx.shared.byKey.get([...deps][0]); if (d && d.home) home = d.home }
+                const entry = { key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), home, members, deps, tparams }
+                ctx.shared.byKey.set(key, entry)
+                ctx.shared.entries.push(entry)
+                return refTo(entry)
+            }
+            if (!ctx.seenUnboxed.has(sname)) {
+                ctx.seenUnboxed.set(sname, true)
+                ctx.unboxed.push({ name: sname, members, tparams })
+            }
+            return tparams ? { kind: 'typeRef', to: sname, _unboxed: true, tparams } : { kind: 'typeRef', to: sname, _unboxed: true }
+        }
     }
 
     // Not cleanly discriminable. Flag for human review ONLY if a member is
@@ -597,7 +1075,24 @@ function unionNode(type, ctx, propName, depth = 0) {
         if ((t.flags & ts.TypeFlags.Object) && s && s.getName() !== '__type' && t.getProperties().length) return true // named object
         return false
     }
-    if (parts.some(isStructured)) return { kind: 'review', text: checker.typeToString(type) }
+    if (parts.some(isStructured)) {
+        // ≥2 "structured" members that can't be discriminated by an @unboxed
+        // variant (abstract objects / arrays) -> an opaque-type module with
+        // zero-cost `from*` constructors. Two shapes qualify: multiple named
+        // object types (e.g. customPresets), OR object | array<object> (e.g.
+        // `Element | Element[]`, `File | File[]`) — the array is structured too,
+        // so we count it. A single object alone still falls through to review.
+        const structuredParts = parts.filter((t) => {
+            if (asArray(t, checker)) return true
+            const s = t.getSymbol && t.getSymbol()
+            return (t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) && s && t.getProperties().length
+        })
+        if (structuredParts.length >= 2) {
+            const opaque = opaqueUnion(ctx, type, unionMembers(checker, type), propName, depth)
+            if (opaque) return opaque
+        }
+        return { kind: 'review', text: checker.typeToString(type) }
+    }
     return { kind: 'opaque', text: checker.typeToString(type) }
 }
 
@@ -641,7 +1136,27 @@ function memberOf(t, ctx, propName, depth) {
         const elemType = inner ? inner.type : classify(elem, ctx, propName, depth + 1)
         return { ctor, rt: 'array', type: { kind: 'array', of: elemType } }
     }
-    return null // objects / functions / etc. — not auto-discriminable
+    // A single function member -> runtime `typeof "function"` (distinct from string/number/
+    // boolean/object/array). Only ONE allowed (`claim('function')` enforces it). Enables
+    // `string | (fn)` (formAction) and `number | (fn)` (virtualItemHeight) as @unboxed.
+    if (t.getCallSignatures && t.getCallSignatures().length) {
+        return { ctor: 'Fn', rt: 'function', type: functionNode(t.getCallSignatures()[0], ctx, propName, depth) }
+    }
+
+    // A single ANONYMOUS inline-object member (e.g. `string | { key, color }`) -> runtime
+    // `typeof "object"` (distinct from string/number/boolean/array). Only ONE is allowed
+    // (two objects can't be discriminated); `claim('object')` in unionNode enforces that.
+    // Restricted to anonymous literals (`__type`): expanding a NAMED cross-domain object
+    // here would pull large interconnected graphs (e.g. Highcharts) into one SCC.
+    const isObjectish = t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)
+    const sym = t.getSymbol && t.getSymbol()
+    if (isObjectish && (sym && sym.getName()) === '__type' && t.getProperties().length > 0 && !isLibraryType(t)) {
+        const node = classify(t, ctx, propName, depth + 1)
+        if (node && node.kind === 'typeRef' && !node._enum && !node._unboxed) {
+            return { ctor: pascal(node.to), rt: 'object', type: node }
+        }
+    }
+    return null // named/library/Date/function objects — not expanded here
 }
 
 /**
@@ -652,71 +1167,136 @@ function memberOf(t, ctx, propName, depth) {
  * @returns {string}
  */
 function unboxedName(members) {
-    const tok = (t) => {
+    const tokType = (t) => {
         switch (t.kind) {
             case 'string': return 'String'
             case 'number': return 'Number'
             case 'boolean': return 'Bool'
-            case 'array': return tok(t.of) + 'Array'
+            case 'array': return tokType(t.of) + 'Array'
             case 'reactElement': return 'Element'
             case 'typeRef': return pascal(t.to)
             default: return 'Value'
         }
     }
-    return lower(members.map((m) => tok(m.type)).join('Or'))
+    // bare `@as("indeterminate")` literal members contribute their value (Indeterminate);
+    // payload members contribute their structural token (String/Number/…).
+    const tok = (m) => (m.as !== undefined ? pascal(String(m.as)) : tokType(m.type))
+    return lower(members.map(tok).join('Or'))
 }
 
 /**
- * Map a function/callback type to an IR callback node. A single React-event
- * parameter becomes `ReactEvent.X.t => unit`; otherwise the first arg is
- * classified normally. Return type is always treated as `unit`.
- * @param {ts.Signature} sig  the call signature
+ * Map a function/callback type to an IR callback node, classifying EVERY parameter
+ * and the real return type. A param matching a React event becomes `ReactEvent.X.t`.
+ * If a param/return can't be typed exactly it stays opaque/unknown and the emitter
+ * flags the whole prop (rather than emitting a half-correct signature).
+ * @param {ts.Signature} sig
  * @param {object} ctx
  * @param {string} propName
  * @param {number} [depth]
- * @returns {{kind:'callback', arg:object, ret:object}}
+ * @returns {{kind:'callback', params:object[], ret:object}}
  */
 function functionNode(sig, ctx, propName, depth = 0) {
     const { checker } = ctx
-    const params = sig.getParameters()
-    // single event-typed param -> Event.t => unit
-    if (params.length >= 1) {
-        const p0 = checker.getTypeOfSymbolAtLocation(params[0], ctx.decl)
-        const n = typeName(p0)
-        if (n && REACT_EVENTS[n]) return { kind: 'callback', arg: { kind: 'event', res: REACT_EVENTS[n] }, ret: { kind: 'unit' } }
+    const params = sig.getParameters().map((pp) => {
+        const pt = checker.getTypeOfSymbolAtLocation(pp, ctx.decl)
+        const n = typeName(pt)
+        if (n && REACT_EVENTS[n]) return { kind: 'event', res: REACT_EVENTS[n] }
+        return classify(pt, ctx, propName, depth + 1)
+    })
+    const retType = sig.getReturnType()
+    // `void | Promise<void>` (a handler that may be sync OR async, e.g. formAction) -> a
+    // polymorphic return `'a`: it accepts both `=> unit` and `=> promise<unit>` handlers,
+    // with `'a` inferred per call site. (Makes the enclosing variant generic.)
+    let ret
+    if (retType.isUnion && retType.isUnion()) {
+        const hasVoid = retType.types.some((t) => t.flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined))
+        const hasPromise = retType.types.some((t) => typeName(t) === 'Promise')
+        if (hasVoid && hasPromise) ret = { kind: 'typeVar', name: "'a" }
     }
-    if (params.length === 0) return { kind: 'callback', arg: { kind: 'unit' }, ret: { kind: 'unit' } }
-    const argType = checker.getTypeOfSymbolAtLocation(params[0], ctx.decl)
-    return {
-        kind: 'callback',
-        arg: classify(argType, ctx, propName, depth + 1),
-        ret: { kind: 'unit' },
+    if (!ret) {
+        const retVoid = !!(retType.flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined))
+        ret = retVoid ? { kind: 'unit' } : classify(retType, ctx, propName, depth + 1)
     }
+    return { kind: 'callback', params, ret }
 }
 
 /**
- * Turn an inline object type `{ a, b }` (a nested object prop) into a ReScript
- * record declaration, register it on `ctx.records` (deduped), and return a
- * reference. Each field is classified recursively. Cycle-guarded via `ctx.visiting`.
+ * Turn an object type into a ReScript record declaration, register it (deduped),
+ * and return a reference. Anonymous `{…}` → named `<prop>Config`; a NAMED interface
+ * (typeName passed) → `<typeName>`. When the type pulls in inherited HTML fields
+ * (it spreads HTMLAttributes), the record spreads `JsxDOM.domProps` and emits only
+ * the own fields whose name doesn't collide with domProps (avoids duplicate-field
+ * errors and keeps it small). Cycle-guarded via `ctx.visiting`.
  * @param {ts.Type} type
  * @param {object} ctx
- * @param {string} propName  used to name the record (e.g. `footer` -> `footerConfig`)
+ * @param {string} propName
  * @param {number} [depth]
+ * @param {string} [typeName]  the named interface name (AvatarData) if first-party named
  * @returns {{kind:'typeRef', to:string}}
  */
-function recordNode(type, ctx, propName, depth = 0) {
-    const { checker } = ctx
-    if (type.id != null) ctx.visiting?.add(type.id)
-    const rname = lower(pascal(propName)) + 'Config'
-    const fields = type.getProperties().map((p) => {
-        const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0
-        const t = checker.getTypeOfSymbolAtLocation(p, ctx.decl)
-        return { name: p.getName(), optional, type: classify(t, ctx, p.getName(), depth + 1) }
-    })
-    if (type.id != null) ctx.visiting?.delete(type.id)
-    if (!ctx.seenRecords.has(rname)) {
-        ctx.seenRecords.set(rname, true)
-        ctx.records.push({ name: rname, fields })
+function recordNode(type, ctx, propName, depth = 0, typeName = null) {
+    const base = typeName ? lower(typeName) : lower(pascal(propName)) + 'Config'
+
+    if (ctx.shared) {
+        // Module mode: register the entry EARLY (with its final name) so self/mutual
+        // references during field building resolve to its typeRef, then fill fields.
+        const key = 'id:' + type.id
+        if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
+        const entry = { key, kind: 'record', name: uniqueName(base, ctx.shared), home: homeOf(type, ctx), deps: new Set(), spread: undefined, fields: [] }
+        ctx.shared.byKey.set(key, entry)
+        ctx.shared.entries.push(entry)
+        if (type.id != null) ctx.visiting?.add(type.id)
+        const built = buildRecordFields(type, ctx, depth)
+        if (type.id != null) ctx.visiting?.delete(type.id)
+        entry.spread = built.spread
+        entry.fields = built.fields
+        for (const f of built.fields) collectRefKeys(f.type, entry.deps)
+        // generic record (uses a type variable) -> parameterize: `type foo<'a> = {…}`
+        const tvars = new Set()
+        for (const f of built.fields) collectTypeVars(f.type, tvars)
+        if (tvars.size) entry.tparams = [...tvars]
+        return refTo(entry)
     }
-    return { kind: 'typeRef', to: rname }
+
+    // Single-file mode: emit into the component's local record list, deduped by name.
+    const rname = base
+    if (ctx.seenRecords.has(rname)) return { kind: 'typeRef', to: rname }
+    ctx.seenRecords.set(rname, true)
+    if (type.id != null) ctx.visiting?.add(type.id)
+    const built = buildRecordFields(type, ctx, depth)
+    if (type.id != null) ctx.visiting?.delete(type.id)
+    const tvars = new Set()
+    for (const f of built.fields) collectTypeVars(f.type, tvars)
+    const tparams = tvars.size ? [...tvars] : undefined
+    ctx.records.push({ name: rname, spread: built.spread, fields: built.fields, tparams })
+    return tparams ? { kind: 'typeRef', to: rname, tparams } : { kind: 'typeRef', to: rname }
+}
+
+/**
+ * Compute a record's `spread` (`JsxDOM.domProps` when it inherits HTML attrs) and
+ * its own `fields` (each classified). Shared by both single-file and module modes.
+ * @returns {{spread:string|undefined, fields:Array<{name,optional,type}>}}
+ */
+function buildRecordFields(type, ctx, depth) {
+    const { checker } = ctx
+    const isInherited = (p) => {
+        const d = p.declarations && p.declarations[0]
+        const f = (d && d.getSourceFile().fileName) || ''
+        return /node_modules\/(@types|typescript)\//.test(f) || /\/lib\.(dom|es|scripthost)/.test(f)
+    }
+    const props = type.getProperties()
+    const hasHtml = props.some(isInherited)
+    const spread = hasHtml ? 'JsxDOM.domProps' : undefined
+
+    const fields = props
+        // when spreading domProps, drop ALL inherited HTML fields + any own field whose
+        // name already exists in domProps (collision); keep only the package's own fields.
+        .filter((p) => !spread || (!isInherited(p) && !DOM_PROPS_FIELDS.has(p.getName())))
+        .filter((p) => !['ref', 'key'].includes(p.getName()))
+        .map((p) => {
+            const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0
+            const t = checker.getTypeOfSymbolAtLocation(p, ctx.decl)
+            return { name: p.getName(), optional, type: classify(t, ctx, p.getName(), depth + 1) }
+        })
+    return { spread, fields }
 }

@@ -15,9 +15,12 @@ import { writeFileSync } from 'fs'
  *   one entry per generated component (counts)
  * @param {Array<{name:string, loose:object[], defects:object[], review:object[]}>} reports
  *   per-prop detail, only for components that have something flagged
+ * @param {{required:Array<{pkg:string,provides:string,present:boolean}>,
+ *          optional:Array<{pkg:string,provides:string,present:boolean,used:boolean,propCount:number}>}} [deps]
+ *   dependency summary: required (always emitted) vs optional (gated on the target project)
  * @returns {void}
  */
-export function writeReport(path, label, rows, reports) {
+export function writeReport(path, label, rows, reports, deps, shared) {
     const detailByName = new Map(reports.map((r) => [r.name, r]))
     const byName = (a, b) => a.name.localeCompare(b.name)
 
@@ -30,7 +33,33 @@ export function writeReport(path, label, rows, reports) {
     L.push(`# Binding report — \`${label}\``)
     L.push(``)
     L.push(`**${rows.length}** components · ✅ **${ready.length}** usable · 🔍 **${review.length}** need review · 🛑 **${broken.length}** broken`)
+    if (shared) L.push(`\n**${shared.types}** shared types deduplicated into **${shared.modules}** \`*Types.res\` modules (referenced qualified — no per-file redeclaration).`)
     L.push(``)
+
+    // ── 📦 DEPENDENCIES ────────────────────────────────────────
+    // Which ReScript packages the generated bindings rely on, split into the
+    // baseline (always emitted) and optional ones gated on the target project.
+    if (deps && (deps.required?.length || deps.optional?.length)) {
+        L.push(`## 📦 Dependencies`)
+        L.push(``)
+        L.push(`| Kind | Package | Provides | Status |`)
+        L.push(`|------|---------|----------|--------|`)
+        for (const d of (deps.required || [])) {
+            L.push(`| required | \`${d.pkg}\` | ${d.provides} | ${d.present ? '✓ present' : '✗ **missing**'} |`)
+        }
+        for (const d of (deps.optional || [])) {
+            const status = d.present
+                ? (d.used ? '✓ present → used' : '✓ present')
+                : `✗ not installed${d.propCount ? ` → ${d.propCount} prop(s) flagged \`string\`` : ''}`
+            L.push(`| optional | \`${d.pkg}\` | ${d.provides} | ${status} |`)
+        }
+        L.push(``)
+        const missingOpt = (deps.optional || []).filter((d) => !d.present && d.propCount)
+        if (missingOpt.length) {
+            L.push(`> Install ${missingOpt.map((d) => `\`${d.pkg}\``).join(', ')} in the target project and re-run to type the flagged props precisely.`)
+            L.push(``)
+        }
+    }
 
     // ── ✅ USABLE (top) ────────────────────────────────────────
     L.push(`## ✅ Usable`)
