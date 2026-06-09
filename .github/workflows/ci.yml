@@ -31,6 +31,33 @@ jobs:
       - name: Smoke + golden snapshot
         run: npm test
 
+  # Publish an ephemeral pkg.pr.new preview of the tool ITSELF on every PR / push to main, so
+  # the exact build can be `npm i`-ed and tested in another project without cutting a release.
+  # Requires the pkg-pr-new GitHub App (https://github.com/apps/pkg-pr-new) installed on the repo.
+  preview:
+    name: Publish preview to pkg.pr.new
+    runs-on: ubuntu-latest
+    needs: test # only publish a preview once the smoke + golden tests pass
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Packs the package per its `files` allowlist, publishes a commit-SHA-pinned build, and posts
+      # a sticky PR comment: npm i https://pkg.pr.new/@juspay/rescript-bindgen@<sha>
+      - name: Publish preview
+        run: npx pkg-pr-new publish
+
   # Compile every golden fixture's output on ReScript 12 — proves the bindings are
   # valid, not just shape-matched. Deterministic and offline — blocking.
   compile:
