@@ -87,6 +87,25 @@ That's it: **bump → push tag → it ships itself**, to the right channel.
 
 ---
 
+## Preview releases (pkg.pr.new) — test a PR/commit without a real release
+
+Every PR and every push to `main` auto-publishes an **ephemeral, commit-pinned preview** of the
+tool via [pkg.pr.new](https://pkg.pr.new) (the `preview` job in `.github/workflows/ci.yml`, gated on
+the tests passing). The bot posts a sticky PR comment with an install URL like:
+
+```bash
+npm i https://pkg.pr.new/@juspay/rescript-bindgen@<sha>
+```
+
+Install that in any project and run the CLI (`npx rescript-bindgen …`) to test the **exact** build of
+a PR/commit — no clone, no `npm link`, no waiting for a real release. Previews live on pkg.pr.new's
+domain (not npmjs.org) and are **not** real publishes; they don't touch `latest`/`beta`.
+
+**One-time setup:** install the [pkg-pr-new GitHub App](https://github.com/apps/pkg-pr-new) on the
+repo (done). No token to manage — it authorizes via the App.
+
+---
+
 ## Notes / gotchas
 
 - The workflow **fails on purpose** if the git tag (`v1.2.3`) doesn't match the

@@ -76,6 +76,20 @@ npx @juspay/rescript-bindgen --help
 
 Requires Node ≥ 20. ReScript 12 is recommended for the generated output.
 
+### Preview builds (test an unreleased change)
+
+Every PR and push to `main` auto-publishes a commit-pinned preview via
+[pkg.pr.new](https://pkg.pr.new) — so you can try a fix before it's released. Install the exact build
+by SHA (the URL is also posted as a comment on each PR):
+
+```bash
+npm i -D https://pkg.pr.new/@juspay/rescript-bindgen@<sha>
+npx rescript-bindgen --pkg <some-package> --out generated --report
+```
+
+Previews live on pkg.pr.new (not npm), are ephemeral, and never affect the `latest`/`beta` you get
+from a normal `npm install`.
+
 ---
 
 ## Usage
