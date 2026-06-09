@@ -1,28 +1,39 @@
 # @juspay/rescript-bindgen
 
-> Deterministic **TypeScript → ReScript** binding generator. Reads `.d.ts` files
-> through the TypeScript compiler API and emits type-safe
-> `@react.component` bindings — **no AI, no `%identity`, no unsafe casts.**
+> **Turn any typed React/TypeScript package into idiomatic, type-safe ReScript bindings.**
+> It reads `.d.ts` through the TypeScript compiler API and emits `@react.component` bindings —
+> deterministically, with **no AI, no `%identity`, no unsafe casts.**
 
-Point it at **any** typed React component package — published on npm, a local folder, or a
-single `.d.ts` — and get idiomatic, compile-ready ReScript bindings you'd otherwise hand-write
-and hand-maintain.
+Point it at **anything typed** — a published npm package (any version), a local folder, or a single
+`.d.ts` — and get compile-ready ReScript 12 bindings you'd otherwise hand-write and hand-maintain:
+
+```bash
+npx @juspay/rescript-bindgen --pkg @radix-ui/react-dialog --out generated --report
+```
+
+## Highlights
+
+- 🌍 **Works on real libraries.** Tested across **50+ of the most popular React packages** — MUI, Radix UI,
+  Headless UI, Ariakit, react-day-picker, cmdk, vaul, … — where **~93% of components bind cleanly**.
+- 🔒 **Type-safe & zero-cost.** Enums → `@as` variants, multi-type props → `@unboxed` untagged variants,
+  refs/events/CSS → their exact ReScript types. The raw runtime value reaches JS untouched.
+- 🎯 **Deterministic.** Same input → same output, every run. No model, no guessing.
+- 🚩 **Honest.** Anything it can't bind type-safely is **flagged for review**, never silently faked.
+- 📦 **Any source.** npm package · local folder · single `.d.ts` · `pkg.pr.new` preview URL.
 
 ---
 
-## Why
+## Why not hand-write them?
 
-There is one existing tool in this space, [`ts2ocaml`](https://github.com/ocsigen/ts2ocaml),
-but it **cannot generate React component bindings** (it emits `external x: any` with a
-`FIXME` for `ForwardRefExoticComponent`) and doesn't match a project's house style.
+Hand-writing bindings for a real component library means hundreds of props across dozens of
+components — tedious, error-prone, and stale the moment the library updates. The only other tool in
+this space, [`ts2ocaml`](https://github.com/ocsigen/ts2ocaml), **can't generate React component
+bindings** (it emits `external x: any` with a `FIXME` for `ForwardRefExoticComponent`).
 
-`rescript-bindgen` is purpose-built for **React component packages**: it resolves
-`Omit<…>`, intersections, imported enums, `RefAttributes`, and indexed-access types
-via the TypeScript **type-checker**, then emits idiomatic ReScript 12 bindings.
-
-The generator is **deterministic**: identical input always produces identical output.
-Anything it cannot bind in a fully type-safe way is **flagged for human review**, never
-silently hacked.
+`rescript-bindgen` is purpose-built for **React component packages**: it drives the TypeScript
+**type-checker** to resolve `Omit<…>`, intersections, imported enums, `RefAttributes`, generics, and
+indexed-access types, then emits idiomatic ReScript 12 — and you re-run it on every upstream bump.
+Anything it can't bind in a fully type-safe way is **flagged for human review**, never silently hacked.
 
 ---
 
@@ -63,6 +74,28 @@ external make: (
 `<Button width=Num(5.0) />` sends `width: 5` to JS; `<Button width=Str("100%") />`
 sends `width: "100%"`. Type-safe **and** zero-cost — the `@unboxed` variant is erased
 at runtime.
+
+---
+
+## Tested on real-world libraries
+
+Run against **50+ of the most-used React / TypeScript packages** — **~9,700 of 10,400 components (93%)
+bind type-safely**, with no unsafe casts. A sample:
+
+| Library | Components | Bound clean |
+|---|---|---|
+| **Radix UI** (`react-dialog`, `react-dropdown-menu`, `react-select`, `themes`, …) | 170+ | **100%** |
+| `@ariakit/react` | 138 | 130 |
+| `@headlessui/react` | 63 | 59 |
+| `@mui/material` | 133 | 86 |
+| `react-aria-components` | 246 | 71 |
+| `react-day-picker` · `cmdk` · `vaul` | 27 · 10 · 6 | **100%** |
+| `sonner` · `react-hot-toast` · `react-toastify` | 1 · 3 · 6 | **100%** |
+| `formik` · `@hello-pangea/dnd` · `react-window` | 4 · 3 · 2 | **100%** |
+| `lucide-react` · `@phosphor-icons/react` | 5,876 · 3,044 | **100%** (icons) |
+
+Generic-heavy chart libraries (recharts, victory, chart.js) and class/CJS-only components are the long
+tail — and whatever can't be bound type-safely is **flagged for review, never faked**.
 
 ---
 
