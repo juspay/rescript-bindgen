@@ -122,7 +122,7 @@ by SHA (the URL is also posted as a comment on each PR):
 
 ```bash
 npm i -D https://pkg.pr.new/@juspay/rescript-bindgen@<sha>
-npx rescript-bindgen --pkg <some-package> --out generated --report
+npx @juspay/rescript-bindgen --pkg <some-package> --out generated --report
 ```
 
 Previews live on pkg.pr.new (not npm), are ephemeral, and never affect the `latest`/`beta` you get
