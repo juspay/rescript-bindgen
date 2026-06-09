@@ -15,8 +15,9 @@
 /** `extractComponent` / `extractModule` — read a .d.ts via the TS compiler API into an IR. */
 export { extractComponent, extractModule } from './extract.mjs'
 
-/** `emit` — render an IR to ReScript source · `report` — bucket props (loose/review/defect). */
-export { emit, report } from './emit.mjs'
+/** `emit` — component IR → ReScript · `emitFunction` — function-export IR → `@module external`
+ *  · `emitClass` — class IR → a `@new`/`@send`/`@get` module · `report` — bucket props. */
+export { emit, emitFunction, emitClass, report } from './emit.mjs'
 
 /** `resolveInput` — locate/install a package's .d.ts entry from a file/dir/pkg spec. */
 export { resolveInput } from './resolve.mjs'

@@ -18,9 +18,13 @@ import { writeFileSync } from 'fs'
  * @param {{required:Array<{pkg:string,provides:string,present:boolean}>,
  *          optional:Array<{pkg:string,provides:string,present:boolean,used:boolean,propCount:number}>}} [deps]
  *   dependency summary: required (always emitted) vs optional (gated on the target project)
+ * @param {{file:string, names:string[]}} [fnInfo]
+ *   standalone function exports (generic TS): the bundled bindings file + the names emitted
+ * @param {Array<{name:string, methods:number, getters:number, ctor:boolean}>} [classInfo]
+ *   class exports (generic TS): one `<name>.res` module each, with member counts
  * @returns {void}
  */
-export function writeReport(path, label, rows, reports, deps, shared) {
+export function writeReport(path, label, rows, reports, deps, shared, fnInfo, classInfo) {
     const detailByName = new Map(reports.map((r) => [r.name, r]))
     const byName = (a, b) => a.name.localeCompare(b.name)
 
@@ -33,6 +37,8 @@ export function writeReport(path, label, rows, reports, deps, shared) {
     L.push(`# Binding report — \`${label}\``)
     L.push(``)
     L.push(`**${rows.length}** components · ✅ **${ready.length}** usable · 🔍 **${review.length}** need review · 🛑 **${broken.length}** broken`)
+    if (fnInfo && fnInfo.names.length) L.push(`\n**${fnInfo.names.length}** function binding(s) → \`${fnInfo.file}\`.`)
+    if (classInfo && classInfo.length) L.push(`\n**${classInfo.length}** class module(s) → \`@new\`/\`@send\`/\`@get\` bindings.`)
     if (shared) L.push(`\n**${shared.types}** shared types deduplicated into **${shared.modules}** \`*Types.res\` modules (referenced qualified — no per-file redeclaration).`)
     L.push(``)
 
@@ -59,6 +65,30 @@ export function writeReport(path, label, rows, reports, deps, shared) {
             L.push(`> Install ${missingOpt.map((d) => `\`${d.pkg}\``).join(', ')} in the target project and re-run to type the flagged props precisely.`)
             L.push(``)
         }
+    }
+
+    // ── 🔧 FUNCTION BINDINGS ───────────────────────────────────
+    // Standalone (non-component) function exports, bundled into one `*Bindings.res`.
+    if (fnInfo && fnInfo.names.length) {
+        L.push(`## 🔧 Function bindings`)
+        L.push(``)
+        L.push(`Standalone function exports, emitted as positional \`@module external\` bindings in \`${fnInfo.file}\`.`)
+        L.push(``)
+        for (const n of fnInfo.names) L.push(`- \`${n}\``)
+        L.push(``)
+    }
+
+    // ── 🏛 CLASS MODULES ───────────────────────────────────────
+    // Each class binds to its own `<Name>.res` module (abstract `type t`).
+    if (classInfo && classInfo.length) {
+        L.push(`## 🏛 Class modules`)
+        L.push(``)
+        L.push(`Each class binds to its own \`<Name>.res\` module with an abstract \`type t\` (\`@new\` constructor, \`@send\` methods, \`@get\` properties).`)
+        L.push(``)
+        L.push(`| Class | Constructor | Methods | Properties |`)
+        L.push(`|-------|-------------|---------|------------|`)
+        for (const c of classInfo) L.push(`| \`${c.name}\` | ${c.ctor ? '✓' : '—'} | ${c.methods} | ${c.getters} |`)
+        L.push(``)
     }
 
     // ── ✅ USABLE (top) ────────────────────────────────────────

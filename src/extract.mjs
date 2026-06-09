@@ -133,10 +133,12 @@ function refTo(entry) {
 /** Collect the registry keys an IR type tree references (for the module graph). */
 function collectRefKeys(t, out) {
     if (!t || typeof t !== 'object') return
-    if (t.key) out.add(t.key)
+    if (t.kind === 'typeRef' && t.key) out.add(t.key)
     if (t.of) collectRefKeys(t.of, out)
     if (t.ret) collectRefKeys(t.ret, out)
     if (t.arg) collectRefKeys(t.arg, out)
+    if (t.mapKey) collectRefKeys(t.mapKey, out)
+    if (t.mapVal) collectRefKeys(t.mapVal, out)
     if (Array.isArray(t.params)) t.params.forEach((p) => collectRefKeys(p, out))
 }
 
@@ -149,6 +151,8 @@ function collectTypeVars(t, out) {
     if (t.of) collectTypeVars(t.of, out)
     if (t.ret) collectTypeVars(t.ret, out)
     if (t.arg) collectTypeVars(t.arg, out)
+    if (t.mapKey) collectTypeVars(t.mapKey, out)
+    if (t.mapVal) collectTypeVars(t.mapVal, out)
     if (Array.isArray(t.params)) t.params.forEach((p) => collectTypeVars(p, out))
     if (Array.isArray(t.fields)) t.fields.forEach((f) => collectTypeVars(f.type, out))
 }
@@ -279,7 +283,9 @@ function makeProgram(entryFile) {
  */
 function isCssType(type) {
     const sym = type.aliasSymbol || (type.getSymbol && type.getSymbol()) || type.symbol
-    const decl = sym && sym.getDeclarations && sym.getDeclarations()[0]
+    // getDeclarations() can return undefined (not []) for synthesized/transient symbols.
+    const decls = sym && sym.getDeclarations && sym.getDeclarations()
+    const decl = decls && decls[0]
     const file = decl && decl.getSourceFile().fileName
     return !!(file && /[\\/]csstype[\\/]/.test(file))
 }
@@ -454,6 +460,231 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
 }
 
 /**
+ * Build the IR for a standalone exported FUNCTION (or a const whose type has a call
+ * signature) — e.g. `export function add(a: number, b: number): number` or
+ * `export const handler: (c: Context) => Response`. This is the non-React analogue of
+ * buildComponentIR: same `ctx`/type-variable setup, but it classifies the call
+ * signature itself (params + return) via `functionNode` instead of a props object.
+ * Nested enums/records/@unboxed register into the SAME shared registry the component
+ * path uses, so generic-TS types land in the same `*Types.res` modules.
+ *
+ * @param {ts.TypeChecker} checker
+ * @param {ts.Symbol} sym       the exported symbol (caller alias-resolves first)
+ * @param {ts.SourceFile} source
+ * @param {string} importName   the JS export name (also the ReScript binding name)
+ * @param {string} from         the `@module(...)` name
+ * @param {object} opts         { shared?, webapi?, … } — same shape buildComponentIR takes
+ * @returns {import('../types').FunctionIR}
+ */
+function buildFunctionIR(checker, sym, source, importName, from, opts) {
+    if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
+    const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0]) || source
+    const fnType = checker.getTypeOfSymbolAtLocation(sym, decl)
+    const sig = fnType.getCallSignatures()[0]
+    if (!sig) throw new Error('no call signature')
+
+    // Generic function (`function map<T, U>(…)`): map each signature type parameter to a
+    // ReScript type variable ('a, 'b, …), exactly as buildComponentIR does — so a `T` param
+    // surfaces as `'a` and the external is polymorphic (the `extends` constraint is dropped).
+    const typeVars = new Map()
+    const TV = ['a', 'b', 'c', 'd', 'e', 'f']
+    const tparams = sig.typeParameters || []
+    tparams.forEach((tp, i) => { if (tp.symbol) typeVars.set(tp.symbol, "'" + (TV[i] || `t${i}`)) })
+
+    const enums = []
+    const records = []
+    const unboxed = []
+    const ctx = {
+        checker, decl, enums, records, unboxed, webapi: !!opts.webapi,
+        seenEnums: new Map(), seenRecords: new Map(), seenUnboxed: new Map(),
+        shared: opts.shared || null,
+        typeVars,
+        sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
+    }
+
+    // sigToMembers keeps each param's NAME + optionality (so the emitter can bind optional
+    // args as labeled `~name=?` — a positional external can't express a trailing optional).
+    const { params, ret: rawRet } = sigToMembers(sig, ctx, 0)
+    // A type parameter used ONLY in the return doesn't round-trip, so `'a` there is unsound
+    // (rule #4) — demote it to its constraint (`nanoid<T extends string>(): T` -> string).
+    const ret = demoteReturnOnly(rawRet, params.map((p) => p.type), sig, ctx, typeVars)
+
+    return {
+        module: importName,
+        import: { from, name: importName },
+        kind: 'function',
+        enums, records, unboxed,
+        sig: { params, ret },
+    }
+}
+
+/**
+ * Classify a call signature's RETURN type, mirroring functionNode's return handling
+ * (`void`/`undefined` -> `unit`; `void | Promise<void>` -> polymorphic `'a`). Factored
+ * out so class methods/constructors reuse the exact same return logic as functions.
+ * @param {ts.Signature} sig
+ * @param {object} ctx
+ * @param {number} [depth]
+ * @returns {object} an IR type node
+ */
+function returnNode(sig, ctx, depth = 0) {
+    const retType = sig.getReturnType()
+    if (retType.isUnion && retType.isUnion()) {
+        const hasVoid = retType.types.some((t) => t.flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined))
+        const hasPromise = retType.types.some((t) => typeName(t) === 'Promise')
+        if (hasVoid && hasPromise) return { kind: 'typeVar', name: "'a" }
+    }
+    const retVoid = !!(retType.flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined))
+    return retVoid ? { kind: 'unit' } : classify(retType, ctx, '', depth + 1)
+}
+
+/**
+ * Whether a function/constructor PARAMETER is optional. Parameter symbols don't carry
+ * `SymbolFlags.Optional` reliably (that flag is for object properties), so read it off the
+ * declaration: a `?` token, a default initializer, or a rest param all make the arg omittable.
+ * @param {ts.Symbol} paramSym
+ * @returns {boolean}
+ */
+function isOptionalParam(paramSym) {
+    if (paramSym.getFlags() & ts.SymbolFlags.Optional) return true
+    const d = paramSym.valueDeclaration || (paramSym.declarations && paramSym.declarations[0])
+    return !!(d && ts.isParameter(d) && (d.questionToken || d.initializer || d.dotDotDotToken))
+}
+
+/**
+ * Classify a call signature into LABELED-ARG members: each param keeps its name +
+ * optionality (class methods/constructors bind as labeled args, unlike M1's positional
+ * functions, because methods lean on optional params and ReScript only allows optionals
+ * when labeled). React-event params are recognised the same way functionNode does.
+ * @returns {{params: Array<{name:string, optional:boolean, type:object}>, ret:object}}
+ */
+function sigToMembers(sig, ctx, depth = 0) {
+    const { checker } = ctx
+    const params = sig.getParameters().map((pp) => {
+        const pt = checker.getTypeOfSymbolAtLocation(pp, ctx.decl)
+        const optional = isOptionalParam(pp)
+        const n = typeName(pt)
+        const type = (n && Object.prototype.hasOwnProperty.call(REACT_EVENTS, n))
+            ? { kind: 'event', res: REACT_EVENTS[n] }
+            : classify(pt, ctx, pp.getName(), depth + 1)
+        return { name: pp.getName(), optional, type }
+    })
+    return { params, ret: returnNode(sig, ctx, depth) }
+}
+
+/** Deep-replace `typeVar` nodes named in `subst` with their substitute IR. */
+function substTypeVars(node, subst) {
+    if (!node || typeof node !== 'object') return node
+    if (node.kind === 'typeVar' && subst[node.name]) return subst[node.name]
+    const out = { ...node }
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) if (out[k]) out[k] = substTypeVars(out[k], subst)
+    if (Array.isArray(out.params)) out.params = out.params.map((p) => substTypeVars(p, subst))
+    return out
+}
+
+/**
+ * Demote RETURN-ONLY type variables to their constraint. A type parameter that appears only
+ * in the return (never in a parameter) does NOT round-trip, so emitting it as `'a` is unsound
+ * (contract rule #4): `nanoid<T extends string>(): T` as `=> 'a` lets a caller pick any `T`
+ * while the runtime value is a string. Replace each such var with its constraint type
+ * (`extends string` -> `string`), or `unknown` (-> flagged) when there's no constraint.
+ * @returns {object} the return IR, with return-only vars substituted
+ */
+function demoteReturnOnly(retNode, paramNodes, sig, ctx, typeVars) {
+    const used = new Set()
+    for (const p of paramNodes) collectTypeVars(p, used)
+    const retVars = new Set()
+    collectTypeVars(retNode, retVars)
+    const subst = {}
+    for (const tp of (sig.typeParameters || [])) {
+        const name = tp.symbol && typeVars.get(tp.symbol)
+        if (!name || !retVars.has(name) || used.has(name)) continue
+        const c = tp.getConstraint && tp.getConstraint()
+        subst[name] = c ? classify(c, ctx, '', 0) : { kind: 'unknown' }
+    }
+    return Object.keys(subst).length ? substTypeVars(retNode, subst) : retNode
+}
+
+/**
+ * Build the IR for an exported CLASS (M2) — bound as a ReScript module with an abstract
+ * `type t` (the canonical cookbook pattern): the constructor -> `@new`, instance methods
+ * -> `@send` (instance as first arg), data properties / getters -> `@get`. Param and
+ * return types reuse `classify`, so records/enums/unions land in the shared `*Types.res`,
+ * and a reference to ANOTHER exported class resolves to `OtherClass.t` (via ctx.classTypes).
+ * First-slice scope: non-generic classes; statics and generic type params are not bound yet.
+ *
+ * @param {ts.TypeChecker} checker
+ * @param {ts.Symbol} sym       the exported class symbol (caller alias-resolves first)
+ * @param {ts.SourceFile} source
+ * @param {string} importName   the JS class name (also the ReScript module / `= "…"` name)
+ * @param {string} from         the `@module(...)` name
+ * @param {object} opts         { shared?, webapi?, classTypes? }
+ * @returns {import('../types').ClassIR}
+ */
+function buildClassIR(checker, sym, source, importName, from, opts) {
+    if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
+    const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0]) || source
+    const instanceType = checker.getDeclaredTypeOfSymbol(sym)        // instance side (members)
+    const staticType = checker.getTypeOfSymbolAtLocation(sym, decl)  // constructor / static side
+
+    const enums = []
+    const records = []
+    const unboxed = []
+    const ctx = {
+        checker, decl, enums, records, unboxed, webapi: !!opts.webapi,
+        seenEnums: new Map(), seenRecords: new Map(), seenUnboxed: new Map(),
+        shared: opts.shared || null,
+        typeVars: new Map(),
+        classTypes: opts.classTypes || null,
+        classSink: opts.classSink || null,
+        currentClass: importName, // a self-reference renders as bare `t`, not the sink
+        sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
+    }
+
+    // Constructor: first construct signature (overloads collapse to the first).
+    const ctors = staticType.getConstructSignatures()
+    const ctor = ctors.length ? { params: sigToMembers(ctors[0], ctx, 0).params } : null
+
+    // Instance members. A property whose type has a call signature is a method (-> @send);
+    // anything else is a data property / getter (-> @get). Inherited lib/@types members and
+    // private/protected/#private members are dropped.
+    const isInherited = (p) => {
+        const d = p.declarations && p.declarations[0]
+        const f = (d && d.getSourceFile().fileName) || ''
+        return /node_modules\/(@types|typescript)\//.test(f) || /\/lib\.(dom|es|scripthost)/.test(f)
+    }
+    const isHidden = (p) => {
+        if (/^[#_]/.test(p.getName())) return true
+        const d = p.declarations && p.declarations[0]
+        return !!(d && (ts.getCombinedModifierFlags(d) & (ts.ModifierFlags.Private | ts.ModifierFlags.Protected)))
+    }
+    const methods = []
+    const getters = []
+    for (const p of instanceType.getProperties()) {
+        const pname = p.getName()
+        if (pname === 'constructor' || pname === 'prototype') continue
+        if (isInherited(p) || isHidden(p)) continue
+        const pt = checker.getTypeOfSymbolAtLocation(p, decl)
+        if (pt.getCallSignatures().length) {
+            const { params, ret } = sigToMembers(pt.getCallSignatures()[0], ctx, 0)
+            methods.push({ jsName: pname, params, ret })
+        } else {
+            getters.push({ jsName: pname, type: classify(pt, ctx, pname, 0) })
+        }
+    }
+
+    return {
+        module: importName,
+        import: { from, name: importName },
+        kind: 'class',
+        enums, records, unboxed,
+        // The class's own abstract type in the sink — emit aliases `type t = InstanceTypes.<sinkName>`.
+        sinkName: (opts.classSink && opts.classSink.get(importName)) || lower(importName),
+        ctor, methods, getters,
+    }
+}
+
+/**
  * Extract ONE component from a per-component `.d.ts` (one that default-exports,
  * or first-capitalized-exports, the component). Use this for a single file.
  *
@@ -486,12 +717,15 @@ export function extractComponent(entryFile, opts = {}) {
 
 /**
  * Extract EVERY exported React component from a package's entry `.d.ts` (e.g.
- * its `index.d.ts`). Non-component exports (types, hooks, constants) are skipped
+ * its `index.d.ts`), plus standalone function/const-with-call-signature exports
+ * (generic-TS support). Remaining exports (classes, bare types, hooks) are skipped
  * with a reason. Use this for a whole package (`--pkg`).
  *
  * @param {string} entryFile  path to the package's entry `.d.ts`
  * @param {{from?: string, htmlAllowlist?: string[]}} [opts]
  * @returns {{ components: Array<{name:string, ir:import('../types').ComponentIR}>,
+ *            functions: Array<{name:string, ir:import('../types').FunctionIR}>,
+ *            classes: Array<{name:string, ir:import('../types').ClassIR}>,
  *            skipped: Array<{name:string, reason:string}> }}
  */
 export function extractModule(entryFile, opts = {}) {
@@ -508,28 +742,105 @@ export function extractModule(entryFile, opts = {}) {
     // Module-level registry: every generated type lives here ONCE, keyed by type.id
     // (structural name for synthesized @unboxed), with a home module + reference edges.
     // emit.mjs groups these by home, SCC-merges cycles, and writes one `*Types.res` each.
-    const shared = { byKey: new Map(), entries: [], names: new Set() }
+    const shared = { byKey: new Map(), entries: [], names: new Set(), bySig: new Map() }
+
+    // Pre-pass: map every exported CLASS's instance-type symbol -> its ReScript module
+    // name, so a method/param/return typed as another exported class resolves to `Name.t`
+    // (not a misclassified record). Built up front so cross-class refs work in any order.
+    const classTypes = new Map()
+    for (const exp of exports) {
+        let s = exp
+        if (s.flags & ts.SymbolFlags.Alias) s = checker.getAliasedSymbol(s)
+        if (!(s.flags & ts.SymbolFlags.Class)) continue
+        let nm = exp.getName()
+        if (nm === 'default' || nm === 'export=') nm = s.getName()
+        if (!nm || !/^[A-Z]/.test(nm)) continue
+        classTypes.set(s, nm)
+        const instSym = checker.getDeclaredTypeOfSymbol(s)?.symbol
+        if (instSym) classTypes.set(instSym, nm)
+    }
+
+    // For each class, register an abstract instance type in a dependency-FREE sink module
+    // (`InstanceTypes`). Everything (shared records, other class files) references the sink
+    // instead of the class file, so a `*Types.res` that mentions a class can't form a cycle
+    // back through the class file — and a reference to a class we never fully emit (e.g. a
+    // generic one) still resolves to its abstract `type`, never a dangling `X.t`.
+    const classSink = new Map() // className -> sink type name (within `InstanceTypes`)
+    for (const cn of new Set(classTypes.values())) {
+        const key = 'class:' + cn
+        let entry = shared.byKey.get(key)
+        if (!entry) {
+            entry = { key, kind: 'nominal', name: uniqueName(lower(cn), shared), home: INSTANCE_MODULE, deps: new Set() }
+            shared.byKey.set(key, entry)
+            shared.entries.push(entry)
+        }
+        classSink.set(cn, entry.name)
+    }
 
     const components = []
+    const functions = []
+    const classes = []
     const skipped = []
     const seen = new Set()
     for (const exp of exports) {
         let sym = exp
         if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
-        // Resolve a usable component name; default exports inherit their original name.
-        let name = exp.getName()
-        if (name === 'default' || name === 'export=') {
+        // Resolve a usable binding name + the actual JS export name. For a default export the
+        // JS name is `"default"` (NOT the resolved identifier) — binding `= "mitt"`/`= "index"`
+        // would call `require("pkg").mitt`, which doesn't exist. The ReScript id prefers the
+        // declaration's own name (e.g. `mitt`), even lowercase, falling back to the file name.
+        const exportName = exp.getName()
+        const isDefault = exportName === 'default' || exportName === 'export='
+        let name = exportName
+        if (isDefault) {
+            // The aliased symbol of a default export is named `default`; the declaration keeps
+            // the real identifier (`function mitt` -> `mitt`), so prefer that for a tidy id.
+            const d0 = sym.valueDeclaration || (sym.declarations && sym.declarations[0])
+            const declName = d0 && d0.name && d0.name.getText && d0.name.getText()
             const real = sym.getName()
-            name = real && real !== 'default' && /^[A-Z]/.test(real) ? real : guessName(entryFile)
+            name = (declName && declName !== 'default') ? declName
+                : (real && real !== 'default' && real !== 'export=') ? real
+                : guessName(entryFile)
         }
+        const jsName = isDefault ? 'default' : exportName
         if (seen.has(name)) continue
         const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0])
         if (!decl) { skipped.push({ name, reason: 'no-declaration' }); continue }
         let type
         try { type = checker.getTypeOfSymbolAtLocation(sym, decl) } catch { skipped.push({ name, reason: 'type-error' }); continue }
-        if (!isReactComponent(type, checker)) { skipped.push({ name, reason: 'not-a-component' }); continue }
+        if (!isReactComponent(type, checker)) {
+            // Not a React component. Bind a CLASS (M2) as a `@new`/`@send`/`@get` module, or
+            // a standalone FUNCTION / const-with-call-signature (M1) as a `@module external`.
+            // Bare type aliases (M3) are still bucketed `not-a-component` for now.
+            if (sym.flags & ts.SymbolFlags.Class) {
+                try {
+                    const ir = buildClassIR(checker, sym, source, name, from, { ...opts, shared, classTypes, classSink })
+                    ir.import.jsName = jsName
+                    ir.import.isDefault = isDefault
+                    seen.add(name)
+                    classes.push({ name, ir })
+                } catch (e) {
+                    skipped.push({ name, reason: 'class-extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
+                }
+            } else if (sym.valueDeclaration && type.getCallSignatures().length) {
+                try {
+                    const ir = buildFunctionIR(checker, sym, source, name, from, { ...opts, shared })
+                    ir.import.jsName = jsName
+                    ir.import.isDefault = isDefault
+                    seen.add(name)
+                    functions.push({ name, ir })
+                } catch (e) {
+                    skipped.push({ name, reason: 'fn-extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
+                }
+            } else {
+                skipped.push({ name, reason: 'not-a-component' })
+            }
+            continue
+        }
         try {
             const ir = buildComponentIR(checker, sym, source, name, from, { ...opts, shared })
+            ir.import.jsName = jsName
+            ir.import.isDefault = isDefault
             seen.add(name)
             if (ir.props.length) components.push({ name, ir })
             else skipped.push({ name, reason: 'no-props' })
@@ -537,7 +848,7 @@ export function extractModule(entryFile, opts = {}) {
             skipped.push({ name, reason: 'extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
         }
     }
-    return { components, skipped, shared }
+    return { components, functions, classes, skipped, shared }
 }
 
 /**
@@ -552,6 +863,11 @@ function guessName(file) {
 
 /** Max recursion depth for classify (complex library types are deeply nested). */
 const MAX_DEPTH = 6
+
+/** The dependency-free sink module that holds every class's abstract instance `type`.
+ *  Class files and shared records reference these instead of each other, so a type module
+ *  that mentions a class can never cycle back through the class file. */
+const INSTANCE_MODULE = 'InstanceTypes'
 
 /**
  * Map one resolved TypeScript type to an IR type node — the central decision
@@ -614,6 +930,30 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (isCssType(type)) return { kind: 'string' }
 
     const name = typeName(type)
+
+    // A reference to an exported CLASS instance -> its abstract type in the `InstanceTypes`
+    // sink (M2). The class currently being built renders as bare `t` (its module's local
+    // alias); any other class as `InstanceTypes.<name>`. Gated on ctx.classTypes, so the
+    // component/function paths are unaffected.
+    if (ctx.classTypes && type.symbol && ctx.classTypes.has(type.symbol)) {
+        const cn = ctx.classTypes.get(type.symbol)
+        const sink = (ctx.classSink && ctx.classSink.get(cn)) || lower(cn)
+        return { kind: 'classRef', to: sink, home: INSTANCE_MODULE, self: cn === ctx.currentClass }
+    }
+
+    // JS built-in containers -> precise ReScript stdlib types (`Map.t` / `Set.t`). Detected by
+    // the RESOLVED symbol name, so a first-party alias (`type EventHandlerMap = Map<…>`) is
+    // caught too. MUST precede the object/record branch: a Map/Set's methods are all
+    // lib-inherited, which would otherwise misfire the domProps-spread heuristic and emit a
+    // nonsensical (and unflagged) `{...JsxDOM.domProps}` record.
+    const builtin = (type.getSymbol && type.getSymbol() && type.getSymbol().getName()) || ''
+    if (/^(Map|WeakMap|ReadonlyMap|Set|WeakSet|ReadonlySet)$/.test(builtin)) {
+        const args = (checker.getTypeArguments && checker.getTypeArguments(type)) || type.aliasTypeArguments || []
+        const cl = (i, fb) => (args[i] ? classify(args[i], ctx, propName, depth + 1) : { kind: 'opaque', text: fb })
+        return /Set$/.test(builtin)
+            ? { kind: 'set', of: cl(0, 'value') }
+            : { kind: 'map', mapKey: cl(0, 'key'), mapVal: cl(1, 'value') }
+    }
 
     // well-known named types
     if (name === 'Date') return { kind: 'date' }
@@ -1225,6 +1565,47 @@ function functionNode(sig, ctx, propName, depth = 0) {
 }
 
 /**
+ * A stable structural signature for an IR type node — identical structures produce
+ * identical strings. typeRefs key on the registry `key` (stable across naming) so two
+ * fields pointing at the same canonical record match; classRefs key on the sink target
+ * only (the `self` flag is ignored — in a shared module it always renders to the sink).
+ * Used to dedup structurally-identical records (Fix B, the generic-instantiation explosion).
+ * @param {object} t
+ * @returns {string}
+ */
+function typeSig(t) {
+    if (!t || typeof t !== 'object') return JSON.stringify(t)
+    switch (t.kind) {
+        case 'typeRef': return 'R(' + (t.key || t.to) + (t.tparams ? '<' + t.tparams.join(',') + '>' : '') + ')'
+        case 'classRef': return 'C(' + t.home + '.' + t.to + ')'
+        case 'array': return 'A[' + typeSig(t.of) + ']'
+        case 'dict': return 'D[' + typeSig(t.of) + ']'
+        case 'map': return 'M[' + typeSig(t.mapKey) + ',' + typeSig(t.mapVal) + ']'
+        case 'set': return 'S[' + typeSig(t.of) + ']'
+        case 'promise': return 'P[' + typeSig(t.of) + ']'
+        case 'callback': return 'F(' + (t.params || []).map(typeSig).join(',') + ')=>' + typeSig(t.ret || { kind: 'unit' })
+        case 'event': return 'E(' + t.res + ')'
+        case 'raw': return 'raw(' + t.res + ')'
+        case 'typeVar': return 'V(' + t.name + ')'
+        case 'number': return t._float ? 'numF' : 'num'
+        // opaque / review / unknown / any all render to the SAME `opaqueFallback` (string),
+        // so they're interchangeable for dedup — normalize, ignoring the (display-only) text.
+        case 'opaque':
+        case 'review':
+        case 'unknown':
+        case 'any': return 'opaque'
+        default: return t.kind
+    }
+}
+
+/** Structural signature of a whole record entry (spread + type params + each field's
+ *  name/optionality/type). Two records with the same signature are interchangeable. */
+function recordSig(entry) {
+    return 'sp:' + (entry.spread || '') + '|tp:' + ((entry.tparams || []).join(',')) + '|' +
+        entry.fields.map((f) => f.name + (f.optional ? '?' : '') + ':' + typeSig(f.type)).join(';')
+}
+
+/**
  * Turn an object type into a ReScript record declaration, register it (deduped),
  * and return a reference. Anonymous `{…}` → named `<prop>Config`; a NAMED interface
  * (typeName passed) → `<typeName>`. When the type pulls in inherited HTML fields
@@ -1259,6 +1640,23 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         const tvars = new Set()
         for (const f of built.fields) collectTypeVars(f.type, tvars)
         if (tvars.size) entry.tparams = [...tvars]
+
+        // Structural dedup: many distinct TS generic instantiations widen to the SAME record
+        // (e.g. Hono's 1728 `honoNNN`, all `{get: …, post: …}` after the generics collapse).
+        // If an identical record already exists, collapse into it: drop this entry, redirect
+        // this type.id to the canonical one, and hand back its ref. Built bottom-up, so a
+        // record's children are already deduped when we hash it. Recursive records carry a
+        // self-key in their signature, so they never falsely merge.
+        const sig = recordSig(entry)
+        const canon = ctx.shared.bySig.get(sig)
+        if (canon && canon !== entry) {
+            const i = ctx.shared.entries.indexOf(entry)
+            if (i >= 0) ctx.shared.entries.splice(i, 1)
+            ctx.shared.names.delete(entry.name)
+            ctx.shared.byKey.set(key, canon) // future refs to this type.id -> canonical
+            return refTo(canon)
+        }
+        ctx.shared.bySig.set(sig, entry)
         return refTo(entry)
     }
 

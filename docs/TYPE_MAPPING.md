@@ -43,6 +43,8 @@ Fixture: [`primitives`](../test/golden/cases/primitives)
 | `Date` | `Date.t` | |
 | `T[]` / `Array<T>` | `array<…>` | element classified recursively |
 | `Record<string, V>` | `Dict.t<…>` | `Record<string, unknown>` → `Dict.t<JSON.t>`; `Record<string, string>` → `Dict.t<string>` |
+| `Map<K, V>` / `ReadonlyMap` / `WeakMap` | `Map.t<k, v>` | detected on the resolved symbol, so a first-party alias (`type EventHandlerMap = Map<…>`) is caught too — never a `{...JsxDOM.domProps}` record ([`builtin-map-set`](../test/golden/cases/builtin-map-set)) |
+| `Set<T>` / `ReadonlySet` / `WeakSet` | `Set.t<t>` | as above |
 
 ---
 
@@ -230,6 +232,94 @@ sanctioned use of `%identity` — the value passes straight through (zero runtim
 | `A \| B \| C` (≥2 object shapes) | `module … { fromA / fromB / fromC }` |
 | `Element \| Element[]` | `module … { fromElement / fromElements }` |
 | `File \| File[]` (with `--webapi`) | `module … { fromFile / fromFiles }` |
+
+---
+
+## Standalone function exports (non-React)
+Fixture: [`fn-exports`](../test/golden/cases/fn-exports)
+
+Beyond React components, a package's plain **function exports** (and `const`s whose type has a call
+signature) are bound too — this is what lets the generator target non-React TS libraries (Hono,
+date-fns, …). Each becomes a `@module external` in one bundled `<Pkg>Bindings.res` file. **Required
+params bind positionally; optional params bind as labeled `~name=?`** (a positional external can't
+express a trailing optional — `nanoid(size?)` would otherwise force the arg), with a `unit` sentinel
+so the optional can be omitted. The JS export name stays in the `= "…"` string, so a reserved or
+capitalized name still binds. Params and the return reuse the same `classify` pipeline as component
+props, so named types land in the shared `*Types.res` (referenced qualified).
+
+| TypeScript export | ReScript |
+|---|---|
+| `function add(a: number, b: number): number` | `@module("pkg") external add: (float, float) => float = "add"` |
+| `function now(): number` (zero args) | `@module("pkg") external now: unit => float = "now"` — an external can't take no args |
+| `function forEach(items: number[], fn: (v: number, i: number) => void): void` | `external forEach: (array<float>, (float, float) => unit) => unit = "forEach"` |
+| `function greet(name: string, greeting?: string): string` | `external greet: (string, ~greeting: string=?, unit) => string = "greet"` (optional → labeled `=?`) |
+| `const translate: (p: Point, dx: number, dy: number) => Point` | `external translate: (PkgTypes.point, float, float) => PkgTypes.point = "translate"` (named `Point` → shared record) |
+
+Same buckets apply: a param/return that can't be typed exactly falls back to the flagged placeholder
+with a leading `// ⚪ loose` / `// ⚠️ REVIEW` / `// 🛑 BROKEN` comment above the binding (flag-don't-fake).
+Bare type-alias/interface exports with no value reference are **not** bound yet — they're still
+reported as `skipped` (planned as a later milestone).
+
+**Default exports** ([`default-export`](../test/golden/cases/default-export)) bind the JS name
+`= "default"` (the ReScript id keeps the declaration's own name, e.g. `greet`), and carry a flag:
+a package that does `module.exports = fn` (plain CJS) exposes the value as the module itself, so
+`require("pkg").default` is undefined — the consumer must verify that case at runtime.
+
+**Return-only generics** ([`fn-optional-generic`](../test/golden/cases/fn-optional-generic)) are
+demoted to their constraint, never `'a`. A type parameter used *only* in the return doesn't
+round-trip, so `'a` would be unsound (rule #4): `nanoid<T extends string>(size?): T` becomes
+`(~size: int=?, unit) => string`, not `=> 'a`. A param like `pluck<T>(items: T[]): T` keeps `'a`,
+because `T` *does* round-trip (it appears in a parameter).
+
+---
+
+## Class exports (non-React)
+Fixture: [`class-exports`](../test/golden/cases/class-exports)
+
+A `class` export binds to its **own `<ClassName>.res` file** (a file *is* a ReScript module) holding
+the canonical abstract-`type t` pattern: constructor → `@new`, instance methods → `@send` (the
+instance is the first arg), data properties / getters → `@get`. Member param/return types reuse the
+same `classify` pipeline, so records/enums/unions land in the shared `*Types.res`.
+
+Method/constructor params bind as **labeled args** (unlike [function exports](#standalone-function-exports-non-react),
+which are positional) — class APIs lean on optional params, and ReScript only allows optionals when
+labeled. A trailing optional gets a `unit` sentinel, the standard ReScript pattern.
+
+**The `InstanceTypes` sink.** Every class's abstract instance type lives in a single dependency-free
+module, `InstanceTypes` (`type counter`, `type tracker`, …). Each class file aliases its own
+(`type t = InstanceTypes.counter`), and *every* reference to a class — from another class, or from a
+shared record — points at the sink, **not** at the class file. This is deliberate: it makes the
+instance type a dependency *sink* (it imports nothing), so a `*Types.res` record that mentions a
+class can never form a cross-file cycle back through the class file (see
+[`class-type-cycle`](../test/golden/cases/class-type-cycle)). It also means a reference to a class
+we don't fully emit (e.g. a generic one) still resolves to its abstract type — never a dangling
+`X.t`. A self-reference inside the class's own file still renders as the tidy bare `t`.
+
+| TypeScript | ReScript (in `Counter.res`, with `type t = InstanceTypes.counter`) |
+|---|---|
+| `class Counter { constructor(start: number, step?: number) }` | `@new @module("pkg") external make: (~start: float, ~step: int=?, unit) => t = "Counter"` |
+| `increment(by: number): Counter` (returns self) | `@send external increment: (t, ~by: float) => t = "increment"` |
+| `get value(): number` | `@get external value: t => float = "value"` |
+| `reset(): void` | `@send external reset: (t) => unit = "reset"` |
+| `watch(counter: Counter): void` (other class, in `Tracker.res`) | `@send external watch: (t, ~counter: InstanceTypes.counter) => unit = "watch"` |
+
+Same flag-don't-fake buckets apply per member. **First-slice scope:** non-generic classes,
+constructor + instance methods + getters. **Static members and generic class type parameters
+(`class Hono<E, S>`) are not bound yet** — generic classes bind their non-generic surface and flag
+the rest.
+
+### Structural record dedup
+Fixture: [`generic-record-dedup`](../test/golden/cases/generic-record-dedup)
+
+Shared records are deduped by **structure**, not just by TypeScript type id. A generic library
+(Hono, Effect, anything with phantom-typed builders) produces hundreds of *distinct* instantiations
+of the same shape — `Router<S & {a}>`, `Router<S & {a} & {b}>`, … — that become **byte-for-byte
+identical once the phantom generics widen** to `string`/opaque. Keying only on type id would emit one
+record per instantiation (Hono: **1728** near-identical `honoNNN` records, a 1.3 MB file). So after a
+record's fields are built, its structural signature is hashed; an identical existing record is reused
+and the duplicate dropped (recursive records carry a self-key, so they never falsely merge). For Hono
+this collapses **2040 → ~180** shared types and lets the whole binding compile. `opaque`/`review`/
+`unknown`/`any` all hash the same (they render to the same placeholder), so widened duplicates merge.
 
 ---
 
