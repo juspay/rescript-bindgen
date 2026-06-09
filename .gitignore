@@ -14,6 +14,9 @@ test/sandbox/src/*.res.mjs
 test/sandbox/src/*.res
 test/sandbox/node_modules/
 
+# local scratch playground (generated bindings + ReScript build output)
+bindgen-playground/
+
 # misc
 *.log
 .DS_Store
