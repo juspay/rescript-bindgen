@@ -15,6 +15,11 @@ import { execSync } from 'child_process'
 /** Where packages fetched for generation are installed (kept out of the project). */
 const SCRATCH = pathResolve(new URL('../.bindgen-cache', import.meta.url).pathname)
 
+// React type definitions co-installed with every scratch package so that `React.*` types
+// (ForwardRefExoticComponent, CSSProperties, ReactNode, MouseEvent, …) resolve instead of
+// collapsing to `any`/`unknown`. Without these, forwardRef components extract no props.
+const REACT_TYPE_DEPS = 'react react-dom @types/react @types/react-dom'
+
 /**
  * Read and parse a JSON file, returning null on any error (missing/invalid).
  * @param {string} p  absolute path to a .json file
@@ -102,13 +107,18 @@ export function resolveInput({ file, dir, pkg, install = true, nodeModulesRoots 
             if (!existsSync(join(SCRATCH, 'package.json')))
                 writeFileSync(join(SCRATCH, 'package.json'), JSON.stringify({ name: 'bindgen-scratch', private: true }) + '\n')
             console.error(`[resolve] installing ${pkg} into scratch cache…`)
-            execSync(`npm install --no-save --silent ${pkg}`, { cwd: SCRATCH, stdio: 'inherit' })
-            // also try @types if the package ships no types
+            // Always co-install React's type definitions. Component packages do `import React from
+            // "react"` and type props via `React.ForwardRefExoticComponent<P>`, `React.CSSProperties`,
+            // `React.ReactNode`, … — without @types/react those all resolve to `any`/`unknown`, so a
+            // forwardRef component yields ZERO props and CSSProperties/ReactNode widen to a placeholder.
+            // (Installed in the SAME command so npm doesn't prune them as extraneous on a later install.)
+            execSync(`npm install --no-save --silent ${pkg} ${REACT_TYPE_DEPS}`, { cwd: SCRATCH, stdio: 'inherit' })
+            // also try @types if the package ships no types (keep React types in the same command)
             pkgDir = findPkgDir(name, [join(SCRATCH, 'node_modules')])
             if (pkgDir && !typesEntry(pkgDir)) {
                 const typesPkg = '@types/' + (name.startsWith('@') ? name.slice(1).replace('/', '__') : name)
                 try {
-                    execSync(`npm install --no-save --silent ${typesPkg}`, { cwd: SCRATCH, stdio: 'inherit' })
+                    execSync(`npm install --no-save --silent ${typesPkg} ${REACT_TYPE_DEPS}`, { cwd: SCRATCH, stdio: 'inherit' })
                 } catch { /* no @types available */ }
             }
             const roots = [join(SCRATCH, 'node_modules')]
