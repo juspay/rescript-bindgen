@@ -11,6 +11,11 @@ Point it at **anything typed** — a published npm package (any version), a loca
 npx @juspay/rescript-bindgen --pkg @radix-ui/react-dialog --out generated --report
 ```
 
+> **Scope today:** it targets **React component packages** — it binds `FC` / `forwardRef` /
+> function-component exports. A non-React TypeScript library (e.g. a backend lib) prints
+> `No React components found to generate`. Generating bindings for *any* TypeScript surface — plain functions,
+> classes, type aliases — is the direction we're actively building toward.
+
 ## Highlights
 
 - 🌍 **Works on real libraries.** Tested across **50+ of the most popular React packages** — MUI, Radix UI,
@@ -135,14 +140,14 @@ so output is reproducible and version-pinned.
 
 ```bash
 # a published package (any version)
-npx rescript-bindgen --pkg react-day-picker --out generated
-npx rescript-bindgen --pkg @mui/material@5.16.0 --only Button --out generated
+npx @juspay/rescript-bindgen --pkg react-day-picker --out generated
+npx @juspay/rescript-bindgen --pkg @mui/material@7.0.0 --only Button --out generated
 
 # a single .d.ts file, printed to stdout
-npx rescript-bindgen --file ./types/Foo.d.ts --stdout
+npx @juspay/rescript-bindgen --file ./types/Foo.d.ts --stdout
 
 # a local folder containing an index.d.ts
-npx rescript-bindgen --dir ./node_modules/some-lib --out generated
+npx @juspay/rescript-bindgen --dir ./node_modules/some-lib --out generated
 ```
 
 | Flag | Meaning |
@@ -168,7 +173,7 @@ components are ready, which props were widened to `string` (loose), which need h
 review, and which are broken (`unknown`/`any`):
 
 ```bash
-npx rescript-bindgen --pkg @mui/material --out generated --report
+npx @juspay/rescript-bindgen --pkg @mui/material --out generated --report
 ```
 
 ---
@@ -241,7 +246,7 @@ This separates *what won't work* (defects) from *what needs a decision* (review)
 *what's done* (ready). Each flagged prop is listed with its original TypeScript.
 
 ```bash
-npx rescript-bindgen --pkg @mui/material --out generated --report
+npx @juspay/rescript-bindgen --pkg @mui/material --out generated --report
 ```
 
 ---
