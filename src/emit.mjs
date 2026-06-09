@@ -48,11 +48,12 @@ function camelFromKebab(name) {
  * @param {string} name  the original prop name from the .d.ts
  * @returns {{ as: string | null, id: string }}  `as` = the `@as` value (or null), `id` = the ReScript identifier
  */
-/** True when a `type rec A = {…} and B = {…}` mutually-recursive group contains two records
- *  that share a field label — the exact trigger for ReScript's warning 30. (Independent
- *  `type` declarations sharing a label do NOT warn; only same-rec-group members do.) When this
- *  happens we prepend `@@warning("-30")` to the file: the duplicate labels are intentional and
- *  every value is explicitly typed, so the ambiguity warning is pure noise for consumers.
+/** True when a `type rec A = {…} and B = {…}` mutually-recursive group contains two members that
+ *  share a NAME — a record field label, or a variant constructor of an `@unboxed` folded into the
+ *  group (e.g. several label unions all using `Str`/`Fn`). That's the exact trigger for ReScript's
+ *  warning 30. (Independent `type` declarations sharing a name do NOT warn; only same-rec-group
+ *  members do.) When it happens we prepend `@@warning("-30")` to the file: the duplication is
+ *  intentional and every value is explicitly typed, so the ambiguity is pure noise for consumers.
  *  Mirrors the SCC grouping in `emitOrderedTypes` so it flags exactly the files that warn. */
 function hasRecGroupLabelCollision(records, objUnboxed, opaque, idOf, depsOf) {
     const items = [
@@ -69,13 +70,21 @@ function hasRecGroupLabelCollision(records, objUnboxed, opaque, idOf, depsOf) {
         edges.set(it.id, ds)
     }
     for (const comp of tarjanSCC([...byId.keys()], edges)) {
-        const recs = comp.map((id) => byId.get(id)).filter((m) => m.kind === 'record').map((m) => m.node)
-        if (recs.length < 2) continue // a single record can't collide with itself
+        const members = comp.map((id) => byId.get(id))
+        const recs = members.filter((m) => m.kind === 'record').map((m) => m.node)
+        const ubs = members.filter((m) => m.kind === 'unboxed').map((m) => m.node)
+        // Names per type that share ONE rec group: record field ids always; `@unboxed` constructors
+        // only when those unboxed are folded into the group (records AND unboxed in the same SCC).
+        const perType = recs.map((r) => new Set((r.fields || []).map((f) => label(f.name).id)))
+        if (recs.length && ubs.length) {
+            for (const u of ubs) perType.push(new Set((u.members || []).map((m) => m.ctor).filter(Boolean)))
+        }
+        if (perType.length < 2) continue // need ≥2 types in the group to collide
         const seen = new Set()
-        for (const r of recs) {
-            for (const id of new Set((r.fields || []).map((f) => label(f.name).id))) {
-                if (seen.has(id)) return true
-                seen.add(id)
+        for (const names of perType) {
+            for (const n of names) {
+                if (seen.has(n)) return true
+                seen.add(n)
             }
         }
     }
@@ -259,17 +268,31 @@ function isObjectUnboxed(u) {
     })
 }
 
+/** The `x<'a> = Str(string) | Fn(… => 'a) | @as("…") Lit` body of an `@unboxed` declaration
+ *  (without the leading `@unboxed type` / `@unboxed and`). Shared by the standalone and the
+ *  in-rec-group renderers. */
+function unboxedBody(u, cfg) {
+    const tp = u.tparams && u.tparams.length ? `<${u.tparams.join(', ')}>` : '' // generic: foo<'a>
+    const ctors = u.members.map((m) =>
+        m.as !== undefined
+            ? `@as(${m._num ? m.as : JSON.stringify(m.as)}) ${m.ctor}`
+            : `${m.ctor}(${renderType(m.type, '', cfg)})`
+    ).join(' | ')
+    return `${u.name}${tp} = ${ctors}`
+}
+
 /** Append one `@unboxed type x<'a> = Str(string) | Fn(… => 'a) | @as("…") Lit | …`. */
 function renderUnboxed(unboxed, lines, cfg) {
-    for (const u of unboxed || []) {
-        const tp = u.tparams && u.tparams.length ? `<${u.tparams.join(', ')}>` : '' // generic: foo<'a>
-        const ctors = u.members.map((m) =>
-            m.as !== undefined
-                ? `@as(${m._num ? m.as : JSON.stringify(m.as)}) ${m.ctor}`
-                : `${m.ctor}(${renderType(m.type, '', cfg)})`
-        ).join(' | ')
-        lines.push(`@unboxed type ${u.name}${tp} = ${ctors}`)
-    }
+    for (const u of unboxed || []) lines.push(`@unboxed type ${unboxedBody(u, cfg)}`)
+}
+
+/** Emit records + object-bearing `@unboxed` that are MUTUALLY RECURSIVE (one SCC) as a single
+ *  `type rec … and …` group — the `@unboxed` members join via `@unboxed and …`. This is the only
+ *  way to express a cycle that runs through an `@unboxed` (a record field `x?: labelGrid` whose
+ *  variant in turn references the record), which ReScript otherwise rejects as a forward reference. */
+function renderRecGroupWithUnboxed(records, unboxed, lines, cfg) {
+    renderRecordGroup(records, lines, cfg, true) // a cross-record/unboxed cycle is always recursive
+    for (const u of unboxed || []) lines.push(`@unboxed and ${unboxedBody(u, cfg)}`)
 }
 
 /** Collect the typeRef target NAMES an IR type tree references (single-file dep graph). */
@@ -314,9 +337,16 @@ function emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg)
         const ops = members.filter((m) => m.kind === 'opaque').map((m) => m.node)
         // `rec` only when actually recursive: a mutual group (>1) or a self-referencing record.
         const selfRec = recItems.some((it) => { for (const d of depsOf(it.node)) if (d === it.id) return true; return false })
-        if (recs.length) renderRecordGroup(recs, lines, cfg, recs.length > 1 || selfRec)
+        if (recs.length && ubs.length) {
+            // A genuine cycle running through an object-bearing `@unboxed` (records + unboxed in one
+            // SCC) — the unboxed can't be a separate later declaration (forward reference) nor a plain
+            // earlier one (it depends back on the records). Emit them as ONE `type rec … and …` group.
+            renderRecGroupWithUnboxed(recs, ubs, lines, cfg)
+        } else {
+            if (recs.length) renderRecordGroup(recs, lines, cfg, recs.length > 1 || selfRec)
+            if (ubs.length) renderUnboxed(ubs, lines, cfg)
+        }
         if (ops.length) ops.forEach((o) => renderOpaque(o, lines, cfg))
-        if (ubs.length) renderUnboxed(ubs, lines, cfg)
     }
 }
 
