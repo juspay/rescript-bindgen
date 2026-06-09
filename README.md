@@ -4,9 +4,9 @@
 > through the TypeScript compiler API and emits type-safe
 > `@react.component` bindings — **no AI, no `%identity`, no unsafe casts.**
 
-Built to keep [`@juspay/rescript-blend`](https://github.com/juspay/blend-rescript)
-in sync with [`@juspay/blend-design-system`](https://www.npmjs.com/package/@juspay/blend-design-system)
-without hand-maintaining bindings — but it works on any typed React component package.
+Point it at **any** typed React component package — published on npm, a local folder, or a
+single `.d.ts` — and get idiomatic, compile-ready ReScript bindings you'd otherwise hand-write
+and hand-maintain.
 
 ---
 
@@ -49,7 +49,7 @@ type buttonType =
 
 @unboxed type widthValue = Str(string) | Num(float)
 
-@module("@juspay/blend-design-system") @react.component
+@module("@acme/ui") @react.component
 external make: (
   ~buttonType: buttonType=?,
   ~text: string=?,
@@ -108,6 +108,8 @@ npx rescript-bindgen --dir ./node_modules/some-lib --out generated
 | `--report` | **also** write `_REPORT.md` — the ready / loose / review / defect summary |
 | `--from <name>` | override the `@module(...)` import name |
 | `--stdout` | print to stdout instead of writing files (single component) |
+| `--webapi` | emit `Webapi.*` types for `File` / `FileList` / `FormData` |
+| `--clean` | remove stale generated files in `--out` before writing |
 | `--no-install` | don't auto-install a missing `--pkg` |
 
 > Untyped JS packages produce only loose skeleton bindings — the tool is type-driven.
@@ -152,14 +154,19 @@ INPUT          RESOLVE         EXTRACT          MAP             EMIT            
 | string-literal union / `enum` | `@as` variant |
 | `string \| number`, `string \| string[]` | **`@unboxed` untagged variant** (`Str \| Num \| StrArr`) |
 | `ReactNode` / `ReactElement` | `React.element` |
+| `ComponentType<P>` / `FC<P>` | `React.component<p>` |
 | `React.CSSProperties` | `JsxDOM.style` |
 | `MouseEvent` / `FocusEvent` / `ChangeEvent` / `KeyboardEvent` | `ReactEvent.Mouse.t` / `.Focus.t` / `.Form.t` / `.Keyboard.t` |
 | `Ref<HTMLX>` | `React.ref<Nullable.t<Dom.element>>` |
 | `X[]` / `Record<K,V>` | `array<X>` / `Dict.t<V>` |
 | `Date` / `CSSObject['x']` | `Date.t` / `string` |
 | `Omit` / `Pick` / `Partial` / intersection | resolved & flattened by the checker |
-| `unknown` / `any` | **flagged as defect — never typed** |
+| `unknown` | `JSON.t` (opaque value you build/decode) |
+| object \| `object[]`, multi-object union | **opaque-type module** (zero-cost `from*` constructors) |
+| `any` | **flagged as defect — never silently typed** |
 | undiscriminable union (object shapes) | **flagged for human review** |
+
+> Full mapping reference: [`docs/TYPE_MAPPING.md`](docs/TYPE_MAPPING.md) — every case, each backed by a golden fixture.
 
 ### Multi-type props use untagged variants
 
@@ -207,28 +214,17 @@ Exports: `extractComponent`, `extractModule`, `emit`, `report`, `resolveInput`,
 
 ---
 
-## Limitations
-
-- **Generic components** (`<T extends …>`) — generic type parameters resolve to
-  `unknown` and are flagged as defects (e.g. blend's `DataTable`). Needs concrete
-  types upstream or generic-binding support (planned).
-- **Sub-components** (`Drawer.Title`) — detected in the IR; nested-module emission is
-  planned.
-- **Untyped JS** — produces loose skeleton bindings only (no types to read).
-- `int` vs `float` for `number` is a name heuristic — verify numeric props if exact.
-
----
-
 ## Development
 
 ```bash
-npm test                # self-contained smoke test
+npm test                  # smoke test + golden snapshot suite
+npm run test:compile      # compile every golden fixture on ReScript (asserts 0 warnings)
 npm run gen -- --pkg <some-package> --out generated --report
-node test/ts-demo.mjs   # live TypeScript compiler-API walkthrough (see test/DEMOS.md)
 ```
 
-The ReScript compile sandbox lives in `test/sandbox/` (used to compile-check
-generated output during development).
+Golden fixtures live in `test/golden/cases/` (self-contained `.d.ts` → expected `.res`); the
+ReScript compile sandbox in `test/sandbox/` compile-checks generated output. The mapping contract
+is documented in [`docs/TYPE_MAPPING.md`](docs/TYPE_MAPPING.md).
 
 ---
 
