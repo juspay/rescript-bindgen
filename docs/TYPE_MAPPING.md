@@ -8,11 +8,25 @@
 
 ## The contract (read this first)
 
-1. **No unsafe casts.** Never `Obj.magic`, `@unwrap`, or a bare `%identity`. The *only*
-   permitted `%identity` is the zero-cost `external from*` constructor of an
+**Goal: maximum ReScript fidelity.** `%identity` is not something to avoid — used inside an
+opaque module it is a principled, zero-cost tool (the value passes straight through unchanged),
+exactly as hand-written official bindings use it. Prefer fidelity over a `string` placeholder.
+The **fidelity ladder**, best first:
+
+1. an **exact** native ReScript type;
+2. an [`@unboxed`](#unboxed-unions) untagged variant when members are runtime-discriminable;
+3. an [**opaque-type module**](#opaque-module-unions) with zero-cost `%identity` views — forward
+   `from*` constructors (concrete→opaque) and/or reverse `as*` accessors (opaque→concrete, e.g. the
+   per-signature views of an overloaded function) — when `@unboxed` can't express it;
+4. only then a `string` placeholder + a bucket flag (⚪ loose / 🔍 review / 🛑 broken).
+
+The rules:
+
+1. **No unsafe casts.** Never `Obj.magic`, `@unwrap`, or a *bare* `%identity`. The *only* permitted
+   `%identity` is the zero-cost `external from*` constructor **or `as*` accessor** of an
    [opaque-type module](#opaque-module-unions), where the value genuinely passes through unchanged.
-2. **Flag, don't fake.** If a type can't be modelled exactly, emit a `string` placeholder
-   with a comment and bucket it (⚪ loose / 🔍 review / 🛑 broken) — never a plausible-but-wrong type.
+2. **Flag, don't fake.** If a type can't reach rung 1–3, emit a `string` placeholder with a comment
+   and bucket it (⚪ loose / 🔍 review / 🛑 broken) — never a plausible-but-wrong type.
 3. **Multi-type props** become an [`@unboxed`](#unboxed-unions) untagged variant when the members
    have distinct runtime tags (`typeof`/`Array.isArray`), else an [opaque module](#opaque-module-unions).
 4. **`unknown` is an opaque value → `JSON.t`**, never a type variable (a type variable in
@@ -47,16 +61,27 @@ Fixture: [`primitives`](../test/golden/cases/primitives)
 ---
 
 ## String-literal unions & enums
-Fixture: [`string-enums`](../test/golden/cases/string-enums)
+Fixtures: [`string-enums`](../test/golden/cases/string-enums), [`literal-union-open`](../test/golden/cases/literal-union-open)
 
 | TypeScript | ReScript |
 |---|---|
 | `'sm' \| 'md' \| 'lg'` | `type size = \| @as("sm") Sm \| @as("md") Md \| @as("lg") Lg` |
 | `'a' \| 'b' \| (string & {})` | a plain enum — the `string & {}` "open" escape is dropped (this is the `HTMLInputTypeAttribute` shape) |
+| `'a' \| 'b' \| string` (plain `\| string` widening) | `@unboxed type <base>OrString = \| @as("a") A \| @as("b") B \| Custom(string)` — the literals as `@as` arms + a `Custom(string)` catch-all. Zero-cost, typo-safe on the known values, still accepts any other string. (TS collapses the union to bare `string`, so the literals are recovered from the **syntactic** node — component-prop level only for now.) |
 | real `enum` | same `@as` variant form |
 
 Constructors are PascalCased from the literal (`"icon-only"` → `IconOnly`, `"2xl"` → `V2xl`). A
-prop literally named `type` becomes `@as("type") ~type_` (reserved-word escaping).
+prop literally named `type` becomes `@as("type") ~type_` (reserved-word escaping). The open
+`<base>OrString` form is named to match the `boolOrString` / `stringOrNumber` convention, leaving the
+bare name free for a co-occurring **pure** (closed) enum of the same literals.
+
+> **`(string & {})` vs `\| string` — both keep the literals, differently.** The branded `(string & {})`
+> form preserves its literals at the type level (TS does *not* collapse it) → a **closed** enum. The
+> plain `\| string` form *is* collapsed by TS to `string`, so the literals are recovered from the
+> syntactic union node → an **open** `@unboxed` variant with a `Custom(string)` catch-all. Caveat: a
+> `\| string` may be a *genuine* escape hatch or merely *loose typing* (only the literals actually work
+> at runtime) — a runtime question the type-only tool can't answer, so the catch-all (a strict superset
+> of `string`) is the safe default; humans tighten to a closed enum when the runtime confirms it.
 
 ---
 
@@ -98,7 +123,7 @@ Fixture: [`react-dom`](../test/golden/cases/react-dom)
 ---
 
 ## Events & callbacks
-Fixture: [`events-callbacks`](../test/golden/cases/events-callbacks)
+Fixtures: [`events-callbacks`](../test/golden/cases/events-callbacks), [`overload-intersection`](../test/golden/cases/overload-intersection)
 
 | TypeScript | ReScript |
 |---|---|
@@ -108,6 +133,8 @@ Fixture: [`events-callbacks`](../test/golden/cases/events-callbacks)
 | `KeyboardEventHandler<T>` (alias) | `ReactEvent.Keyboard.t => unit` |
 | `(value: string, index: number) => void` | `(string, int) => unit` |
 | `() => void \| Promise<void>` | `unit => 'a` — polymorphic return covers sync **and** async |
+| `(reason?: boolean \| string) => void` (**optional** param) | `option<boolOrString> => unit` — an optional param becomes `option<…>` (`None` = omitted), never a required arg. |
+| `((reason?: …) => void) & ((e: MouseEvent) => void)` (overload = intersection of call sigs, or a multi-call-signature interface) | an **opaque module with one zero-cost `%identity` accessor per signature** — `module CloseToastFunc = { type t; external asReason: t => (option<boolOrString> => unit) = "%identity"; external asMouse: t => (ReactEvent.Mouse.t => unit) = "%identity" }`; the prop is typed `…CloseToastFunc.t` with an `ⓘ` note. **No overload is dropped.** Falls back to 🔍 review only if a signature has an untypeable param. See [`overload-intersection`](../test/golden/cases/overload-intersection). |
 
 Both forms work: an **inline** event param maps by the event's **name** (`MouseEvent`→`ReactEvent.Mouse.t`,
 `ChangeEvent`→`ReactEvent.Form.t`, `KeyboardEvent`→`ReactEvent.Keyboard.t`, …); a `*EventHandler<T>`
@@ -202,7 +229,7 @@ becomes `JSON.t`, `keyof T` becomes `string`, and nested records carry the type 
 ---
 
 ## Opaque-module unions
-Fixture: [`opaque-modules`](../test/golden/cases/opaque-modules), [`webapi`](../test/golden/cases/webapi)
+Fixtures: [`opaque-modules`](../test/golden/cases/opaque-modules), [`webapi`](../test/golden/cases/webapi), [`overload-intersection`](../test/golden/cases/overload-intersection)
 
 When a union can't be an `@unboxed` variant — **multiple object shapes**, or **object | array<object>**
 (abstract members that `typeof`/`Array.isArray` can't split into a recognized variant shape) — it
@@ -222,14 +249,37 @@ module Boundary = {           // Element | Element[]
 }
 ```
 
-The prop is typed `…Preset.t` with an `// ⓘ` note listing the constructors. This is the **only**
-sanctioned use of `%identity` — the value passes straight through (zero runtime cost).
+The prop is typed `…Preset.t` with an `// ⓘ` note listing the constructors. The value passes
+straight through (zero runtime cost).
+
+### Reverse `as*` accessors — overloaded functions
+An **overloaded function** (≥2 call signatures — a TS intersection of call sigs `A & B`, or a
+multi-call-signature interface) has no native ReScript type. It becomes an opaque module with one
+zero-cost `%identity` **accessor** per signature (the reverse direction: opaque→concrete), so every
+overload stays callable. The consumer picks the view they need.
+
+```rescript
+// `((reason?: boolean | string) => void) & ((e: MouseEvent) => void)`
+module CloseToastFunc = {
+  type t
+  external asReason: t => (option<boolOrString> => unit) = "%identity"  // close, optional reason
+  external asMouse:  t => (ReactEvent.Mouse.t => unit)   = "%identity"  // use directly as onClick
+}
+```
+Usage: `CloseToastFunc.asReason(closeToast)(None)`; `onClick={CloseToastFunc.asMouse(closeToast)}`.
+Accessor names: `as` + the first param's name (`reason` → `asReason`), else the React-event type
+(`e: MouseEvent` → `asMouse`), else `asThunk` for a no-arg signature. Bucketed ✅ usable (nothing
+dropped); falls back to 🔍 review only if a signature has an untypeable param.
+
+`from*` constructors and `as*` accessors are the **only** sanctioned uses of `%identity` — both are
+zero-cost (value-through).
 
 | TypeScript | ReScript |
 |---|---|
 | `A \| B \| C` (≥2 object shapes) | `module … { fromA / fromB / fromC }` |
 | `Element \| Element[]` | `module … { fromElement / fromElements }` |
 | `File \| File[]` (with `--webapi`) | `module … { fromFile / fromFiles }` |
+| `((a?: T) => void) & ((e: MouseEvent) => void)` (overloaded fn) | `module … { asA: t => (option<T> => unit) / asMouse: t => (ReactEvent.Mouse.t => unit) }` |
 
 ---
 

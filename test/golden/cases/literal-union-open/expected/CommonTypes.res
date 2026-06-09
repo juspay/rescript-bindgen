@@ -1,0 +1,1 @@
+@unboxed type toastPositionOrString = @as("top-right") TopRight | @as("top-center") TopCenter | @as("top-left") TopLeft | @as("bottom-right") BottomRight | @as("bottom-center") BottomCenter | @as("bottom-left") BottomLeft | Custom(string)
