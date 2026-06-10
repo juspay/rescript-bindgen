@@ -1,7 +1,7 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
   ~data: array<'a>,
-  ~columns: string,  // ⚪ loose — was `ColumnDefinition<T>[]`
+  ~columns: array<DataTableTypes.columnDefinition<'a>>,
   ~idField: string,  // ⚪ loose — was `keyof T`
   ~title: string=?,
   ~description: string=?,
@@ -24,7 +24,7 @@ external make: (
   ~columnFreeze: float=?,
   ~enableColumnManager: bool=?,
   ~enableColumnReordering: bool=?,
-  ~onColumnReorder: string=?,  // ⚪ loose — was `(columns: ColumnDefinition<T>[]) => void`
+  ~onColumnReorder: array<DataTableTypes.columnDefinition<'a>> => unit=?,
   ~columnManagerMaxSelections: float=?,
   ~columnManagerAlwaysSelected: string=?,  // ⚪ loose — was `(keyof T)[]`
   ~columnManagerPrimaryAction: DataTableTypes.columnManagerPrimaryActionConfig=?,

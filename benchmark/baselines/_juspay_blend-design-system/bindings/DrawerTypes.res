@@ -28,7 +28,7 @@ type selectDrawerGroup = {
 }
 type itemsConfig2 = {
   groupLabel?: string,
-  items: ReactTypes.primaryActionButtonPropsConfig,
+  items: DateRangePickerTypes.presetsConfig,
   showSeparator?: bool,
 }
 type overlayConfig = {

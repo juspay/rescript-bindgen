@@ -6,7 +6,7 @@ external make: (
   ~name: string=?,
   ~value: JSON.t=?,
   ~defaultValue: JSON.t=?,
-  ~onValueChange: (JSON.t, PositionerTabUtilsTypes.onValueChangeConfig) => unit=?,
+  ~onValueChange: (JSON.t, PositionerTabUtilsTypes.onCheckedChangeConfig) => unit=?,
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
   ~className: RadioGroupTypes.radioGroupClassName=?,
   ~style: RadioGroupTypes.radioGroupStyle=?,

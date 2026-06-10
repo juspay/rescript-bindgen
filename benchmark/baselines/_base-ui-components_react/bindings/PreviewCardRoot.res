@@ -3,7 +3,7 @@ external make: (
   ~children: React.element=?,
   ~defaultOpen: bool=?,
   @as("open") ~open_: bool=?,
-  ~onOpenChange: string=?,  // ⚪ loose — was `(open: boolean, eventDetails: PreviewCardRootChangeEventDetails) => void`
+  ~onOpenChange: (bool, ComponentsMenubarRootStoreToastTypes.previewCardRootChangeEventDetails) => unit=?,
   ~onOpenChangeComplete: bool => unit=?,
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Root"

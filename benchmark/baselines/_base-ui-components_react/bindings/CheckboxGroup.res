@@ -2,7 +2,7 @@
 external make: (
   ~value: array<string>=?,
   ~defaultValue: array<string>=?,
-  ~onValueChange: (array<string>, PositionerTabUtilsTypes.onValueChangeConfig) => unit=?,
+  ~onValueChange: (array<string>, PositionerTabUtilsTypes.onCheckedChangeConfig) => unit=?,
   ~allValues: array<string>=?,
   ~disabled: bool=?,
   ~style: CheckboxGroupTypes.checkboxGroupStyle=?,

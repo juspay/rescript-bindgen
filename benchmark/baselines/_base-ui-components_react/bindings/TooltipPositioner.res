@@ -52,6 +52,7 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: PositionerTabUtilsTypes.popoverPositionerClassName=?,
   ~render: React.element=?,
+  ~sticky: bool=?,
   // ⚠️ REVIEW: `anchor` is `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
   ~anchor: string=?,
   ~positionMethod: PositionerTabUtilsTypes.positionMethod=?,
@@ -61,7 +62,6 @@ external make: (
   // ⚠️ REVIEW: `collisionBoundary` is `Boundary` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
   ~collisionBoundary: string=?,
   ~collisionPadding: string=?,  // ⚪ loose — was `Padding`
-  ~sticky: bool=?,
   ~arrowPadding: float=?,
   ~disableAnchorTracking: bool=?,
   ~collisionAvoidance: PositionerTabUtilsTypes.CollisionAvoidance.t=?,  // ⓘ was `CollisionAvoidance` — opaque; build with CollisionAvoidance.fromSideFlipMode / CollisionAvoidance.fromSideShiftMode

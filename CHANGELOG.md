@@ -19,6 +19,13 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   the sync-or-async value shape `T | Promise<T>` → `promise<t>` (#24).
 
 ### Fixed
+- **DOM-event values and distributed eventDetails records** (#30, probe I-1/I-6):
+  a DOM event as a VALUE (solo or union — base-ui's distributed
+  `ReasonToEvent<R>`) maps to `Dom.event`, and a union of instantiations of
+  the SAME generic record collapses to one record over its apparent members —
+  NumberField/Select/Slider/Accordion primary callbacks are now fully typed
+  (`onValueChange: (float, …changeEventDetails) => unit`) instead of loose
+  `string` placeholders; base-ui loose count 27 → 16.
 - **base-ui bindings were broken at runtime** (#25): the flat names
   (`AccordionRoot`) are `export type *` — type-only, `undefined` at runtime; the
   values live on namespace objects (`Accordion.Root`). Components reachable as

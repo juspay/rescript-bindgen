@@ -4,7 +4,7 @@ external make: (
   ~loopFocus: bool=?,
   ~highlightItemOnHover: bool=?,
   ~modal: bool=?,
-  ~onOpenChange: string=?,  // ⚪ loose — was `(open: boolean, eventDetails: MenuRootChangeEventDetails) => void`
+  ~onOpenChange: (bool, ComponentsMenubarRootStoreToastTypes.menuRootChangeEventDetails) => unit=?,
   ~onOpenChangeComplete: bool => unit=?,
   @as("open") ~open_: bool=?,
   ~orientation: ComponentsMenubarRootStoreToastTypes.menuRootOrientation=?,

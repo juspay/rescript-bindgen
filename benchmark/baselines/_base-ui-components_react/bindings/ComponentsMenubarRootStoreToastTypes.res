@@ -1,6 +1,9 @@
 type reason =
   | @as("trigger-press") TriggerPress
   | @as("none") None
+type reason2 =
+  | @as("trigger-press") TriggerPress
+  | @as("none") None
   | @as("outside-press") OutsidePress
   | @as("close-press") ClosePress
   | @as("focus-out") FocusOut
@@ -8,9 +11,9 @@ type reason =
   | @as("imperative-action") ImperativeAction
 type useSyncedValue =
   | @as("role") Role
+  | @as("open") Open
   | @as("modal") Modal
   | @as("disablePointerDismissal") DisablePointerDismissal
-  | @as("open") Open
   | @as("mounted") Mounted
   | @as("transitionStatus") TransitionStatus
   | @as("floatingRootContext") FloatingRootContext
@@ -39,17 +42,33 @@ type useSyncedValue2 =
 type role =
   | @as("dialog") Dialog
   | @as("alertdialog") Alertdialog
+type reason3 =
+  | @as("trigger-press") TriggerPress
+  | @as("none") None
+  | @as("outside-press") OutsidePress
+  | @as("item-press") ItemPress
+  | @as("clear-press") ClearPress
+  | @as("chip-remove-press") ChipRemovePress
+  | @as("input-change") InputChange
+  | @as("input-clear") InputClear
+  | @as("focus-out") FocusOut
+  | @as("escape-key") EscapeKey
+  | @as("list-navigation") ListNavigation
+type reason4 =
+  | @as("none") None
+  | @as("keyboard") Keyboard
+  | @as("pointer") Pointer
 type mode =
   | @as("none") None
-  | @as("list") List
-  | @as("inline") Inline
   | @as("both") Both
+  | @as("inline") Inline
+  | @as("list") List
 type imageLoadingStatus =
   | @as("idle") Idle
   | @as("loading") Loading
   | @as("loaded") Loaded
   | @as("error") Error
-type reason2 =
+type reason5 =
   | @as("trigger-press") TriggerPress
   | @as("none") None
   | @as("trigger-hover") TriggerHover
@@ -65,8 +84,8 @@ type reason2 =
   | @as("imperative-action") ImperativeAction
 type useSyncedValue3 =
   | @as("disabled") Disabled
-  | @as("modal") Modal
   | @as("open") Open
+  | @as("modal") Modal
   | @as("mounted") Mounted
   | @as("transitionStatus") TransitionStatus
   | @as("floatingRootContext") FloatingRootContext
@@ -95,8 +114,8 @@ type useSyncedValue3 =
   | @as("keyboardEventRelay") KeyboardEventRelay
 type instantType =
   | @as("group") Group
-  | @as("dismiss") Dismiss
   | @as("click") Click
+  | @as("dismiss") Dismiss
 type menuRootChangeEventReason =
   | @as("trigger-press") TriggerPress
   | @as("none") None
@@ -116,9 +135,9 @@ type menuRootOrientation =
   | @as("vertical") Vertical
 type useSyncedValue4 =
   | @as("role") Role
+  | @as("open") Open
   | @as("modal") Modal
   | @as("disablePointerDismissal") DisablePointerDismissal
-  | @as("open") Open
   | @as("mounted") Mounted
   | @as("transitionStatus") TransitionStatus
   | @as("floatingRootContext") FloatingRootContext
@@ -139,8 +158,8 @@ type useSyncedValue4 =
   | @as("viewportElement") ViewportElement
 type useSyncedValue6 =
   | @as("disabled") Disabled
-  | @as("modal") Modal
   | @as("open") Open
+  | @as("modal") Modal
   | @as("mounted") Mounted
   | @as("transitionStatus") TransitionStatus
   | @as("floatingRootContext") FloatingRootContext
@@ -167,10 +186,39 @@ type useSyncedValue6 =
   | @as("floatingParentNodeId") FloatingParentNodeId
   | @as("itemProps") ItemProps
   | @as("keyboardEventRelay") KeyboardEventRelay
+type reason6 =
+  | @as("trigger-press") TriggerPress
+  | @as("none") None
+  | @as("trigger-hover") TriggerHover
+  | @as("outside-press") OutsidePress
+  | @as("link-press") LinkPress
+  | @as("focus-out") FocusOut
+  | @as("escape-key") EscapeKey
+  | @as("list-navigation") ListNavigation
 type orientation2 =
   | @as("horizontal") Horizontal
   | @as("vertical") Vertical
-type reason3 =
+type reason7 =
+  | @as("none") None
+  | @as("increment-press") IncrementPress
+  | @as("decrement-press") DecrementPress
+  | @as("input-change") InputChange
+  | @as("input-clear") InputClear
+  | @as("input-blur") InputBlur
+  | @as("input-paste") InputPaste
+  | @as("keyboard") Keyboard
+  | @as("wheel") Wheel
+  | @as("scrub") Scrub
+type reason8 =
+  | @as("none") None
+  | @as("increment-press") IncrementPress
+  | @as("decrement-press") DecrementPress
+  | @as("input-clear") InputClear
+  | @as("input-blur") InputBlur
+  | @as("keyboard") Keyboard
+  | @as("wheel") Wheel
+  | @as("scrub") Scrub
+type reason9 =
   | @as("trigger-press") TriggerPress
   | @as("none") None
   | @as("trigger-hover") TriggerHover
@@ -182,8 +230,8 @@ type reason3 =
   | @as("imperative-action") ImperativeAction
 type useSyncedValue8 =
   | @as("disabled") Disabled
-  | @as("modal") Modal
   | @as("open") Open
+  | @as("modal") Modal
   | @as("mounted") Mounted
   | @as("transitionStatus") TransitionStatus
   | @as("floatingRootContext") FloatingRootContext
@@ -206,8 +254,8 @@ type useSyncedValue8 =
   | @as("instantType") InstantType
   | @as("openChangeReason") OpenChangeReason
 type instantType2 =
-  | @as("dismiss") Dismiss
   | @as("click") Click
+  | @as("dismiss") Dismiss
 type popoverRootChangeEventReason =
   | @as("trigger-press") TriggerPress
   | @as("none") None
@@ -218,10 +266,27 @@ type popoverRootChangeEventReason =
   | @as("focus-out") FocusOut
   | @as("escape-key") EscapeKey
   | @as("imperative-action") ImperativeAction
+type reason10 =
+  | @as("trigger-press") TriggerPress
+  | @as("none") None
+  | @as("trigger-hover") TriggerHover
+  | @as("trigger-focus") TriggerFocus
+  | @as("outside-press") OutsidePress
+  | @as("escape-key") EscapeKey
 type progressStatus =
   | @as("indeterminate") Indeterminate
   | @as("progressing") Progressing
   | @as("complete") Complete
+type reason11 =
+  | @as("trigger-press") TriggerPress
+  | @as("none") None
+  | @as("outside-press") OutsidePress
+  | @as("item-press") ItemPress
+  | @as("focus-out") FocusOut
+  | @as("escape-key") EscapeKey
+  | @as("list-navigation") ListNavigation
+  | @as("cancel-open") CancelOpen
+  | @as("window-resize") WindowResize
 type thumbAlignment =
   | @as("center") Center
   | @as("edge") Edge
@@ -230,18 +295,19 @@ type thumbCollisionBehavior =
   | @as("none") None
   | @as("push") Push
   | @as("swap") Swap
+type reason12 =
+  | @as("none") None
+  | @as("track-press") TrackPress
+  | @as("input-change") InputChange
+  | @as("keyboard") Keyboard
+  | @as("drag") Drag
 type priority =
   | @as("low") Low
   | @as("high") High
 type transitionStatus2 =
   | @as("starting") Starting
   | @as("ending") Ending
-type trackCursorAxis =
-  | @as("none") None
-  | @as("both") Both
-  | @as("x") X
-  | @as("y") Y
-type reason4 =
+type reason13 =
   | @as("trigger-press") TriggerPress
   | @as("none") None
   | @as("trigger-hover") TriggerHover
@@ -250,6 +316,11 @@ type reason4 =
   | @as("escape-key") EscapeKey
   | @as("disabled") Disabled
   | @as("imperative-action") ImperativeAction
+type trackCursorAxis =
+  | @as("none") None
+  | @as("both") Both
+  | @as("x") X
+  | @as("y") Y
 type useSyncedValue10 =
   | @as("disabled") Disabled
   | @as("open") Open
@@ -272,9 +343,9 @@ type useSyncedValue10 =
   | @as("trackCursorAxis") TrackCursorAxis
   | @as("disableHoverablePopup") DisableHoverablePopup
 type instantType3 =
+  | @as("focus") Focus
   | @as("delay") Delay
   | @as("dismiss") Dismiss
-  | @as("focus") Focus
 type tooltipRootChangeEventReason =
   | @as("trigger-press") TriggerPress
   | @as("none") None
@@ -284,14 +355,33 @@ type tooltipRootChangeEventReason =
   | @as("escape-key") EscapeKey
   | @as("disabled") Disabled
   | @as("imperative-action") ImperativeAction
+type accordionRootChangeEventDetails = {
+  reason: reason,
+  event: Dom.event,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
+}
 type accordionRootState = {
   value: array<string>,
   disabled: bool,
   orientation: PositionerTabUtilsTypes.orientation,
 }
+type alertDialogRootChangeEventDetails = {
+  reason: reason2,
+  event: Dom.event,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
+  preventUnmountOnClose: unit => unit,
+}
 type setOpenConfig = {
-  reason: reason,
-  event: string,
+  reason: reason2,
+  event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
   isCanceled: bool,
@@ -301,7 +391,7 @@ type setOpenConfig = {
 type context = {
   triggerElements: PopupsTypes.popupTriggerMap,
   popupRef: React.ref<Nullable.t<Dom.element>>,
-  onOpenChange?: (bool, string) => unit,
+  onOpenChange?: (bool, alertDialogRootChangeEventDetails) => unit,
   onOpenChangeComplete: bool => unit,
   backdropRef: React.ref<Nullable.t<Dom.element>>,
   internalBackdropRef: React.ref<Nullable.t<Dom.element>>,
@@ -418,7 +508,7 @@ type dialogStore<'a> = {
   setState: setStateConfig2<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
-  useContextCallback: (string, (string, string) => unit) => unit,
+  useContextCallback: (string, (string, alertDialogRootChangeEventDetails) => unit) => unit,
   useStateSetter: useSyncedValue => string => unit,
   observe: string,
   state: setStateConfig2<'a>,
@@ -434,6 +524,20 @@ type dialogHandle<'a> = {
   openWithPayload: 'a => unit,
   close: unit => unit,
   isOpen: bool,
+}
+type changeEventDetails = {
+  reason: reason3,
+  event: Dom.event,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
+}
+type highlightEventDetails = {
+  reason: reason4,
+  event: Dom.event,
+  index: int,
 }
 type avatarRootState = {
   imageLoadingStatus: imageLoadingStatus,
@@ -454,19 +558,29 @@ type collapsibleRootState = {
   disabled: bool,
   @as("open") open_: bool,
 }
-type setOpenConfig3 = {
-  reason: reason2,
-  event: string,
+type contextMenuRootChangeEventDetails = {
+  reason: reason5,
+  event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
   isCanceled: bool,
   isPropagationAllowed: bool,
   trigger: Dom.element,
 }
+type menuRootChangeEventDetails = {
+  reason: reason5,
+  event: Dom.event,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
+  preventUnmountOnClose: unit => unit,
+}
 type context2 = {
   triggerElements: PopupsTypes.popupTriggerMap,
   popupRef: React.ref<Nullable.t<Dom.element>>,
-  onOpenChange?: (bool, string) => unit,
+  onOpenChange?: (bool, menuRootChangeEventDetails) => unit,
   onOpenChangeComplete: bool => unit,
   positionerRef: React.ref<Nullable.t<Dom.element>>,
   typingRef: React.ref<Nullable.t<Dom.element>>,
@@ -545,7 +659,7 @@ type setStateConfig3 = {
   keyboardEventRelay: ReactEvent.Keyboard.t => unit,
 }
 type menuStore = {
-  setOpen: (bool, setOpenConfig3) => unit,
+  setOpen: (bool, contextMenuRootChangeEventDetails) => unit,
   unsubscribeParentListener: string,
   context: context2,
   controlledValues: string,
@@ -559,7 +673,7 @@ type menuStore = {
   setState: setStateConfig3 => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
-  useContextCallback: (string, (bool, string) => unit) => unit,
+  useContextCallback: (string, (bool, menuRootChangeEventDetails) => unit) => unit,
   useStateSetter: useSyncedValue3 => string => unit,
   observe: string,
   state: setStateConfig3,
@@ -635,7 +749,7 @@ type dialogStore2<'a> = {
   setState: setStateConfig2<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
-  useContextCallback: (string, (string, string) => unit) => unit,
+  useContextCallback: (string, (string, alertDialogRootChangeEventDetails) => unit) => unit,
   useStateSetter: useSyncedValue4 => string => unit,
   observe: string,
   state: setStateConfig2<'a>,
@@ -666,7 +780,7 @@ type dialogStore3<'a> = {
   setState: setStateConfig2<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
-  useContextCallback: (string, (string, string) => unit) => unit,
+  useContextCallback: (string, (string, alertDialogRootChangeEventDetails) => unit) => unit,
   useStateSetter: TriggerTypes.useSyncedValue5 => string => unit,
   observe: string,
   state: setStateConfig2<'a>,
@@ -759,7 +873,7 @@ type setStateConfig4<'a> = {
   keyboardEventRelay: ReactEvent.Keyboard.t => unit,
 }
 type menuStore2<'a> = {
-  setOpen: (bool, setOpenConfig3) => unit,
+  setOpen: (bool, contextMenuRootChangeEventDetails) => unit,
   unsubscribeParentListener: string,
   context: context2,
   controlledValues: string,
@@ -773,7 +887,7 @@ type menuStore2<'a> = {
   setState: setStateConfig4<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
-  useContextCallback: (string, (bool, string) => unit) => unit,
+  useContextCallback: (string, (bool, menuRootChangeEventDetails) => unit) => unit,
   useStateSetter: useSyncedValue6 => string => unit,
   observe: string,
   state: setStateConfig4<'a>,
@@ -790,7 +904,7 @@ type menuHandle2<'a> = {
   isOpen: bool,
 }
 type menuStore3<'a> = {
-  setOpen: (bool, setOpenConfig3) => unit,
+  setOpen: (bool, contextMenuRootChangeEventDetails) => unit,
   unsubscribeParentListener: string,
   context: context2,
   controlledValues: string,
@@ -804,7 +918,7 @@ type menuStore3<'a> = {
   setState: setStateConfig4<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
-  useContextCallback: (string, (bool, string) => unit) => unit,
+  useContextCallback: (string, (bool, menuRootChangeEventDetails) => unit) => unit,
   useStateSetter: TriggerTypes.useSyncedValue7 => string => unit,
   observe: string,
   state: setStateConfig4<'a>,
@@ -825,9 +939,32 @@ type menubarState = {
   modal: bool,
   hasSubmenuOpen: bool,
 }
+type navigationMenuRootChangeEventDetails = {
+  reason: reason6,
+  event: Dom.event,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
+}
 type navigationMenuRootState = {
   @as("open") open_: bool,
   nested: bool,
+}
+type numberFieldRootChangeEventDetails = {
+  reason: reason7,
+  event: Dom.event,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
+  direction?: CommonTypes.v1OrV1,
+}
+type numberFieldRootCommitEventDetails = {
+  reason: reason8,
+  event: Dom.event,
 }
 type numberFieldRootState = {
   value: float,
@@ -842,9 +979,19 @@ type numberFieldRootState = {
   filled: bool,
   focused: bool,
 }
-type setOpenConfig4 = {
-  reason: reason3,
-  event: string,
+type popoverRootChangeEventDetails = {
+  reason: reason9,
+  event: Dom.event,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
+  preventUnmountOnClose: unit => unit,
+}
+type setOpenConfig3 = {
+  reason: reason9,
+  event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
   isCanceled: bool,
@@ -854,7 +1001,7 @@ type setOpenConfig4 = {
 type context3 = {
   triggerElements: PopupsTypes.popupTriggerMap,
   popupRef: React.ref<Nullable.t<Dom.element>>,
-  onOpenChange?: (bool, string) => unit,
+  onOpenChange?: (bool, popoverRootChangeEventDetails) => unit,
   onOpenChangeComplete: bool => unit,
   backdropRef: React.ref<Nullable.t<Dom.element>>,
   internalBackdropRef: React.ref<Nullable.t<Dom.element>>,
@@ -915,7 +1062,7 @@ type setStateConfig5<'a> = {
   closeDelay: float,
 }
 type popoverStore<'a> = {
-  setOpen: (bool, setOpenConfig4) => unit,
+  setOpen: (bool, setOpenConfig3) => unit,
   disposeEffect: string,
   context: context3,
   controlledValues: string,
@@ -929,7 +1076,7 @@ type popoverStore<'a> = {
   setState: setStateConfig5<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
-  useContextCallback: (string, (bool, string) => unit) => unit,
+  useContextCallback: (string, (bool, popoverRootChangeEventDetails) => unit) => unit,
   useStateSetter: useSyncedValue8 => string => unit,
   observe: string,
   state: setStateConfig5<'a>,
@@ -946,7 +1093,7 @@ type popoverHandle<'a> = {
   isOpen: bool,
 }
 type popoverStore2<'a> = {
-  setOpen: (bool, setOpenConfig4) => unit,
+  setOpen: (bool, setOpenConfig3) => unit,
   disposeEffect: string,
   context: context3,
   controlledValues: string,
@@ -960,7 +1107,7 @@ type popoverStore2<'a> = {
   setState: setStateConfig5<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
-  useContextCallback: (string, (bool, string) => unit) => unit,
+  useContextCallback: (string, (bool, popoverRootChangeEventDetails) => unit) => unit,
   useStateSetter: TriggerTypes.useSyncedValue9 => string => unit,
   observe: string,
   state: setStateConfig5<'a>,
@@ -975,6 +1122,15 @@ type popoverHandle2<'a> = {
   @as("open") open_: string => unit,
   close: unit => unit,
   isOpen: bool,
+}
+type previewCardRootChangeEventDetails = {
+  reason: reason10,
+  event: Dom.event,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
 }
 type progressRootState = {
   status: progressStatus,
@@ -999,6 +1155,29 @@ type scrollAreaRootState = {
   overflowYEnd: bool,
   cornerHidden: bool,
 }
+type selectRootChangeEventDetails = {
+  reason: reason11,
+  event: Dom.event,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
+}
+type sliderRootChangeEventDetails = {
+  reason: reason12,
+  event: Dom.event,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
+  activeThumbIndex: float,
+}
+type sliderRootCommitEventDetails = {
+  reason: reason12,
+  event: Dom.event,
+}
 type sliderRootState = {
   activeThumbIndex: float,
   disabled: bool,
@@ -1022,6 +1201,7 @@ type tabsRootState = {
 type toastManagerPositionerProps = {
   ...JsxDOM.domProps,
   anchor?: Dom.element,
+  sticky?: bool,
   render?: React.element,
   side?: PositionerTabUtilsTypes.side,
   positionMethod?: PositionerTabUtilsTypes.positionMethod,
@@ -1030,7 +1210,6 @@ type toastManagerPositionerProps = {
   alignOffset?: PositionerTabUtilsTypes.sideOffsetConfigAlignOffset,
   collisionBoundary?: string,
   collisionPadding?: string,
-  sticky?: bool,
   arrowPadding?: float,
   disableAnchorTracking?: bool,
   collisionAvoidance?: PositionerTabUtilsTypes.CollisionAvoidance.t,
@@ -1100,9 +1279,19 @@ type toolbarRootState = {
   disabled: bool,
   orientation: PositionerTabUtilsTypes.orientation,
 }
-type setOpenConfig5 = {
-  reason: reason4,
-  event: string,
+type tooltipRootChangeEventDetails = {
+  reason: reason13,
+  event: Dom.event,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
+  preventUnmountOnClose: unit => unit,
+}
+type setOpenConfig4 = {
+  reason: reason13,
+  event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
   isCanceled: bool,
@@ -1112,7 +1301,7 @@ type setOpenConfig5 = {
 type context4 = {
   triggerElements: PopupsTypes.popupTriggerMap,
   popupRef: React.ref<Nullable.t<Dom.element>>,
-  onOpenChange?: (bool, string) => unit,
+  onOpenChange?: (bool, tooltipRootChangeEventDetails) => unit,
   onOpenChangeComplete: bool => unit,
 }
 type useSyncedValuesConfig6<'a> = {
@@ -1160,7 +1349,7 @@ type setStateConfig6<'a> = {
   closeDelay: float,
 }
 type tooltipStore<'a> = {
-  setOpen: (bool, setOpenConfig5) => unit,
+  setOpen: (bool, setOpenConfig4) => unit,
   context: context4,
   controlledValues: string,
   selectors: string,
@@ -1173,7 +1362,7 @@ type tooltipStore<'a> = {
   setState: setStateConfig6<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
-  useContextCallback: (string, (bool, string) => unit) => unit,
+  useContextCallback: (string, (bool, tooltipRootChangeEventDetails) => unit) => unit,
   useStateSetter: useSyncedValue10 => string => unit,
   observe: string,
   state: setStateConfig6<'a>,
@@ -1190,7 +1379,7 @@ type tooltipHandle<'a> = {
   isOpen: bool,
 }
 type tooltipStore2<'a> = {
-  setOpen: (bool, setOpenConfig5) => unit,
+  setOpen: (bool, setOpenConfig4) => unit,
   context: context4,
   controlledValues: string,
   selectors: string,
@@ -1203,7 +1392,7 @@ type tooltipStore2<'a> = {
   setState: setStateConfig6<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
-  useContextCallback: (string, (bool, string) => unit) => unit,
+  useContextCallback: (string, (bool, tooltipRootChangeEventDetails) => unit) => unit,
   useStateSetter: TriggerTypes.useSyncedValue11 => string => unit,
   observe: string,
   state: setStateConfig6<'a>,

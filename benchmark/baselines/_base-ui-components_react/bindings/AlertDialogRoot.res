@@ -1,6 +1,6 @@
 @module("@base-ui-components/react") @scope("AlertDialog") @react.component
 external make: (
-  ~onOpenChange: string=?,  // ⚪ loose — was `(open: boolean, eventDetails: AlertDialogRootChangeEventDetails) => void`
+  ~onOpenChange: (bool, ComponentsMenubarRootStoreToastTypes.alertDialogRootChangeEventDetails) => unit=?,
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
   ~handle: ComponentsMenubarRootStoreToastTypes.dialogHandle<'a>=?,
   ~children: React.element=?,

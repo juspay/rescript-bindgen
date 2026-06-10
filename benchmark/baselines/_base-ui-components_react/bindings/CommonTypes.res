@@ -7,6 +7,7 @@
 @unboxed type className = Str(string) | Fn(string => string)
 @unboxed type stringOrStringArray = Str(string) | StrArr(array<string>)
 @unboxed type boolOrBadInputOrCustomErrorOrPatternMismatchOrRangeOverflowOrRangeUnderflowOrStepMismatchOrTooLongOrTooShortOrTypeMismatchOrValidOrValueMissing = Bool(bool) | @as("badInput") BadInput | @as("customError") CustomError | @as("patternMismatch") PatternMismatch | @as("rangeOverflow") RangeOverflow | @as("rangeUnderflow") RangeUnderflow | @as("stepMismatch") StepMismatch | @as("tooLong") TooLong | @as("tooShort") TooShort | @as("typeMismatch") TypeMismatch | @as("valid") Valid | @as("valueMissing") ValueMissing
+@unboxed type v1OrV1 = @as(1) N1 | @as(-1) N_1
 @unboxed type style2<'a> = Style(JsxDOM.style) | Fn('a => JsxDOM.style)
 @unboxed type className2<'a> = Str(string) | Fn('a => string)
 module Validate = {

@@ -19,8 +19,8 @@ type variantType =
   | @as("error") Error
   | @as("info") Info
 type positionStrategy =
-  | @as("absolute") Absolute
   | @as("fixed") Fixed
+  | @as("absolute") Absolute
 type renderConfig = {
   content: React.element,
   activeAnchor: Dom.element,

@@ -2,7 +2,7 @@
 external make: (
   ~defaultOpen: bool=?,
   @as("open") ~open_: bool=?,
-  ~onOpenChange: string=?,  // ⚪ loose — was `(open: boolean, eventDetails: PopoverRootChangeEventDetails) => void`
+  ~onOpenChange: (bool, ComponentsMenubarRootStoreToastTypes.popoverRootChangeEventDetails) => unit=?,
   ~onOpenChangeComplete: bool => unit=?,
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
   ~modal: CommonTypes.boolOrTrapFocus=?,

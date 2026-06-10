@@ -5,7 +5,7 @@ external make: (
   ~checked: bool=?,
   ~defaultChecked: bool=?,
   ~disabled: bool=?,
-  ~onCheckedChange: (bool, PositionerTabUtilsTypes.onValueChangeConfig) => unit=?,
+  ~onCheckedChange: (bool, PositionerTabUtilsTypes.onCheckedChangeConfig) => unit=?,
   ~readOnly: bool=?,
   ~required: bool=?,
   ~indeterminate: bool=?,

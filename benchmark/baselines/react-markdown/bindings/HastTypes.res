@@ -1,0 +1,3 @@
+type readonly = {
+  ...JsxDOM.domProps,
+}

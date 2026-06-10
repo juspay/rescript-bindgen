@@ -2,7 +2,7 @@
 external make: (
   ~defaultOpen: bool=?,
   @as("open") ~open_: bool=?,
-  ~onOpenChange: string=?,  // ⚪ loose — was `(open: boolean, eventDetails: TooltipRootChangeEventDetails) => void`
+  ~onOpenChange: (bool, ComponentsMenubarRootStoreToastTypes.tooltipRootChangeEventDetails) => unit=?,
   ~onOpenChangeComplete: bool => unit=?,
   ~disableHoverablePopup: bool=?,
   ~trackCursorAxis: ComponentsMenubarRootStoreToastTypes.trackCursorAxis=?,

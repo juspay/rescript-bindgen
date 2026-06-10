@@ -9,9 +9,10 @@ type htmlInputTypeAttribute =
   | @as("hidden") Hidden
   | @as("checkbox") Checkbox
   | @as("radio") Radio
+  | @as("reset") Reset
+  | @as("range") Range
   | @as("date") Date
   | @as("submit") Submit
-  | @as("reset") Reset
   | @as("tel") Tel
   | @as("url") Url
   | @as("email") Email
@@ -19,7 +20,6 @@ type htmlInputTypeAttribute =
   | @as("file") File
   | @as("month") Month
   | @as("password") Password
-  | @as("range") Range
   | @as("week") Week
 type htmlAttributeAnchorTarget =
   | @as("_self") Self

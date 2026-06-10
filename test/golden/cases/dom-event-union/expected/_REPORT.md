@@ -1,34 +1,22 @@
-# Binding report — `hono@4.12.25`
+# Binding report — `demo`
 
-**0** components · ✅ **0** usable · 🔍 **0** need review · 🛑 **0** broken
+**1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**3** class module(s) → `@new`/`@send`/`@get` bindings.
-
-**30** shared types deduplicated into **5** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**1** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
 | Kind | Package | Provides | Status |
 |------|---------|----------|--------|
 | required | `@rescript/react + stdlib` | JsxDOM, Dom, React, ReactEvent | ✓ present |
-| optional | `rescript-webapi` | File, FileList | ✓ present → used |
-
-## 🏛 Class modules
-
-Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new` constructor, `@send` methods, `@get` properties).
-
-| Class | Constructor | Methods | Properties |
-|-------|-------------|---------|------------|
-| `Context` | ✓ | 15 | 8 |
-| `HonoRequest` | ✓ | 13 | 8 |
-| `Hono` | ✓ | 18 | 2 |
+| optional | `rescript-webapi` | File, FileList | ✗ not installed |
 
 ## ✅ Usable
 
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-_(none)_
+- NumberField
 
 ## ⚪ Loosely typed (widened to `string`)
 

@@ -6,7 +6,7 @@
 
 **5** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**101** shared types deduplicated into **6** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**103** shared types deduplicated into **6** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
