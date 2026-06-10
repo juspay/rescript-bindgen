@@ -517,6 +517,7 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
             const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0
             const t = checker.getTypeOfSymbolAtLocation(p, decl)
             const d = p.declarations && p.declarations[0]
+            ctx.lastAnyAlias = null // each prop keys its implicit-any vars fresh (#31)
             // aria-* / role -> the exact JsxDOM type (verbatim), bypassing classify.
             // hasOwnProperty guard: a prop literally named `toString`/`valueOf`/`constructor`/…
             // would otherwise pick up an inherited Object.prototype member (a native function).
@@ -1124,9 +1125,26 @@ function classify(type, ctx, propName = '', depth = 0) {
     // `unknown` -> `JSON.t`: an opaque value the consumer builds/decodes. This is the
     // honest mapping for a genuinely-unknown value (a callback-supplied id, an opaque
     // filter) — unlike a type variable, which would be unsound in callback position.
-    // `any` stays a flagged defect (it means "untyped", not "opaque value").
     if (flags & ts.TypeFlags.Unknown) return { kind: 'raw', res: 'JSON.t' }
-    if (flags & ts.TypeFlags.Any) return { kind: 'any' }
+    // Prop-position `any` -> an implicit component generic, the same treatment an
+    // EXPLICIT generic already gets (`SliderRoot<Value>` -> 'a). Keyed by the alias that
+    // carried it (`AccordionValue = (any | null)[]`) so `value`/`defaultValue`/
+    // `onValueChange` over one alias unify on ONE variable; a bare `any` gets a fresh var
+    // per occurrence. Exactly as sound as the upstream `any`, strictly better than a
+    // string placeholder that silently does nothing. Inside SHARED record fields it stays
+    // a flagged defect (a shared type can't be component-generic). (#31, probe I-2)
+    if (flags & ts.TypeFlags.Any) {
+        if (ctx.typeVars && !ctx.inRecordField) {
+            const TV = ['a', 'b', 'c', 'd', 'e', 'f']
+            const key = ctx.lastAnyAlias || Symbol('bare-any')
+            if (!ctx.typeVars.has(key)) {
+                const i = ctx.typeVars.size
+                ctx.typeVars.set(key, "'" + (TV[i] || `t${i}`))
+            }
+            return { kind: 'typeVar', name: ctx.typeVars.get(key) }
+        }
+        return { kind: 'any' }
+    }
 
     // A generic type parameter `T` -> the ReScript type variable it was mapped to ('a).
     // An unmapped param (e.g. from a nested generic not on the component signature) is
@@ -1145,6 +1163,10 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (isCssType(type)) return { kind: 'string' }
 
     const name = typeName(type)
+    // Remember the most recent ALIAS on the way down, so an `any` leaf deep inside it
+    // (`AccordionValue = (any | null)[]` -> array -> union -> any) can key its implicit
+    // type variable by the alias that carried it. (#31)
+    if (type.aliasSymbol) ctx.lastAnyAlias = type.aliasSymbol
 
     // A reference to an exported CLASS instance -> its abstract type in the `InstanceTypes`
     // sink (M2). The class currently being built renders as bare `t` (its module's local
@@ -1668,10 +1690,23 @@ function unionNode(type, ctx, propName, depth = 0) {
     // Guard: a CALLABLE arm (`CSSProperties & ((state) => CSSProperties)`) shares its
     // object constituent's symbol but is runtime-discriminable as a function — that
     // shape belongs to the @unboxed Style|Fn machinery below, not a record collapse.
+    // Guard 2: skip when any arm's type ARGUMENTS carry a type parameter
+    // (`ColumnDefinition<T> | …` in a generic component) — the collapsed record would
+    // need the variable threaded through its reference (`columnDefinition<'a>`), which
+    // this path doesn't do; those unions keep the previous (flagged) behavior.
+    // (Regression caught by the benchmark gate on blend's DataTable.)
+    const armHasTypeParam = (t, d = 0) => {
+        if (!t || d > 3) return false
+        if (t.flags & ts.TypeFlags.TypeParameter) return true
+        if (t.flags & ts.TypeFlags.Intersection) return (t.types || []).some((m) => armHasTypeParam(m, d + 1))
+        const args = [...(t.aliasTypeArguments || []), ...((checker.getTypeArguments && (t.objectFlags & ts.ObjectFlags.Reference) && checker.getTypeArguments(t)) || [])]
+        return args.some((a) => armHasTypeParam(a, d + 1))
+    }
     if (parts.length >= 2 && type.getProperties().length > 0 && parts.every((t) =>
         armSym(t) && armSym(t) === armSym(parts[0]) &&
         (t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) &&
-        !(t.getCallSignatures && t.getCallSignatures().length))) {
+        !(t.getCallSignatures && t.getCallSignatures().length) &&
+        !armHasTypeParam(t))) {
         const aliasName = type.aliasSymbol && type.aliasSymbol.getName()
         const symName = armSym(parts[0]).getName()
         const named = (aliasName && /^[A-Z]/.test(aliasName)) ? aliasName : (/^[A-Z]/.test(symName || '') ? symName : null)
@@ -2143,6 +2178,10 @@ function buildRecordFields(type, ctx, depth) {
     const hasHtml = props.some(isInherited)
     const spread = hasHtml ? 'JsxDOM.domProps' : undefined
 
+    // Record fields must not mint implicit component type variables for `any` — a SHARED
+    // record can't be component-generic, so `any` stays a flagged defect there. (#31)
+    const prevInRecord = ctx.inRecordField
+    ctx.inRecordField = true
     const fields = props
         // when spreading domProps, drop ALL inherited HTML fields + any own field whose
         // name already exists in domProps (collision); keep only the package's own fields.
@@ -2153,5 +2192,6 @@ function buildRecordFields(type, ctx, depth) {
             const t = checker.getTypeOfSymbolAtLocation(p, ctx.decl)
             return { name: p.getName(), optional, type: classify(t, ctx, p.getName(), depth + 1) }
         })
+    ctx.inRecordField = prevInRecord
     return { spread, fields }
 }

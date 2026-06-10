@@ -1,12 +1,9 @@
 @module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
   ~children: React.element=?,
-  // 🛑 BROKEN: `value` is `any` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~value: string=?,
-  // 🛑 BROKEN: `defaultValue` is `any` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~defaultValue: string=?,
-  // 🛑 BROKEN: `onValueChange` is `(value: any, eventDetails: MenuRootChangeEventDetails) => void` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~onValueChange: string=?,
+  ~value: 'a=?,
+  ~defaultValue: 'b=?,
+  ~onValueChange: ('c, ComponentsMenubarRootStoreToastTypes.menuRootChangeEventDetails) => unit=?,
   ~disabled: bool=?,
   ~style: ButtonTypes.buttonStyle=?,
   ~title: string=?,

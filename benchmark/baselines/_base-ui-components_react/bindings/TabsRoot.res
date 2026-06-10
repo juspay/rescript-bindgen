@@ -1,12 +1,9 @@
 @module("@base-ui-components/react") @scope("Tabs") @react.component
 external make: (
-  // 🛑 BROKEN: `value` is `any` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~value: string=?,
-  // 🛑 BROKEN: `defaultValue` is `any` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~defaultValue: string=?,
+  ~value: 'a=?,
+  ~defaultValue: 'b=?,
   ~orientation: PositionerTabUtilsTypes.orientation=?,
-  // 🛑 BROKEN: `onValueChange` is `(value: any, eventDetails: BaseUIChangeEventDetail<"none", { activationDirection: TabsTabActivationDirection; ` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~onValueChange: string=?,
+  ~onValueChange: ('c, PositionerTabUtilsTypes.baseUIChangeEventDetail) => unit=?,
   ~style: ComponentsMenubarRootStoreToastTypes.tabsRootStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

@@ -2,12 +2,9 @@
 external make: (
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
   ~onOpenChangeComplete: bool => unit=?,
-  // 🛑 BROKEN: `value` is `any` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~value: string=?,
-  // 🛑 BROKEN: `defaultValue` is `any` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~defaultValue: string=?,
-  // 🛑 BROKEN: `onValueChange` is `(value: any, eventDetails: NavigationMenuRootChangeEventDetails) => void` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~onValueChange: string=?,
+  ~value: 'a=?,
+  ~defaultValue: 'b=?,
+  ~onValueChange: ('c, ComponentsMenubarRootStoreToastTypes.navigationMenuRootChangeEventDetails) => unit=?,
   ~delay: float=?,
   ~closeDelay: float=?,
   ~orientation: ComponentsMenubarRootStoreToastTypes.orientation2=?,

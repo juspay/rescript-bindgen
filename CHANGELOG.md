@@ -19,6 +19,11 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   the sync-or-async value shape `T | Promise<T>` → `promise<t>` (#24).
 
 ### Fixed
+- **Prop-position `any` -> implicit component generics** (#31, probe I-2): an
+  `any`-typed prop becomes a type variable (keyed by its carrying alias, so
+  `value`/`defaultValue`/`onValueChange` over one alias unify) instead of a
+  broken `string` placeholder — base-ui broken components 16 -> 0, usable
+  151 -> 167. Shared-record fields keep the flagged defect.
 - **DOM-event values and distributed eventDetails records** (#30, probe I-1/I-6):
   a DOM event as a VALUE (solo or union — base-ui's distributed
   `ReasonToEvent<R>`) maps to `Dom.event`, and a union of instantiations of

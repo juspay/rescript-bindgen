@@ -1,11 +1,8 @@
 @module("@base-ui-components/react") @react.component
 external make: (
-  // 🛑 BROKEN: `value` is `readonly any[]` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~value: string=?,
-  // 🛑 BROKEN: `defaultValue` is `readonly any[]` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~defaultValue: string=?,
-  // 🛑 BROKEN: `onValueChange` is `(groupValue: any[], eventDetails: { reason: "none"; event: Event; cancel: () => void; allowPropagation: () => ` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~onValueChange: string=?,
+  ~value: array<'a>=?,
+  ~defaultValue: array<'b>=?,
+  ~onValueChange: (array<'c>, PositionerTabUtilsTypes.onCheckedChangeConfig) => unit=?,
   ~disabled: bool=?,
   ~orientation: PositionerTabUtilsTypes.orientation=?,
   ~loopFocus: bool=?,

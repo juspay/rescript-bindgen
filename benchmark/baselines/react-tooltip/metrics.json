@@ -5,8 +5,8 @@
   "buckets": {
     "total": 1,
     "usable": 0,
-    "review": 0,
-    "broken": 1,
+    "review": 1,
+    "broken": 0,
     "loose": 1
   },
   "functions": 0,

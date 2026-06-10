@@ -2,8 +2,7 @@
 external make: (
   ~disabled: bool=?,
   ~name: string=?,
-  // 🛑 BROKEN: `validate` is `(value: unknown, formValues: Record<string, any>) => string | string[] | Promise<string | string[]>` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~validate: string=?,
+  ~validate: (JSON.t, Dict.t<'a>) => CommonTypes.Validate.t=?,
   ~validationMode: FormTypes.formValidationMode=?,
   ~validationDebounceTime: float=?,
   ~invalid: bool=?,

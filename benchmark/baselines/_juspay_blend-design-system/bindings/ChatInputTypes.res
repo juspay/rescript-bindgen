@@ -1,4 +1,4 @@
-type type_3 =
+type type_2 =
   | @as("image") Image
   | @as("text") Text
   | @as("pdf") Pdf
@@ -7,7 +7,7 @@ type type_3 =
 type attachedFile = {
   id: string,
   name: string,
-  @as("type") type_: type_3,
+  @as("type") type_: type_2,
   size?: float,
   url?: string,
   preview?: string,

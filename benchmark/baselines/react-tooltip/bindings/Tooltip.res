@@ -15,8 +15,7 @@ external make: (
   ~children: React.element=?,
   ~openOnClick: bool=?,
   ~positionStrategy: DistTypes.positionStrategy=?,
-  // 🛑 BROKEN: `middlewares` is `any[]` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~middlewares: string=?,
+  ~middlewares: array<'a>=?,
   ~delayShow: float=?,
   ~delayHide: float=?,
   ~autoClose: float=?,

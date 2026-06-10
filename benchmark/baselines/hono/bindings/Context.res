@@ -1,10 +1,8 @@
 type t = InstanceTypes.context
 @new @module("hono") external make: (~req: WebTypes.request, ~options: TypesTypes.contextOptions=?, unit) => t = "Context"
 @send external render: (t, ~content: promise<string>) => promise<WebTypes.response> = "render"
-// 🛑 BROKEN: `setLayout` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
-@send external setLayout: (t, ~layout: TypesTypes.layoutConfig => string) => TypesTypes.layoutConfig => string = "setLayout"
-// 🛑 BROKEN: `getLayout` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
-@send external getLayout: (t) => TypesTypes.layoutConfig => string = "getLayout"
+@send external setLayout: (t, ~layout: TypesTypes.layoutConfig => 'a) => TypesTypes.layoutConfig => 'a = "setLayout"
+@send external getLayout: (t) => TypesTypes.layoutConfig => 'a = "getLayout"
 @send external setRenderer: (t, ~renderer: promise<string> => promise<WebTypes.response>) => unit = "setRenderer"
 // ⚪ loose: `header` has a param/return widened to `string`.
 @send external header: (t, ~name: string, ~value: UtilsTypes.baseMime=?, ~options: TypesTypes.setHeadersOptions=?, unit) => unit = "header"

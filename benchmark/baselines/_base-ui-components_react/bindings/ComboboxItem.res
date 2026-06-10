@@ -3,8 +3,7 @@ external make: (
   ~children: React.element=?,
   ~onClick: ReactEvent.Mouse.t => unit=?,
   ~index: int=?,
-  // 🛑 BROKEN: `value` is `any` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~value: string=?,
+  ~value: 'a=?,
   ~disabled: bool=?,
   ~nativeButton: bool=?,
   ~className: ItemTypes.comboboxItemClassName=?,
