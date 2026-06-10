@@ -91,7 +91,7 @@ function hasRecGroupLabelCollision(records, objUnboxed, opaque, idOf, depsOf) {
     return false
 }
 
-function label(name) {
+export function label(name) {
     const isPlainIdent = /^[a-z_][a-zA-Z0-9_]*$/.test(name)
     if (isPlainIdent && !RESERVED.has(name)) return { as: null, id: name }
     if (RESERVED.has(name)) return { as: name, id: name + '_' }
@@ -109,7 +109,7 @@ function label(name) {
  * @param {string} propName
  * @returns {'int' | 'float'}
  */
-function numberType(propName) {
+export function numberType(propName) {
     return INT_BY_NAME.has(propName) ? 'int' : 'float'
 }
 

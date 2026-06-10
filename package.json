@@ -16,13 +16,14 @@
   },
   "scripts": {
     "gen": "node src/cli.mjs",
-    "test": "node test/smoke.mjs && node test/golden.mjs",
+    "test": "node test/smoke.mjs && node test/golden.mjs && node test/html-attrs.mjs",
     "test:smoke": "node test/smoke.mjs",
     "test:golden": "node test/golden.mjs",
     "test:golden:update": "node test/golden.mjs --update",
     "test:compile": "node test/golden-compile.mjs",
     "bench": "node benchmark/run.mjs",
-    "bench:update": "node benchmark/run.mjs --update"
+    "bench:update": "node benchmark/run.mjs --update",
+    "gen:attrs": "node scripts/gen-html-attrs.mjs"
   },
   "files": [
     "src/",
@@ -57,5 +58,8 @@
   },
   "dependencies": {
     "typescript": "^5.6.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.17"
   }
 }

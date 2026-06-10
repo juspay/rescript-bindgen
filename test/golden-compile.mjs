@@ -86,6 +86,29 @@ for (const name of cases) {
     }
 }
 
+// The vendored HTML attribute library must compile as a whole (54 records,
+// spread hierarchy, poly variants, @as renames, ReactEvent handlers) — the
+// compile-level guarantee behind test/html-attrs.mjs's textual invariants.
+{
+    const { renderFullModule } = await import('../src/html-attrs.mjs')
+    wipeSrc()
+    writeFileSync(join(SRC, 'HtmlAttrs.res'), renderFullModule())
+    try {
+        const out = execSync('npx rescript build 2>&1', { cwd: SANDBOX, encoding: 'utf-8' })
+        const warnings = (out.match(/Warning number \d+/g) || [])
+        if (warnings.length) {
+            console.log(RED(`✗ HtmlAttrs.res — ${warnings.length} warning(s)`))
+            failed++
+        } else {
+            console.log(GREEN('✓ HtmlAttrs.res (full attribute library)'))
+        }
+    } catch (e) {
+        console.log(RED('✗ HtmlAttrs.res — rescript build failed'))
+        console.log(DIM((e.stdout || '').toString().split('\n').filter((l) => /[Ee]rror|Syntax|\.res:/.test(l)).slice(0, 12).join('\n')))
+        failed++
+    }
+}
+
 wipeSrc()
 if (failed) {
     console.log(RED(`\n${failed} case(s) failed to compile.`))
