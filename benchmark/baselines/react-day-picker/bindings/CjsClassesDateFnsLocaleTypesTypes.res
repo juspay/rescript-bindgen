@@ -178,16 +178,16 @@ type match = {
 }
 type rec dayPickerLocaleLabels = {
   labelNav?: CommonTypes.labelNav,
-  labelGrid?: labelGrid,
-  labelGridcell?: labelGridcell,
-  labelMonthDropdown?: labelMonthDropdown,
-  labelYearDropdown?: labelYearDropdown,
-  labelNext?: labelNext,
+  labelGrid?: dateLibOptionsLabelGrid,
+  labelGridcell?: dateLibOptionsLabelGridcell,
+  labelMonthDropdown?: dateLibOptionsLabelMonthDropdown,
+  labelYearDropdown?: dateLibOptionsLabelYearDropdown,
+  labelNext?: dateLibOptionsLabelNext,
   labelPrevious?: CommonTypes.labelPrevious,
-  labelDayButton?: labelDayButton,
-  labelWeekday?: labelWeekday,
-  labelWeekNumber?: labelWeekNumber,
-  labelWeekNumberHeader?: labelWeekNumberHeader,
+  labelDayButton?: dateLibOptionsLabelDayButton,
+  labelWeekday?: dateLibOptionsLabelWeekday,
+  labelWeekNumber?: dateLibOptionsLabelWeekNumber,
+  labelWeekNumberHeader?: dateLibOptionsLabelWeekNumberHeader,
 }
 and dayPickerLocale = {
   labels?: dayPickerLocaleLabels,
@@ -210,15 +210,15 @@ and dateLibOptions = {
   useAdditionalDayOfYearTokens?: bool,
   @as("in") in_?: string => Date.t,
 }
-@unboxed and labelWeekNumberHeader = Str(string) | Fn(option<dateLibOptions> => string)
-@unboxed and labelWeekNumber = Str(string) | Fn((float, option<dateLibOptions>) => string)
-@unboxed and labelWeekday = Str(string) | Fn((Date.t, option<dateLibOptions>, option<InstanceTypes.dateLib>) => string)
-@unboxed and labelDayButton = Str(string) | Fn((Date.t, Dict.t<bool>, option<dateLibOptions>, option<InstanceTypes.dateLib>) => string)
-@unboxed and labelNext = Str(string) | Fn((Date.t, option<dateLibOptions>) => string)
-@unboxed and labelYearDropdown = Str(string) | Fn(option<dateLibOptions> => string)
-@unboxed and labelMonthDropdown = Str(string) | Fn(option<dateLibOptions> => string)
-@unboxed and labelGridcell = Str(string) | Fn((Date.t, option<Dict.t<bool>>, option<dateLibOptions>, option<InstanceTypes.dateLib>) => string)
-@unboxed and labelGrid = Str(string) | Fn((Date.t, option<dateLibOptions>, option<InstanceTypes.dateLib>) => string)
+@unboxed and dateLibOptionsLabelWeekNumberHeader = Str(string) | Fn(option<dateLibOptions> => string)
+@unboxed and dateLibOptionsLabelWeekNumber = Str(string) | Fn((float, option<dateLibOptions>) => string)
+@unboxed and dateLibOptionsLabelWeekday = Str(string) | Fn((Date.t, option<dateLibOptions>, option<InstanceTypes.dateLib>) => string)
+@unboxed and dateLibOptionsLabelDayButton = Str(string) | Fn((Date.t, Dict.t<bool>, option<dateLibOptions>, option<InstanceTypes.dateLib>) => string)
+@unboxed and dateLibOptionsLabelNext = Str(string) | Fn((Date.t, option<dateLibOptions>) => string)
+@unboxed and dateLibOptionsLabelYearDropdown = Str(string) | Fn(option<dateLibOptions> => string)
+@unboxed and dateLibOptionsLabelMonthDropdown = Str(string) | Fn(option<dateLibOptions> => string)
+@unboxed and dateLibOptionsLabelGridcell = Str(string) | Fn((Date.t, option<Dict.t<bool>>, option<dateLibOptions>, option<InstanceTypes.dateLib>) => string)
+@unboxed and dateLibOptionsLabelGrid = Str(string) | Fn((Date.t, option<dateLibOptions>, option<InstanceTypes.dateLib>) => string)
 type interval = {
   start: string,
   end: string,

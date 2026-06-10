@@ -1,0 +1,18 @@
+@module("@base-ui-components/react") @react.component
+external make: (
+  ~defaultOpen: bool=?,
+  ~loopFocus: bool=?,
+  ~highlightItemOnHover: bool=?,
+  ~modal: bool=?,
+  ~onOpenChange: string=?,  // ⚪ loose — was `(open: boolean, eventDetails: MenuRootChangeEventDetails) => void`
+  ~onOpenChangeComplete: bool => unit=?,
+  @as("open") ~open_: bool=?,
+  ~orientation: ComponentsMenubarRootStoreToastTypes.menuRootOrientation=?,
+  ~disabled: bool=?,
+  ~closeParentOnEsc: bool=?,
+  ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
+  ~triggerId: string=?,
+  ~defaultTriggerId: string=?,
+  ~handle: ComponentsMenubarRootStoreToastTypes.menuHandle2<'a>=?,
+  ~children: React.element=?,
+) => React.element = "MenuRoot"

@@ -9,7 +9,7 @@ external make: (
   ~enableSearch: bool=?,
   ~searchPlaceholder: string=?,
   ~enableVirtualScrolling: bool=?,
-  ~virtualItemHeight: MenuTypes.virtualItemHeight=?,
+  ~virtualItemHeight: MenuTypes.menuItemTypeVirtualItemHeight=?,
   ~virtualOverscan: float=?,
   ~virtualScrollThreshold: float=?,
   @as("open") ~open_: bool=?,

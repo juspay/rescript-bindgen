@@ -111,7 +111,7 @@ type responsiveMenuTokensType = {
   sm: menuTokensType,
   lg: menuTokensType,
 }
-@unboxed type virtualItemHeight = Num(float) | Fn((menuItemType, float) => float)
+@unboxed type menuItemTypeVirtualItemHeight = Num(float) | Fn((menuItemType, float) => float)
 module CollisonBoundaryRef = {
   type t
   external fromElement: Dom.element => t = "%identity"
@@ -127,7 +127,7 @@ type overflowMenuPropsConfig = {
   enableSearch?: bool,
   searchPlaceholder?: string,
   enableVirtualScrolling?: bool,
-  virtualItemHeight?: virtualItemHeight,
+  virtualItemHeight?: menuItemTypeVirtualItemHeight,
   virtualOverscan?: float,
   virtualScrollThreshold?: float,
   @as("open") open_?: bool,

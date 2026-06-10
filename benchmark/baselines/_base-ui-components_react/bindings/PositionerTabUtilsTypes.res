@@ -1,0 +1,201 @@
+type orientation =
+  | @as("horizontal") Horizontal
+  | @as("vertical") Vertical
+type transitionStatus =
+  | @as("starting") Starting
+  | @as("ending") Ending
+  | @as("idle") Idle
+type interactionType =
+  | @as("") Value
+  | @as("keyboard") Keyboard
+  | @as("mouse") Mouse
+  | @as("touch") Touch
+  | @as("pen") Pen
+type side =
+  | @as("top") Top
+  | @as("bottom") Bottom
+  | @as("left") Left
+  | @as("right") Right
+  | @as("inline-end") InlineEnd
+  | @as("inline-start") InlineStart
+type align =
+  | @as("center") Center
+  | @as("start") Start
+  | @as("end") End
+type positionMethod =
+  | @as("absolute") Absolute
+  | @as("fixed") Fixed
+type side2 =
+  | @as("none") None
+  | @as("flip") Flip
+type align2 =
+  | @as("none") None
+  | @as("flip") Flip
+  | @as("shift") Shift
+type fallbackAxisSide =
+  | @as("none") None
+  | @as("start") Start
+  | @as("end") End
+type side3 =
+  | @as("none") None
+  | @as("shift") Shift
+type side4 =
+  | @as("none") None
+  | @as("top") Top
+  | @as("bottom") Bottom
+  | @as("left") Left
+  | @as("right") Right
+  | @as("inline-end") InlineEnd
+  | @as("inline-start") InlineStart
+type tabsTabActivationDirection =
+  | @as("none") None
+  | @as("left") Left
+  | @as("right") Right
+  | @as("up") Up
+  | @as("down") Down
+type onValueChangeConfig = {
+  reason: string,
+  event: string,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
+}
+type baseUIEvent = {
+  ...JsxDOM.domProps,
+  preventBaseUIHandler: unit => unit,
+  baseUIHandlerPrevented?: bool,
+}
+type setOpenConfig2 = {
+  reason: string,
+  event: string,
+  cancel: string,
+  allowPropagation: string,
+  isCanceled: string,
+  isPropagationAllowed: string,
+  trigger: string,
+}
+type htmlProps = {
+  ...JsxDOM.domProps,
+}
+type anchorConfig = {
+  width: int,
+  height: int,
+}
+type sideOffsetConfig = {
+  side: side,
+  align: align,
+  anchor: anchorConfig,
+  positioner: anchorConfig,
+}
+type sideFlipMode = {
+  side?: side2,
+  align?: align2,
+  fallbackAxisSide?: fallbackAxisSide,
+}
+type sideShiftMode = {
+  side?: side3,
+  align?: side3,
+  fallbackAxisSide?: fallbackAxisSide,
+}
+type comboboxPositionerState = {
+  @as("open") open_: bool,
+  side: side,
+  align: align,
+  anchorHidden: bool,
+  empty: bool,
+}
+type onFormSubmitConfig = {
+  reason: string,
+  event: string,
+}
+type menuPositionerState = {
+  @as("open") open_: bool,
+  side: side,
+  align: align,
+  anchorHidden: bool,
+  nested: bool,
+}
+type navigationMenuPositionerState = {
+  @as("open") open_: bool,
+  side: side,
+  align: align,
+  anchorHidden: bool,
+  instant: bool,
+}
+type timeout = {
+  currentId: float,
+  start: (float, string) => unit,
+  isStarted: unit => bool,
+  clear: unit => unit,
+  disposeEffect: unit => unit => unit,
+}
+type popoverPositionerState = {
+  @as("open") open_: bool,
+  side: side,
+  align: align,
+  anchorHidden: bool,
+  instant: string,
+}
+type previewCardPositionerState = {
+  @as("open") open_: bool,
+  side: side,
+  align: align,
+  anchorHidden: bool,
+}
+type selectPositionerState = {
+  @as("open") open_: bool,
+  side: side4,
+  align: align,
+  anchorHidden: bool,
+}
+type baseUIChangeEventDetail = {
+  reason: string,
+  event: string,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
+  activationDirection: tabsTabActivationDirection,
+}
+type tabsTabPosition = {
+  left: float,
+  right: float,
+  top: float,
+  bottom: float,
+}
+type tabsTabState = {
+  disabled: bool,
+  active: bool,
+  orientation: orientation,
+}
+type toastPositionerState = {
+  side: side,
+  align: align,
+  anchorHidden: bool,
+}
+@unboxed type sideOffsetConfigSideOffset = Num(float) | Fn(sideOffsetConfig => float)
+@unboxed type sideOffsetConfigAlignOffset = Num(float) | Fn(sideOffsetConfig => float)
+@unboxed type comboboxPositionerStyle = Style(JsxDOM.style) | Fn(comboboxPositionerState => JsxDOM.style)
+@unboxed type comboboxPositionerClassName = Str(string) | Fn(comboboxPositionerState => string)
+@unboxed type menuPositionerStyle = Style(JsxDOM.style) | Fn(menuPositionerState => JsxDOM.style)
+@unboxed type menuPositionerClassName = Str(string) | Fn(menuPositionerState => string)
+@unboxed type navigationMenuPositionerStyle = Style(JsxDOM.style) | Fn(navigationMenuPositionerState => JsxDOM.style)
+@unboxed type navigationMenuPositionerClassName = Str(string) | Fn(navigationMenuPositionerState => string)
+@unboxed type popoverPositionerStyle = Style(JsxDOM.style) | Fn(popoverPositionerState => JsxDOM.style)
+@unboxed type popoverPositionerClassName = Str(string) | Fn(popoverPositionerState => string)
+@unboxed type previewCardPositionerStyle = Style(JsxDOM.style) | Fn(previewCardPositionerState => JsxDOM.style)
+@unboxed type previewCardPositionerClassName = Str(string) | Fn(previewCardPositionerState => string)
+@unboxed type selectPositionerStyle = Style(JsxDOM.style) | Fn(selectPositionerState => JsxDOM.style)
+@unboxed type selectPositionerClassName = Str(string) | Fn(selectPositionerState => string)
+@unboxed type tabsTabStyle = Style(JsxDOM.style) | Fn(tabsTabState => JsxDOM.style)
+@unboxed type tabsTabClassName = Str(string) | Fn(tabsTabState => string)
+@unboxed type toastPositionerStyle = Style(JsxDOM.style) | Fn(toastPositionerState => JsxDOM.style)
+@unboxed type toastPositionerClassName = Str(string) | Fn(toastPositionerState => string)
+module CollisionAvoidance = {
+  type t
+  external fromSideFlipMode: sideFlipMode => t = "%identity"
+  external fromSideShiftMode: sideShiftMode => t = "%identity"
+}

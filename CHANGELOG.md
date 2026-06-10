@@ -5,6 +5,16 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- **State-dependent props** (`T | ((state: S) => T)`, incl. the checker-resolved
+  `T | (T & ((state: S) => T))` intersection form) now map to zero-cost
+  `@unboxed Style/Str | Fn` variants instead of flagged `string` placeholders —
+  flips `@base-ui-components/react` from 14 to 151 usable components (#22).
+- `@unboxed` union dedup is now **structural**: two components sharing a prop
+  name but differing in payload (per-component state records) no longer silently
+  dedupe to the first component's type; function-bearing unions over one record
+  are named after it (`accordionRootStyle`) (#22).
+
 ### Added
 - **Shared HTML attribute records + record-props emission** (#16, #18, #19). A
   component whose props extend `*HTMLAttributes` (bare, `Omit<…, K>`, `Partial`,

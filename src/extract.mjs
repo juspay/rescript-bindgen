@@ -1605,7 +1605,17 @@ function unionNode(type, ctx, propName, depth = 0) {
             // prop (`formAction`, `virtualItemHeight`). A member using a type variable (a
             // sync-or-async `=> 'a` return) makes the variant generic (`formAction<'a>`).
             const hasFn = members.some((m) => m.type && m.type.kind === 'callback')
-            const sname = hasFn ? lower(pascal(propName)) : unboxedName(members)
+            const deps = new Set()
+            for (const m of members) collectRefKeys(m.type, deps)
+            let sname = hasFn ? lower(pascal(propName)) : unboxedName(members)
+            // A fn-bearing union over ONE record/enum (base-ui's per-component
+            // `style`/`className` over its state record) is named after that dep
+            // (`accordionRootState` + `style` -> `accordionRootStyle`) — otherwise 178
+            // same-prop unions would degrade to style2..style178. (#22)
+            if (hasFn && ctx.shared && deps.size === 1) {
+                const d = ctx.shared.byKey.get([...deps][0])
+                if (d && d.name) sname = lower(pascal(d.name.replace(/State$/, '')) + pascal(propName))
+            }
             const tvars = new Set()
             for (const m of members) collectTypeVars(m.type, tvars)
             const tparams = tvars.size ? [...tvars] : undefined
@@ -1613,11 +1623,11 @@ function unionNode(type, ctx, propName, depth = 0) {
                 // Primitive-only variants have no TS source -> home `CommonTypes`. A variant
                 // referencing a record/enum (object payload, or a fn over `menuItemType`)
                 // lives WITH that type's module so `CommonTypes` stays a dependency-free sink
-                // and never gets SCC-merged. Deduped via the `u:` key.
-                const key = 'u:' + sname
+                // and never gets SCC-merged. Deduped via the structural `u:` key — the name
+                // alone is NOT the key: two components sharing a prop name but differing in
+                // payload (per-component state records) must get two distinct types. (#22)
+                const key = 'u:' + sname + ':' + members.map((m) => (m.as !== undefined ? '@' + m.as : typeSig(m.type))).join('|')
                 if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
-                const deps = new Set()
-                for (const m of members) collectRefKeys(m.type, deps)
                 let home = 'CommonTypes'
                 if (deps.size) { const d = ctx.shared.byKey.get([...deps][0]); if (d && d.home) home = d.home }
                 const entry = { key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), home, members, deps, tparams }
@@ -1711,6 +1721,16 @@ function memberOf(t, ctx, propName, depth) {
     if (t.getCallSignatures && t.getCallSignatures().length) {
         return { ctor: 'Fn', rt: 'function', type: functionNode(t.getCallSignatures()[0], ctx, propName, depth) }
     }
+    // NOTE: an INTERSECTION arm with a call signature (`CSSProperties & ((state) =>
+    // CSSProperties)`, base-ui's resolved style shape) is caught by the branch above —
+    // the checker surfaces constituents' call signatures on the intersection, and at
+    // runtime the value IS a function, so `Fn` is the honest mapping. (#22)
+
+    // A `CSSProperties` member -> runtime `typeof "object"` (one allowed via
+    // claim('object')). Enables base-ui's `style: CSSProperties | ((state) =>
+    // CSSProperties)` as `@unboxed Style(JsxDOM.style) | Fn(state => JsxDOM.style)`
+    // — exact and zero-cost. (#22)
+    if (typeName(t) === 'CSSProperties') return { ctor: 'Style', rt: 'object', type: { kind: 'style' } }
 
     // A single ANONYMOUS inline-object member (e.g. `string | { key, color }`) -> runtime
     // `typeof "object"` (distinct from string/number/boolean/array). Only ONE is allowed
