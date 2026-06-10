@@ -2,8 +2,7 @@
 external make: (
   ~children: React.element=?,
   ~id: string=?,
-  // ⚠️ REVIEW: `finalFocus` is `boolean | RefObject<HTMLElement> | ((closeType: InteractionType) => boolean | void | HTMLElement)` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
-  ~finalFocus: string=?,
+  ~finalFocus: PositionerTabUtilsTypes.interactionTypeFinalFocus=?,
   ~style: PopupTypes.menuPopupStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

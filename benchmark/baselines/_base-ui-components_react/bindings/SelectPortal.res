@@ -1,7 +1,6 @@
 @module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
-  // ⚠️ REVIEW: `container` is `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot>` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
-  ~container: string=?,
+  ~container: PortalTypes.Container.t=?,  // ⓘ was `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot>` — opaque; build with Container.fromHTMLElement / Container.fromShadowRoot / Container.fromRefObject
   ~style: CommonTypes.style=?,
   ~title: string=?,
   ~autoFocus: bool=?,

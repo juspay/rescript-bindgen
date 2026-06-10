@@ -21,8 +21,7 @@ external make: (
   ~filteredItems: PositionerTabUtilsTypes.htmlProps=?,
   ~virtualized: bool=?,
   ~limit: float=?,
-  // ⚠️ REVIEW: `locale` is `LocalesArgument` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
-  ~locale: string=?,
+  ~locale: string=?,  // ⓘ Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled
   ~multiple: 'b=?,
   ~autoHighlight: bool=?,
   ~highlightItemOnHover: bool=?,

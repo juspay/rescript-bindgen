@@ -1,10 +1,10 @@
 # Binding report — `@base-ui-components/react@1.0.0-rc.0`
 
-**195** components · ✅ **167** usable · 🔍 **28** need review · 🛑 **0** broken
+**195** components · ✅ **186** usable · 🔍 **9** need review · 🛑 **0** broken
 
 **9** function binding(s) → `ReactBindings.res`.
 
-**371** shared types deduplicated into **40** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**374** shared types deduplicated into **41** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -38,6 +38,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - AccordionRoot
 - AccordionTrigger
 - AlertDialogRoot
+- AutocompleteRoot  _(3 loose)_
 - AutocompleteValue
 - AvatarFallback
 - AvatarImage
@@ -64,6 +65,9 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - ComboboxItem
 - ComboboxItemIndicator
 - ComboboxList
+- ComboboxPopup
+- ComboboxPortal
+- ComboboxRoot  _(3 loose)_
 - ComboboxRow
 - ComboboxStatus
 - ComboboxTrigger
@@ -73,6 +77,8 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - DialogBackdrop
 - DialogClose
 - DialogDescription
+- DialogPopup
+- DialogPortal
 - DialogRoot
 - DialogTitle
 - DialogTrigger
@@ -96,6 +102,8 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - MenuGroup
 - MenuGroupLabel
 - MenuItem
+- MenuPopup
+- MenuPortal
 - MenuRadioGroup
 - MenuRadioItem
 - MenuRadioItemIndicator
@@ -105,6 +113,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - MenuTrigger
 - MeterIndicator
 - MeterLabel
+- MeterRoot  _(1 loose)_
 - MeterTrack
 - MeterValue
 - NavigationMenuArrow
@@ -115,6 +124,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - NavigationMenuLink
 - NavigationMenuList
 - NavigationMenuPopup
+- NavigationMenuPortal
 - NavigationMenuRoot
 - NavigationMenuTrigger
 - NavigationMenuViewport
@@ -122,12 +132,15 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - NumberFieldGroup
 - NumberFieldIncrement
 - NumberFieldInput
+- NumberFieldRoot  _(1 loose)_
 - NumberFieldScrubArea
 - NumberFieldScrubAreaCursor
 - PopoverArrow
 - PopoverBackdrop
 - PopoverClose
 - PopoverDescription
+- PopoverPopup
+- PopoverPortal
 - PopoverRoot
 - PopoverTitle
 - PopoverTrigger
@@ -135,10 +148,12 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - PreviewCardArrow
 - PreviewCardBackdrop
 - PreviewCardPopup
+- PreviewCardPortal
 - PreviewCardRoot
 - PreviewCardTrigger
 - ProgressIndicator
 - ProgressLabel
+- ProgressRoot  _(1 loose)_
 - ProgressTrack
 - ProgressValue
 - RadioGroup
@@ -160,6 +175,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - SelectItemText
 - SelectList
 - SelectPopup
+- SelectPortal
 - SelectScrollDownArrow
 - SelectScrollUpArrow
 - SelectTrigger
@@ -167,6 +183,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - Separator
 - SliderControl
 - SliderIndicator
+- SliderRoot  _(3 loose)_
 - SliderThumb
 - SliderTrack
 - SliderValue
@@ -182,6 +199,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - ToastClose
 - ToastContent
 - ToastDescription
+- ToastPortal
 - ToastProvider
 - ToastRoot
 - ToastTitle
@@ -196,6 +214,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - ToolbarSeparator
 - TooltipArrow
 - TooltipPopup
+- TooltipPortal
 - TooltipProvider
 - TooltipRoot
 - TooltipTrigger
@@ -223,62 +242,12 @@ These resolved to a real but complex type and were widened to `string` (they com
 
 A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object shapes), so an `@unboxed` variant won't work and we **refuse to use `%identity`/unsafe casts**. The prop is emitted as a `string` placeholder with an inline `// ⚠️ REVIEW` comment — bind it by hand or fix the type upstream.
 
-### AutocompleteRoot  _(3 loose)_
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `locale` | `locale?: Intl.LocalesArgument;` |
-
-### ComboboxPopup
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `initialFocus` | `initialFocus?: boolean \| React.RefObject<HTMLElement \| null> \| ((openType: InteractionType) => void \| boolean \| HTMLElement \| null);` |
-| `finalFocus` | `finalFocus?: boolean \| React.RefObject<HTMLElement \| null> \| ((closeType: InteractionType) => void \| boolean \| HTMLElement \| null);` |
-
-### ComboboxPortal
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `container` | `container?: UseFloatingPortalNodeProps['container'];` |
-
 ### ComboboxPositioner  _(1 loose)_
 
 | Prop | Real TypeScript |
 |------|-----------------|
 | `anchor` | `anchor?: Element \| null \| VirtualElement \| React.RefObject<Element \| null> \| (() => Element \| VirtualElement \| null);` |
 | `collisionBoundary` | `collisionBoundary?: Boundary;` |
-
-### ComboboxRoot  _(3 loose)_
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `locale` | `locale?: Intl.LocalesArgument;` |
-
-### DialogPopup
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `initialFocus` | `initialFocus?: boolean \| React.RefObject<HTMLElement \| null> \| ((openType: InteractionType) => boolean \| HTMLElement \| null \| void);` |
-| `finalFocus` | `finalFocus?: boolean \| React.RefObject<HTMLElement \| null> \| ((closeType: InteractionType) => boolean \| HTMLElement \| null \| void);` |
-
-### DialogPortal
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `container` | `container?: FloatingPortal.Props<DialogPortal.State>['container'];` |
-
-### MenuPopup
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `finalFocus` | `finalFocus?: boolean \| React.RefObject<HTMLElement \| null> \| ((closeType: InteractionType) => boolean \| HTMLElement \| null \| void);` |
-
-### MenuPortal
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `container` | `container?: UseFloatingPortalNodeProps['container'];` |
 
 ### MenuPositioner  _(1 loose)_
 
@@ -287,43 +256,12 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 | `anchor` | `anchor?: Element \| null \| VirtualElement \| React.RefObject<Element \| null> \| (() => Element \| VirtualElement \| null);` |
 | `collisionBoundary` | `collisionBoundary?: Boundary;` |
 
-### MeterRoot  _(1 loose)_
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `locale` | `locale?: Intl.LocalesArgument;` |
-
-### NavigationMenuPortal
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `container` | `container?: FloatingPortal.Props<NavigationMenuPortal.State>['container'];` |
-
 ### NavigationMenuPositioner  _(1 loose)_
 
 | Prop | Real TypeScript |
 |------|-----------------|
 | `anchor` | `anchor?: Element \| null \| VirtualElement \| React.RefObject<Element \| null> \| (() => Element \| VirtualElement \| null);` |
 | `collisionBoundary` | `collisionBoundary?: Boundary;` |
-
-### NumberFieldRoot  _(1 loose)_
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `locale` | `locale?: Intl.LocalesArgument;` |
-
-### PopoverPopup
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `initialFocus` | `initialFocus?: boolean \| React.RefObject<HTMLElement \| null> \| ((openType: InteractionType) => void \| boolean \| HTMLElement \| null);` |
-| `finalFocus` | `finalFocus?: boolean \| React.RefObject<HTMLElement \| null> \| ((closeType: InteractionType) => void \| boolean \| HTMLElement \| null);` |
-
-### PopoverPortal
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `container` | `container?: UseFloatingPortalNodeProps['container'];` |
 
 ### PopoverPositioner  _(1 loose)_
 
@@ -332,30 +270,12 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 | `anchor` | `anchor?: Element \| null \| VirtualElement \| React.RefObject<Element \| null> \| (() => Element \| VirtualElement \| null);` |
 | `collisionBoundary` | `collisionBoundary?: Boundary;` |
 
-### PreviewCardPortal
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `container` | `container?: UseFloatingPortalNodeProps['container'];` |
-
 ### PreviewCardPositioner  _(1 loose)_
 
 | Prop | Real TypeScript |
 |------|-----------------|
 | `anchor` | `anchor?: Element \| null \| VirtualElement \| React.RefObject<Element \| null> \| (() => Element \| VirtualElement \| null);` |
 | `collisionBoundary` | `collisionBoundary?: Boundary;` |
-
-### ProgressRoot  _(1 loose)_
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `locale` | `locale?: Intl.LocalesArgument;` |
-
-### SelectPortal
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `container` | `container?: UseFloatingPortalNodeProps['container'];` |
 
 ### SelectPositioner  _(1 loose)_
 
@@ -370,29 +290,11 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 |------|-----------------|
 | `items` | `items?: Record<string, React.ReactNode> \| ReadonlyArray<{ label: React.ReactNode; value: any; }>;` |
 
-### SliderRoot  _(3 loose)_
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `locale` | `locale?: Intl.LocalesArgument;` |
-
-### ToastPortal
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `container` | `container?: UseFloatingPortalNodeProps['container'];` |
-
 ### ToastPositioner  _(1 loose)_
 
 | Prop | Real TypeScript |
 |------|-----------------|
 | `collisionBoundary` | `collisionBoundary?: Boundary;` |
-
-### TooltipPortal
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `container` | `container?: UseFloatingPortalNodeProps['container'];` |
 
 ### TooltipPositioner  _(1 loose)_
 

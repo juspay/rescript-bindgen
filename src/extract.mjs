@@ -1205,6 +1205,12 @@ function classify(type, ctx, propName = '', depth = 0) {
         return { kind: 'raw', res: domElementType(name) }
     if (name === 'Element') return { kind: 'domElement' }
     if (name === 'Node') return { kind: 'raw', res: 'Dom.node' }
+    if (name === 'ShadowRoot') return { kind: 'raw', res: 'Dom.shadowRoot' } // base-ui `container` (#39)
+
+    // `Intl.LocalesArgument` (string | Intl.Locale | readonly array) -> `string` with a
+    // ⓘ note — a BCP-47 tag ("en-US") is the 99% case; `Intl.Locale` objects aren't
+    // modelled. Beats an unexplained review flag on every Meter/NumberField. (#39)
+    if (name === 'LocalesArgument') return { kind: 'string', note: 'Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled' }
 
     // File / FileList / FormData -> rescript-webapi, only if the project depends on it (ctx.webapi).
     if (name === 'File') return ctx.webapi ? { kind: 'raw', res: 'Webapi.File.t' } : { kind: 'opaque', text: 'File' }
@@ -1963,6 +1969,13 @@ function memberOf(t, ctx, propName, depth) {
     // CSSProperties)` as `@unboxed Style(JsxDOM.style) | Fn(state => JsxDOM.style)`
     // — exact and zero-cost. (#22)
     if (typeName(t) === 'CSSProperties') return { ctor: 'Style', rt: 'object', type: { kind: 'style' } }
+
+    // A Ref-family member (`RefObject<HTMLElement>`) -> runtime `typeof "object"`,
+    // rendered as the standard ref type. Enables `boolean | RefObject<…> | (fn)`
+    // (base-ui's initialFocus/finalFocus) as `@unboxed Bool | Ref | Fn`. (#39)
+    if (/^(Ref|RefObject|MutableRefObject|LegacyRef)$/.test(typeName(t) || '')) {
+        return { ctor: 'Ref', rt: 'object', type: { kind: 'domRef' } }
+    }
 
     // A single ANONYMOUS inline-object member (e.g. `string | { key, color }`) -> runtime
     // `typeof "object"` (distinct from string/number/boolean/array). Only ONE is allowed

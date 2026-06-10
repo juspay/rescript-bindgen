@@ -27,8 +27,7 @@ external make: (
   ~itemToStringValue: string=?,  // ⚪ loose — was `(itemValue: Items[number]["items"][number]) => string`
   ~virtualized: bool=?,
   ~limit: float=?,
-  // ⚠️ REVIEW: `locale` is `LocalesArgument` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
-  ~locale: string=?,
+  ~locale: string=?,  // ⓘ Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled
   ~submitOnItemClick: bool=?,
   ~mode: ComponentsMenubarRootStoreToastTypes.mode=?,
   ~onValueChange: (string, ComponentsMenubarRootStoreToastTypes.changeEventDetails) => unit=?,
