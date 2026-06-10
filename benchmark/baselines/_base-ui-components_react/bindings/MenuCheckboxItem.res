@@ -2,7 +2,7 @@
 external make: (
   ~checked: bool=?,
   ~defaultChecked: bool=?,
-  ~onCheckedChange: string=?,  // ⚪ loose — was `(checked: boolean, eventDetails: MenuRootChangeEventDetails) => void`
+  ~onCheckedChange: (bool, ComponentsMenubarRootStoreToastTypes.menuRootChangeEventDetails) => unit=?,
   ~onClick: ReactEvent.Mouse.t => unit=?,
   ~disabled: bool=?,
   ~label: string=?,

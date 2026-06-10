@@ -2,7 +2,7 @@
 external make: (
   @as("open") ~open_: bool=?,
   ~defaultOpen: bool=?,
-  ~onOpenChange: string=?,  // ⚪ loose — was `(open: boolean, eventDetails: CollapsibleRootChangeEventDetails) => void`
+  ~onOpenChange: (bool, ComponentsMenubarRootStoreToastTypes.accordionRootChangeEventDetails) => unit=?,
   ~disabled: bool=?,
   ~style: ComponentsMenubarRootStoreToastTypes.collapsibleRootStyle=?,
   ~title: string=?,

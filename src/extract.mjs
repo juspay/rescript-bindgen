@@ -1197,6 +1197,12 @@ function classify(type, ctx, propName = '', depth = 0) {
         return webSink(ctx, name)
     }
 
+    // A solo DOM event type (`event: FocusEvent`, or distributed per-member event fields)
+    // -> `Dom.event`, the built-in supertype. Same rationale as the all-event-union
+    // collapse in unionNode — without this, a lib.dom event object hits the library gate
+    // and the field goes opaque, poisoning its record (probe I-1/I-6). (#30)
+    if (name && /Event$/.test(name) && isWebPlatformDecl(type)) return { kind: 'raw', res: 'Dom.event' }
+
     // `Promise<T>` -> `promise<t>` (ReScript built-in). Handled here so async APIs
     // (`json(): Promise<unknown>`, `arrayBuffer(): Promise<ArrayBuffer>`) type as real
     // promises instead of falling to the library-object gate; an unresolvable `T` still
@@ -1627,6 +1633,49 @@ function unionNode(type, ctx, propName, depth = 0) {
                 return { kind: 'promise', of: inner, note: `upstream is \`${checker.typeToString(other)} | Promise<…>\` — may also return the bare value synchronously; \`await\` handles both` }
             }
         }
+    }
+
+    // An all-DOM-event union (`InputEvent | FocusEvent | KeyboardEvent | … | Event` —
+    // base-ui's distributed `ReasonToEvent<Reason>` conditionals): collapse to the safe
+    // supertype `Dom.event`. Every member is `typeof "object"` so the `@unboxed`
+    // discriminability check below can never succeed, and ONE such field used to poison
+    // its whole record/callback into a string placeholder (probe I-1b/I-6). (#30)
+    if (parts.length >= 2 && parts.every((t) => {
+        const n = typeName(t) || ''
+        return /Event$/.test(n) && isWebPlatformDecl(t)
+    })) return { kind: 'raw', res: 'Dom.event' }
+
+    // A union of instantiations of the SAME generic record — `BaseUIChangeEventDetails<R>`
+    // over a 10-literal `R` distributes into 10 record types differing only in field
+    // instantiation. Collapse to ONE record over the union's APPARENT members: the checker
+    // unions each field across arms (`reason: "a" | "b" | …` -> enum variant, `event:
+    // InputEvent | … | Event` -> Dom.event via the branch above). Without this the union
+    // fell to an opaque placeholder, taking the whole callback with it (probe I-1). (#30)
+    // An arm's identity symbol: direct for Object arms; for Intersection arms
+    // (`interface & {}` — how `BaseUIChangeEventDetails<R, CustomProperties = {}>`
+    // instantiates) descend to the first constituent that carries one.
+    const armSym = (t) => {
+        const direct = (t.getSymbol && t.getSymbol()) || t.symbol
+        if (direct) return direct
+        if (t.flags & ts.TypeFlags.Intersection) {
+            for (const m of t.types || []) {
+                const s = (m.getSymbol && m.getSymbol()) || m.symbol
+                if (s) return s
+            }
+        }
+        return null
+    }
+    // Guard: a CALLABLE arm (`CSSProperties & ((state) => CSSProperties)`) shares its
+    // object constituent's symbol but is runtime-discriminable as a function — that
+    // shape belongs to the @unboxed Style|Fn machinery below, not a record collapse.
+    if (parts.length >= 2 && type.getProperties().length > 0 && parts.every((t) =>
+        armSym(t) && armSym(t) === armSym(parts[0]) &&
+        (t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) &&
+        !(t.getCallSignatures && t.getCallSignatures().length))) {
+        const aliasName = type.aliasSymbol && type.aliasSymbol.getName()
+        const symName = armSym(parts[0]).getName()
+        const named = (aliasName && /^[A-Z]/.test(aliasName)) ? aliasName : (/^[A-Z]/.test(symName || '') ? symName : null)
+        return recordNode(type, ctx, propName, depth, named)
     }
 
     // String-literal union -> `@as` variant. Also covers the `"a" | "b" | (string & {})`

@@ -4,22 +4,22 @@ external make: (
   ~id: string=?,
   ~children: React.element=?,
   ~disabled: bool=?,
+  ~inline: bool=?,
   ~grid: bool=?,
+  @as("open") ~open_: bool=?,
   ~name: string=?,
   ~modal: bool=?,
-  @as("open") ~open_: bool=?,
   ~defaultOpen: bool=?,
   ~onOpenChangeComplete: bool => unit=?,
-  ~items: array<JSON.t>=?,
+  ~items: PositionerTabUtilsTypes.htmlProps=?,
   ~required: bool=?,
   ~readOnly: bool=?,
   ~openOnInputClick: bool=?,
   ~inputValue: CommonTypes.stringOrNumberOrStringArray=?,
   ~defaultInputValue: CommonTypes.stringOrNumberOrStringArray=?,
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
-  ~filteredItems: array<JSON.t>=?,
+  ~filteredItems: PositionerTabUtilsTypes.htmlProps=?,
   ~virtualized: bool=?,
-  ~inline: bool=?,
   ~limit: float=?,
   // ⚠️ REVIEW: `locale` is `LocalesArgument` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
   ~locale: string=?,
@@ -31,9 +31,9 @@ external make: (
   ~isItemEqualToValue: ('a, 'a) => bool=?,
   ~defaultValue: string=?,  // ⚪ loose — was `ComboboxValueType<Value, Multiple>`
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
-  ~onOpenChange: string=?,  // ⚪ loose — was `(open: boolean, eventDetails: ChangeEventDetails) => void`
-  ~onInputValueChange: string=?,  // ⚪ loose — was `(inputValue: string, eventDetails: ChangeEventDetails) => void`
-  ~onItemHighlighted: string=?,  // ⚪ loose — was `(highlightedValue: Value, eventDetails: HighlightEventDetails) => void`
+  ~onOpenChange: (bool, ComponentsMenubarRootStoreToastTypes.changeEventDetails) => unit=?,
+  ~onInputValueChange: (string, ComponentsMenubarRootStoreToastTypes.changeEventDetails) => unit=?,
+  ~onItemHighlighted: ('a, ComponentsMenubarRootStoreToastTypes.highlightEventDetails) => unit=?,
   ~value: string=?,  // ⚪ loose — was `ComboboxValueType<Value, Multiple>`
   ~onValueChange: string=?,  // ⚪ loose — was `(value: ComboboxValueType<Value, Multiple> | (Multiple extends true ? never : null), eventDetails: ChangeEvent`
 ) => React.element = "Root"

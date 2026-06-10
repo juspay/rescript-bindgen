@@ -43,10 +43,10 @@ type optionsPointIntervalUnitValue =
   | @as("year") Year
 type optionsStackingValue =
   | @as("normal") Normal
+  | @as("stream") Stream
   | @as("percent") Percent
   | @as("null") Null
   | @as("overlap") Overlap
-  | @as("stream") Stream
 type bubbleSizeByValue =
   | @as("width") Width
   | @as("area") Area
@@ -7356,7 +7356,7 @@ type seriesRsiOptions = {
 }
 type seriesSankeyOptions = {
   borderRadius?: string,
-  data?: array<JSON.t>,
+  data?: DateRangePickerTypes.presetsConfig,
   dataParser?: string,
   dataURL?: string,
   depth?: string,
@@ -9865,7 +9865,7 @@ and chart = {
   init: (options, option<string>) => unit,
   isInsidePlot: (float, float, option<chartIsInsideOptionsObject>) => bool,
   redraw: option<string> => unit,
-  reflow: option<string> => unit,
+  reflow: option<Dom.event> => unit,
   setCaption: captionOptions => unit,
   setClassName: option<string> => unit,
   setSize: (option<float>, option<float>, option<string>) => unit,
@@ -9911,7 +9911,7 @@ and series = {
   remove: (option<bool>, option<string>, option<bool>) => unit,
   removePoint: (float, option<bool>, option<string>) => unit,
   render: unit => unit,
-  searchPoint: (string, option<bool>) => point,
+  searchPoint: (Dom.event, option<bool>) => point,
   select: option<bool> => unit,
   setData: (array<PointOptionsType.t>, option<bool>, option<string>, option<bool>) => unit,
   setState: (option<setState>, option<bool>) => unit,

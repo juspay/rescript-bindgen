@@ -147,6 +147,15 @@ Both forms work: an **inline** event param maps by the event's **name** (`MouseE
 `ChangeEvent`→`ReactEvent.Form.t`, `KeyboardEvent`→`ReactEvent.Keyboard.t`, …); a `*EventHandler<T>`
 **alias** maps by the alias name (`ChangeEventHandler`, `MouseEventHandler`, `KeyboardEventHandler`, …).
 
+### Event values & distributed eventDetails records
+Fixture: [`dom-event-union`](../test/golden/cases/dom-event-union)
+
+| TypeScript | ReScript |
+|---|---|
+| `event: FocusEvent` (a DOM event as a VALUE, lib.dom-declared) | `Dom.event` — the built-in supertype |
+| `event: InputEvent \| FocusEvent \| … \| Event` (base-ui's distributed `ReasonToEvent<R>`) | `Dom.event` — every member is `typeof "object"`, so `@unboxed` could never discriminate; one such field used to poison its whole record/callback into a `string` placeholder |
+| `BaseUIChangeEventDetails<'a' \| 'b' \| …>` (a union of instantiations of the SAME generic record) | **one record** over the union's apparent members — `reason` becomes the literal-union variant, `event` becomes `Dom.event`, `cancel: unit => unit` — so `onValueChange: (float, …changeEventDetails) => unit` instead of a loose `string` |
+
 ---
 
 ## ARIA / role attributes

@@ -4,7 +4,7 @@
 
 **50** function binding(s) → `BlendDesignSystemBindings.res`.
 
-**1154** shared types deduplicated into **58** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**1153** shared types deduplicated into **57** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -100,7 +100,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - CodeBlock
 - CodeEditor
 - CoreChart
-- DataTable  _(5 loose)_
+- DataTable  _(3 loose)_
 - DateRangePicker
 - Directory
 - Drawer
@@ -174,9 +174,7 @@ These resolved to a real but complex type and were widened to `string` (they com
 
 | Resolved TypeScript type | → emitted | count | example props |
 |--------------------------|-----------|-------|---------------|
-| `ColumnDefinition<T>[]` | `string` | 1 | columns |
 | `keyof T` | `string` | 1 | idField |
-| `(columns: ColumnDefinition<T>[]) => void` | `string` | 1 | onColumnReorder |
 | `(keyof T)[]` | `string` | 1 | columnManagerAlwaysSelected |
 | `(rowId: unknown, fieldName: keyof T, value: unknown) => void` | `string` | 1 | onFieldChange |
 

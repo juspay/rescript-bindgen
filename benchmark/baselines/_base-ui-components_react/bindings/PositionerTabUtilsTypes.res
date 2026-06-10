@@ -8,23 +8,23 @@ type transitionStatus =
 type interactionType =
   | @as("") Value
   | @as("keyboard") Keyboard
-  | @as("mouse") Mouse
   | @as("touch") Touch
+  | @as("mouse") Mouse
   | @as("pen") Pen
 type side =
-  | @as("top") Top
-  | @as("bottom") Bottom
   | @as("left") Left
   | @as("right") Right
+  | @as("bottom") Bottom
+  | @as("top") Top
   | @as("inline-end") InlineEnd
   | @as("inline-start") InlineStart
 type align =
   | @as("center") Center
-  | @as("start") Start
   | @as("end") End
+  | @as("start") Start
 type positionMethod =
-  | @as("absolute") Absolute
   | @as("fixed") Fixed
+  | @as("absolute") Absolute
 type side2 =
   | @as("none") None
   | @as("flip") Flip
@@ -34,17 +34,17 @@ type align2 =
   | @as("shift") Shift
 type fallbackAxisSide =
   | @as("none") None
-  | @as("start") Start
   | @as("end") End
+  | @as("start") Start
 type side3 =
   | @as("none") None
   | @as("shift") Shift
 type side4 =
   | @as("none") None
-  | @as("top") Top
-  | @as("bottom") Bottom
   | @as("left") Left
   | @as("right") Right
+  | @as("bottom") Bottom
+  | @as("top") Top
   | @as("inline-end") InlineEnd
   | @as("inline-start") InlineStart
 type tabsTabActivationDirection =
@@ -53,15 +53,6 @@ type tabsTabActivationDirection =
   | @as("right") Right
   | @as("up") Up
   | @as("down") Down
-type onValueChangeConfig = {
-  reason: string,
-  event: string,
-  cancel: unit => unit,
-  allowPropagation: unit => unit,
-  isCanceled: bool,
-  isPropagationAllowed: bool,
-  trigger: Dom.element,
-}
 type baseUIEvent = {
   ...JsxDOM.domProps,
   preventBaseUIHandler: unit => unit,
@@ -78,6 +69,15 @@ type setOpenConfig2 = {
 }
 type htmlProps = {
   ...JsxDOM.domProps,
+}
+type onCheckedChangeConfig = {
+  reason: string,
+  event: Dom.event,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
 }
 type anchorConfig = {
   width: float,
@@ -108,7 +108,7 @@ type comboboxPositionerState = {
 }
 type onFormSubmitConfig = {
   reason: string,
-  event: string,
+  event: Dom.event,
 }
 type menuPositionerState = {
   @as("open") open_: bool,
@@ -152,7 +152,7 @@ type selectPositionerState = {
 }
 type baseUIChangeEventDetail = {
   reason: string,
-  event: string,
+  event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
   isCanceled: bool,

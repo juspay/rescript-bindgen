@@ -1,7 +1,3 @@
-type sortDirection =
-  | @as("none") None
-  | @as("asc") Asc
-  | @as("desc") Desc
 type filterType =
   | @as("text") Text
   | @as("number") Number
@@ -10,11 +6,29 @@ type filterType =
   | @as("date") Date
   | @as("boolean") Boolean
   | @as("slider") Slider
+type type_2 =
+  | @as("text") Text
+  | @as("number") Number
+  | @as("avatar") Avatar
+  | @as("tag") Tag
+  | @as("progress") Progress
+  | @as("dropdown") Dropdown
+  | @as("react_element") ReactElement
+  | @as("select") Select
+  | @as("multiselect") Multiselect
+  | @as("date") Date
+  | @as("date_range") DateRange
+  | @as("slider") Slider
+  | @as("custom") Custom
+type sortDirection =
+  | @as("none") None
+  | @as("asc") Asc
+  | @as("desc") Desc
 type operator =
-  | @as("equals") Equals
-  | @as("contains") Contains
-  | @as("startsWith") StartsWith
   | @as("endsWith") EndsWith
+  | @as("startsWith") StartsWith
+  | @as("contains") Contains
+  | @as("equals") Equals
   | @as("gt") Gt
   | @as("lt") Lt
   | @as("gte") Gte
@@ -35,12 +49,40 @@ type columnType =
   | @as("slider") Slider
   | @as("custom") Custom
 type filterComponent =
-  | @as("select") Select
   | @as("search") Search
+  | @as("select") Select
   | @as("slider") Slider
   | @as("multiselect") Multiselect
   | @as("dateRange") DateRange
   | @as("numberRange") NumberRange
+type filterOption = {
+  id: string,
+  label: string,
+  value: string,
+}
+type rec columnDefinition<'a> = {
+  field: string,
+  header: string,
+  headerSubtext?: string,
+  minWidth?: string,
+  maxWidth?: string,
+  width?: string,
+  isVisible?: bool,
+  isSortable?: bool,
+  isEditable?: bool,
+  filterOptions?: array<filterOption>,
+  canHide?: bool,
+  frozen?: bool,
+  className?: string,
+  filterType?: filterType,
+  showSkeleton?: bool,
+  skeletonVariant?: ButtonSkeletonTypes.skeletonVariant,
+  getSortField?: option<string> => string,
+  isDeltaSortable?: bool,
+  sortValueFormatter?: (JSON.t, 'a, columnDefinition, option<string>) => JSON.t,
+  @as("type") type_: type_2,
+  renderCell?: (string, 'a, float) => React.element,
+}
 type sortConfig = {
   field: string,
   direction: sortDirection,
@@ -116,15 +158,10 @@ type rowActionsConfig<'a> = {
   slot1?: rowActionConfig<'a>,
   slot2?: rowActionConfig<'a>,
 }
-type columnFilterOption = {
-  id: string,
-  label: string,
-  value: string,
-}
 type columnTypeConfig = {
   @as("type") type_: columnType,
   filterType: filterType,
-  filterOptions?: array<columnFilterOption>,
+  filterOptions?: array<filterOption>,
   supportsSorting: bool,
   supportsFiltering: bool,
   enableSearch?: bool,

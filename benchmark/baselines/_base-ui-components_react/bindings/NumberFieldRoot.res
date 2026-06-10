@@ -15,8 +15,8 @@ external make: (
   ~allowWheelScrub: bool=?,
   ~snapOnStep: bool=?,
   ~format: string=?,  // ⚪ loose — was `NumberFormatOptions`
-  ~onValueChange: string=?,  // ⚪ loose — was `(value: number, eventDetails: NumberFieldRootChangeEventDetails) => void`
-  ~onValueCommitted: string=?,  // ⚪ loose — was `(value: number, eventDetails: NumberFieldRootCommitEventDetails) => void`
+  ~onValueChange: (float, ComponentsMenubarRootStoreToastTypes.numberFieldRootChangeEventDetails) => unit=?,
+  ~onValueCommitted: (float, ComponentsMenubarRootStoreToastTypes.numberFieldRootCommitEventDetails) => unit=?,
   // ⚠️ REVIEW: `locale` is `LocalesArgument` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
   ~locale: string=?,
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,

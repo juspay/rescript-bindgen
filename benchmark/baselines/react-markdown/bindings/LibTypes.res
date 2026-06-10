@@ -25,9 +25,6 @@ type passThrough =
   | @as("tableRow") TableRow
   | @as("thematicBreak") ThematicBreak
   | @as("yaml") Yaml
-type components = {
-  ...JsxDOM.domProps,
-}
 type vFile = {
   cwd: string,
   data: string,
@@ -86,10 +83,10 @@ type remarkRehypeOptionsConfig = {
   unknownHandler?: (state, string, string) => string,
 }
 type optionsConfig = {
-  allowElement?: (string, float, string) => bool,
+  allowElement?: (string, float, HastTypes.readonly) => bool,
   allowedElements?: array<string>,
   children?: string,
-  components?: components,
+  components?: HastTypes.readonly,
   disallowedElements?: array<string>,
   rehypePlugins?: array<string>,
   remarkPlugins?: array<string>,

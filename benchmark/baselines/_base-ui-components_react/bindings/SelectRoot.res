@@ -10,7 +10,7 @@ external make: (
   ~multiple: 'b=?,
   ~highlightItemOnHover: bool=?,
   ~defaultOpen: bool=?,
-  ~onOpenChange: string=?,  // ⚪ loose — was `(open: boolean, eventDetails: SelectRootChangeEventDetails) => void`
+  ~onOpenChange: (bool, ComponentsMenubarRootStoreToastTypes.selectRootChangeEventDetails) => unit=?,
   ~onOpenChangeComplete: bool => unit=?,
   @as("open") ~open_: bool=?,
   ~modal: bool=?,

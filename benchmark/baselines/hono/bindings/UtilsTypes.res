@@ -1,4 +1,5 @@
 type baseMime =
+  | @as("application/json") ApplicationJson
   | @as("audio/aac") AudioAac
   | @as("video/x-msvideo") VideoXMsvideo
   | @as("image/avif") ImageAvif
@@ -16,7 +17,6 @@ type baseMime =
   | @as("text/calendar; charset=utf-8") TextCalendarCharsetUtf8
   | @as("image/jpeg") ImageJpeg
   | @as("text/javascript; charset=utf-8") TextJavascriptCharsetUtf8
-  | @as("application/json") ApplicationJson
   | @as("application/ld+json") ApplicationLdJson
   | @as("audio/x-midi") AudioXMidi
   | @as("audio/mpeg") AudioMpeg

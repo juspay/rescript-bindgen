@@ -1,12 +1,12 @@
 type type_ =
   | @as("button") Button
-  | @as("submit") Submit
   | @as("reset") Reset
+  | @as("submit") Submit
 type useSyncedValue5 =
   | @as("role") Role
+  | @as("open") Open
   | @as("modal") Modal
   | @as("disablePointerDismissal") DisablePointerDismissal
-  | @as("open") Open
   | @as("mounted") Mounted
   | @as("transitionStatus") TransitionStatus
   | @as("floatingRootContext") FloatingRootContext
@@ -27,8 +27,8 @@ type useSyncedValue5 =
   | @as("viewportElement") ViewportElement
 type useSyncedValue7 =
   | @as("disabled") Disabled
-  | @as("modal") Modal
   | @as("open") Open
+  | @as("modal") Modal
   | @as("mounted") Mounted
   | @as("transitionStatus") TransitionStatus
   | @as("floatingRootContext") FloatingRootContext
@@ -57,8 +57,8 @@ type useSyncedValue7 =
   | @as("keyboardEventRelay") KeyboardEventRelay
 type useSyncedValue9 =
   | @as("disabled") Disabled
-  | @as("modal") Modal
   | @as("open") Open
+  | @as("modal") Modal
   | @as("mounted") Mounted
   | @as("transitionStatus") TransitionStatus
   | @as("floatingRootContext") FloatingRootContext

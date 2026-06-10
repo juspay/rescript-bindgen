@@ -2,7 +2,7 @@
 external make: (
   // 🛑 BROKEN: `value` is `any` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
   ~value: string=?,
-  ~onOpenChange: string=?,  // ⚪ loose — was `(open: boolean, eventDetails: AccordionItemChangeEventDetails) => void`
+  ~onOpenChange: (bool, ComponentsMenubarRootStoreToastTypes.accordionRootChangeEventDetails) => unit=?,
   ~style: ItemTypes.accordionItemStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

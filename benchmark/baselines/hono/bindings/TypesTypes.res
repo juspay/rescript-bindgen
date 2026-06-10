@@ -35,6 +35,9 @@ type layoutConfig = {
 type setHeadersOptions = {
   append?: bool,
 }
+type headerRecord = {
+  @as("Content-Type") contentType: CommonTypes.stringOrStringArray,
+}
 type valueConfig = {
   ...JsxDOM.domProps,
   _data: string,

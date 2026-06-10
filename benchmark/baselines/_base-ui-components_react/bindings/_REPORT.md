@@ -4,7 +4,7 @@
 
 **9** function binding(s) → `ReactBindings.res`.
 
-**347** shared types deduplicated into **40** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**371** shared types deduplicated into **40** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -35,7 +35,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - AccordionHeader
 - AccordionPanel
 - AccordionTrigger
-- AlertDialogRoot  _(1 loose)_
+- AlertDialogRoot
 - AutocompleteValue
 - AvatarFallback
 - AvatarImage
@@ -45,7 +45,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - CheckboxIndicator
 - CheckboxRoot
 - CollapsiblePanel
-- CollapsibleRoot  _(1 loose)_
+- CollapsibleRoot
 - CollapsibleTrigger
 - ComboboxArrow
 - ComboboxBackdrop
@@ -63,12 +63,12 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - ComboboxStatus
 - ComboboxTrigger
 - ComboboxValue
-- ContextMenuRoot  _(1 loose)_
+- ContextMenuRoot
 - ContextMenuTrigger
 - DialogBackdrop
 - DialogClose
 - DialogDescription
-- DialogRoot  _(1 loose)_
+- DialogRoot
 - DialogTitle
 - DialogTrigger
 - DialogViewport
@@ -85,14 +85,14 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - MenuArrow
 - MenuBackdrop
 - Menubar
-- MenuCheckboxItem  _(1 loose)_
+- MenuCheckboxItem
 - MenuCheckboxItemIndicator
 - MenuGroup
 - MenuGroupLabel
 - MenuItem
 - MenuRadioItemIndicator
-- MenuRoot  _(1 loose)_
-- MenuSubmenuRoot  _(1 loose)_
+- MenuRoot
+- MenuSubmenuRoot
 - MenuSubmenuTrigger
 - MenuTrigger
 - MeterIndicator
@@ -118,14 +118,14 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - PopoverBackdrop
 - PopoverClose
 - PopoverDescription
-- PopoverRoot  _(1 loose)_
+- PopoverRoot
 - PopoverTitle
 - PopoverTrigger
 - PopoverViewport
 - PreviewCardArrow
 - PreviewCardBackdrop
 - PreviewCardPopup
-- PreviewCardRoot  _(1 loose)_
+- PreviewCardRoot
 - PreviewCardTrigger
 - ProgressIndicator
 - ProgressLabel
@@ -181,7 +181,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - TooltipArrow
 - TooltipPopup
 - TooltipProvider
-- TooltipRoot  _(1 loose)_
+- TooltipRoot
 - TooltipTrigger
 
 ## ⚪ Loosely typed (widened to `string`)
@@ -192,39 +192,22 @@ These resolved to a real but complex type and were widened to `string` (they com
 |--------------------------|-----------|-------|---------------|
 | `Padding` | `string` | 8 | collisionPadding … |
 | `NumberFormatOptions` | `string` | 4 | format |
-| `(open: boolean, eventDetails: ChangeEventDetails) => void` | `string` | 2 | onOpenChange |
 | `ComboboxValueType<Value, Multiple>` | `string` | 2 | defaultValue, value |
-| `(open: boolean, eventDetails: MenuRootChangeEventDetails) => void` | `string` | 2 | onOpenChange |
 | `SelectValueType<Value, Multiple>` | `string` | 2 | defaultValue, value |
-| `(open: boolean, eventDetails: AccordionItemChangeEventDetails) => void` | `string` | 1 | onOpenChange |
-| `(open: boolean, eventDetails: AlertDialogRootChangeEventDetails) => void` | `string` | 1 | onOpenChange |
 | `(itemValue: Items[number]["items"][number], query: string, itemToString?: (itemValue: Items[number]["items"][number]) => string) => boolean` | `string` | 1 | filter |
 | `(highlightedValue: Items[number]["items"][number], eventDetails: HighlightEventDetails) => void` | `string` | 1 | onItemHighlighted |
 | `(itemValue: Items[number]["items"][number]) => string` | `string` | 1 | itemToStringValue |
-| `(value: string, eventDetails: ChangeEventDetails) => void` | `string` | 1 | onValueChange |
-| `(open: boolean, eventDetails: CollapsibleRootChangeEventDetails) => void` | `string` | 1 | onOpenChange |
-| `(inputValue: string, eventDetails: ChangeEventDetails) => void` | `string` | 1 | onInputValueChange |
-| `(highlightedValue: Value, eventDetails: HighlightEventDetails) => void` | `string` | 1 | onItemHighlighted |
 | `(value: ComboboxValueType<Value, Multiple> \| (Multiple extends true ? never : null), eventDetails: ChangeEventDetails) => void` | `string` | 1 | onValueChange |
-| `(open: boolean, eventDetails: ContextMenuRootChangeEventDetails) => void` | `string` | 1 | onOpenChange |
-| `(open: boolean, eventDetails: DialogRootChangeEventDetails) => void` | `string` | 1 | onOpenChange |
-| `(checked: boolean, eventDetails: MenuRootChangeEventDetails) => void` | `string` | 1 | onCheckedChange |
-| `(value: number, eventDetails: NumberFieldRootChangeEventDetails) => void` | `string` | 1 | onValueChange |
-| `(value: number, eventDetails: NumberFieldRootCommitEventDetails) => void` | `string` | 1 | onValueCommitted |
-| `(open: boolean, eventDetails: PopoverRootChangeEventDetails) => void` | `string` | 1 | onOpenChange |
-| `(open: boolean, eventDetails: PreviewCardRootChangeEventDetails) => void` | `string` | 1 | onOpenChange |
 | `number \| Partial<{ xStart: number; xEnd: number; yStart: number; yEnd: number; }>` | `string` | 1 | overflowEdgeThreshold |
-| `(open: boolean, eventDetails: SelectRootChangeEventDetails) => void` | `string` | 1 | onOpenChange |
 | `(value: SelectValueType<Value, Multiple> \| (Multiple extends true ? never : null), eventDetails: SelectRootChangeEventDetails) => void` | `string` | 1 | onValueChange |
 | `(value: Value extends number ? number : Value, eventDetails: SliderRootChangeEventDetails) => void` | `string` | 1 | onValueChange |
 | `(value: Value extends number ? number : Value, eventDetails: SliderRootCommitEventDetails) => void` | `string` | 1 | onValueCommitted |
-| `(open: boolean, eventDetails: TooltipRootChangeEventDetails) => void` | `string` | 1 | onOpenChange |
 
 ## 🔍 Needs review
 
 A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object shapes), so an `@unboxed` variant won't work and we **refuse to use `%identity`/unsafe casts**. The prop is emitted as a `string` placeholder with an inline `// ⚠️ REVIEW` comment — bind it by hand or fix the type upstream.
 
-### AutocompleteRoot  _(5 loose)_
+### AutocompleteRoot  _(3 loose)_
 
 | Prop | Real TypeScript |
 |------|-----------------|
@@ -250,7 +233,7 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 | `anchor` | `anchor?: Element \| null \| VirtualElement \| React.RefObject<Element \| null> \| (() => Element \| VirtualElement \| null);` |
 | `collisionBoundary` | `collisionBoundary?: Boundary;` |
 
-### ComboboxRoot  _(6 loose)_
+### ComboboxRoot  _(3 loose)_
 
 | Prop | Real TypeScript |
 |------|-----------------|
@@ -307,7 +290,7 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 | `anchor` | `anchor?: Element \| null \| VirtualElement \| React.RefObject<Element \| null> \| (() => Element \| VirtualElement \| null);` |
 | `collisionBoundary` | `collisionBoundary?: Boundary;` |
 
-### NumberFieldRoot  _(3 loose)_
+### NumberFieldRoot  _(1 loose)_
 
 | Prop | Real TypeScript |
 |------|-----------------|
@@ -365,7 +348,7 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 | `anchor` | `anchor?: Element \| null \| VirtualElement \| React.RefObject<Element \| null> \| (() => Element \| VirtualElement \| null);` |
 | `collisionBoundary` | `collisionBoundary?: Boundary;` |
 
-### SelectRoot  _(4 loose)_
+### SelectRoot  _(3 loose)_
 
 | Prop | Real TypeScript |
 |------|-----------------|
@@ -406,7 +389,7 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 
 These props resolved to `unknown`/`any` (usually a generic `T`). They're emitted as a placeholder so the file still compiles, but **the props will not work as typed** — they need a concrete type upstream, or generic-binding support.
 
-### AccordionItem  _(1 loose)_
+### AccordionItem
 
 | Prop | Real TypeScript | Why it won't work |
 |------|-----------------|-------------------|

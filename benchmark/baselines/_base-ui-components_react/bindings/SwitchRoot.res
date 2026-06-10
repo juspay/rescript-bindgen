@@ -6,7 +6,7 @@ external make: (
   ~disabled: bool=?,
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
   ~name: string=?,
-  ~onCheckedChange: (bool, PositionerTabUtilsTypes.onValueChangeConfig) => unit=?,
+  ~onCheckedChange: (bool, PositionerTabUtilsTypes.onCheckedChangeConfig) => unit=?,
   ~readOnly: bool=?,
   ~required: bool=?,
   ~uncheckedValue: string=?,

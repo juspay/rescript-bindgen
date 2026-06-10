@@ -3,7 +3,7 @@ external make: (
   @as("open") ~open_: bool=?,
   ~defaultOpen: bool=?,
   ~modal: CommonTypes.boolOrTrapFocus=?,
-  ~onOpenChange: string=?,  // ⚪ loose — was `(open: boolean, eventDetails: DialogRootChangeEventDetails) => void`
+  ~onOpenChange: (bool, ComponentsMenubarRootStoreToastTypes.alertDialogRootChangeEventDetails) => unit=?,
   ~onOpenChangeComplete: bool => unit=?,
   ~disablePointerDismissal: bool=?,
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,

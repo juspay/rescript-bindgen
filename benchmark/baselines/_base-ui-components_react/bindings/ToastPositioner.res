@@ -54,6 +54,7 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: PositionerTabUtilsTypes.toastPositionerClassName=?,
   ~render: React.element=?,
+  ~sticky: bool=?,
   ~positionMethod: PositionerTabUtilsTypes.positionMethod=?,
   ~sideOffset: PositionerTabUtilsTypes.sideOffsetConfigSideOffset=?,
   ~align: PositionerTabUtilsTypes.align=?,
@@ -61,7 +62,6 @@ external make: (
   // ⚠️ REVIEW: `collisionBoundary` is `Boundary` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
   ~collisionBoundary: string=?,
   ~collisionPadding: string=?,  // ⚪ loose — was `Padding`
-  ~sticky: bool=?,
   ~arrowPadding: float=?,
   ~disableAnchorTracking: bool=?,
   ~collisionAvoidance: PositionerTabUtilsTypes.CollisionAvoidance.t=?,  // ⓘ was `CollisionAvoidance` — opaque; build with CollisionAvoidance.fromSideFlipMode / CollisionAvoidance.fromSideShiftMode
