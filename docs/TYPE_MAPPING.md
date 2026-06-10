@@ -99,8 +99,13 @@ variant (discriminated at runtime). **At most one member may be an object type.*
 | `string \| string[]` | `@unboxed type stringOrStringArray = Str(string) \| StrArr(array<string>)` |
 | `boolean \| 'indeterminate'` | `@unboxed type boolOrIndeterminate = Bool(bool) \| @as("indeterminate") Indeterminate` |
 | `number \| ((i: number) => number)` | `@unboxed type itemHeight = Num(float) \| Fn(float => float)` |
+| `CSSProperties \| ((state: S) => CSSProperties)` (base-ui's state-dependent style; also the checker-resolved `CSSProperties \| (CSSProperties & ((state: S) => CSSProperties))` form) | `@unboxed type sStyle = Style(JsxDOM.style) \| Fn(s => JsxDOM.style)` — an **intersection arm with a call signature counts as the function** (at runtime the value IS a function). Fixture: [`callable-intersection-union`](../test/golden/cases/callable-intersection-union) |
 
-These synthesized variants are de-duplicated into `CommonTypes.res` (module mode).
+These synthesized variants are de-duplicated into `CommonTypes.res` (module mode) — **by
+structure, not by name**: two components sharing a prop name (`style`) but differing in
+payload (per-component state records) get two distinct types. A function-bearing union over
+exactly one record/enum is named after that dep (`accordionRootState` + `style` →
+`accordionRootStyle`); other function-bearing unions keep the prop name.
 
 ---
 
