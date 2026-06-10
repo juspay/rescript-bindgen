@@ -99,6 +99,7 @@ variant (discriminated at runtime). **At most one member may be an object type.*
 | `string \| string[]` | `@unboxed type stringOrStringArray = Str(string) \| StrArr(array<string>)` |
 | `boolean \| 'indeterminate'` | `@unboxed type boolOrIndeterminate = Bool(bool) \| @as("indeterminate") Indeterminate` |
 | `number \| ((i: number) => number)` | `@unboxed type itemHeight = Num(float) \| Fn(float => float)` |
+| `boolean \| RefObject<HTMLElement> \| ((t) => bool)` (clean-return fn) | `@unboxed type toggleFocus = Bool(bool) \| Ref(React.ref<…>) \| Fn(bool => bool)` — bool/object/function are distinct runtime tags. A fn member whose RETURN can't be modelled (`=> boolean \| void \| HTMLElement`) keeps the honest ⚠️ REVIEW flag instead: a fake `=> string` inside a shared `@unboxed` would render unflagged and feed wrong values INTO the library. Fixture: [`ref-union-views`](../test/golden/cases/ref-union-views) |
 | `CSSProperties \| ((state: S) => CSSProperties)` (base-ui's state-dependent style; also the checker-resolved `CSSProperties \| (CSSProperties & ((state: S) => CSSProperties))` form) | `@unboxed type sStyle = Style(JsxDOM.style) \| Fn(s => JsxDOM.style)` — an **intersection arm with a call signature counts as the function** (at runtime the value IS a function). Fixture: [`callable-intersection-union`](../test/golden/cases/callable-intersection-union) |
 
 These synthesized variants are de-duplicated into `CommonTypes.res` (module mode) — **by
@@ -122,6 +123,9 @@ Fixture: [`react-dom`](../test/golden/cases/react-dom)
 | `HTMLDivElement`, `HTMLInputElement`, … | `Dom.htmlDivElement`, … | specific DOM elements, no dependency |
 | `RefObject<T>` / `Ref<T>` / `MutableRefObject<T>` | `React.ref<Nullable.t<Dom.element>>` | configurable via `refType` |
 | `Element \| DocumentFragment` (all DOM nodes) | `Dom.element` **+ note** | collapses to one node type; an `// ⓘ` note records that DocumentFragment isn't covered |
+| `ShadowRoot` | `Dom.shadowRoot` | base-ui portal `container` targets |
+| `HTMLElement \| ShadowRoot \| RefObject<…>` (multi-object union) | opaque module with **`from*` views** — `Container.fromHTMLElement / fromShadowRoot / fromRefObject` | objects can't be `@unboxed`-discriminated; views are zero-cost. Fixture: [`ref-union-views`](../test/golden/cases/ref-union-views) |
+| `Intl.LocalesArgument` | `string` **+ note** | a BCP-47 tag (`"en-US"`) is the 99% case; `Intl.Locale` objects not modelled |
 
 > `Dom.element` vs `Dom.node`: `Element ⊂ Node`. We use `Dom.element` (ergonomic, no `asNode` cast)
 > and note the rare loss; an opaque module is *not* used here because a single native type fits — see

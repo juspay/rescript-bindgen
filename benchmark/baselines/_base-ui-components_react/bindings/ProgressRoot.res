@@ -3,8 +3,7 @@ external make: (
   @as("aria-valuetext") ~ariaValuetext: string=?,
   ~format: string=?,  // ⚪ loose — was `NumberFormatOptions`
   ~getAriaValueText: (string, float) => string=?,
-  // ⚠️ REVIEW: `locale` is `LocalesArgument` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
-  ~locale: string=?,
+  ~locale: string=?,  // ⓘ Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled
   ~max: float=?,
   ~min: float=?,
   ~value: float,

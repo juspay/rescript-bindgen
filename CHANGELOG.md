@@ -19,6 +19,11 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   the sync-or-async value shape `T | Promise<T>` → `promise<t>` (#24).
 
 ### Fixed
+- **base-ui review remainders** (#39): `boolean | RefObject | fn` focus props ->
+  `@unboxed Bool | Ref | Fn`; `HTMLElement | ShadowRoot | RefObject` containers ->
+  opaque modules with `from*` views (`ShadowRoot` -> `Dom.shadowRoot`);
+  `Intl.LocalesArgument` -> `string` + note. base-ui review 28 -> 9, usable
+  167 -> 186 (95%).
 - **Prop-position `any` -> implicit component generics** (#31, probe I-2): an
   `any`-typed prop becomes a type variable (keyed by its carrying alias, so
   `value`/`defaultValue`/`onValueChange` over one alias unify) instead of a

@@ -1,24 +1,15 @@
-# Binding report — `react-markdown@10.1.0`
+# Binding report — `demo`
 
-**2** components · ✅ **0** usable · 🔍 **2** need review · 🛑 **0** broken
+**1** components · ✅ **0** usable · 🔍 **1** need review · 🛑 **0** broken
 
-**2** function binding(s) → `ReactMarkdownBindings.res`.
-
-**10** shared types deduplicated into **3** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**3** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
 | Kind | Package | Provides | Status |
 |------|---------|----------|--------|
 | required | `@rescript/react + stdlib` | JsxDOM, Dom, React, ReactEvent | ✓ present |
-| optional | `rescript-webapi` | File, FileList | ✓ present → used |
-
-## 🔧 Function bindings
-
-Standalone function exports, emitted as positional `@module external` bindings in `ReactMarkdownBindings.res`.
-
-- `MarkdownAsync`
-- `defaultUrlTransform`
+| optional | `rescript-webapi` | File, FileList | ✗ not installed |
 
 ## ✅ Usable
 
@@ -31,28 +22,17 @@ _(none)_
 
 These resolved to a real but complex type and were widened to `string` (they compile and work). Grouped by type so you can review each pattern once — confirm `string` is acceptable, or it may deserve a tighter mapping.
 
-| Resolved TypeScript type | → emitted | count | example props |
-|--------------------------|-----------|-------|---------------|
-| `AllowElement` | `string` | 2 | allowElement |
-| `UrlTransform` | `string` | 2 | urlTransform |
+_(none)_
 
 ## 🔍 Needs review
 
 A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object shapes), so an `@unboxed` variant won't work and we **refuse to use `%identity`/unsafe casts**. The prop is emitted as a `string` placeholder with an inline `// ⚠️ REVIEW` comment — bind it by hand or fix the type upstream.
 
-### Markdown  _(2 loose)_
+### Focusable
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `rehypePlugins` | `rehypePlugins?: PluggableList \| null \| undefined;` |
-| `remarkPlugins` | `remarkPlugins?: PluggableList \| null \| undefined;` |
-
-### MarkdownHooks  _(2 loose)_
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `rehypePlugins` | `rehypePlugins?: PluggableList \| null \| undefined;` |
-| `remarkPlugins` | `remarkPlugins?: PluggableList \| null \| undefined;` |
+| `finalFocus` | `finalFocus?: boolean \| RefObject<HTMLElement> \| ((closeType: string) => boolean \| void \| HTMLElement)` |
 
 ## 🛑 Broken — needs serious component change
 

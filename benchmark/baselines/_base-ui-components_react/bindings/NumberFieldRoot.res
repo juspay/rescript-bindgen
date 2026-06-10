@@ -17,8 +17,7 @@ external make: (
   ~format: string=?,  // ⚪ loose — was `NumberFormatOptions`
   ~onValueChange: (float, ComponentsMenubarRootStoreToastTypes.numberFieldRootChangeEventDetails) => unit=?,
   ~onValueCommitted: (float, ComponentsMenubarRootStoreToastTypes.numberFieldRootCommitEventDetails) => unit=?,
-  // ⚠️ REVIEW: `locale` is `LocalesArgument` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
-  ~locale: string=?,
+  ~locale: string=?,  // ⓘ Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
   ~className: ComponentsMenubarRootStoreToastTypes.numberFieldRootClassName=?,
   ~style: ComponentsMenubarRootStoreToastTypes.numberFieldRootStyle=?,
