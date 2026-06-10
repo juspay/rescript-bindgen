@@ -1,15 +1,12 @@
 @module("@base-ui-components/react") @scope("Accordion") @react.component
 external make: (
-  // 🛑 BROKEN: `value` is `AccordionValue` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~value: string=?,
-  // 🛑 BROKEN: `defaultValue` is `AccordionValue` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~defaultValue: string=?,
+  ~value: array<'a>=?,
+  ~defaultValue: array<'a>=?,
   ~disabled: bool=?,
   ~hiddenUntilFound: bool=?,
   ~keepMounted: bool=?,
   ~loopFocus: bool=?,
-  // 🛑 BROKEN: `onValueChange` is `(value: AccordionValue, eventDetails: AccordionRootChangeEventDetails) => void` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~onValueChange: string=?,
+  ~onValueChange: (array<'a>, ComponentsMenubarRootStoreToastTypes.accordionRootChangeEventDetails) => unit=?,
   ~multiple: bool=?,
   ~orientation: PositionerTabUtilsTypes.orientation=?,
   ~style: ComponentsMenubarRootStoreToastTypes.accordionRootStyle=?,

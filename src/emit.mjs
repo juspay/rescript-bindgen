@@ -243,13 +243,18 @@ export function emit(ir, options = {}) {
     // — because the flat export may be type-only (undefined at runtime, base-ui). (#25)
     const scopeAttr = ir.import.scope ? ` @scope(${JSON.stringify(ir.import.scope)})` : ''
     if (recordProps) {
-        lines.push(`type props = {`)
+        // Type variables in props (explicit generics or implicit `any` vars, #31) make
+        // the record parameterized: `type props<'a> = …`.
+        const tvars = new Set()
+        for (const p of ir.props) collectVarNames(p.type, tvars)
+        const tp = tvars.size ? `<${[...tvars].join(', ')}>` : ''
+        lines.push(`type props${tp} = {`)
         lines.push(`  ...${ir.attrsBase.ref},`)
         for (const p of ir.props) lines.push(...propLine(p, cfg, 'record'))
         lines.push(`}`)
         lines.push('')
         lines.push(`@module(${JSON.stringify(cfg.from)})${scopeAttr}`)
-        lines.push(`external make: React.component<props> = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
+        lines.push(`external make: React.component<props${tp}> = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
     } else {
         lines.push(`@module(${JSON.stringify(cfg.from)})${scopeAttr} @react.component`)
         lines.push(`external make: (`)
@@ -276,6 +281,15 @@ export function emitNamespace(ns, from) {
     for (const m of ns.members) lines.push(`module ${m.member} = ${m.target}`)
     lines.push('')
     return lines.join('\n')
+}
+
+/** Collect every `typeVar` name in an IR type tree (for parameterizing `type props<'a>`). */
+function collectVarNames(t, out) {
+    if (!t || typeof t !== 'object') return
+    if (t.kind === 'typeVar' && t.name) out.add(t.name)
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) if (t[k]) collectVarNames(t[k], out)
+    if (Array.isArray(t.params)) for (const p of t.params) collectVarNames(p, out)
+    if (Array.isArray(t.tparams)) for (const v of t.tparams) if (typeof v === 'string') out.add(v)
 }
 
 /**

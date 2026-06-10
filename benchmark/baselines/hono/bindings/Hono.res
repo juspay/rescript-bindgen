@@ -26,8 +26,7 @@ type t = InstanceTypes.hono
 // ⚠️ REVIEW: `onError` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
 @send external onError: (t, ~handler: (string, InstanceTypes.context) => promise<WebTypes.response>) => t = "onError"
 @send external notFound: (t, ~handler: InstanceTypes.context => promise<WebTypes.response>) => t = "notFound"
-// 🛑 BROKEN: `mount` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
-@send external mount: (t, ~path: string, ~applicationHandler: (WebTypes.request, string) => promise<WebTypes.response>, ~options: TypesTypes.optionsConfigOptions=?, unit) => t = "mount"
+@send external mount: (t, ~path: string, ~applicationHandler: (WebTypes.request, 'a) => promise<WebTypes.response>, ~options: TypesTypes.optionsConfigOptions=?, unit) => t = "mount"
 // ⚪ loose: `fetch` has a param/return widened to `string`.
 @send external fetch: (t, ~request: WebTypes.request, ~env: string=?, ~executionCtx: TypesTypes.executionContext=?, unit) => promise<WebTypes.response> = "fetch"
 // ⚪ loose: `request` has a param/return widened to `string`.

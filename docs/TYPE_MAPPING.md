@@ -257,6 +257,7 @@ A **genuine** generic component maps its type parameter to a ReScript type varia
 | TypeScript | ReScript |
 |---|---|
 | `VirtualList<T>(props: { items: T[]; renderItem: (item: T, i: number) => ReactNode })` | `~items: array<'a>`, `~renderItem: ('a, int) => React.element` |
+| **prop-position `any`** — `type AccordionValue = (any \| null)[]`; `value?: AccordionValue`, `onValueChange?: (v: AccordionValue) => void` | an **implicit** component generic: `~value: array<'a>=?`, `~onValueChange: array<'a> => unit=?` — vars are **keyed by the carrying alias** so props over one alias unify; a bare `any` gets a fresh var per occurrence. Exactly as sound as the upstream `any`, strictly better than a broken `string` placeholder. Inside SHARED record fields `any` stays a flagged defect (a shared type can't be component-generic). Fixture: [`any-to-typevar`](../test/golden/cases/any-to-typevar) |
 
 An **erased** generic — a `forwardRef`/`memo` export that pins the parameter to a placeholder
 (`Record<string, unknown>`) — is *re-genericized*: the placeholder is recovered as `'a`, `unknown`

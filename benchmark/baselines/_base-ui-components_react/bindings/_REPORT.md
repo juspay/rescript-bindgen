@@ -1,6 +1,6 @@
 # Binding report — `@base-ui-components/react@1.0.0-rc.0`
 
-**195** components · ✅ **151** usable · 🔍 **28** need review · 🛑 **16** broken
+**195** components · ✅ **167** usable · 🔍 **28** need review · 🛑 **0** broken
 
 **9** function binding(s) → `ReactBindings.res`.
 
@@ -33,7 +33,9 @@ These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
 - AccordionHeader
+- AccordionItem
 - AccordionPanel
+- AccordionRoot
 - AccordionTrigger
 - AlertDialogRoot
 - AutocompleteValue
@@ -53,10 +55,13 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - ComboboxChipRemove
 - ComboboxChips
 - ComboboxClear
+- ComboboxCollection
 - ComboboxEmpty
+- ComboboxGroup
 - ComboboxGroupLabel
 - ComboboxIcon
 - ComboboxInput
+- ComboboxItem
 - ComboboxItemIndicator
 - ComboboxList
 - ComboboxRow
@@ -77,6 +82,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - FieldDescription
 - FieldError
 - FieldLabel
+- FieldRoot
 - FieldsetLegend
 - FieldsetRoot
 - FieldValidity
@@ -90,6 +96,8 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - MenuGroup
 - MenuGroupLabel
 - MenuItem
+- MenuRadioGroup
+- MenuRadioItem
 - MenuRadioItemIndicator
 - MenuRoot
 - MenuSubmenuRoot
@@ -103,9 +111,11 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - NavigationMenuBackdrop
 - NavigationMenuContent
 - NavigationMenuIcon
+- NavigationMenuItem
 - NavigationMenuLink
 - NavigationMenuList
 - NavigationMenuPopup
+- NavigationMenuRoot
 - NavigationMenuTrigger
 - NavigationMenuViewport
 - NumberFieldDecrement
@@ -133,6 +143,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - ProgressValue
 - RadioGroup
 - RadioIndicator
+- RadioRoot
 - ScrollAreaContent
 - ScrollAreaCorner
 - ScrollAreaRoot  _(1 loose)_
@@ -144,6 +155,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - SelectGroup
 - SelectGroupLabel
 - SelectIcon
+- SelectItem
 - SelectItemIndicator
 - SelectItemText
 - SelectList
@@ -162,6 +174,9 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - SwitchThumb
 - TabsIndicator
 - TabsList
+- TabsPanel
+- TabsRoot
+- TabsTab
 - ToastAction
 - ToastArrow
 - ToastClose
@@ -172,6 +187,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - ToastTitle
 - ToastViewport
 - Toggle
+- ToggleGroup
 - ToolbarButton
 - ToolbarGroup
 - ToolbarInput
@@ -389,109 +405,5 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 
 These props resolved to `unknown`/`any` (usually a generic `T`). They're emitted as a placeholder so the file still compiles, but **the props will not work as typed** — they need a concrete type upstream, or generic-binding support.
 
-### AccordionItem
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `value` | `value?: any;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-
-### AccordionRoot
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `value` | `value?: AccordionValue;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-| `defaultValue` | `defaultValue?: AccordionValue;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-| `onValueChange` | `onValueChange?: (value: AccordionValue, eventDetails: AccordionRootChangeEventDetails) => void;` | It's a **callback** typed `unknown` → emitted as `string`; passing a string does nothing. |
-
-### ComboboxCollection
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `children` | `children: (item: any, index: number) => React.ReactNode;` | It's a **callback** typed `unknown` → emitted as `string`; passing a string does nothing. |
-
-### ComboboxGroup
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `items` | `items?: readonly any[];` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-
-### ComboboxItem
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `value` | `value?: any;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-
-### FieldRoot
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `validate` | `validate?: (value: unknown, formValues: Form.Values) => string \| string[] \| null \| Promise<string \| string[] \| null>;` | It's a **callback** typed `unknown` → emitted as `string`; passing a string does nothing. |
-
-### MenuRadioGroup
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `value` | `value?: any;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-| `defaultValue` | `defaultValue?: any;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-| `onValueChange` | `onValueChange?: (value: any, eventDetails: MenuRadioGroup.ChangeEventDetails) => void;` | It's a **callback** typed `unknown` → emitted as `string`; passing a string does nothing. |
-
-### MenuRadioItem
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `value` | `value: any;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-
-### NavigationMenuItem
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `value` | `value?: any;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-
-### NavigationMenuRoot
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `value` | `value?: any;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-| `defaultValue` | `defaultValue?: any;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-| `onValueChange` | `onValueChange?: (value: any, eventDetails: NavigationMenuRoot.ChangeEventDetails) => void;` | It's a **callback** typed `unknown` → emitted as `string`; passing a string does nothing. |
-
-### RadioRoot
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `value` | `value: any;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-
-### SelectItem
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `value` | `value?: any;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-
-### TabsPanel
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `value` | `value: TabsTab.Value;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-
-### TabsRoot
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `value` | `value?: TabsTab.Value;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-| `defaultValue` | `defaultValue?: TabsTab.Value;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-| `onValueChange` | `onValueChange?: (value: TabsTab.Value, eventDetails: TabsRoot.ChangeEventDetails) => void;` | It's a **callback** typed `unknown` → emitted as `string`; passing a string does nothing. |
-
-### TabsTab
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `value` | `value: TabsTab.Value;` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-
-### ToggleGroup
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `value` | `value?: readonly any[];` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-| `defaultValue` | `defaultValue?: readonly any[];` | Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly. |
-| `onValueChange` | `onValueChange?: (groupValue: any[], eventDetails: ToggleGroup.ChangeEventDetails) => void;` | It's a **callback** typed `unknown` → emitted as `string`; passing a string does nothing. |
+_(none)_ 🎉
 

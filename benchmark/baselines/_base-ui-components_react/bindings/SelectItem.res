@@ -1,8 +1,7 @@
 @module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
   ~children: React.element=?,
-  // 🛑 BROKEN: `value` is `any` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~value: string=?,
+  ~value: 'a=?,
   ~disabled: bool=?,
   ~label: string=?,
   ~nativeButton: bool=?,

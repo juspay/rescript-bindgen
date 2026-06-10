@@ -1,7 +1,6 @@
 @module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
-  // 🛑 BROKEN: `value` is `any` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
-  ~value: string,
+  ~value: 'a,
   ~onClick: ReactEvent.Mouse.t => unit=?,
   ~disabled: bool=?,
   ~label: string=?,
