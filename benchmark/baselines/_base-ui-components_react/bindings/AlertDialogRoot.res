@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("AlertDialog") @react.component
 external make: (
   ~onOpenChange: string=?,  // ⚪ loose — was `(open: boolean, eventDetails: AlertDialogRootChangeEventDetails) => void`
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
@@ -9,4 +9,4 @@ external make: (
   ~onOpenChangeComplete: bool => unit=?,
   ~triggerId: string=?,
   ~defaultTriggerId: string=?,
-) => React.element = "AlertDialogRoot"
+) => React.element = "Root"

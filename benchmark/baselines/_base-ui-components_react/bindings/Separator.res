@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Autocomplete") @react.component
 external make: (
   ~orientation: PositionerTabUtilsTypes.orientation=?,
   ~style: SeparatorTypes.separatorStyle=?,

@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Toast") @react.component
 external make: (
   ~style: ViewportTypes.toastViewportStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ViewportTypes.toastViewportClassName=?,
   ~render: React.element=?,
-) => React.element = "ToastViewport"
+) => React.element = "Viewport"

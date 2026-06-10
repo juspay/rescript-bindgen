@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Meter") @react.component
 external make: (
   @as("aria-valuetext") ~ariaValuetext: string=?,
   ~format: string=?,  // ⚪ loose — was `NumberFormatOptions`
@@ -59,4 +59,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: CommonTypes.className=?,
   ~render: React.element=?,
-) => React.element = "MeterRoot"
+) => React.element = "Root"

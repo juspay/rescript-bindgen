@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("ScrollArea") @react.component
 external make: (
   ~orientation: ComponentsMenubarRootStoreToastTypes.orientation2=?,
   ~keepMounted: bool=?,
@@ -53,4 +53,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ScrollbarTypes.scrollAreaScrollbarClassName=?,
   ~render: React.element=?,
-) => React.element = "ScrollAreaScrollbar"
+) => React.element = "Scrollbar"

@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Combobox") @react.component
 external make: (
   ~children: React.element=?,
-) => React.element = "ComboboxValue"
+) => React.element = "Value"

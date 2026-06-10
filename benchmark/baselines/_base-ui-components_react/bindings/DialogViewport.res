@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("AlertDialog") @react.component
 external make: (
   ~style: PopupTypes.dialogPopupStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: PopupTypes.dialogPopupClassName=?,
   ~render: React.element=?,
-) => React.element = "DialogViewport"
+) => React.element = "Viewport"

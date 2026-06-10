@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("AlertDialog") @react.component
 external make: (
   ~forceRender: bool=?,
   ~style: BackdropTypes.comboboxBackdropStyle=?,
@@ -52,4 +52,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: BackdropTypes.comboboxBackdropClassName=?,
   ~render: React.element=?,
-) => React.element = "DialogBackdrop"
+) => React.element = "Backdrop"

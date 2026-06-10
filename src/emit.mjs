@@ -237,22 +237,42 @@ export function emit(ir, options = {}) {
     //    labeled args (default): the classic `@react.component external make: (~p: t=?, …)`.
     const recordProps = !!(ir.attrsBase && ir.attrsBase.ref)
     if (ir.import.isDefault) lines.push(defaultExportNote(ir.import.name))
+    // A namespace member binds THROUGH the namespace object — `@scope("Accordion") = "Root"`
+    // — because the flat export may be type-only (undefined at runtime, base-ui). (#25)
+    const scopeAttr = ir.import.scope ? ` @scope(${JSON.stringify(ir.import.scope)})` : ''
     if (recordProps) {
         lines.push(`type props = {`)
         lines.push(`  ...${ir.attrsBase.ref},`)
         for (const p of ir.props) lines.push(...propLine(p, cfg, 'record'))
         lines.push(`}`)
         lines.push('')
-        lines.push(`@module(${JSON.stringify(cfg.from)})`)
+        lines.push(`@module(${JSON.stringify(cfg.from)})${scopeAttr}`)
         lines.push(`external make: React.component<props> = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
     } else {
-        lines.push(`@module(${JSON.stringify(cfg.from)}) @react.component`)
+        lines.push(`@module(${JSON.stringify(cfg.from)})${scopeAttr} @react.component`)
         lines.push(`external make: (`)
         for (const p of ir.props) lines.push(...propLine(p, cfg, 'labeled'))
         lines.push(`) => React.element = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
     }
     lines.push('')
 
+    return lines.join('\n')
+}
+
+/**
+ * Render a namespace alias module: `Accordion.res` with `module Root = AccordionRoot`, …
+ * Zero-cost ReScript module aliases over the flat component files (which bind the
+ * namespace member via @scope), enabling the package's documented `<Accordion.Root>`
+ * JSX idiom. (#25)
+ * @param {{name: string, members: Array<{member: string, target: string}>}} ns
+ * @param {string} from  the npm package name (header comment only)
+ * @returns {string}
+ */
+export function emitNamespace(ns, from) {
+    const lines = []
+    lines.push(`// Namespace \`${ns.name}\` of ${from} — zero-cost aliases; use <${ns.name}.${ns.members[0].member} />`)
+    for (const m of ns.members) lines.push(`module ${m.member} = ${m.target}`)
+    lines.push('')
     return lines.join('\n')
 }
 

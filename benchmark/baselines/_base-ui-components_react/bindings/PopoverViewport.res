@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Popover") @react.component
 external make: (
   ~children: React.element=?,
   ~style: ViewportTypes.stateStyle=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ViewportTypes.stateClassName=?,
   ~render: React.element=?,
-) => React.element = "PopoverViewport"
+) => React.element = "Viewport"

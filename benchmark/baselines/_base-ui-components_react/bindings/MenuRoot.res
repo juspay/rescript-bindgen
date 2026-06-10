@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Menu") @react.component
 external make: (
   ~defaultOpen: bool=?,
   ~loopFocus: bool=?,
@@ -15,4 +15,4 @@ external make: (
   ~defaultTriggerId: string=?,
   ~handle: ComponentsMenubarRootStoreToastTypes.menuHandle2<'a>=?,
   ~children: React.element=?,
-) => React.element = "MenuRoot"
+) => React.element = "Root"

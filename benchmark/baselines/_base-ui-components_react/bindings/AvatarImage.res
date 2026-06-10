@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Avatar") @react.component
 external make: (
   ~onLoadingStatusChange: ImageTypes.imageLoadingStatus2 => unit=?,
   ~style: ComponentsMenubarRootStoreToastTypes.avatarRootStyle=?,
@@ -56,4 +56,4 @@ external make: (
   ~width: CommonTypes.stringOrNumber=?,
   ~className: ComponentsMenubarRootStoreToastTypes.avatarRootClassName=?,
   ~render: React.element=?,
-) => React.element = "AvatarImage"
+) => React.element = "Image"

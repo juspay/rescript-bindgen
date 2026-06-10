@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("NavigationMenu") @react.component
 external make: (
   // ⚠️ REVIEW: `anchor` is `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
   ~anchor: string=?,
@@ -65,4 +65,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: PositionerTabUtilsTypes.navigationMenuPositionerClassName=?,
   ~render: React.element=?,
-) => React.element = "NavigationMenuPositioner"
+) => React.element = "Positioner"

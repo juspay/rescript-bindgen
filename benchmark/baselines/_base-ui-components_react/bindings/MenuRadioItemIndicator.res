@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
   ~keepMounted: bool=?,
   ~style: CheckboxItemIndicatorTypes.menuCheckboxItemIndicatorStyle=?,
@@ -52,4 +52,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: CheckboxItemIndicatorTypes.menuCheckboxItemIndicatorClassName=?,
   ~render: React.element=?,
-) => React.element = "MenuRadioItemIndicator"
+) => React.element = "RadioItemIndicator"

@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Toolbar") @react.component
 external make: (
   ~disabled: bool=?,
   ~orientation: PositionerTabUtilsTypes.orientation=?,
@@ -54,4 +54,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ComponentsMenubarRootStoreToastTypes.toolbarRootClassName=?,
   ~render: React.element=?,
-) => React.element = "ToolbarRoot"
+) => React.element = "Root"

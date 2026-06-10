@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Checkbox") @react.component
 external make: (
   ~id: string=?,
   ~name: string=?,
@@ -63,4 +63,4 @@ external make: (
   ~onScroll: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~render: React.element=?,
-) => React.element = "CheckboxRoot"
+) => React.element = "Root"

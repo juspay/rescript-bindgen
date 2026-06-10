@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
   ~onClick: ReactEvent.Mouse.t => unit=?,
   ~disabled: bool=?,
@@ -55,4 +55,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ItemTypes.menuItemClassName=?,
   ~render: React.element=?,
-) => React.element = "MenuItem"
+) => React.element = "Item"

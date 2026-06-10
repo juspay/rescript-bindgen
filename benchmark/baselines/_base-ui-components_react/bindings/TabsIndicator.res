@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Tabs") @react.component
 external make: (
   ~renderBeforeHydration: bool=?,
   ~style: IndicatorTypes.tabsIndicatorStyle=?,
@@ -52,4 +52,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: IndicatorTypes.tabsIndicatorClassName=?,
   ~render: React.element=?,
-) => React.element = "TabsIndicator"
+) => React.element = "Indicator"

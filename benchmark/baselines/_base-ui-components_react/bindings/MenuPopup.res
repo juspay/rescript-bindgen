@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
   ~children: React.element=?,
   ~id: string=?,
@@ -53,4 +53,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: PopupTypes.menuPopupClassName=?,
   ~render: React.element=?,
-) => React.element = "MenuPopup"
+) => React.element = "Popup"

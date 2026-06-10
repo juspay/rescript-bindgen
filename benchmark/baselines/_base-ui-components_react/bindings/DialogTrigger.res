@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("AlertDialog") @react.component
 external make: (
   ~handle: ComponentsMenubarRootStoreToastTypes.dialogHandle3<'a>=?,
   ~payload: 'a=?,
@@ -64,4 +64,4 @@ external make: (
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~className: ComponentsMenubarRootStoreToastTypes.collapsibleRootClassName=?,
   ~render: React.element=?,
-) => React.element = "DialogTrigger"
+) => React.element = "Trigger"

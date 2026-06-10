@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Dialog") @react.component
 external make: (
   @as("open") ~open_: bool=?,
   ~defaultOpen: bool=?,
@@ -11,4 +11,4 @@ external make: (
   ~children: React.element=?,
   ~triggerId: string=?,
   ~defaultTriggerId: string=?,
-) => React.element = "DialogRoot"
+) => React.element = "Root"

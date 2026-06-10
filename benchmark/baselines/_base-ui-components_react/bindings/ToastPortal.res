@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Toast") @react.component
 external make: (
   // ⚠️ REVIEW: `container` is `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot>` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
   ~container: string=?,
@@ -53,4 +53,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: CommonTypes.className2<'a>=?,
   ~render: React.element=?,
-) => React.element = "ToastPortal"
+) => React.element = "Portal"

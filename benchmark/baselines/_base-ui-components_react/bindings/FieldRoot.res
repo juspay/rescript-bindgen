@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Field") @react.component
 external make: (
   ~disabled: bool=?,
   ~name: string=?,
@@ -60,4 +60,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: CheckboxGroupTypes.checkboxGroupClassName=?,
   ~render: React.element=?,
-) => React.element = "FieldRoot"
+) => React.element = "Root"

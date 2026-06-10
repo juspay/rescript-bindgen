@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("NavigationMenu") @react.component
 external make: (
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
   ~onOpenChangeComplete: bool => unit=?,
@@ -62,4 +62,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ComponentsMenubarRootStoreToastTypes.navigationMenuRootClassName=?,
   ~render: React.element=?,
-) => React.element = "NavigationMenuRoot"
+) => React.element = "Root"

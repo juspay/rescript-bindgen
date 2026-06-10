@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Tooltip") @react.component
 external make: (
   ~defaultOpen: bool=?,
   @as("open") ~open_: bool=?,
@@ -12,4 +12,4 @@ external make: (
   ~children: React.element=?,
   ~triggerId: string=?,
   ~defaultTriggerId: string=?,
-) => React.element = "TooltipRoot"
+) => React.element = "Root"

@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("ScrollArea") @react.component
 external make: (
   ~overflowEdgeThreshold: string=?,  // ⚪ loose — was `number | Partial<{ xStart: number; xEnd: number; yStart: number; yEnd: number; }>`
   ~style: ComponentsMenubarRootStoreToastTypes.scrollAreaRootStyle=?,
@@ -52,4 +52,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ComponentsMenubarRootStoreToastTypes.scrollAreaRootClassName=?,
   ~render: React.element=?,
-) => React.element = "ScrollAreaRoot"
+) => React.element = "Root"

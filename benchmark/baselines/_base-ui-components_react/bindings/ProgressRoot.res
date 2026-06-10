@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Progress") @react.component
 external make: (
   @as("aria-valuetext") ~ariaValuetext: string=?,
   ~format: string=?,  // ⚪ loose — was `NumberFormatOptions`
@@ -59,4 +59,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ComponentsMenubarRootStoreToastTypes.progressRootClassName=?,
   ~render: React.element=?,
-) => React.element = "ProgressRoot"
+) => React.element = "Root"

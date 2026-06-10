@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("PreviewCard") @react.component
 external make: (
   ~style: ArrowTypes.comboboxArrowStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ArrowTypes.comboboxArrowClassName=?,
   ~render: React.element=?,
-) => React.element = "PreviewCardArrow"
+) => React.element = "Arrow"

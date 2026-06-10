@@ -19,6 +19,12 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   the sync-or-async value shape `T | Promise<T>` → `promise<t>` (#24).
 
 ### Fixed
+- **base-ui bindings were broken at runtime** (#25): the flat names
+  (`AccordionRoot`) are `export type *` — type-only, `undefined` at runtime; the
+  values live on namespace objects (`Accordion.Root`). Components reachable as
+  namespace members now bind `@scope("Accordion") … = "Root"`, and each namespace
+  gets a zero-cost alias module (`Accordion.res`: `module Root = AccordionRoot`)
+  enabling the documented `<Accordion.Root>` JSX idiom.
 - Bare `--pkg <name>` now installs the `latest` dist-tag instead of the `*`
   range — npm's `*` excludes prereleases, so packages publishing only
   prereleases (e.g. `@base-ui-components/react`) failed to resolve (#23).

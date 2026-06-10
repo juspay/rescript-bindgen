@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Tabs") @react.component
 external make: (
   ~activateOnFocus: bool=?,
   ~loopFocus: bool=?,
@@ -53,4 +53,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ComponentsMenubarRootStoreToastTypes.tabsRootClassName=?,
   ~render: React.element=?,
-) => React.element = "TabsList"
+) => React.element = "List"

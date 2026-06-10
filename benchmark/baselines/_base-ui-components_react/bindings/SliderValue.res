@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Slider") @react.component
 external make: (
   ~children: (array<string>, array<float>) => React.element=?,
   ~className: ComponentsMenubarRootStoreToastTypes.sliderRootClassName=?,
@@ -53,4 +53,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~name: string=?,
   ~render: React.element=?,
-) => React.element = "SliderValue"
+) => React.element = "Value"

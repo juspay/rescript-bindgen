@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
   ~children: React.element=?,
   // 🛑 BROKEN: `value` is `any` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
@@ -58,4 +58,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ButtonTypes.buttonClassName=?,
   ~render: React.element=?,
-) => React.element = "MenuRadioGroup"
+) => React.element = "RadioGroup"

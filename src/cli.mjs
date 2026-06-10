@@ -16,7 +16,7 @@
 // ============================================================================
 
 import { extractComponent, extractModule } from './extract.mjs'
-import { emit, emitFunction, emitClass, report, planSharedModules, emitSharedModule, makeResolveRef } from './emit.mjs'
+import { emit, emitFunction, emitClass, emitNamespace, report, planSharedModules, emitSharedModule, makeResolveRef } from './emit.mjs'
 import { resolveInput } from './resolve.mjs'
 import { writeReport } from './report.mjs'
 import { planHtmlAttrs, HTML_ATTRS_PIN } from './html-attrs.mjs'
@@ -204,6 +204,7 @@ async function main() {
     let units // [{ name, ir }]  — React components
     let functions = [] // [{ name, ir }] — standalone function/const-fn exports (generic TS)
     let classes = []   // [{ name, ir }] — class exports -> `@new`/`@send`/`@get` modules
+    let namespaces = [] // [{ name, members }] — `export * as NS` -> alias modules (#25)
     let skipped = []
     let shared = null // module-level shared-type registry (multi-component runs only)
     if (single) {
@@ -214,12 +215,17 @@ async function main() {
         units = res.components
         functions = res.functions || []
         classes = res.classes || []
+        namespaces = res.namespaces || []
         skipped = res.skipped
         shared = res.shared
         if (opts.only) {
             units = units.filter((u) => u.name === opts.only)
             functions = functions.filter((f) => f.name === opts.only)
             classes = classes.filter((c) => c.name === opts.only)
+            // keep only namespaces whose members survive the filter (alias targets must exist)
+            namespaces = namespaces
+                .map((ns) => ({ ...ns, members: ns.members.filter((m) => units.some((u) => u.name === m.target)) }))
+                .filter((ns) => ns.members.length)
         }
     }
 
@@ -345,6 +351,14 @@ async function main() {
         written.add(fnFile)
         console.error(`[bindgen] wrote ${functions.length} function binding(s) to ${fnFile}`)
     }
+
+    // Namespace alias modules (`Accordion.res` -> `module Root = AccordionRoot`, …):
+    // the package's documented `<Accordion.Root>` idiom, zero-cost. (#25)
+    for (const ns of namespaces) {
+        writeFileSync(join(outDir, `${ns.name}.res`), emitNamespace(ns, from))
+        written.add(`${ns.name}.res`)
+    }
+    if (namespaces.length) console.error(`[bindgen] wrote ${namespaces.length} namespace alias module(s): ${namespaces.slice(0, 8).map((n) => `${n.name}.res`).join(', ')}${namespaces.length > 8 ? '…' : ''}`)
 
     // Class exports: one `<ClassName>.res` module per class (the file IS the module, so
     // cross-class `Other.t` references resolve across files with no ordering concerns).

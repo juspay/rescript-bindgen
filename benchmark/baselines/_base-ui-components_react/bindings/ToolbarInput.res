@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Toolbar") @react.component
 external make: (
   ~disabled: bool=?,
   ~focusableWhenDisabled: bool=?,
@@ -79,4 +79,4 @@ external make: (
   ~placeholder: string=?,
   ~className: ButtonTypes.toolbarButtonClassName=?,
   ~render: React.element=?,
-) => React.element = "ToolbarInput"
+) => React.element = "Input"

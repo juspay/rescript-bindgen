@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Popover") @react.component
 external make: (
   ~defaultOpen: bool=?,
   @as("open") ~open_: bool=?,
@@ -10,4 +10,4 @@ external make: (
   ~defaultTriggerId: string=?,
   ~handle: ComponentsMenubarRootStoreToastTypes.popoverHandle<'a>=?,
   ~children: React.element=?,
-) => React.element = "PopoverRoot"
+) => React.element = "Root"

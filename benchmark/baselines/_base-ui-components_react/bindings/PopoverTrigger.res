@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Popover") @react.component
 external make: (
   ~nativeButton: bool=?,
   ~form: string=?,
@@ -67,4 +67,4 @@ external make: (
   ~openOnHover: bool=?,
   ~delay: float=?,
   ~closeDelay: float=?,
-) => React.element = "PopoverTrigger"
+) => React.element = "Trigger"

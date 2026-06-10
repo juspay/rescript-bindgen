@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Combobox") @react.component
 external make: (
   ~style: ButtonTypes.buttonStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ButtonTypes.buttonClassName=?,
   ~render: React.element=?,
-) => React.element = "ComboboxChip"
+) => React.element = "Chip"

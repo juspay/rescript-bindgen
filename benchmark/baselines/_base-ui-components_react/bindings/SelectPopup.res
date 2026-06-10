@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
   ~children: React.element=?,
   ~style: PopupTypes.selectPopupStyle=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: PopupTypes.selectPopupClassName=?,
   ~render: React.element=?,
-) => React.element = "SelectPopup"
+) => React.element = "Popup"

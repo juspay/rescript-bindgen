@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Toast") @react.component
 external make: (
   ~nativeButton: bool=?,
   ~form: string=?,
@@ -62,4 +62,4 @@ external make: (
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~className: DescriptionTypes.toastDescriptionClassName=?,
   ~render: React.element=?,
-) => React.element = "ToastClose"
+) => React.element = "Close"

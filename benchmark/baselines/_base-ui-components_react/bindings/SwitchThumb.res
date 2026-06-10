@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Switch") @react.component
 external make: (
   ~style: ComponentsMenubarRootStoreToastTypes.radioRootStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ComponentsMenubarRootStoreToastTypes.radioRootClassName=?,
   ~render: React.element=?,
-) => React.element = "SwitchThumb"
+) => React.element = "Thumb"

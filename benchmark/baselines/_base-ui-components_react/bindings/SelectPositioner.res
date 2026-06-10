@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
   ~alignItemWithTrigger: bool=?,
   // ⚠️ REVIEW: `anchor` is `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
@@ -66,4 +66,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: PositionerTabUtilsTypes.selectPositionerClassName=?,
   ~render: React.element=?,
-) => React.element = "SelectPositioner"
+) => React.element = "Positioner"

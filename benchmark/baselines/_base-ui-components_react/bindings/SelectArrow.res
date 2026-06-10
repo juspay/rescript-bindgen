@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
   ~style: ArrowTypes.selectArrowStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ArrowTypes.selectArrowClassName=?,
   ~render: React.element=?,
-) => React.element = "SelectArrow"
+) => React.element = "Arrow"

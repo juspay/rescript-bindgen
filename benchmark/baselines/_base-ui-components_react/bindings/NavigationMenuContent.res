@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("NavigationMenu") @react.component
 external make: (
   ~style: ContentTypes.navigationMenuContentStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ContentTypes.navigationMenuContentClassName=?,
   ~render: React.element=?,
-) => React.element = "NavigationMenuContent"
+) => React.element = "Content"

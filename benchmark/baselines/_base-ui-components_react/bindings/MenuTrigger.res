@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Menu") @react.component
 external make: (
   ~children: React.element=?,
   ~disabled: bool=?,
@@ -67,4 +67,4 @@ external make: (
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~className: TriggerTypes.contextMenuTriggerClassName=?,
   ~render: React.element=?,
-) => React.element = "MenuTrigger"
+) => React.element = "Trigger"

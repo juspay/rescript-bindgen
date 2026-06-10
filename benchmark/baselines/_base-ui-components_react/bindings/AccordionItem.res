@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Accordion") @react.component
 external make: (
   // 🛑 BROKEN: `value` is `any` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
   ~value: string=?,
@@ -55,4 +55,4 @@ external make: (
   ~className: ItemTypes.accordionItemClassName=?,
   ~render: React.element=?,
   ~disabled: bool=?,
-) => React.element = "AccordionItem"
+) => React.element = "Item"
