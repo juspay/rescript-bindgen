@@ -859,6 +859,35 @@ export function extractModule(entryFile, opts = {}) {
         if (instSym) classTypes.set(instSym, nm)
     }
 
+    // Also register each exported class's BASE-class symbols (transitively) → the exported
+    // name, so a method returning the (non-exported) base maps to the class's own `t` instead
+    // of minting a numbered opaque record per call site — e.g. hono's `get/post/…` return
+    // `HonoBase<…>` instantiations, which now render as chainable `t`. Ambiguity guard: a
+    // base claimed by TWO different exported classes is dropped (can't pick a side). (#24)
+    {
+        const claims = new Map() // baseSym -> exported name | null (ambiguous)
+        // NEVER claim a LIBRARY base (lib.es Date, lib.dom EventTarget, …): `TZDate extends
+        // Date` must not remap every `Date` in the package to `InstanceTypes.tzDate`. Only
+        // first-party non-exported bases (hono's `HonoBase`) qualify. (Caught by the
+        // benchmark gate on react-day-picker.)
+        const isLibBase = (bsym) => {
+            const d = bsym.declarations && bsym.declarations[0]
+            const f = (d && d.getSourceFile().fileName) || ''
+            return /node_modules\/(@types|typescript)\//.test(f) || /\/lib\.(dom|es|scripthost|webworker)/.test(f)
+        }
+        for (const [s, nm] of [...classTypes]) {
+            let t = checker.getDeclaredTypeOfSymbol(s)
+            for (let i = 0; i < 6 && t; i++) {
+                const bases = (checker.getBaseTypes && t.isClassOrInterface?.()) ? checker.getBaseTypes(t) : (t.symbol && checker.getBaseTypes?.(checker.getDeclaredTypeOfSymbol(t.symbol)) || [])
+                const base = bases && bases[0]
+                if (!base || !base.symbol || classTypes.has(base.symbol) || isLibBase(base.symbol)) break
+                claims.set(base.symbol, claims.has(base.symbol) && claims.get(base.symbol) !== nm ? null : nm)
+                t = base
+            }
+        }
+        for (const [bs, nm] of claims) if (nm) classTypes.set(bs, nm)
+    }
+
     // For each class, register an abstract instance type in a dependency-FREE sink module
     // (`InstanceTypes`). Everything (shared records, other class files) references the sink
     // instead of the class file, so a `*Types.res` that mentions a class can't form a cycle
@@ -971,6 +1000,45 @@ const MAX_DEPTH = 6
  *  that mentions a class can never cycle back through the class file. */
 const INSTANCE_MODULE = 'InstanceTypes'
 
+/** Dependency-free sink module for web-platform classes (Request, Response, …) — the
+ *  WebTypes analogue of `InstanceTypes`. ReScript 12's stdlib has no Fetch types, so an
+ *  abstract `type request` is the honest zero-cost mapping: values pass through untouched
+ *  and stay chainable, instead of a flagged `string` placeholder. (#24) */
+const WEB_MODULE = 'WebTypes'
+
+/** lib.dom classes worth an abstract sink type. Conservative allowlist: names common in
+ *  server/client APIs that do NOT collide with frequent first-party type names (no
+ *  `Event`, `Body`, `Text`, …). The lib.dom-declaration guard protects the rest. */
+const WEB_PLATFORM_TYPES = {
+    Request: 'request', Response: 'response', Headers: 'headers',
+    URL: 'url', URLSearchParams: 'urlSearchParams',
+    AbortSignal: 'abortSignal', AbortController: 'abortController',
+    Blob: 'blob', ReadableStream: 'readableStream', WritableStream: 'writableStream',
+    WebSocket: 'webSocket',
+}
+
+/** True when the type's symbol is DECLARED in lib.dom/lib.webworker — so a package's OWN
+ *  class named `Response`/`Request` is never hijacked into the WebTypes sink. */
+function isWebPlatformDecl(type) {
+    const sym = type.aliasSymbol || (type.getSymbol && type.getSymbol())
+    const d = sym && sym.declarations && sym.declarations[0]
+    const f = (d && d.getSourceFile && d.getSourceFile().fileName) || ''
+    return /\/lib\.(dom|webworker)/.test(f)
+}
+
+/** Lazily register `WebTypes.<name>` in the shared registry (module mode only) and return
+ *  its classRef. Only types actually referenced get emitted. */
+function webSink(ctx, tsName) {
+    const key = 'web:' + tsName
+    let entry = ctx.shared.byKey.get(key)
+    if (!entry) {
+        entry = { key, kind: 'nominal', name: uniqueName(WEB_PLATFORM_TYPES[tsName], ctx.shared), home: WEB_MODULE, deps: new Set() }
+        ctx.shared.byKey.set(key, entry)
+        ctx.shared.entries.push(entry)
+    }
+    return { kind: 'classRef', to: entry.name, home: WEB_MODULE }
+}
+
 /**
  * Map one resolved TypeScript type to an IR type node — the central decision
  * tree. Checks categories most-specific first (unknown, primitives, well-known
@@ -1075,6 +1143,24 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (name === 'File') return ctx.webapi ? { kind: 'raw', res: 'Webapi.File.t' } : { kind: 'opaque', text: 'File' }
     if (name === 'FileList') return ctx.webapi ? { kind: 'raw', res: 'Webapi.FileList.t' } : { kind: 'opaque', text: 'FileList' }
     if (name === 'FormData') return ctx.webapi ? { kind: 'raw', res: 'Webapi.FormData.t' } : { kind: 'opaque', text: 'FormData' }
+
+    // Web-platform classes (Request, Response, Headers, URL, …) -> abstract types in the
+    // dependency-free `WebTypes` sink (module mode only — it's a second output file).
+    // lib.dom-declaration guarded, so a package's own `Response` class is unaffected.
+    // Single-file mode keeps the flagged fallback below. (#24)
+    if (name && ctx.shared && Object.prototype.hasOwnProperty.call(WEB_PLATFORM_TYPES, name) && isWebPlatformDecl(type)) {
+        return webSink(ctx, name)
+    }
+
+    // `Promise<T>` -> `promise<t>` (ReScript built-in). Handled here so async APIs
+    // (`json(): Promise<unknown>`, `arrayBuffer(): Promise<ArrayBuffer>`) type as real
+    // promises instead of falling to the library-object gate; an unresolvable `T` still
+    // flags the whole prop via the imperfection walker. (#24)
+    if (name === 'Promise') {
+        const arg = ((checker.getTypeArguments && checker.getTypeArguments(type)) || type.aliasTypeArguments || [])[0]
+        if (arg && (arg.flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined))) return { kind: 'promise', of: { kind: 'unit' } }
+        return { kind: 'promise', of: arg ? classify(arg, ctx, propName, depth + 1) : { kind: 'unknown', text: 'Promise' } }
+    }
 
     // React `*EventHandler` alias (e.g. InputEventHandler<T>) -> a typed callback.
     // Handled here because these often expose no call signature to fall through to.
@@ -1479,6 +1565,23 @@ function unionNode(type, ctx, propName, depth = 0) {
     const prims = parts.map(primOf)
     if (prims.every(Boolean) && new Set(prims).size === 1) {
         return { kind: prims[0] === 'boolean' ? 'boolean' : prims[0] === 'number' ? 'number' : 'string' }
+    }
+
+    // Sync-or-async VALUE: `T | Promise<T>` (hono's `fetch` returns
+    // `Response | Promise<Response>`). Emit `promise<t>` with an ⓘ note — `await`
+    // handles a bare T at runtime, so the promise view is the usable binding; an
+    // @unboxed can't discriminate two object types and 'a would be unsound in
+    // return position. (#24)
+    if (parts.length === 2) {
+        const pi = parts.findIndex((t) => typeName(t) === 'Promise')
+        if (pi !== -1) {
+            const other = parts[1 - pi]
+            const arg = ((checker.getTypeArguments && checker.getTypeArguments(parts[pi])) || parts[pi].aliasTypeArguments || [])[0]
+            if (arg && other && arg.id === other.id) {
+                const inner = classify(other, ctx, propName, depth + 1)
+                return { kind: 'promise', of: inner, note: `upstream is \`${checker.typeToString(other)} | Promise<…>\` — may also return the bare value synchronously; \`await\` handles both` }
+            }
+        }
     }
 
     // String-literal union -> `@as` variant. Also covers the `"a" | "b" | (string & {})`

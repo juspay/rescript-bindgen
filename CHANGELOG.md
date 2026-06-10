@@ -5,6 +5,19 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **Self-returning chained methods** via non-exported first-party base classes
+  (hono's `get/post/…` returning `HonoBase<…>`) now map to the chainable `t`
+  instead of minting numbered opaque types; library bases (`Date`, `EventTarget`)
+  are never claimed (#24).
+- **`WebTypes.res` sink for web-platform classes** (#24): `Request`, `Response`,
+  `Headers`, `URL`, `AbortSignal`, `Blob`, streams, `WebSocket` (lib.dom-declared
+  only) map to abstract types in a generated dependency-free module instead of
+  flagged `string` placeholders — hono's `fetch` becomes
+  `(t, ~request: WebTypes.request, …) => promise<WebTypes.response>`.
+- **`Promise<T>` → `promise<t>`** (incl. `Promise<void>` → `promise<unit>`), and
+  the sync-or-async value shape `T | Promise<T>` → `promise<t>` (#24).
+
 ### Fixed
 - Bare `--pkg <name>` now installs the `latest` dist-tag instead of the `*`
   range — npm's `*` excludes prereleases, so packages publishing only

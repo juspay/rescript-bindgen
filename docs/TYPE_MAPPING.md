@@ -392,6 +392,7 @@ we don't fully emit (e.g. a generic one) still resolves to its abstract type —
 |---|---|
 | `class Counter { constructor(start: number, step?: number) }` | `@new @module("pkg") external make: (~start: float, ~step: int=?, unit) => t = "Counter"` |
 | `increment(by: number): Counter` (returns self) | `@send external increment: (t, ~by: float) => t = "increment"` |
+| `get(...): HonoBase<…>` (returns a NON-exported first-party base — hono's chaining shape) | `@send external get: (t, …) => t = "get"` — base-class symbols of exported classes register transitively (ambiguity-guarded; **library** bases like `Date`/`EventTarget` are never claimed). Fixture: [`class-self-return`](../test/golden/cases/class-self-return) |
 | `get value(): number` | `@get external value: t => float = "value"` |
 | `reset(): void` | `@send external reset: (t) => unit = "reset"` |
 | `watch(counter: Counter): void` (other class, in `Tracker.res`) | `@send external watch: (t, ~counter: InstanceTypes.counter) => unit = "watch"` |
@@ -427,6 +428,25 @@ Fixture: [`webapi`](../test/golden/cases/webapi)
 
 `--webapi` is auto-enabled when the target project depends on `rescript-webapi`; otherwise the CLI
 asks (or flags the props). `(d: FormData) => void | Promise<void>` → `Webapi.FormData.t => 'a`.
+
+### The `WebTypes` sink (always on, module mode)
+Fixture: [`web-platform-types`](../test/golden/cases/web-platform-types)
+
+Web-platform **classes** map to abstract types in a dependency-free generated `WebTypes.res`
+(the [`InstanceTypes`](#class-exports-non-react) pattern) — zero-cost, honest (no fake
+structure), and chainable, instead of flagged `string` placeholders. Only types actually
+referenced are emitted. Guarded on the symbol being **declared in lib.dom/lib.webworker**, so a
+package's own class named `Response` is never hijacked.
+
+| TypeScript | ReScript |
+|---|---|
+| `Request`, `Response`, `Headers`, `URL`, `URLSearchParams`, `AbortSignal`, `AbortController`, `Blob`, `ReadableStream`, `WritableStream`, `WebSocket` | `WebTypes.request`, `WebTypes.response`, … (abstract `type` per name) |
+| `fetch(req: Request): Response \| Promise<Response>` (sync-or-async value) | `(t, ~req: WebTypes.request) => promise<WebTypes.response>` — `await` handles a bare value at runtime; an `@unboxed` can't discriminate two object types |
+| `Promise<T>` (bare) | `promise<t>`; `Promise<void>` → `promise<unit>` |
+
+Deliberately excluded from the sink: collision-prone ambient names (`Event`, `Body`, `Text`).
+Future work (not gated yet): upgrading a verified subset to `Webapi.Fetch.*` under `--webapi`.
+Single-file (`--file`/`--stdout`) mode keeps the flagged fallback (no second output file).
 
 ---
 

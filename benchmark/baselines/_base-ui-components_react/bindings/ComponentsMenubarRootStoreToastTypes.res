@@ -1087,14 +1087,14 @@ type toastManager = {
   add: toastManagerAddOptions => string,
   close: string => unit,
   update: (string, toastManagerAddOptions) => unit,
-  promise: (string, toastManagerPromiseOptions) => string,
+  promise: (promise<string>, toastManagerPromiseOptions) => promise<string>,
 }
 type useToastManagerReturnValue = {
   toasts: array<toastRootToastObject>,
   add: toastManagerAddOptions => string,
   close: string => unit,
   update: (string, toastManagerAddOptions) => unit,
-  promise: (string, toastManagerPromiseOptions) => string,
+  promise: (promise<string>, toastManagerPromiseOptions) => promise<string>,
 }
 type toolbarRootState = {
   disabled: bool,

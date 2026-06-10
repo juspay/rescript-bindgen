@@ -4,7 +4,7 @@
 
 **9** function binding(s) → `ReactBindings.res`.
 
-**346** shared types deduplicated into **40** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**347** shared types deduplicated into **40** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
