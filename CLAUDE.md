@@ -40,9 +40,16 @@ A new or changed mapping is not done until all three are updated together:
 | `npm run test:golden:update` | regenerate goldens (after an intentional change) |
 | `npm run test:compile` | compile every golden with ReScript in `test/sandbox` (needs sandbox deps) |
 | `npm run gen -- --pkg <name> --out <dir> --report` | generate bindings for a package |
+| `npm run bench` | real-world benchmark: run the checkout against the pinned packages in `benchmark/packages.json`, diff vs committed baselines (see `benchmark/README.md`) |
+| `npm run bench:update` | accept intentional output changes — regenerate `benchmark/baselines/` and commit the diff in the same PR |
 
-CI (`.github/workflows/ci.yml`) runs the smoke+golden diff and the compile check on every PR, both
-**blocking** — generated output cannot drift from `docs/TYPE_MAPPING.md` without a failing build.
+CI (`.github/workflows/ci.yml`) runs the smoke+golden diff, the compile check, and a
+**fixture guard** (a PR touching `src/extract|emit|resolve.mjs` must also touch
+`test/golden/cases/` or `docs/TYPE_MAPPING.md`; label `no-fixture-needed` opts out) on every
+PR, all **blocking** — generated output cannot drift from `docs/TYPE_MAPPING.md` without a
+failing build. `.github/workflows/benchmark.yml` is the opt-in heavy gate: approve it from
+the PR's "Review pending deployments" button to run the real-package benchmark before a
+release.
 
 ## Conventions
 

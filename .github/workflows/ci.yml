@@ -80,30 +80,27 @@ jobs:
       - name: Compile goldens
         run: npm run test:compile
 
-  # Integration: generate bindings for the latest published blend and compile them.
-  # Informational — depends on npm + the published package, so it must not block CI.
-  integration:
-    name: Generate + compile (blend latest)
+  # Maintenance-loop guard (issue #14): a mapping change is not done until its golden
+  # fixture and TYPE_MAPPING.md row land in the SAME PR (see CLAUDE.md). Pure refactors
+  # can opt out with the `no-fixture-needed` label.
+  fixture-guard:
+    name: Fixture guard (new cases need test cases)
     runs-on: ubuntu-latest
-    continue-on-error: true
+    if: github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-fixture-needed')
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          fetch-depth: 0
 
-      - run: npm ci
-
-      - name: Install ReScript sandbox deps
-        run: npm --prefix test/sandbox ci || npm --prefix test/sandbox install
-
-      - name: Generate blend bindings
-        run: npm run gen -- --pkg @juspay/blend-design-system@latest --out test/sandbox/src --from "@juspay/blend-design-system" --webapi --yes
-
-      - name: Compile-check generated bindings
+      - name: Mapping changes must ship with fixtures
         run: |
-          printf 'module File = {\n  type t\n}\nmodule FileList = {\n  type t\n}\nmodule FormData = {\n  type t\n}\n' > test/sandbox/src/Webapi.res
-          npx --prefix test/sandbox rescript build || (cd test/sandbox && npx rescript build)
+          BASE="origin/${{ github.event.pull_request.base.ref }}"
+          CHANGED=$(git diff --name-only "$BASE"...HEAD)
+          echo "$CHANGED"
+          if echo "$CHANGED" | grep -qE '^src/(extract|emit|resolve)\.mjs$' \
+             && ! echo "$CHANGED" | grep -qE '^(test/golden/cases/|docs/TYPE_MAPPING\.md)'; then
+            echo '::error::This PR changes the mapping pipeline (src/extract|emit|resolve.mjs) but adds/updates no golden case and no docs/TYPE_MAPPING.md row.'
+            echo '::error::Per CLAUDE.md, a mapping change is not done until all three land together: TYPE_MAPPING.md row + fixture under test/golden/cases/ + regenerated golden (npm run test:golden:update). Pure refactors: add the `no-fixture-needed` label.'
+            exit 1
+          fi
+          echo "✅ fixture guard passed"

@@ -1,0 +1,15 @@
+{
+  "generatorExit": 0,
+  "compileOk": true,
+  "warnings": 0,
+  "buckets": {
+    "total": 0,
+    "usable": 0,
+    "review": 0,
+    "broken": 0,
+    "loose": 0
+  },
+  "functions": 1,
+  "classes": 0,
+  "files": 2
+}

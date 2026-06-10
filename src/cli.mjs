@@ -101,6 +101,7 @@ function parseArgs(argv) {
         else if (a === '--only') o.only = argv[++i]
         else if (a === '--no-install') o.install = false
         else if (a === '--report') o.report = true
+        else if (a === '--json-summary') o.jsonSummary = argv[++i]
         else if (a === '--stdout') o.stdout = true
         else if (a === '--node-modules') o.nm = argv[++i]
         else if (a === '--project') o.project = argv[++i]
@@ -130,6 +131,8 @@ Options:
   --only        only emit the component with this export name
   --stdout      print to stdout instead of writing files (single component)
   --report      ALSO write _REPORT.md to --out (ready / loose / review / defects)
+  --json-summary <path>  write a machine-readable run summary (component buckets,
+                 file count) as JSON — for CI / benchmark tooling
   --no-install  do not auto-install a missing --pkg
   --node-modules <dir>  extra node_modules root to resolve --pkg from
   --project <dir>  target ReScript project whose package.json gates optional
@@ -371,6 +374,26 @@ async function main() {
         console.error(`[bindgen] 📄 report written to ${reportPath}`)
     } else {
         console.error(`[bindgen] (add --report to also write _REPORT.md)`)
+    }
+
+    // Machine-readable summary for CI / benchmark tooling. Buckets mirror report.mjs:
+    // most-serious wins — broken (defects) > review > usable; loose counted separately.
+    if (opts.jsonSummary) {
+        const summary = {
+            label: opts.pkg || from,
+            components: {
+                total: rows.length,
+                usable: rows.filter((r) => r.defects === 0 && r.review === 0).length,
+                review: rows.filter((r) => r.defects === 0 && r.review > 0).length,
+                broken: rows.filter((r) => r.defects > 0).length,
+                loose: rows.filter((r) => r.loose > 0).length,
+            },
+            functions: functions.length,
+            classes: classes.length,
+            files: written.size,
+        }
+        writeFileSync(opts.jsonSummary, JSON.stringify(summary, null, 2) + '\n')
+        console.error(`[bindgen] 📊 json summary written to ${opts.jsonSummary}`)
     }
 }
 

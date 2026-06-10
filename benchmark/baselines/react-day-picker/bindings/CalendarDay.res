@@ -1,0 +1,10 @@
+type t = InstanceTypes.calendarDay
+@new @module("react-day-picker") external make: (~date: Date.t, ~displayMonth: Date.t, ~dateLib: InstanceTypes.dateLib=?, unit) => t = "CalendarDay"
+@send external isEqualTo: (t, ~day: t) => bool = "isEqualTo"
+@get external dateLib: t => InstanceTypes.dateLib = "dateLib"
+@get external outside: t => bool = "outside"
+@get external displayMonth: t => Date.t = "displayMonth"
+@get external date: t => Date.t = "date"
+@get external isoDate: t => string = "isoDate"
+@get external displayMonthId: t => string = "displayMonthId"
+@get external dateMonthId: t => string = "dateMonthId"
