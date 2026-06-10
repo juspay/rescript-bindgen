@@ -1,0 +1,23 @@
+@module("@juspay/blend-design-system") @react.component
+external make: (
+  ~selectedValues: array<string>,
+  ~slot: React.element,
+  ~variant: MultiSelectSingleSelectTypes.multiSelectVariant,
+  ~size: MultiSelectSingleSelectTypes.multiSelectMenuSize,
+  ~isSmallScreen: bool,
+  ~onChange: string => unit,
+  ~name: string,
+  ~label: string,
+  ~placeholder: string,
+  ~required: bool,
+  ~selectionTagType: MultiSelectSingleSelectTypes.multiSelectSelectionTagType,
+  ~valueLabelMap: Dict.t<string>,
+  @as("open") ~open_: bool,
+  ~onClick: unit => unit=?,
+  ~multiSelectTokens: MultiSelectSingleSelectTypes.multiSelectTokensType,
+  ~inline: bool=?,
+  ~error: bool=?,
+  ~disabled: bool=?,
+  ~maxTriggerWidth: float=?,
+  ~minTriggerWidth: float=?,
+) => React.element = "MultiSelectTrigger"

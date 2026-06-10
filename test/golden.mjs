@@ -23,6 +23,7 @@ import { mkdtempSync, mkdirSync, rmSync, readdirSync, readFileSync, writeFileSyn
 import { join, dirname } from 'path'
 import { tmpdir } from 'os'
 import { fileURLToPath } from 'url'
+import { GREEN, RED, DIM, readDir, diffDirs } from './lib/diff.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const ROOT = dirname(HERE)
@@ -30,45 +31,12 @@ const CLI = join(ROOT, 'src', 'cli.mjs')
 const CASES_DIR = join(HERE, 'golden', 'cases')
 const UPDATE = process.argv.includes('--update') || process.env.UPDATE === '1'
 
-const GREEN = (s) => `\x1b[32m${s}\x1b[0m`
-const RED = (s) => `\x1b[31m${s}\x1b[0m`
-const DIM = (s) => `\x1b[2m${s}\x1b[0m`
-
 /** List the case directories, sorted for stable ordering. */
 function cases() {
     if (!existsSync(CASES_DIR)) return []
     return readdirSync(CASES_DIR)
         .filter((n) => statSync(join(CASES_DIR, n)).isDirectory())
         .sort()
-}
-
-/** Read every file in a directory (flat — the generator emits a flat tree) into a name->content map. */
-function readDir(dir) {
-    const out = new Map()
-    if (!existsSync(dir)) return out
-    for (const name of readdirSync(dir)) {
-        if (name === '.bindgen-manifest.json') continue // generator bookkeeping, not part of the snapshot
-        const p = join(dir, name)
-        if (statSync(p).isFile()) out.set(name, readFileSync(p, 'utf-8'))
-    }
-    return out
-}
-
-/** A minimal line-level diff for display (no deps). Shows up to `ctx` mismatching lines. */
-function lineDiff(expected, actual, ctx = 40) {
-    const a = expected.split('\n')
-    const b = actual.split('\n')
-    const lines = []
-    const n = Math.max(a.length, b.length)
-    let shown = 0
-    for (let i = 0; i < n && shown < ctx; i++) {
-        if (a[i] !== b[i]) {
-            if (a[i] !== undefined) lines.push(RED(`  - ${a[i]}`))
-            if (b[i] !== undefined) lines.push(GREEN(`  + ${b[i]}`))
-            shown++
-        }
-    }
-    return lines.join('\n')
 }
 
 /** Generate one case into `outDir` by invoking the real CLI. Returns stderr (logs). */
@@ -138,16 +106,7 @@ for (const name of names) {
     }
 
     const expected = readDir(expectedDir)
-    const allNames = new Set([...expected.keys(), ...actual.keys()])
-    const fileProblems = []
-    for (const fn of [...allNames].sort()) {
-        if (!actual.has(fn)) fileProblems.push(`missing file (expected, not generated): ${fn}`)
-        else if (!expected.has(fn)) fileProblems.push(`extra file (generated, not in golden): ${fn}`)
-        else if (expected.get(fn) !== actual.get(fn)) {
-            fileProblems.push(`content differs: ${fn}`)
-            fileProblems.push(lineDiff(expected.get(fn), actual.get(fn)))
-        }
-    }
+    const fileProblems = diffDirs(expected, actual)
 
     rmSync(tmp, { recursive: true, force: true })
 

@@ -1,0 +1,3 @@
+type htmlAttributes = {
+  ...JsxDOM.domProps,
+}

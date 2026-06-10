@@ -1,0 +1,38 @@
+[
+  {
+    "name": "@juspay/blend-design-system",
+    "version": "0.0.36",
+    "flags": ["--webapi"],
+    "notes": "primary downstream target — blend-rescript will be generated from this; replaces the old informational integration job"
+  },
+  {
+    "name": "react-day-picker",
+    "version": "10.0.1",
+    "flags": [],
+    "notes": "large component, heavy shared types, date-fns dep — caught the labelGrid ordering bug"
+  },
+  {
+    "name": "react-tooltip",
+    "version": "6.0.7",
+    "flags": [],
+    "notes": "forwardRef component, enums + callbacks — exercises the forwardRef extraction path"
+  },
+  {
+    "name": "react-markdown",
+    "version": "10.1.0",
+    "flags": [],
+    "notes": "plugin types, Record->Dict, named fn aliases — caught the toString native-code emit bug"
+  },
+  {
+    "name": "@smastrom/react-rating",
+    "version": "1.5.0",
+    "flags": [],
+    "notes": "ForwardRefExoticComponent via typeof — known-gap sentinel: a PR that fixes it shows as WARN improvement"
+  },
+  {
+    "name": "clsx",
+    "version": "2.1.1",
+    "flags": [],
+    "notes": "pure function exports, no components — exercises the emitFunction path"
+  }
+]

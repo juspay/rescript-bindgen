@@ -27,3 +27,6 @@ test/binding-compare/Card.*.res
 
 # scratch manifest from sandbox generation runs
 test/sandbox/src/.bindgen-manifest.json
+
+# benchmark runtime scratch (sandboxes, logs, results) — baselines/ ARE committed
+benchmark/.work/

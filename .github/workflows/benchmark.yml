@@ -1,0 +1,58 @@
+# Real-world benchmark gate — runs the PR's generator against the pinned packages in
+# benchmark/packages.json and compares with committed baselines (see benchmark/README.md).
+#
+# ONE-BUTTON FLOW: the job is gated by the `benchmark` GitHub environment (Settings →
+# Environments → `benchmark` → required reviewer = maintainer). Every PR run parks in
+# "Waiting"; the PR page shows "Review pending deployments" → **Approve and run**.
+# Heavy work never starts without that click.
+name: Benchmark
+
+on:
+  pull_request:
+  workflow_dispatch: # manual re-runs / debugging from the Actions tab
+
+concurrency:
+  group: benchmark-${{ github.ref }}
+  cancel-in-progress: true # a new push supersedes any pending approval / running benchmark
+
+jobs:
+  benchmark:
+    name: Benchmark (pinned real packages)
+    runs-on: ubuntu-latest
+    environment: benchmark # ← the approval button; not a required check, normal CI gates merges
+    permissions:
+      contents: read
+      pull-requests: write # sticky result comment (silently unavailable on fork PRs)
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Sandbox node_modules are reused when the committed lockfiles are unchanged
+      # (run.mjs stamps each sandbox and skips `npm ci` on a hash match).
+      - name: Cache benchmark sandboxes
+        uses: actions/cache@v4
+        with:
+          path: benchmark/.work/*/sandbox/node_modules
+          key: bench-sandbox-${{ runner.os }}-${{ hashFiles('benchmark/packages.json', 'benchmark/sandbox-template/**', 'benchmark/baselines/*/package-lock.json') }}
+
+      - name: Run benchmark
+        run: npm run bench
+
+      - name: Job summary
+        if: always()
+        run: cat benchmark/.work/results.md >> "$GITHUB_STEP_SUMMARY" || echo "no results.md produced" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Sticky PR comment
+        if: always() && github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        continue-on-error: true # read-only token on fork PRs
+        with:
+          header: bindgen-benchmark
+          path: benchmark/.work/results.md
