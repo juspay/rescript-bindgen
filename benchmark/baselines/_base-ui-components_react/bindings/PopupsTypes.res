@@ -7,5 +7,5 @@ type popupTriggerMap = {
   hasMatchingElement: Dom.element => bool => bool,
   getById: string => Dom.element,
   entries: unit => string,
-  size: int,
+  size: float,
 }

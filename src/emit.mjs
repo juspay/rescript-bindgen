@@ -23,9 +23,11 @@ const RESERVED = new Set([
  * not `float`. TypeScript has only `number`, so this is a best-effort heuristic.
  */
 const INT_BY_NAME = new Set([
-    'width', 'height', 'size', 'count', 'index', 'length', 'offset', 'zIndex',
-    'tabIndex', 'maxLength', 'minLength', 'duration', 'rows', 'cols', 'span',
-    'colSpan', 'rowSpan', 'level', 'step', 'min', 'max',
+    // PROVABLY-integral names only. step/min/max/width/height/size/offset/duration were
+    // removed: fractional values are legal there (Slider step={0.1}) and a too-narrow int
+    // is a compile error, while a too-wide float merely asks for a dot. (#32)
+    'count', 'index', 'tabIndex', 'maxLength', 'minLength',
+    'rows', 'cols', 'span', 'colSpan', 'rowSpan', 'level', 'zIndex',
 ])
 
 /**

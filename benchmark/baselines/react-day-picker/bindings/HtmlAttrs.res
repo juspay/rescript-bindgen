@@ -557,7 +557,7 @@ type selectHTMLAttributes = {
   multiple?: bool,
   name?: string,
   required?: bool,
-  size?: int,
+  size?: float,
   value?: string,
 }
 
@@ -569,7 +569,7 @@ type selectHTMLAttributesOmitChildren = {
   multiple?: bool,
   name?: string,
   required?: bool,
-  size?: int,
+  size?: float,
   value?: string,
 }
 

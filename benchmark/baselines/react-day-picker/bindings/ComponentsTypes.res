@@ -11,7 +11,7 @@ type dropdownOption = {
 type chevronConfig = {
   className?: string,
   style?: JsxDOM.style,
-  size?: int,
+  size?: float,
   disabled?: bool,
   orientation?: orientation,
 }

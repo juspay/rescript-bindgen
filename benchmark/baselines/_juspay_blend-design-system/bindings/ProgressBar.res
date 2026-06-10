@@ -5,6 +5,6 @@ external make: (
   ~variant: ProgressBarTypes.progressBarVariant=?,
   @as("type") ~type_: ProgressBarTypes.progressBarType=?,
   ~showLabel: bool=?,
-  ~min: int=?,
-  ~max: int=?,
+  ~min: float=?,
+  ~max: float=?,
 ) => React.element = "ProgressBar"

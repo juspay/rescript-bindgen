@@ -915,15 +915,15 @@ type optionsConfig = {
   decimalPlaces?: float,
 }
 type valueConfig3 = {
-  min: int,
-  max: int,
-  step: int,
+  min: float,
+  max: float,
+  step: float,
   defaultValue: array<float>,
   valueFormat: sliderValueFormatConfig,
 }
 type optionsConfig2 = {
-  min: int,
-  max: int,
+  min: float,
+  max: float,
   value: float,
   formattedValue: string,
   disabled?: bool,

@@ -10,7 +10,7 @@ external make: (
   ~slot: React.element=?,
   ~slotDirection: TooltipTypes.tooltipSlotDirection=?,
   ~delayDuration: float=?,
-  ~offset: int=?,
+  ~offset: float=?,
   ~maxWidth: string=?,
   ~fullWidth: bool=?,
   ~disableInteractive: bool=?,

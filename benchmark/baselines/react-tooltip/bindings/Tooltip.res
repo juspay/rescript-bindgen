@@ -6,7 +6,7 @@ external make: (
   ~portalRoot: Dom.element=?,
   ~render: DistTypes.renderConfig => React.element=?,
   ~place: DistTypes.placesType=?,
-  ~offset: int=?,
+  ~offset: float=?,
   ~id: string=?,
   ~variant: DistTypes.variantType=?,
   ~anchorSelect: string=?,

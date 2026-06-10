@@ -1,4 +1,4 @@
 type options = {
   start: float,
-  step?: int,
+  step?: float,
 }

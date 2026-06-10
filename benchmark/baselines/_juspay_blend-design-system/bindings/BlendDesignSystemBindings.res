@@ -32,7 +32,7 @@
 @module("@juspay/blend-design-system") external getSliderTokenStyles: (SliderTypes.sliderVariant, SliderTypes.sliderSize) => SliderTypes.sliderTokenStyles = "getSliderTokenStyles"
 @module("@juspay/blend-design-system") external formatSliderValue: (float, ~format: SliderTypes.sliderValueFormatConfig=?, unit) => string = "formatSliderValue"
 @module("@juspay/blend-design-system") external parseSliderValue: (string, ~format: SliderTypes.sliderValueFormatConfig=?, unit) => float = "parseSliderValue"
-@module("@juspay/blend-design-system") external createSliderRange: (int, int, int, float, float, SliderTypes.sliderValueType, ~options: SliderTypes.optionsConfig=?, unit) => SliderTypes.valueConfig3 = "createSliderRange"
+@module("@juspay/blend-design-system") external createSliderRange: (float, float, float, float, float, SliderTypes.sliderValueType, ~options: SliderTypes.optionsConfig=?, unit) => SliderTypes.valueConfig3 = "createSliderRange"
 @module("@juspay/blend-design-system") external buildThumbAriaAttributes: (SliderTypes.optionsConfig2) => Dict.t<string> = "buildThumbAriaAttributes"
 @module("@juspay/blend-design-system") external getSliderLabelStyles: (~position: SliderTypes.position=?, unit) => SliderTypes.sliderCSSProperties = "getSliderLabelStyles"
 @module("@juspay/blend-design-system") external getProgressBarTokens: (TokensTypes.foundationTokenType) => ProgressBarTypes.responsiveProgressBarTokens = "getProgressBarTokens"

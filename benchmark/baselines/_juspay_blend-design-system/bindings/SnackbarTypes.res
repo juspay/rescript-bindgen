@@ -21,7 +21,7 @@ type addToastOptions = {
   variant?: snackbarVariant,
   onClose?: unit => unit,
   actionButton?: actionButtonConfig,
-  duration?: int,
+  duration?: float,
   position?: snackbarPosition,
 }
 type colorConfig5 = {

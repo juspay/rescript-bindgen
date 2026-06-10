@@ -57,8 +57,8 @@ type advancedFilterProps = {
   onClearFilters: unit => unit,
 }
 type valueConfig2 = {
-  min: int,
-  max: int,
+  min: float,
+  max: float,
 }
 @unboxed type stringOrStringArrayOrValueConfig2 = Str(string) | StrArr(array<string>) | ValueConfig2(valueConfig2)
 type columnFilter = {

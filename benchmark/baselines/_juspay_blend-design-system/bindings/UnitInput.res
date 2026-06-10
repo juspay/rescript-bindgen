@@ -2,7 +2,7 @@ type props = {
   ...HtmlAttrs.inputHTMLAttributesOmitClassNameOnBlurOnChangeOnFocusRequiredSizeStepStyleValue,
   value: float,
   onChange: ReactEvent.Form.t => unit,
-  step?: int,
+  step?: float,
   error?: bool,
   errorMessage?: string,
   required?: bool,
