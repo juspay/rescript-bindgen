@@ -19,6 +19,7 @@ import { extractComponent, extractModule } from './extract.mjs'
 import { emit, emitFunction, emitClass, report, planSharedModules, emitSharedModule, makeResolveRef } from './emit.mjs'
 import { resolveInput } from './resolve.mjs'
 import { writeReport } from './report.mjs'
+import { planHtmlAttrs, HTML_ATTRS_PIN } from './html-attrs.mjs'
 import { writeFileSync, mkdirSync, existsSync, readFileSync, readdirSync, unlinkSync } from 'fs'
 import { join, resolve as pathResolve, basename, dirname, relative } from 'path'
 import { createInterface } from 'readline'
@@ -108,6 +109,7 @@ function parseArgs(argv) {
         else if (a === '--types-dir') o.typesDir = argv[++i]
         else if (a === '--webapi') o.webapi = true
         else if (a === '--no-webapi') o.webapi = false
+        else if (a === '--no-html-attrs') o.htmlAttrs = false
         else if (a === '--yes' || a === '-y') o.yes = true
         else if (a === '--clean') o.clean = true
         else if (a === '--help' || a === '-h') o.help = true
@@ -139,6 +141,8 @@ Options:
                    deps (default: inferred from --out, then cwd)
   --webapi       force-emit rescript-webapi types (File -> Webapi.File.t)
   --no-webapi    never emit rescript-webapi types (File props stay flagged)
+  --no-html-attrs  disable the shared HtmlAttrs.res spread for components extending
+                 *HTMLAttributes — every attribute is inlined as a labeled arg (legacy)
   --yes, -y      assume "yes" to dependency prompts (non-interactive)
   --clean        remove existing *.res / *.resi / _REPORT.md in --out before
                  generating (avoids stale "orphan" files from a previous run or a
@@ -206,7 +210,7 @@ async function main() {
         const ir = extractComponent(entry, { from, webapi })
         units = [{ name: ir.import.name, ir }]
     } else {
-        const res = extractModule(entry, { from, webapi })
+        const res = extractModule(entry, { from, webapi, htmlAttrs: opts.htmlAttrs })
         units = res.components
         functions = res.functions || []
         classes = res.classes || []
@@ -269,6 +273,16 @@ async function main() {
         return
     }
 
+    // HtmlAttrs module (issue #16): components extending *HTMLAttributes reference one
+    // shared attribute-record module instead of inlining the surface. Planned AFTER the
+    // --stdout return — stdout can't carry a second file, so it keeps labeled args
+    // (ir.attrsBase without .ref makes emit() fall back).
+    const attrsUsages = units.map((u) => u.ir.attrsBase).filter(Boolean)
+    const attrsPlan = attrsUsages.length ? planHtmlAttrs(attrsUsages) : null
+    if (attrsPlan) for (const u of units) {
+        if (u.ir.attrsBase) u.ir.attrsBase.ref = `HtmlAttrs.${attrsPlan.refFor(u.ir.attrsBase)}`
+    }
+
     const outDir = pathResolve(opts.out)
     if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true })
     const typesDir = opts.typesDir ? join(outDir, opts.typesDir) : outDir
@@ -299,6 +313,13 @@ async function main() {
             written.add(relative(outDir, p))
         }
         console.error(`[bindgen] wrote ${plan.byModule.size} shared type module(s) (${shared.entries.length} unique types) to ${typesDir}`)
+    }
+
+    if (attrsPlan) {
+        const p = join(typesDir, 'HtmlAttrs.res')
+        writeFileSync(p, attrsPlan.render())
+        written.add(relative(outDir, p))
+        console.error(`[bindgen] wrote HtmlAttrs.res (${attrsPlan.groupCount} attribute group(s), ${attrsPlan.variantCount} narrowed variant(s)) — ${HTML_ATTRS_PIN} surface`)
     }
 
     let totalDefects = 0

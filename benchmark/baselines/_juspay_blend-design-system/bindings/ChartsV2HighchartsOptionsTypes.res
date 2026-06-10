@@ -38,8 +38,8 @@ type linkColorMode =
   | @as("gradient") Gradient
   | @as("to") To
 type optionsPointIntervalUnitValue =
-  | @as("month") Month
   | @as("day") Day
+  | @as("month") Month
   | @as("year") Year
 type optionsStackingValue =
   | @as("normal") Normal

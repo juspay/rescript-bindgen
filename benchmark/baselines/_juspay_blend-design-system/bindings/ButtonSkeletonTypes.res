@@ -24,10 +24,6 @@ type buttonState =
   | @as("hover") Hover
   | @as("active") Active
   | @as("disabled") Disabled
-type type_ =
-  | @as("submit") Submit
-  | @as("reset") Reset
-  | @as("button") Button
 type skeletonShape =
   | @as("circle") Circle
   | @as("rectangle") Rectangle

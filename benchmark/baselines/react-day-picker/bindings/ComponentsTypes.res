@@ -3,10 +3,6 @@ type orientation =
   | @as("down") Down
   | @as("left") Left
   | @as("right") Right
-type type_ =
-  | @as("button") Button
-  | @as("submit") Submit
-  | @as("reset") Reset
 type dropdownOption = {
   value: float,
   label: string,

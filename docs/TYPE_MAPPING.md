@@ -160,6 +160,44 @@ The prop name is camelCased with the original kept: `@as("aria-checked") ~ariaCh
 
 ---
 
+## Components extending HTML attributes (record-props + `HtmlAttrs.res`)
+Fixtures: [`html-attrs-component`](../test/golden/cases/html-attrs-component), [`html-attrs-omit`](../test/golden/cases/html-attrs-omit), [`html-attrs-collision`](../test/golden/cases/html-attrs-collision), [`html-attrs-no-match`](../test/golden/cases/html-attrs-no-match)
+
+A component whose props intersect (or whose interface `extends`) a React attribute
+interface — `ButtonHTMLAttributes<T>`, `InputHTMLAttributes<T>`, any `*HTMLAttributes`,
+optionally wrapped in `Omit<…, K>` / `Partial<…>` — does NOT inline the attribute
+surface as labeled args. It emits the **record-props form** with one shared spread:
+
+| TypeScript | ReScript |
+|---|---|
+| `OwnProps & ButtonHTMLAttributes<HTMLButtonElement>` | `type props = { ...HtmlAttrs.buttonHTMLAttributes, <own fields> }` + `external make: React.component<props>` |
+| `OwnProps & Omit<ButtonHTMLAttributes<…>, 'style' \| 'className'>` | spread of a **narrowed variant** `HtmlAttrs.buttonHTMLAttributesOmitClassNameStyle` — only the hierarchy slice containing the removed keys is re-materialized; aria + events stay shared. Variants are deduped by removed-set. |
+| own prop colliding with a chain field (e.g. own `onClick: (v, i) => void`) | the own prop WINS with its own mapping; the base spread is narrowed (`…OmitOnClick`) so a duplicate-field compile error is impossible |
+| `& SVGAttributes<…>` / `& AllHTMLAttributes<…>` / non-literal `Omit` keys / generic component / `--file`/`--stdout` mode | **legacy labeled-args output** (unchanged) |
+
+`HtmlAttrs.res` is written once per run (manifest-tracked) and models React's hierarchy
+with record type spread, generated from the **exact-pinned `@types/react` devDependency**
+(see `src/html-attrs-data.mjs` header for the pin):
+
+```
+ariaAttributes (53)   domAttributes (~190 events incl. capture)
+        └────────┬─────────┘
+          htmlAttributes (+55 globals)
+                 │
+  per-element leaves: buttonHTMLAttributes, inputHTMLAttributes, …
+```
+
+JSX call sites are unchanged (JSX v4 lowers to the `make`/`props` pair):
+`<Button text="hi" disabled=true ariaLabel="x" />` and `<Button {...base} text="y" />`
+both type-check. Non-JSX direct `Module.make(...)` calls change shape — that is the
+consumer-visible difference.
+
+**Regeneration contract:** new web-platform attributes arrive by bumping the
+`@types/react` pin → `npm run gen:attrs` → reviewing the `src/html-attrs-data.mjs` and
+golden diffs. `--no-html-attrs` restores the legacy inlined output wholesale.
+
+---
+
 ## Records, recursion & utility unwrapping
 Fixture: [`records`](../test/golden/cases/records)
 
