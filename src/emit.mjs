@@ -229,37 +229,61 @@ export function emit(ir, options = {}) {
 
     if (lines.length) lines.push('')
 
-    // 3. the external binding
+    // 3. the external binding — two forms:
+    //    record-props (ir.attrsBase.ref): `type props = {...HtmlAttrs.x, own…}` +
+    //      `external make: React.component<props>` — the HTML attribute surface is ONE
+    //      shared spread; JSX call sites are unchanged (JSX v4 lowers to make/props).
+    //    labeled args (default): the classic `@react.component external make: (~p: t=?, …)`.
+    const recordProps = !!(ir.attrsBase && ir.attrsBase.ref)
     if (ir.import.isDefault) lines.push(defaultExportNote(ir.import.name))
-    lines.push(`@module(${JSON.stringify(cfg.from)}) @react.component`)
-    lines.push(`external make: (`)
-    for (const p of ir.props) {
-        const { as, id } = label(p.name)
-        const asPrefix = as ? `@as(${JSON.stringify(as)}) ` : ''
-        // A prop is emitted EXACTLY only if its whole type tree maps cleanly. If any
-        // part is opaque/review/unknown, we don't emit a half-correct type — we emit
-        // a `string` placeholder + a flag showing the real TS, so it's hand-matched.
-        const imp = imperfection(p.type)
-        const realTs = (p.tsType || p.type.text || '').replace(/\s+/g, ' ').slice(0, 110)
-        if (imp === 'unknown' || imp === 'any') {
-            lines.push(`  // 🛑 BROKEN: \`${p.name}\` is \`${realTs}\` — contains \`${imp}\`; emitted as \`${cfg.opaqueFallback}\` placeholder and WON'T WORK. Needs a concrete type upstream.`)
-            lines.push(`  ${asPrefix}~${id}: ${cfg.opaqueFallback}${p.optional ? '=?' : ''},`)
-        } else if (imp === 'review') {
-            lines.push(`  // ⚠️ REVIEW: \`${p.name}\` is \`${realTs}\` — couldn't be auto-typed exactly; emitted as \`${cfg.opaqueFallback}\` placeholder. Match the real type by hand.`)
-            lines.push(`  ${asPrefix}~${id}: ${cfg.opaqueFallback}${p.optional ? '=?' : ''},`)
-        } else if (imp === 'opaque') {
-            lines.push(`  ${asPrefix}~${id}: ${cfg.opaqueFallback}${p.optional ? '=?' : ''},  // ⚪ loose — was \`${realTs}\``)
-        } else {
-            // exact match — but an approximate mapping (e.g. DOM union -> Dom.element) may
-            // carry a `note` so the consumer knows what isn't covered.
-            const note = findNote(p.type)
-            lines.push(`  ${asPrefix}~${id}: ${renderType(p.type, p.name, cfg)}${p.optional ? '=?' : ''},${note ? `  // ⓘ ${note}` : ''}`)
-        }
+    if (recordProps) {
+        lines.push(`type props = {`)
+        lines.push(`  ...${ir.attrsBase.ref},`)
+        for (const p of ir.props) lines.push(...propLine(p, cfg, 'record'))
+        lines.push(`}`)
+        lines.push('')
+        lines.push(`@module(${JSON.stringify(cfg.from)})`)
+        lines.push(`external make: React.component<props> = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
+    } else {
+        lines.push(`@module(${JSON.stringify(cfg.from)}) @react.component`)
+        lines.push(`external make: (`)
+        for (const p of ir.props) lines.push(...propLine(p, cfg, 'labeled'))
+        lines.push(`) => React.element = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
     }
-    lines.push(`) => React.element = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
     lines.push('')
 
     return lines.join('\n')
+}
+
+/**
+ * Render one component prop as either a labeled argument (`~id: t=?,`) or a record
+ * field (`id?: t,`), with the SAME imperfection flags in both forms.
+ * A prop is emitted EXACTLY only if its whole type tree maps cleanly. If any part is
+ * opaque/review/unknown, we don't emit a half-correct type — we emit a `string`
+ * placeholder + a flag showing the real TS, so it's hand-matched.
+ * @returns {string[]} 1-2 lines
+ */
+function propLine(p, cfg, form) {
+    const { as, id } = label(p.name)
+    const asPrefix = as ? `@as(${JSON.stringify(as)}) ` : ''
+    const field = (ty) => form === 'record'
+        ? `  ${asPrefix}${id}${p.optional ? '?' : ''}: ${ty},`
+        : `  ${asPrefix}~${id}: ${ty}${p.optional ? '=?' : ''},`
+    const imp = imperfection(p.type)
+    const realTs = (p.tsType || p.type.text || '').replace(/\s+/g, ' ').slice(0, 110)
+    if (imp === 'unknown' || imp === 'any') {
+        return [`  // 🛑 BROKEN: \`${p.name}\` is \`${realTs}\` — contains \`${imp}\`; emitted as \`${cfg.opaqueFallback}\` placeholder and WON'T WORK. Needs a concrete type upstream.`, field(cfg.opaqueFallback)]
+    }
+    if (imp === 'review') {
+        return [`  // ⚠️ REVIEW: \`${p.name}\` is \`${realTs}\` — couldn't be auto-typed exactly; emitted as \`${cfg.opaqueFallback}\` placeholder. Match the real type by hand.`, field(cfg.opaqueFallback)]
+    }
+    if (imp === 'opaque') {
+        return [field(cfg.opaqueFallback) + `  // ⚪ loose — was \`${realTs}\``]
+    }
+    // exact match — but an approximate mapping (e.g. DOM union -> Dom.element) may
+    // carry a `note` so the consumer knows what isn't covered.
+    const note = findNote(p.type)
+    return [field(renderType(p.type, p.name, cfg)) + (note ? `  // ⓘ ${note}` : '')]
 }
 
 /**

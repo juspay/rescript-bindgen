@@ -12,6 +12,10 @@ type tabsVariant =
 type tabsSize =
   | @as("md") Md
   | @as("lg") Lg
+type type_ =
+  | @as("button") Button
+  | @as("submit") Submit
+  | @as("reset") Reset
 type tabItem = {
   value: string,
   label: string,

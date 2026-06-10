@@ -16,15 +16,15 @@ type size =
   | @as("md") Md
   | @as("lg") Lg
 type as_ =
-  | @as("article") Article
-  | @as("main") Main
   | @as("div") Div
   | @as("label") Label
   | @as("nav") Nav
   | @as("span") Span
+  | @as("article") Article
   | @as("footer") Footer
   | @as("header") Header
   | @as("hr") Hr
+  | @as("main") Main
   | @as("section") Section
 type splitTagPosition =
   | @as("left") Left

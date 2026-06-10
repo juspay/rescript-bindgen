@@ -11,7 +11,6 @@ type filterType =
   | @as("boolean") Boolean
   | @as("slider") Slider
 type operator =
-  | @as("range") Range
   | @as("equals") Equals
   | @as("contains") Contains
   | @as("startsWith") StartsWith
@@ -20,6 +19,7 @@ type operator =
   | @as("lt") Lt
   | @as("gte") Gte
   | @as("lte") Lte
+  | @as("range") Range
 type columnType =
   | @as("text") Text
   | @as("number") Number
@@ -35,9 +35,9 @@ type columnType =
   | @as("slider") Slider
   | @as("custom") Custom
 type filterComponent =
+  | @as("select") Select
   | @as("search") Search
   | @as("slider") Slider
-  | @as("select") Select
   | @as("multiselect") Multiselect
   | @as("dateRange") DateRange
   | @as("numberRange") NumberRange

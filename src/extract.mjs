@@ -18,6 +18,8 @@
 import ts from 'typescript'
 import { dirname } from 'path'
 import { DOM_ELEMENT_BY_LOWER, DOM_PROPS_FIELDS } from './stdlib-types.mjs'
+import { TS_NAME_TO_GROUP, chainFields } from './html-attrs.mjs'
+import { label } from './emit.mjs'
 
 /** Map a TS DOM element name to the exact built-in Dom type, e.g.
  *  `HTMLDivElement` -> `Dom.htmlDivElement`; falls back to `Dom.element`. */
@@ -361,6 +363,59 @@ function isReactComponent(type, checker) {
  * @param {{htmlAllowlist?: string[]}} opts
  * @returns {import('../types').ComponentIR}
  */
+// `AllHTMLAttributes` is the everything-bag and `SVGAttributes` is out of scope —
+// a component touching either keeps the legacy labeled-args output entirely.
+const BLOCKED_ATTRS = new Set(['AllHTMLAttributes', 'SVGAttributes'])
+
+/**
+ * Detect a component-props HTML-attributes base (issue #16): an intersection part or
+ * heritage `extends` whose interface NAME is one of the vendored attribute groups
+ * (`ButtonHTMLAttributes`, …), optionally wrapped in `Omit` (keys recorded) or
+ * `Partial` (a no-op — every attribute field is optional anyway). Name-based, so
+ * self-contained golden stubs work exactly like the real @types/react.
+ * @returns {{leaf: string, omitKeys: string[]} | null}  null -> legacy labeled args
+ */
+function detectAttrsBase(propsType, checker) {
+    const parts = (propsType.flags & ts.TypeFlags.Intersection) ? propsType.types : [propsType]
+    const leaves = []
+    const omitKeys = []
+    for (const part of parts) {
+        const aliasName = part.aliasSymbol && part.aliasSymbol.getName()
+        let core = part
+        if (aliasName === 'Omit' || aliasName === 'Partial') {
+            const args = part.aliasTypeArguments || []
+            core = args[0] || part
+            if (aliasName === 'Omit') {
+                const keys = args[1]
+                for (const k of keys ? (keys.isUnion() ? keys.types : [keys]) : []) {
+                    if (k.isStringLiteral()) omitKeys.push(k.value)
+                    else return null // computed/non-literal Omit keys -> legacy
+                }
+            }
+        }
+        const coreSym = core.aliasSymbol || core.getSymbol?.()
+        const coreName = coreSym && coreSym.getName()
+        if (coreName && BLOCKED_ATTRS.has(coreName)) return null
+        if (coreName && TS_NAME_TO_GROUP.has(coreName)) { leaves.push(TS_NAME_TO_GROUP.get(coreName)); continue }
+        // own interface that `extends ButtonHTMLAttributes<…>` (heritage instead of `&`)
+        const ifaceDecl = coreSym && (coreSym.declarations || []).find((d) => ts.isInterfaceDeclaration(d))
+        if (ifaceDecl) for (const h of ifaceDecl.heritageClauses || []) for (const t of h.types) {
+            const base = t.expression.getText()
+            if (BLOCKED_ATTRS.has(base)) return null
+            if (TS_NAME_TO_GROUP.has(base)) leaves.push(TS_NAME_TO_GROUP.get(base))
+        }
+    }
+    if (!leaves.length) return null
+    // Deepest chain wins (field-count is the depth proxy); a second base must be fully
+    // contained in the winner's chain (Button extends HTML — fine), else -> legacy.
+    leaves.sort((a, b) => chainFields(b).size - chainFields(a).size)
+    const leaf = leaves[0]
+    for (const other of leaves.slice(1)) {
+        for (const f of chainFields(other)) if (!chainFields(leaf).has(f)) return null
+    }
+    return { leaf, omitKeys }
+}
+
 function buildComponentIR(checker, sym, source, importName, from, opts) {
     if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
     const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0]) || source
@@ -432,9 +487,30 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
         return /node_modules\/(@types|typescript)\//.test(f) || /\/lib\.(dom|es|scripthost)/.test(f)
     }
 
+    // Components extending HTML attributes (issue #16): emit the attribute surface as
+    // ONE shared spread (`...HtmlAttrs.<leaf>`) instead of inlining 70+ labeled args.
+    // Module mode only (HtmlAttrs.res is a second output file) and never for generic
+    // components (no `type props<'a>` spread interactions). `--no-html-attrs` opts out.
+    const attrsBase = (opts.htmlAttrs !== false && opts.shared && typeVars.size === 0)
+        ? detectAttrsBase(propsType, checker)
+        : null
+
+    // A flattened prop is "covered by the spread" when every declaration of it lives in
+    // a vendored attribute interface inside the leaf's chain. Anything redeclared in the
+    // component's OWN types keeps its own (more specific) mapping and joins `removed`.
+    const coveredBySpread = (p) => {
+        if (!attrsBase) return false
+        const decls = p.declarations || []
+        return decls.length > 0 && decls.every((d) => {
+            const parent = d.parent
+            return parent && ts.isInterfaceDeclaration(parent) && TS_NAME_TO_GROUP.has(parent.name.text)
+        }) && chainFields(attrsBase.leaf).has(p.getName())
+    }
+
     const props = checker
         .getPropertiesOfType(propsType)
         .filter((p) => !['ref', 'key'].includes(p.getName()))
+        .filter((p) => !coveredBySpread(p))
         .filter((p) => !isInherited(p) || allow.has(p.getName()))
         .map((p) => {
             const name = p.getName()
@@ -462,7 +538,24 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
             }
         })
 
-    return { module: importName, import: { from, name: importName }, kind: 'react-component', enums, records, unboxed, props }
+    // `removed` = Omit keys + own props that collide with a chain field at the ReScript
+    // id level (raw `children` = chain `children`, but also own `ariaLabel` vs chain
+    // `aria-label` — both render to the id `ariaLabel`). The own prop always wins; the
+    // base is narrowed so the spread can never produce a duplicate-field compile error.
+    let attrsBaseInfo = null
+    if (attrsBase) {
+        const chain = chainFields(attrsBase.leaf)
+        const idToRaw = new Map()
+        for (const n of chain) idToRaw.set(label(n).id, n)
+        const removed = new Set(attrsBase.omitKeys.filter((k) => chain.has(k)))
+        for (const p of props) {
+            const hit = idToRaw.get(label(p.name).id)
+            if (hit) removed.add(hit)
+        }
+        attrsBaseInfo = { leaf: attrsBase.leaf, removed: [...removed].sort() }
+    }
+
+    return { module: importName, import: { from, name: importName }, kind: 'react-component', enums, records, unboxed, props, attrsBase: attrsBaseInfo }
 }
 
 /**
@@ -848,7 +941,10 @@ export function extractModule(entryFile, opts = {}) {
             ir.import.jsName = jsName
             ir.import.isDefault = isDefault
             seen.add(name)
-            if (ir.props.length) components.push({ name, ir })
+            // A component with zero OWN props is still real when its whole surface is
+            // the HTML-attributes spread (e.g. day-picker's `NextMonthButton(props:
+            // ButtonHTMLAttributes<…>)`) — `type props = {...HtmlAttrs.x}` alone.
+            if (ir.props.length || ir.attrsBase) components.push({ name, ir })
             else skipped.push({ name, reason: 'no-props' })
         } catch (e) {
             skipped.push({ name, reason: 'extract-error: ' + e.message.split('\n')[0].slice(0, 50) })

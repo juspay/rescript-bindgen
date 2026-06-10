@@ -3,6 +3,24 @@
 All notable changes to `@juspay/rescript-bindgen` are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- **Shared HTML attribute records + record-props emission** (#16, #18, #19). A
+  component whose props extend `*HTMLAttributes` (bare, `Omit<…, K>`, `Partial`,
+  or heritage `extends`) now emits `type props = {...HtmlAttrs.<leaf>, <own>}` +
+  `external make: React.component<props>` instead of inlining 70+ labeled
+  attribute args. `HtmlAttrs.res` models React's hierarchy (aria → events →
+  globals → per-element) with record type spread, generated from the exact-pinned
+  `@types/react` devDependency (`npm run gen:attrs` regenerates on a pin bump).
+  TS `Omit` and own-prop collisions narrow only the affected slice (deduped
+  variants). `--no-html-attrs` restores the legacy inlined output.
+
+### Changed
+- Consumers of generated bindings for such components: JSX call sites are
+  unchanged and gain the full typed HTML/ARIA attribute surface; non-JSX direct
+  `Module.make(...)` calls change shape (record instead of labeled args).
+
 ## [1.0.0] — 2026-06-04
 
 First stable release.
