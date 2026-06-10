@@ -5,6 +5,15 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **`WebTypes.res` sink for web-platform classes** (#24): `Request`, `Response`,
+  `Headers`, `URL`, `AbortSignal`, `Blob`, streams, `WebSocket` (lib.dom-declared
+  only) map to abstract types in a generated dependency-free module instead of
+  flagged `string` placeholders — hono's `fetch` becomes
+  `(t, ~request: WebTypes.request, …) => promise<WebTypes.response>`.
+- **`Promise<T>` → `promise<t>`** (incl. `Promise<void>` → `promise<unit>`), and
+  the sync-or-async value shape `T | Promise<T>` → `promise<t>` (#24).
+
 ### Fixed
 - Bare `--pkg <name>` now installs the `latest` dist-tag instead of the `*`
   range — npm's `*` excludes prereleases, so packages publishing only

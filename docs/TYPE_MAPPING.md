@@ -428,6 +428,25 @@ Fixture: [`webapi`](../test/golden/cases/webapi)
 `--webapi` is auto-enabled when the target project depends on `rescript-webapi`; otherwise the CLI
 asks (or flags the props). `(d: FormData) => void | Promise<void>` → `Webapi.FormData.t => 'a`.
 
+### The `WebTypes` sink (always on, module mode)
+Fixture: [`web-platform-types`](../test/golden/cases/web-platform-types)
+
+Web-platform **classes** map to abstract types in a dependency-free generated `WebTypes.res`
+(the [`InstanceTypes`](#class-exports-non-react) pattern) — zero-cost, honest (no fake
+structure), and chainable, instead of flagged `string` placeholders. Only types actually
+referenced are emitted. Guarded on the symbol being **declared in lib.dom/lib.webworker**, so a
+package's own class named `Response` is never hijacked.
+
+| TypeScript | ReScript |
+|---|---|
+| `Request`, `Response`, `Headers`, `URL`, `URLSearchParams`, `AbortSignal`, `AbortController`, `Blob`, `ReadableStream`, `WritableStream`, `WebSocket` | `WebTypes.request`, `WebTypes.response`, … (abstract `type` per name) |
+| `fetch(req: Request): Response \| Promise<Response>` (sync-or-async value) | `(t, ~req: WebTypes.request) => promise<WebTypes.response>` — `await` handles a bare value at runtime; an `@unboxed` can't discriminate two object types |
+| `Promise<T>` (bare) | `promise<t>`; `Promise<void>` → `promise<unit>` |
+
+Deliberately excluded from the sink: collision-prone ambient names (`Event`, `Body`, `Text`).
+Future work (not gated yet): upgrading a verified subset to `Webapi.Fetch.*` under `--webapi`.
+Single-file (`--file`/`--stdout`) mode keeps the flagged fallback (no second output file).
+
 ---
 
 ## Worked examples (from real `@juspay/blend-design-system` work)

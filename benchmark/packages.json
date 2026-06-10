@@ -36,6 +36,12 @@
     "notes": "pure function exports, no components — exercises the emitFunction path"
   },
   {
+    "name": "hono",
+    "version": "4.12.25",
+    "flags": [],
+    "notes": "forum-feedback target (#24) — non-React: 3 class modules + WebTypes sink (Request/Response/URL...), promise returns; exercises the class path"
+  },
+  {
     "name": "@base-ui-components/react",
     "version": "1.0.0-rc.0",
     "flags": [],
