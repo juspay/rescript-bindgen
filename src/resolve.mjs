@@ -106,13 +106,19 @@ export function resolveInput({ file, dir, pkg, install = true, nodeModulesRoots 
             mkdirSync(SCRATCH, { recursive: true })
             if (!existsSync(join(SCRATCH, 'package.json')))
                 writeFileSync(join(SCRATCH, 'package.json'), JSON.stringify({ name: 'bindgen-scratch', private: true }) + '\n')
-            console.error(`[resolve] installing ${pkg} into scratch cache…`)
+            // A bare name (no version) installs `<name>@latest` — the dist-tag. npm treats a bare
+            // name as the `*` RANGE, which EXCLUDES prereleases, so a package whose only published
+            // versions are prereleases (e.g. @base-ui-components/react: alpha/beta/rc only) fails
+            // with "No matching version found" despite having a `latest` tag. The dist-tag form is
+            // byte-identical for normal packages. (#23)
+            const spec = name === pkg ? `${pkg}@latest` : pkg
+            console.error(`[resolve] installing ${spec} into scratch cache…`)
             // Always co-install React's type definitions. Component packages do `import React from
             // "react"` and type props via `React.ForwardRefExoticComponent<P>`, `React.CSSProperties`,
             // `React.ReactNode`, … — without @types/react those all resolve to `any`/`unknown`, so a
             // forwardRef component yields ZERO props and CSSProperties/ReactNode widen to a placeholder.
             // (Installed in the SAME command so npm doesn't prune them as extraneous on a later install.)
-            execSync(`npm install --no-save --silent ${pkg} ${REACT_TYPE_DEPS}`, { cwd: SCRATCH, stdio: 'inherit' })
+            execSync(`npm install --no-save --silent ${spec} ${REACT_TYPE_DEPS}`, { cwd: SCRATCH, stdio: 'inherit' })
             // also try @types if the package ships no types (keep React types in the same command)
             pkgDir = findPkgDir(name, [join(SCRATCH, 'node_modules')])
             if (pkgDir && !typesEntry(pkgDir)) {
