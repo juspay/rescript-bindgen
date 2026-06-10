@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Tooltip") @react.component
 external make: (
   ~handle: ComponentsMenubarRootStoreToastTypes.tooltipHandle2<'a>=?,
   ~payload: 'a=?,
@@ -65,4 +65,4 @@ external make: (
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~className: TriggerTypes.contextMenuTriggerClassName=?,
   ~render: React.element=?,
-) => React.element = "TooltipTrigger"
+) => React.element = "Trigger"

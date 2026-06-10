@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
   ~children: React.element=?,
   // 🛑 BROKEN: `value` is `any` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
@@ -55,4 +55,4 @@ external make: (
   ~onScroll: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~render: React.element=?,
-) => React.element = "SelectItem"
+) => React.element = "Item"

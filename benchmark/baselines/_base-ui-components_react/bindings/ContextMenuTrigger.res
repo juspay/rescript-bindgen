@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
   ~style: TriggerTypes.contextMenuTriggerStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: TriggerTypes.contextMenuTriggerClassName=?,
   ~render: React.element=?,
-) => React.element = "ContextMenuTrigger"
+) => React.element = "Trigger"

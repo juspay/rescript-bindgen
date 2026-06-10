@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Avatar") @react.component
 external make: (
   ~delay: float=?,
   ~style: ComponentsMenubarRootStoreToastTypes.avatarRootStyle=?,
@@ -52,4 +52,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ComponentsMenubarRootStoreToastTypes.avatarRootClassName=?,
   ~render: React.element=?,
-) => React.element = "AvatarFallback"
+) => React.element = "Fallback"

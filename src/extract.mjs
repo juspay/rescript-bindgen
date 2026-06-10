@@ -905,11 +905,34 @@ export function extractModule(entryFile, opts = {}) {
         classSink.set(cn, entry.name)
     }
 
+    // Namespace exports (`export * as Accordion from './index.parts.js'`): map each
+    // member's RESOLVED value symbol -> { ns, member }. base-ui's runtime exports ONLY
+    // these namespaces — the flat names (`AccordionRoot`) are `export type *` (type-only),
+    // so a binding `= "AccordionRoot"` is undefined at runtime. A component reachable as a
+    // namespace member binds `@scope("Accordion") … = "Root"` instead (correct whether or
+    // not a flat VALUE export also exists). (#25)
+    const scopeOf = new Map() // resolved member symbol -> { ns, member }
+    const nsNames = []
+    for (const exp of exports) {
+        let s = exp
+        try { if (s.flags & ts.SymbolFlags.Alias) s = checker.getAliasedSymbol(s) } catch { continue }
+        if (!(s.flags & (ts.SymbolFlags.ValueModule | ts.SymbolFlags.NamespaceModule))) continue
+        const ns = exp.getName()
+        if (!/^[A-Z]/.test(ns)) continue
+        nsNames.push(ns)
+        for (const m of checker.getExportsOfModule(s)) {
+            let ms = m
+            try { if (ms.flags & ts.SymbolFlags.Alias) ms = checker.getAliasedSymbol(ms) } catch { continue }
+            if (!scopeOf.has(ms)) scopeOf.set(ms, { ns, member: m.getName() })
+        }
+    }
+
     const components = []
     const functions = []
     const classes = []
     const skipped = []
     const seen = new Set()
+    const componentBySym = new Map() // resolved symbol -> emitted module name (for NS alias files)
     for (const exp of exports) {
         let sym = exp
         if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
@@ -969,6 +992,14 @@ export function extractModule(entryFile, opts = {}) {
             const ir = buildComponentIR(checker, sym, source, name, from, { ...opts, shared })
             ir.import.jsName = jsName
             ir.import.isDefault = isDefault
+            // Value reachable as a namespace member -> bind through the namespace object
+            // (`@scope("Accordion") … = "Root"`); the flat export may be type-only. (#25)
+            const nsRef = scopeOf.get(sym)
+            if (nsRef && !isDefault) {
+                ir.import.scope = nsRef.ns
+                ir.import.jsName = nsRef.member
+            }
+            componentBySym.set(sym, name)
             seen.add(name)
             // A component with zero OWN props is still real when its whole surface is
             // the HTML-attributes spread (e.g. day-picker's `NextMonthButton(props:
@@ -979,7 +1010,21 @@ export function extractModule(entryFile, opts = {}) {
             skipped.push({ name, reason: 'extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
         }
     }
-    return { components, functions, classes, skipped, shared }
+    // Namespace alias modules: `Accordion.res` with `module Root = AccordionRoot` — the
+    // package's documented idiom (`<Accordion.Root>`), zero-cost ReScript module aliases
+    // over the (scope-bound) flat component files. Only namespaces with ≥1 extracted
+    // component member; skipped when the name collides with an emitted module. (#25)
+    const namespaces = []
+    for (const ns of nsNames) {
+        if (seen.has(ns)) { skipped.push({ name: ns, reason: 'ns-name-collision' }); continue }
+        const members = []
+        for (const [msym, ref] of scopeOf) {
+            if (ref.ns === ns && componentBySym.has(msym)) members.push({ member: ref.member, target: componentBySym.get(msym) })
+        }
+        if (members.length) namespaces.push({ name: ns, members: members.sort((a, b) => a.member.localeCompare(b.member)) })
+    }
+
+    return { components, functions, classes, skipped, shared, namespaces }
 }
 
 /**

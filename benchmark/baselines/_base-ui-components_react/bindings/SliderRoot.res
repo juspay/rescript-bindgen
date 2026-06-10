@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Slider") @react.component
 external make: (
   ~defaultValue: 'a=?,
   ~disabled: bool=?,
@@ -68,4 +68,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ComponentsMenubarRootStoreToastTypes.sliderRootClassName=?,
   ~render: React.element=?,
-) => React.element = "SliderRoot"
+) => React.element = "Root"

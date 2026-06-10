@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Autocomplete") @react.component
 external make: (
   ~children: React.element=?,
   ~className: ListTypes.comboboxListClassName=?,
@@ -51,4 +51,4 @@ external make: (
   ~onScroll: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~render: React.element=?,
-) => React.element = "ComboboxList"
+) => React.element = "List"

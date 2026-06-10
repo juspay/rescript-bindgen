@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Checkbox") @react.component
 external make: (
   ~keepMounted: bool=?,
   ~style: IndicatorTypes.checkboxIndicatorStyle=?,
@@ -52,4 +52,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: IndicatorTypes.checkboxIndicatorClassName=?,
   ~render: React.element=?,
-) => React.element = "CheckboxIndicator"
+) => React.element = "Indicator"

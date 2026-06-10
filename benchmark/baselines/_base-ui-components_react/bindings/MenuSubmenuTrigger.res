@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
   ~onClick: ReactEvent.Mouse.t => unit=?,
   ~label: string=?,
@@ -57,4 +57,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: SubmenuTriggerTypes.menuSubmenuTriggerClassName=?,
   ~render: React.element=?,
-) => React.element = "MenuSubmenuTrigger"
+) => React.element = "SubmenuTrigger"

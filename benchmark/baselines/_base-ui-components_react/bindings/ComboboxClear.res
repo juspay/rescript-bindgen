@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Autocomplete") @react.component
 external make: (
   ~disabled: bool=?,
   ~keepMounted: bool=?,
@@ -63,4 +63,4 @@ external make: (
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~className: ClearTypes.comboboxClearClassName=?,
   ~render: React.element=?,
-) => React.element = "ComboboxClear"
+) => React.element = "Clear"

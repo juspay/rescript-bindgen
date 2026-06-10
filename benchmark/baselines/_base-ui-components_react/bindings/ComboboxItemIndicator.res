@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Combobox") @react.component
 external make: (
   ~children: React.element=?,
   ~keepMounted: bool=?,
@@ -52,4 +52,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ItemIndicatorTypes.comboboxItemIndicatorClassName=?,
   ~render: React.element=?,
-) => React.element = "ComboboxItemIndicator"
+) => React.element = "ItemIndicator"

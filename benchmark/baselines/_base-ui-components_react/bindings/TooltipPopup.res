@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Tooltip") @react.component
 external make: (
   ~style: PopupTypes.tooltipPopupStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: PopupTypes.tooltipPopupClassName=?,
   ~render: React.element=?,
-) => React.element = "TooltipPopup"
+) => React.element = "Popup"

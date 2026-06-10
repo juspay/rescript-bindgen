@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
   ~children: React.element=?,
   ~className: ValueTypes.selectValueClassName=?,
@@ -51,4 +51,4 @@ external make: (
   ~onScroll: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~render: React.element=?,
-) => React.element = "SelectValue"
+) => React.element = "Value"

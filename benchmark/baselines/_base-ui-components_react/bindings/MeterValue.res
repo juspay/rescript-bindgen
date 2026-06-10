@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Meter") @react.component
 external make: (
   ~children: (string, float) => React.element=?,
   ~className: CommonTypes.className=?,
@@ -51,4 +51,4 @@ external make: (
   ~onScroll: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~render: React.element=?,
-) => React.element = "MeterValue"
+) => React.element = "Value"

@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("NumberField") @react.component
 external make: (
   ~direction: ComponentsMenubarRootStoreToastTypes.orientation2=?,
   ~pixelSensitivity: float=?,
@@ -54,4 +54,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ComponentsMenubarRootStoreToastTypes.numberFieldRootClassName=?,
   ~render: React.element=?,
-) => React.element = "NumberFieldScrubArea"
+) => React.element = "ScrubArea"

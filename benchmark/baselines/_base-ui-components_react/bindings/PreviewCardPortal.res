@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("PreviewCard") @react.component
 external make: (
   ~keepMounted: bool=?,
   // ⚠️ REVIEW: `container` is `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot>` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
@@ -54,4 +54,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: CommonTypes.className=?,
   ~render: React.element=?,
-) => React.element = "PreviewCardPortal"
+) => React.element = "Portal"

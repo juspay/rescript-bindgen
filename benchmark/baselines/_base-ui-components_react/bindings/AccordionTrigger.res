@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Accordion") @react.component
 external make: (
   ~nativeButton: bool=?,
   ~form: string=?,
@@ -62,4 +62,4 @@ external make: (
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~className: ItemTypes.accordionItemClassName=?,
   ~render: React.element=?,
-) => React.element = "AccordionTrigger"
+) => React.element = "Trigger"

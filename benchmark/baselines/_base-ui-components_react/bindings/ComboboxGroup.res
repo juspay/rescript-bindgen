@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Autocomplete") @react.component
 external make: (
   // 🛑 BROKEN: `items` is `readonly any[]` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
   ~items: string=?,
@@ -53,4 +53,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: CommonTypes.className=?,
   ~render: React.element=?,
-) => React.element = "ComboboxGroup"
+) => React.element = "Group"

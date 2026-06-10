@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("NumberField") @react.component
 external make: (
   @as("aria-roledescription") ~ariaRoledescription: string=?,
   ~form: string=?,
@@ -78,4 +78,4 @@ external make: (
   ~placeholder: string=?,
   ~className: ComponentsMenubarRootStoreToastTypes.numberFieldRootClassName=?,
   ~render: React.element=?,
-) => React.element = "NumberFieldInput"
+) => React.element = "Input"

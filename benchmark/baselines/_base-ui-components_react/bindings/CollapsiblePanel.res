@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Collapsible") @react.component
 external make: (
   ~hiddenUntilFound: bool=?,
   ~keepMounted: bool=?,
@@ -53,4 +53,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: PanelTypes.collapsiblePanelClassName=?,
   ~render: React.element=?,
-) => React.element = "CollapsiblePanel"
+) => React.element = "Panel"

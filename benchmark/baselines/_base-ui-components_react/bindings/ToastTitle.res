@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Toast") @react.component
 external make: (
   ~style: DescriptionTypes.toastDescriptionStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: DescriptionTypes.toastDescriptionClassName=?,
   ~render: React.element=?,
-) => React.element = "ToastTitle"
+) => React.element = "Title"

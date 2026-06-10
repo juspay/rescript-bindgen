@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("NavigationMenu") @react.component
 external make: (
   ~style: BackdropTypes.comboboxBackdropStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: BackdropTypes.comboboxBackdropClassName=?,
   ~render: React.element=?,
-) => React.element = "NavigationMenuBackdrop"
+) => React.element = "Backdrop"

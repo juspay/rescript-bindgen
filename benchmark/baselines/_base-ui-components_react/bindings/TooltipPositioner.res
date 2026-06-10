@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Tooltip") @react.component
 external make: (
   ~side: PositionerTabUtilsTypes.side=?,
   ~style: PositionerTabUtilsTypes.popoverPositionerStyle=?,
@@ -65,4 +65,4 @@ external make: (
   ~arrowPadding: float=?,
   ~disableAnchorTracking: bool=?,
   ~collisionAvoidance: PositionerTabUtilsTypes.CollisionAvoidance.t=?,  // ⓘ was `CollisionAvoidance` — opaque; build with CollisionAvoidance.fromSideFlipMode / CollisionAvoidance.fromSideShiftMode
-) => React.element = "TooltipPositioner"
+) => React.element = "Positioner"

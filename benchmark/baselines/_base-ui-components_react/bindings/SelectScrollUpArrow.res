@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
   ~keepMounted: bool=?,
   ~style: CommonTypes.style=?,
@@ -52,4 +52,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: CommonTypes.className=?,
   ~render: React.element=?,
-) => React.element = "SelectScrollUpArrow"
+) => React.element = "ScrollUpArrow"

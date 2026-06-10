@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("ScrollArea") @react.component
 external make: (
   ~style: ThumbTypes.scrollAreaThumbStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ThumbTypes.scrollAreaThumbClassName=?,
   ~render: React.element=?,
-) => React.element = "ScrollAreaThumb"
+) => React.element = "Thumb"

@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Fieldset") @react.component
 external make: (
   ~form: string=?,
   ~style: ButtonTypes.buttonStyle=?,
@@ -54,4 +54,4 @@ external make: (
   ~name: string=?,
   ~className: ButtonTypes.buttonClassName=?,
   ~render: React.element=?,
-) => React.element = "FieldsetRoot"
+) => React.element = "Root"

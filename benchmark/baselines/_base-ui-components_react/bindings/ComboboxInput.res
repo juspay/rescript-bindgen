@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Autocomplete") @react.component
 external make: (
   ~disabled: bool=?,
   ~form: string=?,
@@ -77,4 +77,4 @@ external make: (
   ~placeholder: string=?,
   ~className: InputTypes.comboboxInputClassName=?,
   ~render: React.element=?,
-) => React.element = "ComboboxInput"
+) => React.element = "Input"

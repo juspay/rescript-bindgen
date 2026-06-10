@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Toolbar") @react.component
 external make: (
   ~style: SeparatorTypes.separatorStyle=?,
   ~title: string=?,
@@ -54,4 +54,4 @@ external make: (
   ~href: string=?,
   ~className: SeparatorTypes.separatorClassName=?,
   ~render: React.element=?,
-) => React.element = "ToolbarLink"
+) => React.element = "Link"

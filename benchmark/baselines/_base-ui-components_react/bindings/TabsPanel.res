@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Tabs") @react.component
 external make: (
   // 🛑 BROKEN: `value` is `any` — contains `any`; emitted as `string` placeholder and WON'T WORK. Needs a concrete type upstream.
   ~value: string,
@@ -54,4 +54,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: PanelTypes.tabsPanelClassName=?,
   ~render: React.element=?,
-) => React.element = "TabsPanel"
+) => React.element = "Panel"

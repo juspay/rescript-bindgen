@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("PreviewCard") @react.component
 external make: (
   ~delay: float=?,
   ~closeDelay: float=?,
@@ -56,4 +56,4 @@ external make: (
   ~href: string=?,
   ~className: TriggerTypes.contextMenuTriggerClassName=?,
   ~render: React.element=?,
-) => React.element = "PreviewCardTrigger"
+) => React.element = "Trigger"

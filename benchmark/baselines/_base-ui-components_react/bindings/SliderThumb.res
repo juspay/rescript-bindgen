@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Slider") @react.component
 external make: (
   ~disabled: bool=?,
   ~getAriaLabel: float => string=?,
@@ -56,4 +56,4 @@ external make: (
   ~onScroll: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~render: React.element=?,
-) => React.element = "SliderThumb"
+) => React.element = "Thumb"

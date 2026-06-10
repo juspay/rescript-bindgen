@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
   ~children: React.element=?,
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
@@ -23,4 +23,4 @@ external make: (
   ~defaultValue: string=?,  // ⚪ loose — was `SelectValueType<Value, Multiple>`
   ~value: string=?,  // ⚪ loose — was `SelectValueType<Value, Multiple>`
   ~onValueChange: string=?,  // ⚪ loose — was `(value: SelectValueType<Value, Multiple> | (Multiple extends true ? never : null), eventDetails: SelectRootCha`
-) => React.element = "SelectRoot"
+) => React.element = "Root"

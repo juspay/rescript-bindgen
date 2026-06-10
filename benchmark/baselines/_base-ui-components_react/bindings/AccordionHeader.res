@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Accordion") @react.component
 external make: (
   ~style: ItemTypes.accordionItemStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ItemTypes.accordionItemClassName=?,
   ~render: React.element=?,
-) => React.element = "AccordionHeader"
+) => React.element = "Header"

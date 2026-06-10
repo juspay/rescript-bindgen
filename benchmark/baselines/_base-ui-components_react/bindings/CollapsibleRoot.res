@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Collapsible") @react.component
 external make: (
   @as("open") ~open_: bool=?,
   ~defaultOpen: bool=?,
@@ -55,4 +55,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ComponentsMenubarRootStoreToastTypes.collapsibleRootClassName=?,
   ~render: React.element=?,
-) => React.element = "CollapsibleRoot"
+) => React.element = "Root"

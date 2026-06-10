@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
   ~onOpenChange: string=?,  // ⚪ loose — was `(open: boolean, eventDetails: MenuRootChangeEventDetails) => void`
   ~children: React.element=?,
@@ -14,4 +14,4 @@ external make: (
   ~loopFocus: bool=?,
   ~orientation: ComponentsMenubarRootStoreToastTypes.menuRootOrientation=?,
   ~closeParentOnEsc: bool=?,
-) => React.element = "MenuSubmenuRoot"
+) => React.element = "SubmenuRoot"

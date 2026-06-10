@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Autocomplete") @react.component
 external make: (
   ~disabled: bool=?,
   ~nativeButton: bool=?,
@@ -62,4 +62,4 @@ external make: (
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~className: TriggerTypes.comboboxTriggerClassName=?,
   ~render: React.element=?,
-) => React.element = "ComboboxTrigger"
+) => React.element = "Trigger"

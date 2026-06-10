@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
   ~checked: bool=?,
   ~defaultChecked: bool=?,
@@ -58,4 +58,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: CheckboxItemTypes.menuCheckboxItemClassName=?,
   ~render: React.element=?,
-) => React.element = "MenuCheckboxItem"
+) => React.element = "CheckboxItem"

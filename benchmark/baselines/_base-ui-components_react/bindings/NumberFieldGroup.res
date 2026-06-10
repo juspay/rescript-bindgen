@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("NumberField") @react.component
 external make: (
   ~style: ComponentsMenubarRootStoreToastTypes.numberFieldRootStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ComponentsMenubarRootStoreToastTypes.numberFieldRootClassName=?,
   ~render: React.element=?,
-) => React.element = "NumberFieldGroup"
+) => React.element = "Group"

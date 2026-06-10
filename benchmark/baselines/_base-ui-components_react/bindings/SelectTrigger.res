@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
   ~children: React.element=?,
   ~disabled: bool=?,
@@ -62,4 +62,4 @@ external make: (
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~className: TriggerTypes.selectTriggerClassName=?,
   ~render: React.element=?,
-) => React.element = "SelectTrigger"
+) => React.element = "Trigger"

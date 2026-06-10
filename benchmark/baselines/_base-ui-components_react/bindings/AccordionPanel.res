@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Accordion") @react.component
 external make: (
   ~style: PanelTypes.accordionPanelStyle=?,
   ~title: string=?,
@@ -53,4 +53,4 @@ external make: (
   ~render: React.element=?,
   ~hiddenUntilFound: bool=?,
   ~keepMounted: bool=?,
-) => React.element = "AccordionPanel"
+) => React.element = "Panel"

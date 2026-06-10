@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Autocomplete") @react.component
 external make: (
   ~defaultValue: CommonTypes.stringOrNumberOrStringArray=?,
   ~filter: string=?,  // ⚪ loose — was `(itemValue: Items[number]["items"][number], query: string, itemToString?: (itemValue: Items[number]["items"][n`
@@ -33,4 +33,4 @@ external make: (
   ~mode: ComponentsMenubarRootStoreToastTypes.mode=?,
   ~onValueChange: string=?,  // ⚪ loose — was `(value: string, eventDetails: ChangeEventDetails) => void`
   ~items: 'a,
-) => React.element = "AutocompleteRoot"
+) => React.element = "Root"

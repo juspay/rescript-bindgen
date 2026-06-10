@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Toolbar") @react.component
 external make: (
   ~style: SeparatorTypes.separatorStyle=?,
   ~title: string=?,
@@ -52,4 +52,4 @@ external make: (
   ~className: SeparatorTypes.separatorClassName=?,
   ~render: React.element=?,
   ~orientation: PositionerTabUtilsTypes.orientation=?,
-) => React.element = "ToolbarSeparator"
+) => React.element = "Separator"

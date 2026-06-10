@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Radio") @react.component
 external make: (
   ~keepMounted: bool=?,
   ~style: IndicatorTypes.radioIndicatorStyle=?,
@@ -52,4 +52,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: IndicatorTypes.radioIndicatorClassName=?,
   ~render: React.element=?,
-) => React.element = "RadioIndicator"
+) => React.element = "Indicator"

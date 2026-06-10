@@ -450,6 +450,25 @@ Single-file (`--file`/`--stdout`) mode keeps the flagged fallback (no second out
 
 ---
 
+## Namespace exports (`export * as NS`)
+Fixture: [`namespace-exports`](../test/golden/cases/namespace-exports)
+
+A component whose VALUE is reachable as a namespace member binds **through the namespace
+object** — the flat re-export may be `export type *` (type-only), in which case a flat
+binding (`= "AccordionRoot"`) is `undefined` at runtime (base-ui's actual shape; this was
+a runtime-correctness bug, not just ergonomics):
+
+| TypeScript | ReScript |
+|---|---|
+| `export * as Accordion from './parts'` + member `Root` | `AccordionRoot.res`: `@module("pkg") @scope("Accordion") external make: … = "Root"` |
+| (per namespace with ≥1 extracted component) | `Accordion.res`: `module Root = AccordionRoot` … — zero-cost aliases enabling the documented `<Accordion.Root>` JSX idiom |
+
+Scope binding is correct whether or not a flat VALUE export also exists. A namespace whose
+name collides with an emitted module is skipped (`ns-name-collision`). Namespaced classes /
+functions are a follow-up — only components bind through namespaces today.
+
+---
+
 ## Worked examples (from real `@juspay/blend-design-system` work)
 
 | Real prop | Shape | Resolution | Pattern |

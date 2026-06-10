@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Combobox") @react.component
 external make: (
   ~filter: ('a, string, option<'a => string>) => bool=?,
   ~id: string=?,
@@ -36,4 +36,4 @@ external make: (
   ~onItemHighlighted: string=?,  // ⚪ loose — was `(highlightedValue: Value, eventDetails: HighlightEventDetails) => void`
   ~value: string=?,  // ⚪ loose — was `ComboboxValueType<Value, Multiple>`
   ~onValueChange: string=?,  // ⚪ loose — was `(value: ComboboxValueType<Value, Multiple> | (Multiple extends true ? never : null), eventDetails: ChangeEvent`
-) => React.element = "ComboboxRoot"
+) => React.element = "Root"

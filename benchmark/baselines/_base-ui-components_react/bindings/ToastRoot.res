@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Toast") @react.component
 external make: (
   ~toast: ComponentsMenubarRootStoreToastTypes.toastRootToastObject,
   ~swipeDirection: ContentTypes.leftOrRightOrUpOrDownOrActivationDirectionArray=?,
@@ -53,4 +53,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ComponentsMenubarRootStoreToastTypes.toastRootClassName=?,
   ~render: React.element=?,
-) => React.element = "ToastRoot"
+) => React.element = "Root"

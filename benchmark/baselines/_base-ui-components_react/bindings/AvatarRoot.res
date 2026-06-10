@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("Avatar") @react.component
 external make: (
   ~style: ComponentsMenubarRootStoreToastTypes.avatarRootStyle=?,
   ~title: string=?,
@@ -51,4 +51,4 @@ external make: (
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~className: ComponentsMenubarRootStoreToastTypes.avatarRootClassName=?,
   ~render: React.element=?,
-) => React.element = "AvatarRoot"
+) => React.element = "Root"

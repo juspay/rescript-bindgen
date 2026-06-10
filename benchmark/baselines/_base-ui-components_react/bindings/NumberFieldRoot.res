@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("NumberField") @react.component
 external make: (
   ~id: string=?,
   ~min: int=?,
@@ -69,4 +69,4 @@ external make: (
   ~onScroll: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerTabUtilsTypes.baseUIEvent => unit=?,
   ~render: React.element=?,
-) => React.element = "NumberFieldRoot"
+) => React.element = "Root"

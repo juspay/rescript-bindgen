@@ -1,4 +1,4 @@
-@module("@base-ui-components/react") @react.component
+@module("@base-ui-components/react") @scope("NavigationMenu") @react.component
 external make: (
   ~active: bool=?,
   ~closeOnClick: bool=?,
@@ -56,4 +56,4 @@ external make: (
   ~href: string=?,
   ~className: LinkTypes.navigationMenuLinkClassName=?,
   ~render: React.element=?,
-) => React.element = "NavigationMenuLink"
+) => React.element = "Link"
