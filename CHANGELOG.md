@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- Bare `--pkg <name>` now installs the `latest` dist-tag instead of the `*`
+  range — npm's `*` excludes prereleases, so packages publishing only
+  prereleases (e.g. `@base-ui-components/react`) failed to resolve (#23).
 - **State-dependent props** (`T | ((state: S) => T)`, incl. the checker-resolved
   `T | (T & ((state: S) => T))` intersection form) now map to zero-cost
   `@unboxed Style/Str | Fn` variants instead of flagged `string` placeholders —

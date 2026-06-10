@@ -152,7 +152,7 @@ npx @juspay/rescript-bindgen --dir ./node_modules/some-lib --out generated
 
 | Flag | Meaning |
 |------|---------|
-| `--pkg <name[@ver]>` | npm package (auto-installed to a scratch cache if absent) |
+| `--pkg <name[@ver]>` | npm package (auto-installed to a scratch cache if absent). A bare name resolves the `latest` dist-tag, so prerelease-only packages work |
 | `--file <path.d.ts>` | a single declaration file (one component) |
 | `--dir <folder>` | a folder containing `index.d.ts` |
 | `--out <dir>` | output directory (default `generated`) |
