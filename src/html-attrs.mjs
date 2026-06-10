@@ -1,0 +1,140 @@
+// ============================================================================
+// html-attrs.mjs — plans + renders the shared `HtmlAttrs.res` module from the
+// vendored @types/react attribute data (src/html-attrs-data.mjs).
+//
+// The hierarchy is expressed with record type spread:
+//   ariaAttributes / domAttributes → htmlAttributes → per-element leaves
+//
+// ReScript spread FORBIDS duplicate fields, so "base minus keys" (TS `Omit`,
+// own-prop collisions, typed overrides) is solved by NARROWED VARIANTS: only
+// the slice of the hierarchy containing a removed key is re-materialized; the
+// untouched slices keep their canonical spread. Variants are deduped by
+// (group, sorted removed-keys ∩ group chain).
+// ============================================================================
+import { ATTR_GROUPS, HTML_ATTRS_PIN } from './html-attrs-data.mjs'
+import { label } from './emit.mjs'
+
+export { HTML_ATTRS_PIN }
+
+/** TS interface name -> group name (e.g. 'ButtonHTMLAttributes' -> 'buttonHTMLAttributes'). */
+export const TS_NAME_TO_GROUP = new Map(Object.entries(ATTR_GROUPS).map(([g, d]) => [d.ts, g]))
+
+const chainCache = new Map()
+/** Every raw field name reachable from `group` (own + transitive spreads). */
+export function chainFields(group) {
+    if (chainCache.has(group)) return chainCache.get(group)
+    const out = new Set()
+    const def = ATTR_GROUPS[group]
+    if (def) {
+        for (const s of def.spreads) for (const n of chainFields(s)) out.add(n)
+        for (const f of def.fields) out.add(f.name)
+    }
+    chainCache.set(group, out)
+    return out
+}
+
+/** Deterministic variant name: group + Omit + capitalized label-ids of the removed chain keys. */
+function variantName(group, removedInChain) {
+    const part = [...removedInChain].sort().map((n) => {
+        const id = label(n).id
+        return id.charAt(0).toUpperCase() + id.slice(1)
+    }).join('')
+    return `${group}Omit${part}`
+}
+
+/**
+ * Plan the HtmlAttrs module for one generation run.
+ * @param {Array<{leaf: string, removed?: string[]}>} usages  one entry per component
+ * @returns {{refFor: (usage) => string, render: () => string, isEmpty: boolean, groupCount: number, variantCount: number}}
+ */
+export function planHtmlAttrs(usages) {
+    const defs = new Map() // name -> {spreads: [names], fields: [{name,res}], canonical: bool}
+
+    /** Ensure the canonical definition of `group` (and its chain) is planned. */
+    function need(group) {
+        if (defs.has(group)) return group
+        const d = ATTR_GROUPS[group]
+        if (!d) throw new Error(`html-attrs: unknown group '${group}'`)
+        // Typed overrides (leaf field replaces a base field with a different type)
+        // force the canonical leaf to spread a narrowed base. None exist in the
+        // current data, but the mechanism must hold across @types/react updates.
+        const removed = new Set(d.overrides || [])
+        const spreads = d.spreads.map((s) => (intersects(chainFields(s), removed) ? narrow(s, removed) : need(s)))
+        defs.set(group, { spreads, fields: d.fields, canonical: true })
+        return group
+    }
+
+    /** Plan a variant of `group` with `removed` raw field names taken out of its chain. */
+    function narrow(group, removed) {
+        const inChain = [...removed].filter((n) => chainFields(group).has(n))
+        if (!inChain.length) return need(group)
+        const name = variantName(group, inChain)
+        if (defs.has(name)) return name
+        defs.set(name, null) // reserve (cycle-safe; spreads form a DAG)
+        const d = ATTR_GROUPS[group]
+        const removedSet = new Set(inChain)
+        const spreads = d.spreads.map((s) => (intersects(chainFields(s), removedSet) ? narrow(s, removedSet) : need(s)))
+        const fields = d.fields.filter((f) => !removedSet.has(f.name))
+        defs.set(name, { spreads, fields, canonical: false })
+        return name
+    }
+
+    const refs = new Map()
+    for (const u of usages) {
+        const removed = new Set((u.removed || []).filter((n) => chainFields(u.leaf).has(n)))
+        refs.set(u, removed.size ? narrow(u.leaf, removed) : need(u.leaf))
+    }
+
+    function render() {
+        // topo order: a def after everything it spreads; stable tie-break by name
+        const order = []
+        const state = new Map() // name -> 1 visiting | 2 done
+        const visit = (name) => {
+            if (state.get(name) === 2) return
+            if (state.get(name) === 1) throw new Error(`html-attrs: spread cycle at ${name}`)
+            state.set(name, 1)
+            for (const s of defs.get(name).spreads) visit(s)
+            state.set(name, 2)
+            order.push(name)
+        }
+        for (const name of [...defs.keys()].sort()) visit(name)
+
+        const L = []
+        L.push('// ============================================================================')
+        L.push('// HtmlAttrs.res — shared HTML attribute records (generated by rescript-bindgen).')
+        L.push(`// Surface: ${HTML_ATTRS_PIN}. Hierarchy via record type spread:`)
+        L.push('//   ariaAttributes / domAttributes -> htmlAttributes -> per-element leaves.')
+        L.push('// *Omit* variants re-materialize only the slice containing removed fields')
+        L.push('// (TS `Omit<...>` / own-prop collisions) — ReScript spread cannot remove fields.')
+        L.push('// ============================================================================')
+        for (const name of order) {
+            const d = defs.get(name)
+            L.push('')
+            L.push(`type ${name} = {`)
+            for (const s of d.spreads) L.push(`  ...${s},`)
+            for (const f of d.fields) {
+                const { as, id } = label(f.name)
+                L.push(`  ${as ? `@as(${JSON.stringify(as)}) ` : ''}${id}?: ${f.res},`)
+            }
+            L.push('}')
+        }
+        L.push('')
+        return L.join('\n')
+    }
+
+    return {
+        refFor: (usage) => refs.get(usage),
+        render,
+        isEmpty: defs.size === 0,
+        groupCount: [...defs.values()].filter((d) => d.canonical).length,
+        variantCount: [...defs.values()].filter((d) => !d.canonical).length,
+    }
+}
+
+const intersects = (set, other) => { for (const x of other) if (set.has(x)) return true; return false }
+
+/** Render every group (no variants) — used by tests and the compile check. */
+export function renderFullModule() {
+    const usages = Object.keys(ATTR_GROUPS).map((leaf) => ({ leaf }))
+    return planHtmlAttrs(usages).render()
+}
