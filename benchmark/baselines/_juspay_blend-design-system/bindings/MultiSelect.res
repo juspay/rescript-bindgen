@@ -1,6 +1,6 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
-  ~height: int=?,
+  ~height: float=?,
   ~selectedValues: array<string>,
   ~onChange: string => unit,
   ~items: array<MultiSelectSingleSelectTypes.multiSelectMenuGroupType>,

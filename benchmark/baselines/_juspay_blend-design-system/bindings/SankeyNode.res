@@ -2,8 +2,8 @@
 external make: (
   ~x: float=?,
   ~y: float=?,
-  ~width: int=?,
-  ~height: int=?,
+  ~width: float=?,
+  ~height: float=?,
   ~index: int=?,
   ~payload: ChartsTypes.payloadConfig3=?,
   ~containerWidth: float=?,

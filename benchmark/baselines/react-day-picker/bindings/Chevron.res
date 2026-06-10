@@ -2,7 +2,7 @@
 external make: (
   ~className: string=?,
   ~style: JsxDOM.style=?,
-  ~size: int=?,
+  ~size: float=?,
   ~disabled: bool=?,
   ~orientation: ComponentsTypes.orientation=?,
 ) => React.element = "Chevron"

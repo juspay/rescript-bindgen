@@ -8,7 +8,7 @@ type attachedFile = {
   id: string,
   name: string,
   @as("type") type_: type_2,
-  size?: int,
+  size?: float,
   url?: string,
   preview?: string,
 }

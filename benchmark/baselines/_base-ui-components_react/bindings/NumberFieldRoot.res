@@ -1,10 +1,10 @@
 @module("@base-ui-components/react") @scope("NumberField") @react.component
 external make: (
   ~id: string=?,
-  ~min: int=?,
-  ~max: int=?,
+  ~min: float=?,
+  ~max: float=?,
   ~smallStep: float=?,
-  ~step: int=?,
+  ~step: float=?,
   ~largeStep: float=?,
   ~required: bool=?,
   ~disabled: bool=?,

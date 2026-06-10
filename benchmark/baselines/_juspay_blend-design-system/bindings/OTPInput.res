@@ -7,7 +7,7 @@ type props = {
   errorMessage?: string,
   hintText?: string,
   value?: string,
-  length?: int,
+  length?: float,
   autoFocus?: bool,
   onChange?: string => unit,
   form?: string,

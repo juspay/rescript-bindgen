@@ -15,7 +15,7 @@ external make: (
   ~yAxis: ChartsTypes.axisConfig=?,
   ~tooltip: ChartsTypes.tooltipConfig=?,
   ~noData: ChartsTypes.noDataProps=?,
-  ~height: int=?,
+  ~height: float=?,
   ~showHeader: bool=?,
   ~showCollapseIcon: bool=?,
   ~isExpanded: bool=?,

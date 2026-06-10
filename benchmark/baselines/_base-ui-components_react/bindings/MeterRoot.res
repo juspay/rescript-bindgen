@@ -5,8 +5,8 @@ external make: (
   ~getAriaValueText: (string, float) => string=?,
   // ⚠️ REVIEW: `locale` is `LocalesArgument` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
   ~locale: string=?,
-  ~max: int=?,
-  ~min: int=?,
+  ~max: float=?,
+  ~min: float=?,
   ~value: float,
   ~style: CommonTypes.style=?,
   ~title: string=?,

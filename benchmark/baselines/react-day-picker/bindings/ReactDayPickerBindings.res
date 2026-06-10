@@ -18,7 +18,7 @@
 @module("react-day-picker") external labelWeekNumberHeader: (~_options: CjsClassesDateFnsLocaleTypesTypes.dateLibOptions=?, unit) => string = "labelWeekNumberHeader"
 @module("react-day-picker") external labelYearDropdown: (~_options: CjsClassesDateFnsLocaleTypesTypes.dateLibOptions=?, unit) => string = "labelYearDropdown"
 @module("react-day-picker") external useDayPicker: unit => CjsClassesDateFnsLocaleTypesTypes.dayPickerContext = "useDayPicker"
-@module("react-day-picker") external addToRange: (Date.t, CjsClassesDateFnsLocaleTypesTypes.dateRange, ~min: int=?, ~max: int=?, ~required: bool=?, ~dateLib: CjsClassesDateFnsLocaleTypesTypes.dateLib2=?, unit) => CjsClassesDateFnsLocaleTypesTypes.dateRange = "addToRange"
+@module("react-day-picker") external addToRange: (Date.t, CjsClassesDateFnsLocaleTypesTypes.dateRange, ~min: float=?, ~max: float=?, ~required: bool=?, ~dateLib: CjsClassesDateFnsLocaleTypesTypes.dateLib2=?, unit) => CjsClassesDateFnsLocaleTypesTypes.dateRange = "addToRange"
 @module("react-day-picker") external dateMatchModifiers: (Date.t, CjsClassesDateFnsLocaleTypesTypes.Disabled.t, ~dateLib: CjsClassesDateFnsLocaleTypesTypes.dateLib2=?, unit) => bool = "dateMatchModifiers"
 @module("react-day-picker") external rangeContainsDayOfWeek: (UtilsTypes.rangeConfig, CommonTypes.numberOrNumberArray, ~dateLib: CjsClassesDateFnsLocaleTypesTypes.dateLib2=?, unit) => bool = "rangeContainsDayOfWeek"
 @module("react-day-picker") external rangeContainsModifiers: (UtilsTypes.rangeConfig, CjsClassesDateFnsLocaleTypesTypes.Disabled.t, ~dateLib: CjsClassesDateFnsLocaleTypesTypes.dateLib2=?, unit) => bool = "rangeContainsModifiers"

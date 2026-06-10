@@ -5,12 +5,12 @@ external make: (
   ~format: string=?,  // ⚪ loose — was `NumberFormatOptions`
   // ⚠️ REVIEW: `locale` is `LocalesArgument` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
   ~locale: string=?,
-  ~max: int=?,
-  ~min: int=?,
+  ~max: float=?,
+  ~min: float=?,
   ~minStepsBetweenValues: float=?,
   ~name: string=?,
   ~orientation: PositionerTabUtilsTypes.orientation=?,
-  ~step: int=?,
+  ~step: float=?,
   ~largeStep: float=?,
   ~thumbAlignment: ComponentsMenubarRootStoreToastTypes.thumbAlignment=?,
   ~thumbCollisionBehavior: ComponentsMenubarRootStoreToastTypes.thumbCollisionBehavior=?,

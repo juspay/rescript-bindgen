@@ -39,7 +39,7 @@ type tooltipPropsConfig = {
   size?: TooltipTypes.tooltipSize,
   showArrow?: bool,
   delayDuration?: float,
-  offset?: int,
+  offset?: float,
 }
 type rec selectMenuItemType = {
   label: string,

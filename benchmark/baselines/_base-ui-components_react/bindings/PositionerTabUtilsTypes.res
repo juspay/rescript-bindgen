@@ -80,8 +80,8 @@ type htmlProps = {
   ...JsxDOM.domProps,
 }
 type anchorConfig = {
-  width: int,
-  height: int,
+  width: float,
+  height: float,
 }
 type sideOffsetConfig = {
   side: side,
