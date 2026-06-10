@@ -172,6 +172,17 @@ for (const pkg of packages) {
         }
 
         if (UPDATE) {
+            // LOUD degradation warning: --update legitimizes whatever it writes, so a
+            // compile or bucket regression accepted here silently disappears from the
+            // gate. (A blend compile break slipped through exactly this way once.)
+            const prev = existsSync(join(baseDir, 'metrics.json')) ? JSON.parse(readFileSync(join(baseDir, 'metrics.json'), 'utf-8')) : null
+            if (prev) {
+                const regressions = []
+                if (prev.compileOk && !cmp.ok) regressions.push('COMPILE BROKE')
+                if (gen.summary && prev.buckets && gen.summary.components.usable < prev.buckets.usable) regressions.push(`usable ${prev.buckets.usable} -> ${gen.summary.components.usable}`)
+                if (gen.summary && prev.buckets && gen.summary.components.broken > prev.buckets.broken) regressions.push(`broken ${prev.buckets.broken} -> ${gen.summary.components.broken}`)
+                if (regressions.length) console.error(RED(`!! ${label} — BASELINE DEGRADED by this update: ${regressions.join(', ')} — are you sure?`))
+            }
             rmSync(join(baseDir, 'bindings'), { recursive: true, force: true })
             mkdirSync(join(baseDir, 'bindings'), { recursive: true })
             for (const [fn, content] of generated) writeFileSync(join(baseDir, 'bindings', fn), content)

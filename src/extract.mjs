@@ -1690,10 +1690,23 @@ function unionNode(type, ctx, propName, depth = 0) {
     // Guard: a CALLABLE arm (`CSSProperties & ((state) => CSSProperties)`) shares its
     // object constituent's symbol but is runtime-discriminable as a function — that
     // shape belongs to the @unboxed Style|Fn machinery below, not a record collapse.
+    // Guard 2: skip when any arm's type ARGUMENTS carry a type parameter
+    // (`ColumnDefinition<T> | …` in a generic component) — the collapsed record would
+    // need the variable threaded through its reference (`columnDefinition<'a>`), which
+    // this path doesn't do; those unions keep the previous (flagged) behavior.
+    // (Regression caught by the benchmark gate on blend's DataTable.)
+    const armHasTypeParam = (t, d = 0) => {
+        if (!t || d > 3) return false
+        if (t.flags & ts.TypeFlags.TypeParameter) return true
+        if (t.flags & ts.TypeFlags.Intersection) return (t.types || []).some((m) => armHasTypeParam(m, d + 1))
+        const args = [...(t.aliasTypeArguments || []), ...((checker.getTypeArguments && (t.objectFlags & ts.ObjectFlags.Reference) && checker.getTypeArguments(t)) || [])]
+        return args.some((a) => armHasTypeParam(a, d + 1))
+    }
     if (parts.length >= 2 && type.getProperties().length > 0 && parts.every((t) =>
         armSym(t) && armSym(t) === armSym(parts[0]) &&
         (t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) &&
-        !(t.getCallSignatures && t.getCallSignatures().length))) {
+        !(t.getCallSignatures && t.getCallSignatures().length) &&
+        !armHasTypeParam(t))) {
         const aliasName = type.aliasSymbol && type.aliasSymbol.getName()
         const symName = armSym(parts[0]).getName()
         const named = (aliasName && /^[A-Z]/.test(aliasName)) ? aliasName : (/^[A-Z]/.test(symName || '') ? symName : null)
