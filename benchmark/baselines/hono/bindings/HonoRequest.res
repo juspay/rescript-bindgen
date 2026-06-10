@@ -17,8 +17,7 @@ type t = InstanceTypes.honoRequest
 @send external bytes: (t) => promise<string> = "bytes"
 @send external blob: (t) => promise<WebTypes.blob> = "blob"
 @send external formData: (t) => promise<Webapi.FormData.t> = "formData"
-// ⚪ loose: `addValidatedData` has a param/return widened to `string`.
-@send external addValidatedData: (t, ~target: TypesTypes.target, ~data: string) => unit = "addValidatedData"
+@send external addValidatedData: (t, ~target: TypesTypes.target, ~data: JSON.t) => unit = "addValidatedData"
 // 🛑 BROKEN: `valid` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
 @send external valid: (t, ~target: string) => string = "valid"
 @get external raw: t => WebTypes.request = "raw"

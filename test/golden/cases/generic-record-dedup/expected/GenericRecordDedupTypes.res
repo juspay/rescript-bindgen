@@ -22,5 +22,5 @@ type rec router4 = {
 type router = {
   use: unit => router2,
   add: unit => router4,
-  build: unit => string,
+  build: unit => JSON.t,
 }

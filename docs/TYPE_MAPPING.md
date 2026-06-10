@@ -99,7 +99,7 @@ variant (discriminated at runtime). **At most one member may be an object type.*
 | `string \| string[]` | `@unboxed type stringOrStringArray = Str(string) \| StrArr(array<string>)` |
 | `boolean \| 'indeterminate'` | `@unboxed type boolOrIndeterminate = Bool(bool) \| @as("indeterminate") Indeterminate` |
 | `number \| ((i: number) => number)` | `@unboxed type itemHeight = Num(float) \| Fn(float => float)` |
-| `boolean \| RefObject<HTMLElement> \| ((t) => bool)` (clean-return fn) | `@unboxed type toggleFocus = Bool(bool) \| Ref(React.ref<…>) \| Fn(bool => bool)` — bool/object/function are distinct runtime tags. A fn member whose RETURN can't be modelled (`=> boolean \| void \| HTMLElement`) keeps the honest ⚠️ REVIEW flag instead: a fake `=> string` inside a shared `@unboxed` would render unflagged and feed wrong values INTO the library. Fixture: [`ref-union-views`](../test/golden/cases/ref-union-views) |
+| `boolean \| RefObject<HTMLElement> \| ((t) => bool)` (clean-return fn) | `@unboxed type toggleFocus = Bool(bool) \| Ref(React.ref<…>) \| Fn(bool => bool)` — bool/object/function are distinct runtime tags. An unmodellable fn PARAM is salvaged to a fresh type variable (`Fn('x => …)` — the hole the consumer must annotate; params flow library→consumer). A fn member whose RETURN can't be modelled (`=> boolean \| void \| HTMLElement`) keeps the honest ⚠️ REVIEW flag instead: a fake `=> string` inside a shared `@unboxed` would render unflagged and feed wrong values INTO the library. Fixture: [`ref-union-views`](../test/golden/cases/ref-union-views) |
 | `CSSProperties \| ((state: S) => CSSProperties)` (base-ui's state-dependent style; also the checker-resolved `CSSProperties \| (CSSProperties & ((state: S) => CSSProperties))` form) | `@unboxed type sStyle = Style(JsxDOM.style) \| Fn(s => JsxDOM.style)` — an **intersection arm with a call signature counts as the function** (at runtime the value IS a function). Fixture: [`callable-intersection-union`](../test/golden/cases/callable-intersection-union) |
 
 These synthesized variants are de-duplicated into `CommonTypes.res` (module mode) — **by
@@ -224,6 +224,7 @@ Fixture: [`records`](../test/golden/cases/records)
 | anonymous `{ x: number; y: number }` | `type pointConfig = { x: float, y: float }` (named after the prop) |
 | named `interface MenuItemType { … }` | `type menuItemType = { … }` |
 | self-referential `{ subItems?: MenuItemType[] }` | `type rec menuItemType = { subItems?: array<menuItemType> }` (`rec` **only** when genuinely recursive) |
+| `interface EmptyState {}` (empty object) | `JSON.t` — a real object arrives at runtime but has no modellable fields (the `unknown` precedent). Fixture: [`empty-state-and-salvage`](../test/golden/cases/empty-state-and-salvage) |
 | `Partial<BaseProps>` | record with all fields optional (utility unwrapped: `Partial`/`Required`/`Readonly`/`Pick`/`Omit`/`NonNullable`) |
 | `interface X extends HTMLAttributes<…>` | `type … = { ...JsxDOM.domProps, <own fields> }` |
 
@@ -436,9 +437,9 @@ Fixture: [`webapi`](../test/golden/cases/webapi)
 
 | TypeScript | ReScript (`--webapi`) | ReScript (default) |
 |---|---|---|
-| `File` | `Webapi.File.t` | ⚪ `string` (flagged; install `rescript-webapi`) |
-| `FileList` | `Webapi.FileList.t` | ⚪ `string` |
-| `FormData` | `Webapi.FormData.t` | ⚪ `string` |
+| `File` | `Webapi.File.t` | `WebTypes.file` (module mode — abstract, passable) or ⚪ flagged `string` (single-file) |
+| `FileList` | `Webapi.FileList.t` | `WebTypes.fileList` / ⚪ `string` |
+| `FormData` | `Webapi.FormData.t` | `WebTypes.formData` / ⚪ `string` |
 
 `--webapi` is auto-enabled when the target project depends on `rescript-webapi`; otherwise the CLI
 asks (or flags the props). `(d: FormData) => void | Promise<void>` → `Webapi.FormData.t => 'a`.

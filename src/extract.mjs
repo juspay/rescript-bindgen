@@ -1059,6 +1059,18 @@ const WEB_MODULE = 'WebTypes'
  *  (ref arms inside @unboxed unions) so the two dispatches can't drift. (#39) */
 const REF_NAMES = /^(Ref|RefObject|MutableRefObject|LegacyRef)$/
 
+/** Mint a fresh component-scoped type variable (the #31 machinery): 'a, 'b, … per
+ *  component, registered in ctx.typeVars so the shared @unboxed entry parameterizes
+ *  itself via collectTypeVars. Used to SALVAGE unmodellable fn params (#41). */
+function freshTypeVar(ctx) {
+    if (!ctx.typeVars) return { kind: 'unknown' } // no component scope -> keep the flag
+    const TV = ['a', 'b', 'c', 'd', 'e', 'f']
+    const key = Symbol('salvaged-param')
+    const i = ctx.typeVars.size
+    ctx.typeVars.set(key, "'" + (TV[i] || `t${i}`))
+    return { kind: 'typeVar', name: ctx.typeVars.get(key) }
+}
+
 /** Walk an IR type tree for imperfection kinds (opaque/review/unknown/any) — the
  *  extract-side mirror of emit's `imperfection()`, used to gate @unboxed Fn members
  *  (flag-don't-fake: a fake inside a shared variant would render UNFLAGGED). */
@@ -1076,6 +1088,9 @@ const WEB_PLATFORM_TYPES = {
     AbortSignal: 'abortSignal', AbortController: 'abortController',
     Blob: 'blob', ReadableStream: 'readableStream', WritableStream: 'writableStream',
     WebSocket: 'webSocket',
+    // webapi-OFF fallbacks only — with rescript-webapi installed these three map to the
+    // full Webapi.* bindings instead (see the File/FileList/FormData ladder in classify). (#41)
+    File: 'file', FileList: 'fileList', FormData: 'formData',
 }
 
 /** True when the type's symbol is DECLARED in lib.dom/lib.webworker — so a package's OWN
@@ -1228,10 +1243,15 @@ function classify(type, ctx, propName = '', depth = 0) {
     // modelled. Beats an unexplained review flag on every Meter/NumberField. (#39)
     if (name === 'LocalesArgument' && isLibraryType(type)) return { kind: 'string', note: 'Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled' }
 
-    // File / FileList / FormData -> rescript-webapi, only if the project depends on it (ctx.webapi).
-    if (name === 'File') return ctx.webapi ? { kind: 'raw', res: 'Webapi.File.t' } : { kind: 'opaque', text: 'File' }
-    if (name === 'FileList') return ctx.webapi ? { kind: 'raw', res: 'Webapi.FileList.t' } : { kind: 'opaque', text: 'FileList' }
-    if (name === 'FormData') return ctx.webapi ? { kind: 'raw', res: 'Webapi.FormData.t' } : { kind: 'opaque', text: 'FormData' }
+    // File / FileList / FormData — most-specific-type ladder (#41):
+    //   webapi installed -> the FULL ecosystem binding (Webapi.File.t — methods and all);
+    //   webapi absent, module mode -> OUR abstract WebTypes sink type (holdable/passable,
+    //     honest — previously a flagged opaque that degraded into an UNFLAGGED `string`
+    //     inside shared @unboxed unions, e.g. formAction's `Fn(string => 'a)` fake);
+    //   single-file mode -> today's flagged opaque (can't emit a second file).
+    if (name === 'File') return ctx.webapi ? { kind: 'raw', res: 'Webapi.File.t' } : (ctx.shared ? webSink(ctx, 'File') : { kind: 'opaque', text: 'File' })
+    if (name === 'FileList') return ctx.webapi ? { kind: 'raw', res: 'Webapi.FileList.t' } : (ctx.shared ? webSink(ctx, 'FileList') : { kind: 'opaque', text: 'FileList' })
+    if (name === 'FormData') return ctx.webapi ? { kind: 'raw', res: 'Webapi.FormData.t' } : (ctx.shared ? webSink(ctx, 'FormData') : { kind: 'opaque', text: 'FormData' })
 
     // Web-platform classes (Request, Response, Headers, URL, …) -> abstract types in the
     // dependency-free `WebTypes` sink (module mode only — it's a second output file).
@@ -1357,6 +1377,15 @@ function classify(type, ctx, propName = '', depth = 0) {
         if (named || isUtilityWrap || isHtmlAttrs || symName === '__type' || (flags & ts.TypeFlags.Intersection)) {
             return recordNode(type, ctx, propName, depth, named)
         }
+    }
+
+    // An EMPTY object type (`interface ComboboxEmptyState {}` — base-ui's stateless
+    // components): zero fields to model, but a real object arrives at runtime ->
+    // `JSON.t`, the same honest opaque-value mapping `unknown` gets. Without this,
+    // `{}` fell to opaque and rendered as an UNFLAGGED `string` param inside shared
+    // @unboxed variants (`Fn(string => string)` — the #41 fake). (#41)
+    if (isObjectish && type.getProperties().length === 0 && !type.getCallSignatures().length) {
+        return { kind: 'raw', res: 'JSON.t' }
     }
 
     // give up -> opaque, flagged for review
@@ -1977,12 +2006,17 @@ function memberOf(t, ctx, propName, depth) {
     // flag — inside a shared @unboxed the fake would render as an UNFLAGGED
     // `=> string` (e.g. finalFocus's `=> boolean | void | HTMLElement | null`) that
     // actively feeds wrong values INTO the library. (Caught by code review on #39's
-    // PR.) PARAM imperfections are deliberately NOT gated here: param fakes have
-    // rendered un-flagged inside @unboxed since #22 (library -> consumer direction,
-    // strictly less harmful) — tracked separately as a follow-up.
+    // PR.) PARAM imperfections are SALVAGED instead of gated (#41): each unmodellable
+    // param becomes a fresh type variable — `Fn('x => …)` — the type system's own
+    // "you receive something unnameable" signal (params flow library -> consumer, so
+    // a hole the consumer must annotate beats both a fake `string` and losing the
+    // whole otherwise-good callback).
     if (t.getCallSignatures && t.getCallSignatures().length) {
         const fn = functionNode(t.getCallSignatures()[0], ctx, propName, depth)
         if (irHasImperfection(fn.ret)) return null
+        if (Array.isArray(fn.params) && fn.params.some(irHasImperfection)) {
+            fn.params = fn.params.map((p) => (irHasImperfection(p) ? freshTypeVar(ctx) : p))
+        }
         return { ctor: 'Fn', rt: 'function', type: fn }
     }
     // NOTE: an INTERSECTION arm with a call signature (`CSSProperties & ((state) =>

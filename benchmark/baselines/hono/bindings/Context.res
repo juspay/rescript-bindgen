@@ -33,5 +33,4 @@ type t = InstanceTypes.context
 @get external event: t => TypesTypes.fetchEventLike = "event"
 @get external executionCtx: t => TypesTypes.executionContext = "executionCtx"
 @get external res: t => WebTypes.response = "res"
-// ⚪ loose: `var` has a param/return widened to `string`.
-@get external var: t => string = "var"
+@get external var: t => JSON.t = "var"
