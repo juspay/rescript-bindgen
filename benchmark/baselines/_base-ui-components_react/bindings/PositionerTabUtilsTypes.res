@@ -176,8 +176,6 @@ type toastPositionerState = {
   align: align,
   anchorHidden: bool,
 }
-@unboxed type interactionTypeInitialFocus = Bool(bool) | Ref(React.ref<Nullable.t<Dom.element>>) | Fn(interactionType => string)
-@unboxed type interactionTypeFinalFocus = Bool(bool) | Ref(React.ref<Nullable.t<Dom.element>>) | Fn(interactionType => string)
 @unboxed type sideOffsetConfigSideOffset = Num(float) | Fn(sideOffsetConfig => float)
 @unboxed type sideOffsetConfigAlignOffset = Num(float) | Fn(sideOffsetConfig => float)
 @unboxed type comboboxPositionerStyle = Style(JsxDOM.style) | Fn(comboboxPositionerState => JsxDOM.style)

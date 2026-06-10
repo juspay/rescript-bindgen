@@ -1,7 +1,9 @@
 @module("@base-ui-components/react") @scope("Popover") @react.component
 external make: (
-  ~initialFocus: PositionerTabUtilsTypes.interactionTypeInitialFocus=?,
-  ~finalFocus: PositionerTabUtilsTypes.interactionTypeFinalFocus=?,
+  // ⚠️ REVIEW: `initialFocus` is `boolean | RefObject<HTMLElement> | ((openType: InteractionType) => boolean | void | HTMLElement)` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
+  ~initialFocus: string=?,
+  // ⚠️ REVIEW: `finalFocus` is `boolean | RefObject<HTMLElement> | ((closeType: InteractionType) => boolean | void | HTMLElement)` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
+  ~finalFocus: string=?,
   ~style: PopupTypes.popoverPopupStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

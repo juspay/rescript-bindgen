@@ -1,10 +1,10 @@
 # Binding report — `@base-ui-components/react@1.0.0-rc.0`
 
-**195** components · ✅ **186** usable · 🔍 **9** need review · 🛑 **0** broken
+**195** components · ✅ **182** usable · 🔍 **13** need review · 🛑 **0** broken
 
 **9** function binding(s) → `ReactBindings.res`.
 
-**374** shared types deduplicated into **41** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**372** shared types deduplicated into **41** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -65,7 +65,6 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - ComboboxItem
 - ComboboxItemIndicator
 - ComboboxList
-- ComboboxPopup
 - ComboboxPortal
 - ComboboxRoot  _(3 loose)_
 - ComboboxRow
@@ -77,7 +76,6 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - DialogBackdrop
 - DialogClose
 - DialogDescription
-- DialogPopup
 - DialogPortal
 - DialogRoot
 - DialogTitle
@@ -102,7 +100,6 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - MenuGroup
 - MenuGroupLabel
 - MenuItem
-- MenuPopup
 - MenuPortal
 - MenuRadioGroup
 - MenuRadioItem
@@ -139,7 +136,6 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - PopoverBackdrop
 - PopoverClose
 - PopoverDescription
-- PopoverPopup
 - PopoverPortal
 - PopoverRoot
 - PopoverTitle
@@ -242,12 +238,32 @@ These resolved to a real but complex type and were widened to `string` (they com
 
 A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object shapes), so an `@unboxed` variant won't work and we **refuse to use `%identity`/unsafe casts**. The prop is emitted as a `string` placeholder with an inline `// ⚠️ REVIEW` comment — bind it by hand or fix the type upstream.
 
+### ComboboxPopup
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `initialFocus` | `initialFocus?: boolean \| React.RefObject<HTMLElement \| null> \| ((openType: InteractionType) => void \| boolean \| HTMLElement \| null);` |
+| `finalFocus` | `finalFocus?: boolean \| React.RefObject<HTMLElement \| null> \| ((closeType: InteractionType) => void \| boolean \| HTMLElement \| null);` |
+
 ### ComboboxPositioner  _(1 loose)_
 
 | Prop | Real TypeScript |
 |------|-----------------|
 | `anchor` | `anchor?: Element \| null \| VirtualElement \| React.RefObject<Element \| null> \| (() => Element \| VirtualElement \| null);` |
 | `collisionBoundary` | `collisionBoundary?: Boundary;` |
+
+### DialogPopup
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `initialFocus` | `initialFocus?: boolean \| React.RefObject<HTMLElement \| null> \| ((openType: InteractionType) => boolean \| HTMLElement \| null \| void);` |
+| `finalFocus` | `finalFocus?: boolean \| React.RefObject<HTMLElement \| null> \| ((closeType: InteractionType) => boolean \| HTMLElement \| null \| void);` |
+
+### MenuPopup
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `finalFocus` | `finalFocus?: boolean \| React.RefObject<HTMLElement \| null> \| ((closeType: InteractionType) => boolean \| HTMLElement \| null \| void);` |
 
 ### MenuPositioner  _(1 loose)_
 
@@ -262,6 +278,13 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 |------|-----------------|
 | `anchor` | `anchor?: Element \| null \| VirtualElement \| React.RefObject<Element \| null> \| (() => Element \| VirtualElement \| null);` |
 | `collisionBoundary` | `collisionBoundary?: Boundary;` |
+
+### PopoverPopup
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `initialFocus` | `initialFocus?: boolean \| React.RefObject<HTMLElement \| null> \| ((openType: InteractionType) => void \| boolean \| HTMLElement \| null);` |
+| `finalFocus` | `finalFocus?: boolean \| React.RefObject<HTMLElement \| null> \| ((closeType: InteractionType) => void \| boolean \| HTMLElement \| null);` |
 
 ### PopoverPositioner  _(1 loose)_
 

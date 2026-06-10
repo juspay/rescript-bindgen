@@ -1055,6 +1055,21 @@ const WEB_MODULE = 'WebTypes'
 /** lib.dom classes worth an abstract sink type. Conservative allowlist: names common in
  *  server/client APIs that do NOT collide with frequent first-party type names (no
  *  `Event`, `Body`, `Text`, …). The lib.dom-declaration guard protects the rest. */
+/** React's ref-alias family — shared by classify() (solo ref props) and memberOf()
+ *  (ref arms inside @unboxed unions) so the two dispatches can't drift. (#39) */
+const REF_NAMES = /^(Ref|RefObject|MutableRefObject|LegacyRef)$/
+
+/** Walk an IR type tree for imperfection kinds (opaque/review/unknown/any) — the
+ *  extract-side mirror of emit's `imperfection()`, used to gate @unboxed Fn members
+ *  (flag-don't-fake: a fake inside a shared variant would render UNFLAGGED). */
+function irHasImperfection(t) {
+    if (!t || typeof t !== 'object') return false
+    if (t.kind === 'opaque' || t.kind === 'review' || t.kind === 'unknown' || t.kind === 'any') return true
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) if (t[k] && irHasImperfection(t[k])) return true
+    if (Array.isArray(t.params)) for (const p of t.params) if (irHasImperfection(p)) return true
+    return false
+}
+
 const WEB_PLATFORM_TYPES = {
     Request: 'request', Response: 'response', Headers: 'headers',
     URL: 'url', URLSearchParams: 'urlSearchParams',
@@ -1197,20 +1212,21 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (name === 'ReactNode' || name === 'ReactElement' || name === 'ReactNode[]')
         return { kind: 'reactElement' }
     if (name === 'CSSProperties') return { kind: 'style' }
-    if (name === 'Ref' || name === 'RefObject' || name === 'MutableRefObject' || name === 'LegacyRef')
-        return { kind: 'domRef' }
+    if (name && REF_NAMES.test(name)) return { kind: 'domRef' }
     // Specific DOM elements -> Dom.htmlDivElement etc. (built-in, no dep);
     // generic Element/Node -> Dom.element/Dom.node.
     if (name && /Element$/.test(name) && /^(HTML|SVG|Dom)/.test(name))
         return { kind: 'raw', res: domElementType(name) }
     if (name === 'Element') return { kind: 'domElement' }
     if (name === 'Node') return { kind: 'raw', res: 'Dom.node' }
-    if (name === 'ShadowRoot') return { kind: 'raw', res: 'Dom.shadowRoot' } // base-ui `container` (#39)
+    // lib-declaration guarded (isLibraryType) so a package's OWN type named ShadowRoot/
+    // LocalesArgument is never silently hijacked into the stdlib mapping. (#39 review)
+    if (name === 'ShadowRoot' && isLibraryType(type)) return { kind: 'raw', res: 'Dom.shadowRoot' } // base-ui `container`
 
     // `Intl.LocalesArgument` (string | Intl.Locale | readonly array) -> `string` with a
     // ⓘ note — a BCP-47 tag ("en-US") is the 99% case; `Intl.Locale` objects aren't
     // modelled. Beats an unexplained review flag on every Meter/NumberField. (#39)
-    if (name === 'LocalesArgument') return { kind: 'string', note: 'Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled' }
+    if (name === 'LocalesArgument' && isLibraryType(type)) return { kind: 'string', note: 'Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled' }
 
     // File / FileList / FormData -> rescript-webapi, only if the project depends on it (ctx.webapi).
     if (name === 'File') return ctx.webapi ? { kind: 'raw', res: 'Webapi.File.t' } : { kind: 'opaque', text: 'File' }
@@ -1956,8 +1972,18 @@ function memberOf(t, ctx, propName, depth) {
     // A single function member -> runtime `typeof "function"` (distinct from string/number/
     // boolean/object/array). Only ONE allowed (`claim('function')` enforces it). Enables
     // `string | (fn)` (formAction) and `number | (fn)` (virtualItemHeight) as @unboxed.
+    // FLAG-DON'T-FAKE GATE on the RETURN: a fn member whose return classified
+    // opaque/review/unknown returns null so the WHOLE prop keeps its honest ⚠️ REVIEW
+    // flag — inside a shared @unboxed the fake would render as an UNFLAGGED
+    // `=> string` (e.g. finalFocus's `=> boolean | void | HTMLElement | null`) that
+    // actively feeds wrong values INTO the library. (Caught by code review on #39's
+    // PR.) PARAM imperfections are deliberately NOT gated here: param fakes have
+    // rendered un-flagged inside @unboxed since #22 (library -> consumer direction,
+    // strictly less harmful) — tracked separately as a follow-up.
     if (t.getCallSignatures && t.getCallSignatures().length) {
-        return { ctor: 'Fn', rt: 'function', type: functionNode(t.getCallSignatures()[0], ctx, propName, depth) }
+        const fn = functionNode(t.getCallSignatures()[0], ctx, propName, depth)
+        if (irHasImperfection(fn.ret)) return null
+        return { ctor: 'Fn', rt: 'function', type: fn }
     }
     // NOTE: an INTERSECTION arm with a call signature (`CSSProperties & ((state) =>
     // CSSProperties)`, base-ui's resolved style shape) is caught by the branch above —
@@ -1971,9 +1997,10 @@ function memberOf(t, ctx, propName, depth) {
     if (typeName(t) === 'CSSProperties') return { ctor: 'Style', rt: 'object', type: { kind: 'style' } }
 
     // A Ref-family member (`RefObject<HTMLElement>`) -> runtime `typeof "object"`,
-    // rendered as the standard ref type. Enables `boolean | RefObject<…> | (fn)`
-    // (base-ui's initialFocus/finalFocus) as `@unboxed Bool | Ref | Fn`. (#39)
-    if (/^(Ref|RefObject|MutableRefObject|LegacyRef)$/.test(typeName(t) || '')) {
+    // rendered as the standard ref type — same name list classify() uses for solo ref
+    // props (shared REF_NAMES). Enables `boolean | RefObject<…> | (fn)` (base-ui's
+    // initialFocus/finalFocus) as `@unboxed Bool | Ref | Fn`. (#39)
+    if (REF_NAMES.test(typeName(t) || '')) {
         return { ctor: 'Ref', rt: 'object', type: { kind: 'domRef' } }
     }
 
