@@ -1,17 +1,17 @@
-# Binding report — `hono@4.12.25`
+# Binding report — `demo`
 
 **0** components · ✅ **0** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**3** class module(s) → `@new`/`@send`/`@get` bindings.
+**1** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**28** shared types deduplicated into **5** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**1** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
 | Kind | Package | Provides | Status |
 |------|---------|----------|--------|
 | required | `@rescript/react + stdlib` | JsxDOM, Dom, React, ReactEvent | ✓ present |
-| optional | `rescript-webapi` | File, FileList | ✓ present → used |
+| optional | `rescript-webapi` | File, FileList | ✗ not installed |
 
 ## 🏛 Class modules
 
@@ -19,9 +19,7 @@ Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new
 
 | Class | Constructor | Methods | Properties |
 |-------|-------------|---------|------------|
-| `Context` | ✓ | 15 | 8 |
-| `HonoRequest` | ✓ | 13 | 8 |
-| `Hono` | ✓ | 18 | 2 |
+| `Impl` | ✓ | 3 | 0 |
 
 ## ✅ Usable
 

@@ -392,6 +392,7 @@ we don't fully emit (e.g. a generic one) still resolves to its abstract type —
 |---|---|
 | `class Counter { constructor(start: number, step?: number) }` | `@new @module("pkg") external make: (~start: float, ~step: int=?, unit) => t = "Counter"` |
 | `increment(by: number): Counter` (returns self) | `@send external increment: (t, ~by: float) => t = "increment"` |
+| `get(...): HonoBase<…>` (returns a NON-exported first-party base — hono's chaining shape) | `@send external get: (t, …) => t = "get"` — base-class symbols of exported classes register transitively (ambiguity-guarded; **library** bases like `Date`/`EventTarget` are never claimed). Fixture: [`class-self-return`](../test/golden/cases/class-self-return) |
 | `get value(): number` | `@get external value: t => float = "value"` |
 | `reset(): void` | `@send external reset: (t) => unit = "reset"` |
 | `watch(counter: Counter): void` (other class, in `Tracker.res`) | `@send external watch: (t, ~counter: InstanceTypes.counter) => unit = "watch"` |

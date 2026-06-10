@@ -859,6 +859,35 @@ export function extractModule(entryFile, opts = {}) {
         if (instSym) classTypes.set(instSym, nm)
     }
 
+    // Also register each exported class's BASE-class symbols (transitively) → the exported
+    // name, so a method returning the (non-exported) base maps to the class's own `t` instead
+    // of minting a numbered opaque record per call site — e.g. hono's `get/post/…` return
+    // `HonoBase<…>` instantiations, which now render as chainable `t`. Ambiguity guard: a
+    // base claimed by TWO different exported classes is dropped (can't pick a side). (#24)
+    {
+        const claims = new Map() // baseSym -> exported name | null (ambiguous)
+        // NEVER claim a LIBRARY base (lib.es Date, lib.dom EventTarget, …): `TZDate extends
+        // Date` must not remap every `Date` in the package to `InstanceTypes.tzDate`. Only
+        // first-party non-exported bases (hono's `HonoBase`) qualify. (Caught by the
+        // benchmark gate on react-day-picker.)
+        const isLibBase = (bsym) => {
+            const d = bsym.declarations && bsym.declarations[0]
+            const f = (d && d.getSourceFile().fileName) || ''
+            return /node_modules\/(@types|typescript)\//.test(f) || /\/lib\.(dom|es|scripthost|webworker)/.test(f)
+        }
+        for (const [s, nm] of [...classTypes]) {
+            let t = checker.getDeclaredTypeOfSymbol(s)
+            for (let i = 0; i < 6 && t; i++) {
+                const bases = (checker.getBaseTypes && t.isClassOrInterface?.()) ? checker.getBaseTypes(t) : (t.symbol && checker.getBaseTypes?.(checker.getDeclaredTypeOfSymbol(t.symbol)) || [])
+                const base = bases && bases[0]
+                if (!base || !base.symbol || classTypes.has(base.symbol) || isLibBase(base.symbol)) break
+                claims.set(base.symbol, claims.has(base.symbol) && claims.get(base.symbol) !== nm ? null : nm)
+                t = base
+            }
+        }
+        for (const [bs, nm] of claims) if (nm) classTypes.set(bs, nm)
+    }
+
     // For each class, register an abstract instance type in a dependency-FREE sink module
     // (`InstanceTypes`). Everything (shared records, other class files) references the sink
     // instead of the class file, so a `*Types.res` that mentions a class can't form a cycle
