@@ -14,8 +14,8 @@ external make: (
   ~thumbAlignment: RootSharedTypes.thumbAlignment=?,
   ~thumbCollisionBehavior: RootSharedTypes.thumbCollisionBehavior=?,
   ~value: 'a=?,
-  ~onValueChange: string=?,  // ⚪ loose — was `(value: Value extends number ? number : Value, eventDetails: SliderRootChangeEventDetails) => void`
-  ~onValueCommitted: string=?,  // ⚪ loose — was `(value: Value extends number ? number : Value, eventDetails: SliderRootCommitEventDetails) => void`
+  ~onValueChange: ('b, RootSharedTypes.sliderRootChangeEventDetails) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
+  ~onValueCommitted: ('c, RootSharedTypes.sliderRootCommitEventDetails) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~style: RootSharedTypes.sliderRootStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

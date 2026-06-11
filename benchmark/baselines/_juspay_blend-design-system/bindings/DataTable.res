@@ -24,7 +24,7 @@ external make: (
   ~columnFreeze: float=?,
   ~enableColumnManager: bool=?,
   ~enableColumnReordering: bool=?,
-  ~onColumnReorder: string=?,  // ⚪ loose — was `(columns: ColumnDefinition<T>[]) => void`
+  ~onColumnReorder: 'b => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~columnManagerMaxSelections: float=?,
   ~columnManagerAlwaysSelected: string=?,  // ⚪ loose — was `(keyof T)[]`
   ~columnManagerPrimaryAction: DataTableTypes.columnManagerPrimaryActionConfig=?,
@@ -48,7 +48,7 @@ external make: (
   ~onRowSave: (JSON.t, 'a) => unit=?,
   ~onRowCancel: JSON.t => unit=?,
   ~onRowClick: ('a, float) => unit=?,
-  ~onFieldChange: string=?,  // ⚪ loose — was `(rowId: unknown, fieldName: keyof T, value: unknown) => void`
+  ~onFieldChange: (JSON.t, 'c, JSON.t) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~enableRowExpansion: bool=?,
   ~renderExpandedRow: DataTableTypes.renderExpandedRowConfig<'a> => React.element=?,
   ~isRowExpandable: ('a, float) => bool=?,

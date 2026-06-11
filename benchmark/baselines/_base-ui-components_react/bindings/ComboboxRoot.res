@@ -34,5 +34,5 @@ external make: (
   ~onInputValueChange: (string, RootSharedTypes.changeEventDetails) => unit=?,
   ~onItemHighlighted: ('a, RootSharedTypes.highlightEventDetails) => unit=?,
   ~value: string=?,  // ⚪ loose — was `ComboboxValueType<Value, Multiple>`
-  ~onValueChange: string=?,  // ⚪ loose — was `(value: ComboboxValueType<Value, Multiple> | (Multiple extends true ? never : null), eventDetails: ChangeEvent`
+  ~onValueChange: ('c, RootSharedTypes.changeEventDetails) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
 ) => React.element = "Root"

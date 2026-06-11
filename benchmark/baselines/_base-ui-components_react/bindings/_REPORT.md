@@ -38,7 +38,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - AccordionRoot
 - AccordionTrigger
 - AlertDialogRoot
-- AutocompleteRoot  _(3 loose)_
+- AutocompleteRoot
 - AutocompleteValue
 - AvatarFallback
 - AvatarImage
@@ -66,7 +66,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - ComboboxItemIndicator
 - ComboboxList
 - ComboboxPortal
-- ComboboxRoot  _(3 loose)_
+- ComboboxRoot  _(2 loose)_
 - ComboboxRow
 - ComboboxStatus
 - ComboboxTrigger
@@ -179,7 +179,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - Separator
 - SliderControl
 - SliderIndicator
-- SliderRoot  _(3 loose)_
+- SliderRoot  _(1 loose)_
 - SliderThumb
 - SliderTrack
 - SliderValue
@@ -225,14 +225,7 @@ These resolved to a real but complex type and were widened to `string` (they com
 | `NumberFormatOptions` | `string` | 4 | format |
 | `ComboboxValueType<Value, Multiple>` | `string` | 2 | defaultValue, value |
 | `SelectValueType<Value, Multiple>` | `string` | 2 | defaultValue, value |
-| `(itemValue: Items[number]["items"][number], query: string, itemToString?: (itemValue: Items[number]["items"][number]) => string) => boolean` | `string` | 1 | filter |
-| `(highlightedValue: Items[number]["items"][number], eventDetails: HighlightEventDetails) => void` | `string` | 1 | onItemHighlighted |
-| `(itemValue: Items[number]["items"][number]) => string` | `string` | 1 | itemToStringValue |
-| `(value: ComboboxValueType<Value, Multiple> \| (Multiple extends true ? never : null), eventDetails: ChangeEventDetails) => void` | `string` | 1 | onValueChange |
 | `number \| Partial<{ xStart: number; xEnd: number; yStart: number; yEnd: number; }>` | `string` | 1 | overflowEdgeThreshold |
-| `(value: SelectValueType<Value, Multiple> \| (Multiple extends true ? never : null), eventDetails: SelectRootChangeEventDetails) => void` | `string` | 1 | onValueChange |
-| `(value: Value extends number ? number : Value, eventDetails: SliderRootChangeEventDetails) => void` | `string` | 1 | onValueChange |
-| `(value: Value extends number ? number : Value, eventDetails: SliderRootCommitEventDetails) => void` | `string` | 1 | onValueCommitted |
 
 ## 🔍 Needs review
 
@@ -307,7 +300,7 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 | `anchor` | `anchor?: Element \| null \| VirtualElement \| React.RefObject<Element \| null> \| (() => Element \| VirtualElement \| null);` |
 | `collisionBoundary` | `collisionBoundary?: Boundary;` |
 
-### SelectRoot  _(3 loose)_
+### SelectRoot  _(2 loose)_
 
 | Prop | Real TypeScript |
 |------|-----------------|

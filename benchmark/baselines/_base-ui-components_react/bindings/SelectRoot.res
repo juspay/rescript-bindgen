@@ -22,5 +22,5 @@ external make: (
   ~isItemEqualToValue: ('a, 'a) => bool=?,
   ~defaultValue: string=?,  // ⚪ loose — was `SelectValueType<Value, Multiple>`
   ~value: string=?,  // ⚪ loose — was `SelectValueType<Value, Multiple>`
-  ~onValueChange: string=?,  // ⚪ loose — was `(value: SelectValueType<Value, Multiple> | (Multiple extends true ? never : null), eventDetails: SelectRootCha`
+  ~onValueChange: ('c, RootSharedTypes.selectRootChangeEventDetails) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
 ) => React.element = "Root"
