@@ -2,7 +2,7 @@
 
 **1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**5** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**11** shared types deduplicated into **3** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -16,13 +16,15 @@
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- Focusable
+- Positioner  _(1 loose)_
 
 ## ⚪ Loosely typed (widened to `string`)
 
 These resolved to a real but complex type and were widened to `string` (they compile and work). Grouped by type so you can review each pattern once — confirm `string` is acceptable, or it may deserve a tighter mapping.
 
-_(none)_
+| Resolved TypeScript type | → emitted | count | example props |
+|--------------------------|-----------|-------|---------------|
+| `Tainted` | `string` | 1 | tainted |
 
 ## 🔍 Needs review
 

@@ -1,6 +1,6 @@
 # Binding report — `@smastrom/react-rating@1.5.0`
 
-**1** components · ✅ **0** usable · 🔍 **1** need review · 🛑 **0** broken
+**1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
 **9** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
@@ -16,7 +16,7 @@
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-_(none)_
+- Rating
 
 ## ⚪ Loosely typed (widened to `string`)
 
@@ -28,11 +28,7 @@ _(none)_
 
 A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object shapes), so an `@unboxed` variant won't work and we **refuse to use `%identity`/unsafe casts**. The prop is emitted as a `string` placeholder with an inline `// ⚠️ REVIEW` comment — bind it by hand or fix the type upstream.
 
-### Rating
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `onHoverChange` | `onHoverChange?: HoverChange;` |
+_(none)_
 
 ## 🛑 Broken — needs serious component change
 

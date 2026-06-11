@@ -13,5 +13,5 @@ external make: (
   ~remarkRehypeOptions: LibTypes.remarkRehypeOptionsConfig=?,
   ~skipHtml: Nullable.t<bool>=?,
   ~unwrapDisallowed: Nullable.t<bool>=?,
-  ~urlTransform: (string, string, 'c) => string=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
+  ~urlTransform: (string, string, 'e) => string=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
 ) => React.element = "default"

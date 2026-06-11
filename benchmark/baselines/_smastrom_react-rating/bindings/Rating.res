@@ -14,8 +14,7 @@ external make: (
   ~style: JsxDOM.style=?,
   ~halfFillMode: DistTypes.hF=?,
   ~onChange: float => 'a=?,
-  // ⚠️ REVIEW: `onHoverChange` is `HoverChange` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
-  ~onHoverChange: string=?,
+  ~onHoverChange: float => unit => unit=?,
   ~onBlur: option<'a> => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~onFocus: option<'b> => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~isDisabled: bool=?,

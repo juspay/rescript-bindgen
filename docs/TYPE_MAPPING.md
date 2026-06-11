@@ -308,11 +308,33 @@ becomes `JSON.t`, `keyof T` becomes `string`, and nested records carry the type 
 ---
 
 ## Opaque-module unions
-Fixtures: [`opaque-modules`](../test/golden/cases/opaque-modules), [`webapi`](../test/golden/cases/webapi), [`overload-intersection`](../test/golden/cases/overload-intersection)
+Fixtures: [`opaque-modules`](../test/golden/cases/opaque-modules), [`webapi`](../test/golden/cases/webapi), [`overload-intersection`](../test/golden/cases/overload-intersection), [`vendor-views`](../test/golden/cases/vendor-views)
 
 When a union can't be an `@unboxed` variant — **multiple object shapes**, or **object | array<object>**
 (abstract members that `typeof`/`Array.isArray` can't split into a recognized variant shape) — it
 becomes an opaque-type module: an abstract `t` plus zero-cost `%identity` `from*` constructors.
+
+Three member forms beyond plain `from*` constructors (#39):
+
+| Union member | Module arm |
+|---|---|
+| a string LITERAL (`'clipping-ancestors' \| Element \| Rect`) | a ready-made constant via a single-value polyvar cast — `external fromClippingAncestors: [#"clipping-ancestors"] => t` + `let clippingAncestors: t = …`. The polyvar admits exactly that one value (it IS the string at runtime), so no open string cast leaks in |
+| `null` / `void` in a **callback return** | `let none: t = fromUnit()` — `unit`'s runtime value IS `undefined` |
+| any member carrying an inner imperfection | the WHOLE module is rejected (deep `irHasImperfection` check) — no unflagged `=> string` fake can hide inside a view |
+
+**Return-position views (`<Prop>Target`).** A callback **return** union that can't be discriminated
+(`(closeType) => boolean \| HTMLElement \| null \| void`) becomes a construct-only views module —
+`FinalFocusTarget.fromBool / fromHTMLElement / none`. Returns are CONSUMER-produced, so construct-only
+is complete coverage in that direction (an explicit `\| null` is recovered from the syntactic return
+node, since strictNullChecks-off absorbs it). This unlocks the enclosing `@unboxed Bool \| Ref \| Fn`
+with an exact `Fn(interactionType => FinalFocusTarget.t)` arm.
+
+**Vendor-record trial.** A dependency-declared object type the library gate refuses (`@floating-ui`'s
+`Rect`/`VirtualElement` — small, stable, consumer-CONSTRUCTED shapes an opaque sink could not serve)
+gets one sandboxed extraction attempt with a fresh depth budget: accepted **only** if every field of
+every pulled entry is imperfection-free and the entry count stays bounded (≤8); anything less rolls
+back fully and keeps the honest flag (`Tainted` in the fixture proves the rejection path). Platform
+surfaces (lib.*, `@types`, `csstype`) never qualify.
 
 ```rescript
 module Preset = {

@@ -4,8 +4,8 @@
   "warnings": 0,
   "buckets": {
     "total": 1,
-    "usable": 0,
-    "review": 1,
+    "usable": 1,
+    "review": 0,
     "broken": 0,
     "loose": 0
   },

@@ -407,19 +407,19 @@ type floatingRootStoreContext = {
   triggerElements: PopupsTypes.popupTriggerMap,
 }
 type useSyncedValuesConfig2 = {
-  @as("open") open_?: bool,
-  domReferenceElement?: Dom.element,
-  referenceElement?: Dom.element,
-  floatingElement?: Dom.element,
-  positionReference?: Dom.element,
+  @as("open") open_?: string,
+  domReferenceElement?: string,
+  referenceElement?: string,
+  floatingElement?: string,
+  positionReference?: string,
   floatingId?: string,
 }
 type setStateConfig = {
-  @as("open") open_: bool,
-  domReferenceElement: Dom.element,
-  referenceElement: Dom.element,
-  floatingElement: Dom.element,
-  positionReference: Dom.element,
+  @as("open") open_: string,
+  domReferenceElement: string,
+  referenceElement: string,
+  floatingElement: string,
+  positionReference: string,
   floatingId: string,
 }
 type floatingRootStore = {
@@ -1208,7 +1208,7 @@ type toastManagerPositionerProps = {
   sideOffset?: PositionerSharedTypes.sideOffsetConfigSideOffset,
   align?: PositionerSharedTypes.align,
   alignOffset?: PositionerSharedTypes.sideOffsetConfigAlignOffset,
-  collisionBoundary?: string,
+  collisionBoundary?: DistTypes.Boundary.t,
   collisionPadding?: string,
   arrowPadding?: float,
   disableAnchorTracking?: bool,
