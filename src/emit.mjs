@@ -631,6 +631,15 @@ function renderOpaque(t, lines, cfg) {
     }
     const titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1)
     const pascalName = (s) => String(s).replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('')
+    // camel ident for a literal-arm constant ('clippingAncestors' -> clippingAncestors,
+    // 'trap-focus' -> trapFocus); digit-led/reserved names get guarded. (#39)
+    const lowerIdent = (s) => {
+        const p = pascalName(s)
+        let n = p.charAt(0).toLowerCase() + p.slice(1)
+        if (!/^[a-z]/.test(n)) n = 'v' + n
+        if (/^(type|and|as|open|let|rec|in|switch|if|else|to|of|external|module)$/.test(n)) n += '_'
+        return n
+    }
     const fromName = (m) => m.name
         ? 'from' + pascalName(m.name) // explicit hint: Element -> fromElement, Files -> fromFiles
         : 'from' + titleCase(m.type.kind === 'typeRef' ? m.type.to.replace(/\.t$/, '') : (m.type.res || m.type.kind || 'value'))
@@ -638,6 +647,25 @@ function renderOpaque(t, lines, cfg) {
     lines.push(`  type t`)
     const seen = new Set()
     for (const m of t.members) {
+        // A string-LITERAL arm -> a ready-made constant: the polyvar `#"x"` admits exactly
+        // that one value and compiles to the bare string, so nothing else can be cast in. (#39)
+        if (m.literal !== undefined) {
+            const constName = lowerIdent(m.literal)
+            if (seen.has(constName)) continue
+            seen.add(constName)
+            lines.push(`  external from${pascalName(m.literal)}: [#"${m.literal}"] => t = "%identity"`)
+            lines.push(`  let ${constName}: t = from${pascalName(m.literal)}(#"${m.literal}")`)
+            continue
+        }
+        // The null/void arm of a consumer-produced return: unit's runtime value IS
+        // `undefined`, which is exactly what a `void` return is. (#39)
+        if (m.none) {
+            if (seen.has('none')) continue
+            seen.add('none')
+            lines.push(`  external fromUnit: unit => t = "%identity"`)
+            lines.push(`  let none: t = fromUnit()`)
+            continue
+        }
         const fn = fromName(m)
         if (seen.has(fn)) continue
         seen.add(fn)

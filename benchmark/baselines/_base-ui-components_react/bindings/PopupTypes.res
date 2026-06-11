@@ -38,6 +38,15 @@ type tooltipPopupState = {
   instant: RootSharedTypes.instantType3,
   transitionStatus: PositionerSharedTypes.transitionStatus,
 }
+module InitialFocusTarget = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external fromHTMLElement: Dom.element => t = "%identity"
+  external fromUnit: unit => t = "%identity"
+  let none: t = fromUnit()
+}
+@unboxed type initialFocus = Bool(bool) | Ref(React.ref<Nullable.t<Dom.element>>) | Fn(PositionerSharedTypes.interactionType => InitialFocusTarget.t)
+@unboxed type finalFocus = Bool(bool) | Ref(React.ref<Nullable.t<Dom.element>>) | Fn(PositionerSharedTypes.interactionType => InitialFocusTarget.t)
 @unboxed type comboboxPopupStyle = Style(JsxDOM.style) | Fn(comboboxPopupState => JsxDOM.style)
 @unboxed type comboboxPopupClassName = Str(string) | Fn(comboboxPopupState => string)
 @unboxed type dialogPopupStyle = Style(JsxDOM.style) | Fn(dialogPopupState => JsxDOM.style)

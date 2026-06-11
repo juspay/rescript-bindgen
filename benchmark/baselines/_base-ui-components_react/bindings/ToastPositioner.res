@@ -62,8 +62,7 @@ external make: (
   ~sideOffset: PositionerSharedTypes.sideOffsetConfigSideOffset=?,
   ~align: PositionerSharedTypes.align=?,
   ~alignOffset: PositionerSharedTypes.sideOffsetConfigAlignOffset=?,
-  // ⚠️ REVIEW: `collisionBoundary` is `Boundary` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
-  ~collisionBoundary: string=?,
+  ~collisionBoundary: DistTypes.Boundary.t=?,  // ⓘ was `Boundary` — opaque; build with Boundary.fromElement / Boundary.clippingAncestors / Boundary.fromElements / Boundary.fromType
   ~collisionPadding: string=?,  // ⚪ loose — was `Padding`
   ~arrowPadding: float=?,
   ~disableAnchorTracking: bool=?,

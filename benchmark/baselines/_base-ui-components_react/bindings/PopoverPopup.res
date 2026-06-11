@@ -3,10 +3,8 @@ external renderFn: ((PositionerSharedTypes.htmlProps, PopupTypes.popoverPopupSta
 
 @module("@base-ui-components/react") @scope("Popover") @react.component
 external make: (
-  // ⚠️ REVIEW: `initialFocus` is `boolean | RefObject<HTMLElement> | ((openType: InteractionType) => boolean | void | HTMLElement)` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
-  ~initialFocus: string=?,
-  // ⚠️ REVIEW: `finalFocus` is `boolean | RefObject<HTMLElement> | ((closeType: InteractionType) => boolean | void | HTMLElement)` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
-  ~finalFocus: string=?,
+  ~initialFocus: PopupTypes.initialFocus=?,
+  ~finalFocus: PopupTypes.finalFocus=?,
   ~style: PopupTypes.popoverPopupStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

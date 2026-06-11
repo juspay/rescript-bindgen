@@ -9725,13 +9725,6 @@ module SeriesOptionsType = {
   external fromSeriesXrangeOptions: seriesXrangeOptions => t = "%identity"
   external fromSeriesZigzagOptions: seriesZigzagOptions => t = "%identity"
 }
-module PointOptionsType = {
-  type t
-  external fromString: string => t = "%identity"
-  external fromNumber: float => t = "%identity"
-  external fromArray: array<string> => t = "%identity"
-  external fromPointOptionsObject: pointOptionsObject => t = "%identity"
-}
 type svgAttributes = {
   d?: CommonTypes.stringOrValueArray,
   dx?: float,
@@ -9897,7 +9890,7 @@ and series = {
   visible: bool,
   xAxis: axis,
   yAxis: axis,
-  addPoint: (PointOptionsType.t, option<bool>, option<bool>, option<string>, option<bool>) => unit,
+  addPoint: (string, option<bool>, option<bool>, option<string>, option<bool>) => unit,
   animate: option<bool> => unit,
   drawPoints: unit => unit,
   getName: unit => string,
@@ -9913,7 +9906,7 @@ and series = {
   render: unit => unit,
   searchPoint: (Dom.event, option<bool>) => point,
   select: option<bool> => unit,
-  setData: (array<PointOptionsType.t>, option<bool>, option<string>, option<bool>) => unit,
+  setData: (array<string>, option<bool>, option<string>, option<bool>) => unit,
   setState: (option<setState>, option<bool>) => unit,
   setVisible: (option<bool>, option<bool>) => unit,
   show: unit => unit,
