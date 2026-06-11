@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.collapsibleRootState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("Collapsible") @react.component
 external make: (
   @as("open") ~open_: bool=?,
@@ -54,5 +57,5 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: RootSharedTypes.collapsibleRootClassName=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Root"

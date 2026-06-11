@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, ItemTypes.accordionItemState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("Accordion") @react.component
 external make: (
   ~nativeButton: bool=?,
@@ -61,5 +64,5 @@ external make: (
   ~name: string=?,
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~className: ItemTypes.accordionItemClassName=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Trigger"

@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, TriggerTypes.selectTriggerState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
   ~children: React.element=?,
@@ -61,5 +64,5 @@ external make: (
   ~name: string=?,
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~className: TriggerTypes.selectTriggerClassName=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Trigger"

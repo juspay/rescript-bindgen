@@ -4,6 +4,12 @@ type accordionType =
 type accordionChevronPosition =
   | @as("left") Left
   | @as("right") Right
+type slotRenderProps = {
+  isExpanded: bool,
+  toggle: unit => unit,
+  value: string,
+  isDisabled: bool,
+}
 type gapConfig = {
   border: string,
   noBorder: string,

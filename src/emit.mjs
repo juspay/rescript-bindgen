@@ -239,6 +239,18 @@ export function emit(ir, options = {}) {
     //      shared spread; JSX call sites are unchanged (JSX v4 lowers to make/props).
     //    labeled args (default): the classic `@react.component external make: (~p: t=?, …)`.
     const recordProps = !!(ir.attrsBase && ir.attrsBase.ref)
+    // Render-prop FUNCTION-form wrappers (#46): the prop itself binds as `React.element`
+    // (an @unboxed `Element | Fn` cannot compile — React.element is abstract), so the
+    // function form gets a zero-cost `<prop>Fn` %identity wrapper, typed with the EXACT
+    // extracted signature (imperfect params already salvaged to type variables upstream).
+    for (const p of ir.props) {
+        const fn = p.type && p.type.renderFn
+        if (!fn) continue
+        const sig = renderType({ ...fn, kind: 'callback' }, p.name, cfg)
+        lines.push(`/** zero-cost wrapper: pass the FUNCTION form of \`${p.name}\` — \`${p.name}={${p.name}Fn((…) => …)}\` */`)
+        lines.push(`external ${p.name}Fn: (${sig}) => React.element = "%identity"`)
+        lines.push('')
+    }
     if (ir.import.isDefault) lines.push(defaultExportNote(ir.import.name))
     // A namespace member binds THROUGH the namespace object — `@scope("Accordion") = "Root"`
     // — because the flat export may be type-only (undefined at runtime, base-ui). (#25)

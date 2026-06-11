@@ -1,6 +1,12 @@
+/** zero-cost wrapper: pass the FUNCTION form of `children` — `children={childrenFn((…) => …)}` */
+external childrenFn: (('a, float) => React.element) => React.element = "%identity"
+
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, ListTypes.comboboxListState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("Autocomplete") @react.component
 external make: (
-  ~children: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~children: React.element=?,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
   ~className: ListTypes.comboboxListClassName=?,
   ~style: ListTypes.comboboxListStyle=?,
   ~title: string=?,
@@ -50,5 +56,5 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "List"

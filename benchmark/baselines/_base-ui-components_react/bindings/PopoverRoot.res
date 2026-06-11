@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `children` — `children={childrenFn((…) => …)}` */
+external childrenFn: (PopupsTypes.childrenConfig<'a> => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("Popover") @react.component
 external make: (
   ~defaultOpen: bool=?,
@@ -9,5 +12,5 @@ external make: (
   ~triggerId: Nullable.t<string>=?,
   ~defaultTriggerId: Nullable.t<string>=?,
   ~handle: RootSharedTypes.popoverHandle<'a>=?,
-  ~children: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~children: React.element=?,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
 ) => React.element = "Root"

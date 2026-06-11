@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, PositionerSharedTypes.toastPositionerState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("Toast") @react.component
 external make: (
   ~anchor: Dom.element=?,
@@ -53,7 +56,7 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: PositionerSharedTypes.toastPositionerClassName=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
   ~sticky: bool=?,
   ~positionMethod: PositionerSharedTypes.positionMethod=?,
   ~sideOffset: PositionerSharedTypes.sideOffsetConfigSideOffset=?,

@@ -13,9 +13,14 @@ in CI — treat it as a contract, not just docs.
 ## Hard rules (the contract)
 
 - **No unsafe casts.** Never emit `Obj.magic`, `@unwrap`, or a bare `%identity`. The only allowed
-  `%identity` is the zero-cost `external from*` constructor **or `as*` accessor** of an opaque-type
-  module (the value passes through unchanged) — used as the fidelity fallback when an exact type or
-  `@unboxed` variant can't express the shape (e.g. reverse `as*` views of an overloaded function).
+  `%identity` forms are (a) the zero-cost `external from*` constructor **or `as*` accessor** of an
+  opaque-type module (the value passes through unchanged) — used as the fidelity fallback when an
+  exact type or `@unboxed` variant can't express the shape (e.g. reverse `as*` views of an
+  overloaded function) — and (b) the `<prop>Fn` render-prop wrapper
+  (`((props, state) => React.element) => React.element`, #46): the function form of a render prop,
+  precisely typed from the extracted signature; needed because `React.element` is abstract so an
+  `@unboxed Element | Fn` cannot compile. Both are enforced by the golden suite's
+  `checkNoStrayIdentity`.
 - **Flag, don't fake.** If a type can't be modelled exactly, emit a `string` placeholder + comment
   and bucket it (⚪ loose / 🔍 review / 🛑 broken). Never emit a plausible-but-wrong type.
 - **Multi-type props** → `@unboxed` untagged variant (distinct runtime tags) or an opaque module.

@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, IndicatorTypes.tabsIndicatorState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("Tabs") @react.component
 external make: (
   ~renderBeforeHydration: bool=?,
@@ -51,5 +54,5 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: IndicatorTypes.tabsIndicatorClassName=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Indicator"

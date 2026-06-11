@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, PanelTypes.accordionPanelState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("Accordion") @react.component
 external make: (
   ~style: PanelTypes.accordionPanelStyle=?,
@@ -50,7 +53,7 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: PanelTypes.accordionPanelClassName=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
   ~hiddenUntilFound: bool=?,
   ~keepMounted: bool=?,
 ) => React.element = "Panel"
