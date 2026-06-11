@@ -38,8 +38,7 @@
 @module("@juspay/blend-design-system") external getProgressBarTokens: (TokensTypes.foundationTokenType) => ProgressBarTypes.responsiveProgressBarTokens = "getProgressBarTokens"
 @module("@juspay/blend-design-system") external getStepperTokens: (TokensTypes.foundationTokenType) => StepperTypes.responsiveStepperTokens = "getStepperTokens"
 @module("@juspay/blend-design-system") external getSkeletonState: (bool) => ButtonSkeletonTypes.valueConfig4 = "getSkeletonState"
-// ⚪ loose: `mergeSkeletonProps` has a param/return widened to `string`.
-@module("@juspay/blend-design-system") external mergeSkeletonProps: ('a, ~skeletonProps: string=?, unit) => string = "mergeSkeletonProps"
+@module("@juspay/blend-design-system") external mergeSkeletonProps: ('a, ~skeletonProps: JSON.t=?, unit) => JSON.t = "mergeSkeletonProps"
 // ⚪ loose: `getSkeletonDefaults` has a param/return widened to `string`.
 @module("@juspay/blend-design-system") external getSkeletonDefaults: ('a, Dict.t<string>) => 'a = "getSkeletonDefaults"
 @module("@juspay/blend-design-system") external getSkeletonTokens: (TokensTypes.foundationTokenType) => ButtonSkeletonTypes.responsiveSkeletonTokens = "getSkeletonTokens"

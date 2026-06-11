@@ -19,6 +19,12 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   the sync-or-async value shape `T | Promise<T>` → `promise<t>` (#24).
 
 ### Fixed
+- **Unflagged param fakes inside `@unboxed` Fn members** (#41, shipped since #22):
+  a fn param that failed to classify silently rendered as `string` inside shared
+  variants. Three-rung most-specific-type ladder now: `{}` empty states ->
+  `JSON.t`; `File`/`FileList`/`FormData` without rescript-webapi -> abstract
+  `WebTypes` sink types (full `Webapi.*` still preferred when installed);
+  anything else unnameable -> a fresh type variable (`Fn('x => …)`).
 - **base-ui review remainders** (#39): `boolean | RefObject | fn` focus props ->
   `@unboxed Bool | Ref | Fn`; `HTMLElement | ShadowRoot | RefObject` containers ->
   opaque modules with `from*` views (`ShadowRoot` -> `Dom.shadowRoot`);

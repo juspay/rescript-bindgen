@@ -57,6 +57,9 @@ function detectDeps(startDir) {
 function collectWebapiFallbacks(t, out) {
     if (!t || typeof t !== 'object') return
     if (t.kind === 'opaque' && (t.text === 'File' || t.text === 'FileList')) out.add(t.text)
+    // Since #41 the module-mode webapi-off fallback is a WebTypes sink ref, not an
+    // opaque — count those too so the "install rescript-webapi?" upsell still fires.
+    if (t.kind === 'classRef' && t.home === 'WebTypes' && (t.to === 'file' || t.to === 'fileList')) out.add(t.to === 'file' ? 'File' : 'FileList')
     for (const k of ['of', 'ret', 'arg']) if (t[k]) collectWebapiFallbacks(t[k], out)
     if (Array.isArray(t.params)) for (const p of t.params) collectWebapiFallbacks(p, out)
 }
