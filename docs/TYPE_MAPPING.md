@@ -230,7 +230,11 @@ Fixture: [`records`](../test/golden/cases/records)
 | `interface X extends HTMLAttributes<…>` | `type … = { ...JsxDOM.domProps, <own fields> }` |
 
 In module mode these live in per-domain `*Types.res` modules, deduplicated by type identity and
-referenced qualified (`MenuTypes.menuItemType`); cyclic groups merge via SCC.
+referenced qualified (`MenuTypes.menuItemType`); cyclic groups merge via SCC into one module
+named after the SCC's **largest member** + `SharedTypes` (e.g. `PositionerSharedTypes`) — NOT every
+member concatenated. This keeps merged-module names short and, crucially, **stable**: adding or
+removing a small domain from the cycle doesn't rename the module, so consumers' qualified references
+(`PositionerSharedTypes.foo`) survive a regeneration. (#35)
 
 **Deep-record healing.** A record first reached at the `MAX_DEPTH` boundary registers, but its
 fields (one level deeper) overflow the budget and all come back opaque — an all-`string` "ghost"

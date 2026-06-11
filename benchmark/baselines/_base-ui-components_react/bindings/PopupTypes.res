@@ -1,42 +1,42 @@
 type comboboxPopupState = {
   @as("open") open_: bool,
-  side: PositionerTabUtilsTypes.side,
-  align: PositionerTabUtilsTypes.align,
+  side: PositionerSharedTypes.side,
+  align: PositionerSharedTypes.align,
   anchorHidden: bool,
-  transitionStatus: PositionerTabUtilsTypes.transitionStatus,
+  transitionStatus: PositionerSharedTypes.transitionStatus,
   empty: bool,
 }
 type dialogPopupState = {
   @as("open") open_: bool,
-  transitionStatus: PositionerTabUtilsTypes.transitionStatus,
+  transitionStatus: PositionerSharedTypes.transitionStatus,
   nested: bool,
   nestedDialogOpen: bool,
 }
 type menuPopupState = {
-  transitionStatus: PositionerTabUtilsTypes.transitionStatus,
-  side: PositionerTabUtilsTypes.side,
-  align: PositionerTabUtilsTypes.align,
+  transitionStatus: PositionerSharedTypes.transitionStatus,
+  side: PositionerSharedTypes.side,
+  align: PositionerSharedTypes.align,
   @as("open") open_: bool,
   nested: bool,
 }
 type popoverPopupState = {
   @as("open") open_: bool,
-  side: PositionerTabUtilsTypes.side,
-  align: PositionerTabUtilsTypes.align,
-  transitionStatus: PositionerTabUtilsTypes.transitionStatus,
+  side: PositionerSharedTypes.side,
+  align: PositionerSharedTypes.align,
+  transitionStatus: PositionerSharedTypes.transitionStatus,
 }
 type selectPopupState = {
-  side: PositionerTabUtilsTypes.side4,
-  align: PositionerTabUtilsTypes.align,
+  side: PositionerSharedTypes.side4,
+  align: PositionerSharedTypes.align,
   @as("open") open_: bool,
-  transitionStatus: PositionerTabUtilsTypes.transitionStatus,
+  transitionStatus: PositionerSharedTypes.transitionStatus,
 }
 type tooltipPopupState = {
   @as("open") open_: bool,
-  side: PositionerTabUtilsTypes.side,
-  align: PositionerTabUtilsTypes.align,
-  instant: ComponentsMenubarRootStoreToastTypes.instantType3,
-  transitionStatus: PositionerTabUtilsTypes.transitionStatus,
+  side: PositionerSharedTypes.side,
+  align: PositionerSharedTypes.align,
+  instant: RootSharedTypes.instantType3,
+  transitionStatus: PositionerSharedTypes.transitionStatus,
 }
 @unboxed type comboboxPopupStyle = Style(JsxDOM.style) | Fn(comboboxPopupState => JsxDOM.style)
 @unboxed type comboboxPopupClassName = Str(string) | Fn(comboboxPopupState => string)

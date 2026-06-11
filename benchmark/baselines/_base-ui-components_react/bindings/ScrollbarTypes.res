@@ -1,7 +1,7 @@
 type scrollAreaScrollbarState = {
   hovering: bool,
   scrolling: bool,
-  orientation: ComponentsMenubarRootStoreToastTypes.orientation2,
+  orientation: RootSharedTypes.orientation2,
   hasOverflowX: bool,
   hasOverflowY: bool,
   overflowXStart: bool,

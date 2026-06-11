@@ -1,6 +1,6 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
-  ~variant: ButtonSkeletonTypes.skeletonVariant=?,
+  ~variant: ButtonSharedTypes.skeletonVariant=?,
   ~loading: bool=?,
   @as("data-testid") ~dataTestid: string=?,
   ~style: JsxDOM.style=?,

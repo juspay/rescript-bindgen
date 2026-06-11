@@ -32,7 +32,7 @@ type chevronConfig = {
   color: string,
 }
 type itemConfig5 = {
-  padding: ButtonSkeletonTypes.defaultConfig3,
+  padding: ButtonSharedTypes.defaultConfig3,
   gap: string,
   borderRadius: string,
   fontWeight: string,

@@ -1,6 +1,6 @@
 type comboboxInputState = {
   @as("open") open_: bool,
-  popupSide: PositionerTabUtilsTypes.side,
+  popupSide: PositionerSharedTypes.side,
   listEmpty: bool,
   readOnly: bool,
   disabled: bool,

@@ -1,6 +1,6 @@
 type props = {
   ...HtmlAttrs.buttonHTMLAttributes,
-  day: CjsClassesDateFnsLocaleTypesTypes.calendarDay2,
+  day: LocaleSharedTypes.calendarDay2,
   modifiers: Dict.t<bool>,
 }
 

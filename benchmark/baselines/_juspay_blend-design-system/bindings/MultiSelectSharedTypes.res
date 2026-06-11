@@ -65,7 +65,7 @@ type selectMenuGroupType = {
 type singleSelectSkeletonProps = {
   count?: int,
   show?: bool,
-  variant?: ButtonSkeletonTypes.skeletonVariant,
+  variant?: ButtonSharedTypes.skeletonVariant,
 }
 type singleSelectProps = {
   label?: string,
@@ -111,7 +111,7 @@ type singleSelectProps = {
   minTriggerWidth?: float,
   allowCustomValue?: bool,
   customValueLabel?: string,
-  singleSelectGroupPosition?: ButtonSkeletonTypes.buttonGroupPosition,
+  singleSelectGroupPosition?: ButtonSharedTypes.buttonGroupPosition,
   allowDeselect?: bool,
 }
 type rec multiSelectMenuItemType = {
@@ -257,8 +257,8 @@ type responsiveMultiSelectTokens = {
   lg: multiSelectTokensType,
 }
 type smConfig10 = {
-  container: ButtonSkeletonTypes.defaultConfig3,
-  @as("no-container") noContainer: ButtonSkeletonTypes.defaultConfig3,
+  container: ButtonSharedTypes.defaultConfig3,
+  @as("no-container") noContainer: ButtonSharedTypes.defaultConfig3,
 }
 type paddingConfig12 = {
   sm: smConfig10,

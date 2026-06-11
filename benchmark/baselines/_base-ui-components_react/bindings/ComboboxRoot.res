@@ -11,14 +11,14 @@ external make: (
   ~modal: bool=?,
   ~defaultOpen: bool=?,
   ~onOpenChangeComplete: bool => unit=?,
-  ~items: PositionerTabUtilsTypes.htmlProps=?,
+  ~items: PositionerSharedTypes.htmlProps=?,
   ~required: bool=?,
   ~readOnly: bool=?,
   ~openOnInputClick: bool=?,
   ~inputValue: CommonTypes.stringOrNumberOrStringArray=?,
   ~defaultInputValue: CommonTypes.stringOrNumberOrStringArray=?,
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
-  ~filteredItems: PositionerTabUtilsTypes.htmlProps=?,
+  ~filteredItems: PositionerSharedTypes.htmlProps=?,
   ~virtualized: bool=?,
   ~limit: float=?,
   ~locale: string=?,  // ⓘ Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled
@@ -30,9 +30,9 @@ external make: (
   ~isItemEqualToValue: ('a, 'a) => bool=?,
   ~defaultValue: string=?,  // ⚪ loose — was `ComboboxValueType<Value, Multiple>`
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
-  ~onOpenChange: (bool, ComponentsMenubarRootStoreToastTypes.changeEventDetails) => unit=?,
-  ~onInputValueChange: (string, ComponentsMenubarRootStoreToastTypes.changeEventDetails) => unit=?,
-  ~onItemHighlighted: ('a, ComponentsMenubarRootStoreToastTypes.highlightEventDetails) => unit=?,
+  ~onOpenChange: (bool, RootSharedTypes.changeEventDetails) => unit=?,
+  ~onInputValueChange: (string, RootSharedTypes.changeEventDetails) => unit=?,
+  ~onItemHighlighted: ('a, RootSharedTypes.highlightEventDetails) => unit=?,
   ~value: string=?,  // ⚪ loose — was `ComboboxValueType<Value, Multiple>`
   ~onValueChange: string=?,  // ⚪ loose — was `(value: ComboboxValueType<Value, Multiple> | (Multiple extends true ? never : null), eventDetails: ChangeEvent`
 ) => React.element = "Root"

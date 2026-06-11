@@ -96,7 +96,7 @@ type noDataProps = {
   title?: string,
   subtitle?: string,
   slot?: React.element,
-  button?: ButtonSkeletonTypes.buttonProps,
+  button?: ButtonSharedTypes.buttonProps,
 }
 type legendsConfig = {
   title: string,

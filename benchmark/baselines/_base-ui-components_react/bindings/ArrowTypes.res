@@ -1,18 +1,18 @@
 type comboboxArrowState = {
   @as("open") open_: bool,
-  side: PositionerTabUtilsTypes.side,
-  align: PositionerTabUtilsTypes.align,
+  side: PositionerSharedTypes.side,
+  align: PositionerSharedTypes.align,
   uncentered: bool,
 }
 type selectArrowState = {
   @as("open") open_: bool,
-  side: PositionerTabUtilsTypes.side4,
-  align: PositionerTabUtilsTypes.align,
+  side: PositionerSharedTypes.side4,
+  align: PositionerSharedTypes.align,
   uncentered: bool,
 }
 type toastArrowState = {
-  side: PositionerTabUtilsTypes.side,
-  align: PositionerTabUtilsTypes.align,
+  side: PositionerSharedTypes.side,
+  align: PositionerSharedTypes.align,
   uncentered: bool,
 }
 @unboxed type comboboxArrowStyle = Style(JsxDOM.style) | Fn(comboboxArrowState => JsxDOM.style)

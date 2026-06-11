@@ -1,20 +1,20 @@
 type accordionPanelState = {
-  transitionStatus: PositionerTabUtilsTypes.transitionStatus,
+  transitionStatus: PositionerSharedTypes.transitionStatus,
   index: int,
   @as("open") open_: bool,
   value: array<string>,
   disabled: bool,
-  orientation: PositionerTabUtilsTypes.orientation,
+  orientation: PositionerSharedTypes.orientation,
 }
 type collapsiblePanelState = {
-  transitionStatus: PositionerTabUtilsTypes.transitionStatus,
+  transitionStatus: PositionerSharedTypes.transitionStatus,
   disabled: bool,
   @as("open") open_: bool,
 }
 type tabsPanelState = {
   hidden: bool,
-  orientation: PositionerTabUtilsTypes.orientation,
-  tabActivationDirection: PositionerTabUtilsTypes.tabsTabActivationDirection,
+  orientation: PositionerSharedTypes.orientation,
+  tabActivationDirection: PositionerSharedTypes.tabsTabActivationDirection,
 }
 @unboxed type accordionPanelStyle = Style(JsxDOM.style) | Fn(accordionPanelState => JsxDOM.style)
 @unboxed type accordionPanelClassName = Str(string) | Fn(accordionPanelState => string)

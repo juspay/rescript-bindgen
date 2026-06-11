@@ -3,7 +3,7 @@ type accordionItemState = {
   @as("open") open_: bool,
   value: array<string>,
   disabled: bool,
-  orientation: PositionerTabUtilsTypes.orientation,
+  orientation: PositionerSharedTypes.orientation,
 }
 type comboboxItemState = {
   disabled: bool,

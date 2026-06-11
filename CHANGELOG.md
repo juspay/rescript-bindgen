@@ -18,6 +18,13 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - **`Promise<T>` → `promise<t>`** (incl. `Promise<void>` → `promise<unit>`), and
   the sync-or-async value shape `T | Promise<T>` → `promise<t>` (#24).
 
+### Changed
+- **SCC-merged shared modules are named after their largest member** (#35,
+  probe I-9): a cyclic type group now becomes e.g. `PositionerSharedTypes`
+  instead of the 40-char `ComponentsMenubarRootStoreToastTypes` (every member
+  concatenated). Shorter, and STABLE — adding/removing a small domain to the
+  cycle no longer renames the module and breaks consumers' qualified refs.
+
 ### Fixed
 - **Degraded all-string ghost records healed** (#33, probe I-4): a record first
   reached at the MAX_DEPTH boundary registered but had its fields built past the

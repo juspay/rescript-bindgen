@@ -15,7 +15,7 @@ type gapConfig4 = {
 }
 type valueConfig5 = {
   color: string,
-  fontSize: ButtonSkeletonTypes.slotMaxHeightConfig,
+  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
   fontWeight: string,
   gap: string,
 }

@@ -1,5 +1,5 @@
 type checkboxIndicatorState = {
-  transitionStatus: PositionerTabUtilsTypes.transitionStatus,
+  transitionStatus: PositionerSharedTypes.transitionStatus,
   checked: bool,
   disabled: bool,
   readOnly: bool,
@@ -13,13 +13,13 @@ type checkboxIndicatorState = {
 }
 type radioIndicatorState = {
   checked: bool,
-  transitionStatus: PositionerTabUtilsTypes.transitionStatus,
+  transitionStatus: PositionerSharedTypes.transitionStatus,
 }
 type tabsIndicatorState = {
-  activeTabPosition: PositionerTabUtilsTypes.tabsTabPosition,
-  activeTabSize: PositionerTabUtilsTypes.anchorConfig,
-  orientation: PositionerTabUtilsTypes.orientation,
-  tabActivationDirection: PositionerTabUtilsTypes.tabsTabActivationDirection,
+  activeTabPosition: PositionerSharedTypes.tabsTabPosition,
+  activeTabSize: PositionerSharedTypes.anchorConfig,
+  orientation: PositionerSharedTypes.orientation,
+  tabActivationDirection: PositionerSharedTypes.tabsTabActivationDirection,
 }
 @unboxed type checkboxIndicatorStyle = Style(JsxDOM.style) | Fn(checkboxIndicatorState => JsxDOM.style)
 @unboxed type checkboxIndicatorClassName = Str(string) | Fn(checkboxIndicatorState => string)

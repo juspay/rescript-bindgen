@@ -1,8 +1,8 @@
 @module("@base-ui-components/react") @scope("AlertDialog") @react.component
 external make: (
-  ~onOpenChange: (bool, ComponentsMenubarRootStoreToastTypes.alertDialogRootChangeEventDetails) => unit=?,
+  ~onOpenChange: (bool, RootSharedTypes.alertDialogRootChangeEventDetails) => unit=?,
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
-  ~handle: ComponentsMenubarRootStoreToastTypes.dialogHandle<'a>=?,
+  ~handle: RootSharedTypes.dialogHandle<'a>=?,
   ~children: React.element=?,
   @as("open") ~open_: bool=?,
   ~defaultOpen: bool=?,

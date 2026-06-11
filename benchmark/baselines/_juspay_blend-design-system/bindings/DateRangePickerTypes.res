@@ -96,9 +96,9 @@ type borderRadiusConfig6 = {
   bottomRight: string,
 }
 type paddingConfig7 = {
-  sm: ButtonSkeletonTypes.defaultConfig3,
-  lg: ButtonSkeletonTypes.defaultConfig3,
-  md: ButtonSkeletonTypes.defaultConfig3,
+  sm: ButtonSharedTypes.defaultConfig3,
+  lg: ButtonSharedTypes.defaultConfig3,
+  md: ButtonSharedTypes.defaultConfig3,
 }
 type disabledConfig = {
   left: string,
@@ -185,7 +185,7 @@ type weekConfig = {
   fontWeight: string,
   boxShadow: string,
   color: string,
-  padding: ButtonSkeletonTypes.defaultConfig3,
+  padding: ButtonSharedTypes.defaultConfig3,
   row: rowConfig,
 }
 type cellConfig = {

@@ -11,7 +11,7 @@ external make: (
   ~name: string=?,
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~modal: bool=?,
-  ~onOpenChange: (bool, ComponentsMenubarRootStoreToastTypes.changeEventDetails) => unit=?,
+  ~onOpenChange: (bool, RootSharedTypes.changeEventDetails) => unit=?,
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
   ~defaultOpen: bool=?,
   ~onOpenChangeComplete: bool => unit=?,
@@ -23,13 +23,13 @@ external make: (
   ~highlightItemOnHover: bool=?,
   ~onItemHighlighted: string=?,  // ⚪ loose — was `(highlightedValue: Items[number]["items"][number], eventDetails: HighlightEventDetails) => void`
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
-  ~filteredItems: PositionerTabUtilsTypes.htmlProps=?,
+  ~filteredItems: PositionerSharedTypes.htmlProps=?,
   ~itemToStringValue: string=?,  // ⚪ loose — was `(itemValue: Items[number]["items"][number]) => string`
   ~virtualized: bool=?,
   ~limit: float=?,
   ~locale: string=?,  // ⓘ Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled
   ~submitOnItemClick: bool=?,
-  ~mode: ComponentsMenubarRootStoreToastTypes.mode=?,
-  ~onValueChange: (string, ComponentsMenubarRootStoreToastTypes.changeEventDetails) => unit=?,
+  ~mode: RootSharedTypes.mode=?,
+  ~onValueChange: (string, RootSharedTypes.changeEventDetails) => unit=?,
   ~items: 'a,
 ) => React.element = "Root"

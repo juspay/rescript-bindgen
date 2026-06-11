@@ -1,3 +1,3 @@
 type menuSubmenuRootContext = {
-  parentMenu: ComponentsMenubarRootStoreToastTypes.menuStore,
+  parentMenu: RootSharedTypes.menuStore,
 }

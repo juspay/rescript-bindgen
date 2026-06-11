@@ -1,5 +1,5 @@
 type fieldValidityState = {
-  validity: ComponentsMenubarRootStoreToastTypes.validityConfig,
+  validity: RootSharedTypes.validityConfig,
   value: JSON.t,
   error: string,
   errors: array<string>,

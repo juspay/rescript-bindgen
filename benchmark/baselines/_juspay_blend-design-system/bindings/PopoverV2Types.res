@@ -1,37 +1,37 @@
 type paddingConfig17 = {
-  left: ButtonSkeletonTypes.slotMaxHeightConfig,
-  right: ButtonSkeletonTypes.slotMaxHeightConfig,
-  top: ButtonSkeletonTypes.slotMaxHeightConfig,
-  bottom: ButtonSkeletonTypes.slotMaxHeightConfig,
+  left: ButtonSharedTypes.slotMaxHeightConfig,
+  right: ButtonSharedTypes.slotMaxHeightConfig,
+  top: ButtonSharedTypes.slotMaxHeightConfig,
+  bottom: ButtonSharedTypes.slotMaxHeightConfig,
 }
 type headingConfig5 = {
   color: string,
-  fontSize: ButtonSkeletonTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSkeletonTypes.slotMaxHeightConfig,
-  lineHeight: ButtonSkeletonTypes.slotMaxHeightConfig,
+  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
+  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
+  lineHeight: ButtonSharedTypes.slotMaxHeightConfig,
   @as("IconSize") iconSize: InputsTypes.widthConfig2,
 }
 type descriptionConfig3 = {
   color: string,
-  fontSize: ButtonSkeletonTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSkeletonTypes.slotMaxHeightConfig,
-  lineHeight: ButtonSkeletonTypes.slotMaxHeightConfig,
+  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
+  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
+  lineHeight: ButtonSharedTypes.slotMaxHeightConfig,
 }
 type topContainerConfig2 = {
-  gap: ButtonSkeletonTypes.slotMaxHeightConfig,
+  gap: ButtonSharedTypes.slotMaxHeightConfig,
   heading: headingConfig5,
   description: descriptionConfig3,
 }
 type bottomContainerConfig2 = {
-  gap: ButtonSkeletonTypes.slotMaxHeightConfig,
+  gap: ButtonSharedTypes.slotMaxHeightConfig,
 }
 type popoverV2TokenType = {
   background: string,
   border: string,
   shadow: TokensTypes.shadowsConfig,
-  gap: ButtonSkeletonTypes.slotMaxHeightConfig,
+  gap: ButtonSharedTypes.slotMaxHeightConfig,
   zIndex: string,
-  borderRadius: ButtonSkeletonTypes.slotMaxHeightConfig,
+  borderRadius: ButtonSharedTypes.slotMaxHeightConfig,
   padding: paddingConfig17,
   @as("TopContainer") topContainer: topContainerConfig2,
   bottomContainer: bottomContainerConfig2,

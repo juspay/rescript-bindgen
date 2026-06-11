@@ -5,13 +5,13 @@ type backgroundColorConfig17 = {
 type thumbConfig2 = {
   backgroundColor: string,
   border: string,
-  width: ButtonSkeletonTypes.slotMaxHeightConfig,
-  height: ButtonSkeletonTypes.slotMaxHeightConfig,
+  width: ButtonSharedTypes.slotMaxHeightConfig,
+  height: ButtonSharedTypes.slotMaxHeightConfig,
   outline: string,
 }
 type switch_Config = {
-  height: ButtonSkeletonTypes.slotMaxHeightConfig,
-  width: ButtonSkeletonTypes.slotMaxHeightConfig,
+  height: ButtonSharedTypes.slotMaxHeightConfig,
+  width: ButtonSharedTypes.slotMaxHeightConfig,
   backgroundColor: backgroundColorConfig17,
   thumb: thumbConfig2,
 }
@@ -21,16 +21,16 @@ type slotConfig8 = {
 type labelConfig9 = {
   gap: string,
   color: InputsTypes.colorConfig9,
-  fontSize: ButtonSkeletonTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSkeletonTypes.slotMaxHeightConfig,
-  lineHeight: ButtonSkeletonTypes.slotMaxHeightConfig,
+  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
+  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
+  lineHeight: ButtonSharedTypes.slotMaxHeightConfig,
   slot: slotConfig8,
 }
 type subLabelConfig2 = {
   color: InputsTypes.colorConfig9,
-  fontSize: ButtonSkeletonTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSkeletonTypes.slotMaxHeightConfig,
-  lineHeight: ButtonSkeletonTypes.slotMaxHeightConfig,
+  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
+  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
+  lineHeight: ButtonSharedTypes.slotMaxHeightConfig,
 }
 type contentConfig11 = {
   gap: string,
@@ -61,16 +61,16 @@ type backgroundColorConfig19 = {
 }
 type iconConfig8 = {
   color: CheckboxTypes.colorConfig15,
-  width: ButtonSkeletonTypes.slotMaxHeightConfig,
-  height: ButtonSkeletonTypes.slotMaxHeightConfig,
-  strokeWidth: ButtonSkeletonTypes.slotMaxHeightConfig,
+  width: ButtonSharedTypes.slotMaxHeightConfig,
+  height: ButtonSharedTypes.slotMaxHeightConfig,
+  strokeWidth: ButtonSharedTypes.slotMaxHeightConfig,
 }
 type checkboxConfig = {
-  height: ButtonSkeletonTypes.slotMaxHeightConfig,
-  width: ButtonSkeletonTypes.slotMaxHeightConfig,
+  height: ButtonSharedTypes.slotMaxHeightConfig,
+  width: ButtonSharedTypes.slotMaxHeightConfig,
   opacity: string,
   backgroundColor: backgroundColorConfig19,
-  borderRadius: ButtonSkeletonTypes.slotMaxHeightConfig,
+  borderRadius: ButtonSharedTypes.slotMaxHeightConfig,
   border: backgroundColorConfig19,
   outline: string,
   outlineOffset: string,
@@ -119,7 +119,7 @@ type borderWidthConfig2 = {
 type radioConfig = {
   indicator: indicatorConfig5,
   activeIndicator: activeIndicatorConfig3,
-  height: ButtonSkeletonTypes.slotMaxHeightConfig,
+  height: ButtonSharedTypes.slotMaxHeightConfig,
   borderWidth: borderWidthConfig2,
 }
 type radioV2TokensType = {

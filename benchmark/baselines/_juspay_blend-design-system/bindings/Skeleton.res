@@ -1,6 +1,6 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
-  ~variant: ButtonSkeletonTypes.skeletonVariant=?,
+  ~variant: ButtonSharedTypes.skeletonVariant=?,
   ~loading: bool=?,
   @as("data-testid") ~dataTestid: string=?,
   ~style: JsxDOM.style=?,
@@ -149,5 +149,5 @@ external make: (
   ~transitionDelay: string=?,
   ~children: React.element=?,
   ~animate: bool=?,
-  ~shape: ButtonSkeletonTypes.skeletonShape=?,
+  ~shape: ButtonSharedTypes.skeletonShape=?,
 ) => React.element = "Skeleton"

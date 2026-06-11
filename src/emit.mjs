@@ -779,12 +779,23 @@ export function planSharedModules(shared) {
             if (dep && dep.home !== e.home) edges.get(e.home).add(dep.home)
         }
     }
+    // entries per home-domain — used to name a merged SCC after its LARGEST member,
+    // so adding/removing a SMALL domain to the cycle doesn't rename the module (and break
+    // consumers' qualified refs). (#35)
+    const sizeOf = new Map()
+    for (const e of entries) sizeOf.set(e.home, (sizeOf.get(e.home) || 0) + 1)
     const finalOf = new Map()
     for (const comp of tarjanSCC(nodes, edges)) {
-        // singleton -> its own module; cycle -> merge members into one module
-        const fm = comp.length === 1
-            ? comp[0]
-            : comp.map((h) => h.replace(/Types$/, '')).sort().join('') + 'Types'
+        // singleton -> its own module; cycle -> name after the largest member (most types;
+        // alphabetical tie-break for determinism) + `SharedTypes`, NOT every member
+        // concatenated (which was 40+ chars and reshuffled on any SCC edge change). (#35)
+        let fm
+        if (comp.length === 1) {
+            fm = comp[0]
+        } else {
+            const largest = [...comp].sort((a, b) => (sizeOf.get(b) || 0) - (sizeOf.get(a) || 0) || a.localeCompare(b))[0]
+            fm = largest.replace(/Types$/, '') + 'SharedTypes'
+        }
         for (const h of comp) finalOf.set(h, fm)
     }
     const byModule = new Map()

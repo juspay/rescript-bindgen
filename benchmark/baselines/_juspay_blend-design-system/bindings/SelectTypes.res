@@ -11,7 +11,7 @@ type rec selectMenuItemType2 = {
   onClick?: unit => unit,
   subMenu?: array<selectMenuItemType2>,
   tooltip?: React.element,
-  tooltipProps?: MultiSelectSingleSelectTypes.tooltipPropsConfig,
+  tooltipProps?: MultiSelectSharedTypes.tooltipPropsConfig,
   disableTruncation?: bool,
   isDisabled?: bool,
 }

@@ -2,14 +2,14 @@ type modalButtonAction = {
   ...JsxDOM.domProps,
   justifyContent?: string,
   text?: string,
-  buttonType?: ButtonSkeletonTypes.buttonType,
-  subType?: ButtonSkeletonTypes.buttonSubType,
+  buttonType?: ButtonSharedTypes.buttonType,
+  subType?: ButtonSharedTypes.buttonSubType,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
   showSkeleton?: bool,
-  skeletonVariant?: ButtonSkeletonTypes.skeletonVariant,
+  skeletonVariant?: ButtonSharedTypes.skeletonVariant,
   fullWidth?: bool,
-  state?: ButtonSkeletonTypes.buttonState,
+  state?: ButtonSharedTypes.buttonState,
 }
 type bodySkeletonProps = {
   show?: bool,
@@ -18,7 +18,7 @@ type bodySkeletonProps = {
 }
 type modalSkeletonProps = {
   show?: bool,
-  variant?: ButtonSkeletonTypes.skeletonVariant,
+  variant?: ButtonSharedTypes.skeletonVariant,
   bodySkeletonProps?: bodySkeletonProps,
 }
 type paddingConfig5 = {

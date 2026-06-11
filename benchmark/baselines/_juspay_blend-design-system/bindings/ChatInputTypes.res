@@ -127,8 +127,8 @@ type opacityConfig2 = {
   disabled: string,
 }
 type itemConfig8 = {
-  backgroundColor: ButtonSkeletonTypes.defaultConfig,
-  color: ButtonSkeletonTypes.defaultConfig,
+  backgroundColor: ButtonSharedTypes.defaultConfig,
+  color: ButtonSharedTypes.defaultConfig,
   fontSize: string,
   fontWeight: string,
   paddingX: string,
