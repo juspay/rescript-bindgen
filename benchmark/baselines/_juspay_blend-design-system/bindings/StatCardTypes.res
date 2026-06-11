@@ -33,7 +33,7 @@ type statCardAxisConfig = {
   smartDateTimeFormat?: bool,
 }
 type statCardSkeletonProps = {
-  variant: ButtonSkeletonTypes.skeletonVariant,
+  variant: ButtonSharedTypes.skeletonVariant,
   show: bool,
   height?: CommonTypes.stringOrNumber,
   maxWidth?: CommonTypes.stringOrNumber,

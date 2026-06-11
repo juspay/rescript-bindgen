@@ -51,18 +51,18 @@ type paddingConfig14 = {
   left: topConfig,
 }
 type textConfig22 = {
-  color: ButtonSkeletonTypes.smConfig,
-  fontSize: ButtonSkeletonTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSkeletonTypes.slotMaxHeightConfig,
-  lineHeight: ButtonSkeletonTypes.slotMaxHeightConfig,
+  color: ButtonSharedTypes.smConfig,
+  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
+  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
+  lineHeight: ButtonSharedTypes.slotMaxHeightConfig,
 }
 type smConfig14 = {
   gap: string,
-  backgroundColor: ButtonSkeletonTypes.backgroundColorConfig,
+  backgroundColor: ButtonSharedTypes.backgroundColorConfig,
   borderRadius: borderRadiusConfig10,
   padding: paddingConfig14,
-  border: ButtonSkeletonTypes.backgroundColorConfig,
-  shadow: ButtonSkeletonTypes.backgroundColorConfig,
+  border: ButtonSharedTypes.backgroundColorConfig,
+  shadow: ButtonSharedTypes.backgroundColorConfig,
   text: textConfig22,
 }
 type responsiveButtonV2Tokens = {
@@ -75,7 +75,7 @@ type buttonSlot = {
 }
 type buttonSkeleton = {
   showSkeleton?: bool,
-  skeletonVariant?: ButtonSkeletonTypes.skeletonVariant,
+  skeletonVariant?: ButtonSharedTypes.skeletonVariant,
 }
 type buttonPropsConfig = {
   ...JsxDOM.domProps,
@@ -84,7 +84,7 @@ type buttonPropsConfig = {
   leftSlot?: buttonSlot,
   rightSlot?: buttonSlot,
   skeleton?: buttonSkeleton,
-  buttonGroupPosition?: ButtonSkeletonTypes.buttonGroupPosition,
+  buttonGroupPosition?: ButtonSharedTypes.buttonGroupPosition,
   buttonType?: buttonV2Type,
   subType?: buttonV2SubType,
   state?: buttonV2State,

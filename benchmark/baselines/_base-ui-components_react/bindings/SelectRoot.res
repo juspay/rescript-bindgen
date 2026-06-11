@@ -10,7 +10,7 @@ external make: (
   ~multiple: 'b=?,
   ~highlightItemOnHover: bool=?,
   ~defaultOpen: bool=?,
-  ~onOpenChange: (bool, ComponentsMenubarRootStoreToastTypes.selectRootChangeEventDetails) => unit=?,
+  ~onOpenChange: (bool, RootSharedTypes.selectRootChangeEventDetails) => unit=?,
   ~onOpenChangeComplete: bool => unit=?,
   @as("open") ~open_: bool=?,
   ~modal: bool=?,

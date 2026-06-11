@@ -1,15 +1,15 @@
 type textConfig26 = {
   color: string,
-  fontWeight: ButtonSkeletonTypes.slotMaxHeightConfig,
-  fontSize: ButtonSkeletonTypes.slotMaxHeightConfig,
-  lineHeight: ButtonSkeletonTypes.slotMaxHeightConfig,
+  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
+  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
+  lineHeight: ButtonSharedTypes.slotMaxHeightConfig,
 }
 type tooltipV2TokensType = {
   background: string,
-  borderRadius: ButtonSkeletonTypes.slotMaxHeightConfig,
-  maxWidth: ButtonSkeletonTypes.slotMaxHeightConfig,
-  padding: ButtonSkeletonTypes.slotMaxHeightConfig,
-  gap: ButtonSkeletonTypes.slotMaxHeightConfig,
+  borderRadius: ButtonSharedTypes.slotMaxHeightConfig,
+  maxWidth: ButtonSharedTypes.slotMaxHeightConfig,
+  padding: ButtonSharedTypes.slotMaxHeightConfig,
+  gap: ButtonSharedTypes.slotMaxHeightConfig,
   text: textConfig26,
   zIndex: string,
 }

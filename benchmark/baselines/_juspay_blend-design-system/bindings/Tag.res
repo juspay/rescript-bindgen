@@ -151,5 +151,5 @@ external make: (
   ~rightSlot: React.element=?,
   ~splitTagPosition: TagsTypes.splitTagPosition=?,
   ~showSkeleton: bool=?,
-  ~skeletonVariant: ButtonSkeletonTypes.skeletonVariant=?,
+  ~skeletonVariant: ButtonSharedTypes.skeletonVariant=?,
 ) => React.element = "Tag"

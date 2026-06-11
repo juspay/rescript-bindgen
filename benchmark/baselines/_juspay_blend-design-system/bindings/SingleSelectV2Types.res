@@ -12,12 +12,12 @@ type slotConfig9 = {
   width: string,
 }
 type triggerConfig8 = {
-  height: MultiSelectSingleSelectTypes.heightConfig,
+  height: MultiSelectSharedTypes.heightConfig,
   padding: sizeToken,
-  borderRadius: MultiSelectSingleSelectTypes.heightConfig,
-  boxShadow: MultiSelectSingleSelectTypes.smConfig8,
-  backgroundColor: MultiSelectSingleSelectTypes.backgroundColorConfig8,
-  outline: MultiSelectSingleSelectTypes.backgroundColorConfig8,
+  borderRadius: MultiSelectSharedTypes.heightConfig,
+  boxShadow: MultiSelectSharedTypes.smConfig8,
+  backgroundColor: MultiSelectSharedTypes.backgroundColorConfig8,
+  outline: MultiSelectSharedTypes.backgroundColorConfig8,
   slot: slotConfig9,
   placeholder: ModalTypes.titleConfig,
   selectedValue: ModalTypes.titleConfig,
@@ -36,7 +36,7 @@ type groupLabelConfig = {
   paddingLeft: string,
   fontSize: string,
   fontWeight: string,
-  color: MultiSelectSingleSelectTypes.colorConfig12,
+  color: MultiSelectSharedTypes.colorConfig12,
 }
 type itemConfig10 = {
   paddingTop: string,
@@ -46,11 +46,11 @@ type itemConfig10 = {
   margin: string,
   borderRadius: string,
   gap: string,
-  backgroundColor: MultiSelectSingleSelectTypes.colorConfig12,
-  groupLabelText: MultiSelectSingleSelectTypes.labelConfig3,
-  option: MultiSelectSingleSelectTypes.labelConfig3,
-  description: MultiSelectSingleSelectTypes.labelConfig3,
-  separator: MultiSelectSingleSelectTypes.seperatorConfig2,
+  backgroundColor: MultiSelectSharedTypes.colorConfig12,
+  groupLabelText: MultiSelectSharedTypes.labelConfig3,
+  option: MultiSelectSharedTypes.labelConfig3,
+  description: MultiSelectSharedTypes.labelConfig3,
+  separator: MultiSelectSharedTypes.seperatorConfig2,
 }
 type submenuTriggerStateToken = {
   default: string,
@@ -101,9 +101,9 @@ type mobilePanelConfig = {
 }
 type singleSelectV2TokensType = {
   gap: string,
-  label: MultiSelectSingleSelectTypes.labelConfig3,
-  subLabel: MultiSelectSingleSelectTypes.labelConfig3,
-  hintText: MultiSelectSingleSelectTypes.labelConfig3,
+  label: MultiSelectSharedTypes.labelConfig3,
+  subLabel: MultiSelectSharedTypes.labelConfig3,
+  hintText: MultiSelectSharedTypes.labelConfig3,
   errorMessage: StatCardTypes.titleConfig3,
   required: AvatarGroupTypes.textConfig7,
   trigger: triggerConfig8,

@@ -5,7 +5,7 @@ type activationDirection =
   | @as("down") Down
 type navigationMenuContentState = {
   @as("open") open_: bool,
-  transitionStatus: PositionerTabUtilsTypes.transitionStatus,
+  transitionStatus: PositionerSharedTypes.transitionStatus,
   activationDirection: activationDirection,
 }
 type toastContentState = {

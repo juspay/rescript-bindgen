@@ -26,7 +26,7 @@ type emptyConfig = {
   backgroundSize: backgroundImageConfig,
 }
 type linearConfig = {
-  height: ButtonSkeletonTypes.slotMaxHeightConfig,
+  height: ButtonSharedTypes.slotMaxHeightConfig,
   fill: fillConfig2,
   empty: emptyConfig,
   borderRadius: backgroundColorConfig9,
@@ -37,7 +37,7 @@ type strokeWidthConfig = {
   lg: float,
 }
 type circularConfig = {
-  size: ButtonSkeletonTypes.slotMaxHeightConfig,
+  size: ButtonSharedTypes.slotMaxHeightConfig,
   strokeWidth: strokeWidthConfig,
   stroke: backgroundColorConfig9,
   background: backgroundColorConfig9,

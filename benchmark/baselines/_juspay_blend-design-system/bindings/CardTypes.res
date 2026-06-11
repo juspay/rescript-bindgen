@@ -3,7 +3,7 @@ type variant =
   | @as("aligned") Aligned
   | @as("custom") Custom
 type cardSkeletonProps = {
-  variant: ButtonSkeletonTypes.skeletonVariant,
+  variant: ButtonSharedTypes.skeletonVariant,
   show: bool,
   height?: string,
   width?: string,

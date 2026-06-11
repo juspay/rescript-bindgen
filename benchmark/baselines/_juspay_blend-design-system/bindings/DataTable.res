@@ -5,7 +5,7 @@ external make: (
   ~idField: string,  // ⚪ loose — was `keyof T`
   ~title: string=?,
   ~description: string=?,
-  ~descriptionTooltipProps: MultiSelectSingleSelectTypes.tooltipPropsConfig=?,
+  ~descriptionTooltipProps: MultiSelectSharedTypes.tooltipPropsConfig=?,
   ~className: string=?,
   ~isHoverable: bool=?,
   ~defaultSort: DataTableTypes.sortConfig=?,
@@ -36,7 +36,7 @@ external make: (
   ~onPageSizeChange: float => unit=?,
   ~isLoading: bool=?,
   ~showSkeleton: bool=?,
-  ~skeletonVariant: ButtonSkeletonTypes.skeletonVariant=?,
+  ~skeletonVariant: ButtonSharedTypes.skeletonVariant=?,
   ~isRowLoading: ('a, float) => bool=?,
   ~showHeader: bool=?,
   ~showToolbar: bool=?,

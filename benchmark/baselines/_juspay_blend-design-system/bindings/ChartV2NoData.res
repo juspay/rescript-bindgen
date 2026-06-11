@@ -3,5 +3,5 @@ external make: (
   ~title: string=?,
   ~subtitle: string=?,
   ~slot: React.element=?,
-  ~button: ButtonSkeletonTypes.buttonProps=?,
+  ~button: ButtonSharedTypes.buttonProps=?,
 ) => React.element = "ChartV2NoData"

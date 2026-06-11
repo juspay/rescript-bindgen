@@ -4,7 +4,7 @@ type buttonState = {
 type toolbarButtonState = {
   disabled: bool,
   focusable: bool,
-  orientation: PositionerTabUtilsTypes.orientation,
+  orientation: PositionerSharedTypes.orientation,
 }
 @unboxed type buttonClassName = Str(string) | Fn(buttonState => string)
 @unboxed type buttonStyle = Style(JsxDOM.style) | Fn(buttonState => JsxDOM.style)

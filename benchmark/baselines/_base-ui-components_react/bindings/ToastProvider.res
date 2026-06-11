@@ -3,5 +3,5 @@ external make: (
   ~children: React.element=?,
   ~timeout: float=?,
   ~limit: float=?,
-  ~toastManager: ComponentsMenubarRootStoreToastTypes.toastManager=?,
+  ~toastManager: RootSharedTypes.toastManager=?,
 ) => React.element = "Provider"

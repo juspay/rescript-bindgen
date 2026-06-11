@@ -28,7 +28,7 @@ type rec menuItemType = {
   enableSubMenuSearch?: bool,
   subMenuSearchPlaceholder?: string,
   tooltip?: React.element,
-  tooltipProps?: MultiSelectSingleSelectTypes.tooltipPropsConfig,
+  tooltipProps?: MultiSelectSharedTypes.tooltipPropsConfig,
   enableSubMenuVirtualScrolling?: bool,
   subMenuVirtualItemHeight?: float,
   subMenuVirtualOverscan?: float,
@@ -138,5 +138,5 @@ type overflowMenuPropsConfig = {
   sideOffset?: float,
   alignOffset?: float,
   collisonBoundaryRef?: CollisonBoundaryRef.t,
-  skeleton?: MultiSelectSingleSelectTypes.singleSelectSkeletonProps,
+  skeleton?: MultiSelectSharedTypes.singleSelectSkeletonProps,
 }

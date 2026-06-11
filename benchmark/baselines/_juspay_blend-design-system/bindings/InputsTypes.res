@@ -52,14 +52,14 @@ type helpIconConfig2 = {
   color: colorConfig9,
 }
 type paddingConfig10 = {
-  x: ButtonSkeletonTypes.slotMaxHeightConfig,
-  y: ButtonSkeletonTypes.slotMaxHeightConfig,
+  x: ButtonSharedTypes.slotMaxHeightConfig,
+  y: ButtonSharedTypes.slotMaxHeightConfig,
 }
 type inputContainerConfig = {
-  fontSize: ButtonSkeletonTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSkeletonTypes.slotMaxHeightConfig,
+  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
+  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
   color: colorConfig9,
-  borderRadius: ButtonSkeletonTypes.slotMaxHeightConfig,
+  borderRadius: ButtonSharedTypes.slotMaxHeightConfig,
   boxShadow: string,
   padding: paddingConfig10,
   border: colorConfig9,
@@ -97,15 +97,15 @@ type iconConfig = {
   width: widthConfig2,
 }
 type stepperButtonConfig = {
-  width: ButtonSkeletonTypes.slotMaxHeightConfig,
+  width: ButtonSharedTypes.slotMaxHeightConfig,
   backgroundColor: colorConfig9,
   icon: iconConfig,
 }
 type inputContainerConfig2 = {
-  fontSize: ButtonSkeletonTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSkeletonTypes.slotMaxHeightConfig,
+  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
+  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
   color: colorConfig9,
-  borderRadius: ButtonSkeletonTypes.slotMaxHeightConfig,
+  borderRadius: ButtonSharedTypes.slotMaxHeightConfig,
   boxShadow: string,
   padding: paddingConfig10,
   border: colorConfig9,
@@ -128,10 +128,10 @@ type responsiveNumberInputTokens = {
 }
 type inputContainerConfig3 = {
   gap: string,
-  fontSize: ButtonSkeletonTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSkeletonTypes.slotMaxHeightConfig,
+  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
+  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
   color: colorConfig9,
-  borderRadius?: ButtonSkeletonTypes.slotMaxHeightConfig,
+  borderRadius?: ButtonSharedTypes.slotMaxHeightConfig,
   boxShadow: string,
   padding: paddingConfig10,
   border: colorConfig9,
@@ -209,17 +209,17 @@ type responsiveOTPInputTokens = {
   lg: otpInputTokensType,
 }
 type unitConfig2 = {
-  fontSize: ButtonSkeletonTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSkeletonTypes.slotMaxHeightConfig,
+  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
+  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
   color: colorConfig9,
-  padding: ButtonSkeletonTypes.slotMaxHeightConfig,
+  padding: ButtonSharedTypes.slotMaxHeightConfig,
   backgroundColor: colorConfig9,
 }
 type inputContainerConfig6 = {
-  fontSize: ButtonSkeletonTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSkeletonTypes.slotMaxHeightConfig,
+  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
+  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
   color: colorConfig9,
-  borderRadius: ButtonSkeletonTypes.slotMaxHeightConfig,
+  borderRadius: ButtonSharedTypes.slotMaxHeightConfig,
   boxShadow: string,
   padding: paddingConfig10,
   border: colorConfig9,
@@ -241,8 +241,8 @@ type responsiveUnitInputTokens = {
   lg: unitInputTokensType,
 }
 type inputContainerConfig7 = {
-  fontSize: ButtonSkeletonTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSkeletonTypes.slotMaxHeightConfig,
+  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
+  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
   gap: string,
   borderRadius?: string,
   boxShadow: colorConfig9,

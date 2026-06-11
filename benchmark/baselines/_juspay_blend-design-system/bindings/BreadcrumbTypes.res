@@ -1,6 +1,6 @@
 type breadcrumbSkeletonProps = {
   show: bool,
-  variant: ButtonSkeletonTypes.skeletonVariant,
+  variant: ButtonSharedTypes.skeletonVariant,
 }
 type breadcrumbItemType = {
   leftSlot?: React.element,

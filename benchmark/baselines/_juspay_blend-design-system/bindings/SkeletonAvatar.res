@@ -1,6 +1,6 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
-  ~variant: ButtonSkeletonTypes.skeletonVariant=?,
+  ~variant: ButtonSharedTypes.skeletonVariant=?,
   ~loading: bool=?,
   @as("data-testid") ~dataTestid: string=?,
   ~style: JsxDOM.style=?,
@@ -64,7 +64,7 @@ external make: (
   ~letterSpacing: string=?,
   ~fontSize: string=?,
   ~lineHeight: string=?,
-  ~size: ButtonSkeletonTypes.size2=?,
+  ~size: ButtonSharedTypes.size2=?,
   ~display: string=?,
   ~fontWeight: string=?,
   ~opacity: string=?,
@@ -147,5 +147,5 @@ external make: (
   ~transitionDuration: string=?,
   ~transitionTimingFunction: string=?,
   ~transitionDelay: string=?,
-  ~shape: ButtonSkeletonTypes.shape=?,
+  ~shape: ButtonSharedTypes.shape=?,
 ) => React.element = "SkeletonAvatar"
