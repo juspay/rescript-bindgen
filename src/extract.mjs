@@ -552,9 +552,11 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
             // the SYNTACTIC node, and only for a value-position primitive (passing `null`
             // = controlled-clear, distinct from omitting the prop).
             const nullablePrim = !aria && !litOpen && d && syntacticNullablePrimitive(d.type)
-            const baseType = aria ? { kind: 'raw', res: aria }
-                : litOpen ? literalUnionOpenNode(litOpen, unionRefName(d.type), ctx, name)
-                : classify(t, ctx, name)
+            const baseType = salvageCallbackParams(
+                aria ? { kind: 'raw', res: aria }
+                    : litOpen ? literalUnionOpenNode(litOpen, unionRefName(d.type), ctx, name)
+                    : classify(t, ctx, name),
+                ctx)
             return {
                 name,
                 optional,
@@ -1152,6 +1154,24 @@ function freshTypeVar(ctx) {
     const i = ctx.typeVars.size
     ctx.typeVars.set(key, "'" + (TV[i] || `t${i}`))
     return { kind: 'typeVar', name: ctx.typeVars.get(key) }
+}
+
+/** Salvage a callback whose RETURN is clean but whose PARAM(s) couldn't be modelled:
+ *  replace each imperfect param with a fresh type variable, so the prop stays a usable
+ *  typed callback (`('a, string) => unit`) instead of collapsing the WHOLE thing to a
+ *  `string` placeholder. Sound because params flow library->consumer (the consumer
+ *  RECEIVES the value; a hole they must annotate is honest). A clean return is REQUIRED —
+ *  a faked return feeds wrong values INTO the library (gated, same rule as #41's @unboxed
+ *  Fn members). (#30, probe I-1a) */
+function salvageCallbackParams(node, ctx) {
+    if (!node || node.kind !== 'callback' || !Array.isArray(node.params)) return node
+    if (irHasImperfection(node.ret)) return node          // bad return -> leave the prop flagged
+    if (!node.params.some(irHasImperfection)) return node  // nothing to salvage
+    return {
+        ...node,
+        params: node.params.map((p) => (irHasImperfection(p) ? { ...freshTypeVar(ctx), optional: p.optional } : p)),
+        note: 'a parameter type could not be modelled — received as a type variable; annotate at the call site',
+    }
 }
 
 /** Walk an IR type tree for imperfection kinds (opaque/review/unknown/any) — the

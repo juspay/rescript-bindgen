@@ -1,6 +1,6 @@
 @module("react-markdown") @react.component
 external make: (
-  ~allowElement: string=?,  // ⚪ loose — was `AllowElement`
+  ~allowElement: ('a, float, HastTypes.readonly) => bool=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~allowedElements: array<string>=?,
   ~children: Nullable.t<string>=?,
   ~components: HastTypes.readonly=?,
@@ -12,6 +12,6 @@ external make: (
   ~remarkRehypeOptions: LibTypes.remarkRehypeOptionsConfig=?,
   ~skipHtml: Nullable.t<bool>=?,
   ~unwrapDisallowed: Nullable.t<bool>=?,
-  ~urlTransform: string=?,  // ⚪ loose — was `UrlTransform`
+  ~urlTransform: (string, string, 'c) => string=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~fallback: React.element=?,
 ) => React.element = "MarkdownHooks"

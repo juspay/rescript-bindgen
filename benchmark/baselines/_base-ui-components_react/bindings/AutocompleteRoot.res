@@ -1,7 +1,7 @@
 @module("@base-ui-components/react") @scope("Autocomplete") @react.component
 external make: (
   ~defaultValue: CommonTypes.stringOrNumberOrStringArray=?,
-  ~filter: string=?,  // ⚪ loose — was `(itemValue: Items[number]["items"][number], query: string, itemToString?: (itemValue: Items[number]["items"][n`
+  ~filter: ('b, string, option<'c>) => bool=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~id: string=?,
   ~children: React.element=?,
   ~disabled: bool=?,
@@ -21,10 +21,10 @@ external make: (
   ~autoHighlight: CommonTypes.boolOrAlways=?,
   ~keepHighlight: bool=?,
   ~highlightItemOnHover: bool=?,
-  ~onItemHighlighted: string=?,  // ⚪ loose — was `(highlightedValue: Items[number]["items"][number], eventDetails: HighlightEventDetails) => void`
+  ~onItemHighlighted: ('d, RootSharedTypes.highlightEventDetails) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
   ~filteredItems: PositionerSharedTypes.htmlProps=?,
-  ~itemToStringValue: string=?,  // ⚪ loose — was `(itemValue: Items[number]["items"][number]) => string`
+  ~itemToStringValue: 'e => string=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~virtualized: bool=?,
   ~limit: float=?,
   ~locale: string=?,  // ⓘ Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled

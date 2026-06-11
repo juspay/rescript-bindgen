@@ -22,15 +22,13 @@ _(none)_
 
 These resolved to a real but complex type and were widened to `string` (they compile and work). Grouped by type so you can review each pattern once — confirm `string` is acceptable, or it may deserve a tighter mapping.
 
-| Resolved TypeScript type | → emitted | count | example props |
-|--------------------------|-----------|-------|---------------|
-| `FocusEvent_2` | `string` | 2 | onBlur, onFocus |
+_(none)_
 
 ## 🔍 Needs review
 
 A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object shapes), so an `@unboxed` variant won't work and we **refuse to use `%identity`/unsafe casts**. The prop is emitted as a `string` placeholder with an inline `// ⚠️ REVIEW` comment — bind it by hand or fix the type upstream.
 
-### Rating  _(2 loose)_
+### Rating
 
 | Prop | Real TypeScript |
 |------|-----------------|

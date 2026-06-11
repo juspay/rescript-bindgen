@@ -19,6 +19,13 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   the sync-or-async value shape `T | Promise<T>` → `promise<t>` (#24).
 
 ### Added
+- **Direct-callback param salvage** (#30, probe I-1a): a callback prop whose
+  RETURN is clean but whose PARAM can't be modelled now keeps a usable typed
+  callback with a fresh type variable for the bad param (`('a, string) => unit`)
+  instead of collapsing the whole prop to a `string` placeholder — params flow
+  library->consumer, so an annotate-at-call-site hole is honest. A bad RETURN is
+  still NOT salvaged (it would feed wrong values into the library). Completes the
+  I-1a mechanism (the @unboxed-union case shipped in #41).
 - **Fidelity polish trio** (#34, probe I-5/I-7/I-8): `number | null` value props
   -> `Nullable.t<float>` (passing null = controlled-clear, recovered from the
   syntactic node since strictNullChecks is off); a `render` prop's dropped

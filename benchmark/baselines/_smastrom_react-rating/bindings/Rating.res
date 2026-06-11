@@ -16,8 +16,8 @@ external make: (
   ~onChange: float => 'a=?,
   // ⚠️ REVIEW: `onHoverChange` is `HoverChange` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
   ~onHoverChange: string=?,
-  ~onBlur: string=?,  // ⚪ loose — was `FocusEvent_2`
-  ~onFocus: string=?,  // ⚪ loose — was `FocusEvent_2`
+  ~onBlur: option<'a> => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
+  ~onFocus: option<'b> => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~isDisabled: bool=?,
   ~resetOnSecondClick: bool=?,
   ~transition: DistTypes.transitions=?,
