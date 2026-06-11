@@ -118,7 +118,7 @@ Fixture: [`react-dom`](../test/golden/cases/react-dom)
 |---|---|---|
 | `ReactNode` / `ReactElement` / `JSX.Element` | `React.element` | |
 | `ReactNode \| ReactNode[]` | `React.element` | React nodes already cover lists/strings |
-| `ReactElement \| ((props, state) => ReactElement)` (a `render` prop) | `React.element` **+ ⓘ note** that the function form isn't bound — flagged, not silently dropped. (#34) |
+| `ReactElement \| ((props, state) => ReactElement)` (a `render` prop) | `React.element` (common case unchanged: `render={<Foo/>}`) **+ a zero-cost `renderFn` `%identity` wrapper** in the component module for the function form — `render={renderFn((props, state) => …)}` — typed with the signature's **exact** extracted types (e.g. `(PositionerSharedTypes.htmlProps, RootSharedTypes.accordionRootState) => React.element`); imperfect params salvage to type variables, an imperfect return drops the wrapper (note-only). An `@unboxed Element \| Fn` cannot compile: `React.element` is abstract, and untagged variants need each payload's runtime shape statically known. Fixture: [`fidelity-polish`](../test/golden/cases/fidelity-polish). (#34/#46) |
 | `number \| null` value prop (e.g. controlled `value`) | `Nullable.t<float>` — passing `null` (controlled-clear) is distinct from omitting; recovered from the **syntactic** node (strictNullChecks is off), value-position primitives only. (#34) |
 | `ComponentType<P>` / `FC<P>` / `FunctionComponent<P>` / `ComponentClass<P>` | `React.component<p>` | `P` becomes a generated props record; only when `P` classifies cleanly |
 | `Element` | `Dom.element` | a real DOM node (refs, portal targets) |

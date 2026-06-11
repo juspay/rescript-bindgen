@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, 'a) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("Toast") @react.component
 external make: (
   ~container: PortalTypes.Container.t=?,  // ⓘ was `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot>` — opaque; build with Container.fromHTMLElement / Container.fromShadowRoot / Container.fromRefObject
@@ -51,5 +54,5 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: CommonTypes.className2<'a>=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Portal"

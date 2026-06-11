@@ -1937,13 +1937,24 @@ function unionNode(type, ctx, propName, depth = 0) {
         return !!(en && /ReactElement|ReactNode/.test(en))
     }
     if (parts.some(isReactish)) {
-        // `ReactElement | ((props, state) => ReactElement)` (base-ui's `render` prop):
-        // we bind the element form; flag the dropped FUNCTION form with a note instead of
-        // silently simplifying. (#34, probe I-7)
-        const droppedFn = parts.some((t) => t.getCallSignatures && t.getCallSignatures().length)
-        return droppedFn
-            ? { kind: 'reactElement', note: 'function form of this render prop is not bound — pass a React element' }
-            : { kind: 'reactElement' }
+        // `ReactElement | ((props, state) => ReactElement)` (base-ui's `render` prop).
+        // The prop binds as `React.element` (the ergonomic common case — an @unboxed
+        // `Element | Fn` does NOT compile: React.element is abstract, and untagged
+        // variants need each payload's runtime shape statically known). The FUNCTION
+        // form is recovered via a zero-cost `<prop>Fn` %identity wrapper emitted in the
+        // component module, typed from the signature's EXACT extracted types — imperfect
+        // params salvage to fresh type variables, but an imperfect RETURN drops the
+        // helper (a faked return would feed wrong values into the library). (#46)
+        const fnPart = parts.find((t) => t.getCallSignatures && t.getCallSignatures().length)
+        if (fnPart) {
+            const fn = functionNode(fnPart.getCallSignatures()[0], ctx, propName, depth)
+            if (!irHasImperfection(fn.ret) && Array.isArray(fn.params) && fn.params.length) {
+                fn.params = fn.params.map((p) => (irHasImperfection(p) ? { ...freshTypeVar(ctx), optional: p.optional } : p))
+                return { kind: 'reactElement', renderFn: fn, note: `function form: wrap with \`${propName}Fn\` (zero-cost)` }
+            }
+            return { kind: 'reactElement', note: 'function form of this render prop is not bound — pass a React element' }
+        }
+        return { kind: 'reactElement' }
     }
 
     // A union of DOM node/element/fragment types (e.g. a portal `container?: Element |

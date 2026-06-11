@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, PositionerSharedTypes.selectPositionerState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
   ~alignItemWithTrigger: bool=?,
@@ -65,5 +68,5 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: PositionerSharedTypes.selectPositionerClassName=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Positioner"

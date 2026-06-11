@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, ToggleTypes.toggleState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @react.component
 external make: (
   ~pressed: bool=?,
@@ -64,5 +67,5 @@ external make: (
   ~formTarget: string=?,
   ~name: string=?,
   ~className: ToggleTypes.toggleClassName=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Toggle"

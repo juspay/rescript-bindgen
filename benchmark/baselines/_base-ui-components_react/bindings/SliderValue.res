@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.sliderRootState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("Slider") @react.component
 external make: (
   ~children: (array<string>, array<float>) => React.element=?,
@@ -52,5 +55,5 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~name: string=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Value"

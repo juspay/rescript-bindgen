@@ -9,3 +9,9 @@ type popupTriggerMap = {
   entries: unit => string,
   size: float,
 }
+type childrenConfig<'a> = {
+  payload: 'a,
+}
+type childrenConfig2 = {
+  payload: JSON.t,
+}

@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, PositionerSharedTypes.menuPositionerState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
   // ⚠️ REVIEW: `anchor` is `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
@@ -64,5 +67,5 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: PositionerSharedTypes.menuPositionerClassName=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Positioner"

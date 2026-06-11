@@ -1,7 +1,10 @@
+/** zero-cost wrapper: pass the FUNCTION form of `children` — `children={childrenFn((…) => …)}` */
+external childrenFn: (PopupsTypes.childrenConfig2 => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
   ~onOpenChange: (bool, RootSharedTypes.contextMenuRootChangeEventDetails) => unit=?,
-  ~children: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~children: React.element=?,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
   ~disabled: bool=?,
   @as("open") ~open_: bool=?,
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,

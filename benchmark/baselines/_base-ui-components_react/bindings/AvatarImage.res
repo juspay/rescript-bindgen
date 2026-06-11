@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.avatarRootState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("Avatar") @react.component
 external make: (
   ~onLoadingStatusChange: ImageTypes.imageLoadingStatus2 => unit=?,
@@ -55,5 +58,5 @@ external make: (
   ~src: string=?,
   ~width: CommonTypes.stringOrNumber=?,
   ~className: RootSharedTypes.avatarRootClassName=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Image"

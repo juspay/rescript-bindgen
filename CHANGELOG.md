@@ -19,6 +19,16 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   the sync-or-async value shape `T | Promise<T>` → `promise<t>` (#24).
 
 ### Added
+- **Render-prop function form bindable via zero-cost wrapper** (#46): a
+  `render?: ReactElement | ((props, state) => ReactElement)` prop stays
+  `React.element` (the common case is unchanged), and the component module now
+  also carries `external renderFn: ((props, state) => React.element) =>
+  React.element = "%identity"` — typed with the signature's EXACT extracted
+  types (the real per-component state record). `render={renderFn((p, s) => …)}`
+  binds the function form; 177 base-ui components gain it. An @unboxed
+  `Element | Fn` cannot compile (React.element is abstract) — this wrapper is
+  the type-safe alternative, now an explicitly allowed %identity form in the
+  contract (CLAUDE.md + golden-suite guard updated).
 - **Direct-callback param salvage** (#30, probe I-1a): a callback prop whose
   RETURN is clean but whose PARAM can't be modelled now keeps a usable typed
   callback with a fresh type variable for the bad param (`('a, string) => unit`)

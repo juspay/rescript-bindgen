@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, JSON.t) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @react.component
 external make: (
   ~validationMode: FormTypes.formValidationMode=?,
@@ -55,5 +58,5 @@ external make: (
   ~name: string=?,
   ~target: string=?,
   ~className: CommonTypes.className=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Form"

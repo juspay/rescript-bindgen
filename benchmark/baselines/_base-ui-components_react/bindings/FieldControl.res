@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, CheckboxGroupTypes.checkboxGroupState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("Field") @react.component
 external make: (
   ~onValueChange: (string, PositionerSharedTypes.onCheckedChangeConfig) => unit=?,
@@ -78,5 +81,5 @@ external make: (
   ~minLength: int=?,
   ~placeholder: string=?,
   ~className: CheckboxGroupTypes.checkboxGroupClassName=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Control"

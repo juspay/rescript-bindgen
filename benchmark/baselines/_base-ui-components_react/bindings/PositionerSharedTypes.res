@@ -58,6 +58,9 @@ type baseUIEvent = {
   preventBaseUIHandler: unit => unit,
   baseUIHandlerPrevented?: bool,
 }
+type htmlProps = {
+  ...JsxDOM.domProps,
+}
 type setOpenConfig2 = {
   reason: string,
   event: Dom.event,
@@ -66,9 +69,6 @@ type setOpenConfig2 = {
   isCanceled: bool,
   isPropagationAllowed: bool,
   trigger: Dom.element,
-}
-type htmlProps = {
-  ...JsxDOM.domProps,
 }
 type onCheckedChangeConfig = {
   reason: string,

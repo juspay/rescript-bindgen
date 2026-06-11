@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, TriggerTypes.contextMenuTriggerState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("PreviewCard") @react.component
 external make: (
   ~delay: float=?,
@@ -55,5 +58,5 @@ external make: (
   ~target: ReactTypes.htmlAttributeAnchorTarget=?,
   ~href: string=?,
   ~className: TriggerTypes.contextMenuTriggerClassName=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Trigger"

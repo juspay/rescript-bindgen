@@ -1,3 +1,6 @@
+/** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
+external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.radioRootState) => React.element) => React.element = "%identity"
+
 @module("@base-ui-components/react") @scope("Switch") @react.component
 external make: (
   ~style: RootSharedTypes.radioRootStyle=?,
@@ -50,5 +53,5 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: RootSharedTypes.radioRootClassName=?,
-  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Thumb"
