@@ -4,7 +4,7 @@ type slotConfig7 = {
   color: SnackbarTypes.colorConfig5,
 }
 type headerConfig16 = {
-  color: string,
+  color: SnackbarTypes.colorConfig5,
   fontSize: string,
   fontWeight: string,
   lineHeight: string,

@@ -170,7 +170,7 @@ type headerConfig5 = {
   fontSize: string,
   fontWeight: string,
   color: string,
-  padding: string,
+  padding: ModalTypes.paddingConfig5,
   gap: string,
 }
 type monthConfig = {
@@ -189,11 +189,11 @@ type weekConfig = {
   row: rowConfig,
 }
 type cellConfig = {
-  padding: string,
+  padding: ModalTypes.paddingConfig5,
   fontWeight: string,
   fontSize: string,
   lineHeight: string,
-  border: string,
+  border: TabsTypes.boxedConfig,
   borderRadius: string,
 }
 type statesConfig = {
@@ -205,11 +205,11 @@ type statesConfig = {
   disabledDay: string,
 }
 type textConfig13 = {
-  dayNumber: string,
-  selectedDay: string,
-  rangeDay: string,
-  todayDay: string,
-  disabledDate: string,
+  dayNumber: AvatarGroupTypes.textConfig7,
+  selectedDay: AvatarGroupTypes.textConfig7,
+  rangeDay: AvatarGroupTypes.textConfig7,
+  todayDay: AvatarGroupTypes.textConfig7,
+  disabledDate: AvatarGroupTypes.textConfig7,
 }
 type todayIndicatorConfig = {
   width: string,

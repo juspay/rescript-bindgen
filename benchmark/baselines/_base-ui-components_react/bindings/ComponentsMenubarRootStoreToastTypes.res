@@ -407,19 +407,19 @@ type floatingRootStoreContext = {
   triggerElements: PopupsTypes.popupTriggerMap,
 }
 type useSyncedValuesConfig2 = {
-  @as("open") open_?: string,
-  domReferenceElement?: string,
-  referenceElement?: string,
-  floatingElement?: string,
-  positionReference?: string,
+  @as("open") open_?: bool,
+  domReferenceElement?: Dom.element,
+  referenceElement?: Dom.element,
+  floatingElement?: Dom.element,
+  positionReference?: Dom.element,
   floatingId?: string,
 }
 type setStateConfig = {
-  @as("open") open_: string,
-  domReferenceElement: string,
-  referenceElement: string,
-  floatingElement: string,
-  positionReference: string,
+  @as("open") open_: bool,
+  domReferenceElement: Dom.element,
+  referenceElement: Dom.element,
+  floatingElement: Dom.element,
+  positionReference: Dom.element,
   floatingId: string,
 }
 type floatingRootStore = {
@@ -694,14 +694,14 @@ type parentConfig = {
   store: menuStore,
 }
 type menubarContext = {
-  modal: string,
-  disabled: string,
-  contentElement: string,
-  setContentElement: string,
-  hasSubmenuOpen: string,
-  setHasSubmenuOpen: string,
-  orientation: string,
-  allowMouseUpTriggerRef: string,
+  modal: bool,
+  disabled: bool,
+  contentElement: Dom.element,
+  setContentElement: Dom.element => unit,
+  hasSubmenuOpen: bool,
+  setHasSubmenuOpen: bool => unit,
+  orientation: menuRootOrientation,
+  allowMouseUpTriggerRef: React.ref<Nullable.t<Dom.element>>,
   rootId: string,
 }
 type parentConfig2 = {
@@ -724,7 +724,7 @@ type parentConfig3 = {
   context: contextMenuRootContext,
 }
 type menuRootContext = {
-  store: string,
+  store: menuStore,
   parent: string,
 }
 type parentConfig4 = {

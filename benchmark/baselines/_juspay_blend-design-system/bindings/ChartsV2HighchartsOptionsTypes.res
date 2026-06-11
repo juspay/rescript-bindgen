@@ -601,11 +601,37 @@ type langOptions = {
   zoomIn?: string,
   zoomOut?: string,
 }
+type cssObject = {
+  background?: string,
+  backgroundColor?: string,
+  border?: string,
+  borderRadius?: string,
+  color?: string,
+  cursor?: string,
+  fontFamily?: string,
+  fontSize?: string,
+  fontWeight?: string,
+  height?: string,
+  lineClamp?: string,
+  lineWidth?: string,
+  opacity?: string,
+  padding?: string,
+  pointerEvents?: string,
+  position?: string,
+  textAlign?: string,
+  textDecoration?: string,
+  textOutline?: string,
+  textOverflow?: string,
+  top?: string,
+  transition?: string,
+  whiteSpace?: string,
+  width?: string,
+}
 type loadingOptions = {
-  hideDuration?: string,
-  labelStyle?: string,
-  showDuration?: string,
-  style?: string,
+  hideDuration?: float,
+  labelStyle?: cssObject,
+  showDuration?: float,
+  style?: cssObject,
 }
 type mapNavigationOptions = {
   buttonOptions?: string,
@@ -812,29 +838,71 @@ type rangeSelectorOptions = {
 type responsiveOptions = {
   rules?: string,
 }
+type linearGradientColorObject = {
+  x1: float,
+  x2: float,
+  y1: float,
+  y2: float,
+}
+type radialGradientColorObject = {
+  cx: float,
+  cy: float,
+  r: float,
+}
+type gradientColorObject = {
+  linearGradient?: linearGradientColorObject,
+  radialGradient?: radialGradientColorObject,
+  stops: array<string>,
+}
+type patternOptionsObject = {
+  anchorToPoint?: bool,
+  aspectRatio?: float,
+  backgroundColor?: string,
+  color?: string,
+  height?: float,
+  id?: string,
+  image?: string,
+  opacity?: float,
+  path?: string,
+  patternTransform?: string,
+  width?: float,
+  x?: float,
+  y?: float,
+}
+type patternObject = {
+  animation?: string,
+  pattern: patternOptionsObject,
+  patternIndex?: float,
+}
+module ColorType = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromGradientColorObject: gradientColorObject => t = "%identity"
+  external fromPatternObject: patternObject => t = "%identity"
+}
 type scrollbarOptions = {
-  barBackgroundColor?: string,
-  barBorderColor?: string,
-  barBorderRadius?: string,
-  barBorderWidth?: string,
-  buttonArrowColor?: string,
-  buttonBackgroundColor?: string,
-  buttonBorderColor?: string,
-  buttonBorderRadius?: string,
-  buttonBorderWidth?: string,
-  buttonsEnabled?: string,
-  enabled?: string,
-  height?: string,
-  liveRedraw?: string,
-  margin?: string,
-  minWidth?: string,
-  rifleColor?: string,
-  showFull?: string,
-  trackBackgroundColor?: string,
-  trackBorderColor?: string,
-  trackBorderRadius?: string,
-  trackBorderWidth?: string,
-  zIndex?: string,
+  barBackgroundColor?: ColorType.t,
+  barBorderColor?: ColorType.t,
+  barBorderRadius?: float,
+  barBorderWidth?: float,
+  buttonArrowColor?: ColorType.t,
+  buttonBackgroundColor?: ColorType.t,
+  buttonBorderColor?: ColorType.t,
+  buttonBorderRadius?: float,
+  buttonBorderWidth?: float,
+  buttonsEnabled?: bool,
+  enabled?: bool,
+  height?: float,
+  liveRedraw?: bool,
+  margin?: float,
+  minWidth?: float,
+  rifleColor?: ColorType.t,
+  showFull?: bool,
+  trackBackgroundColor?: ColorType.t,
+  trackBorderColor?: ColorType.t,
+  trackBorderRadius?: float,
+  trackBorderWidth?: float,
+  zIndex?: int,
 }
 type sonificationOptions = {
   afterSeriesWait?: string,
@@ -868,7 +936,7 @@ type subtitleOptions = {
 type timeOptions = {
   @as("Date") date?: string,
   timezone?: string,
-  timezoneOffset?: string,
+  timezoneOffset?: float,
 }
 type titleOptions = {
   align?: string,
@@ -1122,57 +1190,6 @@ type colorAxisOptions = {
   width?: string,
   zIndex?: string,
 }
-type chartIsInsideOptionsObject = {
-  axis?: string,
-  ignoreX?: string,
-  ignoreY?: string,
-  inverted?: string,
-  paneCoordinates?: string,
-  series?: string,
-  visiblePlotOnly?: string,
-}
-type linearGradientColorObject = {
-  x1: string,
-  x2: string,
-  y1: string,
-  y2: string,
-}
-type radialGradientColorObject = {
-  cx: string,
-  cy: string,
-  r: string,
-}
-type gradientColorObject = {
-  linearGradient?: linearGradientColorObject,
-  radialGradient?: radialGradientColorObject,
-  stops: array<string>,
-}
-type patternOptionsObject = {
-  anchorToPoint?: string,
-  aspectRatio?: string,
-  backgroundColor?: string,
-  color?: string,
-  height?: string,
-  id?: string,
-  image?: string,
-  opacity?: string,
-  path?: string,
-  patternTransform?: string,
-  width?: string,
-  x?: string,
-  y?: string,
-}
-type patternObject = {
-  animation?: string,
-  pattern: patternOptionsObject,
-  patternIndex?: float,
-}
-module ColorType = {
-  type t
-  external fromString: string => t = "%identity"
-  external fromGradientColorObject: gradientColorObject => t = "%identity"
-  external fromPatternObject: patternObject => t = "%identity"
-}
 type legendItemObject = {
   item?: Dom.element,
   label?: Dom.element,
@@ -1194,13 +1211,13 @@ type dataGroupingOptionsObject = {
   anchor?: string,
   approximation?: string,
   dateTimeLabelFormats?: string,
-  enabled?: string,
+  enabled?: bool,
   firstAnchor?: string,
-  forced?: string,
-  groupAll?: string,
-  groupPixelWidth?: string,
+  forced?: bool,
+  groupAll?: bool,
+  groupPixelWidth?: float,
   lastAnchor?: string,
-  units?: string,
+  units?: array<string>,
 }
 type seriesEventsOptionsObject = {
   afterAnimate?: string,
@@ -1256,8 +1273,8 @@ type pointMarkerOptionsObject = {
   width?: string,
 }
 type plotAbandsParamsOptions = {
-  index?: string,
-  period?: string,
+  index?: int,
+  period?: float,
 }
 type plotSeriesPointOptions = {
   events?: string,
@@ -1388,7 +1405,7 @@ type seriesAbandsOptions = {
 }
 type plotAdParamsOptions = {
   index?: string,
-  period?: string,
+  period?: float,
   volumeSeriesID?: string,
 }
 type seriesAdOptions = {
@@ -1565,9 +1582,9 @@ type seriesAoOptions = {
   zIndex?: int,
 }
 type plotApoParamsOptions = {
-  index?: string,
+  index?: int,
   period?: string,
-  periods?: string,
+  periods?: array<float>,
 }
 type seriesApoOptions = {
   allAreas?: string,
@@ -2579,9 +2596,9 @@ type seriesBarOptions = {
   zIndex?: int,
 }
 type plotBbParamsOptions = {
-  index?: string,
-  period?: string,
-  standardDeviation?: string,
+  index?: int,
+  period?: float,
+  standardDeviation?: float,
 }
 type seriesBbOptions = {
   dataParser?: string,
@@ -2854,8 +2871,8 @@ type seriesBoxplotOptions = {
   zIndex?: int,
 }
 type plotBubbleJitterOptions = {
-  x?: string,
-  y?: string,
+  x?: float,
+  y?: float,
 }
 type seriesBubbleOptions = {
   data?: array<string>,
@@ -2959,11 +2976,11 @@ type seriesBubbleOptions = {
 }
 type plotBulletTargetOptions = {
   borderColor?: string,
-  borderRadius?: string,
-  borderWidth?: string,
-  color?: string,
-  height?: string,
-  width?: string,
+  borderRadius?: float,
+  borderWidth?: float,
+  color?: ColorType.t,
+  height?: float,
+  width?: CommonTypes.stringOrNumber,
 }
 type seriesBulletOptions = {
   data?: array<string>,
@@ -3156,8 +3173,8 @@ type seriesCandlestickOptions = {
 }
 type plotChaikinParamsOptions = {
   index?: string,
-  period?: string,
-  periods?: string,
+  period?: float,
+  periods?: array<float>,
   volumeSeriesID?: string,
 }
 type seriesChaikinOptions = {
@@ -3938,8 +3955,8 @@ type seriesDependencywheelOptions = {
 }
 type plotDisparityindexParamsOptions = {
   average?: string,
-  index?: string,
-  period?: string,
+  index?: int,
+  period?: float,
 }
 type seriesDisparityindexOptions = {
   allAreas?: string,
@@ -4210,32 +4227,6 @@ type seriesDumbbellOptions = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
-type cssObject = {
-  background?: string,
-  backgroundColor?: string,
-  border?: string,
-  borderRadius?: string,
-  color?: string,
-  cursor?: string,
-  fontFamily?: string,
-  fontSize?: string,
-  fontWeight?: string,
-  height?: string,
-  lineClamp?: string,
-  lineWidth?: string,
-  opacity?: string,
-  padding?: string,
-  pointerEvents?: string,
-  position?: string,
-  textAlign?: string,
-  textDecoration?: string,
-  textOutline?: string,
-  textOverflow?: string,
-  top?: string,
-  transition?: string,
-  whiteSpace?: string,
-  width?: string,
-}
 type seriesFlagsOptions = {
   colorByPoint?: string,
   data?: array<string>,
@@ -4345,10 +4336,10 @@ type seriesFlagsOptions = {
   zIndex?: int,
 }
 type seriesFlowMapSeriesOptionsObject = {
-  enabled?: string,
-  height?: string,
+  enabled?: bool,
+  height?: CommonTypes.stringOrNumber,
   markerType?: string,
-  width?: string,
+  width?: CommonTypes.stringOrNumber,
 }
 type seriesFlowmapOptions = {
   affectsMapView?: string,
@@ -4591,7 +4582,7 @@ type seriesConnectorsOptionsObject = {
   @as("type") type_?: string,
 }
 type plotGanttPartialFillOptions = {
-  fill?: string,
+  fill?: ColorType.t,
 }
 type seriesGanttOptions = {
   data?: array<string>,
@@ -4672,10 +4663,10 @@ type plotGaugeDialOptions = {
   topWidth?: string,
 }
 type plotGaugePivotOptions = {
-  backgroundColor?: string,
-  borderColor?: string,
-  borderWidth?: string,
-  radius?: string,
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderWidth?: float,
+  radius?: float,
 }
 type seriesGaugeOptions = {
   data?: array<string>,
@@ -5061,13 +5052,13 @@ type seriesHlcOptions = {
 }
 type plotIkhParamsOptions = {
   index?: string,
-  period?: string,
-  periodSenkouSpanB?: string,
-  periodTenkan?: string,
+  period?: float,
+  periodSenkouSpanB?: float,
+  periodTenkan?: float,
 }
 type plotIkhSenkouSpanOptions = {
-  color?: string,
-  negativeColor?: string,
+  color?: ColorType.t,
+  negativeColor?: ColorType.t,
 }
 type seriesIkhOptions = {
   dataParser?: string,
@@ -5228,9 +5219,9 @@ type seriesItemOptions = {
   zIndex?: int,
 }
 type plotKlingerParamsOptions = {
-  fastAvgPeriod?: string,
-  signalPeriod?: string,
-  slowAvgPeriod?: string,
+  fastAvgPeriod?: float,
+  signalPeriod?: float,
+  slowAvgPeriod?: float,
   volumeSeriesID?: string,
 }
 type seriesKlingerOptions = {
@@ -5319,9 +5310,9 @@ type seriesKlingerOptions = {
   zIndex?: int,
 }
 type plotLinearregressionangleParamsOptions = {
-  index?: string,
-  period?: string,
-  xAxisUnit?: string,
+  index?: int,
+  period?: float,
+  xAxisUnit?: float,
 }
 type seriesLinearregressionangleOptions = {
   dataParser?: string,
@@ -5604,11 +5595,11 @@ type plotMacdMacdLineOptions = {
   zones?: string,
 }
 type plotMacdParamsOptions = {
-  index?: string,
-  longPeriod?: string,
-  period?: string,
-  shortPeriod?: string,
-  signalPeriod?: string,
+  index?: int,
+  longPeriod?: float,
+  period?: float,
+  shortPeriod?: float,
+  signalPeriod?: float,
 }
 type seriesMacdOptions = {
   dataParser?: string,
@@ -5965,9 +5956,9 @@ type seriesMappointOptions = {
   yAxis?: CommonTypes.stringOrNumber,
 }
 type plotMfiParamsOptions = {
-  decimals?: string,
+  decimals?: float,
   index?: string,
-  period?: string,
+  period?: float,
   volumeSeriesID?: string,
 }
 type seriesMfiOptions = {
@@ -6073,8 +6064,8 @@ type plotNetworkgraphLayoutAlgorithmOptions = {
 type plotNetworkgraphLinkOptions = {
   color?: string,
   dashStyle?: string,
-  opacity?: string,
-  width?: string,
+  opacity?: float,
+  width?: float,
 }
 type seriesNetworkgraphOptions = {
   data?: string,
@@ -6330,7 +6321,7 @@ type plotPackedbubbleLayoutAlgorithmOptions = {
   @as("type") type_?: string,
 }
 type plotPackedbubbleParentNodeOptions = {
-  allowPointSelect?: string,
+  allowPointSelect?: bool,
 }
 type seriesPackedbubbleOptions = {
   data?: string,
@@ -6643,7 +6634,7 @@ type seriesPieOptions = {
 type plotPivotpointsParamsOptions = {
   algorithm?: string,
   index?: string,
-  period?: string,
+  period?: float,
 }
 type seriesPivotpointsOptions = {
   dataParser?: string,
@@ -6730,7 +6721,7 @@ type seriesPivotpointsOptions = {
   zIndex?: int,
 }
 type plotPointandfigureDataGroupingOptions = {
-  enabled?: string,
+  enabled?: bool,
 }
 type seriesPointandfigureOptions = {
   data?: array<string>,
@@ -6907,10 +6898,10 @@ type seriesPolygonOptions = {
   zIndex?: int,
 }
 type plotPriceenvelopesParamsOptions = {
-  bottomBand?: string,
-  index?: string,
-  period?: string,
-  topBand?: string,
+  bottomBand?: float,
+  index?: int,
+  period?: float,
+  topBand?: float,
 }
 type seriesPriceenvelopesOptions = {
   dataParser?: string,
@@ -6999,11 +6990,11 @@ type seriesPriceenvelopesOptions = {
   zIndex?: int,
 }
 type plotPsarParamsOptions = {
-  decimals?: string,
-  increment?: string,
-  index?: string,
-  initialAccelerationFactor?: string,
-  maxAccelerationFactor?: string,
+  decimals?: float,
+  increment?: float,
+  index?: int,
+  initialAccelerationFactor?: float,
+  maxAccelerationFactor?: float,
   period?: string,
 }
 type seriesPsarOptions = {
@@ -7266,9 +7257,9 @@ type seriesRenkoOptions = {
   zIndex?: int,
 }
 type plotRsiParamsOptions = {
-  decimals?: string,
-  index?: string,
-  period?: string,
+  decimals?: float,
+  index?: int,
+  period?: float,
 }
 type seriesRsiOptions = {
   dataParser?: string,
@@ -8207,8 +8198,8 @@ type seriesSunburstOptions = {
 }
 type plotSupertrendParamsOptions = {
   index?: string,
-  multiplier?: string,
-  period?: string,
+  multiplier?: float,
+  period?: float,
 }
 type seriesSupertrendOptions = {
   allAreas?: string,
@@ -8846,7 +8837,7 @@ type seriesVariwideOptions = {
 type plotVbpParamsOptions = {
   index?: string,
   period?: string,
-  ranges?: string,
+  ranges?: float,
   volumeSeriesID?: string,
 }
 type plotVbpVolumeDivisionOptions = {
@@ -9366,9 +9357,9 @@ type seriesWindbarbOptions = {
   zIndex?: int,
 }
 type plotWordcloudRotationOptions = {
-  from?: string,
-  orientations?: string,
-  @as("to") to_?: string,
+  from?: float,
+  orientations?: float,
+  @as("to") to_?: float,
 }
 type seriesWordcloudOptions = {
   data?: array<string>,
@@ -9523,10 +9514,10 @@ type seriesXrangeOptions = {
   zIndex?: int,
 }
 type plotZigzagParamsOptions = {
-  deviation?: string,
-  highIndex?: string,
+  deviation?: float,
+  highIndex?: float,
   index?: string,
-  lowIndex?: string,
+  lowIndex?: float,
   period?: string,
 }
 type seriesZigzagOptions = {
@@ -9759,7 +9750,16 @@ type svgAttributes = {
   translateY?: float,
   zIndex?: int,
 }
-type rec tooltip = {
+type rec chartIsInsideOptionsObject = {
+  axis?: axis,
+  ignoreX?: bool,
+  ignoreY?: bool,
+  inverted?: bool,
+  paneCoordinates?: bool,
+  series?: series,
+  visiblePlotOnly?: bool,
+}
+and tooltip = {
   chart: chart,
   container?: Dom.element,
   options: tooltipOptions,

@@ -19,6 +19,16 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   the sync-or-async value shape `T | Promise<T>` → `promise<t>` (#24).
 
 ### Fixed
+- **Degraded all-string ghost records healed** (#33, probe I-4): a record first
+  reached at the MAX_DEPTH boundary registered but had its fields built past the
+  budget -> an all-`string` ghost (`setOpenConfig2` with `cancel: string`). A
+  post-extraction pass re-resolves mostly-fallback records at depth 0, accepting
+  the result only when it adds zero new registry entries — genuine small configs
+  heal (`cancel: unit => unit`) while unbounded library graphs (Highcharts) are
+  rolled back and stay safely truncated.
+- **Case-only-distinct enum members de-collided** (#33): `'a' | 'A'` no longer
+  emit two constructors named `A` (a compile error); later collisions get a
+  numeric suffix (`A` / `A2`), the `@as` arm keeping the runtime value.
 - **Unflagged param fakes inside `@unboxed` Fn members** (#41, shipped since #22):
   a fn param that failed to classify silently rendered as `string` inside shared
   variants. Three-rung most-specific-type ladder now: `{}` empty states ->

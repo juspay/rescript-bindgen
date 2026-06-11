@@ -60,12 +60,12 @@ type baseUIEvent = {
 }
 type setOpenConfig2 = {
   reason: string,
-  event: string,
-  cancel: string,
-  allowPropagation: string,
-  isCanceled: string,
-  isPropagationAllowed: string,
-  trigger: string,
+  event: Dom.event,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger: Dom.element,
 }
 type htmlProps = {
   ...JsxDOM.domProps,
