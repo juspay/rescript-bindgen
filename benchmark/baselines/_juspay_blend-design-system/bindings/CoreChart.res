@@ -10,7 +10,7 @@ external make: (
   ~height: CommonTypes.stringOrNumber=?,
   ~width: CommonTypes.stringOrNumber=?,
   ~isSmallScreen: bool=?,
-  ~hoveredKey: string=?,
+  ~hoveredKey: Nullable.t<string>=?,
   ~onHoveredKeyChange: string => unit=?,
   ~selectedKeys: array<string>=?,
   ~lineSeriesKeys: array<string>=?,

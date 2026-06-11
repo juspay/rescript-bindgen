@@ -54,5 +54,5 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: ItemTypes.menuItemClassName=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
 ) => React.element = "Item"

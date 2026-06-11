@@ -53,7 +53,7 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: PositionerSharedTypes.toastPositionerClassName=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
   ~sticky: bool=?,
   ~positionMethod: PositionerSharedTypes.positionMethod=?,
   ~sideOffset: PositionerSharedTypes.sideOffsetConfigSideOffset=?,

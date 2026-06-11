@@ -78,5 +78,5 @@ external make: (
   ~minLength: int=?,
   ~placeholder: string=?,
   ~className: CheckboxGroupTypes.checkboxGroupClassName=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
 ) => React.element = "Input"

@@ -163,6 +163,7 @@ function renderType(t, propName, cfg) {
         case 'map': return `Map.t<${renderType(t.mapKey, propName, cfg)}, ${renderType(t.mapVal, propName, cfg)}>`
         case 'set': return `Set.t<${renderType(t.of, propName, cfg)}>`
         case 'promise': return `promise<${renderType(t.of, propName, cfg)}>`
+        case 'nullable': return `Nullable.t<${renderType(t.of, propName, cfg)}>` // `T | null` value prop (#34)
         case 'callback': {
             // an optional param `reason?: T` -> `option<T>` (None = the arg omitted)
             const render1 = (p) => {

@@ -6,7 +6,7 @@ external make: (
   ~locale: string=?,  // ⓘ Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled
   ~max: float=?,
   ~min: float=?,
-  ~value: float,
+  ~value: Nullable.t<float>,
   ~style: RootSharedTypes.progressRootStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
@@ -57,5 +57,5 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: RootSharedTypes.progressRootClassName=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
 ) => React.element = "Root"

@@ -64,5 +64,5 @@ external make: (
   ~formTarget: string=?,
   ~name: string=?,
   ~className: ToggleTypes.toggleClassName=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
 ) => React.element = "Toggle"

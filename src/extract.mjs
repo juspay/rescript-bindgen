@@ -547,13 +547,21 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
             // the resolved type, so recover the known literals from the SYNTACTIC node -> an @unboxed
             // variant with a `Custom(string)` catch-all (typo-safe known values + open escape hatch).
             const litOpen = !aria && d && literalUnionOpen(d.type, checker)
+            // `value?: number | null` -> `Nullable.t<float>` (#34, I-5). strictNullChecks
+            // is off, so `null` already collapsed in the resolved type — recover it from
+            // the SYNTACTIC node, and only for a value-position primitive (passing `null`
+            // = controlled-clear, distinct from omitting the prop).
+            const nullablePrim = !aria && !litOpen && d && syntacticNullablePrimitive(d.type)
+            const baseType = aria ? { kind: 'raw', res: aria }
+                : litOpen ? literalUnionOpenNode(litOpen, unionRefName(d.type), ctx, name)
+                : classify(t, ctx, name)
             return {
                 name,
                 optional,
                 inherited: isInherited(p),
-                type: aria ? { kind: 'raw', res: aria }
-                    : litOpen ? literalUnionOpenNode(litOpen, unionRefName(d.type), ctx, name)
-                    : classify(t, ctx, name),
+                type: (nullablePrim && /^(string|number|boolean)$/.test(baseType.kind))
+                    ? { kind: 'nullable', of: baseType }
+                    : baseType,
                 // raw TS info, used by the report to describe unmapped props
                 tsType: checker.typeToString(t).replace(/\s+/g, ' ').slice(0, 200),
                 declText: (d ? d.getText() : '').replace(/\s+/g, ' ').trim().slice(0, 200),
@@ -1302,7 +1310,18 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (name === 'ReactNode' || name === 'ReactElement' || name === 'ReactNode[]')
         return { kind: 'reactElement' }
     if (name === 'CSSProperties') return { kind: 'style' }
-    if (name && REF_NAMES.test(name)) return { kind: 'domRef' }
+    if (name && REF_NAMES.test(name)) {
+        // Read the ref's element type arg: `React.Ref<HTMLInputElement>` ->
+        // `React.ref<Nullable.t<Dom.htmlInputElement>>` (specificity), handling a
+        // `HTMLElement | null` arg by stripping null. Falls back to the generic ref when
+        // the arg isn't a concrete element. (#34, probe I-8)
+        const arg = ((checker.getTypeArguments && checker.getTypeArguments(type)) || type.aliasTypeArguments || [])[0]
+        const argParts = arg && arg.isUnion?.() ? arg.types : [arg]
+        const elemPart = (argParts || []).find((t) => { const n = t && typeName(t); return n && /Element$/.test(n) && /^(HTML|SVG)/.test(n) })
+        const en = elemPart && typeName(elemPart)
+        if (en && DOM_ELEMENT_BY_LOWER.has(en.toLowerCase())) return { kind: 'raw', res: `React.ref<Nullable.t<${domElementType(en)}>>` }
+        return { kind: 'domRef' }
+    }
     // Specific DOM elements -> Dom.htmlDivElement etc. (built-in, no dep);
     // generic Element/Node -> Dom.element/Dom.node.
     if (name && /Element$/.test(name) && /^(HTML|SVG|Dom)/.test(name))
@@ -1520,6 +1539,24 @@ function literalUnionOpen(typeNode, checker) {
     }
     if (!hasString || !literals.length) return null
     return [...new Set(literals)] // dedupe, preserve order
+}
+
+/** True when a syntactic type node is `<primitive> | null` (in any order, `| undefined`
+ *  allowed too) — exactly ONE primitive keyword (number/string/boolean) plus an explicit
+ *  `null`, no other members. Used to recover the explicit-null arm that strictNullChecks-off
+ *  resolution swallowed. (#34, I-5) */
+function syntacticNullablePrimitive(typeNode) {
+    if (!typeNode || !ts.isUnionTypeNode(typeNode)) return false
+    let hasNull = false, prims = 0, other = 0
+    for (const m of typeNode.types) {
+        const isNull = m.kind === ts.SyntaxKind.NullKeyword ||
+            (ts.isLiteralTypeNode(m) && m.literal.kind === ts.SyntaxKind.NullKeyword)
+        if (isNull) hasNull = true
+        else if (m.kind === ts.SyntaxKind.UndefinedKeyword) { /* optional already handles it */ }
+        else if (m.kind === ts.SyntaxKind.NumberKeyword || m.kind === ts.SyntaxKind.StringKeyword || m.kind === ts.SyntaxKind.BooleanKeyword) prims++
+        else other++
+    }
+    return hasNull && prims === 1 && other === 0
 }
 
 /** First TypeReference name in a union node (`ToastPosition | string` -> "ToastPosition"), for naming. */
@@ -1740,7 +1777,10 @@ function lower(s) {
  */
 function unionNode(type, ctx, propName, depth = 0) {
     const { checker } = ctx
-    // strip null/undefined (handled by optional)
+    // strip null/undefined (handled by optional). NOTE: the generator runs with
+    // strictNullChecks OFF, so `null` is NOT a distinct union member here — `T | null`
+    // already collapsed to `T`. The explicit-null case (#34, I-5) is recovered
+    // syntactically at the component-prop level (see `syntacticNullable`).
     const parts = type.types.filter(
         (t) => !(t.flags & (ts.TypeFlags.Null | ts.TypeFlags.Undefined))
     )
@@ -1876,7 +1916,15 @@ function unionNode(type, ctx, propName, depth = 0) {
         const en = elem && typeName(elem)
         return !!(en && /ReactElement|ReactNode/.test(en))
     }
-    if (parts.some(isReactish)) return { kind: 'reactElement' }
+    if (parts.some(isReactish)) {
+        // `ReactElement | ((props, state) => ReactElement)` (base-ui's `render` prop):
+        // we bind the element form; flag the dropped FUNCTION form with a note instead of
+        // silently simplifying. (#34, probe I-7)
+        const droppedFn = parts.some((t) => t.getCallSignatures && t.getCallSignatures().length)
+        return droppedFn
+            ? { kind: 'reactElement', note: 'function form of this render prop is not bound — pass a React element' }
+            : { kind: 'reactElement' }
+    }
 
     // A union of DOM node/element/fragment types (e.g. a portal `container?: Element |
     // DocumentFragment`) -> `Dom.element` (the ergonomic portal-target type). A note is
@@ -2217,6 +2265,7 @@ function typeSig(t) {
         case 'typeRef': return 'R(' + (t.key || t.to) + (t.tparams ? '<' + t.tparams.join(',') + '>' : '') + ')'
         case 'classRef': return 'C(' + t.home + '.' + t.to + ')'
         case 'array': return 'A[' + typeSig(t.of) + ']'
+        case 'nullable': return 'N[' + typeSig(t.of) + ']'
         case 'dict': return 'D[' + typeSig(t.of) + ']'
         case 'map': return 'M[' + typeSig(t.mapKey) + ',' + typeSig(t.mapVal) + ']'
         case 'set': return 'S[' + typeSig(t.of) + ']'

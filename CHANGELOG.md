@@ -18,6 +18,14 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - **`Promise<T>` → `promise<t>`** (incl. `Promise<void>` → `promise<unit>`), and
   the sync-or-async value shape `T | Promise<T>` → `promise<t>` (#24).
 
+### Added
+- **Fidelity polish trio** (#34, probe I-5/I-7/I-8): `number | null` value props
+  -> `Nullable.t<float>` (passing null = controlled-clear, recovered from the
+  syntactic node since strictNullChecks is off); a `render` prop's dropped
+  function form now carries an ⓘ note instead of vanishing silently; `Ref<T>`
+  with a concrete element arg -> `React.ref<Nullable.t<Dom.htmlInputElement>>`
+  (specificity) instead of the generic `Dom.element`.
+
 ### Changed
 - **SCC-merged shared modules are named after their largest member** (#35,
   probe I-9): a cyclic type group now becomes e.g. `PositionerSharedTypes`

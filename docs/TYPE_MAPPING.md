@@ -118,11 +118,14 @@ Fixture: [`react-dom`](../test/golden/cases/react-dom)
 |---|---|---|
 | `ReactNode` / `ReactElement` / `JSX.Element` | `React.element` | |
 | `ReactNode \| ReactNode[]` | `React.element` | React nodes already cover lists/strings |
+| `ReactElement \| ((props, state) => ReactElement)` (a `render` prop) | `React.element` **+ ⓘ note** that the function form isn't bound — flagged, not silently dropped. (#34) |
+| `number \| null` value prop (e.g. controlled `value`) | `Nullable.t<float>` — passing `null` (controlled-clear) is distinct from omitting; recovered from the **syntactic** node (strictNullChecks is off), value-position primitives only. (#34) |
 | `ComponentType<P>` / `FC<P>` / `FunctionComponent<P>` / `ComponentClass<P>` | `React.component<p>` | `P` becomes a generated props record; only when `P` classifies cleanly |
 | `Element` | `Dom.element` | a real DOM node (refs, portal targets) |
 | `Node` | `Dom.node` | broader than Element (covers DocumentFragment/Text/…) |
 | `HTMLDivElement`, `HTMLInputElement`, … | `Dom.htmlDivElement`, … | specific DOM elements, no dependency |
 | `RefObject<T>` / `Ref<T>` / `MutableRefObject<T>` | `React.ref<Nullable.t<Dom.element>>` | configurable via `refType` |
+| `Ref<HTMLInputElement>` (concrete element arg) | `React.ref<Nullable.t<Dom.htmlInputElement>>` — the element arg is read for specificity (a `HTMLElement \| null` arg strips null); falls back to `Dom.element`. (#34) |
 | `Element \| DocumentFragment` (all DOM nodes) | `Dom.element` **+ note** | collapses to one node type; an `// ⓘ` note records that DocumentFragment isn't covered |
 | `ShadowRoot` | `Dom.shadowRoot` | base-ui portal `container` targets |
 | `HTMLElement \| ShadowRoot \| RefObject<…>` (multi-object union) | opaque module with **`from*` views** — `Container.fromHTMLElement / fromShadowRoot / fromRefObject` | objects can't be `@unboxed`-discriminated; views are zero-cost. Fixture: [`ref-union-views`](../test/golden/cases/ref-union-views) |

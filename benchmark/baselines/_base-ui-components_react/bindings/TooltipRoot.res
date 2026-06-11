@@ -9,7 +9,7 @@ external make: (
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
   ~disabled: bool=?,
   ~handle: RootSharedTypes.tooltipHandle<'a>=?,
-  ~children: React.element=?,
-  ~triggerId: string=?,
-  ~defaultTriggerId: string=?,
+  ~children: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
+  ~triggerId: Nullable.t<string>=?,
+  ~defaultTriggerId: Nullable.t<string>=?,
 ) => React.element = "Root"

@@ -51,7 +51,7 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: PositionerSharedTypes.popoverPositionerClassName=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
   ~sticky: bool=?,
   // ⚠️ REVIEW: `anchor` is `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
   ~anchor: string=?,

@@ -1,6 +1,6 @@
 @module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
-  ~children: React.element=?,
+  ~children: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
   ~className: ValueTypes.selectValueClassName=?,
   ~style: ValueTypes.selectValueStyle=?,
   ~title: string=?,
@@ -50,5 +50,5 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
 ) => React.element = "Value"

@@ -53,5 +53,5 @@ external make: (
   ~disabled: bool=?,
   ~name: string=?,
   ~className: ButtonTypes.buttonClassName=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
 ) => React.element = "Root"

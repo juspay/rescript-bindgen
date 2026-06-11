@@ -2,8 +2,8 @@
 external make: (
   ~directoryData: array<DirectoryTypes.directoryData>,
   ~idPrefix: string=?,
-  ~activeItem: string=?,
+  ~activeItem: Nullable.t<string>=?,
   ~onActiveItemChange: string => unit=?,
-  ~defaultActiveItem: string=?,
+  ~defaultActiveItem: Nullable.t<string>=?,
   ~iconOnlyMode: bool=?,
 ) => React.element = "Directory"
