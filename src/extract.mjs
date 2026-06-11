@@ -327,6 +327,27 @@ function pascal(raw) {
 }
 
 /**
+ * Ensure variant constructor names are UNIQUE within one enum/variant. Two literals can
+ * pascal-case to the same constructor — most often a case-only pair like `'a'`/`'A'`
+ * (both -> `A`), or `'x-y'`/`'x_y'`. ReScript rejects duplicate constructors in a type
+ * ("Two constructors are named A"). The `@as` arm preserves the real runtime value, so a
+ * numeric suffix on later collisions is purely cosmetic and always safe. (#33 — surfaced
+ * by the heal recovering Highcharts' `'a'|…|'A'|…` svgPathCommand.)
+ * @param {Array<{ctor:string}>} members  mutated in place; returned for chaining
+ */
+function dedupeCtors(members) {
+    const seen = new Set()
+    for (const m of members) {
+        if (!m.ctor) continue
+        let c = m.ctor, i = 2
+        while (seen.has(c)) c = m.ctor + i++
+        m.ctor = c
+        seen.add(c)
+    }
+    return members
+}
+
+/**
  * Heuristic: does this type look like a React component? True for `FC`,
  * `ForwardRefExoticComponent`, `ComponentType`, or any callable whose return
  * type looks element-ish (`ReactNode`/`JSX.Element`). Used by `extractModule`
@@ -1025,7 +1046,61 @@ export function extractModule(entryFile, opts = {}) {
         if (members.length) namespaces.push({ name: ns, members: members.sort((a, b) => a.member.localeCompare(b.member)) })
     }
 
+    healGhostRecords(shared)
+
     return { components, functions, classes, skipped, shared, namespaces }
+}
+
+/**
+ * Post-extraction healing pass (#33, probe I-4). A shared record whose FIRST encounter
+ * was DEEP (a store/config object nested ≥ MAX_DEPTH levels inside a prop) had every
+ * field built past the depth budget -> all opaque -> an all-`string` ghost (e.g.
+ * `setOpenConfig2` with `cancel: string`), frozen forever alongside a shallow-encountered
+ * sibling that resolved fine (`setOpenConfig`). Re-resolve any mostly-fallback record at
+ * depth 0 and keep the result only when strictly fewer fields are fallback.
+ *
+ * CRITICAL BOUND: `MAX_DEPTH` deliberately truncates UNBOUNDED library graphs (Highcharts
+ * options nest dozens of levels). A depth-0 re-resolve would defeat that and re-expand the
+ * whole graph (28k lines + dangling `Point.t`/`NavigatorOptions.t` module refs). So a heal
+ * is accepted ONLY when its re-resolve introduces ZERO new registry entries — i.e. every
+ * field resolves to a builtin/leaf or a ref to an ALREADY-emitted type. That exactly
+ * captures the genuine ghost (`setOpenConfig2`: its enum/records were already registered by
+ * a shallow-resolved twin, so re-resolving adds nothing) while rejecting any record that
+ * would pull fresh library graph (which always registers new entries -> rolled back, ghost
+ * kept). The snapshot/rollback also undoes a rejected rebuild's registration side-effects.
+ */
+function healGhostRecords(shared) {
+    const fallbacks = (fields) => fields.filter((f) => irHasImperfection(f.type)).length
+    for (const e of [...shared.entries]) { // copy: a heal appends entries we must not re-scan
+        if (e.kind !== 'record' || !e._heal || !e.fields.length) continue
+        const bad = fallbacks(e.fields)
+        if (!bad || bad < e.fields.length * 0.8) continue
+        const { type, ctx } = e._heal
+        // snapshot for rollback
+        const entriesLen = shared.entries.length
+        const keysBefore = new Set(shared.byKey.keys())
+        const sigsBefore = new Set(shared.bySig.keys())
+        let rebuilt
+        try { rebuilt = buildRecordFields(type, { ...ctx, visiting: new Set() }, 0) } catch { rebuilt = null }
+        const newEntries = shared.entries.length - entriesLen
+        // Accept only a self-contained improvement: strictly fewer fallbacks AND zero new
+        // entries (no fresh library graph, so no possibility of a dangling module ref).
+        const accept = rebuilt && fallbacks(rebuilt.fields) < bad && newEntries === 0
+        if (!accept) {
+            // roll back every registration the (rejected) rebuild performed
+            shared.entries.length = entriesLen
+            for (const k of [...shared.byKey.keys()]) if (!keysBefore.has(k)) shared.byKey.delete(k)
+            for (const s of [...shared.bySig.keys()]) if (!sigsBefore.has(s)) shared.bySig.delete(s)
+            continue
+        }
+        e.fields = rebuilt.fields
+        e.spread = rebuilt.spread
+        e.deps = new Set()
+        for (const f of rebuilt.fields) collectRefKeys(f.type, e.deps)
+        const tvars = new Set()
+        for (const f of rebuilt.fields) collectTypeVars(f.type, tvars)
+        e.tparams = tvars.size ? [...tvars] : undefined
+    }
 }
 
 /**
@@ -1413,6 +1488,7 @@ function enumNode(type, ctx, propName) {
             members.push({ as: String(value), ctor: pascal(basis) })
         }
     }
+    dedupeCtors(members) // case-only collisions ('a' vs 'A' -> A, A2) (#33)
     if (ctx.shared) return registerNamed(ctx, type, 'enum', lower(ename), { members })
     const key = lower(ename)
     if (!ctx.seenEnums.has(key)) {
@@ -1459,7 +1535,7 @@ function unionRefName(typeNode) {
  * @returns {{kind:'typeRef', to:string, _unboxed:true}}
  */
 function literalUnionOpenNode(literals, baseName, ctx, propName) {
-    const members = literals.map((v) => ({ ctor: pascal(String(v)), as: String(v) }))
+    const members = dedupeCtors(literals.map((v) => ({ ctor: pascal(String(v)), as: String(v) }))) // (#33)
     members.push({ ctor: 'Custom', type: { kind: 'string' } }) // the `| string` escape hatch
     // `<base>OrString` (matches the `boolOrString` / `stringOrNumber` convention) — the `OrString`
     // signals the open `Custom(string)` arm and leaves the bare name free for the closed enum.
@@ -1772,7 +1848,7 @@ function unionNode(type, ctx, propName, depth = 0) {
     const isStrBrand = (t) => (t.flags & ts.TypeFlags.Intersection) && (t.types || []).some((x) => x.flags & ts.TypeFlags.String)
     const litParts = parts.filter(isLit)
     if (litParts.length >= 2 && parts.every((t) => isLit(t) || isStrBrand(t))) {
-        const members = litParts.map((t) => ({ as: t.value, ctor: pascal(t.value) }))
+        const members = dedupeCtors(litParts.map((t) => ({ as: t.value, ctor: pascal(t.value) }))) // (#33)
         if (ctx.shared) return registerNamed(ctx, type, 'enum', lower(typeName(type) || pascal(propName)), { members })
         const key = lower(pascal(propName))
         if (!ctx.seenEnums.has(key)) {
@@ -2190,6 +2266,10 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         const key = 'id:' + type.id
         if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
         const entry = { key, kind: 'record', name: uniqueName(base, ctx.shared), home: homeOf(type, ctx), deps: new Set(), spread: undefined, fields: [] }
+        // Heal handle (#33): keep the ts.Type + a ctx snapshot so a post-extraction pass
+        // can RE-resolve fields with a fresh `visiting` set if this record was first built
+        // in a degraded (mid-cycle) context and cached as an all-`string` ghost.
+        entry._heal = { type, ctx, depth }
         ctx.shared.byKey.set(key, entry)
         ctx.shared.entries.push(entry)
         if (type.id != null) ctx.visiting?.add(type.id)

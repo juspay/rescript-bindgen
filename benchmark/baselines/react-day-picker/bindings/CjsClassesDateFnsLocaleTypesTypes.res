@@ -101,8 +101,8 @@ type formatDistanceFnOptions = {
   comparison?: CommonTypes.v0OrV1OrV1,
 }
 type localeOptions = {
-  weekStartsOn?: string,
-  firstWeekContainsDate?: string,
+  weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
+  firstWeekContainsDate?: CommonTypes.v1OrV4,
 }
 type localeConfig = {
   options?: localeOptions,
@@ -118,7 +118,7 @@ type localizeFnOptions = {
   unit?: localeUnit,
 }
 type formatPart = {
-  isToken: string,
+  isToken: bool,
   value: string,
 }
 type localize = {

@@ -62,10 +62,10 @@ type headerConfig6 = {
   helpIcon: helpIconConfig,
 }
 type valueConfig = {
-  line: string,
-  progress: string,
-  bar: string,
-  number: string,
+  line: titleConfig3,
+  progress: titleConfig3,
+  bar: titleConfig3,
+  number: titleConfig3,
 }
 type changeConfig = {
   margin: string,

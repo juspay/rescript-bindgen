@@ -68,6 +68,7 @@ Fixtures: [`string-enums`](../test/golden/cases/string-enums), [`literal-union-o
 | TypeScript | ReScript |
 |---|---|
 | `'sm' \| 'md' \| 'lg'` | `type size = \| @as("sm") Sm \| @as("md") Md \| @as("lg") Lg` |
+| `'a' \| 'A' \| 'm' \| 'M'` (case-only-distinct) | `\| @as("a") A \| @as("A") A2 \| @as("m") M \| @as("M") M2` — constructors that PascalCase to the same name get a numeric suffix (the `@as` keeps the real value). Fixture: [`enum-case-collision`](../test/golden/cases/enum-case-collision) |
 | `'a' \| 'b' \| (string & {})` | a plain enum — the `string & {}` "open" escape is dropped (this is the `HTMLInputTypeAttribute` shape) |
 | `'a' \| 'b' \| string` (plain `\| string` widening) | `@unboxed type <base>OrString = \| @as("a") A \| @as("b") B \| Custom(string)` — the literals as `@as` arms + a `Custom(string)` catch-all. Zero-cost, typo-safe on the known values, still accepts any other string. (TS collapses the union to bare `string`, so the literals are recovered from the **syntactic** node — component-prop level only for now.) |
 | real `enum` | same `@as` variant form |
@@ -230,6 +231,16 @@ Fixture: [`records`](../test/golden/cases/records)
 
 In module mode these live in per-domain `*Types.res` modules, deduplicated by type identity and
 referenced qualified (`MenuTypes.menuItemType`); cyclic groups merge via SCC.
+
+**Deep-record healing.** A record first reached at the `MAX_DEPTH` boundary registers, but its
+fields (one level deeper) overflow the budget and all come back opaque — an all-`string` "ghost"
+(`setOpenConfig2` with `cancel: string`). A post-extraction pass re-resolves any mostly-fallback
+record at depth 0 and keeps the result **only when it introduces zero new registry entries** — so a
+genuine small config (whose field types were already registered by a shallow-resolved twin) heals to
+its real types (`cancel: unit => unit`), while an unbounded library graph (Highcharts options) would
+register hundreds of new entries, gets rolled back, and stays safely truncated. Locked by base-ui's
+`setOpenConfig2` in the benchmark baseline (the depth boundary is too fragile to pin in a synthetic
+golden).
 
 **`@unboxed` inside a record cycle.** A field like `labelGrid?: string | ((…, Options) => string)`
 becomes an object-bearing `@unboxed`, and if its function arm references back into the record cycle

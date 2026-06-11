@@ -17,7 +17,7 @@ type gapConfig5 = {
   right: string,
 }
 type headingConfig4 = {
-  color: string,
+  color: AlertTypes.colorConfig2,
   fontWeight: string,
   fontSize: string,
   lineHeight: string,

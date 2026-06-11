@@ -215,7 +215,7 @@ type bulkActionsType = {
 }
 type rowConfig2 = {
   height: string,
-  @as("&:hover") __hover: string,
+  @as("&:hover") __hover: DrawerTypes.overlayConfig,
 }
 type cellConfig2 = {
   padding: string,
