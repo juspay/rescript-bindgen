@@ -55,5 +55,5 @@ external make: (
   ~src: string=?,
   ~width: CommonTypes.stringOrNumber=?,
   ~className: RootSharedTypes.avatarRootClassName=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
 ) => React.element = "Image"

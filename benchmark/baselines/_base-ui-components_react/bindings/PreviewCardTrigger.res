@@ -55,5 +55,5 @@ external make: (
   ~target: ReactTypes.htmlAttributeAnchorTarget=?,
   ~href: string=?,
   ~className: TriggerTypes.contextMenuTriggerClassName=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
 ) => React.element = "Trigger"

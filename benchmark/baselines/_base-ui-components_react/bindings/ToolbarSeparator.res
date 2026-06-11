@@ -50,6 +50,6 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: SeparatorTypes.separatorClassName=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
   ~orientation: PositionerSharedTypes.orientation=?,
 ) => React.element = "Separator"

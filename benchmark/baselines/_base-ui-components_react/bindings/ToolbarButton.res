@@ -62,5 +62,5 @@ external make: (
   ~name: string=?,
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~className: ButtonTypes.toolbarButtonClassName=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
 ) => React.element = "Button"

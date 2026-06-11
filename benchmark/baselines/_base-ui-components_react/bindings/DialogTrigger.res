@@ -63,5 +63,5 @@ external make: (
   ~name: string=?,
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~className: RootSharedTypes.collapsibleRootClassName=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
 ) => React.element = "Trigger"

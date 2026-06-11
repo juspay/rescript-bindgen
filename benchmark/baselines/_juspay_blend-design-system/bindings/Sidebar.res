@@ -24,8 +24,8 @@ external make: (
   ~hideOnIconOnlyToggle: bool=?,
   ~showPrimaryActionButton: bool=?,
   ~primaryActionButtonProps: DateRangePickerTypes.presetsConfig=?,
-  ~activeItem: string=?,
+  ~activeItem: Nullable.t<string>=?,
   ~onActiveItemChange: string => unit=?,
-  ~defaultActiveItem: string=?,
+  ~defaultActiveItem: Nullable.t<string>=?,
   ~onHoveringChange: bool => unit=?,
 ) => React.element = "Sidebar"

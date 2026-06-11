@@ -61,5 +61,5 @@ external make: (
   ~name: string=?,
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~className: RootSharedTypes.numberFieldRootClassName=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
 ) => React.element = "Decrement"

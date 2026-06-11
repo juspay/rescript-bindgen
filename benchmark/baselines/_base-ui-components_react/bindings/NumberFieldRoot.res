@@ -10,7 +10,7 @@ external make: (
   ~disabled: bool=?,
   ~readOnly: bool=?,
   ~name: string=?,
-  ~value: float=?,
+  ~value: Nullable.t<float>=?,
   ~defaultValue: float=?,
   ~allowWheelScrub: bool=?,
   ~snapOnStep: bool=?,
@@ -67,5 +67,5 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~render: React.element=?,
+  ~render: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
 ) => React.element = "Root"

@@ -6,7 +6,7 @@ external make: (
   ~leftSlot: React.element=?,
   ~rightSlot: React.element=?,
   ~subtextSlot: React.element=?,
-  ~triggerSlot: React.element=?,
+  ~triggerSlot: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
   ~triggerSlotWidth: CommonTypes.stringOrNumber=?,
   ~children: React.element,
   ~isDisabled: bool=?,

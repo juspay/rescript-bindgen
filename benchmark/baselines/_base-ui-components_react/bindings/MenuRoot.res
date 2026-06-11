@@ -11,8 +11,8 @@ external make: (
   ~disabled: bool=?,
   ~closeParentOnEsc: bool=?,
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
-  ~triggerId: string=?,
-  ~defaultTriggerId: string=?,
+  ~triggerId: Nullable.t<string>=?,
+  ~defaultTriggerId: Nullable.t<string>=?,
   ~handle: RootSharedTypes.menuHandle2<'a>=?,
-  ~children: React.element=?,
+  ~children: React.element=?,  // ⓘ function form of this render prop is not bound — pass a React element
 ) => React.element = "Root"
