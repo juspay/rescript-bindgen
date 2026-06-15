@@ -1330,7 +1330,16 @@ function classify(type, ctx, propName = '', depth = 0) {
     // string placeholder that silently does nothing. Inside SHARED record fields it stays
     // a flagged defect (a shared type can't be component-generic). (#31, probe I-2)
     if (flags & ts.TypeFlags.Any) {
-        if (ctx.typeVars && !ctx.inRecordField) {
+        // A record-field `any` normally stays a flagged defect (#31) — a shared record
+        // can't carry a per-component var, and a generic record referenced as a callback
+        // param inside a shared `className`/`style` @unboxed doesn't thread its `<'a>`
+        // (compile break). BUT for an ARRAY-ELEMENT record at a produce position (`items:
+        // {value: any}[]`, round-tripping with `itemToStringValue`) the var threads cleanly
+        // through `array<item<'a>>` -> the union -> the component (proven; refTo copies
+        // tparams, collectTypeVars/collectVarNames surface them). Narrowly scoped to exactly
+        // that case so state records consumed by className/style stay as-is. (#50)
+        const fieldVarOk = ctx.inRecordField && ctx.inArrayElem && ctx.produced !== false
+        if (ctx.typeVars && (!ctx.inRecordField || fieldVarOk)) {
             const TV = ['a', 'b', 'c', 'd', 'e', 'f']
             const key = ctx.lastAnyAlias || Symbol('bare-any')
             if (!ctx.typeVars.has(key)) {
@@ -1489,7 +1498,10 @@ function classify(type, ctx, propName = '', depth = 0) {
     // arrays
     if (checker.isArrayType?.(type)) {
         const elem = checker.getTypeArguments(type)[0]
-        return { kind: 'array', of: classify(elem, ctx, propName, depth + 1) }
+        const prevAE = ctx.inArrayElem; ctx.inArrayElem = true // element-record field-any may go generic (#50)
+        const of = classify(elem, ctx, propName, depth + 1)
+        ctx.inArrayElem = prevAE
+        return { kind: 'array', of }
     }
 
     // Record<K,V> -> `Dict.t<V>`. A mapped `Record<>` isn't a TypeReference, so
@@ -2318,9 +2330,14 @@ function memberOf(t, ctx, propName, depth) {
     if (t.flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) return { ctor: 'Bool', rt: 'boolean', type: { kind: 'boolean' } }
     const elem = asArray(t, c)
     if (elem) {
+        // inArrayElem: an element record's field-`any` may become a generic (`item<'a>`) —
+        // it threads cleanly through `array<…>` (proven by `items`). Set BEFORE memberOf,
+        // which is what actually builds the element record. (#50)
+        const prevAE = ctx.inArrayElem; ctx.inArrayElem = true
         const inner = memberOf(elem, ctx, propName, depth)
         const ctor = inner ? inner.ctor + 'Arr' : 'Arr'
         const elemType = inner ? inner.type : classify(elem, ctx, propName, depth + 1)
+        ctx.inArrayElem = prevAE
         return { ctor, rt: 'array', type: { kind: 'array', of: elemType } }
     }
     // A single function member -> runtime `typeof "function"` (distinct from string/number/
@@ -2363,12 +2380,23 @@ function memberOf(t, ctx, propName, depth) {
         return { ctor: 'Ref', rt: 'object', type: { kind: 'domRef' } }
     }
 
+    // A `Record<string, V>` / `{ [k: string]: V }` member -> runtime object (a dict),
+    // distinct from an array arm (`Array.isArray`) and the single allowed object arm via
+    // `claim('object')`. Enables `Record<string, ReactNode> | Array<…>` (Select's `items`)
+    // as `@unboxed Dict(Dict.t<…>) | Items(array<…>)`. Purely STRUCTURAL (string index, no
+    // named props), so — unlike the named-object arm below — it does NOT exclude library
+    // types: `Record` itself is declared in lib.es5. (#50)
+    const isObjectish = t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)
+    if (isObjectish && t.getProperties().length === 0) {
+        const si = c.getIndexInfoOfType && c.getIndexInfoOfType(t, ts.IndexKind.String)
+        if (si && si.type) return { ctor: 'Dict', rt: 'object', type: { kind: 'dict', of: classify(si.type, ctx, propName, depth + 1) } }
+    }
+
     // A single ANONYMOUS inline-object member (e.g. `string | { key, color }`) -> runtime
     // `typeof "object"` (distinct from string/number/boolean/array). Only ONE is allowed
     // (two objects can't be discriminated); `claim('object')` in unionNode enforces that.
     // Restricted to anonymous literals (`__type`): expanding a NAMED cross-domain object
     // here would pull large interconnected graphs (e.g. Highcharts) into one SCC.
-    const isObjectish = t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)
     const sym = t.getSymbol && t.getSymbol()
     if (isObjectish && (sym && sym.getName()) === '__type' && t.getProperties().length > 0 && !isLibraryType(t)) {
         const node = classify(t, ctx, propName, depth + 1)

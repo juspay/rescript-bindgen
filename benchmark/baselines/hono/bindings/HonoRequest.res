@@ -26,5 +26,5 @@ type t = InstanceTypes.honoRequest
 @get external bodyCache: t => TypesTypes.bodyCacheConfig = "bodyCache"
 @get external url: t => string = "url"
 @get external method: t => string = "method"
-@get external matchedRoutes: t => array<TypesTypes.routerRoute> = "matchedRoutes"
+@get external matchedRoutes: t => array<TypesTypes.routerRoute<'a>> = "matchedRoutes"
 @get external routePath: t => string = "routePath"

@@ -5,6 +5,16 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **`Record | Array<{…value: any}>` unions now bind exactly** (#50, the last base-ui
+  review component -> base-ui **195/195 usable, 0 review, 0 broken**): a dict member
+  and an array member are runtime-distinct, so the union becomes `@unboxed Dict(Dict.t<V>)
+  | ItemsConfigArr(array<itemsConfig<'a>>)`. The element record's round-tripping
+  `value: any` (paired with `itemToStringValue`) becomes a real generic `itemsConfig<'a>`,
+  threaded to the component — narrowly scoped to ARRAY-ELEMENT records so state records
+  consumed by `className`/`style` stay flagged (their `<'a>` wouldn't thread through a
+  shared @unboxed). New `Dict` arm in the @unboxed builder.
+
 ### Changed
 - **Large string-literal runs in opaque modules collapse to one polyvar arm** (#53):
   a non-discriminable union whose literal members are a big set (React's

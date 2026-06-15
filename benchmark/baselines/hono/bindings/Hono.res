@@ -32,4 +32,4 @@ type t = InstanceTypes.hono
 @send external request: (t, ~input: TypesTypes.Input.t, ~requestInit: string=?, ~env: string=?, ~executionCtx: TypesTypes.executionContext=?, unit) => promise<WebTypes.response> = "request"
 @send external fire: (t) => unit = "fire"
 @get external router: t => TypesTypes.router = "router"
-@get external routes: t => array<TypesTypes.routerRoute> = "routes"
+@get external routes: t => array<TypesTypes.routerRoute<'a>> = "routes"
