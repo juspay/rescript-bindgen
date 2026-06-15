@@ -593,7 +593,7 @@ type classNames = {
   caption_before_enter: string,
   caption_before_exit: string,
 }
-module Select = {
+module SelectTarget = {
   type t
   external fromDate: Date.t => t = "%identity"
   external fromDates: array<Date.t> => t = "%identity"
@@ -650,10 +650,10 @@ type formatters = {
 }
 module Matcher = {
   type t
-  external fromBoolean: bool => t = "%identity"
+  external fromBool: bool => t = "%identity"
   external fromDate: Date.t => t = "%identity"
   external fromDates: array<Date.t> => t = "%identity"
-  external fromType: (Date.t => bool) => t = "%identity"
+  external fromFn: (Date.t => bool) => t = "%identity"
   external fromDateRange: dateRange => t = "%identity"
   external fromDateBefore: dateBefore => t = "%identity"
   external fromDateAfter: dateAfter => t = "%identity"
@@ -662,10 +662,10 @@ module Matcher = {
 }
 module Disabled = {
   type t
-  external fromBoolean: bool => t = "%identity"
+  external fromBool: bool => t = "%identity"
   external fromDate: Date.t => t = "%identity"
   external fromDates: array<Date.t> => t = "%identity"
-  external fromType: (Date.t => bool) => t = "%identity"
+  external fromFn: (Date.t => bool) => t = "%identity"
   external fromDateRange: dateRange => t = "%identity"
   external fromDateBefore: dateBefore => t = "%identity"
   external fromDateAfter: dateAfter => t = "%identity"
@@ -744,7 +744,7 @@ type dayPickerContext = {
   goToMonth: Date.t => unit,
   getModifiers: calendarDay2 => Dict.t<bool>,
   selected: string,
-  select: (Date.t, Dict.t<bool>, string) => Select.t,
+  select: (Date.t, Dict.t<bool>, string) => SelectTarget.t,
   isSelected: Date.t => bool,
   components: customComponents,
   classNames: classNames,

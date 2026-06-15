@@ -10,9 +10,11 @@
 @unboxed type v1OrV1 = @as(1) N1 | @as(-1) N_1
 @unboxed type style2<'a> = Style(JsxDOM.style) | Fn('a => JsxDOM.style)
 @unboxed type className2<'a> = Str(string) | Fn('a => string)
-module Validate = {
+module ValidateTarget = {
   type t
   external fromString: string => t = "%identity"
   external fromArray: array<string> => t = "%identity"
   external fromPromise: promise<stringOrStringArray> => t = "%identity"
+  external fromUnit: unit => t = "%identity"
+  let none: t = fromUnit()
 }

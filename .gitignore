@@ -1,5 +1,8 @@
 # dependencies
 node_modules/
+# ...except golden-fixture vendor stubs (self-contained test inputs, not real deps)
+!test/golden/cases/*/node_modules/
+!test/golden/cases/*/node_modules/**
 
 # scratch install cache (versions fetched from npm for generation)
 .bindgen-cache/

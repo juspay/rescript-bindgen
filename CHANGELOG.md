@@ -19,6 +19,20 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   the sync-or-async value shape `T | Promise<T>` → `promise<t>` (#24).
 
 ### Added
+- **Exact views for the formerly-review union patterns** (#39): base-ui review
+  13 → 1. Four cooperating mechanisms: (1) VENDOR-record trial — dependency-
+  declared consumer-constructed shapes (@floating-ui `Rect`/`VirtualElement`)
+  extract as exact records iff every field is perfect (sandboxed + rolled back
+  otherwise); (2) string-literal arms in views modules become ready-made
+  constants via single-value polyvar casts (`Boundary.clippingAncestors`);
+  (3) consumer-produced callback-RETURN unions become construct-only
+  `<Prop>Target` views modules (`FinalFocusTarget.fromBool/fromHTMLElement/
+  none`) — unlocking `finalFocus`/`initialFocus` as exact @unboxed and the
+  `anchor` fn arm; (4) views-module members are now DEEP-checked for inner
+  imperfections (an unflagged `=> string` fake can no longer hide inside a
+  view). `isDomNodeType` is lib.dom-guarded (a vendor type merely named
+  *Element no longer collapses into `Dom.element`). `DOMRectList` joined the
+  WebTypes sink. Review hardening: construct-only views are gated to produce-positions (callback params keep the `'a` salvage), ident-colliding/`__type` arms reject the module instead of silently dropping a variant, reserved-word literal constants use the shared reserved set (note matches code), and a failed vendor-record trial fully rolls back minted names + type vars.
 - **Render-prop function form bindable via zero-cost wrapper** (#46): a
   `render?: ReactElement | ((props, state) => ReactElement)` prop stays
   `React.element` (the common case is unchanged), and the component module now

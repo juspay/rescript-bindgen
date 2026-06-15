@@ -5,7 +5,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, CheckboxGroupTypes.checkbo
 external make: (
   ~disabled: bool=?,
   ~name: string=?,
-  ~validate: (JSON.t, Dict.t<'a>) => CommonTypes.Validate.t=?,
+  ~validate: (JSON.t, Dict.t<'a>) => CommonTypes.ValidateTarget.t=?,
   ~validationMode: FormTypes.formValidationMode=?,
   ~validationDebounceTime: float=?,
   ~invalid: bool=?,

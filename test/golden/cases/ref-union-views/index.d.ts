@@ -1,9 +1,11 @@
 // base-ui's remaining review patterns (#39) + the flag-don't-fake gate from its review:
 //   1. boolean | RefObject<…> | (CLEAN fn)  -> @unboxed Bool | Ref | Fn — runtime-
 //      discriminable; the Ref arm renders the standard ref type.
-//   2. boolean | RefObject<…> | (fn with an UNMODELLABLE return) -> stays an honest
-//      ⚠️ REVIEW flag: a fake `=> string` inside a shared @unboxed would render
-//      UNFLAGGED, so the Fn arm is imperfection-gated (memberOf returns null).
+//   2. boolean | RefObject<…> | (fn whose return mixes runtime shapes) -> the return
+//      becomes a construct-only views module (#39): `FinalFocusTarget.fromBool /
+//      fromHTMLElement / none` (none = the void|null arm; unit IS undefined at runtime).
+//      Consumer-PRODUCED position, so construct-only is complete coverage — the Fn arm
+//      passes #40's return gate with an EXACT type instead of being dropped.
 //   3. HTMLElement | ShadowRoot | RefObject<…> -> opaque module with from* views
 //      (lib.dom ShadowRoot -> Dom.shadowRoot; a FIRST-PARTY type named ShadowRoot or
 //      LocalesArgument is NOT hijacked — lib-declaration guarded).

@@ -10,13 +10,11 @@
 // This file knows ReScript but nothing about TypeScript — the split is deliberate.
 // ============================================================================
 
-/** ReScript keywords that can't be used bare as identifiers/labels (we suffix `_`). */
-const RESERVED = new Set([
-    'type', 'and', 'as', 'open', 'let', 'rec', 'in', 'switch', 'if', 'else',
-    'for', 'while', 'fun', 'mutable', 'try', 'catch', 'exception', 'module',
-    'external', 'when', 'with', 'lazy', 'assert', 'true', 'false', 'include',
-    'constraint', 'private', 'of', 'to', 'downto',
-])
+import { RESCRIPT_RESERVED } from './stdlib-types.mjs'
+
+/** ReScript keywords that can't be used bare as identifiers/labels (we suffix `_`).
+ *  Shared with extract via stdlib-types so notes and emitted idents never disagree. */
+const RESERVED = RESCRIPT_RESERVED
 
 /**
  * Prop names whose `number` type should become ReScript `int` (counts/indices),
@@ -631,6 +629,17 @@ function renderOpaque(t, lines, cfg) {
     }
     const titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1)
     const pascalName = (s) => String(s).replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('')
+    // camel ident for a literal-arm constant ('clippingAncestors' -> clippingAncestors,
+    // 'trap-focus' -> trapFocus, 'true' -> true_, '2xl' -> v2xl). Mirrors extract's
+    // lower(pascal(…)) — same shared RESERVED set — so the prop's ⓘ note and the
+    // emitted ident can never disagree. (#39 review)
+    const lowerIdent = (s) => {
+        let p = pascalName(s)
+        if (!/^[A-Z]/.test(p)) p = 'V' + p
+        let n = p.charAt(0).toLowerCase() + p.slice(1)
+        if (RESERVED.has(n)) n += '_'
+        return n
+    }
     const fromName = (m) => m.name
         ? 'from' + pascalName(m.name) // explicit hint: Element -> fromElement, Files -> fromFiles
         : 'from' + titleCase(m.type.kind === 'typeRef' ? m.type.to.replace(/\.t$/, '') : (m.type.res || m.type.kind || 'value'))
@@ -638,6 +647,25 @@ function renderOpaque(t, lines, cfg) {
     lines.push(`  type t`)
     const seen = new Set()
     for (const m of t.members) {
+        // A string-LITERAL arm -> a ready-made constant: the polyvar `#"x"` admits exactly
+        // that one value and compiles to the bare string, so nothing else can be cast in. (#39)
+        if (m.literal !== undefined) {
+            const constName = lowerIdent(m.literal)
+            if (seen.has(constName)) continue
+            seen.add(constName)
+            lines.push(`  external from${pascalName(m.literal)}: [#"${m.literal}"] => t = "%identity"`)
+            lines.push(`  let ${constName}: t = from${pascalName(m.literal)}(#"${m.literal}")`)
+            continue
+        }
+        // The null/void arm of a consumer-produced return: unit's runtime value IS
+        // `undefined`, which is exactly what a `void` return is. (#39)
+        if (m.none) {
+            if (seen.has('none')) continue
+            seen.add('none')
+            lines.push(`  external fromUnit: unit => t = "%identity"`)
+            lines.push(`  let none: t = fromUnit()`)
+            continue
+        }
         const fn = fromName(m)
         if (seen.has(fn)) continue
         seen.add(fn)

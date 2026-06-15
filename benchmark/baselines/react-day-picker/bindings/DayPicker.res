@@ -33,10 +33,10 @@ external make: (
   ~components: LocaleSharedTypes.componentsConfig=?,
   ~footer: React.element=?,
   ~autoFocus: bool=?,
-  ~disabled: LocaleSharedTypes.Disabled.t=?,
-  ~hidden: LocaleSharedTypes.Disabled.t=?,
+  ~disabled: LocaleSharedTypes.Disabled.t=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with Disabled.fromBool / Disabled.fromDate / Disabled.fromDates / Disabled.fromFn / Disabled.fromDateRange / Disabled.fromDateBefore / Disabled.fromDateAfter / Disabled.fromDateInterval / Disabled.fromDayOfWeek / Disabled.fromMatchers
+  ~hidden: LocaleSharedTypes.Disabled.t=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with Disabled.fromBool / Disabled.fromDate / Disabled.fromDates / Disabled.fromFn / Disabled.fromDateRange / Disabled.fromDateBefore / Disabled.fromDateAfter / Disabled.fromDateInterval / Disabled.fromDayOfWeek / Disabled.fromMatchers
   ~today: Date.t=?,
-  ~modifiers: Dict.t<LocaleSharedTypes.Disabled.t>=?,
+  ~modifiers: Dict.t<LocaleSharedTypes.Disabled.t>=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with Disabled.fromBool / Disabled.fromDate / Disabled.fromDates / Disabled.fromFn / Disabled.fromDateRange / Disabled.fromDateBefore / Disabled.fromDateAfter / Disabled.fromDateInterval / Disabled.fromDayOfWeek / Disabled.fromMatchers
   ~labels: LocaleSharedTypes.labelsConfig=?,
   ~formatters: LocaleSharedTypes.formattersConfig=?,
   ~dir: string=?,

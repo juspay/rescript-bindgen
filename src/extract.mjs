@@ -17,7 +17,7 @@
 
 import ts from 'typescript'
 import { dirname } from 'path'
-import { DOM_ELEMENT_BY_LOWER, DOM_PROPS_FIELDS } from './stdlib-types.mjs'
+import { DOM_ELEMENT_BY_LOWER, DOM_PROPS_FIELDS, RESCRIPT_RESERVED } from './stdlib-types.mjs'
 import { TS_NAME_TO_GROUP, chainFields } from './html-attrs.mjs'
 import { label } from './emit.mjs'
 
@@ -36,6 +36,22 @@ function isLibraryType(type) {
     const file = (decl && decl.getSourceFile().fileName) || ''
     return /node_modules\/(@types|typescript|csstype|styled-components|@floating-ui)\//.test(file) ||
         /\/lib\.(dom|es|scripthost)/.test(file)
+}
+
+/** A VENDOR library type: declared in a dependency package the library gate blocks, but
+ *  NOT a platform surface (lib.*, @types/react, typescript, csstype — those have dedicated
+ *  handling). Since isLibraryType's denylist is what blocks, this is EFFECTIVELY an
+ *  allowlist of @floating-ui and styled-components today (every other node_modules
+ *  package already passes the first record gate). Vendor records that extract perfectly
+ *  may pass via `trialVendorRecord` (#39: @floating-ui's `Rect`, `VirtualElement` —
+ *  small, stable, CONSUMER-CONSTRUCTED shapes that an opaque sink could not serve). */
+function isVendorLibType(type) {
+    const sym = type.aliasSymbol || (type.getSymbol && type.getSymbol()) || type.symbol
+    const decl = sym && sym.getDeclarations && sym.getDeclarations()[0]
+    const file = (decl && decl.getSourceFile().fileName) || ''
+    return /node_modules\//.test(file) &&
+        !/node_modules\/(@types|typescript|csstype)\//.test(file) &&
+        !/\/lib\.(dom|es|scripthost)/.test(file)
 }
 
 // TS utility-type aliases that WRAP another type: the alias itself lives in lib.es5,
@@ -1144,6 +1160,46 @@ const WEB_MODULE = 'WebTypes'
  *  (ref arms inside @unboxed unions) so the two dispatches can't drift. (#39) */
 const REF_NAMES = /^(Ref|RefObject|MutableRefObject|LegacyRef)$/
 
+/** Trial-extract a VENDOR library record (#39): the library gate normally refuses
+ *  records for dependency-declared types (anti-hijack, anti-graph-pull), but small
+ *  consumer-CONSTRUCTED shapes like @floating-ui's `Rect`/`VirtualElement` lose their
+ *  whole prop to a review flag that way — and an opaque sink can't serve a value the
+ *  consumer must BUILD. So: attempt the record extraction sandboxed (snapshot/rollback,
+ *  the #33 heal pattern) and accept ONLY a perfect result — every field of every newly
+ *  registered entry imperfection-free, and a bounded entry count (no graph pull).
+ *  Anything less rolls back fully and keeps the honest flag. */
+const VENDOR_TRIAL_ENTRY_CAP = 8
+function trialVendorRecord(type, ctx, propName, named) {
+    const shared = ctx.shared
+    if (!shared) return null
+    const entriesLen = shared.entries.length
+    const keysBefore = new Set(shared.byKey.keys())
+    const sigsBefore = new Set(shared.bySig.keys())
+    const namesBefore = new Set(shared.names)
+    const typeVarsBefore = ctx.typeVars ? new Map(ctx.typeVars) : null
+    let ref = null
+    // Fresh depth budget: a vendor shape is often reached DEEP (anchor's fn-return inside
+    // a positioner config), where MAX_DEPTH would starve its fields into opaque and fail
+    // the trial. Safe here: acceptance demands perfect cleanliness + a hard entry cap, so
+    // the budget reset cannot smuggle in a graph pull. (#39, same reasoning as #33's heal)
+    try { ref = recordNode(type, ctx, propName, 0, named) } catch { ref = null }
+    const fresh = shared.entries.slice(entriesLen)
+    // NOTE: fresh.length === 0 with a valid ref is the structural-DEDUP hit — the
+    // extracted record was identical to an already-vetted entry and collapsed into it.
+    const clean = ref &&
+        fresh.length <= VENDOR_TRIAL_ENTRY_CAP &&
+        fresh.every((e) => e.kind !== 'record' || (e.fields.length > 0 && !e.fields.some((f) => irHasImperfection(f.type))))
+    if (clean) return ref
+    // FULL rollback — including minted names (else a failed trial makes a later legitimate
+    // `Rect` become `Rect2`) and any type variables salvaged params minted. (#39 review)
+    shared.entries.length = entriesLen
+    for (const k of [...shared.byKey.keys()]) if (!keysBefore.has(k)) shared.byKey.delete(k)
+    for (const s of [...shared.bySig.keys()]) if (!sigsBefore.has(s)) shared.bySig.delete(s)
+    for (const n of [...shared.names]) if (!namesBefore.has(n)) shared.names.delete(n)
+    if (typeVarsBefore && ctx.typeVars) { ctx.typeVars.clear(); for (const [k, v] of typeVarsBefore) ctx.typeVars.set(k, v) }
+    return null
+}
+
 /** Mint a fresh component-scoped type variable (the #31 machinery): 'a, 'b, … per
  *  component, registered in ctx.typeVars so the shared @unboxed entry parameterizes
  *  itself via collectTypeVars. Used to SALVAGE unmodellable fn params (#41). */
@@ -1194,6 +1250,9 @@ const WEB_PLATFORM_TYPES = {
     // webapi-OFF fallbacks only — with rescript-webapi installed these three map to the
     // full Webapi.* bindings instead (see the File/FileList/FormData ladder in classify). (#41)
     File: 'file', FileList: 'fileList', FormData: 'formData',
+    // pass-through value (obtained from `range.getClientRects()` etc.) — needed so
+    // VirtualElement's `getClientRects` return union stays clean. (#39)
+    DOMRectList: 'domRectList',
 }
 
 /** True when the type's symbol is DECLARED in lib.dom/lib.webworker — so a package's OWN
@@ -1493,6 +1552,20 @@ function classify(type, ctx, propName = '', depth = 0) {
         }
     }
 
+    // VENDOR-record exception (#39): a dependency-declared object type the gate above
+    // refused (e.g. @floating-ui's `Rect`/`VirtualElement` — consumer-CONSTRUCTED, so an
+    // opaque sink can't serve it) gets ONE sandboxed extraction attempt; accepted only
+    // if every field of every pulled entry is imperfection-free (else full rollback,
+    // honest flag kept). Platform surfaces (lib.*, @types, csstype) never qualify.
+    if (isObjectish && type.getProperties().length > 0 && isLibraryType(libCore) && isVendorLibType(libCore) && !isWebPlatformDecl(type)) {
+        const sym = type.getSymbol() || type.symbol
+        const symName = sym && sym.getName()
+        const cap = (n) => (n && /^[A-Z]/.test(n) ? n : null)
+        const named = cap(typeName(libCore)) || cap(symName && symName !== '__type' ? symName : null)
+        const trial = trialVendorRecord(type, ctx, propName, named)
+        if (trial) return trial
+    }
+
     // An EMPTY object type (`interface ComboboxEmptyState {}` — base-ui's stateless
     // components): zero fields to model, but a real object arrives at runtime ->
     // `JSON.t`, the same honest opaque-value mapping `unknown` gets. Without this,
@@ -1664,40 +1737,94 @@ function unionMembers(checker, u) {
  * typed (then the caller keeps it flagged).
  * @returns {{kind:'typeRef', to:string, home:string, key:string} | null}
  */
-function opaqueUnion(ctx, type, memberTypes, propName, depth) {
+function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     if (!ctx.shared) return null // module mode only
     const key = 't:' + type.id
     // carry the entry's `note` (how to construct the opaque value) onto each ref so
     // emit can surface it inline on the prop — even on a memoized cache-hit.
     const ref = (e) => ({ kind: 'typeRef', to: e.name + '.t', home: e.home, key: e.key, ...(e.note ? { note: e.note } : {}) })
-    if (ctx.shared.byKey.has(key)) return ref(ctx.shared.byKey.get(key))
+    // RECEIVE-position guard (#39 review): a views module is CONSTRUCT-only (`from*`, no
+    // `as*` accessors). For a value the library PRODUCES (`ctx.produced === false`, e.g. a
+    // callback param) that's an uninspectable black box — strictly worse than the honest
+    // 'a salvage / review flag. Literal/none arms are new in #39, so they must never reach
+    // a receive position — neither freshly (gate below) nor via the `t:`-cache
+    // (entry._construct gate here).
+    const received = ctx.produced === false
+    const hasLiteralArm = memberTypes.some((mt) => mt.isStringLiteral && mt.isStringLiteral())
+    if (received && (hasLiteralArm || opts.addNone)) return null
+    if (ctx.shared.byKey.has(key)) {
+        const e = ctx.shared.byKey.get(key)
+        if (e._construct && received) return null
+        return ref(e)
+    }
     const { checker } = ctx
     const members = []
+    let sawBool = false
     for (const mt of memberTypes) {
+        // A string-LITERAL arm (`'clippingAncestors' | Element | …`, #39) becomes a
+        // ready-made constant: `external fromX: [#x] => t` + `let x: t = fromX(#x)` —
+        // the polyvar admits exactly that one value (it IS the string at runtime), so
+        // no open string cast leaks into the module.
+        if (mt.isStringLiteral && mt.isStringLiteral()) {
+            members.push({ literal: String(mt.value), name: String(mt.value) })
+            continue
+        }
+        // TS expands `boolean` to `true | false` — collapse to ONE fromBool arm. (#39)
+        if (mt.flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) {
+            if (!sawBool) { sawBool = true; members.push({ type: { kind: 'boolean' }, name: 'Bool' }) }
+            continue
+        }
         const node = classify(mt, ctx, propName, depth + 1)
-        if (!node || ['opaque', 'review', 'unknown', 'any'].includes(node.kind)) return null
+        // DEEP imperfection check (#39): a member that is itself clean-KINDED can still
+        // carry a fake inside (a callback whose return classified opaque renders as an
+        // UNFLAGGED `=> string`). Reject the whole module — flag-don't-fake.
+        if (!node || irHasImperfection(node)) return null
         // Constructor-name hint so emit produces clean `from*` names regardless of
         // how the member renders: `Element` -> fromElement, `Element[]` ->
         // fromElements (plural of the element's name), `File`/`File[]` ->
-        // fromFile/fromFiles. Falls back in emit when no hint is available.
+        // fromFile/fromFiles. A FUNCTION arm is named `Fn` (the TS-internal `__type`
+        // symbol must not leak as `fromType`). Falls back in emit otherwise.
+        // Constructor-name hint. NEVER leak the TS-internal `__type` symbol (anonymous
+        // records/intersections like @floating-ui's `ClientRectObject = Prettify<…>`):
+        // for an array of an anon element, derive from the element's RENDERED record name
+        // (`array<clientRectObject>` -> fromClientRectObjects); a bare anon record from the
+        // node's typeRef; a function arm -> `Fn`. (#39 review)
         const elem = asArray(mt, checker)
-        const name = elem ? (typeName(elem) ? typeName(elem) + 's' : undefined) : typeName(mt)
+        const raw = typeName(mt)
+        const en = elem && typeName(elem)
+        const refName = (n) => (n && n.kind === 'typeRef' ? n.to.replace(/\.t$/, '') : null)
+        const name = elem
+            ? (en && en !== '__type' ? en + 's' : (refName(node && node.of) ? refName(node.of) + 's' : undefined))
+            : (raw && raw !== '__type') ? raw
+            : (mt.getCallSignatures && mt.getCallSignatures().length) ? 'Fn'
+            : refName(node) || undefined
         members.push({ type: node, name })
     }
+    // `T | null/void` in a consumer-PRODUCED position (a callback's return, #39):
+    // `none` constant (unit cast — `()` compiles to `undefined`, exactly what `void`
+    // returns; the library treats null/undefined alike here).
+    if (opts.addNone) members.push({ none: true, name: 'none' })
     if (members.length < 2) return null
-    const name = uniqueName(pascal(typeName(type) || propName), ctx.shared) // a MODULE name
+    // Constructor-ident COLLISION check (#39 review): two literals that camel to the same
+    // ident (`'trap-focus'` vs `'trapFocus'`), or two same-named arms, would silently drop
+    // a TS variant (emit's `seen` dedup). All-cases-or-flag: reject the module instead.
+    const identOf = (m) => m.literal !== undefined ? lower(pascal(m.literal)) : m.none ? 'none' : ('from' + (m.name ? pascal(m.name) : (m.type && m.type.kind) || 'value'))
+    const idents = members.map(identOf)
+    if (new Set(idents).size !== idents.length) return null
+    const name = uniqueName(pascal(opts.nameHint || typeName(type) || propName), ctx.shared) // a MODULE name
     const deps = new Set()
-    for (const m of members) collectRefKeys(m.type, deps)
+    for (const m of members) { if (m.type) collectRefKeys(m.type, deps) }
     // Sit with the records it references (first dep's home); else the prop's own
     // domain module (so anonymous prop-unions land in <Component>Types, not Common).
     let home = homeOf(type, ctx)
     if (deps.size) { const d = ctx.shared.byKey.get([...deps][0]); if (d && d.home) home = d.home }
     // Note telling the caller how to build this opaque value (the `from*` ctors),
     // since the prop only shows `<Module>.t`. Mirrors the Dom-node note convention.
+    const ctorName = (m) => m.literal ? `${name}.${lower(pascal(m.literal))}` : m.none ? `${name}.none` : `${name}.from${pascal(m.name)}`
     const note = members.every((m) => m.name)
-        ? `was \`${checker.typeToString(type).replace(/ \| (null|undefined)\b/g, '')}\` — opaque; build with ${members.map((m) => `${name}.from${pascal(m.name)}`).join(' / ')}`
+        ? `was \`${checker.typeToString(type).replace(/ \| (null|undefined)\b/g, '')}\` — opaque; build with ${members.map(ctorName).join(' / ')}`
         : undefined
-    const entry = { key, kind: 'opaque', name, home, members, deps, note }
+    const entry = { key, kind: 'opaque', name, home, members, deps, note, _construct: hasLiteralArm || !!opts.addNone }
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
     return ref(entry)
@@ -1761,12 +1888,6 @@ function overloadModule(ctx, type, callSigs, propName, depth) {
     return ref(entry)
 }
 
-const RESCRIPT_RESERVED = new Set([
-    'type', 'and', 'as', 'open', 'let', 'rec', 'in', 'switch', 'if', 'else',
-    'for', 'while', 'fun', 'mutable', 'try', 'exception', 'module', 'external',
-    'when', 'with', 'lazy', 'assert', 'true', 'false', 'include', 'of', 'to',
-])
-
 /**
  * Make a valid lowercase ReScript TYPE name (types must start lowercase, can't
  * be reserved words or start with a digit). `Size` -> `size`, `type` -> `type_`.
@@ -1797,12 +1918,19 @@ function lower(s) {
  */
 function unionNode(type, ctx, propName, depth = 0) {
     const { checker } = ctx
-    // strip null/undefined (handled by optional). NOTE: the generator runs with
-    // strictNullChecks OFF, so `null` is NOT a distinct union member here — `T | null`
-    // already collapsed to `T`. The explicit-null case (#34, I-5) is recovered
-    // syntactically at the component-prop level (see `syntacticNullable`).
+    // strip null/undefined/void (null/undefined handled by optional). NOTE: the generator
+    // runs with strictNullChecks OFF, so `null` is NOT a distinct union member here —
+    // `T | null` already collapsed to `T`. The explicit-null case (#34, I-5) is recovered
+    // syntactically at the component-prop level (see `syntacticNullable`). In a callback's
+    // RETURN position (`ctx.inFnReturn`) a nullish/void arm is real coverage the consumer
+    // must be able to produce — remembered here, surfaced as a `none` constant when the
+    // return becomes a views module. (#39)
+    // consume the syntactic-null hint (set by functionNode for THIS top return union only)
+    const synNull = !!ctx.retSynNull
+    if (ctx.retSynNull) ctx.retSynNull = false
+    const hadNullish = synNull || type.types.some((t) => t.flags & (ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void))
     const parts = type.types.filter(
-        (t) => !(t.flags & (ts.TypeFlags.Null | ts.TypeFlags.Undefined))
+        (t) => !(t.flags & (ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void))
     )
     if (parts.length === 1) return classify(parts[0], ctx, propName, depth + 1)
 
@@ -1962,7 +2090,10 @@ function unionNode(type, ctx, propName, depth = 0) {
     // attached so the consumer knows a fragment / shadow-root target isn't covered.
     const isDomNodeType = (t) => {
         const n = typeName(t)
-        return !!(n && (/Element$/.test(n) || n === 'Node' || n === 'DocumentFragment' || n === 'ShadowRoot'))
+        // lib.dom-declared only: a vendor type merely NAMED *Element (@floating-ui's
+        // VirtualElement — a plain object, not a DOM node) must not be swallowed into
+        // Dom.element. (#39, same name-hijack guard family as #40's ShadowRoot fix.)
+        return !!(n && (/Element$/.test(n) || n === 'Node' || n === 'DocumentFragment' || n === 'ShadowRoot')) && isWebPlatformDecl(t)
     }
     if (parts.every(isDomNodeType)) {
         const note = parts.some((t) => { const n = typeName(t); return n === 'DocumentFragment' || n === 'ShadowRoot' })
@@ -2105,12 +2236,32 @@ function unionNode(type, ctx, propName, depth = 0) {
             return (t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) && s && t.getProperties().length
         })
         if (structuredParts.length >= 2) {
-            const opaque = opaqueUnion(ctx, type, unionMembers(checker, type), propName, depth)
+            const opaque = opaqueUnion(ctx, type, unionMembers(checker, type), propName, depth, retViewOpts(ctx, propName, hadNullish))
             if (opaque) return opaque
+        }
+        // Consumer-PRODUCED return union (`(closeType) => boolean | HTMLElement | null | void`,
+        // #39): even ONE structured arm qualifies for a views module here, because the
+        // consumer only needs to CONSTRUCT the value — `FinalFocusTarget.fromBool(true)` /
+        // `.fromHTMLElement(el)` / `.none`. Construct-only is complete coverage in this
+        // direction; in receive positions the honest flag stays.
+        if (ctx.inFnReturn && ctx.produced !== false) {
+            const v = opaqueUnion(ctx, type, parts, propName, depth, retViewOpts(ctx, propName, hadNullish))
+            if (v) return v
         }
         return { kind: 'review', text: checker.typeToString(type) }
     }
+    if (ctx.inFnReturn && ctx.produced !== false) {
+        const v = opaqueUnion(ctx, type, parts, propName, depth, retViewOpts(ctx, propName, hadNullish))
+        if (v) return v
+    }
     return { kind: 'opaque', text: checker.typeToString(type) }
+}
+
+/** opaqueUnion options for a callback-RETURN position: a `none` constant when the TS
+ *  return allows null/void, and a `<Prop>Target` module name. (#39) */
+function retViewOpts(ctx, propName, hadNullish) {
+    if (!ctx.inFnReturn || ctx.produced === false) return {}
+    return { addNone: !!hadNullish, nameHint: pascal(propName) + 'Target' }
 }
 
 /**
@@ -2247,6 +2398,16 @@ function unboxedName(members) {
  */
 function functionNode(sig, ctx, propName, depth = 0) {
     const { checker } = ctx
+    // POLARITY (#39 review): `ctx.produced` tracks who constructs the value being
+    // classified (true/undefined = the CONSUMER produces it — prop values, returns of
+    // consumer-provided callbacks; false = the LIBRARY produces it — callback params).
+    // It FLIPS at each fn boundary: for a fn of polarity P, params are !P and the return
+    // is P. Construct-only views (literal/none arms) are only sound where produced holds.
+    // inFnReturn must also not leak from an enclosing return into nested params.
+    const P = ctx.produced !== false
+    const prevRet = ctx.inFnReturn, prevProduced = ctx.produced
+    ctx.inFnReturn = false
+    ctx.produced = !P
     const params = sig.getParameters().map((pp) => {
         // An optional param `reason?: T` (or one with a default) -> `option<T>` (emit wraps it).
         // Parameter symbols don't carry SymbolFlags.Optional reliably, so read the declaration's
@@ -2264,6 +2425,8 @@ function functionNode(sig, ctx, propName, depth = 0) {
             : classify(pt, ctx, propName, depth + 1)
         return optional ? { ...node, optional: true } : node
     })
+    ctx.inFnReturn = prevRet
+    ctx.produced = prevProduced
     const retType = sig.getReturnType()
     // `void | Promise<void>` (a handler that may be sync OR async, e.g. formAction) -> a
     // polymorphic return `'a`: it accepts both `=> unit` and `=> promise<unit>` handlers,
@@ -2276,7 +2439,28 @@ function functionNode(sig, ctx, propName, depth = 0) {
     }
     if (!ret) {
         const retVoid = !!(retType.flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined))
-        ret = retVoid ? { kind: 'unit' } : classify(retType, ctx, propName, depth + 1)
+        if (retVoid) {
+            ret = { kind: 'unit' }
+        } else {
+            // Mark the RETURN position: a return of polarity P keeps the fn's polarity —
+            // for a consumer-provided callback (P=true) the return is CONSUMER-produced,
+            // so a non-discriminable union may become a construct-only views module
+            // (`FinalFocusTarget.fromBool/…/none`) instead of a review flag. (#39)
+            // An explicit `| null` in the return is REAL coverage the consumer must be
+            // able to produce, but strictNullChecks-off absorbs it from the resolved
+            // type — recover it from the SYNTACTIC return node (the I-5 technique).
+            const retNode = sig.declaration && sig.declaration.type
+            const synNull = !!(retNode && ts.isUnionTypeNode(retNode) && retNode.types.some((m) =>
+                m.kind === ts.SyntaxKind.NullKeyword || (ts.isLiteralTypeNode(m) && m.literal.kind === ts.SyntaxKind.NullKeyword)))
+            const prev = ctx.inFnReturn, prevNull = ctx.retSynNull, prevProd = ctx.produced
+            ctx.inFnReturn = true
+            ctx.retSynNull = synNull
+            ctx.produced = P
+            ret = classify(retType, ctx, propName, depth + 1)
+            ctx.inFnReturn = prev
+            ctx.retSynNull = prevNull
+            ctx.produced = prevProd
+        }
     }
     return { kind: 'callback', params, ret }
 }

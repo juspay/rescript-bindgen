@@ -56,14 +56,12 @@ external make: (
   ~className: PositionerSharedTypes.popoverPositionerClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
   ~sticky: bool=?,
-  // ⚠️ REVIEW: `anchor` is `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
-  ~anchor: string=?,
+  ~anchor: DistTypes.Anchor.t=?,  // ⓘ was `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — opaque; build with Anchor.fromElement / Anchor.fromVirtualElement / Anchor.fromRefObject / Anchor.fromFn
   ~positionMethod: PositionerSharedTypes.positionMethod=?,
   ~sideOffset: PositionerSharedTypes.sideOffsetConfigSideOffset=?,
   ~align: PositionerSharedTypes.align=?,
   ~alignOffset: PositionerSharedTypes.sideOffsetConfigAlignOffset=?,
-  // ⚠️ REVIEW: `collisionBoundary` is `Boundary` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
-  ~collisionBoundary: string=?,
+  ~collisionBoundary: DistTypes.Boundary.t=?,  // ⓘ was `Boundary` — opaque; build with Boundary.fromElement / Boundary.clippingAncestors / Boundary.fromElements / Boundary.fromCollisionBoundaryConfig
   ~collisionPadding: string=?,  // ⚪ loose — was `Padding`
   ~arrowPadding: float=?,
   ~disableAnchorTracking: bool=?,
