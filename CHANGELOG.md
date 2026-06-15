@@ -32,7 +32,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   imperfections (an unflagged `=> string` fake can no longer hide inside a
   view). `isDomNodeType` is lib.dom-guarded (a vendor type merely named
   *Element no longer collapses into `Dom.element`). `DOMRectList` joined the
-  WebTypes sink.
+  WebTypes sink. Review hardening: construct-only views are gated to produce-positions (callback params keep the `'a` salvage), ident-colliding/`__type` arms reject the module instead of silently dropping a variant, reserved-word literal constants use the shared reserved set (note matches code), and a failed vendor-record trial fully rolls back minted names + type vars.
 - **Render-prop function form bindable via zero-cost wrapper** (#46): a
   `render?: ReactElement | ((props, state) => ReactElement)` prop stays
   `React.element` (the common case is unchanged), and the component module now

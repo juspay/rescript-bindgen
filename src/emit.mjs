@@ -10,13 +10,11 @@
 // This file knows ReScript but nothing about TypeScript — the split is deliberate.
 // ============================================================================
 
-/** ReScript keywords that can't be used bare as identifiers/labels (we suffix `_`). */
-const RESERVED = new Set([
-    'type', 'and', 'as', 'open', 'let', 'rec', 'in', 'switch', 'if', 'else',
-    'for', 'while', 'fun', 'mutable', 'try', 'catch', 'exception', 'module',
-    'external', 'when', 'with', 'lazy', 'assert', 'true', 'false', 'include',
-    'constraint', 'private', 'of', 'to', 'downto',
-])
+import { RESCRIPT_RESERVED } from './stdlib-types.mjs'
+
+/** ReScript keywords that can't be used bare as identifiers/labels (we suffix `_`).
+ *  Shared with extract via stdlib-types so notes and emitted idents never disagree. */
+const RESERVED = RESCRIPT_RESERVED
 
 /**
  * Prop names whose `number` type should become ReScript `int` (counts/indices),
@@ -632,12 +630,14 @@ function renderOpaque(t, lines, cfg) {
     const titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1)
     const pascalName = (s) => String(s).replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('')
     // camel ident for a literal-arm constant ('clippingAncestors' -> clippingAncestors,
-    // 'trap-focus' -> trapFocus); digit-led/reserved names get guarded. (#39)
+    // 'trap-focus' -> trapFocus, 'true' -> true_, '2xl' -> v2xl). Mirrors extract's
+    // lower(pascal(…)) — same shared RESERVED set — so the prop's ⓘ note and the
+    // emitted ident can never disagree. (#39 review)
     const lowerIdent = (s) => {
-        const p = pascalName(s)
+        let p = pascalName(s)
+        if (!/^[A-Z]/.test(p)) p = 'V' + p
         let n = p.charAt(0).toLowerCase() + p.slice(1)
-        if (!/^[a-z]/.test(n)) n = 'v' + n
-        if (/^(type|and|as|open|let|rec|in|switch|if|else|to|of|external|module)$/.test(n)) n += '_'
+        if (RESERVED.has(n)) n += '_'
         return n
     }
     const fromName = (m) => m.name

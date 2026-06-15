@@ -4,13 +4,13 @@ external renderFn: ((PositionerSharedTypes.htmlProps, PositionerSharedTypes.sele
 @module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
   ~alignItemWithTrigger: bool=?,
-  ~anchor: DistTypes.Anchor.t=?,  // ⓘ was `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — opaque; build with Anchor.fromElement / Anchor.fromVirtualElement / Anchor.fromRefObject / Anchor.fromType
+  ~anchor: DistTypes.Anchor.t=?,  // ⓘ was `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — opaque; build with Anchor.fromElement / Anchor.fromVirtualElement / Anchor.fromRefObject / Anchor.fromFn
   ~positionMethod: PositionerSharedTypes.positionMethod=?,
   ~side: PositionerSharedTypes.side=?,
   ~sideOffset: PositionerSharedTypes.sideOffsetConfigSideOffset=?,
   ~align: PositionerSharedTypes.align=?,
   ~alignOffset: PositionerSharedTypes.sideOffsetConfigAlignOffset=?,
-  ~collisionBoundary: DistTypes.Boundary.t=?,  // ⓘ was `Boundary` — opaque; build with Boundary.fromElement / Boundary.clippingAncestors / Boundary.fromElements / Boundary.fromType
+  ~collisionBoundary: DistTypes.Boundary.t=?,  // ⓘ was `Boundary` — opaque; build with Boundary.fromElement / Boundary.clippingAncestors / Boundary.fromElements / Boundary.fromCollisionBoundaryConfig
   ~collisionPadding: string=?,  // ⚪ loose — was `Padding`
   ~sticky: bool=?,
   ~arrowPadding: float=?,

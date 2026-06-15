@@ -17,7 +17,7 @@
 
 import ts from 'typescript'
 import { dirname } from 'path'
-import { DOM_ELEMENT_BY_LOWER, DOM_PROPS_FIELDS } from './stdlib-types.mjs'
+import { DOM_ELEMENT_BY_LOWER, DOM_PROPS_FIELDS, RESCRIPT_RESERVED } from './stdlib-types.mjs'
 import { TS_NAME_TO_GROUP, chainFields } from './html-attrs.mjs'
 import { label } from './emit.mjs'
 
@@ -40,9 +40,11 @@ function isLibraryType(type) {
 
 /** A VENDOR library type: declared in a dependency package the library gate blocks, but
  *  NOT a platform surface (lib.*, @types/react, typescript, csstype — those have dedicated
- *  handling). Vendor records that extract perfectly may pass the gate via
- *  `trialVendorRecord` (#39: @floating-ui's `Rect`, `VirtualElement` — small, stable,
- *  CONSUMER-CONSTRUCTED shapes that an opaque sink could not serve). */
+ *  handling). Since isLibraryType's denylist is what blocks, this is EFFECTIVELY an
+ *  allowlist of @floating-ui and styled-components today (every other node_modules
+ *  package already passes the first record gate). Vendor records that extract perfectly
+ *  may pass via `trialVendorRecord` (#39: @floating-ui's `Rect`, `VirtualElement` —
+ *  small, stable, CONSUMER-CONSTRUCTED shapes that an opaque sink could not serve). */
 function isVendorLibType(type) {
     const sym = type.aliasSymbol || (type.getSymbol && type.getSymbol()) || type.symbol
     const decl = sym && sym.getDeclarations && sym.getDeclarations()[0]
@@ -1167,12 +1169,14 @@ const REF_NAMES = /^(Ref|RefObject|MutableRefObject|LegacyRef)$/
  *  registered entry imperfection-free, and a bounded entry count (no graph pull).
  *  Anything less rolls back fully and keeps the honest flag. */
 const VENDOR_TRIAL_ENTRY_CAP = 8
-function trialVendorRecord(type, ctx, propName, depth, named) {
+function trialVendorRecord(type, ctx, propName, named) {
     const shared = ctx.shared
     if (!shared) return null
     const entriesLen = shared.entries.length
     const keysBefore = new Set(shared.byKey.keys())
     const sigsBefore = new Set(shared.bySig.keys())
+    const namesBefore = new Set(shared.names)
+    const typeVarsBefore = ctx.typeVars ? new Map(ctx.typeVars) : null
     let ref = null
     // Fresh depth budget: a vendor shape is often reached DEEP (anchor's fn-return inside
     // a positioner config), where MAX_DEPTH would starve its fields into opaque and fail
@@ -1186,9 +1190,13 @@ function trialVendorRecord(type, ctx, propName, depth, named) {
         fresh.length <= VENDOR_TRIAL_ENTRY_CAP &&
         fresh.every((e) => e.kind !== 'record' || (e.fields.length > 0 && !e.fields.some((f) => irHasImperfection(f.type))))
     if (clean) return ref
+    // FULL rollback — including minted names (else a failed trial makes a later legitimate
+    // `Rect` become `Rect2`) and any type variables salvaged params minted. (#39 review)
     shared.entries.length = entriesLen
     for (const k of [...shared.byKey.keys()]) if (!keysBefore.has(k)) shared.byKey.delete(k)
     for (const s of [...shared.bySig.keys()]) if (!sigsBefore.has(s)) shared.bySig.delete(s)
+    for (const n of [...shared.names]) if (!namesBefore.has(n)) shared.names.delete(n)
+    if (typeVarsBefore && ctx.typeVars) { ctx.typeVars.clear(); for (const [k, v] of typeVarsBefore) ctx.typeVars.set(k, v) }
     return null
 }
 
@@ -1554,7 +1562,7 @@ function classify(type, ctx, propName = '', depth = 0) {
         const symName = sym && sym.getName()
         const cap = (n) => (n && /^[A-Z]/.test(n) ? n : null)
         const named = cap(typeName(libCore)) || cap(symName && symName !== '__type' ? symName : null)
-        const trial = trialVendorRecord(type, ctx, propName, depth, named)
+        const trial = trialVendorRecord(type, ctx, propName, named)
         if (trial) return trial
     }
 
@@ -1735,7 +1743,20 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     // carry the entry's `note` (how to construct the opaque value) onto each ref so
     // emit can surface it inline on the prop — even on a memoized cache-hit.
     const ref = (e) => ({ kind: 'typeRef', to: e.name + '.t', home: e.home, key: e.key, ...(e.note ? { note: e.note } : {}) })
-    if (ctx.shared.byKey.has(key)) return ref(ctx.shared.byKey.get(key))
+    // RECEIVE-position guard (#39 review): a views module is CONSTRUCT-only (`from*`, no
+    // `as*` accessors). For a value the library PRODUCES (`ctx.produced === false`, e.g. a
+    // callback param) that's an uninspectable black box — strictly worse than the honest
+    // 'a salvage / review flag. Literal/none arms are new in #39, so they must never reach
+    // a receive position — neither freshly (gate below) nor via the `t:`-cache
+    // (entry._construct gate here).
+    const received = ctx.produced === false
+    const hasLiteralArm = memberTypes.some((mt) => mt.isStringLiteral && mt.isStringLiteral())
+    if (received && (hasLiteralArm || opts.addNone)) return null
+    if (ctx.shared.byKey.has(key)) {
+        const e = ctx.shared.byKey.get(key)
+        if (e._construct && received) return null
+        return ref(e)
+    }
     const { checker } = ctx
     const members = []
     let sawBool = false
@@ -1761,9 +1782,22 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
         // Constructor-name hint so emit produces clean `from*` names regardless of
         // how the member renders: `Element` -> fromElement, `Element[]` ->
         // fromElements (plural of the element's name), `File`/`File[]` ->
-        // fromFile/fromFiles. Falls back in emit when no hint is available.
+        // fromFile/fromFiles. A FUNCTION arm is named `Fn` (the TS-internal `__type`
+        // symbol must not leak as `fromType`). Falls back in emit otherwise.
+        // Constructor-name hint. NEVER leak the TS-internal `__type` symbol (anonymous
+        // records/intersections like @floating-ui's `ClientRectObject = Prettify<…>`):
+        // for an array of an anon element, derive from the element's RENDERED record name
+        // (`array<clientRectObject>` -> fromClientRectObjects); a bare anon record from the
+        // node's typeRef; a function arm -> `Fn`. (#39 review)
         const elem = asArray(mt, checker)
-        const name = elem ? (typeName(elem) ? typeName(elem) + 's' : undefined) : typeName(mt)
+        const raw = typeName(mt)
+        const en = elem && typeName(elem)
+        const refName = (n) => (n && n.kind === 'typeRef' ? n.to.replace(/\.t$/, '') : null)
+        const name = elem
+            ? (en && en !== '__type' ? en + 's' : (refName(node && node.of) ? refName(node.of) + 's' : undefined))
+            : (raw && raw !== '__type') ? raw
+            : (mt.getCallSignatures && mt.getCallSignatures().length) ? 'Fn'
+            : refName(node) || undefined
         members.push({ type: node, name })
     }
     // `T | null/void` in a consumer-PRODUCED position (a callback's return, #39):
@@ -1771,6 +1805,12 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     // returns; the library treats null/undefined alike here).
     if (opts.addNone) members.push({ none: true, name: 'none' })
     if (members.length < 2) return null
+    // Constructor-ident COLLISION check (#39 review): two literals that camel to the same
+    // ident (`'trap-focus'` vs `'trapFocus'`), or two same-named arms, would silently drop
+    // a TS variant (emit's `seen` dedup). All-cases-or-flag: reject the module instead.
+    const identOf = (m) => m.literal !== undefined ? lower(pascal(m.literal)) : m.none ? 'none' : ('from' + (m.name ? pascal(m.name) : (m.type && m.type.kind) || 'value'))
+    const idents = members.map(identOf)
+    if (new Set(idents).size !== idents.length) return null
     const name = uniqueName(pascal(opts.nameHint || typeName(type) || propName), ctx.shared) // a MODULE name
     const deps = new Set()
     for (const m of members) { if (m.type) collectRefKeys(m.type, deps) }
@@ -1784,7 +1824,7 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     const note = members.every((m) => m.name)
         ? `was \`${checker.typeToString(type).replace(/ \| (null|undefined)\b/g, '')}\` — opaque; build with ${members.map(ctorName).join(' / ')}`
         : undefined
-    const entry = { key, kind: 'opaque', name, home, members, deps, note }
+    const entry = { key, kind: 'opaque', name, home, members, deps, note, _construct: hasLiteralArm || !!opts.addNone }
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
     return ref(entry)
@@ -1847,12 +1887,6 @@ function overloadModule(ctx, type, callSigs, propName, depth) {
     ctx.shared.entries.push(entry)
     return ref(entry)
 }
-
-const RESCRIPT_RESERVED = new Set([
-    'type', 'and', 'as', 'open', 'let', 'rec', 'in', 'switch', 'if', 'else',
-    'for', 'while', 'fun', 'mutable', 'try', 'exception', 'module', 'external',
-    'when', 'with', 'lazy', 'assert', 'true', 'false', 'include', 'of', 'to',
-])
 
 /**
  * Make a valid lowercase ReScript TYPE name (types must start lowercase, can't
@@ -2210,13 +2244,13 @@ function unionNode(type, ctx, propName, depth = 0) {
         // consumer only needs to CONSTRUCT the value — `FinalFocusTarget.fromBool(true)` /
         // `.fromHTMLElement(el)` / `.none`. Construct-only is complete coverage in this
         // direction; in receive positions the honest flag stays.
-        if (ctx.inFnReturn) {
+        if (ctx.inFnReturn && ctx.produced !== false) {
             const v = opaqueUnion(ctx, type, parts, propName, depth, retViewOpts(ctx, propName, hadNullish))
             if (v) return v
         }
         return { kind: 'review', text: checker.typeToString(type) }
     }
-    if (ctx.inFnReturn) {
+    if (ctx.inFnReturn && ctx.produced !== false) {
         const v = opaqueUnion(ctx, type, parts, propName, depth, retViewOpts(ctx, propName, hadNullish))
         if (v) return v
     }
@@ -2226,7 +2260,7 @@ function unionNode(type, ctx, propName, depth = 0) {
 /** opaqueUnion options for a callback-RETURN position: a `none` constant when the TS
  *  return allows null/void, and a `<Prop>Target` module name. (#39) */
 function retViewOpts(ctx, propName, hadNullish) {
-    if (!ctx.inFnReturn) return {}
+    if (!ctx.inFnReturn || ctx.produced === false) return {}
     return { addNone: !!hadNullish, nameHint: pascal(propName) + 'Target' }
 }
 
@@ -2364,6 +2398,16 @@ function unboxedName(members) {
  */
 function functionNode(sig, ctx, propName, depth = 0) {
     const { checker } = ctx
+    // POLARITY (#39 review): `ctx.produced` tracks who constructs the value being
+    // classified (true/undefined = the CONSUMER produces it — prop values, returns of
+    // consumer-provided callbacks; false = the LIBRARY produces it — callback params).
+    // It FLIPS at each fn boundary: for a fn of polarity P, params are !P and the return
+    // is P. Construct-only views (literal/none arms) are only sound where produced holds.
+    // inFnReturn must also not leak from an enclosing return into nested params.
+    const P = ctx.produced !== false
+    const prevRet = ctx.inFnReturn, prevProduced = ctx.produced
+    ctx.inFnReturn = false
+    ctx.produced = !P
     const params = sig.getParameters().map((pp) => {
         // An optional param `reason?: T` (or one with a default) -> `option<T>` (emit wraps it).
         // Parameter symbols don't carry SymbolFlags.Optional reliably, so read the declaration's
@@ -2381,6 +2425,8 @@ function functionNode(sig, ctx, propName, depth = 0) {
             : classify(pt, ctx, propName, depth + 1)
         return optional ? { ...node, optional: true } : node
     })
+    ctx.inFnReturn = prevRet
+    ctx.produced = prevProduced
     const retType = sig.getReturnType()
     // `void | Promise<void>` (a handler that may be sync OR async, e.g. formAction) -> a
     // polymorphic return `'a`: it accepts both `=> unit` and `=> promise<unit>` handlers,
@@ -2396,8 +2442,9 @@ function functionNode(sig, ctx, propName, depth = 0) {
         if (retVoid) {
             ret = { kind: 'unit' }
         } else {
-            // Mark the RETURN position: values here are CONSUMER-produced, so a
-            // non-discriminable union may become a construct-only views module
+            // Mark the RETURN position: a return of polarity P keeps the fn's polarity —
+            // for a consumer-provided callback (P=true) the return is CONSUMER-produced,
+            // so a non-discriminable union may become a construct-only views module
             // (`FinalFocusTarget.fromBool/…/none`) instead of a review flag. (#39)
             // An explicit `| null` in the return is REAL coverage the consumer must be
             // able to produce, but strictNullChecks-off absorbs it from the resolved
@@ -2405,12 +2452,14 @@ function functionNode(sig, ctx, propName, depth = 0) {
             const retNode = sig.declaration && sig.declaration.type
             const synNull = !!(retNode && ts.isUnionTypeNode(retNode) && retNode.types.some((m) =>
                 m.kind === ts.SyntaxKind.NullKeyword || (ts.isLiteralTypeNode(m) && m.literal.kind === ts.SyntaxKind.NullKeyword)))
-            const prev = ctx.inFnReturn, prevNull = ctx.retSynNull
+            const prev = ctx.inFnReturn, prevNull = ctx.retSynNull, prevProd = ctx.produced
             ctx.inFnReturn = true
             ctx.retSynNull = synNull
+            ctx.produced = P
             ret = classify(retType, ctx, propName, depth + 1)
             ctx.inFnReturn = prev
             ctx.retSynNull = prevNull
+            ctx.produced = prevProd
         }
     }
     return { kind: 'callback', params, ret }

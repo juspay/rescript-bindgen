@@ -62,7 +62,7 @@ external make: (
   ~sideOffset: PositionerSharedTypes.sideOffsetConfigSideOffset=?,
   ~align: PositionerSharedTypes.align=?,
   ~alignOffset: PositionerSharedTypes.sideOffsetConfigAlignOffset=?,
-  ~collisionBoundary: DistTypes.Boundary.t=?,  // ⓘ was `Boundary` — opaque; build with Boundary.fromElement / Boundary.clippingAncestors / Boundary.fromElements / Boundary.fromType
+  ~collisionBoundary: DistTypes.Boundary.t=?,  // ⓘ was `Boundary` — opaque; build with Boundary.fromElement / Boundary.clippingAncestors / Boundary.fromElements / Boundary.fromCollisionBoundaryConfig
   ~collisionPadding: string=?,  // ⚪ loose — was `Padding`
   ~arrowPadding: float=?,
   ~disableAnchorTracking: bool=?,

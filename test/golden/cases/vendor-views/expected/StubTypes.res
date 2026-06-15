@@ -44,5 +44,5 @@ module Anchor = {
   external fromElement: Dom.element => t = "%identity"
   external fromVirtualElement: virtualElement => t = "%identity"
   external fromRefObject: React.ref<Nullable.t<Dom.element>> => t = "%identity"
-  external fromType: (unit => AnchorTarget.t) => t = "%identity"
+  external fromFn: (unit => AnchorTarget.t) => t = "%identity"
 }

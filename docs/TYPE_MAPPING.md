@@ -321,6 +321,10 @@ Three member forms beyond plain `from*` constructors (#39):
 | a string LITERAL (`'clipping-ancestors' \| Element \| Rect`) | a ready-made constant via a single-value polyvar cast — `external fromClippingAncestors: [#"clipping-ancestors"] => t` + `let clippingAncestors: t = …`. The polyvar admits exactly that one value (it IS the string at runtime), so no open string cast leaks in |
 | `null` / `void` in a **callback return** | `let none: t = fromUnit()` — `unit`'s runtime value IS `undefined` |
 | any member carrying an inner imperfection | the WHOLE module is rejected (deep `irHasImperfection` check) — no unflagged `=> string` fake can hide inside a view |
+| two arms that produce the **same constructor ident** (`'trap-focus'` vs `'trapFocus'`, or two anon functions) | the WHOLE module is rejected → prop stays flagged (all-cases-or-flag: never silently drop a variant) |
+| an anonymous (`__type`) function / array element | named `Fn` / derived from the element's record name — the TS-internal `__type` symbol never leaks into a `from*` constructor |
+
+**Direction matters (construct-only views are produce-position-only).** A views module exposes `from*` constructors but no `as*` accessors, so it is only sound where the value is CONSUMER-produced (a prop, or the return of a consumer-provided callback). For a value the library PRODUCES — a callback PARAM — a construct-only module would be an uninspectable black box, so those positions keep the honest `'a` type-variable salvage / review flag instead. Polarity flips at each function boundary and is tracked through nested callbacks. Locked by [`views-polarity`](../test/golden/cases/views-polarity).
 
 **Return-position views (`<Prop>Target`).** A callback **return** union that can't be discriminated
 (`(closeType) => boolean \| HTMLElement \| null \| void`) becomes a construct-only views module —

@@ -10,7 +10,7 @@ type getBoundingClientRectConfig = {
 }
 module GetClientRectsTarget = {
   type t
-  external fromTypes: array<getBoundingClientRectConfig> => t = "%identity"
+  external fromGetBoundingClientRectConfigs: array<getBoundingClientRectConfig> => t = "%identity"
   external fromDOMRectList: WebTypes.domRectList => t = "%identity"
 }
 type virtualElement = {
@@ -36,7 +36,7 @@ module Anchor = {
   external fromElement: Dom.element => t = "%identity"
   external fromVirtualElement: virtualElement => t = "%identity"
   external fromRefObject: React.ref<Nullable.t<Dom.element>> => t = "%identity"
-  external fromType: (unit => AnchorTarget.t) => t = "%identity"
+  external fromFn: (unit => AnchorTarget.t) => t = "%identity"
 }
 module Boundary = {
   type t
@@ -44,5 +44,5 @@ module Boundary = {
   external fromClippingAncestors: [#"clipping-ancestors"] => t = "%identity"
   let clippingAncestors: t = fromClippingAncestors(#"clipping-ancestors")
   external fromElements: array<Dom.element> => t = "%identity"
-  external fromType: collisionBoundaryConfig => t = "%identity"
+  external fromCollisionBoundaryConfig: collisionBoundaryConfig => t = "%identity"
 }
