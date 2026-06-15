@@ -1,0 +1,210 @@
+# =============================================================================
+# Yama PR Review configuration
+# =============================================================================
+# Consumed by the @juspay/yama GitHub Action (.github/workflows). Auto-discovered
+# from the repo root (search order: yama.config.yaml → config/yama.config.yaml →
+# .yama/config.yaml) and also passed explicitly via the workflow `config-path`.
+#
+# WHERE THE REVIEW RULES COME FROM
+#   Yama automatically loads, from this repo root, if present:
+#     • CLAUDE.md       — your authoritative engineering rules
+#     • CONTRIBUTING.md — contribution + commit conventions
+#   and injects them into the reviewer as <project-rules>. Keep repo-specific
+#   rules THERE; this file tunes WHAT the reviewer focuses on and WHAT blocks a
+#   merge.
+#
+# PROVIDER / MODEL ARE INTENTIONALLY NOT SET HERE
+#   They are controlled by the workflow inputs (ai-provider / ai-model), exposed
+#   as AI_PROVIDER / AI_MODEL env. Yama merges this file OVER those env values, so
+#   setting ai.provider / ai.model here would silently override the workflow.
+# =============================================================================
+
+version: 2
+configType: "yama"
+
+display:
+  showBanner: false
+  streamingMode: false
+  verboseToolCalls: false
+  showAIThinking: false
+
+ai:
+  # provider/model OMITTED on purpose — controlled by the workflow.
+  temperature: 0.2 # deterministic, review-grade output
+  timeout: "15m"
+  retryAttempts: 3
+
+  # The explore worker reads project rules (CLAUDE.md / CONTRIBUTING.md) and
+  # codebase context. Keep enabled so the reviewer sees your repo's rules.
+  explore:
+    enabled: true
+    timeout: "5m"
+    cacheResults: true
+
+# GitHub MCP only. Jira/Bitbucket off so no extra credentials are needed. Yama's
+# built-in denylist already blocks repo-mutating GitHub tools; this is a
+# read + review-comment workflow.
+mcpServers:
+  github:
+    enabled: true
+    # transport defaults to "http" (hosted GitHub MCP at api.githubcopilot.com).
+  jira:
+    enabled: false
+
+review:
+  enabled: true
+
+  # High-level instruction the reviewer follows for THIS repo.
+  workflowInstructions: |
+    You are reviewing a pull request for @juspay/rescript-bindgen — a
+    DETERMINISTIC TypeScript(.d.ts) → ReScript binding generator. There is NO AI
+    at runtime: it drives the TypeScript type-checker (src/extract.mjs), builds an
+    IR, and emits ReScript 12 (src/emit.mjs) via a FIXED mapping table; src/cli.mjs
+    and src/resolve.mjs wire input resolution. Same input must always produce the
+    same output, with no Obj.magic / @unwrap / bare %identity in generated code.
+
+    Treat the <project-rules> block (this repo's CLAUDE.md / CONTRIBUTING.md and,
+    by reference, docs/TYPE_MAPPING.md) as the AUTHORITATIVE contract. When a
+    mapping or emit change conflicts with the documented rules ("no unsafe casts",
+    "flag, don't fake", unknown→JSON.t, multi-type→@unboxed/opaque, the
+    maintenance loop), cite the exact rule.
+
+    Do NOT duplicate the mechanical checks CI already runs and BLOCKS on
+    (.github/workflows/ci.yml): the smoke + golden snapshot diff (npm test), the
+    ReScript-12 golden compile (npm run test:compile), and the fixture-guard (a PR
+    touching src/extract|emit|resolve.mjs must also touch test/golden/cases/ or
+    docs/TYPE_MAPPING.md). Do not re-flag formatting, snapshot drift, or a missing
+    fixture — the build already fails on those. The benchmark workflow (real
+    pinned packages) is a separate opt-in gate.
+
+    Focus instead on what those checks cannot catch: whether the EMITTED ReScript
+    is actually correct and type-safe per docs/TYPE_MAPPING.md, whether new logic
+    handles edge-case .d.ts inputs (overloads, intersections, Omit/Pick, generics,
+    indexed access, undiscriminable unions), determinism (no Map/Set iteration
+    order, Date, or filesystem ordering leaking into output), and whether an
+    intentional output change silently regresses previously clean bindings.
+
+    Be specific and constructive: every comment cites the exact file+line, the
+    concrete risk, and a suggested fix. Match the terse, heavily-commented style of
+    src/*.mjs. Only block per <blocking-criteria>; otherwise leave inline comments
+    and approve.
+
+  # What the review prioritises for THIS repo. Priority is advisory; see
+  # blockingCriteria below for what actually fails the check.
+  focusAreas:
+    - name: "Mapping correctness & type safety of emitted ReScript"
+      priority: "CRITICAL"
+      description: |
+        The whole product is the generated output, so a wrong type maps real
+        users onto a wrong binding. Verify each TS→ReScript change against
+        docs/TYPE_MAPPING.md (the contract):
+        - NO unsafe casts in emitted code: no Obj.magic, @unwrap, or bare
+          %identity. The only allowed %identity is the zero-cost from*/as*
+          accessor of an opaque module, or the documented <prop>Fn render-prop
+          wrapper (#46).
+        - "Flag, don't fake": an unmodellable type must emit a `string`
+          placeholder + ⚪/🔍/🛑 bucket comment, never a plausible-but-wrong type.
+        - unknown → JSON.t (not a type variable); 'a only for a genuine
+          round-tripping generic; multi-type props → @unboxed untagged variant
+          (distinct runtime tags) or an opaque module; `any` is a defect, never
+          silently typed.
+    - name: "Determinism & reproducibility"
+      priority: "CRITICAL"
+      description: |
+        Same input MUST yield byte-identical output on every run and machine.
+        Flag anything that can leak nondeterminism into emitted code or reports:
+        unordered Map/Set/object-key iteration, Date/time, randomness, absolute
+        paths, locale-sensitive sort, or filesystem readdir order used without an
+        explicit stable sort.
+    - name: "Edge-case .d.ts input handling in the extract/resolve pipeline"
+      priority: "MAJOR"
+      description: |
+        extract.mjs / resolve.mjs drive the TS type-checker over arbitrary real
+        packages. Look for crashes, silent drops, or wrong IR on hard inputs:
+        overloads, intersections, Omit/Pick/Partial, imported enums,
+        RefAttributes, generics, indexed-access, undiscriminable unions, missing
+        or malformed declaration entries. Prefer an honest flag over a throw or a
+        bad emit.
+    - name: "Backward compatibility of generated bindings"
+      priority: "MAJOR"
+      description: |
+        An intentional change to one mapping can silently regress previously
+        clean bindings (the 50+ benchmarked packages, ~93% clean). When golden or
+        baseline output changes, confirm the diff is the intended improvement and
+        does NOT downgrade ready bindings to loose/review/broken or rename public
+        labels/variant cases without cause.
+    - name: "Process integrity of the mapping change"
+      priority: "MINOR"
+      description: |
+        Per CLAUDE.md the maintenance loop is a unit: a new/changed mapping needs
+        a docs/TYPE_MAPPING.md row, a self-contained fixture under
+        test/golden/cases/, and its regenerated golden — together. (CI's
+        fixture-guard already blocks the missing-fixture case; here, sanity-check
+        that the fixture actually exercises the new behaviour rather than just
+        existing to satisfy the guard.)
+
+  # What BLOCKS a merge. ONLY these escalate the decision to BLOCKED (failing the
+  # check in enforcing mode). Kept tight — everything else is an advisory inline
+  # comment. CI already blocks snapshot drift, compile failures, and the
+  # fixture-guard, so those are intentionally NOT repeated here.
+  blockingCriteria:
+    - condition: "Any hardcoded secret, API key, token, password or credential committed in source (non-test, non-example)"
+      action: "BLOCK"
+      reason: "Security: secrets must never be committed"
+    - condition: "Any CRITICAL severity security vulnerability in the tooling itself (command injection via package spec / path, arbitrary file write outside --out, unsafe install of untrusted input)"
+      action: "BLOCK"
+      reason: "Critical security risk in the generator"
+    - condition: "Generated ReScript introduces an unsafe cast that violates the contract — Obj.magic, @unwrap, or a bare %identity outside the two documented allowances (opaque-module from*/as* accessor, render-prop <prop>Fn wrapper)"
+      action: "BLOCK"
+      reason: "Breaks the core 'no unsafe casts' guarantee in docs/TYPE_MAPPING.md / CLAUDE.md"
+    - condition: "A change makes generated output nondeterministic (same input → differing output across runs) — e.g. unordered iteration, time, or randomness reaching emitted code"
+      action: "BLOCK"
+      reason: "Determinism is a core product guarantee; nondeterministic output is unshippable"
+
+  # Generated / vendored / binary files are skipped. NOTE: golden .res files under
+  # test/golden/cases/*/expected/ are intentionally NOT excluded — they ARE the
+  # output and are the point of review; the AI should read them to judge the diff.
+  excludePatterns:
+    - "*.lock"
+    - "package-lock.json"
+    - "*.map"
+    - "*.svg"
+    # Generated artifacts / scratch caches (per .gitignore conventions):
+    - "generated/**"          # default --out dir for ad-hoc local runs
+    - "coverage/**"
+    # ReScript compile sandbox build output (not source):
+    - "test/sandbox/lib/**"
+    - "**/*.res.mjs"          # ReScript-compiled JS
+    - "**/*.res.js"
+    # Benchmark scratch + heavy committed baselines (reviewed via the bench gate,
+    # not file-by-file): keep packages.json reviewable, skip the work dir.
+    - "benchmark/.work/**"
+    # Vendored stubs inside fixtures (third-party .d.ts copied in for offline cases):
+    - "test/golden/cases/**/node_modules/**"
+
+  contextLines: 3
+  maxFilesPerReview: 100
+  fileAnalysisTimeout: "2m"
+
+# Review-only: never rewrite PR descriptions (also forced by the workflow input
+# skip-description-enhance: "true").
+descriptionEnhancement:
+  enabled: false
+
+# Stateless reviewer: no memory-bank dir, no knowledge-base file, no commits back
+# to the repo (needs no write access beyond posting the review).
+memoryBank:
+  enabled: false
+knowledgeBase:
+  enabled: false
+memory:
+  enabled: false
+  autoCommit: false
+
+# Cost / runtime guardrails.
+performance:
+  maxReviewDuration: "15m"
+  tokenBudget:
+    maxTokensPerReview: 800000
+    warningThreshold: 600000
+
