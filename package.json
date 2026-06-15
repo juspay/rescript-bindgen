@@ -41,7 +41,12 @@
     "d.ts",
     "interop",
     "blend-design-system",
-    "juspay"
+    "juspay",
+    "binding-generator",
+    "typescript-to-rescript",
+    "dts",
+    "rescript-bindings",
+    "type-generator"
   ],
   "author": "Juspay Technologies",
   "license": "MIT",
