@@ -1164,6 +1164,10 @@ type selectRootChangeEventDetails = {
   isPropagationAllowed: bool,
   trigger: Dom.element,
 }
+type itemsConfig<'c> = {
+  label: React.element,
+  value: 'c,
+}
 type sliderRootChangeEventDetails = {
   reason: reason12,
   event: Dom.event,
@@ -1428,6 +1432,7 @@ type tooltipHandle2<'a> = {
 @unboxed type radioRootStyle = Style(JsxDOM.style) | Fn(radioRootState => JsxDOM.style)
 @unboxed type scrollAreaRootStyle = Style(JsxDOM.style) | Fn(scrollAreaRootState => JsxDOM.style)
 @unboxed type scrollAreaRootClassName = Str(string) | Fn(scrollAreaRootState => string)
+@unboxed type valueOrItemsConfigArray<'c> = Dict(Dict.t<React.element>) | ItemsConfigArr(array<itemsConfig<'c>>)
 @unboxed type sliderRootStyle = Style(JsxDOM.style) | Fn(sliderRootState => JsxDOM.style)
 @unboxed type sliderRootClassName = Str(string) | Fn(sliderRootState => string)
 @unboxed type tabsRootStyle = Style(JsxDOM.style) | Fn(tabsRootState => JsxDOM.style)

@@ -593,7 +593,7 @@ type classNames = {
   caption_before_enter: string,
   caption_before_exit: string,
 }
-module SelectTarget = {
+module Select = {
   type t
   external fromDate: Date.t => t = "%identity"
   external fromDates: array<Date.t> => t = "%identity"
@@ -744,7 +744,7 @@ type dayPickerContext = {
   goToMonth: Date.t => unit,
   getModifiers: calendarDay2 => Dict.t<bool>,
   selected: string,
-  select: (Date.t, Dict.t<bool>, string) => SelectTarget.t,
+  select: (Date.t, Dict.t<bool>, string) => Select.t,
   isSelected: Date.t => bool,
   components: customComponents,
   classNames: classNames,

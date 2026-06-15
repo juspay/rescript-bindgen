@@ -1,10 +1,10 @@
 # Binding report — `@base-ui-components/react@1.0.0-rc.0`
 
-**195** components · ✅ **194** usable · 🔍 **1** need review · 🛑 **0** broken
+**195** components · ✅ **195** usable · 🔍 **0** need review · 🛑 **0** broken
 
 **9** function binding(s) → `ReactBindings.res`.
 
-**385** shared types deduplicated into **43** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**387** shared types deduplicated into **43** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -182,6 +182,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - SelectPopup
 - SelectPortal
 - SelectPositioner  _(1 loose)_
+- SelectRoot  _(2 loose)_
 - SelectScrollDownArrow
 - SelectScrollUpArrow
 - SelectTrigger
@@ -243,11 +244,7 @@ These resolved to a real but complex type and were widened to `string` (they com
 
 A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object shapes), so an `@unboxed` variant won't work and we **refuse to use `%identity`/unsafe casts**. The prop is emitted as a `string` placeholder with an inline `// ⚠️ REVIEW` comment — bind it by hand or fix the type upstream.
 
-### SelectRoot  _(2 loose)_
-
-| Prop | Real TypeScript |
-|------|-----------------|
-| `items` | `items?: Record<string, React.ReactNode> \| ReadonlyArray<{ label: React.ReactNode; value: any; }>;` |
+_(none)_
 
 ## 🛑 Broken — needs serious component change
 
