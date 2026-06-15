@@ -84,6 +84,22 @@ review:
     order, Date, or filesystem ordering leaking into output), and whether an
     intentional output change silently regresses previously clean bindings.
 
+    CRITICAL LENS — compilation is NOT soundness. The CI gates (npm test, golden
+    compile, bench) prove the output COMPILES and MATCHES the committed baseline; they
+    do NOT prove the emitted types are sound. An unsound `'a` external always compiles;
+    a fake `string` hidden inside a shared *Types.res entry compiles and may not even
+    appear in the report (imperfection bucketing stops at a typeRef boundary, so a fake
+    behind a shared type reference does not bubble to the prop). Judge each `'a`, each
+    @unboxed / views-module arm, and each shared-type field by REASONING about runtime
+    values and data-flow direction — never by whether it builds.
+
+    POLARITY — for every emitted type ask who PRODUCES the value: the consumer (INPUT —
+    a prop, a method/constructor param, the return of a callback the consumer implements)
+    or the library (OUTPUT — a getter/method return, or a callback PARAM the consumer
+    receives). A type variable `'a` is sound ONLY when it appears in a consumer-SUPPLIED
+    input (it round-trips); an `any`/unmodellable type in an OUTPUT position must stay a
+    flagged placeholder, never a free `'a` (which unifies with anything).
+
     Be specific and constructive: every comment cites the exact file+line, the
     concrete risk, and a suggested fix. Match the terse, heavily-commented style of
     src/*.mjs. Only block per <blocking-criteria>; otherwise leave inline comments
@@ -108,6 +124,11 @@ review:
           round-tripping generic; multi-type props → @unboxed untagged variant
           (distinct runtime tags) or an opaque module; `any` is a defect, never
           silently typed.
+        - All-cases-or-flag: every TS variant of a union / overload must be
+          reachable in the emitted output, or the WHOLE prop is flagged — never
+          silently drop one (e.g. two string literals colliding on one constructor
+          ident like `'trap-focus'`/`'trapFocus'`, or a dropped overload arm, both
+          still compile).
     - name: "Determinism & reproducibility"
       priority: "CRITICAL"
       description: |
@@ -157,6 +178,12 @@ review:
     - condition: "Generated ReScript introduces an unsafe cast that violates the contract — Obj.magic, @unwrap, or a bare %identity outside the two documented allowances (opaque-module from*/as* accessor, render-prop <prop>Fn wrapper)"
       action: "BLOCK"
       reason: "Breaks the core 'no unsafe casts' guarantee in docs/TYPE_MAPPING.md / CLAUDE.md"
+    - condition: "Generated ReScript introduces a type variable ('a) that does NOT round-trip — it appears only in OUTPUT positions (a getter/method return, or a callback param the consumer receives) and never in a consumer-supplied input, so it unifies with anything (e.g. an `any` field surfacing as `routes(): RouterRoute<'a>[]`)"
+      action: "BLOCK"
+      reason: "An output-only 'a is an unsound cast (rule #4: a type var is only for a genuine round-tripping generic) — strictly worse than a flagged placeholder, and it compiles, so no other gate catches it"
+    - condition: "A fake / plausible-but-wrong type (e.g. `string` where the TS type was richer) is emitted UNFLAGGED inside a shared *Types.res entry (an @unboxed arm, a record field, or a views-module member) — no ⚪/🔍/🛑 bucket comment, because the prop only holds a typeRef and the imperfection does not bubble up"
+      action: "BLOCK"
+      reason: "'Flag, don't fake' must hold even when the fake hides behind a shared type reference and the report shows the prop as usable"
     - condition: "A change makes generated output nondeterministic (same input → differing output across runs) — e.g. unordered iteration, time, or randomness reaching emitted code"
       action: "BLOCK"
       reason: "Determinism is a core product guarantee; nondeterministic output is unshippable"
