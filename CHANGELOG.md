@@ -13,7 +13,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   `value: any` (paired with `itemToStringValue`) becomes a real generic `itemsConfig<'a>`,
   threaded to the component — narrowly scoped to ARRAY-ELEMENT records so state records
   consumed by `className`/`style` stay flagged (their `<'a>` wouldn't thread through a
-  shared @unboxed). New `Dict` arm in the @unboxed builder.
+  shared @unboxed) and to consumer-SUPPLIED (input) positions only — an `any` in a getter/method RETURN (output) stays flagged, since an output-only `'a` would unify with anything. New `Dict` arm in the @unboxed builder.
 
 ### Changed
 - **Large string-literal runs in opaque modules collapse to one polyvar arm** (#53):

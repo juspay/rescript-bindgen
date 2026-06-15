@@ -2,7 +2,9 @@
 
 **1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**2** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**1** class module(s) → `@new`/`@send`/`@get` bindings.
+
+**4** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -10,6 +12,14 @@
 |------|---------|----------|--------|
 | required | `@rescript/react + stdlib` | JsxDOM, Dom, React, ReactEvent | ✓ present |
 | optional | `rescript-webapi` | File, FileList | ✗ not installed |
+
+## 🏛 Class modules
+
+Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new` constructor, `@send` methods, `@get` properties).
+
+| Class | Constructor | Methods | Properties |
+|-------|-------------|---------|------------|
+| `Registry` | ✓ | 0 | 1 |
 
 ## ✅ Usable
 

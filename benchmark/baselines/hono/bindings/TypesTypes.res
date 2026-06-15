@@ -51,11 +51,11 @@ type bodyCacheConfig = {
   blob?: WebTypes.blob,
   formData?: Webapi.FormData.t,
 }
-type routerRoute<'a> = {
+type routerRoute = {
   basePath: string,
   path: string,
   method: string,
-  handler: (InstanceTypes.context, unit => promise<unit>) => 'a,
+  handler: (InstanceTypes.context, unit => promise<unit>) => string,
 }
 type router = {
   name: string,

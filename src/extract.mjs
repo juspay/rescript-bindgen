@@ -707,6 +707,14 @@ function isOptionalParam(paramSym) {
  */
 function sigToMembers(sig, ctx, depth = 0) {
     const { checker } = ctx
+    // POLARITY for a method/function the consumer CALLS (#50 review): its PARAMS are
+    // consumer-supplied (input -> produced) and its RETURN is consumer-received
+    // (output -> NOT produced). This is what stops an output-only `any` from being
+    // generalized to an unsound `'a` — e.g. hono's `routes(): RouterRoute[]` getter,
+    // whose `handler` field return would otherwise become a free `'a` that unifies with
+    // anything. (functionNode flips this again for any nested callback values.)
+    const prev = ctx.produced
+    ctx.produced = true
     const params = sig.getParameters().map((pp) => {
         const pt = checker.getTypeOfSymbolAtLocation(pp, ctx.decl)
         const optional = isOptionalParam(pp)
@@ -716,7 +724,10 @@ function sigToMembers(sig, ctx, depth = 0) {
             : classify(pt, ctx, pp.getName(), depth + 1)
         return { name: pp.getName(), optional, type }
     })
-    return { params, ret: returnNode(sig, ctx, depth) }
+    ctx.produced = false
+    const ret = returnNode(sig, ctx, depth)
+    ctx.produced = prev
+    return { params, ret }
 }
 
 /** Deep-replace `typeVar` nodes named in `subst` with their substitute IR. */
@@ -816,7 +827,14 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
             const { params, ret } = sigToMembers(pt.getCallSignatures()[0], ctx, 0)
             methods.push({ jsName: pname, params, ret })
         } else {
+            // A getter / data property is consumer-RECEIVED (output): mark `produced=false`
+            // so an output-only `any` inside it (hono's `routes: RouterRoute[]` whose
+            // `handler` returns `any`) stays a flagged placeholder rather than an unsound
+            // free `'a`. (#50 review)
+            const prev = ctx.produced
+            ctx.produced = false
             getters.push({ jsName: pname, type: classify(pt, ctx, pname, 0) })
+            ctx.produced = prev
         }
     }
 
