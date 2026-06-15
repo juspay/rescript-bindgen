@@ -5,151 +5,113 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [1.1.0] — 2026-06-15
+
+The "real-world packages" release: the generator now targets **general TypeScript
+packages** (not just React), and a 50+ package benchmark drove the binding quality
+of `@base-ui-components/react` from **14 → 195 / 195 usable components (0 review,
+0 broken)** and unblocked Hono. Driven by community feedback on the
+[announcement thread](https://forum.rescript-lang.org/t/introducing-juspay-rescript-bindgen/7210).
+No breaking CLI changes; generated *output* is substantially more precise.
+
 ### Added
-- **`Record | Array<{…value: any}>` unions now bind exactly** (#50, the last base-ui
-  review component -> base-ui **195/195 usable, 0 review, 0 broken**): a dict member
-  and an array member are runtime-distinct, so the union becomes `@unboxed Dict(Dict.t<V>)
-  | ItemsConfigArr(array<itemsConfig<'a>>)`. The element record's round-tripping
-  `value: any` (paired with `itemToStringValue`) becomes a real generic `itemsConfig<'a>`,
-  threaded to the component — narrowly scoped to ARRAY-ELEMENT records so state records
-  consumed by `className`/`style` stay flagged (their `<'a>` wouldn't thread through a
-  shared @unboxed) and to consumer-SUPPLIED (input) positions only — an `any` in a getter/method RETURN (output) stays flagged, since an output-only `'a` would unify with anything. New `Dict` arm in the @unboxed builder.
+- **General TypeScript support — functions and classes, not just React** (#15).
+  A package with no React components (Hono, utilities, SDKs) is no longer rejected
+  with "No React components found": standalone functions emit `@module external`
+  bindings, and classes emit a `@new` constructor + `@send` methods + `@get`
+  accessors over an abstract instance type. Same `TS checker → IR → emit` pipeline.
+- **Shared HTML attribute library + record-props emission** (#16, #18, #19). A
+  component whose props extend `*HTMLAttributes` (bare, `Omit<…, K>`, `Partial`, or
+  heritage `extends`) emits `type props = {...HtmlAttrs.<leaf>, <own>}` +
+  `external make: React.component<props>` instead of inlining 70+ labeled attribute
+  args. `HtmlAttrs.res` models React's attribute hierarchy (aria → events → globals
+  → per-element) via record spread, generated from the exact-pinned `@types/react`
+  devDependency (`npm run gen:attrs`). `--no-html-attrs` restores the legacy form.
+- **Namespace member bindings + alias modules** (#25). base-ui's documented
+  `<Accordion.Root>` idiom now works: namespace members bind through the namespace
+  object (`@scope("Accordion") … = "Root"`) and each namespace gets a zero-cost
+  alias module (`Accordion.res`: `module Root = AccordionRoot`).
+- **`WebTypes.res` sink, `Promise<T>`, and chainable self-returns** (#24).
+  Web-platform classes (`Request`, `Response`, `Headers`, `URL`, `AbortSignal`,
+  `Blob`, streams, `WebSocket` — lib.dom-declared only) map to abstract types in a
+  generated dependency-free module; `Promise<T>` → `promise<t>` (incl.
+  `Promise<void>` → `promise<unit>`) and `T | Promise<T>` → `promise<t>`; methods
+  returning a non-exported base class chain on the abstract `t` (Hono's
+  `app.get(...).post(...)`). Library bases (`Date`, `EventTarget`) are never claimed.
+- **Render-prop function form** (#46). `render?: ReactElement | ((props, state) =>
+  ReactElement)` keeps the ergonomic `~render: React.element`, plus a zero-cost
+  `external renderFn: ((props, state) => React.element) => React.element` wrapper —
+  typed with the component's exact state record — for the function form. (An
+  `@unboxed Element | Fn` cannot compile: `React.element` is abstract.)
+- **Faithful overloads + open string-literal unions** (`LiteralUnion`). An
+  overloaded function (intersection of call signatures) becomes an opaque module
+  with one zero-cost `as*` accessor per signature (no overload dropped); a
+  `'a' | 'b' | (string & {})` / `… | string` widening keeps its literals as an
+  `@unboxed` enum + `Custom(string)` catch-all instead of collapsing to `string`.
+- **Round-tripping collection generics** (#50). `Record<string, V> | Array<{label,
+  value: any}>` (Select's `items`) → `@unboxed Dict(Dict.t<V>) | ItemsConfigArr(
+  array<itemsConfig<'a>>)`, where a consumer-supplied `value: any` becomes a real
+  generic threaded to the component.
+- **Real-world benchmark gate + fixture guard** (#17). A one-click, environment-gated
+  CI job regenerates bindings for 8 pinned real packages and diffs against committed
+  baselines (compile + bucket metrics); a fixture guard blocks any `src/` mapping
+  change that lacks a golden case or a `docs/TYPE_MAPPING.md` row.
 
 ### Changed
-- **Large string-literal runs in opaque modules collapse to one polyvar arm** (#53):
-  a non-discriminable union whose literal members are a big set (React's
-  `ElementType`/`keyof JSX.IntrinsicElements` -> ~170 tag names, e.g.
-  react-tooltip's `wrapper`) now emits `external fromTag: [#"a" | #"div" | …] => t`
-  instead of one `external`+`let` pair per literal. Same exactness (the polyvar
-  admits exactly that set, leak-free) — react-tooltip `DistTypes.res` 398 -> 43
-  lines. A small literal set (< 4) keeps readable named constants.
-
-### Added
-- **Self-returning chained methods** via non-exported first-party base classes
-  (hono's `get/post/…` returning `HonoBase<…>`) now map to the chainable `t`
-  instead of minting numbered opaque types; library bases (`Date`, `EventTarget`)
-  are never claimed (#24).
-- **`WebTypes.res` sink for web-platform classes** (#24): `Request`, `Response`,
-  `Headers`, `URL`, `AbortSignal`, `Blob`, streams, `WebSocket` (lib.dom-declared
-  only) map to abstract types in a generated dependency-free module instead of
-  flagged `string` placeholders — hono's `fetch` becomes
-  `(t, ~request: WebTypes.request, …) => promise<WebTypes.response>`.
-- **`Promise<T>` → `promise<t>`** (incl. `Promise<void>` → `promise<unit>`), and
-  the sync-or-async value shape `T | Promise<T>` → `promise<t>` (#24).
-
-### Added
-- **Exact views for the formerly-review union patterns** (#39): base-ui review
-  13 → 1. Four cooperating mechanisms: (1) VENDOR-record trial — dependency-
-  declared consumer-constructed shapes (@floating-ui `Rect`/`VirtualElement`)
-  extract as exact records iff every field is perfect (sandboxed + rolled back
-  otherwise); (2) string-literal arms in views modules become ready-made
-  constants via single-value polyvar casts (`Boundary.clippingAncestors`);
-  (3) consumer-produced callback-RETURN unions become construct-only
-  `<Prop>Target` views modules (`FinalFocusTarget.fromBool/fromHTMLElement/
-  none`) — unlocking `finalFocus`/`initialFocus` as exact @unboxed and the
-  `anchor` fn arm; (4) views-module members are now DEEP-checked for inner
-  imperfections (an unflagged `=> string` fake can no longer hide inside a
-  view). `isDomNodeType` is lib.dom-guarded (a vendor type merely named
-  *Element no longer collapses into `Dom.element`). `DOMRectList` joined the
-  WebTypes sink. Review hardening: construct-only views are gated to produce-positions (callback params keep the `'a` salvage), ident-colliding/`__type` arms reject the module instead of silently dropping a variant, reserved-word literal constants use the shared reserved set (note matches code), and a failed vendor-record trial fully rolls back minted names + type vars.
-- **Render-prop function form bindable via zero-cost wrapper** (#46): a
-  `render?: ReactElement | ((props, state) => ReactElement)` prop stays
-  `React.element` (the common case is unchanged), and the component module now
-  also carries `external renderFn: ((props, state) => React.element) =>
-  React.element = "%identity"` — typed with the signature's EXACT extracted
-  types (the real per-component state record). `render={renderFn((p, s) => …)}`
-  binds the function form; 177 base-ui components gain it. An @unboxed
-  `Element | Fn` cannot compile (React.element is abstract) — this wrapper is
-  the type-safe alternative, now an explicitly allowed %identity form in the
-  contract (CLAUDE.md + golden-suite guard updated).
-- **Direct-callback param salvage** (#30, probe I-1a): a callback prop whose
-  RETURN is clean but whose PARAM can't be modelled now keeps a usable typed
-  callback with a fresh type variable for the bad param (`('a, string) => unit`)
-  instead of collapsing the whole prop to a `string` placeholder — params flow
-  library->consumer, so an annotate-at-call-site hole is honest. A bad RETURN is
-  still NOT salvaged (it would feed wrong values into the library). Completes the
-  I-1a mechanism (the @unboxed-union case shipped in #41).
-- **Fidelity polish trio** (#34, probe I-5/I-7/I-8): `number | null` value props
-  -> `Nullable.t<float>` (passing null = controlled-clear, recovered from the
-  syntactic node since strictNullChecks is off); a `render` prop's dropped
-  function form now carries an ⓘ note instead of vanishing silently; `Ref<T>`
-  with a concrete element arg -> `React.ref<Nullable.t<Dom.htmlInputElement>>`
-  (specificity) instead of the generic `Dom.element`.
-
-### Changed
-- **SCC-merged shared modules are named after their largest member** (#35,
-  probe I-9): a cyclic type group now becomes e.g. `PositionerSharedTypes`
-  instead of the 40-char `ComponentsMenubarRootStoreToastTypes` (every member
-  concatenated). Shorter, and STABLE — adding/removing a small domain to the
-  cycle no longer renames the module and breaks consumers' qualified refs.
+- **SCC-merged shared modules are named after their largest member** (#35): a cyclic
+  type group is now e.g. `PositionerSharedTypes`, not the 40-char
+  `ComponentsMenubarRootStoreToastTypes`. Short, and stable — adding/removing a small
+  domain to the cycle no longer renames the module and breaks consumers' references.
+- **Large string-literal runs collapse to one polyvar arm** (#53): a non-discriminable
+  union with ~170 tag-name literals (React's `ElementType`) now emits one
+  `external fromTag: [#"a" | #"div" | …] => t` instead of ~2 lines per literal —
+  react-tooltip's `DistTypes.res` went 398 → 43 lines, same exactness.
+- **`int` vs `float` heuristic narrowed** (#32): `step`/`min`/`max`/`width`/`size`/
+  `offset`/`duration` now map to `float` (fractional values are legal, e.g.
+  `Slider step={0.1}`); only provably-integral names (`count`, `index`, `tabIndex`, …)
+  stay `int`.
+- For components emitted as record-props (HTML-attrs), non-JSX direct
+  `Module.make(...)` calls change shape (a record instead of labeled args); JSX call
+  sites are unchanged and gain the full typed HTML/ARIA surface.
 
 ### Fixed
-- **Degraded all-string ghost records healed** (#33, probe I-4): a record first
-  reached at the MAX_DEPTH boundary registered but had its fields built past the
-  budget -> an all-`string` ghost (`setOpenConfig2` with `cancel: string`). A
-  post-extraction pass re-resolves mostly-fallback records at depth 0, accepting
-  the result only when it adds zero new registry entries — genuine small configs
-  heal (`cancel: unit => unit`) while unbounded library graphs (Highcharts) are
-  rolled back and stay safely truncated.
-- **Case-only-distinct enum members de-collided** (#33): `'a' | 'A'` no longer
-  emit two constructors named `A` (a compile error); later collisions get a
-  numeric suffix (`A` / `A2`), the `@as` arm keeping the runtime value.
-- **Unflagged param fakes inside `@unboxed` Fn members** (#41, shipped since #22):
-  a fn param that failed to classify silently rendered as `string` inside shared
-  variants. Three-rung most-specific-type ladder now: `{}` empty states ->
-  `JSON.t`; `File`/`FileList`/`FormData` without rescript-webapi -> abstract
-  `WebTypes` sink types (full `Webapi.*` still preferred when installed);
-  anything else unnameable -> a fresh type variable (`Fn('x => …)`).
-- **base-ui review remainders** (#39): `boolean | RefObject | fn` focus props ->
-  `@unboxed Bool | Ref | Fn`; `HTMLElement | ShadowRoot | RefObject` containers ->
-  opaque modules with `from*` views (`ShadowRoot` -> `Dom.shadowRoot`);
-  `Intl.LocalesArgument` -> `string` + note. base-ui review 28 -> 9, usable
-  167 -> 186 (95%).
-- **Prop-position `any` -> implicit component generics** (#31, probe I-2): an
-  `any`-typed prop becomes a type variable (keyed by its carrying alias, so
-  `value`/`defaultValue`/`onValueChange` over one alias unify) instead of a
-  broken `string` placeholder — base-ui broken components 16 -> 0, usable
-  151 -> 167. Shared-record fields keep the flagged defect.
-- **DOM-event values and distributed eventDetails records** (#30, probe I-1/I-6):
-  a DOM event as a VALUE (solo or union — base-ui's distributed
-  `ReasonToEvent<R>`) maps to `Dom.event`, and a union of instantiations of
-  the SAME generic record collapses to one record over its apparent members —
-  NumberField/Select/Slider/Accordion primary callbacks are now fully typed
-  (`onValueChange: (float, …changeEventDetails) => unit`) instead of loose
-  `string` placeholders; base-ui loose count 27 → 16.
-- **base-ui bindings were broken at runtime** (#25): the flat names
-  (`AccordionRoot`) are `export type *` — type-only, `undefined` at runtime; the
-  values live on namespace objects (`Accordion.Root`). Components reachable as
-  namespace members now bind `@scope("Accordion") … = "Root"`, and each namespace
-  gets a zero-cost alias module (`Accordion.res`: `module Root = AccordionRoot`)
-  enabling the documented `<Accordion.Root>` JSX idiom.
-- Bare `--pkg <name>` now installs the `latest` dist-tag instead of the `*`
-  range — npm's `*` excludes prereleases, so packages publishing only
-  prereleases (e.g. `@base-ui-components/react`) failed to resolve (#23).
-- **State-dependent props** (`T | ((state: S) => T)`, incl. the checker-resolved
-  `T | (T & ((state: S) => T))` intersection form) now map to zero-cost
-  `@unboxed Style/Str | Fn` variants instead of flagged `string` placeholders —
-  flips `@base-ui-components/react` from 14 to 151 usable components (#22).
-- `@unboxed` union dedup is now **structural**: two components sharing a prop
-  name but differing in payload (per-component state records) no longer silently
-  dedupe to the first component's type; function-bearing unions over one record
-  are named after it (`accordionRootStyle`) (#22).
+- **State-dependent props** `T | ((state) => T)` → zero-cost `@unboxed Style/Str | Fn`
+  instead of a flagged `string` — flipped `@base-ui-components/react` from **14 → 151**
+  usable components (#22). `@unboxed` dedup is now structural (two components sharing a
+  prop name but differing in payload no longer collapse to the first's type).
+- **Prop-position `any` → implicit component generics** (#31): an `any`-typed prop
+  becomes a type variable (keyed by its carrying alias, so `value`/`defaultValue`/
+  `onValueChange` unify) instead of a broken `string` — base-ui broken **16 → 0**.
+- **DOM events + distributed eventDetails records** (#30): a DOM event value maps to
+  `Dom.event`, and a union of instantiations of one generic record collapses to a
+  single record — NumberField/Select/Slider/Accordion primary callbacks are now fully
+  typed (`onValueChange: (float, …changeEventDetails) => unit`). Plus direct-callback
+  param salvage: an unmodellable callback PARAM becomes a fresh type variable rather
+  than collapsing the whole callback to `string` (a clean RETURN is required).
+- **base-ui bindings were broken at runtime** (#25): the flat names (`AccordionRoot`)
+  are `export type *` — type-only, `undefined` at runtime; values live on namespace
+  objects. Now bound via `@scope` (see Added).
+- **Deep all-string "ghost" records healed** (#33): a record first reached at the
+  `MAX_DEPTH` boundary had its fields built past the budget → an all-`string` ghost; a
+  post-extraction pass re-resolves it at depth 0 (accepting only when it pulls zero new
+  entries, so unbounded library graphs stay truncated). Case-only-distinct enum members
+  (`'a' | 'A'`) no longer emit two identically-named constructors (a compile error).
+- **Unmodellable `@unboxed` fn params no longer fake a `string`** (#41): `{}` empty
+  states → `JSON.t`; `File`/`FileList`/`FormData` without rescript-webapi → abstract
+  `WebTypes` types; anything else unnameable → a fresh type variable.
+- **Exact views for the last review patterns** (#39): `boolean | RefObject | fn` focus
+  props → `@unboxed Bool | Ref | Fn`; `collisionBoundary`/`anchor` (incl. @floating-ui's
+  `Rect`/`VirtualElement`) → opaque modules with `from*` constructors; `finalFocus`/
+  `initialFocus` callback returns → construct-only `<Prop>Target` views. base-ui review
+  **28 → 0**.
+- **Fidelity polish** (#34): `number | null` value props → `Nullable.t<float>` (so a
+  controlled component can be cleared); `Ref<HTMLInputElement>` →
+  `React.ref<Nullable.t<Dom.htmlInputElement>>` (element specificity).
+- **Bare `--pkg <name>` installs the `latest` dist-tag** instead of `*`, so
+  prerelease-only packages (e.g. `@base-ui-components/react`) resolve (#23).
 
-### Added
-- **Shared HTML attribute records + record-props emission** (#16, #18, #19). A
-  component whose props extend `*HTMLAttributes` (bare, `Omit<…, K>`, `Partial`,
-  or heritage `extends`) now emits `type props = {...HtmlAttrs.<leaf>, <own>}` +
-  `external make: React.component<props>` instead of inlining 70+ labeled
-  attribute args. `HtmlAttrs.res` models React's hierarchy (aria → events →
-  globals → per-element) with record type spread, generated from the exact-pinned
-  `@types/react` devDependency (`npm run gen:attrs` regenerates on a pin bump).
-  TS `Omit` and own-prop collisions narrow only the affected slice (deduped
-  variants). `--no-html-attrs` restores the legacy inlined output.
-
-### Changed
-- Consumers of generated bindings for such components: JSX call sites are
-  unchanged and gain the full typed HTML/ARIA attribute surface; non-JSX direct
-  `Module.make(...)` calls change shape (record instead of labeled args).
 
 ## [1.0.0] — 2026-06-04
 
