@@ -5,6 +5,15 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- **Large string-literal runs in opaque modules collapse to one polyvar arm** (#53):
+  a non-discriminable union whose literal members are a big set (React's
+  `ElementType`/`keyof JSX.IntrinsicElements` -> ~170 tag names, e.g.
+  react-tooltip's `wrapper`) now emits `external fromTag: [#"a" | #"div" | …] => t`
+  instead of one `external`+`let` pair per literal. Same exactness (the polyvar
+  admits exactly that set, leak-free) — react-tooltip `DistTypes.res` 398 -> 43
+  lines. A small literal set (< 4) keeps readable named constants.
+
 ### Added
 - **Self-returning chained methods** via non-exported first-party base classes
   (hono's `get/post/…` returning `HonoBase<…>`) now map to the chainable `t`

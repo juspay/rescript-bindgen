@@ -1169,6 +1169,10 @@ const REF_NAMES = /^(Ref|RefObject|MutableRefObject|LegacyRef)$/
  *  registered entry imperfection-free, and a bounded entry count (no graph pull).
  *  Anything less rolls back fully and keeps the honest flag. */
 const VENDOR_TRIAL_ENTRY_CAP = 8
+// At/above this many string-literal arms in an opaque module, collapse them into ONE
+// `fromTag: [#"…" | …]` polyvar constructor instead of one named constant each. Below it,
+// keep readable named constants (`Boundary.clippingAncestors`). (#53)
+const LITERAL_COLLAPSE_THRESHOLD = 4
 function trialVendorRecord(type, ctx, propName, named) {
     const shared = ctx.shared
     if (!shared) return null
@@ -1760,13 +1764,17 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     const { checker } = ctx
     const members = []
     let sawBool = false
+    // Collect string-literal arms in one slot (keeps their original position). A SMALL set
+    // stays individual ready-made constants (`let clippingAncestors`); a LARGE run (React's
+    // `ElementType`/`keyof JSX.IntrinsicElements` expands to ~170 tag literals) collapses to
+    // ONE polyvar constructor `external fromTag: [#"a" | #"div" | …] => t` instead of
+    // ~340 lines — same exactness (the polyvar admits exactly that set), leak-free. (#53)
+    const literalRun = []
+    let litSlot = -1
     for (const mt of memberTypes) {
-        // A string-LITERAL arm (`'clippingAncestors' | Element | …`, #39) becomes a
-        // ready-made constant: `external fromX: [#x] => t` + `let x: t = fromX(#x)` —
-        // the polyvar admits exactly that one value (it IS the string at runtime), so
-        // no open string cast leaks into the module.
         if (mt.isStringLiteral && mt.isStringLiteral()) {
-            members.push({ literal: String(mt.value), name: String(mt.value) })
+            if (litSlot < 0) { litSlot = members.length; members.push(null) } // reserve position
+            literalRun.push(String(mt.value))
             continue
         }
         // TS expands `boolean` to `true | false` — collapse to ONE fromBool arm. (#39)
@@ -1800,6 +1808,15 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
             : refName(node) || undefined
         members.push({ type: node, name })
     }
+    // Fold the literal run into its reserved slot: collapse a large set to one `tagSet`
+    // polyvar arm; keep a small set as individual named constants. (#53)
+    if (litSlot >= 0) {
+        const uniq = [...new Set(literalRun)]
+        const folded = uniq.length >= LITERAL_COLLAPSE_THRESHOLD
+            ? [{ tagSet: uniq, name: 'Tag' }]
+            : uniq.map((v) => ({ literal: v, name: v }))
+        members.splice(litSlot, 1, ...folded)
+    }
     // `T | null/void` in a consumer-PRODUCED position (a callback's return, #39):
     // `none` constant (unit cast — `()` compiles to `undefined`, exactly what `void`
     // returns; the library treats null/undefined alike here).
@@ -1808,7 +1825,9 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     // Constructor-ident COLLISION check (#39 review): two literals that camel to the same
     // ident (`'trap-focus'` vs `'trapFocus'`), or two same-named arms, would silently drop
     // a TS variant (emit's `seen` dedup). All-cases-or-flag: reject the module instead.
-    const identOf = (m) => m.literal !== undefined ? lower(pascal(m.literal)) : m.none ? 'none' : ('from' + (m.name ? pascal(m.name) : (m.type && m.type.kind) || 'value'))
+    // (A `tagSet` arm carries no collision risk — its polyvar values are the raw strings,
+    // so `#"trap-focus"` and `#"trapFocus"` stay distinct; only ident-bearing arms count.)
+    const identOf = (m) => m.tagSet ? 'fromTag' : m.literal !== undefined ? lower(pascal(m.literal)) : m.none ? 'none' : ('from' + (m.name ? pascal(m.name) : (m.type && m.type.kind) || 'value'))
     const idents = members.map(identOf)
     if (new Set(idents).size !== idents.length) return null
     const name = uniqueName(pascal(opts.nameHint || typeName(type) || propName), ctx.shared) // a MODULE name
@@ -1820,7 +1839,7 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     if (deps.size) { const d = ctx.shared.byKey.get([...deps][0]); if (d && d.home) home = d.home }
     // Note telling the caller how to build this opaque value (the `from*` ctors),
     // since the prop only shows `<Module>.t`. Mirrors the Dom-node note convention.
-    const ctorName = (m) => m.literal ? `${name}.${lower(pascal(m.literal))}` : m.none ? `${name}.none` : `${name}.from${pascal(m.name)}`
+    const ctorName = (m) => m.tagSet ? `${name}.fromTag` : m.literal ? `${name}.${lower(pascal(m.literal))}` : m.none ? `${name}.none` : `${name}.from${pascal(m.name)}`
     const note = members.every((m) => m.name)
         ? `was \`${checker.typeToString(type).replace(/ \| (null|undefined)\b/g, '')}\` — opaque; build with ${members.map(ctorName).join(' / ')}`
         : undefined

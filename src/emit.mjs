@@ -647,6 +647,17 @@ function renderOpaque(t, lines, cfg) {
     lines.push(`  type t`)
     const seen = new Set()
     for (const m of t.members) {
+        // A collapsed LITERAL RUN (#53) -> ONE polyvar constructor admitting exactly that
+        // set: `external fromTag: [#"a" | #"div" | …] => t = "%identity"`. Each tag value
+        // passes through unchanged (it IS the string), so this is exact and leak-free —
+        // the same guarantee as N individual constants, ~1 line instead of ~2N.
+        if (m.tagSet) {
+            if (seen.has('fromTag')) continue
+            seen.add('fromTag')
+            const poly = m.tagSet.map((v) => `#"${v}"`).join(' | ')
+            lines.push(`  external fromTag: [${poly}] => t = "%identity"`)
+            continue
+        }
         // A string-LITERAL arm -> a ready-made constant: the polyvar `#"x"` admits exactly
         // that one value and compiles to the bare string, so nothing else can be cast in. (#39)
         if (m.literal !== undefined) {

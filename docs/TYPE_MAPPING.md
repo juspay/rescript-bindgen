@@ -308,7 +308,7 @@ becomes `JSON.t`, `keyof T` becomes `string`, and nested records carry the type 
 ---
 
 ## Opaque-module unions
-Fixtures: [`opaque-modules`](../test/golden/cases/opaque-modules), [`webapi`](../test/golden/cases/webapi), [`overload-intersection`](../test/golden/cases/overload-intersection), [`vendor-views`](../test/golden/cases/vendor-views)
+Fixtures: [`opaque-modules`](../test/golden/cases/opaque-modules), [`webapi`](../test/golden/cases/webapi), [`overload-intersection`](../test/golden/cases/overload-intersection), [`vendor-views`](../test/golden/cases/vendor-views), [`literal-run-collapse`](../test/golden/cases/literal-run-collapse)
 
 When a union can't be an `@unboxed` variant — **multiple object shapes**, or **object | array<object>**
 (abstract members that `typeof`/`Array.isArray` can't split into a recognized variant shape) — it
@@ -319,6 +319,7 @@ Three member forms beyond plain `from*` constructors (#39):
 | Union member | Module arm |
 |---|---|
 | a string LITERAL (`'clipping-ancestors' \| Element \| Rect`) | a ready-made constant via a single-value polyvar cast — `external fromClippingAncestors: [#"clipping-ancestors"] => t` + `let clippingAncestors: t = …`. The polyvar admits exactly that one value (it IS the string at runtime), so no open string cast leaks in |
+| a LARGE run of string literals (≥ 4 — React's `ElementType`/`keyof JSX.IntrinsicElements` expands to ~170 tag names) | ONE polyvar constructor `external fromTag: [#"a" \| #"div" \| …] => t` instead of ~2N constant lines. Same exactness (admits exactly that set, leak-free), ~85% smaller. A small set (< 4) keeps individual named constants. (#53) |
 | `null` / `void` in a **callback return** | `let none: t = fromUnit()` — `unit`'s runtime value IS `undefined` |
 | any member carrying an inner imperfection | the WHOLE module is rejected (deep `irHasImperfection` check) — no unflagged `=> string` fake can hide inside a view |
 | two arms that produce the **same constructor ident** (`'trap-focus'` vs `'trapFocus'`, or two anon functions) | the WHOLE module is rejected → prop stays flagged (all-cases-or-flag: never silently drop a variant) |
