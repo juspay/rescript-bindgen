@@ -2757,7 +2757,9 @@ function buildRecordFields(type, ctx, depth) {
         // when spreading domProps, drop ALL inherited HTML fields + any own field whose
         // name already exists in domProps (collision); keep only the package's own fields.
         .filter((p) => !spread || (!isInherited(p) && !DOM_PROPS_FIELDS.has(p.getName())))
-        .filter((p) => !['ref', 'key'].includes(p.getName()))
+        // NB: `key`/`ref` are React-reserved only on a COMPONENT's top-level props (filtered in
+        // buildComponentIR). A nested DATA record (`{ key: string; color: string }[]`) uses `key`
+        // as real payload, so it must NOT be stripped here (#63 C1).
         .map((p) => {
             const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0
             const t = checker.getTypeOfSymbolAtLocation(p, ctx.decl)

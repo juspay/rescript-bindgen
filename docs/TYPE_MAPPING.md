@@ -233,6 +233,7 @@ Fixture: [`records`](../test/golden/cases/records)
 | `interface EmptyState {}` (empty object) | `JSON.t` — a real object arrives at runtime but has no modellable fields (the `unknown` precedent). Fixture: [`empty-state-and-salvage`](../test/golden/cases/empty-state-and-salvage) |
 | `Partial<BaseProps>` | record with all fields optional (utility unwrapped: `Partial`/`Required`/`Readonly`/`Pick`/`Omit`/`NonNullable`) |
 | `interface X extends HTMLAttributes<…>` | `type … = { ...JsxDOM.domProps, <own fields> }` |
+| nested data record `{ key: string; color: string }[]` | `type … = { key: string, color: string }` — `key`/`ref` are React-reserved **only** on a component's top-level props (stripped there); inside a nested DATA record they are real payload and are KEPT. Fixture: [`data-record-key`](../test/golden/cases/data-record-key). (#63 C1) |
 
 In module mode these live in per-domain `*Types.res` modules, deduplicated by type identity and
 referenced qualified (`MenuTypes.menuItemType`); cyclic groups merge via SCC into one module
