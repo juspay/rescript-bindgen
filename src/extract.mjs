@@ -2844,16 +2844,25 @@ function buildRecordFields(type, ctx, depth) {
     }
     const props = type.getProperties()
     const hasHtml = props.some(isInherited)
-    const spread = hasHtml ? 'JsxDOM.domProps' : undefined
+    // A FIRST-PARTY field whose name collides with a DOM attr (`id`, `size`, `shape`, …) can't
+    // co-exist with the all-or-nothing `...JsxDOM.domProps` spread (ReScript rejects an explicit
+    // field that overlaps a spread), and JsxDOM.domProps — unlike the component path's narrowable
+    // HtmlAttrs variants — can't omit it. Previously such own fields were SILENTLY DROPPED
+    // (AvatarData lost required `id`/`size`/`shape`). The named first-party fields matter more
+    // than the generic inherited-attr bag, so on collision we keep ALL own fields and drop the
+    // spread (the inherited HTML attrs go with it). (#63 C3)
+    const ownCollides = hasHtml && props.some((p) => !isInherited(p) && DOM_PROPS_FIELDS.has(p.getName()))
+    const spread = (hasHtml && !ownCollides) ? 'JsxDOM.domProps' : undefined
 
     // Record fields must not mint implicit component type variables for `any` — a SHARED
     // record can't be component-generic, so `any` stays a flagged defect there. (#31)
     const prevInRecord = ctx.inRecordField
     ctx.inRecordField = true
     const fields = props
-        // when spreading domProps, drop ALL inherited HTML fields + any own field whose
-        // name already exists in domProps (collision); keep only the package's own fields.
-        .filter((p) => !spread || (!isInherited(p) && !DOM_PROPS_FIELDS.has(p.getName())))
+        // Keep every FIRST-PARTY field (with its real type); drop genuinely inherited (@types/
+        // lib.dom) HTML attrs — they're covered by the domProps spread, or intentionally gone
+        // with it on collision. (#63 C3)
+        .filter((p) => !isInherited(p))
         // NB: `key`/`ref` are React-reserved only on a COMPONENT's top-level props (filtered in
         // buildComponentIR). A nested DATA record (`{ key: string; color: string }[]`) uses `key`
         // as real payload, so it must NOT be stripped here (#63 C1).
