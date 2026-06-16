@@ -386,8 +386,28 @@ function isReactComponent(type, checker) {
     if (/ExoticComponent|FunctionComponent|^FC$|ComponentType|ComponentClass/.test(n)) return true
     const sigs = type.getCallSignatures()
     for (const sig of sigs) {
+        // A React FC takes 0 or 1 (props) arg. A multi-arg callable is a plain function —
+        // binding it as a component silently drops every arg past the first (#63 C4:
+        // `renderVariantFallbackValue(tokens, variant)` lost `variant`).
+        const params = sig.getParameters()
+        if (params.length > 1) continue
+        // The single arg must be a props bag, not a PRIMITIVE (`(s: string) => …` is a fn). Only
+        // reject clearly-primitive params — object / intersection (`A & B`) / union / generic
+        // props are all valid component shapes, so a blanket `!Object` check would over-reject.
+        if (params.length === 1) {
+            const d = params[0].valueDeclaration || (params[0].declarations && params[0].declarations[0])
+            const pt = d && checker.getTypeOfSymbolAtLocation(params[0], d)
+            const PRIM = ts.TypeFlags.StringLike | ts.TypeFlags.NumberLike | ts.TypeFlags.BooleanLike |
+                ts.TypeFlags.BigIntLike | ts.TypeFlags.ESSymbolLike | ts.TypeFlags.Null |
+                ts.TypeFlags.Undefined | ts.TypeFlags.Void
+            if (pt && (pt.flags & PRIM)) continue
+        }
         const ret = sig.getReturnType()
-        const rn = typeName(ret) || checker.typeToString(ret)
+        const rs = checker.typeToString(ret)
+        // The return must BE a React element, not merely CONTAIN one: a tuple `[ReactNode?]` or
+        // array `ReactNode[]` is a data-returning util, not a component (#63 C4: `getItemSlots`).
+        if (/^(readonly )?\[/.test(rs) || /\[\]$/.test(rs) || /^(Readonly)?Array</.test(rs)) continue
+        const rn = typeName(ret) || rs
         if (/Element|ReactNode|ReactElement|JSX/.test(rn)) return true
     }
     return false
