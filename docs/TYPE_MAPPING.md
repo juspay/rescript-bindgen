@@ -234,6 +234,8 @@ Fixture: [`records`](../test/golden/cases/records)
 | `Partial<BaseProps>` | record with all fields optional (utility unwrapped: `Partial`/`Required`/`Readonly`/`Pick`/`Omit`/`NonNullable`) |
 | `interface X extends HTMLAttributes<…>` | `type … = { ...JsxDOM.domProps, <own fields> }` |
 | nested data record `{ key: string; color: string }[]` | `type … = { key: string, color: string }` — `key`/`ref` are React-reserved **only** on a component's top-level props (stripped there); inside a nested DATA record they are real payload and are KEPT. Fixture: [`data-record-key`](../test/golden/cases/data-record-key). (#63 C1) |
+| `data: Row[] \| null` (required) | `data: Nullable.t<array<row>>` — `T \| null` recovers to `Nullable.t<T>` for **any** single `T` (array/record/primitive), not just primitives; dropping `\| null` to a required non-nullable type flips required-ness. Applies to record fields **and** component props. Fixture: [`nullable-fields`](../test/golden/cases/nullable-fields). (#63 C5) |
+| `note: string \| undefined` (required decl) / `caption: Props['x']` (indexed access into an optional prop) | optional field/prop (`note?`, `~caption: …=?`) — a `\| undefined` (or an indexed access into an optional source prop) means the value can be omitted. strictNullChecks is off, so recovered from the syntactic node / the source prop's optional flag. Fixture: [`nullable-fields`](../test/golden/cases/nullable-fields). (#63 C5) |
 
 In module mode these live in per-domain `*Types.res` modules, deduplicated by type identity and
 referenced qualified (`MenuTypes.menuItemType`); cyclic groups merge via SCC into one module

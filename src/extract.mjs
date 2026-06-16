@@ -596,7 +596,7 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
             // is off, so `null` already collapsed in the resolved type — recover it from
             // the SYNTACTIC node, and only for a value-position primitive (passing `null`
             // = controlled-clear, distinct from omitting the prop).
-            const nullablePrim = !aria && !litOpen && d && syntacticNullablePrimitive(d.type)
+            const nb = !aria && !litOpen && d && syntacticNullability(d.type)
             const baseType = salvageCallbackParams(
                 aria ? { kind: 'raw', res: aria }
                     : litOpen ? literalUnionOpenNode(litOpen, unionRefName(d.type), ctx, name)
@@ -604,11 +604,11 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
                 ctx)
             return {
                 name,
-                optional,
+                // a syntactic `| undefined` on a REQUIRED prop means it can be omitted -> optional
+                // (`=?`), distinct from `| null` (an explicit value -> Nullable.t). (#63 C5)
+                optional: optional || !!(nb && nb.hasUndef) || indexedAccessOptional(d && d.type, checker),
                 inherited: isInherited(p),
-                type: (nullablePrim && /^(string|number|boolean)$/.test(baseType.kind))
-                    ? { kind: 'nullable', of: baseType }
-                    : baseType,
+                type: applyNullable(baseType, nb),
                 // raw TS info, used by the report to describe unmapped props
                 tsType: checker.typeToString(t).replace(/\s+/g, ' ').slice(0, 200),
                 declText: (d ? d.getText() : '').replace(/\s+/g, ' ').trim().slice(0, 200),
@@ -1825,18 +1825,41 @@ function literalUnionOpen(typeNode, checker) {
  *  allowed too) — exactly ONE primitive keyword (number/string/boolean) plus an explicit
  *  `null`, no other members. Used to recover the explicit-null arm that strictNullChecks-off
  *  resolution swallowed. (#34, I-5) */
-function syntacticNullablePrimitive(typeNode) {
-    if (!typeNode || !ts.isUnionTypeNode(typeNode)) return false
-    let hasNull = false, prims = 0, other = 0
+function syntacticNullability(typeNode) {
+    if (!typeNode || !ts.isUnionTypeNode(typeNode)) return null
+    let hasNull = false, hasUndef = false, nonNull = 0
     for (const m of typeNode.types) {
         const isNull = m.kind === ts.SyntaxKind.NullKeyword ||
             (ts.isLiteralTypeNode(m) && m.literal.kind === ts.SyntaxKind.NullKeyword)
         if (isNull) hasNull = true
-        else if (m.kind === ts.SyntaxKind.UndefinedKeyword) { /* optional already handles it */ }
-        else if (m.kind === ts.SyntaxKind.NumberKeyword || m.kind === ts.SyntaxKind.StringKeyword || m.kind === ts.SyntaxKind.BooleanKeyword) prims++
-        else other++
+        else if (m.kind === ts.SyntaxKind.UndefinedKeyword) hasUndef = true
+        else nonNull++
     }
-    return hasNull && prims === 1 && other === 0
+    // `single`: exactly one non-null/undefined member, so `T | null` wraps cleanly as
+    // `Nullable.t<T>` (a multi-arm `A | B | null` is a real union, handled elsewhere).
+    return { hasNull, hasUndef, single: nonNull === 1 }
+}
+
+/** A prop typed by indexed access into an OPTIONAL source prop — `value: StatCardV2Props["value"]`
+ *  where `StatCardV2Props.value?` is optional — resolves to `T | undefined`, so this field can be
+ *  omitted too. strictNullChecks is off (undefined is stripped from both the syntactic and resolved
+ *  types), so recover it from the referenced property's optional flag. (#63 C5) */
+function indexedAccessOptional(typeNode, checker) {
+    if (!typeNode || !ts.isIndexedAccessTypeNode(typeNode)) return false
+    const idx = typeNode.indexType
+    if (!ts.isLiteralTypeNode(idx) || !ts.isStringLiteral(idx.literal)) return false
+    const objType = checker.getTypeFromTypeNode(typeNode.objectType)
+    const prop = objType && objType.getProperty(idx.literal.text)
+    return !!(prop && (prop.getFlags() & ts.SymbolFlags.Optional))
+}
+
+/** Wrap a base IR type in `Nullable.t<…>` for a syntactic `T | null` (#34/#63 C5) — for ANY
+ *  single `T` (primitive, array, record), not just primitives. Skips placeholder/already-
+ *  nullable bases (wrapping a flagged `string` in Nullable is noise). */
+function applyNullable(baseType, nb) {
+    if (!nb || !nb.hasNull || !nb.single) return baseType
+    if (baseType.kind === 'nullable' || /^(opaque|review|unknown|any)$/.test(baseType.kind)) return baseType
+    return { kind: 'nullable', of: baseType }
 }
 
 /** First TypeReference name in a union node (`ToastPosition | string` -> "ToastPosition"), for naming. */
@@ -2837,7 +2860,17 @@ function buildRecordFields(type, ctx, depth) {
         .map((p) => {
             const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0
             const t = checker.getTypeOfSymbolAtLocation(p, ctx.decl)
-            return { name: p.getName(), optional, type: classify(t, ctx, p.getName(), depth + 1) }
+            const d = p.declarations && p.declarations[0]
+            // Recover syntactic nullability — `data: DirectoryData[] | null` must stay
+            // `Nullable.t<array<…>>`, not collapse to a required non-nullable array; a `| undefined`
+            // makes the field optional. strictNullChecks is off, so it's gone from the resolved
+            // type and read from the SYNTACTIC node — same as component props. (#63 C5)
+            const nb = d && d.type && syntacticNullability(d.type)
+            return {
+                name: p.getName(),
+                optional: optional || !!(nb && nb.hasUndef) || indexedAccessOptional(d && d.type, checker),
+                type: applyNullable(classify(t, ctx, p.getName(), depth + 1), nb),
+            }
         })
     ctx.inRecordField = prevInRecord
     return { spread, fields }
