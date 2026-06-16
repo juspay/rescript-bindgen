@@ -258,6 +258,19 @@ a separate declaration (forward reference either way), so it's **folded into the
 group** as `@unboxed and labelGrid = Str(string) | Fn(…)`. Fixture:
 [`unboxed-in-record-cycle`](../test/golden/cases/unboxed-in-record-cycle).
 
+**Type-parameter propagation across a cycle.** A genuine generic (`'a` — e.g. an input
+`{ value: any }[]` element, #50) that enters a recursive group must reach **every** member that
+transitively references it, even members with no type variable of their own. Records are built
+bottom-up, so a cycle (`annotationControlPoint<'a> → events → annotation → options →
+annotationControlPoint`) can reference a member **before** it has acquired its parameter — the
+bottom-up pass then leaves an intermediary (`annotationEvents`) non-generic while it references the
+now-generic `annotation<'a>`, emitting a bare `option<annotation>` that **won't compile** ("the type
+constructor `annotation` expects 1 argument(s), but is here applied to 0"). A post-extraction
+**fixpoint** closes the assignment: any entry that transitively reaches a parameterized member becomes
+parameterized too (`annotationEvents<'a>`), and every reference is re-synced to its target's final
+params (`option<annotation<'a>>`). No emitted type-constructor reference is ever left under-applied.
+Fixture: [`recursive-type-param-cycle`](../test/golden/cases/recursive-type-param-cycle). (#61)
+
 **Warning 30 (duplicate labels/constructors).** When a mutually-recursive `type rec A = {…} and B = {…}`
 group holds two members that share a **name** — a record field label (Highcharts
 `tooltip`/`legend`/`point`/`series` all have `chart`/`options`/`update`), or a variant constructor of a

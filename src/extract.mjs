@@ -1091,6 +1091,7 @@ export function extractModule(entryFile, opts = {}) {
     }
 
     healGhostRecords(shared)
+    propagateTypeParams(shared)
 
     return { components, functions, classes, skipped, shared, namespaces }
 }
@@ -1145,6 +1146,75 @@ function healGhostRecords(shared) {
         for (const f of rebuilt.fields) collectTypeVars(f.type, tvars)
         e.tparams = tvars.size ? [...tvars] : undefined
     }
+}
+
+/** The type nodes a shared entry directly contains — record fields' types, or union
+ *  members' types. (enums have no nested types.) */
+function entryChildTypes(e) {
+    if (e.kind === 'record') return e.fields.map((f) => f.type)
+    if (e.kind === 'unboxed') return e.members.map((m) => m.type)
+    return []
+}
+
+/** Equal tparam lists? Each is an array of `'a`-style strings, or undefined. */
+function sameTparams(a, b) {
+    const x = a || [], y = b || []
+    return x.length === y.length && x.every((v, i) => v === y[i])
+}
+
+/** Re-establish the `refTo` invariant — a typeRef carries exactly its target entry's
+ *  type parameters — across one type tree, reading the target's CURRENT tparams from the
+ *  registry. Refs to types outside the registry (no key, or external) are left untouched. */
+function syncRefTparams(t, byKey, seen) {
+    if (!t || typeof t !== 'object' || seen.has(t)) return
+    seen.add(t)
+    if (t.kind === 'typeRef' && t.key && byKey.has(t.key)) {
+        const tp = byKey.get(t.key).tparams
+        if (tp && tp.length) t.tparams = [...tp]
+        else delete t.tparams
+    }
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) if (t[k]) syncRefTparams(t[k], byKey, seen)
+    if (Array.isArray(t.params)) for (const p of t.params) syncRefTparams(p, byKey, seen)
+    if (Array.isArray(t.fields)) for (const f of t.fields) syncRefTparams(f.type, byKey, seen)
+    if (Array.isArray(t.members)) for (const m of t.members) syncRefTparams(m.type, byKey, seen)
+}
+
+/**
+ * Fixpoint pass: propagate type parameters across the shared-type reference graph.
+ *
+ * Shared records/unions are built bottom-up, but a CYCLE (Highcharts annotations:
+ * `annotationsOptions<'a>` -> `events` -> `annotation<'a>` -> `annotationsOptions<'a>`)
+ * means a member can be referenced BEFORE it has acquired its type parameter: `refTo`
+ * bakes a bare `annotation` ref (no `<'a>`), `collectTypeVars` then never sees the var,
+ * and the referencing record (`annotationsEventsOptions`) stays NON-generic while
+ * referencing a generic type. The output `option<annotation>` is under-applied —
+ * "type constructor annotation expects 1 argument(s), but is here applied to 0" — and
+ * does not compile.
+ *
+ * The bottom-up build gives a partial assignment; this closes it. Iterate to a fixpoint:
+ * any entry that transitively reaches a parameterized entry becomes parameterized too
+ * (its tparams = vars in its own fields ∪ tparams of every entry it references). Then a
+ * final sync rewrites every reference to its target's converged tparams, so no emitted
+ * type-constructor reference is left under-applied. Monotonic (param sets only grow), so
+ * it converges; the guard is a belt-and-braces backstop.
+ */
+function propagateTypeParams(shared) {
+    const byKey = shared.byKey
+    let changed = true, guard = 0
+    while (changed && guard++ < 1000) {
+        changed = false
+        for (const e of shared.entries) {
+            if (e.kind !== 'record' && e.kind !== 'unboxed') continue
+            const kids = entryChildTypes(e)
+            for (const t of kids) syncRefTparams(t, byKey, new Set())
+            const tvars = new Set()
+            for (const t of kids) collectTypeVars(t, tvars)
+            const next = tvars.size ? [...tvars] : undefined
+            if (!sameTparams(e.tparams, next)) { e.tparams = next; changed = true }
+        }
+    }
+    // Final sync: reference sites now carry the converged tparams of their target.
+    for (const e of shared.entries) for (const t of entryChildTypes(e)) syncRefTparams(t, byKey, new Set())
 }
 
 /**
