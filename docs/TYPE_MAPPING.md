@@ -222,6 +222,23 @@ golden diffs. `--no-html-attrs` restores the legacy inlined output wholesale.
 
 ---
 
+## Discriminated-union props (`Base & (A | B | C)`)
+Fixture: [`discriminated-union-props`](../test/golden/cases/discriminated-union-props)
+
+A component whose props are a base intersected with a union of variant shapes —
+`{ maxWidth?, … } & (DefaultCardProps | AlignedCardProps | CustomCardProps)` — distributes to
+`(Base&A) | (Base&B) | (Base&C)`. TS's `getPropertiesOfType` on that union returns only the props
+common to **every** arm (the base + any shared discriminant), so variant-specific props were
+silently dropped — `Card` kept only `maxWidth`/`variant` and could render nothing.
+
+The binding gathers the arm-specific props too: the union's common props keep their correctly-merged
+types (e.g. the `variant` discriminant becomes one enum over all arms), and each prop that isn't in
+**every** arm is added as **optional** (it applies only to its variant; ReScript can't express the
+discriminated dependency, so flatten-optional is the faithful, compilable model — `~alignment` and
+`~children`, required within their arm, surface as optional). (#63 C2)
+
+---
+
 ## Records, recursion & utility unwrapping
 Fixture: [`records`](../test/golden/cases/records)
 

@@ -573,14 +573,38 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
         }) && chainFields(attrsBase.leaf).has(p.getName())
     }
 
-    const props = checker
-        .getPropertiesOfType(propsType)
+    // Discriminated-union props — `Base & (A | B | C)` distributes to `(Base&A)|(Base&B)|(Base&C)`,
+    // and `getPropertiesOfType` returns only the props common to ALL arms (Base + the shared
+    // discriminant), silently DROPPING every variant-specific prop (blend's `Card` lost
+    // `headerTitle`/`content`/`alignment`/`children` — unusable). Gather the arm-specific props
+    // too: take the union's common props (their types are correctly merged, e.g. the `variant`
+    // discriminant), then add each arm-only prop as OPTIONAL (it only applies to its variant, and
+    // ReScript can't express the discriminated dependency — flatten-optional is the faithful,
+    // compilable model). (#63 C2)
+    const commonSyms = checker.getPropertiesOfType(propsType)
+    const unionOptional = new Set()
+    let propSyms = commonSyms
+    if (propsType.isUnion && propsType.isUnion()) {
+        const commonNames = new Set(commonSyms.map((p) => p.getName()))
+        const extra = []
+        const seen = new Set()
+        for (const arm of propsType.types) {
+            for (const p of checker.getPropertiesOfType(arm)) {
+                const nm = p.getName()
+                if (commonNames.has(nm) || seen.has(nm)) continue
+                seen.add(nm); extra.push(p); unionOptional.add(nm)
+            }
+        }
+        propSyms = [...commonSyms, ...extra]
+    }
+
+    const props = propSyms
         .filter((p) => !['ref', 'key'].includes(p.getName()))
         .filter((p) => !coveredBySpread(p))
         .filter((p) => !isInherited(p) || allow.has(p.getName()))
         .map((p) => {
             const name = p.getName()
-            const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0
+            const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0 || unionOptional.has(name)
             const t = checker.getTypeOfSymbolAtLocation(p, decl)
             const d = p.declarations && p.declarations[0]
             ctx.lastAnyAlias = null // each prop keys its implicit-any vars fresh (#31)
