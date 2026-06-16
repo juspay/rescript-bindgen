@@ -74,5 +74,5 @@ external make: (
   ~isOverlay: bool=?,
   ~tabsGroupId: string=?,
   ~showSkeleton: bool=?,
-  ~skeletonVariant: ButtonSharedTypes.skeletonVariant=?,
+  ~skeletonVariant: SkeletonTypes.skeletonVariant=?,
 ) => React.element = "TabsTrigger"

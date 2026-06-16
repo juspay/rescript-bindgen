@@ -17,7 +17,7 @@ type radioIndicatorState = {
 }
 type tabsIndicatorState = {
   activeTabPosition: PositionerSharedTypes.tabsTabPosition,
-  activeTabSize: PositionerSharedTypes.anchorConfig,
+  activeTabSize: PositionerSharedTypes.tabsTabSize,
   orientation: PositionerSharedTypes.orientation,
   tabActivationDirection: PositionerSharedTypes.tabsTabActivationDirection,
 }

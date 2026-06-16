@@ -241,6 +241,24 @@ member concatenated. This keeps merged-module names short and, crucially, **stab
 removing a small domain from the cycle doesn't rename the module, so consumers' qualified references
 (`PositionerSharedTypes.foo`) survive a regeneration. (#35)
 
+**Structural dedup is scoped per home module.** Distinct TS types that widen to the same record
+shape collapse to one (e.g. Hono's 1728 `honoNNN`) — but **only within the same home module**. An
+anonymous `{…}` has no declaration file, so it's homed to whichever component builds it first;
+merging identical inline shapes *across* components (Avatar's `sizeConfig` ≡ DataTable's) pinned the
+canonical to that arbitrary home and drew a processing-order cross-edge. With dense cross-references
+that fused **58 of 77** component modules into ONE artificial SCC (`HighchartsSharedTypes` held
+2409/2578 types for `@juspay/blend`). Keying the dedup by `home|sig` keeps the within-module collapse
+(Hono shares one home; component files stay compact) while a shared shape gets its own copy per
+component — types stay in the module the library declares them in, and only **genuine** mutual
+recursion merges. A named library type is never structurally merged with a *differently-named* one.
+Fixture: [`cross-component-dedup`](../test/golden/cases/cross-component-dedup). (#61)
+
+**No generated type shadows a builtin.** An upstream interface named `Array`/`Option`/… lowercases
+to `array`/`option`; emitted bare it would shadow the ReScript pervasive within its module, so
+`array<string>` fails to compile ("the type array is not generic"). `uniqueName` suffixes a base that
+collides with a pervasive (`array` → `array2`, `option` → `option2`) exactly as it does a name clash.
+Fixture: [`cross-component-dedup`](../test/golden/cases/cross-component-dedup). (#61)
+
 **Deep-record healing.** A record first reached at the `MAX_DEPTH` boundary registers, but its
 fields (one level deeper) overflow the budget and all come back opaque — an all-`string` "ghost"
 (`setOpenConfig2` with `cancel: string`). A post-extraction pass re-resolves any mostly-fallback

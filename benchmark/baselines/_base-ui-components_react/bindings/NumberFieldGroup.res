@@ -1,9 +1,9 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.numberFieldRootState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, GroupTypes.numberFieldGroupState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("NumberField") @react.component
 external make: (
-  ~style: RootSharedTypes.numberFieldRootStyle=?,
+  ~style: GroupTypes.numberFieldGroupStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -52,6 +52,6 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~className: RootSharedTypes.numberFieldRootClassName=?,
+  ~className: GroupTypes.numberFieldGroupClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Group"

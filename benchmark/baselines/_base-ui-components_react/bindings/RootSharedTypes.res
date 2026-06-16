@@ -539,6 +539,9 @@ type highlightEventDetails = {
   event: Dom.event,
   index: int,
 }
+type readonlyArray = {
+  ...JsxDOM.domProps,
+}
 type avatarRootState = {
   imageLoadingStatus: imageLoadingStatus,
 }
@@ -797,6 +800,14 @@ type dialogHandle3<'a> = {
   close: unit => unit,
   isOpen: bool,
 }
+type fieldRootState = {
+  disabled: bool,
+  touched: bool,
+  dirty: bool,
+  valid: bool,
+  filled: bool,
+  focused: bool,
+}
 type validityConfig = {
   badInput: bool,
   customError: bool,
@@ -809,6 +820,9 @@ type validityConfig = {
   typeMismatch: bool,
   valueMissing: bool,
   valid: bool,
+}
+type fieldsetRootState = {
+  disabled: bool,
 }
 type useSyncedValuesConfig4<'a> = {
   @as("open") open_?: bool,
@@ -1272,8 +1286,24 @@ type toastManager = {
   update: (string, toastManagerAddOptions) => unit,
   promise: (promise<string>, toastManagerPromiseOptions) => promise<string>,
 }
+type toastObject = {
+  id: string,
+  title?: React.element,
+  @as("type") type_?: string,
+  description?: React.element,
+  timeout?: float,
+  priority?: priority,
+  transitionStatus?: transitionStatus2,
+  limited?: bool,
+  height?: float,
+  onClose?: unit => unit,
+  onRemove?: unit => unit,
+  actionProps?: string,
+  positionerProps?: toastManagerPositionerProps,
+  data?: string,
+}
 type useToastManagerReturnValue = {
-  toasts: array<toastRootToastObject>,
+  toasts: array<toastObject>,
   add: toastManagerAddOptions => string,
   close: string => unit,
   update: (string, toastManagerAddOptions) => unit,
@@ -1420,6 +1450,10 @@ type tooltipHandle2<'a> = {
 @unboxed type checkboxRootStyle = Style(JsxDOM.style) | Fn(checkboxRootState => JsxDOM.style)
 @unboxed type collapsibleRootStyle = Style(JsxDOM.style) | Fn(collapsibleRootState => JsxDOM.style)
 @unboxed type collapsibleRootClassName = Str(string) | Fn(collapsibleRootState => string)
+@unboxed type fieldRootStyle = Style(JsxDOM.style) | Fn(fieldRootState => JsxDOM.style)
+@unboxed type fieldRootClassName = Str(string) | Fn(fieldRootState => string)
+@unboxed type fieldsetRootStyle = Style(JsxDOM.style) | Fn(fieldsetRootState => JsxDOM.style)
+@unboxed type fieldsetRootClassName = Str(string) | Fn(fieldsetRootState => string)
 @unboxed type menubarStyle = Style(JsxDOM.style) | Fn(menubarState => JsxDOM.style)
 @unboxed type menubarClassName = Str(string) | Fn(menubarState => string)
 @unboxed type navigationMenuRootStyle = Style(JsxDOM.style) | Fn(navigationMenuRootState => JsxDOM.style)

@@ -1,12 +1,12 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, CheckboxGroupTypes.checkboxGroupState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.fieldRootState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("Field") @react.component
 external make: (
   ~onValueChange: (string, PositionerSharedTypes.onCheckedChangeConfig) => unit=?,
   ~defaultValue: CommonTypes.stringOrNumberOrStringArray=?,
   ~form: string=?,
-  ~style: CheckboxGroupTypes.checkboxGroupStyle=?,
+  ~style: RootSharedTypes.fieldRootStyle=?,
   ~title: string=?,
   ~pattern: string=?,
   ~autoFocus: bool=?,
@@ -80,6 +80,6 @@ external make: (
   ~min: CommonTypes.stringOrNumber=?,
   ~minLength: int=?,
   ~placeholder: string=?,
-  ~className: CheckboxGroupTypes.checkboxGroupClassName=?,
+  ~className: RootSharedTypes.fieldRootClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Control"

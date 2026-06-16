@@ -166,6 +166,10 @@ type tabsTabPosition = {
   top: float,
   bottom: float,
 }
+type tabsTabSize = {
+  width: float,
+  height: float,
+}
 type tabsTabState = {
   disabled: bool,
   active: bool,

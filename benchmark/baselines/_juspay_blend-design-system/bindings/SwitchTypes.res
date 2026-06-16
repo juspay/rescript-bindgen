@@ -1,15 +1,29 @@
 type switchSize =
   | @as("sm") Sm
   | @as("md") Md
-type backgroundColorConfig13 = {
-  active: RadioTypes.backgroundColorConfig11,
-  inactive: RadioTypes.backgroundColorConfig11,
+type maxLengthConfig3 = {
+  label?: float,
+  subtext?: float,
 }
-type borderConfig8 = {
+type heightConfig4 = {
+  sm: string,
+  md: string,
+}
+type activeConfig6 = {
+  disabled: string,
+  default: string,
+  hover: string,
+  error: string,
+}
+type backgroundColorConfig16 = {
+  active: activeConfig6,
+  inactive: activeConfig6,
+}
+type borderConfig10 = {
   color: string,
   width: string,
 }
-type smConfig13 = {
+type smConfig15 = {
   width: string,
   height: string,
   top: string,
@@ -17,45 +31,53 @@ type smConfig13 = {
   offset: string,
 }
 type sizeConfig4 = {
-  sm: smConfig13,
-  md: smConfig13,
+  sm: smConfig15,
+  md: smConfig15,
 }
 type thumbConfig = {
   backgroundColor: string,
-  border: borderConfig8,
-  borderRadius: RadioTypes.fontSizeConfig5,
+  border: borderConfig10,
+  borderRadius: heightConfig4,
   size: sizeConfig4,
   outline: string,
   outlineOffset: string,
   boxShadow: string,
 }
 type switchContainerConfig = {
-  height: RadioTypes.fontSizeConfig5,
-  width: RadioTypes.fontSizeConfig5,
-  borderRadius: RadioTypes.fontSizeConfig5,
-  backgroundColor: backgroundColorConfig13,
+  height: heightConfig4,
+  width: heightConfig4,
+  borderRadius: heightConfig4,
+  backgroundColor: backgroundColorConfig16,
   thumb: thumbConfig,
 }
-type labelConfig6 = {
-  color: RadioTypes.backgroundColorConfig11,
-  fontSize: RadioTypes.fontSizeConfig5,
-  fontWeight: RadioTypes.fontSizeConfig5,
+type labelConfig9 = {
+  color: activeConfig6,
+  fontSize: heightConfig4,
+  fontWeight: heightConfig4,
   gap: string,
 }
-type contentConfig6 = {
-  label: labelConfig6,
-  subtext: RadioTypes.sublabelConfig,
+type subtextConfig2 = {
+  color: activeConfig6,
+  fontSize: heightConfig4,
+  fontWeight: heightConfig4,
+}
+type contentConfig7 = {
+  label: labelConfig9,
+  subtext: subtextConfig2,
   gap: string,
+}
+type requiredConfig6 = {
+  color: string,
 }
 type slotConfig4 = {
-  width: RadioTypes.fontSizeConfig5,
-  height: RadioTypes.fontSizeConfig5,
+  width: heightConfig4,
+  height: heightConfig4,
 }
 type switchTokensType = {
   gap: string,
   switchContainer: switchContainerConfig,
-  content: contentConfig6,
-  required: AvatarGroupTypes.textConfig7,
+  content: contentConfig7,
+  required: requiredConfig6,
   slot: slotConfig4,
 }
 type responsiveSwitchTokens = {

@@ -26,10 +26,19 @@ type selectDrawerGroup = {
   items: array<selectDrawerItem>,
   showSeparator?: bool,
 }
+type itemsConfig3 = {
+  ...JsxDOM.domProps,
+}
 type itemsConfig2 = {
   groupLabel?: string,
-  items: DateRangePickerTypes.presetsConfig,
+  items: itemsConfig3,
   showSeparator?: bool,
+}
+type borderRadiusConfig11 = {
+  topLeft: string,
+  topRight: string,
+  bottomLeft: string,
+  bottomRight: string,
 }
 type overlayConfig = {
   backgroundColor: string,
@@ -40,22 +49,26 @@ type offsetConfig = {
   left: string,
   right: string,
 }
+type paddingConfig22 = {
+  x: string,
+  y: string,
+}
 type handleConfig = {
   backgroundColor: string,
   borderRadius: string,
   width: string,
   height: string,
 }
-type contentConfig8 = {
+type contentConfig9 = {
   backgroundColor: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig22,
   handle: handleConfig,
 }
 type drawerTokensType = {
-  borderRadius: DateRangePickerTypes.borderRadiusConfig6,
+  borderRadius: borderRadiusConfig11,
   overlay: overlayConfig,
   offset: offsetConfig,
-  content: contentConfig8,
+  content: contentConfig9,
 }
 type responsiveDrawerTokens = {
   sm: drawerTokensType,

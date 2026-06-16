@@ -41,6 +41,14 @@ type filterComponent =
   | @as("multiselect") Multiselect
   | @as("dateRange") DateRange
   | @as("numberRange") NumberRange
+type descriptionTooltipPropsConfig = {
+  side?: TooltipTypes.tooltipSide,
+  align?: TooltipTypes.tooltipAlign,
+  size?: TooltipTypes.tooltipSize,
+  showArrow?: bool,
+  delayDuration?: float,
+  offset?: float,
+}
 type sortConfig = {
   field: string,
   direction: sortDirection,
@@ -102,9 +110,9 @@ type bulkActionsConfig = {
 type rowActionConfig<'a> = {
   id: string,
   text?: string,
-  buttonType?: ButtonSharedTypes.buttonType,
-  size?: ButtonSharedTypes.buttonSize,
-  subType?: ButtonSharedTypes.buttonSubType,
+  buttonType?: ButtonTypes.buttonType,
+  size?: ButtonTypes.buttonSize,
+  subType?: ButtonTypes.buttonSubType,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
   disabled?: CommonTypes.disabled<'a>,
@@ -130,6 +138,11 @@ type columnTypeConfig = {
   enableSearch?: bool,
   filterComponent?: filterComponent,
 }
+type titleConfig6 = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+}
 type descriptionConfig = {
   fontSize: string,
   color: string,
@@ -145,6 +158,13 @@ type titleRowConfig = {
   marginBottom: string,
   justifyContent: string,
   alignItems: string,
+}
+type descriptionRowConfig = {
+  marginTop: string,
+}
+type searchIconConfig = {
+  width: string,
+  height: string,
 }
 type columnManagerIconConfig = {
   width: string,
@@ -164,8 +184,8 @@ type columnManagerTriggerConfig = {
 }
 type actionIconsConfig = {
   gap: string,
-  searchIcon: AvatarTypes.smConfig4,
-  filterIcon: AvatarTypes.smConfig4,
+  searchIcon: searchIconConfig,
+  filterIcon: searchIconConfig,
   columnManagerIcon: columnManagerIconConfig,
   columnManagerTrigger?: columnManagerTriggerConfig,
 }
@@ -178,13 +198,13 @@ type headerType = {
   maxWidth: string,
   overflowX: string,
   overflowY: string,
-  title: StatCardTypes.titleConfig3,
+  title: titleConfig6,
   description: descriptionConfig,
   headerSlot1: headerSlot1Config,
   headerSlot2: headerSlot1Config,
   headerSlot3: headerSlot1Config,
   titleRow: titleRowConfig,
-  descriptionRow: AvatarGroupTypes.menuConfig,
+  descriptionRow: descriptionRowConfig,
   actionIcons: actionIconsConfig,
 }
 type selectTextConfig = {
@@ -215,7 +235,7 @@ type bulkActionsType = {
 }
 type rowConfig2 = {
   height: string,
-  @as("&:hover") __hover: DrawerTypes.overlayConfig,
+  @as("&:hover") __hover: string,
 }
 type cellConfig2 = {
   padding: string,

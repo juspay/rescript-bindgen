@@ -16,16 +16,16 @@ type topQuery = {
   id: string,
   text: string,
 }
-type backgroundColorConfig10 = {
+type backgroundColorConfig11 = {
   default: string,
   hover: string,
   disabled: string,
 }
-type borderRadiusConfig9 = {
+type borderRadiusConfig10 = {
   default: string,
   focus: string,
 }
-type colorConfig14 = {
+type colorConfig15 = {
   default: string,
   hover: string,
   focus: string,
@@ -36,15 +36,15 @@ type lineHeightConfig2 = {
   hover: string,
   focus: string,
 }
-type textConfig19 = {
-  color: colorConfig14,
-  fontSize: colorConfig14,
-  fontWeight: colorConfig14,
+type textConfig21 = {
+  color: colorConfig15,
+  fontSize: colorConfig15,
+  fontWeight: colorConfig15,
   lineHeight: lineHeightConfig2,
 }
-type containerConfig8 = {
-  backgroundColor: backgroundColorConfig10,
-  border: borderRadiusConfig9,
+type containerConfig11 = {
+  backgroundColor: backgroundColorConfig11,
+  border: borderRadiusConfig10,
   borderRadius: string,
   padding: string,
   gap: string,
@@ -57,6 +57,9 @@ type attachmentContainerConfig = {
   borderRadius: string,
   padding: string,
 }
+type placeholderConfig4 = {
+  color: string,
+}
 type textareaConfig = {
   backgroundColor: string,
   color: string,
@@ -68,7 +71,7 @@ type textareaConfig = {
   paddingLeft: string,
   border: string,
   borderRadius: string,
-  placeholder: AvatarGroupTypes.textConfig7,
+  placeholder: placeholderConfig4,
   resize: string,
   fontFamily: string,
   minHeight: string,
@@ -89,9 +92,14 @@ type bottomActionsConfig = {
   gap: string,
   justifyContent: string,
 }
+type backgroundColorConfig12 = {
+  default: string,
+  hover: string,
+  active: string,
+}
 type overflowTagConfig = {
-  backgroundColor: BreadcrumbTypes.colorConfig3,
-  color: BreadcrumbTypes.colorConfig3,
+  backgroundColor: backgroundColorConfig12,
+  color: backgroundColorConfig12,
   border: string,
   borderRadius: string,
   paddingX: string,
@@ -102,11 +110,11 @@ type overflowTagConfig = {
   transition: string,
   cursor: string,
 }
-type containerConfig9 = {
+type containerConfig12 = {
   borderTop: string,
   paddingTop: string,
 }
-type headerConfig13 = {
+type headerConfig14 = {
   color: string,
   fontSize: string,
   fontWeight: string,
@@ -122,13 +130,19 @@ type scrollContainerConfig = {
   backgroundColor: string,
   scrollbarColor: string,
 }
+type backgroundColorConfig13 = {
+  default: string,
+  hover: string,
+  active: string,
+  disabled: string,
+}
 type opacityConfig2 = {
   default: string,
   disabled: string,
 }
 type itemConfig8 = {
-  backgroundColor: ButtonSharedTypes.defaultConfig,
-  color: ButtonSharedTypes.defaultConfig,
+  backgroundColor: backgroundColorConfig13,
+  color: backgroundColorConfig13,
   fontSize: string,
   fontWeight: string,
   paddingX: string,
@@ -139,25 +153,25 @@ type itemConfig8 = {
   opacity: opacityConfig2,
 }
 type topQueriesConfig = {
-  container: containerConfig9,
-  header: headerConfig13,
+  container: containerConfig12,
+  header: headerConfig14,
   scrollContainer: scrollContainerConfig,
   item: itemConfig8,
 }
-type smConfig11 = {
-  backgroundColor: backgroundColorConfig10,
-  borderRadius: borderRadiusConfig9,
-  border: borderRadiusConfig9,
+type smConfig13 = {
+  backgroundColor: backgroundColorConfig11,
+  borderRadius: borderRadiusConfig10,
+  border: borderRadiusConfig10,
   minHeight: string,
   maxHeight: string,
   gap: string,
-  text: textConfig19,
+  text: textConfig21,
   resize: string,
   overflow: string,
   paddingLeft: string,
   paddingTop: string,
   paddingBottom: string,
-  container: containerConfig8,
+  container: containerConfig11,
   attachmentContainer: attachmentContainerConfig,
   textarea: textareaConfig,
   filesContainer: filesContainerConfig,
@@ -166,6 +180,6 @@ type smConfig11 = {
   topQueries: topQueriesConfig,
 }
 type responsiveChatInputTokensType = {
-  sm: smConfig11,
-  lg: smConfig11,
+  sm: smConfig13,
+  lg: smConfig13,
 }

@@ -1,5 +1,5 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, ButtonTypes.buttonState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, RadioGroupTypes.menuRadioGroupState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
@@ -8,7 +8,7 @@ external make: (
   ~defaultValue: 'b=?,
   ~onValueChange: ('c, RootSharedTypes.menuRootChangeEventDetails) => unit=?,
   ~disabled: bool=?,
-  ~style: ButtonTypes.buttonStyle=?,
+  ~style: RadioGroupTypes.menuRadioGroupStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -56,6 +56,6 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~className: ButtonTypes.buttonClassName=?,
+  ~className: RadioGroupTypes.menuRadioGroupClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "RadioGroup"

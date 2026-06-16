@@ -1,11 +1,11 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.tabsRootState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, ListTypes.tabsListState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("Tabs") @react.component
 external make: (
   ~activateOnFocus: bool=?,
   ~loopFocus: bool=?,
-  ~style: RootSharedTypes.tabsRootStyle=?,
+  ~style: ListTypes.tabsListStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -54,6 +54,6 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~className: RootSharedTypes.tabsRootClassName=?,
+  ~className: ListTypes.tabsListClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "List"

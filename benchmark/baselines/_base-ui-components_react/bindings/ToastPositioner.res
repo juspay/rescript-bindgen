@@ -5,7 +5,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, PositionerSharedTypes.toas
 external make: (
   ~anchor: Dom.element=?,
   ~side: PositionerSharedTypes.side=?,
-  ~toast: RootSharedTypes.toastRootToastObject,
+  ~toast: RootSharedTypes.toastObject,
   ~style: PositionerSharedTypes.toastPositionerStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

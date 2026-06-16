@@ -1,10 +1,10 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, CheckboxItemIndicatorTypes.menuCheckboxItemIndicatorState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, RadioItemIndicatorTypes.menuRadioItemIndicatorState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
   ~keepMounted: bool=?,
-  ~style: CheckboxItemIndicatorTypes.menuCheckboxItemIndicatorStyle=?,
+  ~style: RadioItemIndicatorTypes.menuRadioItemIndicatorStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -53,6 +53,6 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~className: CheckboxItemIndicatorTypes.menuCheckboxItemIndicatorClassName=?,
+  ~className: RadioItemIndicatorTypes.menuRadioItemIndicatorClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "RadioItemIndicator"

@@ -11,10 +11,6 @@ type buttonSubType =
   | @as("default") Default
   | @as("iconOnly") IconOnly
   | @as("inline") Inline
-type skeletonVariant =
-  | @as("pulse") Pulse
-  | @as("wave") Wave
-  | @as("shimmer") Shimmer
 type buttonGroupPosition =
   | @as("center") Center
   | @as("left") Left
@@ -24,17 +20,6 @@ type buttonState =
   | @as("hover") Hover
   | @as("active") Active
   | @as("disabled") Disabled
-type skeletonShape =
-  | @as("circle") Circle
-  | @as("rectangle") Rectangle
-  | @as("rounded") Rounded
-type size2 =
-  | @as("sm") Sm
-  | @as("lg") Lg
-  | @as("md") Md
-type shape =
-  | @as("circle") Circle
-  | @as("square") Square
 type slotMaxHeightConfig = {
   sm: string,
   md: string,
@@ -127,60 +112,11 @@ type buttonProps = {
   leadingIcon?: React.element,
   trailingIcon?: React.element,
   showSkeleton?: bool,
-  skeletonVariant?: skeletonVariant,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
   buttonGroupPosition?: buttonGroupPosition,
   fullWidth?: bool,
   justifyContent?: string,
   state?: buttonState,
-}
-type valueConfig4 = {
-  shouldShowSkeleton: bool,
-  shouldShowContent: bool,
-}
-type animationConfig = {
-  duration: string,
-  timingFunction: string,
-  iterationCount: string,
-  direction: string,
-}
-type colorsConfig2 = {
-  base: string,
-  highlight: string,
-  shimmer: string,
-}
-type borderRadiusConfig8 = {
-  rectangle: string,
-  rounded: string,
-  circle: string,
-}
-type spacingConfig = {
-  gap: string,
-  margin: string,
-}
-type textConfig17 = {
-  height: string,
-  minWidth: string,
-}
-type buttonConfig2 = {
-  sm: textConfig17,
-  md: textConfig17,
-  lg: textConfig17,
-}
-type sizesConfig = {
-  text: textConfig17,
-  avatar: slotMaxHeightConfig,
-  button: buttonConfig2,
-}
-type skeletonTokensType = {
-  animation: animationConfig,
-  colors: colorsConfig2,
-  borderRadius: borderRadiusConfig8,
-  spacing: spacingConfig,
-  sizes: sizesConfig,
-}
-type responsiveSkeletonTokens = {
-  sm: skeletonTokensType,
-  lg: skeletonTokensType,
 }
 module OnClick = {
   type t

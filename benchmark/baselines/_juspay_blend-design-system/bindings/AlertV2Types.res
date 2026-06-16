@@ -12,12 +12,43 @@ type alertV2SubType =
 type alertV2ActionPosition =
   | @as("bottom") Bottom
   | @as("right") Right
+type primaryConfig11 = {
+  subtle: string,
+  noFill: string,
+}
+type borderConfig12 = {
+  primary: primaryConfig11,
+  success: primaryConfig11,
+  warning: primaryConfig11,
+  error: primaryConfig11,
+  purple: primaryConfig11,
+  orange: primaryConfig11,
+  neutral: primaryConfig11,
+}
+type paddingConfig27 = {
+  top: string,
+  bottom: string,
+  left: string,
+  right: string,
+}
 type gapConfig5 = {
   bottom: string,
   right: string,
 }
+type slotConfig6 = {
+  maxHeight: string,
+}
+type colorConfig19 = {
+  primary: string,
+  success: string,
+  warning: string,
+  error: string,
+  purple: string,
+  orange: string,
+  neutral: string,
+}
 type headingConfig4 = {
-  color: AlertTypes.colorConfig2,
+  color: colorConfig19,
   fontWeight: string,
   fontSize: string,
   lineHeight: string,
@@ -32,38 +63,38 @@ type actionContainerConfig = {
   primaryAction: headingConfig4,
   secondaryAction: headingConfig4,
 }
-type contentConfig9 = {
+type contentConfig10 = {
   gap: gapConfig5,
   textContainer: textContainerConfig3,
   actionContainer: actionContainerConfig,
 }
-type closeButtonConfig2 = {
-  color: AlertTypes.colorConfig2,
+type closeButtonConfig3 = {
+  color: colorConfig19,
   height: string,
   width: string,
 }
 type mainContainerConfig = {
   gap: string,
-  content: contentConfig9,
-  closeButton: closeButtonConfig2,
+  content: contentConfig10,
+  closeButton: closeButtonConfig3,
 }
 type alertV2TokensType = {
   width: string,
   maxWidth: string,
   minWidth: string,
-  border: AlertTypes.backgroundConfig,
+  border: borderConfig12,
   borderRadius: string,
-  backgroundColor: AlertTypes.backgroundConfig,
-  padding: DrawerTypes.offsetConfig,
+  backgroundColor: borderConfig12,
+  padding: paddingConfig27,
   gap: gapConfig5,
-  slot: ChartsTypes.dropdownConfig,
+  slot: slotConfig6,
   mainContainer: mainContainerConfig,
 }
 type responsiveAlertV2Tokens = {
   sm: alertV2TokensType,
   lg: alertV2TokensType,
 }
-type slotConfig11 = {
+type slotConfig13 = {
   slot: React.element,
   maxHeight?: string,
 }
@@ -76,7 +107,7 @@ type alertV2Actions = {
   primaryAction?: alertV2Action,
   secondaryAction?: alertV2Action,
 }
-type closeButtonConfig4 = {
+type closeButtonConfig5 = {
   show?: bool,
   onClick?: ReactEvent.Mouse.t => unit,
 }

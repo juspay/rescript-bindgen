@@ -35,26 +35,38 @@ type onStateChangeConfig = {
   errorFiles: array<uploadedFileWithStatus>,
   successfulFiles: array<uploadedFileWithStatus>,
 }
-type labelConfig4 = {
-  text: StatCardTypes.titleConfig3,
+type textConfig18 = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+}
+type labelConfig7 = {
+  text: textConfig18,
   marginBottom: string,
   gap: string,
 }
-type requiredConfig = {
-  text: AvatarGroupTypes.textConfig7,
+type textConfig19 = {
+  color: string,
+}
+type requiredConfig4 = {
+  text: textConfig19,
   gap: string,
 }
 type subLabelConfig = {
-  text: StatCardTypes.titleConfig3,
+  text: textConfig18,
   gap: string,
 }
-type headerConfig12 = {
-  label: labelConfig4,
-  required: requiredConfig,
-  subLabel: subLabelConfig,
-  helpIcon: AvatarGroupTypes.borderConfig3,
+type helpIconConfig3 = {
+  width: string,
+  color: string,
 }
-type borderConfig7 = {
+type headerConfig13 = {
+  label: labelConfig7,
+  required: requiredConfig4,
+  subLabel: subLabelConfig,
+  helpIcon: helpIconConfig3,
+}
+type borderConfig9 = {
   idle: string,
   uploading: string,
   success: string,
@@ -65,30 +77,35 @@ type slotConfig3 = {
   width: string,
   gap: string,
 }
-type textConfig18 = {
-  title: DateRangePickerTypes.labelConfig,
-  subtitle: DateRangePickerTypes.labelConfig,
+type titleConfig8 = {
+  color: string,
+  fontSize: string,
+  fontWeight: string,
+}
+type textConfig20 = {
+  title: titleConfig8,
+  subtitle: titleConfig8,
   gap: string,
 }
 type actionableConfig = {
   gap: string,
-  errorText: DateRangePickerTypes.labelConfig,
+  errorText: titleConfig8,
 }
-type contentConfig4 = {
+type contentConfig5 = {
   slot: slotConfig3,
-  text: textConfig18,
+  text: textConfig20,
   actionable: actionableConfig,
 }
-type containerConfig7 = {
-  border: borderConfig7,
-  backgroundColor: borderConfig7,
+type containerConfig10 = {
+  border: borderConfig9,
+  backgroundColor: borderConfig9,
   borderRadius: string,
   padding: string,
-  content: contentConfig4,
+  content: contentConfig5,
 }
 type uploadTokenType = {
-  header: headerConfig12,
-  container: containerConfig7,
+  header: headerConfig13,
+  container: containerConfig10,
 }
 type responsiveUploadTokens = {
   sm: uploadTokenType,

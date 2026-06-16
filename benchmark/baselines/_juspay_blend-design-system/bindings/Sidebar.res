@@ -23,7 +23,7 @@ external make: (
   ~iconOnlyMode: bool=?,
   ~hideOnIconOnlyToggle: bool=?,
   ~showPrimaryActionButton: bool=?,
-  ~primaryActionButtonProps: DateRangePickerTypes.presetsConfig=?,
+  ~primaryActionButtonProps: ReactTypes.primaryActionButtonPropsConfig=?,
   ~activeItem: Nullable.t<string>=?,
   ~onActiveItemChange: string => unit=?,
   ~defaultActiveItem: Nullable.t<string>=?,

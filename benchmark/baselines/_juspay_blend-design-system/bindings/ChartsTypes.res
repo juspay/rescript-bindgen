@@ -47,6 +47,9 @@ type newNestedDataPoint = {
   name: string,
   data: Dict.t<dataPoint>,
 }
+type colorsConfig = {
+  color: string,
+}
 type stackedLegendsDataPoint = {
   value: float,
   delta: float,
@@ -96,7 +99,11 @@ type noDataProps = {
   title?: string,
   subtitle?: string,
   slot?: React.element,
-  button?: ButtonSharedTypes.buttonProps,
+  button?: ButtonTypes.buttonProps,
+}
+type chartsSkeletonProps = {
+  show: bool,
+  variant: SkeletonTypes.skeletonVariant,
 }
 type legendsConfig = {
   title: string,
@@ -137,11 +144,15 @@ type sankeyLink = {
   color?: string,
   hoverColor?: string,
 }
+type paddingConfig7 = {
+  x: string,
+  y: string,
+}
 type slotsConfig = {
   gap: string,
 }
 type headerConfig3 = {
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig7,
   backgroundColor: string,
   borderBottom: string,
   borderRadius: string,
@@ -167,9 +178,15 @@ type legendConfig = {
   dropdown: dropdownConfig,
   item: itemConfig2,
 }
+type paddingConfig8 = {
+  top: string,
+  right: string,
+  bottom: string,
+  left: string,
+}
 type contentConfig2 = {
   legend: legendConfig,
-  padding: TabsTypes.boxedConfig2,
+  padding: paddingConfig8,
   gap: string,
   backgroundColor: string,
 }
@@ -183,3 +200,4 @@ type responsiveChartTokens = {
   sm: chartTokensType,
   lg: chartTokensType,
 }
+@unboxed type stringOrColorsConfig = Str(string) | ColorsConfig(colorsConfig)

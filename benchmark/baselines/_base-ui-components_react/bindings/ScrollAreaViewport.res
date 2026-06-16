@@ -1,9 +1,9 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.scrollAreaRootState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, ViewportTypes.scrollAreaViewportState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("ScrollArea") @react.component
 external make: (
-  ~style: RootSharedTypes.scrollAreaRootStyle=?,
+  ~style: ViewportTypes.scrollAreaViewportStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -52,6 +52,6 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~className: RootSharedTypes.scrollAreaRootClassName=?,
+  ~className: ViewportTypes.scrollAreaViewportClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Viewport"

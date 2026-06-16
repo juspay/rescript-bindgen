@@ -89,16 +89,20 @@ type triggerConfig3 = {
   style?: JsxDOM.style,
   renderTrigger?: renderTriggerConfig => React.element,
 }
-type borderRadiusConfig6 = {
+type borderRadiusConfig7 = {
   topLeft: string,
   topRight: string,
   bottomLeft: string,
   bottomRight: string,
 }
-type paddingConfig7 = {
-  sm: ButtonSharedTypes.defaultConfig3,
-  lg: ButtonSharedTypes.defaultConfig3,
-  md: ButtonSharedTypes.defaultConfig3,
+type smConfig8 = {
+  x: string,
+  y: string,
+}
+type paddingConfig9 = {
+  sm: smConfig8,
+  lg: smConfig8,
+  md: smConfig8,
 }
 type disabledConfig = {
   left: string,
@@ -123,15 +127,15 @@ type textConfig11 = {
   fontSize: fontSizeConfig4,
 }
 type quickSelectorConfig = {
-  borderRadius: borderRadiusConfig6,
+  borderRadius: borderRadiusConfig7,
   backgroundColor: string,
   gap: string,
-  padding: paddingConfig7,
+  padding: paddingConfig9,
   border: borderConfig5,
   text: textConfig11,
   iconSize: string,
 }
-type borderRadiusConfig7 = {
+type borderRadiusConfig8 = {
   withQuickSelector: string,
   withoutQuickSelector: string,
 }
@@ -140,11 +144,17 @@ type textConfig12 = {
   fontSize: fontSizeConfig4,
   fontWeight: string,
 }
+type borderConfig6 = {
+  disabled: string,
+  default: string,
+  hover: string,
+  active: string,
+}
 type dateInputConfig = {
-  borderRadius: borderRadiusConfig7,
-  padding: paddingConfig7,
+  borderRadius: borderRadiusConfig8,
+  padding: paddingConfig9,
   text: textConfig12,
-  border: TabsTypes.boxedConfig,
+  border: borderConfig6,
   backgroundColor: string,
   iconSize: string,
   gap: string,
@@ -152,6 +162,10 @@ type dateInputConfig = {
 type triggerConfig4 = {
   quickSelector: quickSelectorConfig,
   dateInput: dateInputConfig,
+}
+type paddingConfig10 = {
+  x: string,
+  y: string,
 }
 type labelConfig = {
   color: string,
@@ -163,14 +177,14 @@ type dateInputConfig2 = {
   label: labelConfig,
 }
 type headerConfig4 = {
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig10,
   dateInput: dateInputConfig2,
 }
 type headerConfig5 = {
   fontSize: string,
   fontWeight: string,
   color: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig10,
   gap: string,
 }
 type monthConfig = {
@@ -185,15 +199,15 @@ type weekConfig = {
   fontWeight: string,
   boxShadow: string,
   color: string,
-  padding: ButtonSharedTypes.defaultConfig3,
+  padding: smConfig8,
   row: rowConfig,
 }
 type cellConfig = {
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig10,
   fontWeight: string,
   fontSize: string,
   lineHeight: string,
-  border: TabsTypes.boxedConfig,
+  border: borderConfig6,
   borderRadius: string,
 }
 type statesConfig = {
@@ -205,11 +219,11 @@ type statesConfig = {
   disabledDay: string,
 }
 type textConfig13 = {
-  dayNumber: AvatarGroupTypes.textConfig7,
-  selectedDay: AvatarGroupTypes.textConfig7,
-  rangeDay: AvatarGroupTypes.textConfig7,
-  todayDay: AvatarGroupTypes.textConfig7,
-  disabledDate: AvatarGroupTypes.textConfig7,
+  dayNumber: string,
+  selectedDay: string,
+  rangeDay: string,
+  todayDay: string,
+  disabledDate: string,
 }
 type todayIndicatorConfig = {
   width: string,
@@ -227,7 +241,7 @@ type calendarGridConfig = {
   day: dayConfig,
 }
 type footerConfig3 = {
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig10,
   borderTop: string,
   gap: string,
 }

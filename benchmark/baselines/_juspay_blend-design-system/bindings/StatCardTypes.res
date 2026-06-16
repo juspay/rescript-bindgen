@@ -33,11 +33,15 @@ type statCardAxisConfig = {
   smartDateTimeFormat?: bool,
 }
 type statCardSkeletonProps = {
-  variant: ButtonSharedTypes.skeletonVariant,
+  variant: SkeletonTypes.skeletonVariant,
   show: bool,
   height?: CommonTypes.stringOrNumber,
   maxWidth?: CommonTypes.stringOrNumber,
   minWidth?: CommonTypes.stringOrNumber,
+}
+type paddingConfig11 = {
+  x: string,
+  y: string,
 }
 type titleConfig3 = {
   fontSize: string,
@@ -96,7 +100,7 @@ type gradientConfig = {
   startOpacity: float,
   endOpacity: float,
 }
-type colorsConfig = {
+type colorsConfig2 = {
   line: lineConfig,
   area: lineConfig,
   gradient: gradientConfig,
@@ -124,7 +128,7 @@ type patternConfig = {
   color: string,
   size: string,
 }
-type backgroundConfig2 = {
+type backgroundConfig3 = {
   fill: string,
   empty: string,
   pattern: patternConfig,
@@ -133,12 +137,12 @@ type progressBarConfig = {
   height: string,
   borderRadius: string,
   gap: string,
-  background: backgroundConfig2,
+  background: backgroundConfig3,
   label: titleConfig3,
 }
 type tooltipConfig2 = {
   backgroundColor: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig11,
   borderRadius: string,
   color: string,
   fontSize: string,
@@ -146,7 +150,7 @@ type tooltipConfig2 = {
 }
 type chartConfig = {
   height: string,
-  colors: colorsConfig,
+  colors: colorsConfig2,
   line: lineConfig2,
   bar: barConfig,
   progressBar: progressBarConfig,
@@ -159,7 +163,7 @@ type statCardTokenType = {
   borderRadius: string,
   backgroundColor: string,
   boxShadow: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig11,
   textContainer: textContainerConfig2,
   chart: chartConfig,
 }

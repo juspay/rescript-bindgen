@@ -113,6 +113,10 @@ type comboboxTriggerState = {
 type contextMenuTriggerState = {
   @as("open") open_: bool,
 }
+type dialogTriggerState = {
+  disabled: bool,
+  @as("open") open_: bool,
+}
 type selectTriggerState = {
   @as("open") open_: bool,
   readOnly: bool,
@@ -128,5 +132,7 @@ type selectTriggerState = {
 @unboxed type comboboxTriggerClassName = Str(string) | Fn(comboboxTriggerState => string)
 @unboxed type contextMenuTriggerStyle = Style(JsxDOM.style) | Fn(contextMenuTriggerState => JsxDOM.style)
 @unboxed type contextMenuTriggerClassName = Str(string) | Fn(contextMenuTriggerState => string)
+@unboxed type dialogTriggerStyle = Style(JsxDOM.style) | Fn(dialogTriggerState => JsxDOM.style)
+@unboxed type dialogTriggerClassName = Str(string) | Fn(dialogTriggerState => string)
 @unboxed type selectTriggerStyle = Style(JsxDOM.style) | Fn(selectTriggerState => JsxDOM.style)
 @unboxed type selectTriggerClassName = Str(string) | Fn(selectTriggerState => string)

@@ -1,9 +1,9 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, DescriptionTypes.toastDescriptionState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, TitleTypes.toastTitleState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("Toast") @react.component
 external make: (
-  ~style: DescriptionTypes.toastDescriptionStyle=?,
+  ~style: TitleTypes.toastTitleStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -52,6 +52,6 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~className: DescriptionTypes.toastDescriptionClassName=?,
+  ~className: TitleTypes.toastTitleClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Title"

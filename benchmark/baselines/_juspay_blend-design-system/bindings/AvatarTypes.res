@@ -12,7 +12,7 @@ type avatarOnlinePosition =
   | @as("bottom") Bottom
 type skeletonConfig = {
   show: bool,
-  variant?: ButtonSharedTypes.skeletonVariant,
+  variant?: SkeletonTypes.skeletonVariant,
 }
 type smConfig4 = {
   width: string,

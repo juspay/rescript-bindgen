@@ -129,11 +129,20 @@ function isPlaceholderArg(t, checker) {
     return false
 }
 
+/** ReScript pervasive type constructors a generated type must never shadow. An upstream
+ *  interface named `Array`/`Option`/… would lower to `array`/`option` and, emitted bare,
+ *  shadow the builtin within its module — so `array<string>` then fails to compile ("the
+ *  type array is not generic"). `uniqueName` suffixes these exactly like a name collision. */
+const RESERVED_TYPE_NAMES = new Set([
+    'array', 'option', 'list', 'string', 'int', 'float', 'bool', 'char', 'bytes',
+    'unit', 'result', 'dict', 'promise', 'lazy_t', 'exn', 'ref',
+])
+
 /** A globally-unique ReScript type name (suffix on collision) so two domains that
- *  merge into one module via SCC never clash. */
+ *  merge into one module via SCC never clash — and never a pervasive builtin name. */
 function uniqueName(base, shared) {
     let n = base, i = 2
-    while (shared.names.has(n)) n = base + i++
+    while (shared.names.has(n) || RESERVED_TYPE_NAMES.has(n)) n = base + i++
     shared.names.add(n)
     return n
 }
@@ -2688,7 +2697,16 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         // this type.id to the canonical one, and hand back its ref. Built bottom-up, so a
         // record's children are already deduped when we hash it. Recursive records carry a
         // self-key in their signature, so they never falsely merge.
-        const sig = recordSig(entry)
+        //
+        // SCOPED PER HOME MODULE. An anonymous `{…}` has no declaration file, so its home is
+        // whichever component happened to build it first; merging identical inline shapes
+        // ACROSS components (e.g. Avatar's `sizeConfig` ≡ DataTable's) pinned the canonical to
+        // that arbitrary home and drew a processing-order cross-edge — fusing dozens of
+        // unrelated component modules into ONE giant SCC (`HighchartsSharedTypes` held 2409/2578
+        // types for @juspay/blend). Keying by `home|sig` keeps the within-module collapse (Hono's
+        // 1728 share one home; component files stay compact) while a shared shape now gets its
+        // own copy per component — types stay where the library declares them. (#61 follow-up)
+        const sig = entry.home + '|' + recordSig(entry)
         const canon = ctx.shared.bySig.get(sig)
         if (canon && canon !== entry) {
             const i = ctx.shared.entries.indexOf(entry)

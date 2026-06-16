@@ -1,42 +1,70 @@
-type titleConfig7 = {
+type gapConfig6 = {
+  border: string,
+  noBorder: string,
+}
+type contentConfig11 = {
+  gap: string,
+}
+type borderConfig13 = {
+  disabled: string,
+  default: string,
+  hover: string,
+  active: string,
+  @as("open") open_: string,
+}
+type backgroundColorConfig22 = {
+  border: borderConfig13,
+  noBorder: borderConfig13,
+}
+type colorConfig20 = {
+  disabled: string,
+  default: string,
+  hover: string,
+  active: string,
+  @as("open") open_: string,
+}
+type titleConfig10 = {
   fontSize: string,
   fontWeight: string,
   lineHeight: string,
-  color: AccordionTypes.colorConfig4,
+  color: colorConfig20,
 }
-type subtextConfig3 = {
+type subtextConfig4 = {
   fontSize: string,
   fontWeight: string,
   lineHeight: string,
   gap: string,
-  color: AccordionTypes.colorConfig4,
+  color: colorConfig20,
 }
-type textConfig24 = {
+type textConfig28 = {
   gap: string,
-  title: titleConfig7,
-  subtext: subtextConfig3,
+  title: titleConfig10,
+  subtext: subtextConfig4,
 }
-type slotConfig6 = {
+type slotConfig7 = {
   height: string,
 }
 type triggerConfig7 = {
-  content: ChartsTypes.slotsConfig,
-  backgroundColor: AccordionTypes.backgroundColorConfig5,
-  border: AccordionTypes.backgroundColorConfig5,
-  padding: AccordionTypes.gapConfig,
-  text: textConfig24,
-  slot: slotConfig6,
+  content: contentConfig11,
+  backgroundColor: backgroundColorConfig22,
+  border: backgroundColorConfig22,
+  padding: gapConfig6,
+  text: textConfig28,
+  slot: slotConfig7,
 }
-type chevronConfig2 = {
+type separatorConfig3 = {
+  color: gapConfig6,
+}
+type chevronConfig3 = {
   height: string,
-  color: AccordionTypes.borderConfig4,
+  color: borderConfig13,
 }
 type accordionV2TokensType = {
-  gap: AccordionTypes.gapConfig,
-  borderRadius: AccordionTypes.gapConfig,
+  gap: gapConfig6,
+  borderRadius: gapConfig6,
   trigger: triggerConfig7,
-  separator: AccordionTypes.separatorConfig,
-  chevron: chevronConfig2,
+  separator: separatorConfig3,
+  chevron: chevronConfig3,
 }
 type responsiveAccordionV2Tokens = {
   sm: accordionV2TokensType,

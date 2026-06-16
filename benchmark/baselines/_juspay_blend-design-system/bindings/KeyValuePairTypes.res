@@ -13,9 +13,14 @@ type gapConfig4 = {
   horizontal: string,
   vertical: string,
 }
+type fontSizeConfig6 = {
+  sm: string,
+  md: string,
+  lg: string,
+}
 type valueConfig5 = {
   color: string,
-  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
+  fontSize: fontSizeConfig6,
   fontWeight: string,
   gap: string,
 }

@@ -1,9 +1,9 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, TriggerTypes.contextMenuTriggerState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, IconTypes.navigationMenuIconState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("NavigationMenu") @react.component
 external make: (
-  ~style: TriggerTypes.contextMenuTriggerStyle=?,
+  ~style: IconTypes.navigationMenuIconStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -52,6 +52,6 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~className: TriggerTypes.contextMenuTriggerClassName=?,
+  ~className: IconTypes.navigationMenuIconClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Icon"

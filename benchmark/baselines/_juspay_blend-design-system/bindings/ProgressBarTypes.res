@@ -9,27 +9,32 @@ type progressBarVariant =
 type progressBarType =
   | @as("solid") Solid
   | @as("segmented") Segmented
-type backgroundColorConfig9 = {
+type heightConfig3 = {
+  sm: string,
+  md: string,
+  lg: string,
+}
+type backgroundColorConfig10 = {
   solid: string,
   segmented: string,
 }
 type fillConfig2 = {
-  backgroundColor: backgroundColorConfig9,
-  borderRadius: backgroundColorConfig9,
+  backgroundColor: backgroundColorConfig10,
+  borderRadius: backgroundColorConfig10,
 }
 type backgroundImageConfig = {
   segmented: string,
 }
 type emptyConfig = {
-  backgroundColor: backgroundColorConfig9,
+  backgroundColor: backgroundColorConfig10,
   backgroundImage: backgroundImageConfig,
   backgroundSize: backgroundImageConfig,
 }
 type linearConfig = {
-  height: ButtonSharedTypes.slotMaxHeightConfig,
+  height: heightConfig3,
   fill: fillConfig2,
   empty: emptyConfig,
-  borderRadius: backgroundColorConfig9,
+  borderRadius: backgroundColorConfig10,
 }
 type strokeWidthConfig = {
   sm: float,
@@ -37,17 +42,22 @@ type strokeWidthConfig = {
   lg: float,
 }
 type circularConfig = {
-  size: ButtonSharedTypes.slotMaxHeightConfig,
+  size: heightConfig3,
   strokeWidth: strokeWidthConfig,
-  stroke: backgroundColorConfig9,
-  background: backgroundColorConfig9,
-  dashArray: backgroundColorConfig9,
-  dashOffset: backgroundColorConfig9,
+  stroke: backgroundColorConfig10,
+  background: backgroundColorConfig10,
+  dashArray: backgroundColorConfig10,
+  dashOffset: backgroundColorConfig10,
+}
+type labelConfig6 = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
 }
 type progressBarTokenType = {
   linear: linearConfig,
   circular: circularConfig,
-  label: StatCardTypes.titleConfig3,
+  label: labelConfig6,
   transition: string,
 }
 type responsiveProgressBarTokens = {

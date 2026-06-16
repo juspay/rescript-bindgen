@@ -23,7 +23,7 @@ external make: (
   ~highlightItemOnHover: bool=?,
   ~onItemHighlighted: ('d, RootSharedTypes.highlightEventDetails) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
-  ~filteredItems: PositionerSharedTypes.htmlProps=?,
+  ~filteredItems: RootSharedTypes.readonlyArray=?,
   ~itemToStringValue: 'e => string=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~virtualized: bool=?,
   ~limit: float=?,

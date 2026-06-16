@@ -7,8 +7,19 @@ type avatarData = {
   trailingSlot?: React.element,
   skeleton?: AvatarTypes.skeletonConfig,
 }
+type skeletonConfig2 = {
+  show: bool,
+  variant?: SkeletonTypes.skeletonVariant,
+}
+type marginLeftConfig = {
+  sm: string,
+  regular: string,
+  md: string,
+  lg: string,
+  xl: string,
+}
 type containerConfig3 = {
-  marginLeft: AvatarTypes.fontSizeConfig3,
+  marginLeft: marginLeftConfig,
 }
 type selectedConfig = {
   ringColor: string,
@@ -22,6 +33,11 @@ type borderConfig3 = {
 type avatarConfig = {
   selected: selectedConfig,
   border: borderConfig3,
+}
+type backgroundConfig2 = {
+  default: string,
+  hover: string,
+  active: string,
 }
 type textConfig7 = {
   color: string,
@@ -38,12 +54,16 @@ type sizeConfig3 = {
   lg: smConfig6,
   xl: smConfig6,
 }
+type borderRadiusConfig5 = {
+  circular: string,
+  rounded: string,
+}
 type overflowCounterConfig = {
-  background: BreadcrumbTypes.colorConfig3,
+  background: backgroundConfig2,
   text: textConfig7,
   border: borderConfig3,
   size: sizeConfig3,
-  borderRadius: AvatarTypes.borderRadiusConfig4,
+  borderRadius: borderRadiusConfig5,
 }
 type menuConfig = {
   marginTop: string,
@@ -59,4 +79,3 @@ type responsiveAvatarGroupTokens = {
   sm: avatarGroupTokensType,
   lg: avatarGroupTokensType,
 }
-@unboxed type stringOrTextConfig7 = Str(string) | TextConfig7(textConfig7)

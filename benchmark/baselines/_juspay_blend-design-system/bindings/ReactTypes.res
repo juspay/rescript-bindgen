@@ -1,0 +1,3 @@
+type primaryActionButtonPropsConfig = {
+  ...JsxDOM.domProps,
+}

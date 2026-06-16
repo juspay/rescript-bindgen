@@ -20,5 +20,5 @@ external make: (
   ~sideOffset: float=?,
   ~alignOffset: float=?,
   ~collisonBoundaryRef: MenuTypes.CollisonBoundaryRef.t=?,  // ⓘ was `Element | Element[]` — opaque; build with CollisonBoundaryRef.fromElement / CollisonBoundaryRef.fromElements
-  ~skeleton: MultiSelectSharedTypes.singleSelectSkeletonProps=?,
+  ~skeleton: MenuTypes.menuSkeletonProps=?,
 ) => React.element = "Menu"

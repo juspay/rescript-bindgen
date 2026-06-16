@@ -1,44 +1,65 @@
-type labelConfig10 = {
-  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
-  lineHeight: ButtonSharedTypes.slotMaxHeightConfig,
-  color: InputsTypes.colorConfig9,
+type fontSizeConfig9 = {
+  sm: string,
+  md: string,
+  lg: string,
 }
-type helpIconConfig3 = {
-  width: ButtonSharedTypes.slotMaxHeightConfig,
-  color: InputsTypes.colorConfig9,
+type colorConfig22 = {
+  default: string,
+  hover: string,
+  focus: string,
+  error: string,
+  disabled: string,
+}
+type labelConfig15 = {
+  fontSize: fontSizeConfig9,
+  fontWeight: fontSizeConfig9,
+  lineHeight: fontSizeConfig9,
+  color: colorConfig22,
+}
+type requiredConfig11 = {
+  color: string,
+}
+type helpIconConfig4 = {
+  width: fontSizeConfig9,
+  color: colorConfig22,
 }
 type topContainerConfig = {
-  label: labelConfig10,
-  subLabel: labelConfig10,
-  required: AvatarGroupTypes.textConfig7,
-  helpIcon: helpIconConfig3,
+  label: labelConfig15,
+  subLabel: labelConfig15,
+  required: requiredConfig11,
+  helpIcon: helpIconConfig4,
 }
-type paddingConfig16 = {
-  top: ButtonSharedTypes.slotMaxHeightConfig,
-  right: ButtonSharedTypes.slotMaxHeightConfig,
-  bottom: ButtonSharedTypes.slotMaxHeightConfig,
-  left: ButtonSharedTypes.slotMaxHeightConfig,
+type placeholderConfig8 = {
+  color: colorConfig22,
+  fontSize: fontSizeConfig9,
+  fontWeight: fontSizeConfig9,
+  lineHeight: fontSizeConfig9,
+}
+type paddingConfig28 = {
+  top: fontSizeConfig9,
+  right: fontSizeConfig9,
+  bottom: fontSizeConfig9,
+  left: fontSizeConfig9,
 }
 type inputContainerConfig9 = {
   gap: string,
-  placeholder: SelectorV2Types.subLabelConfig2,
-  inputText: labelConfig10,
-  borderRadius: ButtonSharedTypes.slotMaxHeightConfig,
+  placeholder: placeholderConfig8,
+  inputText: labelConfig15,
+  borderRadius: fontSizeConfig9,
   boxShadow: string,
-  padding: paddingConfig16,
-  border: InputsTypes.colorConfig9,
-  backgroundColor: InputsTypes.colorConfig9,
+  padding: paddingConfig28,
+  border: colorConfig22,
+  backgroundColor: colorConfig22,
 }
-type errorMessageConfig = {
-  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
-  lineHeight: ButtonSharedTypes.slotMaxHeightConfig,
+type errorMessageConfig6 = {
+  fontSize: fontSizeConfig9,
+  fontWeight: fontSizeConfig9,
+  lineHeight: fontSizeConfig9,
   color: string,
 }
 type bottomContainerConfig = {
-  hintText: labelConfig10,
-  errorMessage: errorMessageConfig,
+  hintText: labelConfig15,
+  errorMessage: errorMessageConfig6,
 }
 type textInputV2TokensType = {
   gap: string,

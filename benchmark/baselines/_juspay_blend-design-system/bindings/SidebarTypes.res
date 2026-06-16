@@ -21,27 +21,36 @@ type maxWidthConfig = {
   withoutLeftPanel: string,
   iconOnly?: string,
 }
+type paddingConfig17 = {
+  x: string,
+  y: string,
+}
+type borderConfig7 = {
+  default: string,
+  hover: string,
+  active: string,
+}
 type itemConfig4 = {
   width: string,
   borderRadius: string,
-  border: BreadcrumbTypes.colorConfig3,
-  backgroundColor: BreadcrumbTypes.colorConfig3,
+  border: borderConfig7,
+  backgroundColor: borderConfig7,
 }
 type leftPanelConfig = {
   width: string,
   backgroundColor: string,
   borderRight: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig17,
   gap: string,
   item: itemConfig4,
 }
 type toggleButtonConfig = {
-  backgroundColor: BreadcrumbTypes.colorConfig3,
+  backgroundColor: borderConfig7,
   width: string,
 }
 type headerConfig9 = {
   backgroundColor: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig17,
   gap: string,
   borderBottom: string,
   toggleButton: toggleButtonConfig,
@@ -53,7 +62,7 @@ type directoryConfig = {
 }
 type footerConfig5 = {
   backgroundColor: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig17,
   borderTop: string,
 }
 type sidebarTokenType = {
@@ -73,7 +82,7 @@ type drawerConfig3 = {
   borderRadius: string,
   borderTop: string,
 }
-type backgroundColorConfig15 = {
+type backgroundColorConfig19 = {
   default: string,
   active: string,
 }
@@ -83,7 +92,7 @@ type iconConfig7 = {
   borderRadius: string,
   transition: string,
 }
-type textConfig20 = {
+type textConfig23 = {
   fontSize: string,
   fontWeight: string,
   textAlign: string,
@@ -93,31 +102,35 @@ type itemConfig9 = {
   height: string,
   borderRadius: string,
   gap: string,
-  backgroundColor: backgroundColorConfig15,
-  color: backgroundColorConfig15,
+  backgroundColor: backgroundColorConfig19,
+  color: backgroundColorConfig19,
   fontWeight: string,
   icon: iconConfig7,
-  text: textConfig20,
+  text: textConfig23,
 }
-type primaryActionConfig2 = {
+type iconConfig8 = {
+  width: string,
+  height: string,
+}
+type primaryActionConfig3 = {
   width: string,
   height: string,
   borderRadius: string,
   background: string,
   boxShadow: string,
   color: string,
-  icon: AvatarTypes.smConfig4,
+  icon: iconConfig8,
 }
 type rowConfig4 = {
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig17,
   gap: string,
   item: itemConfig9,
-  primaryAction: primaryActionConfig2,
+  primaryAction: primaryActionConfig3,
 }
 type mobileNavigationTokenType = {
   backgroundColor: string,
   drawer: drawerConfig3,
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig17,
   gap: string,
   row: rowConfig4,
 }

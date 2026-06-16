@@ -24,8 +24,11 @@ type step = {
   isExpandable?: bool,
   isExpanded?: bool,
 }
-type containerConfig6 = {
-  default: ChartsTypes.slotsConfig,
+type defaultConfig8 = {
+  gap: string,
+}
+type containerConfig9 = {
+  default: defaultConfig8,
 }
 type disabledConfig3 = {
   backgroundColor: string,
@@ -70,12 +73,12 @@ type stepConfig = {
   circle: circleConfig,
   icon: iconConfig4,
 }
-type defaultConfig7 = {
+type defaultConfig9 = {
   color: string,
   height: string,
 }
 type activeConfig2 = {
-  default: defaultConfig7,
+  default: defaultConfig9,
 }
 type lineConfig3 = {
   active: activeConfig2,
@@ -103,14 +106,14 @@ type textConfig16 = {
   disabled: completedConfig3,
   skipped: completedConfig3,
 }
-type titleConfig6 = {
+type titleConfig7 = {
   text: textConfig16,
 }
 type stepperTokensType = {
-  container: containerConfig6,
+  container: containerConfig9,
   step: stepConfig,
   connector: connectorConfig,
-  title: titleConfig6,
+  title: titleConfig7,
 }
 type responsiveStepperTokens = {
   sm: stepperTokensType,

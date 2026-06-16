@@ -1,10 +1,10 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, CheckboxGroupTypes.checkboxGroupState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.fieldRootState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("Field") @react.component
 external make: (
   ~match: CommonTypes.boolOrBadInputOrCustomErrorOrPatternMismatchOrRangeOverflowOrRangeUnderflowOrStepMismatchOrTooLongOrTooShortOrTypeMismatchOrValidOrValueMissing=?,
-  ~style: CheckboxGroupTypes.checkboxGroupStyle=?,
+  ~style: RootSharedTypes.fieldRootStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -53,6 +53,6 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~className: CheckboxGroupTypes.checkboxGroupClassName=?,
+  ~className: RootSharedTypes.fieldRootClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Error"

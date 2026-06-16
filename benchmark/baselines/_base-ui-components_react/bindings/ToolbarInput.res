@@ -1,5 +1,5 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, ButtonTypes.toolbarButtonState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, InputTypes.toolbarInputState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("Toolbar") @react.component
 external make: (
@@ -7,7 +7,7 @@ external make: (
   ~focusableWhenDisabled: bool=?,
   ~defaultValue: CommonTypes.stringOrNumberOrStringArray=?,
   ~form: string=?,
-  ~style: ButtonTypes.toolbarButtonStyle=?,
+  ~style: InputTypes.toolbarInputStyle=?,
   ~title: string=?,
   ~pattern: string=?,
   ~autoFocus: bool=?,
@@ -80,6 +80,6 @@ external make: (
   ~min: CommonTypes.stringOrNumber=?,
   ~minLength: int=?,
   ~placeholder: string=?,
-  ~className: ButtonTypes.toolbarButtonClassName=?,
+  ~className: InputTypes.toolbarInputClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Input"

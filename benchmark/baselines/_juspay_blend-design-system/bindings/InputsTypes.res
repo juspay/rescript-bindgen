@@ -51,17 +51,30 @@ type helpIconConfig2 = {
   width: string,
   color: colorConfig9,
 }
-type paddingConfig10 = {
-  x: ButtonSharedTypes.slotMaxHeightConfig,
-  y: ButtonSharedTypes.slotMaxHeightConfig,
+type errorMessageConfig = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+}
+type requiredConfig = {
+  color: string,
+}
+type fontSizeConfig5 = {
+  sm: string,
+  md: string,
+  lg: string,
+}
+type paddingConfig14 = {
+  x: fontSizeConfig5,
+  y: fontSizeConfig5,
 }
 type inputContainerConfig = {
-  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
+  fontSize: fontSizeConfig5,
+  fontWeight: fontSizeConfig5,
   color: colorConfig9,
-  borderRadius: ButtonSharedTypes.slotMaxHeightConfig,
+  borderRadius: fontSizeConfig5,
   boxShadow: string,
-  padding: paddingConfig10,
+  padding: paddingConfig14,
   border: colorConfig9,
   backgroundColor: colorConfig9,
 }
@@ -72,8 +85,8 @@ type textInputTokensType = {
   subLabel: labelConfig2,
   hintText: labelConfig2,
   helpIcon: helpIconConfig2,
-  errorMessage: StatCardTypes.titleConfig3,
-  required: AvatarGroupTypes.textConfig7,
+  errorMessage: errorMessageConfig,
+  required: requiredConfig,
   inputContainer: inputContainerConfig,
 }
 type responsiveTextInputTokens = {
@@ -97,17 +110,17 @@ type iconConfig = {
   width: widthConfig2,
 }
 type stepperButtonConfig = {
-  width: ButtonSharedTypes.slotMaxHeightConfig,
+  width: fontSizeConfig5,
   backgroundColor: colorConfig9,
   icon: iconConfig,
 }
 type inputContainerConfig2 = {
-  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
+  fontSize: fontSizeConfig5,
+  fontWeight: fontSizeConfig5,
   color: colorConfig9,
-  borderRadius: ButtonSharedTypes.slotMaxHeightConfig,
+  borderRadius: fontSizeConfig5,
   boxShadow: string,
-  padding: paddingConfig10,
+  padding: paddingConfig14,
   border: colorConfig9,
   backgroundColor: colorConfig9,
   stepperButton: stepperButtonConfig,
@@ -118,8 +131,8 @@ type numberInputTokensType = {
   subLabel: labelConfig2,
   hintText: labelConfig2,
   helpIcon: helpIconConfig2,
-  errorMessage: StatCardTypes.titleConfig3,
-  required: AvatarGroupTypes.textConfig7,
+  errorMessage: errorMessageConfig,
+  required: requiredConfig,
   inputContainer: inputContainerConfig2,
 }
 type responsiveNumberInputTokens = {
@@ -128,12 +141,12 @@ type responsiveNumberInputTokens = {
 }
 type inputContainerConfig3 = {
   gap: string,
-  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
+  fontSize: fontSizeConfig5,
+  fontWeight: fontSizeConfig5,
   color: colorConfig9,
-  borderRadius?: ButtonSharedTypes.slotMaxHeightConfig,
+  borderRadius?: fontSizeConfig5,
   boxShadow: string,
-  padding: paddingConfig10,
+  padding: paddingConfig14,
   border: colorConfig9,
   backgroundColor: colorConfig9,
 }
@@ -142,8 +155,8 @@ type dropdownInputTokensType = {
   label: labelConfig2,
   subLabel: labelConfig2,
   hintText: labelConfig2,
-  errorMessage: StatCardTypes.titleConfig3,
-  required: AvatarGroupTypes.textConfig7,
+  errorMessage: errorMessageConfig,
+  required: requiredConfig,
   helpIcon: helpIconConfig2,
   inputContainer: inputContainerConfig3,
 }
@@ -151,8 +164,12 @@ type responsiveDropdownInputTokens = {
   sm: dropdownInputTokensType,
   lg: dropdownInputTokensType,
 }
+type paddingConfig15 = {
+  x: string,
+  y: string,
+}
 type inputContainerConfig4 = {
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig15,
   borderRadius: string,
   borderBottom: colorConfig9,
   outline: string,
@@ -170,8 +187,8 @@ type searchInputTokensType = {
   label: labelConfig2,
   subLabel: labelConfig2,
   hintText: labelConfig2,
-  errorMessage: StatCardTypes.titleConfig3,
-  required: AvatarGroupTypes.textConfig7,
+  errorMessage: errorMessageConfig,
+  required: requiredConfig,
   inputContainer: inputContainerConfig4,
   icon: iconConfig2,
 }
@@ -200,8 +217,8 @@ type otpInputTokensType = {
   subLabel: labelConfig2,
   helpIcon: helpIconConfig2,
   hintText: labelConfig2,
-  errorMessage: StatCardTypes.titleConfig3,
-  required: AvatarGroupTypes.textConfig7,
+  errorMessage: errorMessageConfig,
+  required: requiredConfig,
   inputContainer: inputContainerConfig5,
 }
 type responsiveOTPInputTokens = {
@@ -209,19 +226,19 @@ type responsiveOTPInputTokens = {
   lg: otpInputTokensType,
 }
 type unitConfig2 = {
-  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
+  fontSize: fontSizeConfig5,
+  fontWeight: fontSizeConfig5,
   color: colorConfig9,
-  padding: ButtonSharedTypes.slotMaxHeightConfig,
+  padding: fontSizeConfig5,
   backgroundColor: colorConfig9,
 }
 type inputContainerConfig6 = {
-  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
+  fontSize: fontSizeConfig5,
+  fontWeight: fontSizeConfig5,
   color: colorConfig9,
-  borderRadius: ButtonSharedTypes.slotMaxHeightConfig,
+  borderRadius: fontSizeConfig5,
   boxShadow: string,
-  padding: paddingConfig10,
+  padding: paddingConfig14,
   border: colorConfig9,
   backgroundColor: colorConfig9,
   unit: unitConfig2,
@@ -232,8 +249,8 @@ type unitInputTokensType = {
   subLabel: labelConfig2,
   helpIcon: helpIconConfig2,
   hintText: labelConfig2,
-  errorMessage: StatCardTypes.titleConfig3,
-  required: AvatarGroupTypes.textConfig7,
+  errorMessage: errorMessageConfig,
+  required: requiredConfig,
   inputContainer: inputContainerConfig6,
 }
 type responsiveUnitInputTokens = {
@@ -241,12 +258,12 @@ type responsiveUnitInputTokens = {
   lg: unitInputTokensType,
 }
 type inputContainerConfig7 = {
-  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
+  fontSize: fontSizeConfig5,
+  fontWeight: fontSizeConfig5,
   gap: string,
   borderRadius?: string,
   boxShadow: colorConfig9,
-  padding: paddingConfig10,
+  padding: paddingConfig14,
   border: colorConfig9,
   color: colorConfig9,
   backgroundColor: colorConfig9,
@@ -257,22 +274,22 @@ type multiValueInputTokensType = {
   subLabel: labelConfig2,
   hintText: labelConfig2,
   helpIcon: helpIconConfig2,
-  errorMessage: StatCardTypes.titleConfig3,
-  required: AvatarGroupTypes.textConfig7,
+  errorMessage: errorMessageConfig,
+  required: requiredConfig,
   inputContainer: inputContainerConfig7,
 }
 type responsiveMultiValueInputTokens = {
   sm: multiValueInputTokensType,
   lg: multiValueInputTokensType,
 }
-type placeholderConfig2 = {
+type placeholderConfig5 = {
   color?: string,
   fontWeight?: string,
 }
 type inputContainerConfig8 = {
   fontSize: string,
   fontWeight: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig15,
   borderRadius: string,
   boxShadow: string,
   border: colorConfig9,
@@ -281,13 +298,13 @@ type inputContainerConfig8 = {
 }
 type textAreaTokensType = {
   gap: string,
-  placeholder?: placeholderConfig2,
+  placeholder?: placeholderConfig5,
   label: labelConfig2,
   subLabel: labelConfig2,
   helpIcon: helpIconConfig2,
   hintText: labelConfig2,
-  errorMessage: StatCardTypes.titleConfig3,
-  required: AvatarGroupTypes.textConfig7,
+  errorMessage: errorMessageConfig,
+  required: requiredConfig,
   inputContainer: inputContainerConfig8,
 }
 type responsiveTextAreaTokens = {

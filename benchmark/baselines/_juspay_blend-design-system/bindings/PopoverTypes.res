@@ -22,13 +22,13 @@ type popoverActionType = {
   ...JsxDOM.domProps,
   justifyContent?: string,
   text?: string,
-  buttonType?: ButtonSharedTypes.buttonType,
+  buttonType?: ButtonTypes.buttonType,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
   showSkeleton?: bool,
-  skeletonVariant?: ButtonSharedTypes.skeletonVariant,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
   fullWidth?: bool,
-  state?: ButtonSharedTypes.buttonState,
+  state?: ButtonTypes.buttonState,
 }
 type bodySkeletonProps2 = {
   show?: bool,
@@ -37,7 +37,7 @@ type bodySkeletonProps2 = {
 }
 type popoverSkeletonProps = {
   show?: bool,
-  variant?: ButtonSharedTypes.skeletonVariant,
+  variant?: SkeletonTypes.skeletonVariant,
   bodySkeletonProps?: bodySkeletonProps2,
 }
 type gapConfig2 = {

@@ -3,7 +3,7 @@ external make: (
   ~allowElement: ('a, float, HastTypes.readonly) => bool=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~allowedElements: array<string>=?,
   ~children: Nullable.t<string>=?,
-  ~components: HastTypes.readonly=?,
+  ~components: LibTypes.components=?,
   ~disallowedElements: array<string>=?,
   // ⚠️ REVIEW: `rehypePlugins` is `PluggableList` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
   ~rehypePlugins: string=?,

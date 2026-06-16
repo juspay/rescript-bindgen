@@ -1,35 +1,41 @@
-type slotConfig7 = {
+type colorConfig21 = {
+  info: string,
+  success: string,
+  warning: string,
+  error: string,
+}
+type slotConfig8 = {
   height: string,
   width: string,
-  color: SnackbarTypes.colorConfig5,
+  color: colorConfig21,
 }
-type headerConfig16 = {
-  color: SnackbarTypes.colorConfig5,
+type headerConfig17 = {
+  color: colorConfig21,
   fontSize: string,
   fontWeight: string,
   lineHeight: string,
 }
 type textContainerConfig4 = {
   gap: string,
-  header: headerConfig16,
-  description: headerConfig16,
+  header: headerConfig17,
+  description: headerConfig17,
 }
 type actionContainerConfig2 = {
-  primaryAction: headerConfig16,
+  primaryAction: headerConfig17,
 }
-type contentConfig10 = {
+type contentConfig12 = {
   gap: string,
   textContainer: textContainerConfig4,
   actionContainer: actionContainerConfig2,
 }
-type closeButtonConfig3 = {
+type closeButtonConfig4 = {
   height: string,
-  color: SnackbarTypes.colorConfig5,
+  color: colorConfig21,
 }
 type mainContainerConfig2 = {
   gap: string,
-  content: contentConfig10,
-  closeButton: closeButtonConfig3,
+  content: contentConfig12,
+  closeButton: closeButtonConfig4,
 }
 type snackbarV2TokensType = {
   width: string,
@@ -40,7 +46,7 @@ type snackbarV2TokensType = {
   padding: string,
   boxShadow: string,
   gap: string,
-  slot: slotConfig7,
+  slot: slotConfig8,
   mainContainer: mainContainerConfig2,
 }
 type responsiveSnackbarV2Tokens = {

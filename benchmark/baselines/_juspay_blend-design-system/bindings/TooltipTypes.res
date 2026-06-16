@@ -13,22 +13,22 @@ type tooltipSize =
 type tooltipSlotDirection =
   | @as("left") Left
   | @as("right") Right
-type borderRadiusConfig5 = {
+type borderRadiusConfig6 = {
   sm: string,
   lg: string,
 }
 type textConfig9 = {
   color: string,
-  fontWeight: borderRadiusConfig5,
-  fontSize: borderRadiusConfig5,
-  lineHeight: borderRadiusConfig5,
+  fontWeight: borderRadiusConfig6,
+  fontSize: borderRadiusConfig6,
+  lineHeight: borderRadiusConfig6,
 }
 type tooltipTokensType = {
   background: string,
-  borderRadius: borderRadiusConfig5,
-  maxWidth: borderRadiusConfig5,
-  padding: borderRadiusConfig5,
-  gap: borderRadiusConfig5,
+  borderRadius: borderRadiusConfig6,
+  maxWidth: borderRadiusConfig6,
+  padding: borderRadiusConfig6,
+  gap: borderRadiusConfig6,
   text: textConfig9,
 }
 type responsiveTooltipTokens = {

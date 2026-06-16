@@ -12,62 +12,101 @@ type buttonV2State =
   | @as("hover") Hover
   | @as("active") Active
   | @as("disabled") Disabled
-type primaryConfig7 = {
+type defaultConfig10 = {
   default: string,
-  iconOnly: string,
-  inline: string,
+  hover: string,
+  active: string,
+  disabled: string,
 }
-type smConfig15 = {
+type primaryConfig7 = {
+  default: defaultConfig10,
+  iconOnly: defaultConfig10,
+  inline: defaultConfig10,
+}
+type backgroundColorConfig21 = {
   primary: primaryConfig7,
   secondary: primaryConfig7,
   danger: primaryConfig7,
   success: primaryConfig7,
-}
-type borderRadiusConfig10 = {
-  sm: smConfig15,
-  md: smConfig15,
-  lg: smConfig15,
 }
 type primaryConfig8 = {
   default: string,
   iconOnly: string,
   inline: string,
 }
-type smConfig16 = {
+type smConfig17 = {
   primary: primaryConfig8,
   secondary: primaryConfig8,
   danger: primaryConfig8,
   success: primaryConfig8,
 }
-type topConfig = {
-  sm: smConfig16,
-  md: smConfig16,
-  lg: smConfig16,
+type borderRadiusConfig12 = {
+  sm: smConfig17,
+  md: smConfig17,
+  lg: smConfig17,
 }
-type paddingConfig14 = {
+type primaryConfig9 = {
+  default: string,
+  iconOnly: string,
+  inline: string,
+}
+type smConfig18 = {
+  primary: primaryConfig9,
+  secondary: primaryConfig9,
+  danger: primaryConfig9,
+  success: primaryConfig9,
+}
+type topConfig = {
+  sm: smConfig18,
+  md: smConfig18,
+  lg: smConfig18,
+}
+type paddingConfig25 = {
   top: topConfig,
   right: topConfig,
   bottom: topConfig,
   left: topConfig,
 }
-type textConfig22 = {
-  color: ButtonSharedTypes.smConfig,
-  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
-  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
-  lineHeight: ButtonSharedTypes.slotMaxHeightConfig,
+type defaultConfig11 = {
+  default: string,
+  hover: string,
+  active: string,
+  disabled: string,
 }
-type smConfig14 = {
+type primaryConfig10 = {
+  default: defaultConfig11,
+  iconOnly: defaultConfig11,
+  inline: defaultConfig11,
+}
+type colorConfig18 = {
+  primary: primaryConfig10,
+  secondary: primaryConfig10,
+  danger: primaryConfig10,
+  success: primaryConfig10,
+}
+type fontSizeConfig8 = {
+  sm: string,
+  md: string,
+  lg: string,
+}
+type textConfig26 = {
+  color: colorConfig18,
+  fontSize: fontSizeConfig8,
+  fontWeight: fontSizeConfig8,
+  lineHeight: fontSizeConfig8,
+}
+type smConfig16 = {
   gap: string,
-  backgroundColor: ButtonSharedTypes.backgroundColorConfig,
-  borderRadius: borderRadiusConfig10,
-  padding: paddingConfig14,
-  border: ButtonSharedTypes.backgroundColorConfig,
-  shadow: ButtonSharedTypes.backgroundColorConfig,
-  text: textConfig22,
+  backgroundColor: backgroundColorConfig21,
+  borderRadius: borderRadiusConfig12,
+  padding: paddingConfig25,
+  border: backgroundColorConfig21,
+  shadow: backgroundColorConfig21,
+  text: textConfig26,
 }
 type responsiveButtonV2Tokens = {
-  sm: smConfig14,
-  lg: smConfig14,
+  sm: smConfig16,
+  lg: smConfig16,
 }
 type buttonSlot = {
   slot: React.element,
@@ -75,7 +114,7 @@ type buttonSlot = {
 }
 type buttonSkeleton = {
   showSkeleton?: bool,
-  skeletonVariant?: ButtonSharedTypes.skeletonVariant,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
 }
 type buttonPropsConfig = {
   ...JsxDOM.domProps,
@@ -84,7 +123,7 @@ type buttonPropsConfig = {
   leftSlot?: buttonSlot,
   rightSlot?: buttonSlot,
   skeleton?: buttonSkeleton,
-  buttonGroupPosition?: ButtonSharedTypes.buttonGroupPosition,
+  buttonGroupPosition?: ButtonTypes.buttonGroupPosition,
   buttonType?: buttonV2Type,
   subType?: buttonV2SubType,
   state?: buttonV2State,

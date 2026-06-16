@@ -3,14 +3,18 @@ type variant =
   | @as("aligned") Aligned
   | @as("custom") Custom
 type cardSkeletonProps = {
-  variant: ButtonSharedTypes.skeletonVariant,
+  variant: SkeletonTypes.skeletonVariant,
   show: bool,
   height?: string,
   width?: string,
 }
-type paddingConfig8 = {
-  default: ModalTypes.paddingConfig5,
-  aligned: ModalTypes.paddingConfig5,
+type defaultConfig5 = {
+  x: string,
+  y: string,
+}
+type paddingConfig12 = {
+  default: defaultConfig5,
+  aligned: defaultConfig5,
   custom: string,
 }
 type titleConfig5 = {
@@ -19,24 +23,29 @@ type titleConfig5 = {
   color: string,
   gap: string,
 }
+type subTitleConfig = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+}
 type textConfig14 = {
   title: titleConfig5,
-  subTitle: StatCardTypes.titleConfig3,
+  subTitle: subTitleConfig,
   gap: string,
 }
-type defaultConfig5 = {
+type defaultConfig6 = {
   backgroundColor: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: defaultConfig5,
   borderBottom: string,
 }
 type headerConfig7 = {
   text: textConfig14,
-  default: defaultConfig5,
+  default: defaultConfig6,
   aligned: string,
   custom: string,
 }
-type paddingConfig9 = {
-  default: ModalTypes.paddingConfig5,
+type paddingConfig13 = {
+  default: defaultConfig5,
   aligned: string,
   custom: string,
 }
@@ -51,7 +60,7 @@ type contentConfig3 = {
   fontWeight: string,
 }
 type textConfig15 = {
-  title: StatCardTypes.titleConfig3,
+  title: subTitleConfig,
   content: contentConfig3,
   gap: string,
 }
@@ -72,7 +81,7 @@ type alignmentConfig = {
   custom: string,
 }
 type bodyConfig3 = {
-  padding: paddingConfig9,
+  padding: paddingConfig13,
   gap: gapConfig3,
   text: textConfig15,
   actions: actionsConfig2,
@@ -84,7 +93,7 @@ type cardTokenType = {
   border: string,
   boxShadow: string,
   backgroundColor: string,
-  padding: paddingConfig8,
+  padding: paddingConfig12,
   header: headerConfig7,
   body: bodyConfig3,
 }

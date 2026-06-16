@@ -2,7 +2,7 @@
 external make: (
   ~chartType: ChartsTypes.chartType=?,
   ~data: array<ChartsTypes.newNestedDataPoint>,
-  ~colors: array<AvatarGroupTypes.textConfig7>=?,
+  ~colors: array<ChartsTypes.colorsConfig>=?,
   ~barsize: float=?,
   ~xAxis: ChartsTypes.axisConfig=?,
   ~yAxis: ChartsTypes.axisConfig=?,

@@ -14,10 +14,27 @@ type directoryData = {
   isCollapsible?: bool,
   defaultOpen?: bool,
 }
+type paddingConfig18 = {
+  x: string,
+  y: string,
+}
+type labelConfig3 = {
+  fontSize: string,
+  color: string,
+  fontWeight: string,
+}
+type chevronConfig = {
+  width: string,
+  color: string,
+}
 type headerConfig10 = {
-  padding: ModalTypes.paddingConfig5,
-  label: CardTypes.contentConfig3,
-  chevron: AvatarGroupTypes.borderConfig3,
+  padding: paddingConfig18,
+  label: labelConfig3,
+  chevron: chevronConfig,
+}
+type paddingConfig19 = {
+  x: string,
+  y: string,
 }
 type backgroundColorConfig7 = {
   default: string,
@@ -27,12 +44,12 @@ type backgroundColorConfig7 = {
 type iconConfig3 = {
   width: string,
 }
-type chevronConfig = {
+type chevronConfig2 = {
   width: string,
   color: string,
 }
 type itemConfig5 = {
-  padding: ButtonSharedTypes.defaultConfig3,
+  padding: paddingConfig19,
   gap: string,
   borderRadius: string,
   fontWeight: string,
@@ -41,9 +58,9 @@ type itemConfig5 = {
   backgroundColor: backgroundColorConfig7,
   color: backgroundColorConfig7,
   icon: iconConfig3,
-  chevron: chevronConfig,
+  chevron: chevronConfig2,
 }
-type borderConfig6 = {
+type borderConfig8 = {
   width: string,
   color: string,
   leftOffset: string,
@@ -51,7 +68,7 @@ type borderConfig6 = {
 type nestedConfig = {
   paddingLeft: string,
   marginTop: string,
-  border: borderConfig6,
+  border: borderConfig8,
 }
 type itemListConfig = {
   gap: string,

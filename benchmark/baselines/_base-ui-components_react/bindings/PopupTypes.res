@@ -19,6 +19,10 @@ type menuPopupState = {
   @as("open") open_: bool,
   nested: bool,
 }
+type navigationMenuPopupState = {
+  @as("open") open_: bool,
+  transitionStatus: PositionerSharedTypes.transitionStatus,
+}
 type popoverPopupState = {
   @as("open") open_: bool,
   side: PositionerSharedTypes.side,
@@ -53,6 +57,8 @@ module InitialFocusTarget = {
 @unboxed type dialogPopupClassName = Str(string) | Fn(dialogPopupState => string)
 @unboxed type menuPopupStyle = Style(JsxDOM.style) | Fn(menuPopupState => JsxDOM.style)
 @unboxed type menuPopupClassName = Str(string) | Fn(menuPopupState => string)
+@unboxed type navigationMenuPopupStyle = Style(JsxDOM.style) | Fn(navigationMenuPopupState => JsxDOM.style)
+@unboxed type navigationMenuPopupClassName = Str(string) | Fn(navigationMenuPopupState => string)
 @unboxed type popoverPopupStyle = Style(JsxDOM.style) | Fn(popoverPopupState => JsxDOM.style)
 @unboxed type popoverPopupClassName = Str(string) | Fn(popoverPopupState => string)
 @unboxed type selectPopupStyle = Style(JsxDOM.style) | Fn(selectPopupState => JsxDOM.style)

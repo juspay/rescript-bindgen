@@ -2,14 +2,14 @@ type modalButtonAction = {
   ...JsxDOM.domProps,
   justifyContent?: string,
   text?: string,
-  buttonType?: ButtonSharedTypes.buttonType,
-  subType?: ButtonSharedTypes.buttonSubType,
+  buttonType?: ButtonTypes.buttonType,
+  subType?: ButtonTypes.buttonSubType,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
   showSkeleton?: bool,
-  skeletonVariant?: ButtonSharedTypes.skeletonVariant,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
   fullWidth?: bool,
-  state?: ButtonSharedTypes.buttonState,
+  state?: ButtonTypes.buttonState,
 }
 type bodySkeletonProps = {
   show?: bool,
@@ -18,7 +18,7 @@ type bodySkeletonProps = {
 }
 type modalSkeletonProps = {
   show?: bool,
-  variant?: ButtonSharedTypes.skeletonVariant,
+  variant?: SkeletonTypes.skeletonVariant,
   bodySkeletonProps?: bodySkeletonProps,
 }
 type paddingConfig5 = {
@@ -50,13 +50,16 @@ type footerConfig = {
   backgroundColor: string,
   gap: string,
 }
+type closeButtonConfig = {
+  color: string,
+}
 type modalTokensType = {
   boxShadow: string,
   borderRadius: string,
   header: headerConfig,
   body: bodyConfig2,
   footer: footerConfig,
-  closeButton: AvatarGroupTypes.textConfig7,
+  closeButton: closeButtonConfig,
 }
 type responsiveModalTokens = {
   sm: modalTokensType,

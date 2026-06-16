@@ -8,6 +8,11 @@ type merchantInfo = {
   selected: string,
   onSelect: string => unit,
 }
+type backgroundColorConfig18 = {
+  default: string,
+  hover: string,
+  active: string,
+}
 type iconConfig6 = {
   size: string,
   color: string,
@@ -15,7 +20,7 @@ type iconConfig6 = {
 type toggleButtonConfig2 = {
   borderRadius: string,
   padding: string,
-  backgroundColor: BreadcrumbTypes.colorConfig3,
+  backgroundColor: backgroundColorConfig18,
   transition: string,
   icon: iconConfig6,
 }
@@ -24,25 +29,33 @@ type actionButtonConfig2 = {
   padding: string,
   minWidth: string,
   height: string,
-  backgroundColor: BreadcrumbTypes.colorConfig3,
+  backgroundColor: backgroundColorConfig18,
   transition: string,
   icon: iconConfig6,
 }
 type tenantIconButtonConfig = {
   borderRadius: string,
   minHeight: string,
-  backgroundColor: BreadcrumbTypes.colorConfig3,
+  backgroundColor: backgroundColorConfig18,
   transition: string,
+}
+type textConfig22 = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
 }
 type merchantSelectTriggerConfig = {
   gap: string,
   icon: iconConfig6,
-  text: StatCardTypes.titleConfig3,
+  text: textConfig22,
 }
 type leftSectionConfig = {
   gap: string,
   maxHeight: string,
-  divider: StatCardTypes.titleConfig3,
+  divider: textConfig22,
+}
+type rightSectionConfig = {
+  gap: string,
 }
 type topbarTokenType = {
   zIndex: string,
@@ -56,8 +69,8 @@ type topbarTokenType = {
   tenantIconButton: tenantIconButtonConfig,
   merchantSelectTrigger: merchantSelectTriggerConfig,
   leftSection: leftSectionConfig,
-  rightSection: ChartsTypes.slotsConfig,
-  sidebarSection: ChartsTypes.slotsConfig,
+  rightSection: rightSectionConfig,
+  sidebarSection: rightSectionConfig,
 }
 type responsiveTopbarTokens = {
   sm: topbarTokenType,

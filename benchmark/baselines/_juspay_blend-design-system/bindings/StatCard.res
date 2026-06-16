@@ -11,7 +11,7 @@ external make: (
   ~titleIcon: React.element=?,
   ~actionIcon: React.element=?,
   ~helpIconText: string=?,
-  ~dropdownProps: MultiSelectSharedTypes.singleSelectProps=?,
+  ~dropdownProps: SingleSelectTypes.singleSelectProps=?,
   ~maxWidth: string=?,
   ~minWidth: string=?,
   ~xAxis: StatCardTypes.statCardAxisConfig=?,

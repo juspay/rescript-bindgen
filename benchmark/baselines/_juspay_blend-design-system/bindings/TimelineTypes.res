@@ -33,12 +33,17 @@ type maskConfig = {
   backgroundColor: string,
   height: string,
 }
-type labelConfig8 = {
+type textConfig25 = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+}
+type labelConfig11 = {
   paddingLeft: string,
   marginBottom: string,
   circle: circleConfig2,
   mask: maskConfig,
-  text: StatCardTypes.titleConfig3,
+  text: textConfig25,
 }
 type rowConfig5 = {
   paddingLeft: string,
@@ -53,14 +58,23 @@ type timestampConfig = {
   color: string,
   gap: string,
 }
-type headerConfig15 = {
+type headerConfig16 = {
   row: rowConfig5,
   section: sectionConfig2,
-  title: StatCardTypes.titleConfig3,
+  title: textConfig25,
   timestamp: timestampConfig,
 }
 type rootIndicatorConfig = {
   top: string,
+}
+type headerRowConfig = {
+  gap: string,
+}
+type titleConfig9 = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+  gap: string,
 }
 type descriptionConfig2 = {
   fontSize: string,
@@ -75,7 +89,7 @@ type connectorConfig2 = {
   height: string,
   color: string,
 }
-type avatarConfig2 = {
+type avatarConfig3 = {
   width: string,
   height: string,
   marginTop: string,
@@ -102,14 +116,14 @@ type subsectionConfig = {
   marginBottom: string,
   marginLeft: string,
   rootIndicator: rootIndicatorConfig,
-  headerRow: ChartsTypes.slotsConfig,
-  titleRow: ChartsTypes.slotsConfig,
-  datetimeGroup: ChartsTypes.slotsConfig,
-  title: CardTypes.titleConfig5,
+  headerRow: headerRowConfig,
+  titleRow: headerRowConfig,
+  datetimeGroup: headerRowConfig,
+  title: titleConfig9,
   description: descriptionConfig2,
   datetime: timestampConfig,
   connector: connectorConfig2,
-  avatar: avatarConfig2,
+  avatar: avatarConfig3,
   user: userConfig,
   time: timeConfig,
   separator: separatorConfig2,
@@ -122,8 +136,8 @@ type timelineTokensType = {
   track: trackConfig,
   indicator: indicatorConfig4,
   statusColors: timelineStatusColors,
-  label: labelConfig8,
-  header: headerConfig15,
+  label: labelConfig11,
+  header: headerConfig16,
   subsection: subsectionConfig,
   showMore: showMoreConfig,
 }

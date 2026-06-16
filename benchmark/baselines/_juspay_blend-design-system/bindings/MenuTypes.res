@@ -13,6 +13,14 @@ type menuSide =
   | @as("left") Left
   | @as("right") Right
   | @as("bottom") Bottom
+type tooltipPropsConfig3 = {
+  side?: TooltipTypes.tooltipSide,
+  align?: TooltipTypes.tooltipAlign,
+  size?: TooltipTypes.tooltipSize,
+  showArrow?: bool,
+  delayDuration?: float,
+  offset?: float,
+}
 type rec menuItemType = {
   label: string,
   subLabel?: string,
@@ -28,7 +36,7 @@ type rec menuItemType = {
   enableSubMenuSearch?: bool,
   subMenuSearchPlaceholder?: string,
   tooltip?: React.element,
-  tooltipProps?: MultiSelectSharedTypes.tooltipPropsConfig,
+  tooltipProps?: tooltipPropsConfig3,
   enableSubMenuVirtualScrolling?: bool,
   subMenuVirtualItemHeight?: float,
   subMenuVirtualOverscan?: float,
@@ -39,6 +47,15 @@ type menuGroupType = {
   items: array<menuItemType>,
   showSeparator?: bool,
 }
+type menuSkeletonProps = {
+  count?: int,
+  show?: bool,
+  variant?: SkeletonTypes.skeletonVariant,
+}
+type paddingConfig16 = {
+  x: string,
+  y: string,
+}
 type enabledConfig = {
   disabled: string,
   default: string,
@@ -47,7 +64,7 @@ type enabledConfig = {
   focus: string,
   focusVisible: string,
 }
-type defaultConfig6 = {
+type defaultConfig7 = {
   enabled: enabledConfig,
   disabled: enabledConfig,
 }
@@ -60,15 +77,15 @@ type actionConfig = {
   danger: primaryConfig6,
 }
 type backgroundColorConfig6 = {
-  default: defaultConfig6,
+  default: defaultConfig7,
   action: actionConfig,
 }
 type optionsLabelConfig = {
   fontSize: string,
   fontWeight: string,
   color: string,
-  padding: ModalTypes.paddingConfig5,
-  margin: ModalTypes.paddingConfig5,
+  padding: paddingConfig16,
+  margin: paddingConfig16,
 }
 type actionConfig2 = {
   primary: string,
@@ -86,11 +103,11 @@ type optionConfig = {
 type seperatorConfig = {
   color: string,
   height: string,
-  margin: ModalTypes.paddingConfig5,
+  margin: paddingConfig16,
 }
 type itemConfig3 = {
-  padding: ModalTypes.paddingConfig5,
-  margin: ModalTypes.paddingConfig5,
+  padding: paddingConfig16,
+  margin: paddingConfig16,
   borderRadius: string,
   backgroundColor: backgroundColorConfig6,
   gap: string,
@@ -102,7 +119,7 @@ type itemConfig3 = {
 type menuTokensType = {
   boxShadow: string,
   backgroundColor: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: paddingConfig16,
   border: string,
   borderRadius: string,
   item: itemConfig3,
@@ -138,5 +155,5 @@ type overflowMenuPropsConfig = {
   sideOffset?: float,
   alignOffset?: float,
   collisonBoundaryRef?: CollisonBoundaryRef.t,
-  skeleton?: MultiSelectSharedTypes.singleSelectSkeletonProps,
+  skeleton?: menuSkeletonProps,
 }

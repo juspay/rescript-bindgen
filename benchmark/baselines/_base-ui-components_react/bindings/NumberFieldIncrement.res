@@ -1,11 +1,11 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.numberFieldRootState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, IncrementTypes.numberFieldIncrementState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("NumberField") @react.component
 external make: (
   ~nativeButton: bool=?,
   ~form: string=?,
-  ~style: RootSharedTypes.numberFieldRootStyle=?,
+  ~style: IncrementTypes.numberFieldIncrementStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -63,6 +63,6 @@ external make: (
   ~formTarget: string=?,
   ~name: string=?,
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
-  ~className: RootSharedTypes.numberFieldRootClassName=?,
+  ~className: IncrementTypes.numberFieldIncrementClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Increment"

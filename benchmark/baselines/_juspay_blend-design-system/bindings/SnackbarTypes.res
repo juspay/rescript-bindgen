@@ -59,13 +59,13 @@ type primaryActionConfig = {
   fontSize: string,
   fontWeight: string,
 }
-type closeButtonConfig = {
+type closeButtonConfig2 = {
   height: string,
   color: colorConfig5,
 }
 type actionsConfig = {
   primaryAction: primaryActionConfig,
-  closeButton: closeButtonConfig,
+  closeButton: closeButtonConfig2,
 }
 type smConfig7 = {
   backgroundColor: string,

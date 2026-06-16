@@ -22,7 +22,7 @@ type tabItem = {
   content: React.element,
   disable?: bool,
   showSkeleton?: bool,
-  skeletonVariant?: ButtonSharedTypes.skeletonVariant,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
   leftSlot?: React.element,
   rightSlot?: React.element,
   newItem?: bool,

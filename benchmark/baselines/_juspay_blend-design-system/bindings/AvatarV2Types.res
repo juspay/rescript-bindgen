@@ -9,17 +9,28 @@ type avatarV2StatusPosition =
   | @as("bottomRight") BottomRight
   | @as("topLeft") TopLeft
   | @as("bottomLeft") BottomLeft
+type widthConfig4 = {
+  sm: string,
+  regular: string,
+  md: string,
+  lg: string,
+  xl: string,
+}
+type borderRadiusConfig14 = {
+  circular: string,
+  rounded: string,
+}
 type imageConfig = {
   border: string,
 }
 type fallbackTextConfig = {
   border: string,
-  fontSize: AvatarTypes.fontSizeConfig3,
-  fontWeight: AvatarTypes.fontSizeConfig3,
-  lineHeight: AvatarTypes.fontSizeConfig3,
+  fontSize: widthConfig4,
+  fontWeight: widthConfig4,
+  lineHeight: widthConfig4,
   color: string,
 }
-type backgroundColorConfig18 = {
+type backgroundColorConfig24 = {
   none: string,
   online: string,
   offline: string,
@@ -38,31 +49,31 @@ type positionConfig2 = {
   rounded: circularConfig2,
 }
 type statusConfig = {
-  width: AvatarTypes.fontSizeConfig3,
-  height: AvatarTypes.fontSizeConfig3,
-  border: AvatarTypes.fontSizeConfig3,
+  width: widthConfig4,
+  height: widthConfig4,
+  border: widthConfig4,
   borderRadius: string,
-  backgroundColor: backgroundColorConfig18,
+  backgroundColor: backgroundColorConfig24,
   boxShadow: string,
   position: positionConfig2,
 }
-type containerConfig10 = {
+type containerConfig15 = {
   backgroundColor: string,
-  width: AvatarTypes.fontSizeConfig3,
-  height: AvatarTypes.fontSizeConfig3,
-  borderRadius: AvatarTypes.borderRadiusConfig4,
+  width: widthConfig4,
+  height: widthConfig4,
+  borderRadius: borderRadiusConfig14,
   image: imageConfig,
   fallbackText: fallbackTextConfig,
   status: statusConfig,
 }
-type slotConfig10 = {
+type slotConfig12 = {
   height: string,
   width: string,
 }
 type avatarV2TokensType = {
   gap: string,
-  container: containerConfig10,
-  slot: slotConfig10,
+  container: containerConfig15,
+  slot: slotConfig12,
 }
 type responsiveAvatarV2Tokens = {
   sm: avatarV2TokensType,

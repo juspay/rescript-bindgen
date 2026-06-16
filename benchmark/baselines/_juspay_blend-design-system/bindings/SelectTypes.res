@@ -1,3 +1,11 @@
+type tooltipPropsConfig2 = {
+  side?: TooltipTypes.tooltipSide,
+  align?: TooltipTypes.tooltipAlign,
+  size?: TooltipTypes.tooltipSize,
+  showArrow?: bool,
+  delayDuration?: float,
+  offset?: float,
+}
 type rec selectMenuItemType2 = {
   label: string,
   value: string,
@@ -11,7 +19,7 @@ type rec selectMenuItemType2 = {
   onClick?: unit => unit,
   subMenu?: array<selectMenuItemType2>,
   tooltip?: React.element,
-  tooltipProps?: MultiSelectSharedTypes.tooltipPropsConfig,
+  tooltipProps?: tooltipPropsConfig2,
   disableTruncation?: bool,
   isDisabled?: bool,
 }

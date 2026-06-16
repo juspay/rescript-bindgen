@@ -2,7 +2,7 @@
 external make: (
   ~chartContainerRef: React.ref<Nullable.t<Dom.htmlDivElement>>,
   ~keys: array<string>,
-  ~colors: array<AvatarGroupTypes.textConfig7>,
+  ~colors: array<ChartsTypes.colorsConfig>,
   ~handleLegendClick: string => unit,
   ~handleLegendEnter: string => unit,
   ~handleLegendLeave: unit => unit,

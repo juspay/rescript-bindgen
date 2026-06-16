@@ -6,7 +6,7 @@ type props = {
   shape?: AvatarTypes.avatarShape,
   selectedAvatarIds?: array<CommonTypes.stringOrNumber>,
   onSelectionChange?: array<CommonTypes.stringOrNumber> => unit,
-  skeleton?: AvatarTypes.skeletonConfig,
+  skeleton?: AvatarGroupTypes.skeletonConfig2,
 }
 
 @module("@juspay/blend-design-system")

@@ -1,5 +1,5 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.sliderRootState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, ThumbTypes.sliderThumbState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("Slider") @react.component
 external make: (
@@ -11,8 +11,8 @@ external make: (
   ~onBlur: ReactEvent.Focus.t => unit=?,
   ~onFocus: ReactEvent.Focus.t => unit=?,
   ~tabIndex: int=?,
-  ~className: RootSharedTypes.sliderRootClassName=?,
-  ~style: RootSharedTypes.sliderRootStyle=?,
+  ~className: ThumbTypes.sliderThumbClassName=?,
+  ~style: ThumbTypes.sliderThumbStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,

@@ -1,47 +1,54 @@
 type radioSize =
   | @as("sm") Sm
   | @as("md") Md
-type backgroundColorConfig11 = {
+type maxLengthConfig2 = {
+  label?: float,
+  subtext?: float,
+}
+type groupConfig = {
+  gap: string,
+}
+type backgroundColorConfig14 = {
   disabled: string,
   default: string,
   hover: string,
   error: string,
 }
 type activeConfig3 = {
-  backgroundColor: backgroundColorConfig11,
-  borderColor: backgroundColorConfig11,
+  backgroundColor: backgroundColorConfig14,
+  borderColor: backgroundColorConfig14,
 }
 type indicatorConfig2 = {
   active: activeConfig3,
   inactive: activeConfig3,
 }
-type backgroundColorConfig12 = {
+type backgroundColorConfig15 = {
   disabled: string,
   default: string,
 }
 type activeConfig4 = {
-  backgroundColor: backgroundColorConfig12,
+  backgroundColor: backgroundColorConfig15,
 }
 type activeIndicatorConfig2 = {
   active: activeConfig4,
 }
-type fontSizeConfig5 = {
+type fontSizeConfig7 = {
   sm: string,
   md: string,
 }
-type labelConfig5 = {
+type labelConfig8 = {
   gap: string,
-  color: backgroundColorConfig11,
-  fontSize: fontSizeConfig5,
-  fontWeight: fontSizeConfig5,
+  color: backgroundColorConfig14,
+  fontSize: fontSizeConfig7,
+  fontWeight: fontSizeConfig7,
 }
 type sublabelConfig = {
-  color: backgroundColorConfig11,
-  fontSize: fontSizeConfig5,
-  fontWeight: fontSizeConfig5,
+  color: backgroundColorConfig14,
+  fontSize: fontSizeConfig7,
+  fontWeight: fontSizeConfig7,
 }
-type contentConfig5 = {
-  label: labelConfig5,
+type contentConfig6 = {
+  label: labelConfig8,
   sublabel: sublabelConfig,
 }
 type activeConfig5 = {
@@ -54,18 +61,21 @@ type borderWidthConfig = {
   active: activeConfig5,
   inactive: activeConfig5,
 }
-type smConfig12 = {
+type requiredConfig5 = {
+  color: string,
+}
+type smConfig14 = {
   gap: string,
-  group: ChartsTypes.slotsConfig,
+  group: groupConfig,
   indicator: indicatorConfig2,
   activeIndicator: activeIndicatorConfig2,
-  content: contentConfig5,
-  height: fontSizeConfig5,
+  content: contentConfig6,
+  height: fontSizeConfig7,
   borderWidth: borderWidthConfig,
-  slot: fontSizeConfig5,
-  required: AvatarGroupTypes.textConfig7,
+  slot: fontSizeConfig7,
+  required: requiredConfig5,
 }
 type responsiveRadioTokens = {
-  sm: smConfig12,
-  lg: smConfig12,
+  sm: smConfig14,
+  lg: smConfig14,
 }

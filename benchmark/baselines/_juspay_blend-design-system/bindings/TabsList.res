@@ -70,7 +70,7 @@ external make: (
   ~activeTab: string=?,
   ~disable: bool=?,
   ~showSkeleton: bool=?,
-  ~skeletonVariant: ButtonSharedTypes.skeletonVariant=?,
+  ~skeletonVariant: SkeletonTypes.skeletonVariant=?,
   ~stickyHeader: bool=?,
   ~offsetTop: float=?,
 ) => React.element = "TabsList"
