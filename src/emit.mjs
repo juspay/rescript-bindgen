@@ -377,6 +377,16 @@ export function emitFunction(ir, options = {}) {
     // `label` gives a safe ReScript id (the original JS name stays in the `= "…"` string),
     // so a reserved/Capitalized export name still binds cleanly.
     const { id } = label(ir.import.name)
+
+    // A `React.Context<T>` value export binds as the context VALUE, not a call (#63 C6).
+    if (ir.context) {
+        const ofType = renderType(ir.context.ofType, '', cfg)
+        const imp = imperfection(ir.context.ofType)
+        if (imp) lines.push(`// ${imp === 'unknown' || imp === 'any' ? '🛑 BROKEN' : '⚠️ REVIEW'}: \`${ir.import.name}\` context value couldn't be typed exactly — \`${cfg.opaqueFallback}\` placeholder.`)
+        lines.push(`@module(${JSON.stringify(cfg.from)}) external ${id}: React.Context.t<${ofType}> = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
+        return lines.join('\n')
+    }
+
     const render1 = (p) => (p.type.kind === 'event' ? p.type.res : renderType(p.type, p.name, cfg))
     const params = ir.sig.params || []
     // Required params stay POSITIONAL (idiomatic for plain functions); optional params bind as

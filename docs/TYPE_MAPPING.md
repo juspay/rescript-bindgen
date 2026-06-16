@@ -443,6 +443,7 @@ props, so named types land in the shared `*Types.res` (referenced qualified).
 | `const translate: (p: Point, dx: number, dy: number) => Point` | `external translate: (PkgTypes.point, float, float) => PkgTypes.point = "translate"` (named `Point` → shared record) |
 | `const renderThing: (a: Point, b: Point) => JSX.Element` | a **function**, not a `@react.component` — a React FC takes 0 or 1 (props) arg, so a **multi-arg** callable (even one returning JSX) binds as a function and keeps **every** arg. (#63 C4) |
 | `const getSlots: (item: Item) => [ReactNode?]` | a **function** — a React element must **be** the return, not merely appear inside a **tuple/array** (`[ReactNode?]`, `ReactNode[]`); such a data-returning util is not a component. (#63 C4) |
+| `const ThemeContext: React.Context<ThemeValue>` | `external themeContext: React.Context.t<themeValue> = "ThemeContext"` — a context VALUE, not a faked `@react.component`. React 19 makes a context renderable (element-returning call sig), but the export is a Context object (`<Ctx.Provider value=…>` / `useContext`). Fixture: [`react-context`](../test/golden/cases/react-context). (#63 C6) |
 
 Same buckets apply: a param/return that can't be typed exactly falls back to the flagged placeholder
 with a leading `// ⚪ loose` / `// ⚠️ REVIEW` / `// 🛑 BROKEN` comment above the binding (flag-don't-fake).

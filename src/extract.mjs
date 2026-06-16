@@ -694,6 +694,45 @@ function buildFunctionIR(checker, sym, source, importName, from, opts) {
     }
 }
 
+/** A `React.Context<T>` value export (`import('react').Context<…>` or `React.Context<…>`).
+ *  Its alias/symbol name is `Context` and it carries one type argument (the context value). */
+function isReactContextType(type) {
+    if (typeName(type) !== 'Context') return false
+    const args = type.aliasTypeArguments || type.typeArguments || []
+    return args.length === 1
+}
+
+/**
+ * Build the IR for a `React.Context<T>` value export. Classifies the context value `T`
+ * through the shared pipeline (so a named value record lands in its `*Types.res`), and
+ * emits a VALUE binding `external <name>: React.Context.t<T> = "<jsName>"` — the honest
+ * shape of a context object, not a faked `@react.component`. (#63 C6)
+ */
+function buildContextIR(checker, sym, source, importName, from, opts) {
+    if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
+    const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0]) || source
+    const type = checker.getTypeOfSymbolAtLocation(sym, decl)
+    const inner = (type.aliasTypeArguments || type.typeArguments || [])[0]
+    const enums = []
+    const records = []
+    const unboxed = []
+    const ctx = {
+        checker, decl, enums, records, unboxed, webapi: !!opts.webapi,
+        seenEnums: new Map(), seenRecords: new Map(), seenUnboxed: new Map(),
+        shared: opts.shared || null,
+        typeVars: new Map(),
+        sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
+    }
+    const ofType = inner ? classify(inner, ctx, importName) : { kind: 'unknown' }
+    return {
+        module: importName,
+        import: { from, name: importName },
+        kind: 'function',
+        enums, records, unboxed,
+        context: { ofType },
+    }
+}
+
 /**
  * Classify a call signature's RETURN type, mirroring functionNode's return handling
  * (`void`/`undefined` -> `unit`; `void | Promise<void>` -> polymorphic `'a`). Factored
@@ -1054,6 +1093,21 @@ export function extractModule(entryFile, opts = {}) {
         if (!decl) { skipped.push({ name, reason: 'no-declaration' }); continue }
         let type
         try { type = checker.getTypeOfSymbolAtLocation(sym, decl) } catch { skipped.push({ name, reason: 'type-error' }); continue }
+        // A `React.Context<T>` value (React 19 makes it renderable, so it has element-returning
+        // call signatures and would otherwise fake a `@react.component` taking value+children).
+        // Bind it faithfully as the context VALUE — `React.Context.t<T>` (#63 C6).
+        if (isReactContextType(type)) {
+            try {
+                const ir = buildContextIR(checker, sym, source, name, from, { ...opts, shared })
+                ir.import.jsName = jsName
+                ir.import.isDefault = isDefault
+                seen.add(name)
+                functions.push({ name, ir })
+            } catch (e) {
+                skipped.push({ name, reason: 'context-extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
+            }
+            continue
+        }
         if (!isReactComponent(type, checker)) {
             // Not a React component. Bind a CLASS (M2) as a `@new`/`@send`/`@get` module, or
             // a standalone FUNCTION / const-with-call-signature (M1) as a `@module external`.
