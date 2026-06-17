@@ -4,8 +4,8 @@ external renderFn: ((PositionerSharedTypes.htmlProps, ThumbTypes.sliderThumbStat
 @module("@base-ui-components/react") @scope("Slider") @react.component
 external make: (
   ~disabled: bool=?,
-  ~getAriaLabel: float => string=?,
-  ~getAriaValueText: (string, float, float) => string=?,
+  ~getAriaLabel: Nullable.t<float => string>=?,
+  ~getAriaValueText: Nullable.t<(string, float, float) => string>=?,
   ~index: int=?,
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
   ~onBlur: ReactEvent.Focus.t => unit=?,

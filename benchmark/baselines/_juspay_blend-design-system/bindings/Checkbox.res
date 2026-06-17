@@ -13,5 +13,5 @@ external make: (
   ~children: React.element=?,
   ~subtext: string=?,
   ~slot: React.element=?,
-  ~maxLength: CheckboxTypes.maxLengthConfig=?,
+  ~maxLength: CheckboxTypes.checkboxMaxLengthConfig=?,
 ) => React.element = "Checkbox"

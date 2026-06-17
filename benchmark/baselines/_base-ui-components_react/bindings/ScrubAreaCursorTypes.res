@@ -1,5 +1,5 @@
 type numberFieldScrubAreaCursorState = {
-  value: float,
+  value: Nullable.t<float>,
   inputValue: string,
   required: bool,
   disabled: bool,
@@ -7,7 +7,7 @@ type numberFieldScrubAreaCursorState = {
   scrubbing: bool,
   touched: bool,
   dirty: bool,
-  valid: bool,
+  valid: Nullable.t<bool>,
   filled: bool,
   focused: bool,
 }

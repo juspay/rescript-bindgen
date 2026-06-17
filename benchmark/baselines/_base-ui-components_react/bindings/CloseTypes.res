@@ -2,7 +2,7 @@ type dialogCloseState = {
   disabled: bool,
 }
 type toastCloseState = {
-  @as("type") type_: string,
+  @as("type") type_?: string,
 }
 @unboxed type dialogCloseStyle = Style(JsxDOM.style) | Fn(dialogCloseState => JsxDOM.style)
 @unboxed type dialogCloseClassName = Str(string) | Fn(dialogCloseState => string)

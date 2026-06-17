@@ -13,7 +13,7 @@ type sliderThumbState = {
   values: array<float>,
   touched: bool,
   dirty: bool,
-  valid: bool,
+  valid: Nullable.t<bool>,
   filled: bool,
   focused: bool,
 }
@@ -24,7 +24,7 @@ type switchThumbState = {
   required: bool,
   touched: bool,
   dirty: bool,
-  valid: bool,
+  valid: Nullable.t<bool>,
   filled: bool,
   focused: bool,
 }

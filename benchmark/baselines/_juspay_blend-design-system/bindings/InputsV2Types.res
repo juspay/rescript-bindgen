@@ -1,71 +1,71 @@
-type fontSizeConfig9 = {
+type inputsV2FontSizeConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type colorConfig22 = {
+type inputsV2ColorConfig = {
   default: string,
   hover: string,
   focus: string,
   error: string,
   disabled: string,
 }
-type labelConfig15 = {
-  fontSize: fontSizeConfig9,
-  fontWeight: fontSizeConfig9,
-  lineHeight: fontSizeConfig9,
-  color: colorConfig22,
+type inputsV2LabelConfig = {
+  fontSize: inputsV2FontSizeConfig,
+  fontWeight: inputsV2FontSizeConfig,
+  lineHeight: inputsV2FontSizeConfig,
+  color: inputsV2ColorConfig,
 }
-type requiredConfig11 = {
-  color: string,
+type inputsV2RequiredConfig = {
+  color?: string,
 }
-type helpIconConfig4 = {
-  width: fontSizeConfig9,
-  color: colorConfig22,
+type inputsV2HelpIconConfig = {
+  width: inputsV2FontSizeConfig,
+  color: inputsV2ColorConfig,
 }
-type topContainerConfig = {
-  label: labelConfig15,
-  subLabel: labelConfig15,
-  required: requiredConfig11,
-  helpIcon: helpIconConfig4,
+type inputsV2TopContainerConfig = {
+  label: inputsV2LabelConfig,
+  subLabel: inputsV2LabelConfig,
+  required: inputsV2RequiredConfig,
+  helpIcon: inputsV2HelpIconConfig,
 }
-type placeholderConfig8 = {
-  color: colorConfig22,
-  fontSize: fontSizeConfig9,
-  fontWeight: fontSizeConfig9,
-  lineHeight: fontSizeConfig9,
+type inputsV2PlaceholderConfig = {
+  color: inputsV2ColorConfig,
+  fontSize: inputsV2FontSizeConfig,
+  fontWeight: inputsV2FontSizeConfig,
+  lineHeight: inputsV2FontSizeConfig,
 }
-type paddingConfig28 = {
-  top: fontSizeConfig9,
-  right: fontSizeConfig9,
-  bottom: fontSizeConfig9,
-  left: fontSizeConfig9,
+type inputsV2PaddingConfig = {
+  top: inputsV2FontSizeConfig,
+  right: inputsV2FontSizeConfig,
+  bottom: inputsV2FontSizeConfig,
+  left: inputsV2FontSizeConfig,
 }
-type inputContainerConfig9 = {
-  gap: string,
-  placeholder: placeholderConfig8,
-  inputText: labelConfig15,
-  borderRadius: fontSizeConfig9,
-  boxShadow: string,
-  padding: paddingConfig28,
-  border: colorConfig22,
-  backgroundColor: colorConfig22,
+type inputsV2InputContainerConfig = {
+  gap?: string,
+  placeholder: inputsV2PlaceholderConfig,
+  inputText: inputsV2LabelConfig,
+  borderRadius: inputsV2FontSizeConfig,
+  boxShadow?: string,
+  padding: inputsV2PaddingConfig,
+  border: inputsV2ColorConfig,
+  backgroundColor: inputsV2ColorConfig,
 }
-type errorMessageConfig6 = {
-  fontSize: fontSizeConfig9,
-  fontWeight: fontSizeConfig9,
-  lineHeight: fontSizeConfig9,
-  color: string,
+type inputsV2ErrorMessageConfig = {
+  fontSize: inputsV2FontSizeConfig,
+  fontWeight: inputsV2FontSizeConfig,
+  lineHeight: inputsV2FontSizeConfig,
+  color?: string,
 }
-type bottomContainerConfig = {
-  hintText: labelConfig15,
-  errorMessage: errorMessageConfig6,
+type inputsV2BottomContainerConfig = {
+  hintText: inputsV2LabelConfig,
+  errorMessage: inputsV2ErrorMessageConfig,
 }
 type textInputV2TokensType = {
-  gap: string,
-  topContainer: topContainerConfig,
-  inputContainer: inputContainerConfig9,
-  bottomContainer: bottomContainerConfig,
+  gap?: string,
+  topContainer: inputsV2TopContainerConfig,
+  inputContainer: inputsV2InputContainerConfig,
+  bottomContainer: inputsV2BottomContainerConfig,
 }
 type responsiveTextInputV2Tokens = {
   sm: textInputV2TokensType,

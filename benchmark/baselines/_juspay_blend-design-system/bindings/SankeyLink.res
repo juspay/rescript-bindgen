@@ -9,7 +9,7 @@ external make: (
   ~linkWidth: float=?,
   ~index: int=?,
   ~payload: ChartsTypes.sankeyLink=?,
-  ~linkColors: array<ChartsTypes.stringOrColorsConfig>=?,
+  ~linkColors: array<ChartsTypes.stringOrChartsColorsConfig>=?,
   ~onMouseEnter: (ChartsTypes.sankeyTooltipData, ReactEvent.Mouse.t) => unit=?,
   ~onMouseLeave: unit => unit=?,
 ) => React.element = "SankeyLink"

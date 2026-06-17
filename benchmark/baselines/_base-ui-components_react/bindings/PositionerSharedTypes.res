@@ -59,35 +59,35 @@ type baseUIEvent = {
   baseUIHandlerPrevented?: bool,
 }
 type htmlProps = {
-  ...JsxDOM.domProps,
+  ref?: React.ref<Nullable.t<Dom.element>>,
 }
-type setOpenConfig2 = {
+type utilsSetOpenConfig = {
   reason: string,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
   isCanceled: bool,
   isPropagationAllowed: bool,
-  trigger: Dom.element,
+  trigger?: Dom.element,
 }
-type onCheckedChangeConfig = {
+type utilsOnCheckedChangeConfig = {
   reason: string,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
   isCanceled: bool,
   isPropagationAllowed: bool,
-  trigger: Dom.element,
+  trigger?: Dom.element,
 }
-type anchorConfig = {
+type utilsAnchorConfig = {
   width: float,
   height: float,
 }
-type sideOffsetConfig = {
+type utilsSideOffsetConfig = {
   side: side,
   align: align,
-  anchor: anchorConfig,
-  positioner: anchorConfig,
+  anchor: utilsAnchorConfig,
+  positioner: utilsAnchorConfig,
 }
 type sideFlipMode = {
   side?: side2,
@@ -106,7 +106,7 @@ type comboboxPositionerState = {
   anchorHidden: bool,
   empty: bool,
 }
-type onFormSubmitConfig = {
+type utilsOnFormSubmitConfig = {
   reason: string,
   event: Dom.event,
 }
@@ -136,7 +136,7 @@ type popoverPositionerState = {
   side: side,
   align: align,
   anchorHidden: bool,
-  instant: string,
+  instant?: string,
 }
 type previewCardPositionerState = {
   @as("open") open_: bool,
@@ -157,7 +157,7 @@ type baseUIChangeEventDetail = {
   allowPropagation: unit => unit,
   isCanceled: bool,
   isPropagationAllowed: bool,
-  trigger: Dom.element,
+  trigger?: Dom.element,
   activationDirection: tabsTabActivationDirection,
 }
 type tabsTabPosition = {
@@ -180,8 +180,8 @@ type toastPositionerState = {
   align: align,
   anchorHidden: bool,
 }
-@unboxed type sideOffsetConfigSideOffset = Num(float) | Fn(sideOffsetConfig => float)
-@unboxed type sideOffsetConfigAlignOffset = Num(float) | Fn(sideOffsetConfig => float)
+@unboxed type utilsSideOffsetConfigSideOffset = Num(float) | Fn(utilsSideOffsetConfig => float)
+@unboxed type utilsSideOffsetConfigAlignOffset = Num(float) | Fn(utilsSideOffsetConfig => float)
 @unboxed type comboboxPositionerStyle = Style(JsxDOM.style) | Fn(comboboxPositionerState => JsxDOM.style)
 @unboxed type comboboxPositionerClassName = Str(string) | Fn(comboboxPositionerState => string)
 @unboxed type menuPositionerStyle = Style(JsxDOM.style) | Fn(menuPositionerState => JsxDOM.style)
@@ -196,8 +196,8 @@ type toastPositionerState = {
 @unboxed type selectPositionerClassName = Str(string) | Fn(selectPositionerState => string)
 @unboxed type tabsTabStyle = Style(JsxDOM.style) | Fn(tabsTabState => JsxDOM.style)
 @unboxed type tabsTabClassName = Str(string) | Fn(tabsTabState => string)
-@unboxed type toastPositionerStyle = Style(JsxDOM.style) | Fn(toastPositionerState => JsxDOM.style)
 @unboxed type toastPositionerClassName = Str(string) | Fn(toastPositionerState => string)
+@unboxed type toastPositionerStyle = Style(JsxDOM.style) | Fn(toastPositionerState => JsxDOM.style)
 module CollisionAvoidance = {
   type t
   external fromSideFlipMode: sideFlipMode => t = "%identity"

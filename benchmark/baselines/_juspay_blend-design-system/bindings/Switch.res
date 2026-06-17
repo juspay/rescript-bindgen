@@ -13,5 +13,5 @@ external make: (
   ~slot: React.element=?,
   ~name: string=?,
   ~value: string=?,
-  ~maxLength: SwitchTypes.maxLengthConfig3=?,
+  ~maxLength: SwitchTypes.switch_MaxLengthConfig=?,
 ) => React.element = "Switch"

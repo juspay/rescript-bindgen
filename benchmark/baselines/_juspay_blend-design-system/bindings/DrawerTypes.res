@@ -8,7 +8,7 @@ type overflowY =
   | @as("auto") Auto
   | @as("scroll") Scroll
   | @as("visible") Visible
-type mobileOffsetConfig = {
+type drawerMobileOffsetConfig = {
   top?: string,
   bottom?: string,
   left?: string,
@@ -26,49 +26,43 @@ type selectDrawerGroup = {
   items: array<selectDrawerItem>,
   showSeparator?: bool,
 }
-type itemsConfig3 = {
+type drawerItemsConfig2 = {
   ...JsxDOM.domProps,
 }
-type itemsConfig2 = {
+type drawerItemsConfig = {
   groupLabel?: string,
-  items: itemsConfig3,
+  items: drawerItemsConfig2,
   showSeparator?: bool,
 }
-type borderRadiusConfig11 = {
-  topLeft: string,
-  topRight: string,
-  bottomLeft: string,
-  bottomRight: string,
+type drawerBorderRadiusConfig = {
+  topLeft?: string,
+  topRight?: string,
+  bottomLeft?: string,
+  bottomRight?: string,
 }
-type overlayConfig = {
-  backgroundColor: string,
+type drawerOverlayConfig = {
+  backgroundColor?: string,
 }
-type offsetConfig = {
-  top: string,
-  bottom: string,
-  left: string,
-  right: string,
+type drawerPaddingConfig = {
+  x?: string,
+  y?: string,
 }
-type paddingConfig22 = {
-  x: string,
-  y: string,
+type drawerHandleConfig = {
+  backgroundColor?: string,
+  borderRadius?: string,
+  width?: string,
+  height?: string,
 }
-type handleConfig = {
-  backgroundColor: string,
-  borderRadius: string,
-  width: string,
-  height: string,
-}
-type contentConfig9 = {
-  backgroundColor: string,
-  padding: paddingConfig22,
-  handle: handleConfig,
+type drawerContentConfig = {
+  backgroundColor?: string,
+  padding: drawerPaddingConfig,
+  handle: drawerHandleConfig,
 }
 type drawerTokensType = {
-  borderRadius: borderRadiusConfig11,
-  overlay: overlayConfig,
-  offset: offsetConfig,
-  content: contentConfig9,
+  borderRadius: drawerBorderRadiusConfig,
+  overlay: drawerOverlayConfig,
+  offset: drawerMobileOffsetConfig,
+  content: drawerContentConfig,
 }
 type responsiveDrawerTokens = {
   sm: drawerTokensType,

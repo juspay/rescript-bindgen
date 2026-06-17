@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.progressRo
 
 @module("@base-ui-components/react") @scope("Progress") @react.component
 external make: (
-  ~children: (string, float) => React.element=?,
+  ~children: Nullable.t<(string, float) => React.element>=?,
   ~className: RootSharedTypes.progressRootClassName=?,
   ~style: RootSharedTypes.progressRootStyle=?,
   ~title: string=?,

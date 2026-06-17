@@ -2,7 +2,7 @@
 external make: (
   ~chartType: ChartsTypes.chartType=?,
   ~data: array<ChartsTypes.newNestedDataPoint>,
-  ~colors: array<ChartsTypes.colorsConfig>=?,
+  ~colors: array<ChartsTypes.chartsColorsConfig>=?,
   ~barsize: float=?,
   ~xAxis: ChartsTypes.axisConfig=?,
   ~yAxis: ChartsTypes.axisConfig=?,

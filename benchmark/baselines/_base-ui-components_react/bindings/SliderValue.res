@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.sliderRoot
 
 @module("@base-ui-components/react") @scope("Slider") @react.component
 external make: (
-  ~children: (array<string>, array<float>) => React.element=?,
+  ~children: Nullable.t<(array<string>, array<float>) => React.element>=?,
   ~className: RootSharedTypes.sliderRootClassName=?,
   ~form: string=?,
   ~style: RootSharedTypes.sliderRootStyle=?,

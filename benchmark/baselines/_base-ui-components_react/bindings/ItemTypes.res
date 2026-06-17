@@ -5,7 +5,7 @@ type accordionItemChangeEventDetails = {
   allowPropagation: unit => unit,
   isCanceled: bool,
   isPropagationAllowed: bool,
-  trigger: Dom.element,
+  trigger?: Dom.element,
 }
 type accordionItemState = {
   index: int,

@@ -1,6 +1,6 @@
 type props = {
   ...HtmlAttrs.htmlAttributesOmitChildrenTitle,
-  title: string,
+  title?: string,
   children?: React.element,
   status?: TimelineTypes.timelineNodeStatus,
   timestamp?: string,

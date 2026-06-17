@@ -1,3 +1,7 @@
+type buttonV2Size =
+  | @as("sm") Sm
+  | @as("md") Md
+  | @as("lg") Lg
 type buttonV2Type =
   | @as("primary") Primary
   | @as("secondary") Secondary
@@ -12,101 +16,101 @@ type buttonV2State =
   | @as("hover") Hover
   | @as("active") Active
   | @as("disabled") Disabled
-type defaultConfig10 = {
+type buttonV2DefaultConfig = {
   default: string,
   hover: string,
   active: string,
   disabled: string,
 }
-type primaryConfig7 = {
-  default: defaultConfig10,
-  iconOnly: defaultConfig10,
-  inline: defaultConfig10,
+type buttonV2PrimaryConfig = {
+  default: buttonV2DefaultConfig,
+  iconOnly: buttonV2DefaultConfig,
+  inline: buttonV2DefaultConfig,
 }
-type backgroundColorConfig21 = {
-  primary: primaryConfig7,
-  secondary: primaryConfig7,
-  danger: primaryConfig7,
-  success: primaryConfig7,
+type buttonV2BackgroundColorConfig = {
+  primary: buttonV2PrimaryConfig,
+  secondary: buttonV2PrimaryConfig,
+  danger: buttonV2PrimaryConfig,
+  success: buttonV2PrimaryConfig,
 }
-type primaryConfig8 = {
+type buttonV2PrimaryConfig2 = {
   default: string,
   iconOnly: string,
   inline: string,
 }
-type smConfig17 = {
-  primary: primaryConfig8,
-  secondary: primaryConfig8,
-  danger: primaryConfig8,
-  success: primaryConfig8,
+type buttonV2SmConfig2 = {
+  primary: buttonV2PrimaryConfig2,
+  secondary: buttonV2PrimaryConfig2,
+  danger: buttonV2PrimaryConfig2,
+  success: buttonV2PrimaryConfig2,
 }
-type borderRadiusConfig12 = {
-  sm: smConfig17,
-  md: smConfig17,
-  lg: smConfig17,
+type buttonV2BorderRadiusConfig = {
+  sm: buttonV2SmConfig2,
+  md: buttonV2SmConfig2,
+  lg: buttonV2SmConfig2,
 }
-type primaryConfig9 = {
+type buttonV2PrimaryConfig3 = {
   default: string,
   iconOnly: string,
   inline: string,
 }
-type smConfig18 = {
-  primary: primaryConfig9,
-  secondary: primaryConfig9,
-  danger: primaryConfig9,
-  success: primaryConfig9,
+type buttonV2SmConfig3 = {
+  primary: buttonV2PrimaryConfig3,
+  secondary: buttonV2PrimaryConfig3,
+  danger: buttonV2PrimaryConfig3,
+  success: buttonV2PrimaryConfig3,
 }
-type topConfig = {
-  sm: smConfig18,
-  md: smConfig18,
-  lg: smConfig18,
+type buttonV2TopConfig = {
+  sm: buttonV2SmConfig3,
+  md: buttonV2SmConfig3,
+  lg: buttonV2SmConfig3,
 }
-type paddingConfig25 = {
-  top: topConfig,
-  right: topConfig,
-  bottom: topConfig,
-  left: topConfig,
+type buttonV2PaddingConfig = {
+  top: buttonV2TopConfig,
+  right: buttonV2TopConfig,
+  bottom: buttonV2TopConfig,
+  left: buttonV2TopConfig,
 }
-type defaultConfig11 = {
+type buttonV2DefaultConfig2 = {
   default: string,
   hover: string,
   active: string,
   disabled: string,
 }
-type primaryConfig10 = {
-  default: defaultConfig11,
-  iconOnly: defaultConfig11,
-  inline: defaultConfig11,
+type buttonV2PrimaryConfig4 = {
+  default: buttonV2DefaultConfig2,
+  iconOnly: buttonV2DefaultConfig2,
+  inline: buttonV2DefaultConfig2,
 }
-type colorConfig18 = {
-  primary: primaryConfig10,
-  secondary: primaryConfig10,
-  danger: primaryConfig10,
-  success: primaryConfig10,
+type buttonV2ColorConfig = {
+  primary: buttonV2PrimaryConfig4,
+  secondary: buttonV2PrimaryConfig4,
+  danger: buttonV2PrimaryConfig4,
+  success: buttonV2PrimaryConfig4,
 }
-type fontSizeConfig8 = {
+type buttonV2FontSizeConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type textConfig26 = {
-  color: colorConfig18,
-  fontSize: fontSizeConfig8,
-  fontWeight: fontSizeConfig8,
-  lineHeight: fontSizeConfig8,
+type buttonV2TextConfig = {
+  color: buttonV2ColorConfig,
+  fontSize: buttonV2FontSizeConfig,
+  fontWeight: buttonV2FontSizeConfig,
+  lineHeight: buttonV2FontSizeConfig,
 }
-type smConfig16 = {
-  gap: string,
-  backgroundColor: backgroundColorConfig21,
-  borderRadius: borderRadiusConfig12,
-  padding: paddingConfig25,
-  border: backgroundColorConfig21,
-  shadow: backgroundColorConfig21,
-  text: textConfig26,
+type buttonV2SmConfig = {
+  gap?: string,
+  backgroundColor: buttonV2BackgroundColorConfig,
+  borderRadius: buttonV2BorderRadiusConfig,
+  padding: buttonV2PaddingConfig,
+  border: buttonV2BackgroundColorConfig,
+  shadow: buttonV2BackgroundColorConfig,
+  text: buttonV2TextConfig,
 }
 type responsiveButtonV2Tokens = {
-  sm: smConfig16,
-  lg: smConfig16,
+  sm: buttonV2SmConfig,
+  lg: buttonV2SmConfig,
 }
 type buttonSlot = {
   slot: React.element,
@@ -116,15 +120,17 @@ type buttonSkeleton = {
   showSkeleton?: bool,
   skeletonVariant?: SkeletonTypes.skeletonVariant,
 }
-type buttonPropsConfig = {
-  ...JsxDOM.domProps,
+type buttonV2ButtonPropsConfig = {
+  width?: CommonTypes.stringOrNumber,
+  size?: buttonV2Size,
   minWidth?: CommonTypes.stringOrNumber,
   maxWidth?: CommonTypes.stringOrNumber,
   leftSlot?: buttonSlot,
   rightSlot?: buttonSlot,
   skeleton?: buttonSkeleton,
-  buttonGroupPosition?: ButtonTypes.buttonGroupPosition,
+  buttonGroupPosition?: ButtonSharedTypes.buttonGroupPosition,
   buttonType?: buttonV2Type,
   subType?: buttonV2SubType,
+  loading?: bool,
   state?: buttonV2State,
 }

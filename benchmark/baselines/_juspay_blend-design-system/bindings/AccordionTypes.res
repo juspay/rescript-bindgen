@@ -10,60 +10,60 @@ type slotRenderProps = {
   value: string,
   isDisabled: bool,
 }
-type gapConfig = {
+type accordionGapConfig = {
   border: string,
   noBorder: string,
 }
-type borderConfig4 = {
+type accordionBorderConfig = {
   disabled: string,
   default: string,
   hover: string,
   active: string,
   @as("open") open_: string,
 }
-type backgroundColorConfig5 = {
-  border: borderConfig4,
-  noBorder: borderConfig4,
+type accordionBackgroundColorConfig = {
+  border: accordionBorderConfig,
+  noBorder: accordionBorderConfig,
 }
-type colorConfig4 = {
+type accordionColorConfig = {
   disabled: string,
   default: string,
   hover: string,
   active: string,
   @as("open") open_: string,
 }
-type titleConfig2 = {
-  fontSize: string,
-  fontWeight: string,
-  color: colorConfig4,
+type accordionTitleConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  color: accordionColorConfig,
 }
-type subtextConfig = {
-  fontSize: string,
-  gap: string,
-  color: colorConfig4,
+type accordionSubtextConfig = {
+  fontSize?: string,
+  gap?: string,
+  color: accordionColorConfig,
 }
-type textConfig10 = {
-  title: titleConfig2,
-  subtext: subtextConfig,
+type accordionTextConfig = {
+  title: accordionTitleConfig,
+  subtext: accordionSubtextConfig,
 }
-type slotConfig2 = {
-  maxWidth: string,
+type accordionSlotConfig = {
+  maxWidth?: string,
 }
-type triggerConfig2 = {
-  backgroundColor: backgroundColorConfig5,
-  border: backgroundColorConfig5,
-  padding: gapConfig,
-  text: textConfig10,
-  slot?: slotConfig2,
+type accordionTriggerConfig = {
+  backgroundColor: accordionBackgroundColorConfig,
+  border: accordionBackgroundColorConfig,
+  padding: accordionGapConfig,
+  text: accordionTextConfig,
+  slot?: accordionSlotConfig,
 }
-type separatorConfig = {
-  color: gapConfig,
+type accordionSeparatorConfig = {
+  color: accordionGapConfig,
 }
 type accordionTokenType = {
-  gap: gapConfig,
-  borderRadius: gapConfig,
-  trigger: triggerConfig2,
-  separator: separatorConfig,
+  gap: accordionGapConfig,
+  borderRadius: accordionGapConfig,
+  trigger: accordionTriggerConfig,
+  separator: accordionSeparatorConfig,
 }
 type responsiveAccordionTokens = {
   sm: accordionTokenType,

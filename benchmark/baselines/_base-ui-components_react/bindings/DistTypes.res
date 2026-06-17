@@ -1,4 +1,4 @@
-type getBoundingClientRectConfig = {
+type distGetBoundingClientRectConfig = {
   x: float,
   y: float,
   height: float,
@@ -10,15 +10,15 @@ type getBoundingClientRectConfig = {
 }
 module GetClientRectsTarget = {
   type t
-  external fromGetBoundingClientRectConfigs: array<getBoundingClientRectConfig> => t = "%identity"
+  external fromDistGetBoundingClientRectConfigs: array<distGetBoundingClientRectConfig> => t = "%identity"
   external fromDOMRectList: WebTypes.domRectList => t = "%identity"
 }
 type virtualElement = {
-  getBoundingClientRect: unit => getBoundingClientRectConfig,
+  getBoundingClientRect: unit => distGetBoundingClientRectConfig,
   getClientRects?: unit => GetClientRectsTarget.t,
   contextElement?: Dom.element,
 }
-type collisionBoundaryConfig = {
+type distCollisionBoundaryConfig = {
   x: float,
   y: float,
   height: float,
@@ -44,5 +44,5 @@ module Boundary = {
   external fromClippingAncestors: [#"clipping-ancestors"] => t = "%identity"
   let clippingAncestors: t = fromClippingAncestors(#"clipping-ancestors")
   external fromElements: array<Dom.element> => t = "%identity"
-  external fromCollisionBoundaryConfig: collisionBoundaryConfig => t = "%identity"
+  external fromDistCollisionBoundaryConfig: distCollisionBoundaryConfig => t = "%identity"
 }

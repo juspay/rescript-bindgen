@@ -1,171 +1,171 @@
-type heightConfig6 = {
+type selectorV2HeightConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type checkedConfig3 = {
+type selectorV2CheckedConfig = {
   default: string,
   hover: string,
   focus: string,
   error: string,
   disabled: string,
 }
-type backgroundColorConfig23 = {
-  checked: checkedConfig3,
-  unchecked: checkedConfig3,
+type selectorV2BackgroundColorConfig = {
+  checked: selectorV2CheckedConfig,
+  unchecked: selectorV2CheckedConfig,
 }
-type thumbConfig2 = {
-  backgroundColor: string,
-  border: string,
-  width: heightConfig6,
-  height: heightConfig6,
-  outline: string,
+type selectorV2ThumbConfig = {
+  backgroundColor?: string,
+  border?: string,
+  width: selectorV2HeightConfig,
+  height: selectorV2HeightConfig,
+  outline?: string,
 }
-type switch_Config = {
-  height: heightConfig6,
-  width: heightConfig6,
-  backgroundColor: backgroundColorConfig23,
-  thumb: thumbConfig2,
+type selectorV2SwitchConfig = {
+  height: selectorV2HeightConfig,
+  width: selectorV2HeightConfig,
+  backgroundColor: selectorV2BackgroundColorConfig,
+  thumb: selectorV2ThumbConfig,
 }
-type maxHeightConfig = {
+type selectorV2MaxHeightConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type slotConfig9 = {
-  maxHeight: maxHeightConfig,
+type selectorV2SlotConfig = {
+  maxHeight: selectorV2MaxHeightConfig,
 }
-type labelConfig12 = {
-  gap: string,
-  color: checkedConfig3,
-  fontSize: heightConfig6,
-  fontWeight: heightConfig6,
-  lineHeight: heightConfig6,
-  slot: slotConfig9,
+type selectorV2LabelConfig = {
+  gap?: string,
+  color: selectorV2CheckedConfig,
+  fontSize: selectorV2HeightConfig,
+  fontWeight: selectorV2HeightConfig,
+  lineHeight: selectorV2HeightConfig,
+  slot: selectorV2SlotConfig,
 }
-type subLabelConfig2 = {
-  color: checkedConfig3,
-  fontSize: heightConfig6,
-  fontWeight: heightConfig6,
-  lineHeight: heightConfig6,
+type selectorV2SubLabelConfig = {
+  color: selectorV2CheckedConfig,
+  fontSize: selectorV2HeightConfig,
+  fontWeight: selectorV2HeightConfig,
+  lineHeight: selectorV2HeightConfig,
 }
-type requiredConfig8 = {
-  color: string,
+type selectorV2RequiredConfig = {
+  color?: string,
 }
-type contentConfig13 = {
-  gap: string,
-  label: labelConfig12,
-  subLabel: subLabelConfig2,
-  required: requiredConfig8,
+type selectorV2ContentConfig = {
+  gap?: string,
+  label: selectorV2LabelConfig,
+  subLabel: selectorV2SubLabelConfig,
+  required: selectorV2RequiredConfig,
 }
 type switchV2TokensType = {
-  gap: string,
-  @as("switch") switch_: switch_Config,
-  content: contentConfig13,
+  gap?: string,
+  @as("switch") switch_: selectorV2SwitchConfig,
+  content: selectorV2ContentConfig,
 }
 type responsiveSwitchV2Tokens = {
   sm: switchV2TokensType,
   lg: switchV2TokensType,
 }
-type checkedConfig4 = {
+type selectorV2CheckedConfig2 = {
   default?: string,
   hover?: string,
   focus?: string,
   error?: string,
   disabled?: string,
 }
-type backgroundColorConfig25 = {
-  checked?: checkedConfig4,
-  unchecked?: checkedConfig4,
-  indeterminate?: checkedConfig4,
+type selectorV2BackgroundColorConfig2 = {
+  checked?: selectorV2CheckedConfig2,
+  unchecked?: selectorV2CheckedConfig2,
+  indeterminate?: selectorV2CheckedConfig2,
 }
-type checkedConfig5 = {
+type selectorV2CheckedConfig3 = {
   default?: string,
   disabled?: string,
 }
-type colorConfig23 = {
-  checked?: checkedConfig5,
-  unchecked?: checkedConfig5,
-  indeterminate?: checkedConfig5,
+type selectorV2ColorConfig = {
+  checked?: selectorV2CheckedConfig3,
+  unchecked?: selectorV2CheckedConfig3,
+  indeterminate?: selectorV2CheckedConfig3,
 }
-type iconConfig10 = {
-  color: colorConfig23,
-  width: heightConfig6,
-  height: heightConfig6,
-  strokeWidth: heightConfig6,
+type selectorV2IconConfig = {
+  color: selectorV2ColorConfig,
+  width: selectorV2HeightConfig,
+  height: selectorV2HeightConfig,
+  strokeWidth: selectorV2HeightConfig,
 }
-type checkboxConfig = {
-  height: heightConfig6,
-  width: heightConfig6,
-  opacity: string,
-  backgroundColor: backgroundColorConfig25,
-  borderRadius: heightConfig6,
-  border: backgroundColorConfig25,
-  outline: string,
-  outlineOffset: string,
-  boxShadow: string,
-  icon: iconConfig10,
+type selectorV2CheckboxConfig = {
+  height: selectorV2HeightConfig,
+  width: selectorV2HeightConfig,
+  opacity?: string,
+  backgroundColor: selectorV2BackgroundColorConfig2,
+  borderRadius: selectorV2HeightConfig,
+  border: selectorV2BackgroundColorConfig2,
+  outline?: string,
+  outlineOffset?: string,
+  boxShadow?: string,
+  icon: selectorV2IconConfig,
 }
 type checkboxV2TokensType = {
-  gap: string,
-  checkbox: checkboxConfig,
-  content: contentConfig13,
+  gap?: string,
+  checkbox: selectorV2CheckboxConfig,
+  content: selectorV2ContentConfig,
 }
 type responsiveCheckboxV2Tokens = {
   sm: checkboxV2TokensType,
   lg: checkboxV2TokensType,
 }
-type groupConfig2 = {
-  gap: string,
+type selectorV2GroupConfig = {
+  gap?: string,
 }
-type backgroundColorConfig26 = {
+type selectorV2BackgroundColorConfig3 = {
   default: string,
   hover: string,
   focus: string,
   error: string,
   disabled: string,
 }
-type activeConfig7 = {
-  backgroundColor: backgroundColorConfig26,
-  borderColor: backgroundColorConfig26,
+type selectorV2ActiveConfig = {
+  backgroundColor: selectorV2BackgroundColorConfig3,
+  borderColor: selectorV2BackgroundColorConfig3,
 }
-type indicatorConfig5 = {
-  active: activeConfig7,
-  inactive: activeConfig7,
+type selectorV2IndicatorConfig = {
+  active: selectorV2ActiveConfig,
+  inactive: selectorV2ActiveConfig,
 }
-type backgroundColorConfig27 = {
+type selectorV2BackgroundColorConfig4 = {
   default: string,
   focus: string,
   disabled: string,
 }
-type activeConfig8 = {
-  backgroundColor: backgroundColorConfig27,
+type selectorV2ActiveConfig2 = {
+  backgroundColor: selectorV2BackgroundColorConfig4,
 }
-type activeIndicatorConfig3 = {
-  active: activeConfig8,
+type selectorV2ActiveIndicatorConfig = {
+  active: selectorV2ActiveConfig2,
 }
-type activeConfig9 = {
+type selectorV2ActiveConfig3 = {
   default: float,
   hover: float,
   focus: float,
   error: float,
   disabled: float,
 }
-type borderWidthConfig2 = {
-  active: activeConfig9,
-  inactive: activeConfig9,
+type selectorV2BorderWidthConfig = {
+  active: selectorV2ActiveConfig3,
+  inactive: selectorV2ActiveConfig3,
 }
-type radioConfig = {
-  indicator: indicatorConfig5,
-  activeIndicator: activeIndicatorConfig3,
-  height: heightConfig6,
-  borderWidth: borderWidthConfig2,
+type selectorV2RadioConfig = {
+  indicator: selectorV2IndicatorConfig,
+  activeIndicator: selectorV2ActiveIndicatorConfig,
+  height: selectorV2HeightConfig,
+  borderWidth: selectorV2BorderWidthConfig,
 }
 type radioV2TokensType = {
-  gap: string,
-  group: groupConfig2,
-  radio: radioConfig,
-  content: contentConfig13,
+  gap?: string,
+  group: selectorV2GroupConfig,
+  radio: selectorV2RadioConfig,
+  content: selectorV2ContentConfig,
 }
 type responsiveRadioV2Tokens = {
   sm: radioV2TokensType,

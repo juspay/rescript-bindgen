@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.fieldRootS
 
 @module("@base-ui-components/react") @scope("Field") @react.component
 external make: (
-  ~onValueChange: (string, PositionerSharedTypes.onCheckedChangeConfig) => unit=?,
+  ~onValueChange: (string, PositionerSharedTypes.utilsOnCheckedChangeConfig) => unit=?,
   ~defaultValue: CommonTypes.stringOrNumberOrStringArray=?,
   ~form: string=?,
   ~style: RootSharedTypes.fieldRootStyle=?,

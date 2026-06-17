@@ -1,4 +1,4 @@
-type noFillConfig2 = {
+type tagV2NoFillConfig = {
   neutral: string,
   primary: string,
   success: string,
@@ -6,54 +6,54 @@ type noFillConfig2 = {
   warning: string,
   purple: string,
 }
-type borderConfig11 = {
-  noFill: noFillConfig2,
-  attentive: noFillConfig2,
-  subtle: noFillConfig2,
+type tagV2BorderConfig = {
+  noFill: tagV2NoFillConfig,
+  attentive: tagV2NoFillConfig,
+  subtle: tagV2NoFillConfig,
 }
-type xsConfig3 = {
+type tagV2XsConfig = {
   rounded: string,
   squarical: string,
 }
-type borderRadiusConfig13 = {
-  xs: xsConfig3,
-  sm: xsConfig3,
-  md: xsConfig3,
-  lg: xsConfig3,
+type tagV2BorderRadiusConfig = {
+  xs: tagV2XsConfig,
+  sm: tagV2XsConfig,
+  md: tagV2XsConfig,
+  lg: tagV2XsConfig,
 }
-type heightConfig5 = {
+type tagV2HeightConfig = {
   xs: string,
   sm: string,
   md: string,
   lg: string,
 }
-type paddingConfig26 = {
-  top: heightConfig5,
-  bottom: heightConfig5,
-  left: heightConfig5,
-  right: heightConfig5,
+type tagV2PaddingConfig = {
+  top: tagV2HeightConfig,
+  bottom: tagV2HeightConfig,
+  left: tagV2HeightConfig,
+  right: tagV2HeightConfig,
 }
-type leftSlotConfig = {
-  maxHeight: heightConfig5,
+type tagV2LeftSlotConfig = {
+  maxHeight: tagV2HeightConfig,
 }
-type textConfig27 = {
-  color: borderConfig11,
-  fontSize: heightConfig5,
-  fontWeight: heightConfig5,
-  lineHeight: heightConfig5,
+type tagV2TextConfig = {
+  color: tagV2BorderConfig,
+  fontSize: tagV2HeightConfig,
+  fontWeight: tagV2HeightConfig,
+  lineHeight: tagV2HeightConfig,
 }
-type smConfig19 = {
-  border: borderConfig11,
-  borderRadius: borderRadiusConfig13,
-  backgroundColor: borderConfig11,
-  height: heightConfig5,
-  padding: paddingConfig26,
-  gap: string,
-  leftSlot: leftSlotConfig,
-  rightSlot: leftSlotConfig,
-  text: textConfig27,
+type tagV2SmConfig = {
+  border: tagV2BorderConfig,
+  borderRadius: tagV2BorderRadiusConfig,
+  backgroundColor: tagV2BorderConfig,
+  height: tagV2HeightConfig,
+  padding: tagV2PaddingConfig,
+  gap?: string,
+  leftSlot: tagV2LeftSlotConfig,
+  rightSlot: tagV2LeftSlotConfig,
+  text: tagV2TextConfig,
 }
 type responsiveTagV2Tokens = {
-  sm: smConfig19,
-  lg: smConfig19,
+  sm: tagV2SmConfig,
+  lg: tagV2SmConfig,
 }

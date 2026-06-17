@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, InputTypes.inputState) => 
 
 @module("@base-ui-components/react") @react.component
 external make: (
-  ~onValueChange: (string, PositionerSharedTypes.onCheckedChangeConfig) => unit=?,
+  ~onValueChange: (string, PositionerSharedTypes.utilsOnCheckedChangeConfig) => unit=?,
   ~defaultValue: CommonTypes.stringOrNumberOrStringArray=?,
   ~form: string=?,
   ~style: InputTypes.inputStyle=?,

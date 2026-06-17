@@ -1,84 +1,84 @@
 type switchSize =
   | @as("sm") Sm
   | @as("md") Md
-type maxLengthConfig3 = {
+type switch_MaxLengthConfig = {
   label?: float,
   subtext?: float,
 }
-type heightConfig4 = {
+type switch_HeightConfig = {
   sm: string,
   md: string,
 }
-type activeConfig6 = {
+type switch_ActiveConfig = {
   disabled: string,
   default: string,
   hover: string,
   error: string,
 }
-type backgroundColorConfig16 = {
-  active: activeConfig6,
-  inactive: activeConfig6,
+type switch_BackgroundColorConfig = {
+  active: switch_ActiveConfig,
+  inactive: switch_ActiveConfig,
 }
-type borderConfig10 = {
-  color: string,
-  width: string,
+type switch_BorderConfig = {
+  color?: string,
+  width?: string,
 }
-type smConfig15 = {
-  width: string,
-  height: string,
-  top: string,
-  left: string,
+type switch_SmConfig = {
+  width?: string,
+  height?: string,
+  top?: string,
+  left?: string,
   offset: string,
 }
-type sizeConfig4 = {
-  sm: smConfig15,
-  md: smConfig15,
+type switch_SizeConfig = {
+  sm: switch_SmConfig,
+  md: switch_SmConfig,
 }
-type thumbConfig = {
-  backgroundColor: string,
-  border: borderConfig10,
-  borderRadius: heightConfig4,
-  size: sizeConfig4,
-  outline: string,
-  outlineOffset: string,
-  boxShadow: string,
+type switch_ThumbConfig = {
+  backgroundColor?: string,
+  border: switch_BorderConfig,
+  borderRadius: switch_HeightConfig,
+  size: switch_SizeConfig,
+  outline?: string,
+  outlineOffset?: string,
+  boxShadow?: string,
 }
-type switchContainerConfig = {
-  height: heightConfig4,
-  width: heightConfig4,
-  borderRadius: heightConfig4,
-  backgroundColor: backgroundColorConfig16,
-  thumb: thumbConfig,
+type switch_SwitchContainerConfig = {
+  height: switch_HeightConfig,
+  width: switch_HeightConfig,
+  borderRadius: switch_HeightConfig,
+  backgroundColor: switch_BackgroundColorConfig,
+  thumb: switch_ThumbConfig,
 }
-type labelConfig9 = {
-  color: activeConfig6,
-  fontSize: heightConfig4,
-  fontWeight: heightConfig4,
-  gap: string,
+type switch_LabelConfig = {
+  color: switch_ActiveConfig,
+  fontSize: switch_HeightConfig,
+  fontWeight: switch_HeightConfig,
+  gap?: string,
 }
-type subtextConfig2 = {
-  color: activeConfig6,
-  fontSize: heightConfig4,
-  fontWeight: heightConfig4,
+type switch_SubtextConfig = {
+  color: switch_ActiveConfig,
+  fontSize: switch_HeightConfig,
+  fontWeight: switch_HeightConfig,
 }
-type contentConfig7 = {
-  label: labelConfig9,
-  subtext: subtextConfig2,
-  gap: string,
+type switch_ContentConfig = {
+  label: switch_LabelConfig,
+  subtext: switch_SubtextConfig,
+  gap?: string,
 }
-type requiredConfig6 = {
-  color: string,
+type switch_RequiredConfig = {
+  color?: string,
 }
-type slotConfig4 = {
-  width: heightConfig4,
-  height: heightConfig4,
+type switch_SlotConfig = {
+  width: switch_HeightConfig,
+  height: switch_HeightConfig,
 }
 type switchTokensType = {
-  gap: string,
-  switchContainer: switchContainerConfig,
-  content: contentConfig7,
-  required: requiredConfig6,
-  slot: slotConfig4,
+  gap?: string,
+  switchContainer: switch_SwitchContainerConfig,
+  content: switch_ContentConfig,
+  required: switch_RequiredConfig,
+  slot: switch_SlotConfig,
 }
 type responsiveSwitchTokens = {
   sm: switchTokensType,

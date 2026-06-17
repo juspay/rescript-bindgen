@@ -57,4 +57,13 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
+  ~form: string=?,
+  @as("type") ~type_: TriggerTypes.type_=?,
+  ~formAction: CommonTypes.formAction<'a>=?,
+  ~formEncType: string=?,
+  ~formMethod: string=?,
+  ~formNoValidate: bool=?,
+  ~formTarget: string=?,
+  ~name: string=?,
+  ~value: CommonTypes.stringOrNumberOrStringArray=?,
 ) => React.element = "Button"

@@ -179,6 +179,7 @@ type defaultTagName =
   | @as("view") View
 type parameters<'a, 'c> = {
   render?: React.element,
+  ref?: string,
   state?: 'a,
   stateAttributesMapping?: Dict.t<string => Dict.t<string>>,
   props?: Dict.t<JSON.t>,

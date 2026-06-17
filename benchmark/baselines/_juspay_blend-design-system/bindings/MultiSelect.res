@@ -39,8 +39,8 @@ external make: (
   ~error: bool=?,
   ~errorMessage: string=?,
   ~showActionButtons: bool=?,
-  ~primaryAction: MultiSelectTypes.primaryActionConfig2=?,
-  ~secondaryAction: MultiSelectTypes.secondaryActionConfig=?,
+  ~primaryAction: MultiSelectTypes.multiSelectPrimaryActionConfig=?,
+  ~secondaryAction: MultiSelectTypes.multiSelectSecondaryActionConfig=?,
   ~showItemDividers: bool=?,
   ~showHeaderBorder: bool=?,
   ~fullWidth: bool=?,
@@ -57,5 +57,5 @@ external make: (
   ~customValueLabel: string=?,
   ~showClearButton: bool=?,
   ~onClearAllClick: unit => unit=?,
-  ~multiSelectGroupPosition: ButtonTypes.buttonGroupPosition=?,
+  ~multiSelectGroupPosition: ButtonSharedTypes.buttonGroupPosition=?,
 ) => React.element = "MultiSelect"

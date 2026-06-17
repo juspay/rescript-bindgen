@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, PositionerSharedTypes.toas
 
 @module("@base-ui-components/react") @scope("Toast") @react.component
 external make: (
-  ~anchor: Dom.element=?,
+  ~anchor: Nullable.t<Dom.element>=?,
   ~side: PositionerSharedTypes.side=?,
   ~toast: RootSharedTypes.toastObject,
   ~style: PositionerSharedTypes.toastPositionerStyle=?,
@@ -59,10 +59,10 @@ external make: (
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
   ~sticky: bool=?,
   ~positionMethod: PositionerSharedTypes.positionMethod=?,
-  ~sideOffset: PositionerSharedTypes.sideOffsetConfigSideOffset=?,
+  ~sideOffset: PositionerSharedTypes.utilsSideOffsetConfigSideOffset=?,
   ~align: PositionerSharedTypes.align=?,
-  ~alignOffset: PositionerSharedTypes.sideOffsetConfigAlignOffset=?,
-  ~collisionBoundary: DistTypes.Boundary.t=?,  // ⓘ was `Boundary` — opaque; build with Boundary.fromElement / Boundary.clippingAncestors / Boundary.fromElements / Boundary.fromCollisionBoundaryConfig
+  ~alignOffset: PositionerSharedTypes.utilsSideOffsetConfigAlignOffset=?,
+  ~collisionBoundary: DistTypes.Boundary.t=?,  // ⓘ was `Boundary` — opaque; build with Boundary.fromElement / Boundary.clippingAncestors / Boundary.fromElements / Boundary.fromDistCollisionBoundaryConfig
   ~collisionPadding: string=?,  // ⚪ loose — was `Padding`
   ~arrowPadding: float=?,
   ~disableAnchorTracking: bool=?,

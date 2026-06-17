@@ -5,13 +5,13 @@ type popupTriggerMap = {
   delete: string => unit,
   hasElement: Dom.element => bool,
   hasMatchingElement: Dom.element => bool => bool,
-  getById: string => Dom.element,
+  getById?: string => Dom.element,
   entries: unit => string,
   size: float,
 }
-type childrenConfig<'a> = {
-  payload: 'a,
+type popupsChildrenConfig<'a> = {
+  payload?: 'a,
 }
-type childrenConfig2 = {
-  payload: JSON.t,
+type popupsChildrenConfig2 = {
+  payload?: JSON.t,
 }

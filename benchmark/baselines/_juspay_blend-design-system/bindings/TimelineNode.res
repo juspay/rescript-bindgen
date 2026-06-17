@@ -10,7 +10,7 @@ type props = {
   text?: string,
   maxLines?: float,
   user?: TimelineTypes.timelineUser,
-  avatarProps?: AvatarV2Types.avatarPropsConfig,
+  avatarProps?: AvatarV2Types.avatarV2AvatarPropsConfig,
   time?: string,
   status?: TimelineTypes.timelineNodeStatus,
 }

@@ -23,81 +23,81 @@ type diffLine = {
   content: string,
   @as("type") type_: diffLineType,
 }
-type paddingConfig23 = {
-  x: string,
-  y: string,
+type codeBlockPaddingConfig = {
+  x?: string,
+  y?: string,
 }
-type iconConfig9 = {
-  width: string,
+type codeBlockIconConfig = {
+  width?: string,
 }
-type textConfig24 = {
-  fontSize: string,
-  fontWeight: string,
-  lineHeight: string,
-  color: string,
+type codeBlockTextConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  lineHeight?: string,
+  color?: string,
 }
-type headerConfig15 = {
-  backgroundColor: string,
-  borderBottom: string,
-  padding: paddingConfig23,
-  gap: string,
-  icon: iconConfig9,
-  text: textConfig24,
+type codeBlockHeaderConfig = {
+  backgroundColor?: string,
+  borderBottom?: string,
+  padding: codeBlockPaddingConfig,
+  gap?: string,
+  icon: codeBlockIconConfig,
+  text: codeBlockTextConfig,
 }
-type backgroundColorConfig20 = {
+type codeBlockBackgroundColorConfig = {
   added: string,
   removed: string,
   unchanged: string,
 }
-type gutterConfig = {
-  width: string,
-  color: string,
-  backgroundColor: backgroundColorConfig20,
-  borderLeft: backgroundColorConfig20,
-  borderColor: backgroundColorConfig20,
+type codeBlockGutterConfig = {
+  width?: string,
+  color?: string,
+  backgroundColor: codeBlockBackgroundColorConfig,
+  borderLeft: codeBlockBackgroundColorConfig,
+  borderColor: codeBlockBackgroundColorConfig,
 }
-type xConfig = {
-  left: string,
-  right: string,
+type codeBlockXConfig = {
+  left?: string,
+  right?: string,
 }
-type paddingConfig24 = {
-  x: xConfig,
-  y: string,
+type codeBlockPaddingConfig2 = {
+  x: codeBlockXConfig,
+  y?: string,
 }
-type codeConfig2 = {
-  fontFamily: string,
-  fontSize: string,
-  lineHeight: string,
-  padding: paddingConfig24,
+type codeBlockCodeConfig = {
+  fontFamily?: string,
+  fontSize?: string,
+  lineHeight?: string,
+  padding: codeBlockPaddingConfig2,
 }
-type highlightedLineConfig = {
-  backgroundColor: backgroundColorConfig20,
+type codeBlockHighlightedLineConfig = {
+  backgroundColor: codeBlockBackgroundColorConfig,
 }
-type syntaxConfig = {
-  keyword: string,
-  function: string,
-  string: string,
-  number: string,
-  operator: string,
-  variable: string,
-  comment: string,
-  text: string,
+type codeBlockSyntaxConfig = {
+  keyword?: string,
+  function?: string,
+  string?: string,
+  number?: string,
+  operator?: string,
+  variable?: string,
+  comment?: string,
+  text?: string,
 }
-type bodyConfig5 = {
-  padding: paddingConfig23,
-  backgroundColor: string,
-  gutter: gutterConfig,
-  code: codeConfig2,
-  highlightedLine: highlightedLineConfig,
-  syntax: syntaxConfig,
+type codeBlockBodyConfig = {
+  padding: codeBlockPaddingConfig,
+  backgroundColor?: string,
+  gutter: codeBlockGutterConfig,
+  code: codeBlockCodeConfig,
+  highlightedLine: codeBlockHighlightedLineConfig,
+  syntax: codeBlockSyntaxConfig,
 }
 type codeBlockTokenType = {
-  backgroundColor: string,
-  border: string,
-  borderRadius: string,
-  boxShadow: string,
-  header: headerConfig15,
-  body: bodyConfig5,
+  backgroundColor?: string,
+  border?: string,
+  borderRadius?: string,
+  boxShadow?: string,
+  header: codeBlockHeaderConfig,
+  body: codeBlockBodyConfig,
 }
 type responsiveCodeBlockTokens = {
   sm: codeBlockTokenType,

@@ -43,6 +43,6 @@ external make: (
   ~minTriggerWidth: float=?,
   ~allowCustomValue: bool=?,
   ~customValueLabel: string=?,
-  ~singleSelectGroupPosition: ButtonTypes.buttonGroupPosition=?,
+  ~singleSelectGroupPosition: ButtonSharedTypes.buttonGroupPosition=?,
   ~allowDeselect: bool=?,
 ) => React.element = "SingleSelect"

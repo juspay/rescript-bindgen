@@ -13,7 +13,7 @@ type menuSide =
   | @as("left") Left
   | @as("right") Right
   | @as("bottom") Bottom
-type tooltipPropsConfig3 = {
+type menuTooltipPropsConfig = {
   side?: TooltipTypes.tooltipSide,
   align?: TooltipTypes.tooltipAlign,
   size?: TooltipTypes.tooltipSize,
@@ -36,7 +36,7 @@ type rec menuItemType = {
   enableSubMenuSearch?: bool,
   subMenuSearchPlaceholder?: string,
   tooltip?: React.element,
-  tooltipProps?: tooltipPropsConfig3,
+  tooltipProps?: menuTooltipPropsConfig,
   enableSubMenuVirtualScrolling?: bool,
   subMenuVirtualItemHeight?: float,
   subMenuVirtualOverscan?: float,
@@ -52,11 +52,11 @@ type menuSkeletonProps = {
   show?: bool,
   variant?: SkeletonTypes.skeletonVariant,
 }
-type paddingConfig16 = {
-  x: string,
-  y: string,
+type menuPaddingConfig = {
+  x?: string,
+  y?: string,
 }
-type enabledConfig = {
+type menuEnabledConfig = {
   disabled: string,
   default: string,
   hover: string,
@@ -64,65 +64,65 @@ type enabledConfig = {
   focus: string,
   focusVisible: string,
 }
-type defaultConfig7 = {
-  enabled: enabledConfig,
-  disabled: enabledConfig,
+type menuDefaultConfig = {
+  enabled: menuEnabledConfig,
+  disabled: menuEnabledConfig,
 }
-type primaryConfig6 = {
+type menuPrimaryConfig = {
   enabled: string,
   disabled: string,
 }
-type actionConfig = {
-  primary: primaryConfig6,
-  danger: primaryConfig6,
+type menuActionConfig = {
+  primary: menuPrimaryConfig,
+  danger: menuPrimaryConfig,
 }
-type backgroundColorConfig6 = {
-  default: defaultConfig7,
-  action: actionConfig,
+type menuBackgroundColorConfig = {
+  default: menuDefaultConfig,
+  action: menuActionConfig,
 }
-type optionsLabelConfig = {
-  fontSize: string,
-  fontWeight: string,
-  color: string,
-  padding: paddingConfig16,
-  margin: paddingConfig16,
+type menuOptionsLabelConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  color?: string,
+  padding: menuPaddingConfig,
+  margin: menuPaddingConfig,
 }
-type actionConfig2 = {
+type menuActionConfig2 = {
   primary: string,
   danger: string,
 }
-type colorConfig11 = {
-  default: primaryConfig6,
-  action: actionConfig2,
+type menuColorConfig = {
+  default: menuPrimaryConfig,
+  action: menuActionConfig2,
 }
-type optionConfig = {
-  fontSize: string,
-  fontWeight: string,
-  color: colorConfig11,
+type menuOptionConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  color: menuColorConfig,
 }
-type seperatorConfig = {
-  color: string,
-  height: string,
-  margin: paddingConfig16,
+type menuSeperatorConfig = {
+  color?: string,
+  height?: string,
+  margin: menuPaddingConfig,
 }
-type itemConfig3 = {
-  padding: paddingConfig16,
-  margin: paddingConfig16,
-  borderRadius: string,
-  backgroundColor: backgroundColorConfig6,
-  gap: string,
-  optionsLabel: optionsLabelConfig,
-  option: optionConfig,
-  description: optionConfig,
-  seperator: seperatorConfig,
+type menuItemConfig = {
+  padding: menuPaddingConfig,
+  margin: menuPaddingConfig,
+  borderRadius?: string,
+  backgroundColor: menuBackgroundColorConfig,
+  gap?: string,
+  optionsLabel: menuOptionsLabelConfig,
+  option: menuOptionConfig,
+  description: menuOptionConfig,
+  seperator: menuSeperatorConfig,
 }
 type menuTokensType = {
-  boxShadow: string,
-  backgroundColor: string,
-  padding: paddingConfig16,
-  border: string,
-  borderRadius: string,
-  item: itemConfig3,
+  boxShadow?: string,
+  backgroundColor?: string,
+  padding: menuPaddingConfig,
+  border?: string,
+  borderRadius?: string,
+  item: menuItemConfig,
 }
 type responsiveMenuTokensType = {
   sm: menuTokensType,
@@ -134,7 +134,7 @@ module CollisonBoundaryRef = {
   external fromElement: Dom.element => t = "%identity"
   external fromElements: array<Dom.element> => t = "%identity"
 }
-type overflowMenuPropsConfig = {
+type menuOverflowMenuPropsConfig = {
   trigger?: React.element,
   items?: array<menuGroupType>,
   maxHeight?: float,

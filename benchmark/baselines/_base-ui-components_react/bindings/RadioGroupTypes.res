@@ -2,11 +2,11 @@ type menuRadioGroupState = {
   disabled: bool,
 }
 type radioGroupState = {
-  readOnly: bool,
+  readOnly?: bool,
   disabled: bool,
   touched: bool,
   dirty: bool,
-  valid: bool,
+  valid: Nullable.t<bool>,
   filled: bool,
   focused: bool,
 }

@@ -23,13 +23,13 @@ module ExecutionCtx = {
   external fromExecutionContext: executionContext => t = "%identity"
 }
 type contextOptions = {
-  env: string,
+  env?: string,
   executionCtx?: ExecutionCtx.t,
   notFoundHandler?: InstanceTypes.context => promise<WebTypes.response>,
   matchResult?: string,
   path?: string,
 }
-type layoutConfig = {
+type typesLayoutConfig = {
   @as("Layout") layout: Dict.t<string> => string,
 }
 type setHeadersOptions = {
@@ -38,13 +38,13 @@ type setHeadersOptions = {
 type headerRecord = {
   @as("Content-Type") contentType: CommonTypes.stringOrStringArray,
 }
-type valueConfig = {
+type typesValueConfig = {
   ...JsxDOM.domProps,
   _data: string,
   _status: string,
   _format: string,
 }
-type bodyCacheConfig = {
+type typesBodyCacheConfig = {
   json?: string,
   text?: string,
   arrayBuffer?: string,
@@ -62,19 +62,19 @@ type router = {
   add: (string, string, string) => unit,
   match: (string, string) => string,
 }
-type getPathConfig = {
+type typesGetPathConfig = {
   env?: string,
 }
 type honoOptions = {
   strict?: bool,
   router?: router,
-  getPath?: (WebTypes.request, option<getPathConfig>) => string,
+  getPath?: (WebTypes.request, option<typesGetPathConfig>) => string,
 }
-type optionsConfig = {
+type typesOptionsConfig = {
   optionHandler?: InstanceTypes.context => JSON.t,
   replaceRequest?: CommonTypes.replaceRequest,
 }
-@unboxed type optionsConfigOptions = Fn(InstanceTypes.context => JSON.t) | OptionsConfig(optionsConfig)
+@unboxed type typesOptionsConfigOptions = Fn(InstanceTypes.context => JSON.t) | TypesOptionsConfig(typesOptionsConfig)
 module Input = {
   type t
   external fromString: string => t = "%identity"

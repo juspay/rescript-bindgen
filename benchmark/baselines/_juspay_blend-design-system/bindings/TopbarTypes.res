@@ -1,76 +1,76 @@
-type itemsConfig = {
+type topbarItemsConfig = {
   label: string,
   value: string,
   icon?: React.element,
 }
 type merchantInfo = {
-  items: array<itemsConfig>,
+  items: array<topbarItemsConfig>,
   selected: string,
   onSelect: string => unit,
 }
-type backgroundColorConfig18 = {
+type topbarBackgroundColorConfig = {
   default: string,
   hover: string,
   active: string,
 }
-type iconConfig6 = {
-  size: string,
-  color: string,
+type topbarIconConfig = {
+  size?: string,
+  color?: string,
 }
-type toggleButtonConfig2 = {
-  borderRadius: string,
-  padding: string,
-  backgroundColor: backgroundColorConfig18,
-  transition: string,
-  icon: iconConfig6,
+type topbarToggleButtonConfig = {
+  borderRadius?: string,
+  padding?: string,
+  backgroundColor: topbarBackgroundColorConfig,
+  transition?: string,
+  icon: topbarIconConfig,
 }
-type actionButtonConfig2 = {
-  borderRadius: string,
-  padding: string,
-  minWidth: string,
-  height: string,
-  backgroundColor: backgroundColorConfig18,
-  transition: string,
-  icon: iconConfig6,
+type topbarActionButtonConfig = {
+  borderRadius?: string,
+  padding?: string,
+  minWidth?: string,
+  height?: string,
+  backgroundColor: topbarBackgroundColorConfig,
+  transition?: string,
+  icon: topbarIconConfig,
 }
-type tenantIconButtonConfig = {
-  borderRadius: string,
-  minHeight: string,
-  backgroundColor: backgroundColorConfig18,
-  transition: string,
+type topbarTenantIconButtonConfig = {
+  borderRadius?: string,
+  minHeight?: string,
+  backgroundColor: topbarBackgroundColorConfig,
+  transition?: string,
 }
-type textConfig22 = {
-  fontSize: string,
-  fontWeight: string,
-  color: string,
+type topbarTextConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  color?: string,
 }
-type merchantSelectTriggerConfig = {
-  gap: string,
-  icon: iconConfig6,
-  text: textConfig22,
+type topbarMerchantSelectTriggerConfig = {
+  gap?: string,
+  icon: topbarIconConfig,
+  text: topbarTextConfig,
 }
-type leftSectionConfig = {
-  gap: string,
-  maxHeight: string,
-  divider: textConfig22,
+type topbarLeftSectionConfig = {
+  gap?: string,
+  maxHeight?: string,
+  divider: topbarTextConfig,
 }
-type rightSectionConfig = {
-  gap: string,
+type topbarRightSectionConfig = {
+  gap?: string,
 }
 type topbarTokenType = {
-  zIndex: string,
-  borderBottom: string,
-  backgroundColor: string,
-  backdropFilter: string,
-  padding: string,
-  gap: string,
-  toggleButton: toggleButtonConfig2,
-  actionButton: actionButtonConfig2,
-  tenantIconButton: tenantIconButtonConfig,
-  merchantSelectTrigger: merchantSelectTriggerConfig,
-  leftSection: leftSectionConfig,
-  rightSection: rightSectionConfig,
-  sidebarSection: rightSectionConfig,
+  zIndex?: string,
+  borderBottom?: string,
+  backgroundColor?: string,
+  backdropFilter?: string,
+  padding?: string,
+  gap?: string,
+  toggleButton: topbarToggleButtonConfig,
+  actionButton: topbarActionButtonConfig,
+  tenantIconButton: topbarTenantIconButtonConfig,
+  merchantSelectTrigger: topbarMerchantSelectTriggerConfig,
+  leftSection: topbarLeftSectionConfig,
+  rightSection: topbarRightSectionConfig,
+  sidebarSection: topbarRightSectionConfig,
 }
 type responsiveTopbarTokens = {
   sm: topbarTokenType,

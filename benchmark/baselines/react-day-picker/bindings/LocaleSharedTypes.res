@@ -104,13 +104,13 @@ type localeOptions = {
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
   firstWeekContainsDate?: CommonTypes.v1OrV4,
 }
-type localeConfig = {
+type localeLocaleConfig = {
   options?: localeOptions,
   formatRelative: (string, string, string, option<string>) => string,
 }
 type formatRelativeFnOptions = {
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
-  locale?: localeConfig,
+  locale?: localeLocaleConfig,
 }
 type localizeFnOptions = {
   width?: localeWidth,
@@ -142,7 +142,7 @@ type matchFnResult = {
   value: float,
   rest: string,
 }
-type ordinalNumberConfig = {
+type classesOrdinalNumberConfig = {
   width?: localeWidth,
   valueCallback?: string => string,
   unit: localeUnit,
@@ -151,7 +151,7 @@ type matchFnResult2 = {
   value: CommonTypes.v0OrV1,
   rest: string,
 }
-type eraConfig = {
+type classesEraConfig = {
   width?: localeWidth,
   valueCallback?: string => string,
 }
@@ -172,12 +172,12 @@ type matchFnResult6 = {
   rest: string,
 }
 type match = {
-  ordinalNumber: (string, option<ordinalNumberConfig>) => matchFnResult,
-  era: (string, option<eraConfig>) => matchFnResult2,
-  quarter: (string, option<eraConfig>) => matchFnResult3,
-  month: (string, option<eraConfig>) => matchFnResult4,
-  day: (string, option<eraConfig>) => matchFnResult5,
-  dayPeriod: (string, option<eraConfig>) => matchFnResult6,
+  ordinalNumber: (string, option<classesOrdinalNumberConfig>) => matchFnResult,
+  era: (string, option<classesEraConfig>) => matchFnResult2,
+  quarter: (string, option<classesEraConfig>) => matchFnResult3,
+  month: (string, option<classesEraConfig>) => matchFnResult4,
+  day: (string, option<classesEraConfig>) => matchFnResult5,
+  dayPeriod: (string, option<classesEraConfig>) => matchFnResult6,
 }
 type rec dayPickerLocaleLabels = {
   labelNav?: CommonTypes.labelNav,
@@ -226,21 +226,21 @@ type interval = {
   start: string,
   end: string,
 }
-type localeConfig2 = {
+type localeLocaleConfig2 = {
   options?: localeOptions,
 }
 type endOfWeekOptions = {
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
-  locale?: localeConfig2,
+  locale?: localeLocaleConfig2,
   @as("in") in_?: string => Date.t,
 }
-type localeConfig3 = {
+type localeLocaleConfig3 = {
   options?: localeOptions,
   localize: localize,
   formatLong: formatLong,
 }
 type formatOptions = {
-  locale?: localeConfig3,
+  locale?: localeLocaleConfig3,
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
   firstWeekContainsDate?: CommonTypes.v1OrV4,
   useAdditionalWeekYearTokens?: bool,
@@ -251,19 +251,19 @@ type getMonthOptions = {
   @as("in") in_?: string => Date.t,
 }
 type getWeekOptions = {
-  locale?: localeConfig2,
+  locale?: localeLocaleConfig2,
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
   firstWeekContainsDate?: CommonTypes.v1OrV4,
   @as("in") in_?: string => Date.t,
 }
 type startOfWeekOptions = {
-  locale?: localeConfig2,
+  locale?: localeLocaleConfig2,
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
   @as("in") in_?: string => Date.t,
 }
-type rec overridesConfig = {
+type rec classesOverridesConfig = {
   options?: dateLibOptions,
-  overrides?: overridesConfig,
+  overrides?: classesOverridesConfig,
   formatNumber?: CommonTypes.stringOrNumber => string,
   getMonthYearOrder?: unit => monthYearOrder,
   formatMonthYear?: Date.t => string,
@@ -306,7 +306,7 @@ type rec overridesConfig = {
 }
 type rec dateLib2 = {
   options: dateLibOptions,
-  overrides?: overridesConfig,
+  overrides?: classesOverridesConfig,
   getDigitMap: string,
   replaceDigits: string,
   formatNumber: CommonTypes.stringOrNumber => string,
@@ -367,7 +367,7 @@ type calendarMonth2 = {
   date: Date.t,
   weeks: array<calendarWeek2>,
 }
-type classNamesConfig = {
+type typesClassNamesConfig = {
   root?: string,
   chevron?: string,
   day?: string,
@@ -410,7 +410,7 @@ type classNamesConfig = {
   caption_before_enter?: string,
   caption_before_exit?: string,
 }
-type stylesConfig = {
+type typesStylesConfig = {
   root?: JsxDOM.style,
   chevron?: JsxDOM.style,
   day?: JsxDOM.style,
@@ -445,64 +445,64 @@ type stylesConfig = {
   focused?: JsxDOM.style,
   today?: JsxDOM.style,
 }
-type dayConfig = {
+type cjsDayConfig = {
   ...JsxDOM.domProps,
   day: calendarDay2,
   modifiers: Dict.t<bool>,
 }
-type dropdownConfig = {
+type cjsDropdownConfig = {
   ...JsxDOM.domProps,
   options?: array<ComponentsTypes.dropdownOption>,
 }
-type monthConfig = {
+type cjsMonthConfig = {
   ...JsxDOM.domProps,
   calendarMonth: calendarMonth2,
   displayIndex: float,
 }
-type navConfig = {
+type cjsNavConfig = {
   ...JsxDOM.domProps,
   onPreviousClick?: ReactEvent.Mouse.t => unit,
   onNextClick?: ReactEvent.Mouse.t => unit,
   previousMonth?: Date.t,
   nextMonth?: Date.t,
 }
-type rootConfig = {
+type cjsRootConfig = {
   ...JsxDOM.domProps,
   rootRef?: React.ref<Nullable.t<Dom.element>>,
 }
-type weekConfig = {
+type cjsWeekConfig = {
   ...JsxDOM.domProps,
   week: calendarWeek2,
 }
-type componentsConfig = {
-  @as("Chevron") chevron?: ComponentsTypes.chevronConfig => Dom.element,
+type typesComponentsConfig = {
+  @as("Chevron") chevron?: ComponentsTypes.componentsChevronConfig => Dom.element,
   @as("CaptionLabel") captionLabel?: ReactTypes.htmlAttributes => Dom.element,
-  @as("Day") day?: dayConfig => Dom.element,
-  @as("DayButton") dayButton?: dayConfig => Dom.element,
-  @as("Dropdown") dropdown?: dropdownConfig => Dom.element,
+  @as("Day") day?: cjsDayConfig => Dom.element,
+  @as("DayButton") dayButton?: cjsDayConfig => Dom.element,
+  @as("Dropdown") dropdown?: cjsDropdownConfig => Dom.element,
   @as("DropdownNav") dropdownNav?: ReactTypes.htmlAttributes => Dom.element,
   @as("Footer") footer?: ReactTypes.htmlAttributes => Dom.element,
-  @as("Month") month?: monthConfig => Dom.element,
-  @as("MonthCaption") monthCaption?: monthConfig => Dom.element,
+  @as("Month") month?: cjsMonthConfig => Dom.element,
+  @as("MonthCaption") monthCaption?: cjsMonthConfig => Dom.element,
   @as("MonthGrid") monthGrid?: ReactTypes.htmlAttributes => Dom.element,
   @as("Months") months?: ReactTypes.htmlAttributes => Dom.element,
-  @as("Nav") nav?: navConfig => Dom.element,
+  @as("Nav") nav?: cjsNavConfig => Dom.element,
   @as("Option") option?: ReactTypes.htmlAttributes => Dom.element,
   @as("PreviousMonthButton") previousMonthButton?: ReactTypes.htmlAttributes => Dom.element,
   @as("NextMonthButton") nextMonthButton?: ReactTypes.htmlAttributes => Dom.element,
-  @as("Root") root?: rootConfig => Dom.element,
+  @as("Root") root?: cjsRootConfig => Dom.element,
   @as("Select") select?: ReactTypes.htmlAttributes => Dom.element,
   @as("Weeks") weeks?: ReactTypes.htmlAttributes => Dom.element,
-  @as("Week") week?: weekConfig => Dom.element,
+  @as("Week") week?: cjsWeekConfig => Dom.element,
   @as("Weekday") weekday?: ReactTypes.htmlAttributes => Dom.element,
   @as("Weekdays") weekdays?: ReactTypes.htmlAttributes => Dom.element,
-  @as("WeekNumber") weekNumber?: weekConfig => Dom.element,
+  @as("WeekNumber") weekNumber?: cjsWeekConfig => Dom.element,
   @as("WeekNumberHeader") weekNumberHeader?: ReactTypes.htmlAttributes => Dom.element,
-  @as("MonthsDropdown") monthsDropdown?: dropdownConfig => Dom.element,
-  @as("YearsDropdown") yearsDropdown?: dropdownConfig => Dom.element,
+  @as("MonthsDropdown") monthsDropdown?: cjsDropdownConfig => Dom.element,
+  @as("YearsDropdown") yearsDropdown?: cjsDropdownConfig => Dom.element,
 }
 type dateRange = {
-  from: Date.t,
+  from?: Date.t,
   @as("to") to_?: Date.t,
 }
 type dateBefore = {
@@ -518,7 +518,7 @@ type dateInterval = {
 type dayOfWeek = {
   dayOfWeek: CommonTypes.numberOrNumberArray,
 }
-type labelsConfig = {
+type typesLabelsConfig = {
   labelNav?: unit => string,
   labelGrid?: (Date.t, option<dateLibOptions>, option<dateLib2>) => string,
   labelGridcell?: (Date.t, option<Dict.t<bool>>, option<dateLibOptions>, option<dateLib2>) => string,
@@ -531,7 +531,7 @@ type labelsConfig = {
   labelWeekNumber?: (float, option<dateLibOptions>) => string,
   labelWeekNumberHeader?: option<dateLibOptions> => string,
 }
-type formattersConfig = {
+type typesFormattersConfig = {
   formatCaption?: (Date.t, option<dateLibOptions>, option<dateLib2>) => string,
   formatDay?: (Date.t, option<dateLibOptions>, option<dateLib2>) => string,
   formatMonthDropdown?: (Date.t, option<dateLib2>) => string,
@@ -540,7 +540,7 @@ type formattersConfig = {
   formatWeekdayName?: (Date.t, option<dateLibOptions>, option<dateLib2>) => string,
   formatYearDropdown?: (Date.t, option<dateLib2>) => string,
 }
-type localeConfig4 = {
+type classesLocaleConfig = {
   labels?: dayPickerLocaleLabels,
   code?: string,
   formatDistance?: (formatDistanceToken, float, option<formatDistanceFnOptions>) => string,
@@ -600,31 +600,31 @@ module Select = {
   external fromDateRange: dateRange => t = "%identity"
 }
 type customComponents = {
-  @as("Chevron") chevron: ComponentsTypes.chevronConfig => Dom.element,
+  @as("Chevron") chevron: ComponentsTypes.componentsChevronConfig => Dom.element,
   @as("CaptionLabel") captionLabel: ReactTypes.htmlAttributes => Dom.element,
-  @as("Day") day: dayConfig => Dom.element,
-  @as("DayButton") dayButton: dayConfig => Dom.element,
-  @as("Dropdown") dropdown: dropdownConfig => Dom.element,
+  @as("Day") day: cjsDayConfig => Dom.element,
+  @as("DayButton") dayButton: cjsDayConfig => Dom.element,
+  @as("Dropdown") dropdown: cjsDropdownConfig => Dom.element,
   @as("DropdownNav") dropdownNav: ReactTypes.htmlAttributes => Dom.element,
   @as("Footer") footer: ReactTypes.htmlAttributes => Dom.element,
-  @as("Month") month: monthConfig => Dom.element,
-  @as("MonthCaption") monthCaption: monthConfig => Dom.element,
+  @as("Month") month: cjsMonthConfig => Dom.element,
+  @as("MonthCaption") monthCaption: cjsMonthConfig => Dom.element,
   @as("MonthGrid") monthGrid: ReactTypes.htmlAttributes => Dom.element,
   @as("Months") months: ReactTypes.htmlAttributes => Dom.element,
-  @as("Nav") nav: navConfig => Dom.element,
+  @as("Nav") nav: cjsNavConfig => Dom.element,
   @as("Option") option: ReactTypes.htmlAttributes => Dom.element,
   @as("PreviousMonthButton") previousMonthButton: ReactTypes.htmlAttributes => Dom.element,
   @as("NextMonthButton") nextMonthButton: ReactTypes.htmlAttributes => Dom.element,
-  @as("Root") root: rootConfig => Dom.element,
+  @as("Root") root: cjsRootConfig => Dom.element,
   @as("Select") select: ReactTypes.htmlAttributes => Dom.element,
   @as("Weeks") weeks: ReactTypes.htmlAttributes => Dom.element,
-  @as("Week") week: weekConfig => Dom.element,
+  @as("Week") week: cjsWeekConfig => Dom.element,
   @as("Weekday") weekday: ReactTypes.htmlAttributes => Dom.element,
   @as("Weekdays") weekdays: ReactTypes.htmlAttributes => Dom.element,
-  @as("WeekNumber") weekNumber: weekConfig => Dom.element,
+  @as("WeekNumber") weekNumber: cjsWeekConfig => Dom.element,
   @as("WeekNumberHeader") weekNumberHeader: ReactTypes.htmlAttributes => Dom.element,
-  @as("MonthsDropdown") monthsDropdown: dropdownConfig => Dom.element,
-  @as("YearsDropdown") yearsDropdown: dropdownConfig => Dom.element,
+  @as("MonthsDropdown") monthsDropdown: cjsDropdownConfig => Dom.element,
+  @as("YearsDropdown") yearsDropdown: cjsDropdownConfig => Dom.element,
 }
 type labels = {
   labelNav: unit => string,
@@ -677,10 +677,10 @@ type dayPickerProps = {
   mode?: mode,
   required?: bool,
   className?: string,
-  classNames?: classNamesConfig,
+  classNames?: typesClassNamesConfig,
   modifiersClassNames?: Dict.t<string>,
   style?: JsxDOM.style,
-  styles?: stylesConfig,
+  styles?: typesStylesConfig,
   modifiersStyles?: Dict.t<JsxDOM.style>,
   id?: string,
   defaultMonth?: Date.t,
@@ -704,15 +704,15 @@ type dayPickerProps = {
   @as("ISOWeek") iSOWeek?: bool,
   timeZone?: string,
   noonSafe?: bool,
-  components?: componentsConfig,
+  components?: typesComponentsConfig,
   footer?: React.element,
   autoFocus?: bool,
   disabled?: Disabled.t,
   hidden?: Disabled.t,
   today?: Date.t,
   modifiers?: Dict.t<Disabled.t>,
-  labels?: labelsConfig,
-  formatters?: formattersConfig,
+  labels?: typesLabelsConfig,
+  formatters?: typesFormattersConfig,
   dir?: string,
   @as("aria-label") ariaLabel?: string,
   @as("aria-labelledby") ariaLabelledby?: string,
@@ -720,7 +720,7 @@ type dayPickerProps = {
   nonce?: string,
   title?: string,
   lang?: string,
-  locale?: localeConfig4,
+  locale?: classesLocaleConfig,
   numerals?: numerals,
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
   firstWeekContainsDate?: CommonTypes.v1OrV4,
@@ -735,36 +735,36 @@ type dayPickerProps = {
   onDayKeyDown?: (Date.t, Dict.t<bool>, ReactEvent.Keyboard.t) => unit,
   onDayMouseEnter?: (Date.t, Dict.t<bool>, ReactEvent.Mouse.t) => unit,
   onDayMouseLeave?: (Date.t, Dict.t<bool>, ReactEvent.Mouse.t) => unit,
-  dateLib?: overridesConfig,
+  dateLib?: classesOverridesConfig,
 }
 type dayPickerContext = {
   months: array<calendarMonth2>,
-  nextMonth: Date.t,
-  previousMonth: Date.t,
+  nextMonth?: Date.t,
+  previousMonth?: Date.t,
   goToMonth: Date.t => unit,
   getModifiers: calendarDay2 => Dict.t<bool>,
-  selected: string,
-  select: (Date.t, Dict.t<bool>, string) => Select.t,
-  isSelected: Date.t => bool,
+  selected?: string,
+  select?: (Date.t, Dict.t<bool>, string) => Select.t,
+  isSelected?: Date.t => bool,
   components: customComponents,
   classNames: classNames,
-  styles: stylesConfig,
+  styles?: typesStylesConfig,
   labels: labels,
   formatters: formatters,
   dayPickerProps: dayPickerProps,
 }
 type dayPickerContext2 = {
   months: array<calendarMonth2>,
-  nextMonth: Date.t,
-  previousMonth: Date.t,
+  nextMonth?: Date.t,
+  previousMonth?: Date.t,
   goToMonth: Date.t => unit,
   getModifiers: calendarDay2 => Dict.t<bool>,
-  selected: string,
-  select: string,
-  isSelected: Date.t => bool,
+  selected?: string,
+  select?: string,
+  isSelected?: Date.t => bool,
   components: customComponents,
   classNames: classNames,
-  styles: stylesConfig,
+  styles?: typesStylesConfig,
   labels: labels,
   formatters: formatters,
   dayPickerProps: dayPickerProps,

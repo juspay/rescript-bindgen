@@ -14,6 +14,6 @@ external make: (
   ~fadeFromIndex: float=?,
   ~snapToSequentialPoint: bool=?,
   ~disableDrag: bool=?,
-  ~mobileOffset: DrawerTypes.mobileOffsetConfig=?,
+  ~mobileOffset: DrawerTypes.drawerMobileOffsetConfig=?,
   ~children: React.element,
 ) => React.element = "Drawer"

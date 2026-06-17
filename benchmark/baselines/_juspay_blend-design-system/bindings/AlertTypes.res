@@ -16,20 +16,20 @@ type alertAction = {
   label: string,
   onClick: unit => unit,
 }
-type primaryConfig4 = {
+type alertPrimaryConfig = {
   subtle: string,
   noFill: string,
 }
-type backgroundConfig = {
-  primary: primaryConfig4,
-  success: primaryConfig4,
-  warning: primaryConfig4,
-  error: primaryConfig4,
-  purple: primaryConfig4,
-  orange: primaryConfig4,
-  neutral: primaryConfig4,
+type alertBackgroundConfig = {
+  primary: alertPrimaryConfig,
+  success: alertPrimaryConfig,
+  warning: alertPrimaryConfig,
+  error: alertPrimaryConfig,
+  purple: alertPrimaryConfig,
+  orange: alertPrimaryConfig,
+  neutral: alertPrimaryConfig,
 }
-type colorConfig2 = {
+type alertColorConfig = {
   primary: string,
   success: string,
   warning: string,
@@ -38,33 +38,33 @@ type colorConfig2 = {
   orange: string,
   neutral: string,
 }
-type headingConfig2 = {
-  color: colorConfig2,
-  fontWeight: string,
-  fontSize: string,
-  lineHeight: string,
+type alertHeadingConfig = {
+  color: alertColorConfig,
+  fontWeight?: string,
+  fontSize?: string,
+  lineHeight?: string,
 }
-type textConfig3 = {
-  heading: headingConfig2,
-  description: headingConfig2,
+type alertTextConfig = {
+  heading: alertHeadingConfig,
+  description: alertHeadingConfig,
 }
-type buttonConfig = {
-  gap: string,
-  primaryAction: headingConfig2,
-  secondaryAction: headingConfig2,
-  closeButton: headingConfig2,
+type alertButtonConfig = {
+  gap?: string,
+  primaryAction: alertHeadingConfig,
+  secondaryAction: alertHeadingConfig,
+  closeButton: alertHeadingConfig,
 }
 type alertTokenType = {
-  width: string,
-  maxWidth: string,
-  minWidth: string,
-  gap: string,
-  padding: string,
-  borderRadius: string,
-  background: backgroundConfig,
-  border: backgroundConfig,
-  text: textConfig3,
-  button: buttonConfig,
+  width?: string,
+  maxWidth?: string,
+  minWidth?: string,
+  gap?: string,
+  padding?: string,
+  borderRadius?: string,
+  background: alertBackgroundConfig,
+  border: alertBackgroundConfig,
+  text: alertTextConfig,
+  button: alertButtonConfig,
 }
 type responsiveAlertTokens = {
   sm: alertTokenType,

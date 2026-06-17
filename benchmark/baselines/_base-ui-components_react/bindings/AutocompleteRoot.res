@@ -1,7 +1,7 @@
 @module("@base-ui-components/react") @scope("Autocomplete") @react.component
 external make: (
   ~defaultValue: CommonTypes.stringOrNumberOrStringArray=?,
-  ~filter: ('b, string, option<'c>) => bool=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
+  ~filter: Nullable.t<('b, string, option<'c>) => bool>=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~id: string=?,
   ~children: React.element=?,
   ~disabled: bool=?,

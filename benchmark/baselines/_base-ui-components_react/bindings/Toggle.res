@@ -6,7 +6,7 @@ external make: (
   ~pressed: bool=?,
   ~defaultPressed: bool=?,
   ~disabled: bool=?,
-  ~onPressedChange: (bool, PositionerSharedTypes.onCheckedChangeConfig) => unit=?,
+  ~onPressedChange: (bool, PositionerSharedTypes.utilsOnCheckedChangeConfig) => unit=?,
   ~value: string=?,
   ~nativeButton: bool=?,
   ~form: string=?,

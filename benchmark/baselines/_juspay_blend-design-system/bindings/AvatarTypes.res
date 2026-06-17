@@ -10,83 +10,83 @@ type avatarShape =
 type avatarOnlinePosition =
   | @as("top") Top
   | @as("bottom") Bottom
-type skeletonConfig = {
+type avatarSkeletonConfig = {
   show: bool,
   variant?: SkeletonTypes.skeletonVariant,
 }
-type smConfig4 = {
-  width: string,
-  height: string,
+type avatarSmConfig = {
+  width?: string,
+  height?: string,
 }
-type sizeConfig2 = {
-  sm: smConfig4,
-  regular: smConfig4,
-  md: smConfig4,
-  lg: smConfig4,
-  xl: smConfig4,
+type avatarSizeConfig = {
+  sm: avatarSmConfig,
+  regular: avatarSmConfig,
+  md: avatarSmConfig,
+  lg: avatarSmConfig,
+  xl: avatarSmConfig,
 }
-type withImageConfig = {
+type avatarWithImageConfig = {
   default: string,
   online: string,
 }
-type backgroundColorConfig4 = {
-  withImage: withImageConfig,
-  withoutImage: withImageConfig,
+type avatarBackgroundColorConfig = {
+  withImage: avatarWithImageConfig,
+  withoutImage: avatarWithImageConfig,
 }
-type borderRadiusConfig4 = {
+type avatarBorderRadiusConfig = {
   circular: string,
   rounded: string,
 }
-type containerConfig2 = {
-  size: sizeConfig2,
-  backgroundColor: backgroundColorConfig4,
-  border: backgroundColorConfig4,
-  borderRadius: borderRadiusConfig4,
+type avatarContainerConfig = {
+  size: avatarSizeConfig,
+  backgroundColor: avatarBackgroundColorConfig,
+  border: avatarBackgroundColorConfig,
+  borderRadius: avatarBorderRadiusConfig,
 }
-type fontSizeConfig3 = {
+type avatarFontSizeConfig = {
   sm: string,
   regular: string,
   md: string,
   lg: string,
   xl: string,
 }
-type textConfig6 = {
-  color: withImageConfig,
-  fontSize: fontSizeConfig3,
-  fontWeight: fontSizeConfig3,
+type avatarTextConfig = {
+  color: avatarWithImageConfig,
+  fontSize: avatarFontSizeConfig,
+  fontWeight: avatarFontSizeConfig,
 }
-type defaultConfig4 = {
-  color: string,
-  width: string,
+type avatarDefaultConfig = {
+  color?: string,
+  width?: string,
 }
-type smConfig5 = {
-  default: defaultConfig4,
-  online: defaultConfig4,
+type avatarSmConfig2 = {
+  default: avatarDefaultConfig,
+  online: avatarDefaultConfig,
 }
-type borderConfig2 = {
-  sm: smConfig5,
-  regular: smConfig5,
-  md: smConfig5,
-  lg: smConfig5,
-  xl: smConfig5,
+type avatarBorderConfig = {
+  sm: avatarSmConfig2,
+  regular: avatarSmConfig2,
+  md: avatarSmConfig2,
+  lg: avatarSmConfig2,
+  xl: avatarSmConfig2,
 }
-type indicatorConfig = {
-  backgroundColor: withImageConfig,
-  border: borderConfig2,
-  size: sizeConfig2,
-  borderRadius: string,
-  boxShadow: string,
+type avatarIndicatorConfig = {
+  backgroundColor: avatarWithImageConfig,
+  border: avatarBorderConfig,
+  size: avatarSizeConfig,
+  borderRadius?: string,
+  boxShadow?: string,
 }
-type slotConfig = {
-  spacing: string,
-  color: withImageConfig,
+type avatarSlotConfig = {
+  spacing?: string,
+  color: avatarWithImageConfig,
 }
 type avatarTokensType = {
-  gap: string,
-  container: containerConfig2,
-  text: textConfig6,
-  indicator: indicatorConfig,
-  slot: slotConfig,
+  gap?: string,
+  container: avatarContainerConfig,
+  text: avatarTextConfig,
+  indicator: avatarIndicatorConfig,
+  slot: avatarSlotConfig,
 }
 type responsiveAvatarTokens = {
   sm: avatarTokensType,

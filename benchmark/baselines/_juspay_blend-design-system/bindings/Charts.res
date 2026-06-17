@@ -2,7 +2,7 @@
 external make: (
   ~chartType: ChartsTypes.chartType=?,
   ~data: array<ChartsTypes.newNestedDataPoint>,
-  ~colors: array<ChartsTypes.colorsConfig>=?,
+  ~colors: array<ChartsTypes.chartsColorsConfig>=?,
   ~slot1: React.element=?,
   ~slot2: React.element=?,
   ~slot3: React.element=?,
@@ -22,7 +22,7 @@ external make: (
   ~onExpandedChange: bool => unit=?,
   ~chartName: string=?,
   ~skeleton: ChartsTypes.chartsSkeletonProps=?,
-  ~legends: array<ChartsTypes.legendsConfig>=?,
+  ~legends: array<ChartsTypes.chartsLegendsConfig>=?,
   @as("CustomizedDot") ~customizedDot: ChartsTypes.dotItemDotProps => React.element=?,
   ~lineSeriesKeys: array<string>=?,
 ) => React.element = "Charts"

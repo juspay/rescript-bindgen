@@ -17,11 +17,11 @@ type chartLegendPosition =
 type legendsChangeType =
   | @as("increase") Increase
   | @as("decrease") Decrease
-type primaryConfig5 = {
+type chartsPrimaryConfig = {
   label: string,
   val: float,
 }
-type auxConfig = {
+type chartsAuxConfig = {
   label: string,
   val: float,
   @as("type") type_?: axisType,
@@ -30,24 +30,25 @@ type auxConfig = {
   timeZone?: string,
   hour12?: bool,
 }
-type errorDataConfig = {
+type chartsErrorDataConfig = {
   label: string,
   value: string,
 }
-type errorConfig = {
+type chartsErrorConfig = {
   title: string,
-  errorData?: array<errorDataConfig>,
+  errorData?: array<chartsErrorDataConfig>,
 }
 type dataPoint = {
-  primary: primaryConfig5,
-  aux?: array<auxConfig>,
-  error?: errorConfig,
+  primary: chartsPrimaryConfig,
+  aux?: array<chartsAuxConfig>,
+  error?: chartsErrorConfig,
 }
 type newNestedDataPoint = {
   name: string,
   data: Dict.t<dataPoint>,
 }
-type colorsConfig = {
+type chartsColorsConfig = {
+  key: string,
   color: string,
 }
 type stackedLegendsDataPoint = {
@@ -55,7 +56,7 @@ type stackedLegendsDataPoint = {
   delta: float,
   changeType: legendsChangeType,
 }
-type payloadConfig = {
+type chartsPayloadConfig = {
   value: CommonTypes.stringOrNumber,
   index?: int,
   coordinate?: float,
@@ -63,7 +64,7 @@ type payloadConfig = {
 type tickProps = {
   x?: float,
   y?: float,
-  payload?: payloadConfig,
+  payload?: chartsPayloadConfig,
 }
 type axisConfig = {
   label?: string,
@@ -83,48 +84,48 @@ type axisConfig = {
   maxTicks?: float,
   smartDateTimeFormat?: bool,
 }
-type positionConfig = {
+type chartsPositionConfig = {
   x?: float,
   y?: float,
 }
-type allowEscapeViewBoxConfig = {
+type chartsAllowEscapeViewBoxConfig = {
   x?: bool,
   y?: bool,
 }
 type tooltipConfig = {
-  position?: positionConfig,
-  allowEscapeViewBox?: allowEscapeViewBoxConfig,
+  position?: chartsPositionConfig,
+  allowEscapeViewBox?: chartsAllowEscapeViewBoxConfig,
 }
 type noDataProps = {
   title?: string,
   subtitle?: string,
   slot?: React.element,
-  button?: ButtonTypes.buttonProps,
+  button?: ButtonSharedTypes.buttonProps,
 }
 type chartsSkeletonProps = {
   show: bool,
   variant: SkeletonTypes.skeletonVariant,
 }
-type legendsConfig = {
+type chartsLegendsConfig = {
   title: string,
   total?: string,
 }
-type payloadConfig2 = {
+type chartsPayloadConfig2 = {
   name?: string,
 }
 type dotItemDotProps = {
   cx?: float,
   cy?: float,
   value?: float,
-  payload?: payloadConfig2,
+  payload?: chartsPayloadConfig2,
 }
-type payloadConfig3 = {
+type chartsPayloadConfig3 = {
   name: string,
   id?: string,
   color?: string,
   value?: float,
 }
-type payloadConfig4 = {
+type chartsPayloadConfig4 = {
   name?: string,
   value?: float,
   source?: CommonTypes.stringOrNumber,
@@ -135,7 +136,7 @@ type payloadConfig4 = {
   hoverColor?: string,
 }
 type sankeyTooltipData = {
-  payload: payloadConfig4,
+  payload: chartsPayloadConfig4,
 }
 type sankeyLink = {
   source: CommonTypes.stringOrNumber,
@@ -144,60 +145,60 @@ type sankeyLink = {
   color?: string,
   hoverColor?: string,
 }
-type paddingConfig7 = {
-  x: string,
-  y: string,
+type chartsPaddingConfig = {
+  x?: string,
+  y?: string,
 }
-type slotsConfig = {
-  gap: string,
+type chartsSlotsConfig = {
+  gap?: string,
 }
-type headerConfig3 = {
-  padding: paddingConfig7,
-  backgroundColor: string,
-  borderBottom: string,
-  borderRadius: string,
-  slots: slotsConfig,
+type chartsHeaderConfig = {
+  padding: chartsPaddingConfig,
+  backgroundColor?: string,
+  borderBottom?: string,
+  borderRadius?: string,
+  slots: chartsSlotsConfig,
 }
-type dropdownConfig = {
-  maxHeight: string,
+type chartsDropdownConfig = {
+  maxHeight?: string,
 }
-type colorConfig7 = {
+type chartsColorConfig = {
   default: string,
   hover: string,
   active: string,
   total: string,
 }
-type itemConfig2 = {
-  gap: string,
-  color: colorConfig7,
-  fontSize: string,
-  fontWeight: string,
+type chartsItemConfig = {
+  gap?: string,
+  color: chartsColorConfig,
+  fontSize?: string,
+  fontWeight?: string,
 }
-type legendConfig = {
-  gap: string,
-  dropdown: dropdownConfig,
-  item: itemConfig2,
+type chartsLegendConfig = {
+  gap?: string,
+  dropdown: chartsDropdownConfig,
+  item: chartsItemConfig,
 }
-type paddingConfig8 = {
-  top: string,
-  right: string,
-  bottom: string,
-  left: string,
+type chartsPaddingConfig2 = {
+  top?: string,
+  right?: string,
+  bottom?: string,
+  left?: string,
 }
-type contentConfig2 = {
-  legend: legendConfig,
-  padding: paddingConfig8,
-  gap: string,
-  backgroundColor: string,
+type chartsContentConfig = {
+  legend: chartsLegendConfig,
+  padding: chartsPaddingConfig2,
+  gap?: string,
+  backgroundColor?: string,
 }
 type chartTokensType = {
-  border: string,
-  borderRadius: string,
-  header: headerConfig3,
-  content: contentConfig2,
+  border?: string,
+  borderRadius?: string,
+  header: chartsHeaderConfig,
+  content: chartsContentConfig,
 }
 type responsiveChartTokens = {
   sm: chartTokensType,
   lg: chartTokensType,
 }
-@unboxed type stringOrColorsConfig = Str(string) | ColorsConfig(colorsConfig)
+@unboxed type stringOrChartsColorsConfig = Str(string) | ChartsColorsConfig(chartsColorsConfig)

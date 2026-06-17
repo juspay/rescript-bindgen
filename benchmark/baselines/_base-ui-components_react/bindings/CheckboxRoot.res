@@ -8,7 +8,7 @@ external make: (
   ~checked: bool=?,
   ~defaultChecked: bool=?,
   ~disabled: bool=?,
-  ~onCheckedChange: (bool, PositionerSharedTypes.onCheckedChangeConfig) => unit=?,
+  ~onCheckedChange: (bool, PositionerSharedTypes.utilsOnCheckedChangeConfig) => unit=?,
   ~readOnly: bool=?,
   ~required: bool=?,
   ~indeterminate: bool=?,

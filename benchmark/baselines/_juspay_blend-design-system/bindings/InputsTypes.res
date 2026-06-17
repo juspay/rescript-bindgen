@@ -31,281 +31,277 @@ type resize =
   | @as("block") Block
   | @as("inline") Inline
   | @as("both") Both
-type placeholderConfig = {
-  color: string,
-  fontWeight: string,
+type inputsPlaceholderConfig = {
+  color?: string,
+  fontWeight?: string,
 }
-type colorConfig9 = {
+type inputsColorConfig = {
   default: string,
   hover: string,
   focus: string,
   error: string,
   disabled: string,
 }
-type labelConfig2 = {
-  fontSize: string,
-  fontWeight: string,
-  color: colorConfig9,
+type inputsLabelConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  color: inputsColorConfig,
 }
-type helpIconConfig2 = {
-  width: string,
-  color: colorConfig9,
+type inputsHelpIconConfig = {
+  width?: string,
+  color: inputsColorConfig,
 }
-type errorMessageConfig = {
-  fontSize: string,
-  fontWeight: string,
-  color: string,
+type inputsErrorMessageConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  color?: string,
 }
-type requiredConfig = {
-  color: string,
+type inputsRequiredConfig = {
+  color?: string,
 }
-type fontSizeConfig5 = {
+type inputsFontSizeConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type paddingConfig14 = {
-  x: fontSizeConfig5,
-  y: fontSizeConfig5,
+type inputsPaddingConfig = {
+  x: inputsFontSizeConfig,
+  y: inputsFontSizeConfig,
 }
-type inputContainerConfig = {
-  fontSize: fontSizeConfig5,
-  fontWeight: fontSizeConfig5,
-  color: colorConfig9,
-  borderRadius: fontSizeConfig5,
-  boxShadow: string,
-  padding: paddingConfig14,
-  border: colorConfig9,
-  backgroundColor: colorConfig9,
+type inputsInputContainerConfig = {
+  fontSize: inputsFontSizeConfig,
+  fontWeight: inputsFontSizeConfig,
+  color: inputsColorConfig,
+  borderRadius: inputsFontSizeConfig,
+  boxShadow?: string,
+  padding: inputsPaddingConfig,
+  border: inputsColorConfig,
+  backgroundColor: inputsColorConfig,
 }
 type textInputTokensType = {
-  placeholder: placeholderConfig,
-  gap: string,
-  label: labelConfig2,
-  subLabel: labelConfig2,
-  hintText: labelConfig2,
-  helpIcon: helpIconConfig2,
-  errorMessage: errorMessageConfig,
-  required: requiredConfig,
-  inputContainer: inputContainerConfig,
+  placeholder: inputsPlaceholderConfig,
+  gap?: string,
+  label: inputsLabelConfig,
+  subLabel: inputsLabelConfig,
+  hintText: inputsLabelConfig,
+  helpIcon: inputsHelpIconConfig,
+  errorMessage: inputsErrorMessageConfig,
+  required: inputsRequiredConfig,
+  inputContainer: inputsInputContainerConfig,
 }
 type responsiveTextInputTokens = {
   sm: textInputTokensType,
   lg: textInputTokensType,
 }
-type colorConfig10 = {
+type inputsColorConfig2 = {
   default: string,
   hover: string,
   focus: string,
   error: string,
   disabled: string,
 }
-type widthConfig2 = {
+type inputsWidthConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type iconConfig = {
-  color: colorConfig10,
-  width: widthConfig2,
+type inputsIconConfig = {
+  color: inputsColorConfig2,
+  width: inputsWidthConfig,
 }
-type stepperButtonConfig = {
-  width: fontSizeConfig5,
-  backgroundColor: colorConfig9,
-  icon: iconConfig,
+type inputsStepperButtonConfig = {
+  width: inputsFontSizeConfig,
+  backgroundColor: inputsColorConfig,
+  icon: inputsIconConfig,
 }
-type inputContainerConfig2 = {
-  fontSize: fontSizeConfig5,
-  fontWeight: fontSizeConfig5,
-  color: colorConfig9,
-  borderRadius: fontSizeConfig5,
-  boxShadow: string,
-  padding: paddingConfig14,
-  border: colorConfig9,
-  backgroundColor: colorConfig9,
-  stepperButton: stepperButtonConfig,
+type inputsInputContainerConfig2 = {
+  fontSize: inputsFontSizeConfig,
+  fontWeight: inputsFontSizeConfig,
+  color: inputsColorConfig,
+  borderRadius: inputsFontSizeConfig,
+  boxShadow?: string,
+  padding: inputsPaddingConfig,
+  border: inputsColorConfig,
+  backgroundColor: inputsColorConfig,
+  stepperButton: inputsStepperButtonConfig,
 }
 type numberInputTokensType = {
-  gap: string,
-  label: labelConfig2,
-  subLabel: labelConfig2,
-  hintText: labelConfig2,
-  helpIcon: helpIconConfig2,
-  errorMessage: errorMessageConfig,
-  required: requiredConfig,
-  inputContainer: inputContainerConfig2,
+  gap?: string,
+  label: inputsLabelConfig,
+  subLabel: inputsLabelConfig,
+  hintText: inputsLabelConfig,
+  helpIcon: inputsHelpIconConfig,
+  errorMessage: inputsErrorMessageConfig,
+  required: inputsRequiredConfig,
+  inputContainer: inputsInputContainerConfig2,
 }
 type responsiveNumberInputTokens = {
   sm: numberInputTokensType,
   lg: numberInputTokensType,
 }
-type inputContainerConfig3 = {
-  gap: string,
-  fontSize: fontSizeConfig5,
-  fontWeight: fontSizeConfig5,
-  color: colorConfig9,
-  borderRadius?: fontSizeConfig5,
-  boxShadow: string,
-  padding: paddingConfig14,
-  border: colorConfig9,
-  backgroundColor: colorConfig9,
+type inputsInputContainerConfig3 = {
+  gap?: string,
+  fontSize: inputsFontSizeConfig,
+  fontWeight: inputsFontSizeConfig,
+  color: inputsColorConfig,
+  borderRadius?: inputsFontSizeConfig,
+  boxShadow?: string,
+  padding: inputsPaddingConfig,
+  border: inputsColorConfig,
+  backgroundColor: inputsColorConfig,
 }
 type dropdownInputTokensType = {
-  gap: string,
-  label: labelConfig2,
-  subLabel: labelConfig2,
-  hintText: labelConfig2,
-  errorMessage: errorMessageConfig,
-  required: requiredConfig,
-  helpIcon: helpIconConfig2,
-  inputContainer: inputContainerConfig3,
+  gap?: string,
+  label: inputsLabelConfig,
+  subLabel: inputsLabelConfig,
+  hintText: inputsLabelConfig,
+  errorMessage: inputsErrorMessageConfig,
+  required: inputsRequiredConfig,
+  helpIcon: inputsHelpIconConfig,
+  inputContainer: inputsInputContainerConfig3,
 }
 type responsiveDropdownInputTokens = {
   sm: dropdownInputTokensType,
   lg: dropdownInputTokensType,
 }
-type paddingConfig15 = {
-  x: string,
-  y: string,
+type inputsPaddingConfig2 = {
+  x?: string,
+  y?: string,
 }
-type inputContainerConfig4 = {
-  padding: paddingConfig15,
-  borderRadius: string,
-  borderBottom: colorConfig9,
-  outline: string,
-  boxShadow: string,
-  color: colorConfig9,
-  fontSize: string,
-  fontWeight: string,
+type inputsInputContainerConfig4 = {
+  padding: inputsPaddingConfig2,
+  borderRadius?: string,
+  borderBottom: inputsColorConfig,
+  outline?: string,
+  boxShadow?: string,
+  color: inputsColorConfig,
+  fontSize?: string,
+  fontWeight?: string,
 }
-type iconConfig2 = {
-  color: colorConfig9,
-  width: string,
+type inputsIconConfig2 = {
+  color: inputsColorConfig,
+  width?: string,
 }
 type searchInputTokensType = {
-  gap: string,
-  label: labelConfig2,
-  subLabel: labelConfig2,
-  hintText: labelConfig2,
-  errorMessage: errorMessageConfig,
-  required: requiredConfig,
-  inputContainer: inputContainerConfig4,
-  icon: iconConfig2,
+  gap?: string,
+  label: inputsLabelConfig,
+  subLabel: inputsLabelConfig,
+  hintText: inputsLabelConfig,
+  errorMessage: inputsErrorMessageConfig,
+  required: inputsRequiredConfig,
+  inputContainer: inputsInputContainerConfig4,
+  icon: inputsIconConfig2,
 }
 type responsiveSearchInputTokens = {
   sm: searchInputTokensType,
   lg: searchInputTokensType,
 }
-type inputConfig = {
-  height: string,
-  width: string,
-  fontSize: string,
-  fontWeight: string,
-  color: colorConfig9,
-  borderRadius: string,
-  boxShadow: string,
-  border: colorConfig9,
-  backgroundColor: colorConfig9,
+type inputsInputConfig = {
+  height?: string,
+  width?: string,
+  fontSize?: string,
+  fontWeight?: string,
+  color: inputsColorConfig,
+  borderRadius?: string,
+  boxShadow?: string,
+  border: inputsColorConfig,
+  backgroundColor: inputsColorConfig,
 }
-type inputContainerConfig5 = {
-  gap: string,
-  input: inputConfig,
+type inputsInputContainerConfig5 = {
+  gap?: string,
+  input: inputsInputConfig,
 }
 type otpInputTokensType = {
-  gap: string,
-  label: labelConfig2,
-  subLabel: labelConfig2,
-  helpIcon: helpIconConfig2,
-  hintText: labelConfig2,
-  errorMessage: errorMessageConfig,
-  required: requiredConfig,
-  inputContainer: inputContainerConfig5,
+  gap?: string,
+  label: inputsLabelConfig,
+  subLabel: inputsLabelConfig,
+  helpIcon: inputsHelpIconConfig,
+  hintText: inputsLabelConfig,
+  errorMessage: inputsErrorMessageConfig,
+  required: inputsRequiredConfig,
+  inputContainer: inputsInputContainerConfig5,
 }
 type responsiveOTPInputTokens = {
   sm: otpInputTokensType,
   lg: otpInputTokensType,
 }
-type unitConfig2 = {
-  fontSize: fontSizeConfig5,
-  fontWeight: fontSizeConfig5,
-  color: colorConfig9,
-  padding: fontSizeConfig5,
-  backgroundColor: colorConfig9,
+type inputsUnitConfig = {
+  fontSize: inputsFontSizeConfig,
+  fontWeight: inputsFontSizeConfig,
+  color: inputsColorConfig,
+  padding: inputsFontSizeConfig,
+  backgroundColor: inputsColorConfig,
 }
-type inputContainerConfig6 = {
-  fontSize: fontSizeConfig5,
-  fontWeight: fontSizeConfig5,
-  color: colorConfig9,
-  borderRadius: fontSizeConfig5,
-  boxShadow: string,
-  padding: paddingConfig14,
-  border: colorConfig9,
-  backgroundColor: colorConfig9,
-  unit: unitConfig2,
+type inputsInputContainerConfig6 = {
+  fontSize: inputsFontSizeConfig,
+  fontWeight: inputsFontSizeConfig,
+  color: inputsColorConfig,
+  borderRadius: inputsFontSizeConfig,
+  boxShadow?: string,
+  padding: inputsPaddingConfig,
+  border: inputsColorConfig,
+  backgroundColor: inputsColorConfig,
+  unit: inputsUnitConfig,
 }
 type unitInputTokensType = {
-  gap: string,
-  label: labelConfig2,
-  subLabel: labelConfig2,
-  helpIcon: helpIconConfig2,
-  hintText: labelConfig2,
-  errorMessage: errorMessageConfig,
-  required: requiredConfig,
-  inputContainer: inputContainerConfig6,
+  gap?: string,
+  label: inputsLabelConfig,
+  subLabel: inputsLabelConfig,
+  helpIcon: inputsHelpIconConfig,
+  hintText: inputsLabelConfig,
+  errorMessage: inputsErrorMessageConfig,
+  required: inputsRequiredConfig,
+  inputContainer: inputsInputContainerConfig6,
 }
 type responsiveUnitInputTokens = {
   sm: unitInputTokensType,
   lg: unitInputTokensType,
 }
-type inputContainerConfig7 = {
-  fontSize: fontSizeConfig5,
-  fontWeight: fontSizeConfig5,
-  gap: string,
+type inputsInputContainerConfig7 = {
+  fontSize: inputsFontSizeConfig,
+  fontWeight: inputsFontSizeConfig,
+  gap?: string,
   borderRadius?: string,
-  boxShadow: colorConfig9,
-  padding: paddingConfig14,
-  border: colorConfig9,
-  color: colorConfig9,
-  backgroundColor: colorConfig9,
+  boxShadow: inputsColorConfig,
+  padding: inputsPaddingConfig,
+  border: inputsColorConfig,
+  color: inputsColorConfig,
+  backgroundColor: inputsColorConfig,
 }
 type multiValueInputTokensType = {
-  gap: string,
-  label: labelConfig2,
-  subLabel: labelConfig2,
-  hintText: labelConfig2,
-  helpIcon: helpIconConfig2,
-  errorMessage: errorMessageConfig,
-  required: requiredConfig,
-  inputContainer: inputContainerConfig7,
+  gap?: string,
+  label: inputsLabelConfig,
+  subLabel: inputsLabelConfig,
+  hintText: inputsLabelConfig,
+  helpIcon: inputsHelpIconConfig,
+  errorMessage: inputsErrorMessageConfig,
+  required: inputsRequiredConfig,
+  inputContainer: inputsInputContainerConfig7,
 }
 type responsiveMultiValueInputTokens = {
   sm: multiValueInputTokensType,
   lg: multiValueInputTokensType,
 }
-type placeholderConfig5 = {
-  color?: string,
+type inputsInputContainerConfig8 = {
+  fontSize?: string,
   fontWeight?: string,
-}
-type inputContainerConfig8 = {
-  fontSize: string,
-  fontWeight: string,
-  padding: paddingConfig15,
-  borderRadius: string,
-  boxShadow: string,
-  border: colorConfig9,
-  color: colorConfig9,
-  backgroundColor: colorConfig9,
+  padding: inputsPaddingConfig2,
+  borderRadius?: string,
+  boxShadow?: string,
+  border: inputsColorConfig,
+  color: inputsColorConfig,
+  backgroundColor: inputsColorConfig,
 }
 type textAreaTokensType = {
-  gap: string,
-  placeholder?: placeholderConfig5,
-  label: labelConfig2,
-  subLabel: labelConfig2,
-  helpIcon: helpIconConfig2,
-  hintText: labelConfig2,
-  errorMessage: errorMessageConfig,
-  required: requiredConfig,
-  inputContainer: inputContainerConfig8,
+  gap?: string,
+  placeholder?: inputsPlaceholderConfig,
+  label: inputsLabelConfig,
+  subLabel: inputsLabelConfig,
+  helpIcon: inputsHelpIconConfig,
+  hintText: inputsLabelConfig,
+  errorMessage: inputsErrorMessageConfig,
+  required: inputsRequiredConfig,
+  inputContainer: inputsInputContainerConfig8,
 }
 type responsiveTextAreaTokens = {
   sm: textAreaTokensType,

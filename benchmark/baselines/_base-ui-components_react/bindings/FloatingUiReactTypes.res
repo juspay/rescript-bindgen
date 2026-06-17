@@ -4,7 +4,7 @@ type floatingEvents = {
   off: string,
 }
 type floatingNodeType = {
-  id: string,
+  id?: string,
   parentId: string,
   context?: string,
 }

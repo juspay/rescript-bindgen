@@ -25,17 +25,17 @@ type sliderValueFormatConfig = {
   showLabels?: bool,
   formatter?: float => string,
 }
-type hoverConfig = {
+type sliderHoverConfig = {
   boxShadow?: string,
 }
-type focusConfig = {
+type sliderFocusConfig = {
   outline?: string,
   boxShadow?: string,
 }
-type activeConfig = {
+type sliderActiveConfig = {
   cursor?: string,
 }
-type disabledConfig2 = {
+type sliderDisabledConfig = {
   cursor?: string,
   opacity?: CommonTypes.stringOrNumber,
 }
@@ -897,11 +897,11 @@ type sliderCSSProperties = {
   colorInterpolation?: string,
   colorRendering?: string,
   glyphOrientationVertical?: string,
-  @as("&:hover") __hover?: hoverConfig,
-  @as("&:focus") __focus?: focusConfig,
-  @as("&:focus-visible") __focusVisible?: focusConfig,
-  @as("&:active") __active?: activeConfig,
-  @as("&:disabled") __disabled?: disabledConfig2,
+  @as("&:hover") __hover?: sliderHoverConfig,
+  @as("&:focus") __focus?: sliderFocusConfig,
+  @as("&:focus-visible") __focusVisible?: sliderFocusConfig,
+  @as("&:active") __active?: sliderActiveConfig,
+  @as("&:disabled") __disabled?: sliderDisabledConfig,
 }
 type sliderTokenStyles = {
   root: sliderCSSProperties,
@@ -909,19 +909,19 @@ type sliderTokenStyles = {
   range: sliderCSSProperties,
   thumb: sliderCSSProperties,
 }
-type optionsConfig = {
+type sliderOptionsConfig = {
   prefix?: string,
   suffix?: string,
   decimalPlaces?: float,
 }
-type valueConfig3 = {
+type sliderValueConfig = {
   min: float,
   max: float,
   step: float,
   defaultValue: array<float>,
   valueFormat: sliderValueFormatConfig,
 }
-type optionsConfig2 = {
+type sliderOptionsConfig2 = {
   min: float,
   max: float,
   value: float,

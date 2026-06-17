@@ -3,7 +3,7 @@ external make: (
   ~title: string,
   ~value: CommonTypes.stringOrNumber,
   ~valueTooltip: React.element=?,
-  ~change: StatCardTypes.statCardChange=?,
+  ~change: Nullable.t<StatCardTypes.statCardChange>=?,
   ~subtitle: string=?,
   ~variant: StatCardTypes.statCardVariant,
   ~chartData: array<StatCardTypes.chartDataPoint>=?,

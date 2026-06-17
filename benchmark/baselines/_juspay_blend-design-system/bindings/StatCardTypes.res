@@ -13,7 +13,7 @@ type statCardDirection =
   | @as("vertical") Vertical
   | @as("horizontal") Horizontal
 type statCardChange = {
-  value: float,
+  value?: Nullable.t<float>,
   valueType: changeType,
   arrowDirection?: statCardArrowDirection,
   tooltip?: React.element,
@@ -39,133 +39,133 @@ type statCardSkeletonProps = {
   maxWidth?: CommonTypes.stringOrNumber,
   minWidth?: CommonTypes.stringOrNumber,
 }
-type paddingConfig11 = {
-  x: string,
-  y: string,
+type statCardPaddingConfig = {
+  x?: string,
+  y?: string,
 }
-type titleConfig3 = {
-  fontSize: string,
-  fontWeight: string,
-  color: string,
+type statCardTitleConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  color?: string,
 }
-type titleIconConfig = {
-  width: string,
+type statCardTitleIconConfig = {
+  width?: string,
 }
-type colorConfig8 = {
+type statCardColorConfig = {
   default: string,
   hover: string,
 }
-type helpIconConfig = {
-  width: string,
-  color: colorConfig8,
+type statCardHelpIconConfig = {
+  width?: string,
+  color: statCardColorConfig,
 }
-type headerConfig6 = {
-  gap: string,
-  title: titleConfig3,
-  titleIcon: titleIconConfig,
-  helpIcon: helpIconConfig,
+type statCardHeaderConfig = {
+  gap?: string,
+  title: statCardTitleConfig,
+  titleIcon: statCardTitleIconConfig,
+  helpIcon: statCardHelpIconConfig,
 }
-type valueConfig = {
-  line: titleConfig3,
-  progress: titleConfig3,
-  bar: titleConfig3,
-  number: titleConfig3,
+type statCardValueConfig = {
+  line: statCardTitleConfig,
+  progress: statCardTitleConfig,
+  bar: statCardTitleConfig,
+  number: statCardTitleConfig,
 }
-type changeConfig = {
-  margin: string,
+type statCardChangeConfig = {
+  margin?: string,
   arrow: string,
   text: string,
 }
-type titleConfig4 = {
-  gap: string,
-  value: valueConfig,
-  change: changeConfig,
+type statCardTitleConfig2 = {
+  gap?: string,
+  value: statCardValueConfig,
+  change: statCardChangeConfig,
 }
-type statsConfig = {
-  gap: string,
-  title: titleConfig4,
-  subtitle: titleConfig3,
+type statCardStatsConfig = {
+  gap?: string,
+  title: statCardTitleConfig2,
+  subtitle: statCardTitleConfig,
 }
-type textContainerConfig2 = {
-  gap: string,
-  header: headerConfig6,
-  stats: statsConfig,
+type statCardTextContainerConfig = {
+  gap?: string,
+  header: statCardHeaderConfig,
+  stats: statCardStatsConfig,
 }
-type lineConfig = {
-  increase: string,
-  decrease: string,
+type statCardLineConfig = {
+  increase?: string,
+  decrease?: string,
 }
-type gradientConfig = {
-  end: string,
+type statCardGradientConfig = {
+  end?: string,
   startOpacity: float,
   endOpacity: float,
 }
-type colorsConfig2 = {
-  line: lineConfig,
-  area: lineConfig,
-  gradient: gradientConfig,
+type statCardColorsConfig = {
+  line: statCardLineConfig,
+  area: statCardLineConfig,
+  gradient: statCardGradientConfig,
 }
-type activeDotConfig = {
-  width: string,
-  fill: string,
+type statCardActiveDotConfig = {
+  width?: string,
+  fill?: string,
 }
-type lineConfig2 = {
-  strokeWidth: string,
-  activeDot: activeDotConfig,
+type statCardLineConfig2 = {
+  strokeWidth?: string,
+  activeDot: statCardActiveDotConfig,
 }
-type fillConfig = {
+type statCardFillConfig = {
   default: string,
   hover: string,
 }
-type barConfig = {
-  borderTopRightRadius: string,
-  borderTopLeftRadius: string,
-  borderBottomRightRadius: string,
-  borderBottomLeftRadius: string,
-  fill: fillConfig,
+type statCardBarConfig = {
+  borderTopRightRadius?: string,
+  borderTopLeftRadius?: string,
+  borderBottomRightRadius?: string,
+  borderBottomLeftRadius?: string,
+  fill: statCardFillConfig,
 }
-type patternConfig = {
-  color: string,
-  size: string,
+type statCardPatternConfig = {
+  color?: string,
+  size?: string,
 }
-type backgroundConfig3 = {
-  fill: string,
-  empty: string,
-  pattern: patternConfig,
+type statCardBackgroundConfig = {
+  fill?: string,
+  empty?: string,
+  pattern: statCardPatternConfig,
 }
-type progressBarConfig = {
-  height: string,
-  borderRadius: string,
-  gap: string,
-  background: backgroundConfig3,
-  label: titleConfig3,
+type statCardProgressBarConfig = {
+  height?: string,
+  borderRadius?: string,
+  gap?: string,
+  background: statCardBackgroundConfig,
+  label: statCardTitleConfig,
 }
-type tooltipConfig2 = {
-  backgroundColor: string,
-  padding: paddingConfig11,
-  borderRadius: string,
-  color: string,
-  fontSize: string,
-  fontWeight: string,
+type statCardTooltipConfig = {
+  backgroundColor?: string,
+  padding: statCardPaddingConfig,
+  borderRadius?: string,
+  color?: string,
+  fontSize?: string,
+  fontWeight?: string,
 }
-type chartConfig = {
-  height: string,
-  colors: colorsConfig2,
-  line: lineConfig2,
-  bar: barConfig,
-  progressBar: progressBarConfig,
-  tooltip: tooltipConfig2,
+type statCardChartConfig = {
+  height?: string,
+  colors: statCardColorsConfig,
+  line: statCardLineConfig2,
+  bar: statCardBarConfig,
+  progressBar: statCardProgressBarConfig,
+  tooltip: statCardTooltipConfig,
 }
 type statCardTokenType = {
-  height: string,
-  maxWidth: string,
-  border: string,
-  borderRadius: string,
-  backgroundColor: string,
-  boxShadow: string,
-  padding: paddingConfig11,
-  textContainer: textContainerConfig2,
-  chart: chartConfig,
+  height?: string,
+  maxWidth?: string,
+  border?: string,
+  borderRadius?: string,
+  backgroundColor?: string,
+  boxShadow?: string,
+  padding: statCardPaddingConfig,
+  textContainer: statCardTextContainerConfig,
+  chart: statCardChartConfig,
 }
 type responsiveStatCardTokens = {
   sm: statCardTokenType,

@@ -1,70 +1,70 @@
-type gapConfig6 = {
+type accordionV2GapConfig = {
   border: string,
   noBorder: string,
 }
-type contentConfig11 = {
-  gap: string,
+type accordionV2ContentConfig = {
+  gap?: string,
 }
-type borderConfig13 = {
+type accordionV2BorderConfig = {
   disabled: string,
   default: string,
   hover: string,
   active: string,
   @as("open") open_: string,
 }
-type backgroundColorConfig22 = {
-  border: borderConfig13,
-  noBorder: borderConfig13,
+type accordionV2BackgroundColorConfig = {
+  border: accordionV2BorderConfig,
+  noBorder: accordionV2BorderConfig,
 }
-type colorConfig20 = {
+type accordionV2ColorConfig = {
   disabled: string,
   default: string,
   hover: string,
   active: string,
   @as("open") open_: string,
 }
-type titleConfig10 = {
-  fontSize: string,
-  fontWeight: string,
-  lineHeight: string,
-  color: colorConfig20,
+type accordionV2TitleConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  lineHeight?: string,
+  color: accordionV2ColorConfig,
 }
-type subtextConfig4 = {
-  fontSize: string,
-  fontWeight: string,
-  lineHeight: string,
-  gap: string,
-  color: colorConfig20,
+type accordionV2SubtextConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  lineHeight?: string,
+  gap?: string,
+  color: accordionV2ColorConfig,
 }
-type textConfig28 = {
-  gap: string,
-  title: titleConfig10,
-  subtext: subtextConfig4,
+type accordionV2TextConfig = {
+  gap?: string,
+  title: accordionV2TitleConfig,
+  subtext: accordionV2SubtextConfig,
 }
-type slotConfig7 = {
-  height: string,
+type accordionV2SlotConfig = {
+  height?: string,
 }
-type triggerConfig7 = {
-  content: contentConfig11,
-  backgroundColor: backgroundColorConfig22,
-  border: backgroundColorConfig22,
-  padding: gapConfig6,
-  text: textConfig28,
-  slot: slotConfig7,
+type accordionV2TriggerConfig = {
+  content: accordionV2ContentConfig,
+  backgroundColor: accordionV2BackgroundColorConfig,
+  border: accordionV2BackgroundColorConfig,
+  padding: accordionV2GapConfig,
+  text: accordionV2TextConfig,
+  slot: accordionV2SlotConfig,
 }
-type separatorConfig3 = {
-  color: gapConfig6,
+type accordionV2SeparatorConfig = {
+  color: accordionV2GapConfig,
 }
-type chevronConfig3 = {
-  height: string,
-  color: borderConfig13,
+type accordionV2ChevronConfig = {
+  height?: string,
+  color: accordionV2BorderConfig,
 }
 type accordionV2TokensType = {
-  gap: gapConfig6,
-  borderRadius: gapConfig6,
-  trigger: triggerConfig7,
-  separator: separatorConfig3,
-  chevron: chevronConfig3,
+  gap: accordionV2GapConfig,
+  borderRadius: accordionV2GapConfig,
+  trigger: accordionV2TriggerConfig,
+  separator: accordionV2SeparatorConfig,
+  chevron: accordionV2ChevronConfig,
 }
 type responsiveAccordionV2Tokens = {
   sm: accordionV2TokensType,

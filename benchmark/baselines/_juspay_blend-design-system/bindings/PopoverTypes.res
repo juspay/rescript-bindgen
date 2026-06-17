@@ -19,16 +19,20 @@ type shadow =
   | @as("2xl") V2xl
   | @as("full") Full
 type popoverActionType = {
-  ...JsxDOM.domProps,
+  disabled?: bool,
+  onClick?: ButtonSharedTypes.OnClick2.t,
   justifyContent?: string,
+  width?: CommonTypes.stringOrNumber,
+  size?: ButtonSharedTypes.buttonSize,
   text?: string,
-  buttonType?: ButtonTypes.buttonType,
+  buttonType?: ButtonSharedTypes.buttonType,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
+  loading?: bool,
   showSkeleton?: bool,
   skeletonVariant?: SkeletonTypes.skeletonVariant,
   fullWidth?: bool,
-  state?: ButtonTypes.buttonState,
+  state?: ButtonSharedTypes.buttonState,
 }
 type bodySkeletonProps2 = {
   show?: bool,
@@ -40,39 +44,39 @@ type popoverSkeletonProps = {
   variant?: SkeletonTypes.skeletonVariant,
   bodySkeletonProps?: bodySkeletonProps2,
 }
-type gapConfig2 = {
+type popoverGapConfig = {
   small: string,
   medium: string,
 }
-type paddingConfig6 = {
-  left: gapConfig2,
-  right: gapConfig2,
-  top: gapConfig2,
-  bottom: gapConfig2,
+type popoverPaddingConfig = {
+  left: popoverGapConfig,
+  right: popoverGapConfig,
+  top: popoverGapConfig,
+  bottom: popoverGapConfig,
 }
-type headingConfig3 = {
-  color: string,
-  fontSize: gapConfig2,
-  fontWeight: gapConfig2,
-  lineHeight: gapConfig2,
+type popoverHeadingConfig = {
+  color?: string,
+  fontSize: popoverGapConfig,
+  fontWeight: popoverGapConfig,
+  lineHeight: popoverGapConfig,
 }
-type headerContainerConfig = {
-  heading: headingConfig3,
-  description: headingConfig3,
+type popoverHeaderContainerConfig = {
+  heading: popoverHeadingConfig,
+  description: popoverHeadingConfig,
 }
-type footerConfig2 = {
-  gap: gapConfig2,
+type popoverFooterConfig = {
+  gap: popoverGapConfig,
 }
 type popoverTokenType = {
-  background: string,
-  border: string,
-  shadow: TokensTypes.shadowsConfig,
-  gap: gapConfig2,
-  zIndex: string,
-  borderRadius: gapConfig2,
-  padding: paddingConfig6,
-  headerContainer: headerContainerConfig,
-  footer: footerConfig2,
+  background?: string,
+  border?: string,
+  shadow: TokensTypes.tokensShadowsConfig,
+  gap: popoverGapConfig,
+  zIndex?: string,
+  borderRadius: popoverGapConfig,
+  padding: popoverPaddingConfig,
+  headerContainer: popoverHeaderContainerConfig,
+  footer: popoverFooterConfig,
 }
 type responsivePopoverTokens = {
   sm: popoverTokenType,

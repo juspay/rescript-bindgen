@@ -5,7 +5,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, CheckboxGroupTypes.checkbo
 external make: (
   ~value: array<string>=?,
   ~defaultValue: array<string>=?,
-  ~onValueChange: (array<string>, PositionerSharedTypes.onCheckedChangeConfig) => unit=?,
+  ~onValueChange: (array<string>, PositionerSharedTypes.utilsOnCheckedChangeConfig) => unit=?,
   ~allValues: array<string>=?,
   ~disabled: bool=?,
   ~style: CheckboxGroupTypes.checkboxGroupStyle=?,

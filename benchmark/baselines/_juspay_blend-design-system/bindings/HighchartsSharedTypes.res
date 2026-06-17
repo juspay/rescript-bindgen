@@ -120,83 +120,84 @@ type setState =
   | @as("select") Select
   | @as("hover") Hover
   | @as("inactive") Inactive
-type paddingConfig29 = {
-  top: string,
-  right: string,
-  bottom: string,
-  left: string,
+type chartsV2PaddingConfig = {
+  top?: string,
+  right?: string,
+  bottom?: string,
+  left?: string,
 }
-type headerConfig21 = {
-  padding: paddingConfig29,
-  backgroundColor: string,
-  borderBottom: string,
+type chartsV2HeaderConfig = {
+  padding: chartsV2PaddingConfig,
+  backgroundColor?: string,
+  borderBottom?: string,
 }
-type shapeConfig = {
-  width: string,
-  height: string,
-  borderRadius: string,
+type chartsV2ShapeConfig = {
+  width?: string,
+  height?: string,
+  borderRadius?: string,
 }
-type nameConfig = {
-  fontSize: string,
-  fontWeight: string,
-  lineHeight: string,
-  color: string,
+type chartsV2NameConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  lineHeight?: string,
+  color?: string,
 }
-type separatorConfig5 = {
-  color: string,
-  width: string,
-  height: string,
+type chartsV2SeparatorConfig = {
+  color?: string,
+  width?: string,
+  height?: string,
 }
-type textConfig29 = {
-  gap: string,
-  name: nameConfig,
-  value: nameConfig,
-  separator: separatorConfig5,
+type chartsV2TextConfig = {
+  gap?: string,
+  name: chartsV2NameConfig,
+  value: chartsV2NameConfig,
+  separator: chartsV2SeparatorConfig,
 }
-type legendItemConfig = {
-  gap: string,
-  shape: shapeConfig,
-  text: textConfig29,
+type chartsV2LegendItemConfig = {
+  gap?: string,
+  shape: chartsV2ShapeConfig,
+  text: chartsV2TextConfig,
 }
-type legendsConfig2 = {
-  gap: string,
-  legendItem: legendItemConfig,
+type chartsV2LegendsConfig = {
+  gap?: string,
+  legendItem: chartsV2LegendItemConfig,
 }
-type titleConfig11 = {
-  fontSize: string,
-  color: string,
-  fontWeight: string,
-  lineHeight: string,
+type chartsV2TitleConfig = {
+  fontSize?: string,
+  color?: string,
+  fontWeight?: string,
+  lineHeight?: string,
 }
-type lineConfig4 = {
-  width: string,
-  color: string,
+type chartsV2LineConfig = {
+  width?: string,
+  color?: string,
 }
-type xAxisConfig = {
-  title: titleConfig11,
-  labels: titleConfig11,
-  line: lineConfig4,
-  gridLine: lineConfig4,
+type chartsV2XAxisConfig = {
+  title: chartsV2TitleConfig,
+  labels: chartsV2TitleConfig,
+  line: chartsV2LineConfig,
+  gridLine: chartsV2LineConfig,
 }
-type chartConfig2 = {
-  backgroundColor: string,
-  xAxis: xAxisConfig,
-  yAxis: xAxisConfig,
+type chartsV2ChartConfig = {
+  backgroundColor?: string,
+  xAxis: chartsV2XAxisConfig,
+  yAxis: chartsV2XAxisConfig,
 }
 type chartV2TokensType = {
-  border: string,
-  borderRadius: string,
-  boxShadow: string,
-  backgroundColor: string,
-  header: headerConfig21,
-  legends: legendsConfig2,
-  chart: chartConfig2,
+  border?: string,
+  borderRadius?: string,
+  boxShadow?: string,
+  backgroundColor?: string,
+  header: chartsV2HeaderConfig,
+  legends: chartsV2LegendsConfig,
+  chart: chartsV2ChartConfig,
 }
 type responsiveChartV2Tokens = {
   sm: chartV2TokensType,
   lg: chartV2TokensType,
 }
 type chartV2CustomLegendItem = {
+  key: string,
   name: string,
   color?: string,
   value?: CommonTypes.stringOrNumber,
@@ -313,7 +314,7 @@ type pointOptionsObject = {
   y?: string,
   z?: string,
 }
-type shapeArgsConfig = {
+type highchartsShapeArgsConfig = {
   d?: string,
   dx?: string,
   dy?: string,
@@ -10941,6 +10942,7 @@ and point = {
   graphic?: Dom.element,
   graphics?: array<string>,
   index: int,
+  key: CommonTypes.stringOrNumber,
   name: string,
   options: pointOptionsObject,
   percentage?: float,
@@ -10949,7 +10951,7 @@ and point = {
   points?: array<string>,
   selected: bool,
   series: series,
-  shapeArgs?: shapeArgsConfig,
+  shapeArgs?: highchartsShapeArgsConfig,
   sliced?: bool,
   tooltipPos?: array<string>,
   total?: float,
@@ -11073,7 +11075,7 @@ module ChartV2LegendItem = {
   external fromSeries: series => t = "%identity"
   external fromPoint: point => t = "%identity"
 }
-type renderItemConfig = {
+type chartsV2RenderItemConfig = {
   item: ChartV2LegendItem.t,
   name: string,
   visible: bool,

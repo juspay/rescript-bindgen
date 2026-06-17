@@ -17,7 +17,7 @@ type multiSelectMenuSide =
   | @as("left") Left
   | @as("right") Right
   | @as("bottom") Bottom
-type tooltipPropsConfig4 = {
+type multiSelectTooltipPropsConfig = {
   side?: TooltipTypes.tooltipSide,
   align?: TooltipTypes.tooltipAlign,
   size?: TooltipTypes.tooltipSize,
@@ -39,7 +39,7 @@ type rec multiSelectMenuItemType = {
   onClick?: unit => unit,
   subMenu?: array<multiSelectMenuItemType>,
   tooltip?: React.element,
-  tooltipProps?: tooltipPropsConfig4,
+  tooltipProps?: multiSelectTooltipPropsConfig,
   disableTruncation?: bool,
 }
 type multiSelectMenuGroupType = {
@@ -47,13 +47,13 @@ type multiSelectMenuGroupType = {
   items: array<multiSelectMenuItemType>,
   showSeparator?: bool,
 }
-type primaryActionConfig2 = {
+type multiSelectPrimaryActionConfig = {
   text: string,
   onClick: array<string> => unit,
   disabled?: bool,
   loading?: bool,
 }
-type secondaryActionConfig = {
+type multiSelectSecondaryActionConfig = {
   text: string,
   onClick: unit => unit,
   disabled?: bool,
@@ -64,7 +64,7 @@ type multiSelectSkeletonProps = {
   show?: bool,
   variant?: SkeletonTypes.skeletonVariant,
 }
-type colorConfig12 = {
+type multiSelectColorConfig = {
   disabled: string,
   default: string,
   hover: string,
@@ -73,132 +73,132 @@ type colorConfig12 = {
   focusVisible: string,
   selected: string,
 }
-type labelConfig4 = {
-  fontSize: string,
-  fontWeight: string,
-  color: colorConfig12,
+type multiSelectLabelConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  color: multiSelectColorConfig,
 }
-type errorMessageConfig2 = {
-  fontSize: string,
-  fontWeight: string,
-  color: string,
+type multiSelectErrorMessageConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  color?: string,
 }
-type requiredConfig2 = {
-  color: string,
+type multiSelectRequiredConfig = {
+  color?: string,
 }
-type smConfig9 = {
+type multiSelectSmConfig = {
   container: string,
   @as("no-container") noContainer: string,
 }
-type heightConfig = {
-  sm: smConfig9,
-  md: smConfig9,
-  lg: smConfig9,
+type multiSelectHeightConfig = {
+  sm: multiSelectSmConfig,
+  md: multiSelectSmConfig,
+  lg: multiSelectSmConfig,
 }
-type containerConfig4 = {
-  x: string,
-  y: string,
+type multiSelectContainerConfig = {
+  x?: string,
+  y?: string,
 }
-type smConfig10 = {
-  container: containerConfig4,
-  @as("no-container") noContainer: containerConfig4,
+type multiSelectSmConfig2 = {
+  container: multiSelectContainerConfig,
+  @as("no-container") noContainer: multiSelectContainerConfig,
 }
-type paddingConfig20 = {
-  sm: smConfig10,
-  md: smConfig10,
-  lg: smConfig10,
+type multiSelectPaddingConfig = {
+  sm: multiSelectSmConfig2,
+  md: multiSelectSmConfig2,
+  lg: multiSelectSmConfig2,
 }
-type containerConfig5 = {
+type multiSelectContainerConfig2 = {
   hover: string,
   @as("open") open_: string,
   focus: string,
   closed: string,
   error: string,
 }
-type backgroundColorConfig8 = {
-  container: containerConfig5,
-  @as("no-container") noContainer: containerConfig5,
+type multiSelectBackgroundColorConfig = {
+  container: multiSelectContainerConfig2,
+  @as("no-container") noContainer: multiSelectContainerConfig2,
 }
-type countConfig = {
-  color: string,
-  backgroundColor: string,
-  fontWeight: string,
+type multiSelectCountConfig = {
+  color?: string,
+  backgroundColor?: string,
+  fontWeight?: string,
 }
-type containerConfig6 = {
-  count: countConfig,
-  text: countConfig,
+type multiSelectContainerConfig3 = {
+  count: multiSelectCountConfig,
+  text: multiSelectCountConfig,
 }
-type selectionTagConfig = {
-  container: containerConfig6,
-  @as("no-container") noContainer: containerConfig6,
+type multiSelectSelectionTagConfig = {
+  container: multiSelectContainerConfig3,
+  @as("no-container") noContainer: multiSelectContainerConfig3,
 }
-type placeholderConfig2 = {
-  color: string,
-  fontSize: string,
-  fontWeight: string,
+type multiSelectPlaceholderConfig = {
+  color?: string,
+  fontSize?: string,
+  fontWeight?: string,
 }
-type triggerConfig5 = {
-  height: heightConfig,
-  padding: paddingConfig20,
-  borderRadius: heightConfig,
-  boxShadow: smConfig9,
-  backgroundColor: backgroundColorConfig8,
-  outline: backgroundColorConfig8,
-  selectionTag: selectionTagConfig,
-  placeholder: placeholderConfig2,
-  selectedValue: placeholderConfig2,
+type multiSelectTriggerConfig = {
+  height: multiSelectHeightConfig,
+  padding: multiSelectPaddingConfig,
+  borderRadius: multiSelectHeightConfig,
+  boxShadow: multiSelectSmConfig,
+  backgroundColor: multiSelectBackgroundColorConfig,
+  outline: multiSelectBackgroundColorConfig,
+  selectionTag: multiSelectSelectionTagConfig,
+  placeholder: multiSelectPlaceholderConfig,
+  selectedValue: multiSelectPlaceholderConfig,
 }
-type seperatorConfig2 = {
-  color: string,
-  height: string,
-  margin: string,
+type multiSelectSeperatorConfig = {
+  color?: string,
+  height?: string,
+  margin?: string,
 }
-type itemConfig6 = {
-  padding: string,
-  margin: string,
-  borderRadius: string,
-  gap: string,
-  backgroundColor: colorConfig12,
-  optionsLabel: labelConfig4,
-  option: labelConfig4,
-  description: labelConfig4,
-  seperator: seperatorConfig2,
+type multiSelectItemConfig = {
+  padding?: string,
+  margin?: string,
+  borderRadius?: string,
+  gap?: string,
+  backgroundColor: multiSelectColorConfig,
+  optionsLabel: multiSelectLabelConfig,
+  option: multiSelectLabelConfig,
+  description: multiSelectLabelConfig,
+  seperator: multiSelectSeperatorConfig,
 }
-type menuConfig2 = {
-  backgroundColor: string,
-  border: string,
-  borderRadius: string,
-  padding: paddingConfig20,
-  item: itemConfig6,
+type multiSelectMenuConfig = {
+  backgroundColor?: string,
+  border?: string,
+  borderRadius?: string,
+  padding: multiSelectPaddingConfig,
+  item: multiSelectItemConfig,
 }
-type headerConfig11 = {
-  paddingX: string,
-  paddingBottom: string,
-  borderBottom: string,
+type multiSelectHeaderConfig = {
+  paddingX?: string,
+  paddingBottom?: string,
+  borderBottom?: string,
 }
-type searchConfig2 = {
-  paddingX: string,
-  marginTop: string,
-  marginBottom: string,
+type multiSelectSearchConfig = {
+  paddingX?: string,
+  marginTop?: string,
+  marginBottom?: string,
 }
-type contentConfig4 = {
-  gap: string,
+type multiSelectContentConfig = {
+  gap?: string,
 }
-type drawerConfig = {
-  header: headerConfig11,
-  search: searchConfig2,
-  content: contentConfig4,
+type multiSelectDrawerConfig = {
+  header: multiSelectHeaderConfig,
+  search: multiSelectSearchConfig,
+  content: multiSelectContentConfig,
 }
 type multiSelectTokensType = {
-  gap: string,
-  label: labelConfig4,
-  subLabel: labelConfig4,
-  hintText: labelConfig4,
-  errorMessage: errorMessageConfig2,
-  required: requiredConfig2,
-  trigger: triggerConfig5,
-  menu: menuConfig2,
-  drawer: drawerConfig,
+  gap?: string,
+  label: multiSelectLabelConfig,
+  subLabel: multiSelectLabelConfig,
+  hintText: multiSelectLabelConfig,
+  errorMessage: multiSelectErrorMessageConfig,
+  required: multiSelectRequiredConfig,
+  trigger: multiSelectTriggerConfig,
+  menu: multiSelectMenuConfig,
+  drawer: multiSelectDrawerConfig,
 }
 type responsiveMultiSelectTokens = {
   sm: multiSelectTokensType,

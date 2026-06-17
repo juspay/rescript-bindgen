@@ -1,6 +1,6 @@
 @module("@base-ui-components/react") @scope("Combobox") @react.component
 external make: (
-  ~filter: ('a, string, option<'a => string>) => bool=?,
+  ~filter: Nullable.t<('a, string, option<'a => string>) => bool>=?,
   ~id: string=?,
   ~children: React.element=?,
   ~disabled: bool=?,

@@ -7,18 +7,18 @@ type stateToken2 = {
   focusVisible: string,
   selected: string,
 }
-type labelConfig14 = {
-  fontSize: string,
-  fontWeight: string,
+type multiSelectV2LabelConfig = {
+  fontSize?: string,
+  fontWeight?: string,
   color: stateToken2,
 }
-type errorMessageConfig5 = {
-  fontSize: string,
-  fontWeight: string,
-  color: string,
+type multiSelectV2ErrorMessageConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  color?: string,
 }
-type requiredConfig10 = {
-  color: string,
+type multiSelectV2RequiredConfig = {
+  color?: string,
 }
 type variantToken4 = {
   container: string,
@@ -29,15 +29,15 @@ type sizeToken3 = {
   md: variantToken4,
   lg: variantToken4,
 }
-type containerConfig14 = {
-  top: string,
-  right: string,
-  bottom: string,
-  left: string,
+type multiSelectV2ContainerConfig = {
+  top?: string,
+  right?: string,
+  bottom?: string,
+  left?: string,
 }
 type variantToken5 = {
-  container: containerConfig14,
-  @as("no-container") noContainer: containerConfig14,
+  container: multiSelectV2ContainerConfig,
+  @as("no-container") noContainer: multiSelectV2ContainerConfig,
 }
 type sizeToken4 = {
   sm: variantToken5,
@@ -55,187 +55,187 @@ type variantToken6 = {
   container: triggerStateToken2,
   @as("no-container") noContainer: triggerStateToken2,
 }
-type slotConfig11 = {
-  gap: string,
-  width: string,
-}
-type countConfig2 = {
-  color: string,
-  backgroundColor: string,
-  fontWeight: string,
-  paddingTop: string,
-  paddingRight: string,
-  paddingBottom: string,
-  paddingLeft: string,
-}
-type selectionTagTypeToken = {
-  count: countConfig2,
-  text: countConfig2,
-}
-type selectionTagConfig2 = {
-  container: selectionTagTypeToken,
-  @as("no-container") noContainer: selectionTagTypeToken,
-  marginLeft: string,
-  borderRadius: string,
-}
-type chevronConfig4 = {
-  gap: string,
-  width: string,
-  height: string,
-  iconSize?: float,
-}
-type clearButtonConfig = {
-  backgroundColor: triggerStateToken2,
-  outline: triggerStateToken2,
-  color: string,
+type multiSelectV2SlotConfig = {
+  gap?: string,
   width?: string,
 }
-type floatingLabelConfig = {
-  paddingTop: string,
-  paddingRight: string,
-  paddingBottom: string,
-  paddingLeft: string,
+type multiSelectV2CountConfig = {
+  color?: string,
+  backgroundColor?: string,
+  fontWeight?: string,
+  paddingTop?: string,
+  paddingRight?: string,
+  paddingBottom?: string,
+  paddingLeft?: string,
 }
-type placeholderConfig7 = {
-  color: string,
-  fontSize: string,
-  fontWeight: string,
+type selectionTagTypeToken = {
+  count: multiSelectV2CountConfig,
+  text: multiSelectV2CountConfig,
 }
-type triggerConfig10 = {
+type contextSelectionTagConfig = {
+  container: selectionTagTypeToken,
+  @as("no-container") noContainer: selectionTagTypeToken,
+  marginLeft?: string,
+  borderRadius?: string,
+}
+type multiSelectV2ChevronConfig = {
+  gap?: string,
+  width?: string,
+  height?: string,
+  iconSize?: float,
+}
+type multiSelectV2ClearButtonConfig = {
+  backgroundColor: triggerStateToken2,
+  outline: triggerStateToken2,
+  color?: string,
+  width?: string,
+}
+type multiSelectV2FloatingLabelConfig = {
+  paddingTop?: string,
+  paddingRight?: string,
+  paddingBottom?: string,
+  paddingLeft?: string,
+}
+type multiSelectV2PlaceholderConfig = {
+  color?: string,
+  fontSize?: string,
+  fontWeight?: string,
+}
+type multiSelectV2TriggerConfig = {
   height: sizeToken3,
   padding: sizeToken4,
   borderRadius: sizeToken3,
   boxShadow: variantToken4,
   backgroundColor: variantToken6,
   outline: variantToken6,
-  slot: slotConfig11,
-  selectionTag: selectionTagConfig2,
-  chevron: chevronConfig4,
-  clearButton?: clearButtonConfig,
-  floatingLabel: floatingLabelConfig,
-  placeholder: placeholderConfig7,
-  selectedValue: placeholderConfig7,
+  slot: multiSelectV2SlotConfig,
+  selectionTag: contextSelectionTagConfig,
+  chevron: multiSelectV2ChevronConfig,
+  clearButton?: multiSelectV2ClearButtonConfig,
+  floatingLabel: multiSelectV2FloatingLabelConfig,
+  placeholder: multiSelectV2PlaceholderConfig,
+  selectedValue: multiSelectV2PlaceholderConfig,
 }
-type scrollConfig = {
-  height: string,
-  maxHeight: string,
+type multiSelectV2ScrollConfig = {
+  height?: string,
+  maxHeight?: string,
 }
-type headerConfig19 = {
-  backgroundColor: string,
-  borderBottom: string,
-  selectAllRowPaddingLeft: string,
-  selectAllRowPaddingRight: string,
+type multiSelectV2HeaderConfig = {
+  backgroundColor?: string,
+  borderBottom?: string,
+  selectAllRowPaddingLeft?: string,
+  selectAllRowPaddingRight?: string,
 }
-type selectAllConfig = {
-  paddingTop: string,
-  paddingRight: string,
-  paddingBottom: string,
-  paddingLeft: string,
-  borderRadius: string,
+type multiSelectV2SelectAllConfig = {
+  paddingTop?: string,
+  paddingRight?: string,
+  paddingBottom?: string,
+  paddingLeft?: string,
+  borderRadius?: string,
 }
-type actionsConfig3 = {
-  paddingTop: string,
-  paddingRight: string,
-  paddingBottom: string,
-  paddingLeft: string,
-  gap: string,
-  backgroundColor: string,
-  borderTop: string,
+type multiSelectV2ActionsConfig = {
+  paddingTop?: string,
+  paddingRight?: string,
+  paddingBottom?: string,
+  paddingLeft?: string,
+  gap?: string,
+  backgroundColor?: string,
+  borderTop?: string,
 }
-type optionsLabelConfig3 = {
-  fontSize: string,
-  fontWeight: string,
+type multiSelectV2OptionsLabelConfig = {
+  fontSize?: string,
+  fontWeight?: string,
   color: stateToken2,
-  paddingTop: string,
-  paddingRight: string,
-  paddingBottom: string,
-  paddingLeft: string,
+  paddingTop?: string,
+  paddingRight?: string,
+  paddingBottom?: string,
+  paddingLeft?: string,
 }
-type seperatorConfig4 = {
-  color: string,
-  height: string,
-  margin: string,
+type multiSelectV2SeperatorConfig = {
+  color?: string,
+  height?: string,
+  margin?: string,
 }
-type itemConfig11 = {
-  paddingTop: string,
-  paddingRight: string,
-  paddingBottom: string,
-  paddingLeft: string,
-  margin: string,
-  borderRadius: string,
-  gap: string,
+type multiSelectV2ItemConfig = {
+  paddingTop?: string,
+  paddingRight?: string,
+  paddingBottom?: string,
+  paddingLeft?: string,
+  margin?: string,
+  borderRadius?: string,
+  gap?: string,
   backgroundColor: stateToken2,
-  optionsLabel: optionsLabelConfig3,
-  option: labelConfig14,
-  description: labelConfig14,
-  seperator: seperatorConfig4,
+  optionsLabel: multiSelectV2OptionsLabelConfig,
+  option: multiSelectV2LabelConfig,
+  description: multiSelectV2LabelConfig,
+  seperator: multiSelectV2SeperatorConfig,
 }
-type menuConfig5 = {
-  backgroundColor: string,
-  border: string,
-  borderRadius: string,
+type multiSelectV2MenuConfig = {
+  backgroundColor?: string,
+  border?: string,
+  borderRadius?: string,
   padding: sizeToken4,
-  minWidth: string,
-  scroll: scrollConfig,
-  header: headerConfig19,
-  selectAll: selectAllConfig,
-  list: floatingLabelConfig,
-  actions: actionsConfig3,
-  item: itemConfig11,
+  minWidth?: string,
+  scroll: multiSelectV2ScrollConfig,
+  header: multiSelectV2HeaderConfig,
+  selectAll: multiSelectV2SelectAllConfig,
+  list: multiSelectV2FloatingLabelConfig,
+  actions: multiSelectV2ActionsConfig,
+  item: multiSelectV2ItemConfig,
 }
-type triggerConfig11 = {
-  paddingTop: string,
-  paddingRight: string,
-  paddingBottom: string,
-  paddingLeft: string,
-  margin: string,
-  borderRadius: string,
+type multiSelectV2TriggerConfig2 = {
+  paddingTop?: string,
+  paddingRight?: string,
+  paddingBottom?: string,
+  paddingLeft?: string,
+  margin?: string,
+  borderRadius?: string,
 }
-type contentConfig16 = {
-  borderRadius: string,
-  paddingTop: string,
-  paddingRight: string,
-  paddingBottom: string,
-  paddingLeft: string,
+type multiSelectV2ContentConfig = {
+  borderRadius?: string,
+  paddingTop?: string,
+  paddingRight?: string,
+  paddingBottom?: string,
+  paddingLeft?: string,
 }
-type subMenuConfig = {
-  trigger: triggerConfig11,
-  content: contentConfig16,
+type multiSelectV2SubMenuConfig = {
+  trigger: multiSelectV2TriggerConfig2,
+  content: multiSelectV2ContentConfig,
 }
-type headerConfig20 = {
-  paddingTop: string,
-  paddingRight: string,
-  paddingBottom: string,
-  paddingLeft: string,
-  borderBottom: string,
+type multiSelectV2HeaderConfig2 = {
+  paddingTop?: string,
+  paddingRight?: string,
+  paddingBottom?: string,
+  paddingLeft?: string,
+  borderBottom?: string,
 }
-type searchConfig3 = {
-  paddingTop: string,
-  paddingRight: string,
-  paddingBottom: string,
-  paddingLeft: string,
-  marginTop: string,
-  marginBottom: string,
+type multiSelectV2SearchConfig = {
+  paddingTop?: string,
+  paddingRight?: string,
+  paddingBottom?: string,
+  paddingLeft?: string,
+  marginTop?: string,
+  marginBottom?: string,
 }
-type contentConfig17 = {
-  gap: string,
+type multiSelectV2ContentConfig2 = {
+  gap?: string,
 }
-type drawerConfig4 = {
-  header: headerConfig20,
-  search: searchConfig3,
-  content: contentConfig17,
+type multiSelectV2DrawerConfig = {
+  header: multiSelectV2HeaderConfig2,
+  search: multiSelectV2SearchConfig,
+  content: multiSelectV2ContentConfig2,
 }
 type multiSelectV2TokensType = {
-  gap: string,
-  label: labelConfig14,
-  subLabel: labelConfig14,
-  hintText: labelConfig14,
-  errorMessage: errorMessageConfig5,
-  required: requiredConfig10,
-  trigger: triggerConfig10,
-  menu: menuConfig5,
-  subMenu: subMenuConfig,
-  drawer: drawerConfig4,
+  gap?: string,
+  label: multiSelectV2LabelConfig,
+  subLabel: multiSelectV2LabelConfig,
+  hintText: multiSelectV2LabelConfig,
+  errorMessage: multiSelectV2ErrorMessageConfig,
+  required: multiSelectV2RequiredConfig,
+  trigger: multiSelectV2TriggerConfig,
+  menu: multiSelectV2MenuConfig,
+  subMenu: multiSelectV2SubMenuConfig,
+  drawer: multiSelectV2DrawerConfig,
 }
 type responsiveMultiSelectV2Tokens = {
   sm: multiSelectV2TokensType,
@@ -257,8 +257,8 @@ type componentTokenType = {
   @as("DROPDOWN_INPUT") dROPDOWN_INPUT?: InputsTypes.responsiveDropdownInputTokens,
   @as("CHECKBOX") cHECKBOX?: CheckboxTypes.responsiveCheckboxTokens,
   @as("TABS") tABS?: TabsTypes.responsiveTabsTokens,
-  @as("BUTTON") bUTTON?: ButtonTypes.responsiveButtonTokens,
-  @as("MODAL") mODAL?: ModalTypes.responsiveModalTokens,
+  @as("BUTTON") bUTTON?: ButtonSharedTypes.responsiveButtonTokens,
+  @as("MODAL") mODAL?: ButtonSharedTypes.responsiveModalTokens,
   @as("BREADCRUMB") bREADCRUMB?: BreadcrumbTypes.responsiveBreadcrumbTokens,
   @as("POPOVER") pOPOVER?: PopoverTypes.responsivePopoverTokens,
   @as("MENU") mENU?: MenuTypes.responsiveMenuTokensType,
@@ -303,7 +303,7 @@ type componentTokenType = {
   @as("RADIOV2") rADIOV2?: SelectorV2Types.responsiveRadioV2Tokens,
   @as("POPOVERV2") pOPOVERV2?: PopoverV2Types.responsivePopoverV2Tokens,
 }
-type componentTokensConfig = {
+type contextComponentTokensConfig = {
   @as("TAGS") tAGS: TagsTypes.responsiveTagTokens,
   @as("SEARCH_INPUT") sEARCH_INPUT: InputsTypes.responsiveSearchInputTokens,
   @as("TEXT_AREA") tEXT_AREA: InputsTypes.responsiveTextAreaTokens,
@@ -319,8 +319,8 @@ type componentTokensConfig = {
   @as("DROPDOWN_INPUT") dROPDOWN_INPUT: InputsTypes.responsiveDropdownInputTokens,
   @as("CHECKBOX") cHECKBOX: CheckboxTypes.responsiveCheckboxTokens,
   @as("TABS") tABS: TabsTypes.responsiveTabsTokens,
-  @as("BUTTON") bUTTON: ButtonTypes.responsiveButtonTokens,
-  @as("MODAL") mODAL: ModalTypes.responsiveModalTokens,
+  @as("BUTTON") bUTTON: ButtonSharedTypes.responsiveButtonTokens,
+  @as("MODAL") mODAL: ButtonSharedTypes.responsiveModalTokens,
   @as("BREADCRUMB") bREADCRUMB: BreadcrumbTypes.responsiveBreadcrumbTokens,
   @as("POPOVER") pOPOVER: PopoverTypes.responsivePopoverTokens,
   @as("MENU") mENU: MenuTypes.responsiveMenuTokensType,
@@ -367,7 +367,7 @@ type componentTokensConfig = {
 }
 type themeContextType = {
   foundationTokens: TokensTypes.foundationTokenType,
-  componentTokens: componentTokensConfig,
+  componentTokens: contextComponentTokensConfig,
   breakpoints: BreakpointsTypes.breakpointType,
   theme: string,
 }

@@ -6,15 +6,15 @@ type timelineNodeStatus =
 type variant2 =
   | @as("pulse") Pulse
   | @as("wave") Wave
-type trackConfig = {
-  width: string,
-  backgroundColor: string,
-  left: string,
+type timelineTrackConfig = {
+  width?: string,
+  backgroundColor?: string,
+  left?: string,
 }
-type indicatorConfig4 = {
-  left: string,
-  width: string,
-  height: string,
+type timelineIndicatorConfig = {
+  left?: string,
+  width?: string,
+  height?: string,
 }
 type timelineStatusColors = {
   success: string,
@@ -22,124 +22,124 @@ type timelineStatusColors = {
   error: string,
   neutral: string,
 }
-type circleConfig2 = {
-  left: string,
-  width: string,
-  height: string,
-  backgroundColor: string,
-  border: string,
+type timelineCircleConfig = {
+  left?: string,
+  width?: string,
+  height?: string,
+  backgroundColor?: string,
+  border?: string,
 }
-type maskConfig = {
-  backgroundColor: string,
-  height: string,
+type timelineMaskConfig = {
+  backgroundColor?: string,
+  height?: string,
 }
-type textConfig25 = {
-  fontSize: string,
-  fontWeight: string,
-  color: string,
+type timelineTextConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  color?: string,
 }
-type labelConfig11 = {
-  paddingLeft: string,
-  marginBottom: string,
-  circle: circleConfig2,
-  mask: maskConfig,
-  text: textConfig25,
+type timelineLabelConfig = {
+  paddingLeft?: string,
+  marginBottom?: string,
+  circle: timelineCircleConfig,
+  mask: timelineMaskConfig,
+  text: timelineTextConfig,
 }
-type rowConfig5 = {
-  paddingLeft: string,
-  marginBottom: string,
-  gap: string,
+type timelineRowConfig = {
+  paddingLeft?: string,
+  marginBottom?: string,
+  gap?: string,
 }
-type sectionConfig2 = {
-  marginBottom: string,
+type timelineSectionConfig = {
+  marginBottom?: string,
 }
-type timestampConfig = {
-  fontSize: string,
-  color: string,
-  gap: string,
+type timelineTimestampConfig = {
+  fontSize?: string,
+  color?: string,
+  gap?: string,
 }
-type headerConfig16 = {
-  row: rowConfig5,
-  section: sectionConfig2,
-  title: textConfig25,
-  timestamp: timestampConfig,
+type timelineHeaderConfig = {
+  row: timelineRowConfig,
+  section: timelineSectionConfig,
+  title: timelineTextConfig,
+  timestamp: timelineTimestampConfig,
 }
-type rootIndicatorConfig = {
-  top: string,
+type timelineRootIndicatorConfig = {
+  top?: string,
 }
-type headerRowConfig = {
-  gap: string,
+type timelineHeaderRowConfig = {
+  gap?: string,
 }
-type titleConfig9 = {
-  fontSize: string,
-  fontWeight: string,
-  color: string,
-  gap: string,
+type timelineTitleConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  color?: string,
+  gap?: string,
 }
-type descriptionConfig2 = {
-  fontSize: string,
-  color: string,
-  marginTop: string,
-  marginBottom: string,
-  lineHeight: string,
+type timelineDescriptionConfig = {
+  fontSize?: string,
+  color?: string,
+  marginTop?: string,
+  marginBottom?: string,
+  lineHeight?: string,
 }
-type connectorConfig2 = {
-  left: string,
-  width: string,
-  height: string,
-  color: string,
+type timelineConnectorConfig = {
+  left?: string,
+  width?: string,
+  height?: string,
+  color?: string,
 }
-type avatarConfig3 = {
-  width: string,
-  height: string,
-  marginTop: string,
+type timelineAvatarConfig = {
+  width?: string,
+  height?: string,
+  marginTop?: string,
 }
-type userConfig = {
-  fontSize: string,
-  color: string,
-  marginLeft: string,
+type timelineUserConfig = {
+  fontSize?: string,
+  color?: string,
+  marginLeft?: string,
 }
-type timeConfig = {
-  fontSize: string,
-  color: string,
+type timelineTimeConfig = {
+  fontSize?: string,
+  color?: string,
 }
-type separatorConfig2 = {
-  width: string,
-  height: string,
-  color: string,
-  marginLeft: string,
-  marginRight: string,
+type timelineSeparatorConfig = {
+  width?: string,
+  height?: string,
+  color?: string,
+  marginLeft?: string,
+  marginRight?: string,
 }
-type subsectionConfig = {
-  paddingLeft: string,
-  marginTop: string,
-  marginBottom: string,
-  marginLeft: string,
-  rootIndicator: rootIndicatorConfig,
-  headerRow: headerRowConfig,
-  titleRow: headerRowConfig,
-  datetimeGroup: headerRowConfig,
-  title: titleConfig9,
-  description: descriptionConfig2,
-  datetime: timestampConfig,
-  connector: connectorConfig2,
-  avatar: avatarConfig3,
-  user: userConfig,
-  time: timeConfig,
-  separator: separatorConfig2,
+type timelineSubsectionConfig = {
+  paddingLeft?: string,
+  marginTop?: string,
+  marginBottom?: string,
+  marginLeft?: string,
+  rootIndicator: timelineRootIndicatorConfig,
+  headerRow: timelineHeaderRowConfig,
+  titleRow: timelineHeaderRowConfig,
+  datetimeGroup: timelineHeaderRowConfig,
+  title: timelineTitleConfig,
+  description: timelineDescriptionConfig,
+  datetime: timelineTimestampConfig,
+  connector: timelineConnectorConfig,
+  avatar: timelineAvatarConfig,
+  user: timelineUserConfig,
+  time: timelineTimeConfig,
+  separator: timelineSeparatorConfig,
 }
-type showMoreConfig = {
-  paddingLeft: string,
-  marginTop: string,
+type timelineShowMoreConfig = {
+  paddingLeft?: string,
+  marginTop?: string,
 }
 type timelineTokensType = {
-  track: trackConfig,
-  indicator: indicatorConfig4,
+  track: timelineTrackConfig,
+  indicator: timelineIndicatorConfig,
   statusColors: timelineStatusColors,
-  label: labelConfig11,
-  header: headerConfig16,
-  subsection: subsectionConfig,
-  showMore: showMoreConfig,
+  label: timelineLabelConfig,
+  header: timelineHeaderConfig,
+  subsection: timelineSubsectionConfig,
+  showMore: timelineShowMoreConfig,
 }
 type responsiveTimelineTokens = {
   sm: timelineTokensType,

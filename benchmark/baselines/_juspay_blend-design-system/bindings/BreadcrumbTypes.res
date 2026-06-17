@@ -10,24 +10,24 @@ type breadcrumbItemType = {
   onClick?: ReactEvent.Mouse.t => unit,
   skeleton?: breadcrumbSkeletonProps,
 }
-type colorConfig3 = {
+type breadcrumbColorConfig = {
   default: string,
   hover: string,
   active: string,
 }
-type textConfig5 = {
-  fontSize: string,
-  fontWeight: string,
-  color: colorConfig3,
+type breadcrumbTextConfig = {
+  fontSize?: string,
+  fontWeight?: string,
+  color: breadcrumbColorConfig,
 }
-type itemConfig = {
-  padding: string,
-  gap: string,
-  text: textConfig5,
+type breadcrumbItemConfig = {
+  padding?: string,
+  gap?: string,
+  text: breadcrumbTextConfig,
 }
 type breadcrumbTokenType = {
-  gap: string,
-  item: itemConfig,
+  gap?: string,
+  item: breadcrumbItemConfig,
 }
 type responsiveBreadcrumbTokens = {
   sm: breadcrumbTokenType,

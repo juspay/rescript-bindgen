@@ -1,12 +1,12 @@
 type comboboxInputState = {
   @as("open") open_: bool,
-  popupSide: PositionerSharedTypes.side,
+  popupSide: Nullable.t<PositionerSharedTypes.side>,
   listEmpty: bool,
   readOnly: bool,
   disabled: bool,
   touched: bool,
   dirty: bool,
-  valid: bool,
+  valid: Nullable.t<bool>,
   filled: bool,
   focused: bool,
 }
@@ -14,12 +14,12 @@ type inputState = {
   disabled: bool,
   touched: bool,
   dirty: bool,
-  valid: bool,
+  valid: Nullable.t<bool>,
   filled: bool,
   focused: bool,
 }
 type numberFieldInputState = {
-  value: float,
+  value: Nullable.t<float>,
   inputValue: string,
   required: bool,
   disabled: bool,
@@ -27,7 +27,7 @@ type numberFieldInputState = {
   scrubbing: bool,
   touched: bool,
   dirty: bool,
-  valid: bool,
+  valid: Nullable.t<bool>,
   filled: bool,
   focused: bool,
 }

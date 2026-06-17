@@ -1,50 +1,50 @@
-type gapConfig8 = {
+type popoverV2GapConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type paddingConfig30 = {
-  left: gapConfig8,
-  right: gapConfig8,
-  top: gapConfig8,
-  bottom: gapConfig8,
+type popoverV2PaddingConfig = {
+  left: popoverV2GapConfig,
+  right: popoverV2GapConfig,
+  top: popoverV2GapConfig,
+  bottom: popoverV2GapConfig,
 }
-type iconSizeConfig = {
+type popoverV2IconSizeConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type headingConfig5 = {
-  color: string,
-  fontSize: gapConfig8,
-  fontWeight: gapConfig8,
-  lineHeight: gapConfig8,
-  @as("IconSize") iconSize: iconSizeConfig,
+type popoverV2HeadingConfig = {
+  color?: string,
+  fontSize: popoverV2GapConfig,
+  fontWeight: popoverV2GapConfig,
+  lineHeight: popoverV2GapConfig,
+  @as("IconSize") iconSize: popoverV2IconSizeConfig,
 }
-type descriptionConfig3 = {
-  color: string,
-  fontSize: gapConfig8,
-  fontWeight: gapConfig8,
-  lineHeight: gapConfig8,
+type popoverV2DescriptionConfig = {
+  color?: string,
+  fontSize: popoverV2GapConfig,
+  fontWeight: popoverV2GapConfig,
+  lineHeight: popoverV2GapConfig,
 }
-type topContainerConfig2 = {
-  gap: gapConfig8,
-  heading: headingConfig5,
-  description: descriptionConfig3,
+type popoverV2TopContainerConfig = {
+  gap: popoverV2GapConfig,
+  heading: popoverV2HeadingConfig,
+  description: popoverV2DescriptionConfig,
 }
-type bottomContainerConfig2 = {
-  gap: gapConfig8,
+type popoverV2BottomContainerConfig = {
+  gap: popoverV2GapConfig,
 }
 type popoverV2TokenType = {
-  background: string,
-  border: string,
-  shadow: TokensTypes.shadowsConfig,
-  gap: gapConfig8,
-  zIndex: string,
-  borderRadius: gapConfig8,
-  padding: paddingConfig30,
-  @as("TopContainer") topContainer: topContainerConfig2,
-  bottomContainer: bottomContainerConfig2,
+  background?: string,
+  border?: string,
+  shadow: TokensTypes.tokensShadowsConfig,
+  gap: popoverV2GapConfig,
+  zIndex?: string,
+  borderRadius: popoverV2GapConfig,
+  padding: popoverV2PaddingConfig,
+  @as("TopContainer") topContainer: popoverV2TopContainerConfig,
+  bottomContainer: popoverV2BottomContainerConfig,
 }
 type responsivePopoverV2Tokens = {
   sm: popoverV2TokenType,

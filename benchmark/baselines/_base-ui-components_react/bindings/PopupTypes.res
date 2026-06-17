@@ -39,7 +39,7 @@ type tooltipPopupState = {
   @as("open") open_: bool,
   side: PositionerSharedTypes.side,
   align: PositionerSharedTypes.align,
-  instant: RootSharedTypes.instantType3,
+  instant?: RootSharedTypes.instantType3,
   transitionStatus: PositionerSharedTypes.transitionStatus,
 }
 module InitialFocusTarget = {

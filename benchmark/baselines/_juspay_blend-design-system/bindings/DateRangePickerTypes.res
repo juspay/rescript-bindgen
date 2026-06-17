@@ -59,7 +59,7 @@ type customRangeConfig = {
   allowManualEndDateSelection?: bool,
   applyToPresets?: bool,
 }
-type customFormatConfig = {
+type dateRangePickerCustomFormatConfig = {
   includeTime?: bool,
   includeYear?: bool,
   separator?: string,
@@ -67,150 +67,150 @@ type customFormatConfig = {
 }
 type dateFormatConfig = {
   preset?: dateFormatPreset,
-  customFormat?: (dateRange, option<customFormatConfig>) => string,
+  customFormat?: (dateRange, option<dateRangePickerCustomFormatConfig>) => string,
   includeTime?: bool,
   includeYear?: bool,
   separator?: string,
   locale?: string,
   timeFormat?: timeFormat,
 }
-type renderTriggerConfig = {
-  selectedRange: dateRange,
+type dateRangePickerRenderTriggerConfig = {
+  selectedRange?: dateRange,
   isOpen: bool,
   isDisabled: bool,
   formattedValue: string,
   onClick: unit => unit,
 }
-type triggerConfig3 = {
+type triggerConfig = {
   element?: React.element,
   placeholder?: string,
   showIcon?: bool,
   icon?: React.element,
   style?: JsxDOM.style,
-  renderTrigger?: renderTriggerConfig => React.element,
+  renderTrigger?: dateRangePickerRenderTriggerConfig => React.element,
 }
-type borderRadiusConfig7 = {
-  topLeft: string,
-  topRight: string,
-  bottomLeft: string,
-  bottomRight: string,
+type dateRangePickerBorderRadiusConfig = {
+  topLeft?: string,
+  topRight?: string,
+  bottomLeft?: string,
+  bottomRight?: string,
 }
-type smConfig8 = {
-  x: string,
-  y: string,
+type dateRangePickerSmConfig = {
+  x?: string,
+  y?: string,
 }
-type paddingConfig9 = {
-  sm: smConfig8,
-  lg: smConfig8,
-  md: smConfig8,
+type dateRangePickerPaddingConfig = {
+  sm: dateRangePickerSmConfig,
+  lg: dateRangePickerSmConfig,
+  md: dateRangePickerSmConfig,
 }
-type disabledConfig = {
-  left: string,
-  top: string,
-  bottom: string,
-  right: string,
+type dateRangePickerDisabledConfig = {
+  left?: string,
+  top?: string,
+  bottom?: string,
+  right?: string,
 }
-type borderConfig5 = {
-  disabled: disabledConfig,
-  default: disabledConfig,
-  hover: disabledConfig,
-  active: disabledConfig,
+type dateRangePickerBorderConfig = {
+  disabled: dateRangePickerDisabledConfig,
+  default: dateRangePickerDisabledConfig,
+  hover: dateRangePickerDisabledConfig,
+  active: dateRangePickerDisabledConfig,
 }
-type fontSizeConfig4 = {
+type dateRangePickerFontSizeConfig = {
   sm: string,
   lg: string,
   md: string,
 }
-type textConfig11 = {
-  color: string,
-  fontWeight: string,
-  fontSize: fontSizeConfig4,
+type dateRangePickerTextConfig = {
+  color?: string,
+  fontWeight?: string,
+  fontSize: dateRangePickerFontSizeConfig,
 }
-type quickSelectorConfig = {
-  borderRadius: borderRadiusConfig7,
-  backgroundColor: string,
-  gap: string,
-  padding: paddingConfig9,
-  border: borderConfig5,
-  text: textConfig11,
-  iconSize: string,
+type dateRangePickerQuickSelectorConfig = {
+  borderRadius: dateRangePickerBorderRadiusConfig,
+  backgroundColor?: string,
+  gap?: string,
+  padding: dateRangePickerPaddingConfig,
+  border: dateRangePickerBorderConfig,
+  text: dateRangePickerTextConfig,
+  iconSize?: string,
 }
-type borderRadiusConfig8 = {
-  withQuickSelector: string,
-  withoutQuickSelector: string,
+type dateRangePickerBorderRadiusConfig2 = {
+  withQuickSelector?: string,
+  withoutQuickSelector?: string,
 }
-type textConfig12 = {
-  color: string,
-  fontSize: fontSizeConfig4,
-  fontWeight: string,
+type dateRangePickerTextConfig2 = {
+  color?: string,
+  fontSize: dateRangePickerFontSizeConfig,
+  fontWeight?: string,
 }
-type borderConfig6 = {
+type dateRangePickerBorderConfig2 = {
   disabled: string,
   default: string,
   hover: string,
   active: string,
 }
-type dateInputConfig = {
-  borderRadius: borderRadiusConfig8,
-  padding: paddingConfig9,
-  text: textConfig12,
-  border: borderConfig6,
-  backgroundColor: string,
-  iconSize: string,
-  gap: string,
+type dateRangePickerDateInputConfig = {
+  borderRadius: dateRangePickerBorderRadiusConfig2,
+  padding: dateRangePickerPaddingConfig,
+  text: dateRangePickerTextConfig2,
+  border: dateRangePickerBorderConfig2,
+  backgroundColor?: string,
+  iconSize?: string,
+  gap?: string,
 }
-type triggerConfig4 = {
-  quickSelector: quickSelectorConfig,
-  dateInput: dateInputConfig,
+type dateRangePickerTriggerConfig = {
+  quickSelector: dateRangePickerQuickSelectorConfig,
+  dateInput: dateRangePickerDateInputConfig,
 }
-type paddingConfig10 = {
-  x: string,
-  y: string,
+type dateRangePickerPaddingConfig2 = {
+  x?: string,
+  y?: string,
 }
-type labelConfig = {
-  color: string,
-  fontSize: string,
-  fontWeight: string,
+type dateRangePickerLabelConfig = {
+  color?: string,
+  fontSize?: string,
+  fontWeight?: string,
 }
-type dateInputConfig2 = {
-  gap: string,
-  label: labelConfig,
+type dateRangePickerDateInputConfig2 = {
+  gap?: string,
+  label: dateRangePickerLabelConfig,
 }
-type headerConfig4 = {
-  padding: paddingConfig10,
-  dateInput: dateInputConfig2,
+type dateRangePickerHeaderConfig = {
+  padding: dateRangePickerPaddingConfig2,
+  dateInput: dateRangePickerDateInputConfig2,
 }
-type headerConfig5 = {
-  fontSize: string,
-  fontWeight: string,
-  color: string,
-  padding: paddingConfig10,
-  gap: string,
+type dateRangePickerHeaderConfig2 = {
+  fontSize?: string,
+  fontWeight?: string,
+  color?: string,
+  padding: dateRangePickerPaddingConfig2,
+  gap?: string,
 }
-type monthConfig = {
-  header: headerConfig5,
+type dateRangePickerMonthConfig = {
+  header: dateRangePickerHeaderConfig2,
 }
-type rowConfig = {
-  gap: string,
+type dateRangePickerRowConfig = {
+  gap?: string,
 }
-type weekConfig = {
-  gap: string,
-  fontSize: string,
-  fontWeight: string,
-  boxShadow: string,
-  color: string,
-  padding: smConfig8,
-  row: rowConfig,
+type dateRangePickerWeekConfig = {
+  gap?: string,
+  fontSize?: string,
+  fontWeight?: string,
+  boxShadow?: string,
+  color?: string,
+  padding: dateRangePickerSmConfig,
+  row: dateRangePickerRowConfig,
 }
-type cellConfig = {
-  padding: paddingConfig10,
-  fontWeight: string,
-  fontSize: string,
-  lineHeight: string,
-  border: borderConfig6,
-  borderRadius: string,
+type dateRangePickerCellConfig = {
+  padding: dateRangePickerPaddingConfig2,
+  fontWeight?: string,
+  fontSize?: string,
+  lineHeight?: string,
+  border: dateRangePickerBorderConfig2,
+  borderRadius?: string,
 }
-type statesConfig = {
+type dateRangePickerStatesConfig = {
   startDate: string,
   endDate: string,
   singleDate: string,
@@ -218,47 +218,47 @@ type statesConfig = {
   todayDay: string,
   disabledDay: string,
 }
-type textConfig13 = {
+type dateRangePickerTextConfig3 = {
   dayNumber: string,
   selectedDay: string,
   rangeDay: string,
   todayDay: string,
   disabledDate: string,
 }
-type todayIndicatorConfig = {
-  width: string,
-  backgroundColor: string,
+type dateRangePickerTodayIndicatorConfig = {
+  width?: string,
+  backgroundColor?: string,
 }
-type dayConfig = {
-  cell: cellConfig,
-  states: statesConfig,
-  text: textConfig13,
-  todayIndicator: todayIndicatorConfig,
+type dateRangePickerDayConfig = {
+  cell: dateRangePickerCellConfig,
+  states: dateRangePickerStatesConfig,
+  text: dateRangePickerTextConfig3,
+  todayIndicator: dateRangePickerTodayIndicatorConfig,
 }
-type calendarGridConfig = {
-  month: monthConfig,
-  week: weekConfig,
-  day: dayConfig,
+type dateRangePickerCalendarGridConfig = {
+  month: dateRangePickerMonthConfig,
+  week: dateRangePickerWeekConfig,
+  day: dateRangePickerDayConfig,
 }
-type footerConfig3 = {
-  padding: paddingConfig10,
-  borderTop: string,
-  gap: string,
+type dateRangePickerFooterConfig = {
+  padding: dateRangePickerPaddingConfig2,
+  borderTop?: string,
+  gap?: string,
 }
-type calendarConfig = {
-  minWidth: string,
-  width: string,
-  backgroundColor: string,
-  border: string,
-  borderRadius: string,
-  boxShadow: string,
-  header: headerConfig4,
-  calendarGrid: calendarGridConfig,
-  footer: footerConfig3,
+type dateRangePickerCalendarConfig = {
+  minWidth?: string,
+  width?: string,
+  backgroundColor?: string,
+  border?: string,
+  borderRadius?: string,
+  boxShadow?: string,
+  header: dateRangePickerHeaderConfig,
+  calendarGrid: dateRangePickerCalendarGridConfig,
+  footer: dateRangePickerFooterConfig,
 }
 type calendarTokenType = {
-  trigger: triggerConfig4,
-  calendar: calendarConfig,
+  trigger: dateRangePickerTriggerConfig,
+  calendar: dateRangePickerCalendarConfig,
 }
 type responsiveCalendarTokens = {
   sm: calendarTokenType,

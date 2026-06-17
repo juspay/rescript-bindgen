@@ -1,4 +1,4 @@
-type rangeConfig = {
+type utilsRangeConfig = {
   from: Date.t,
   @as("to") to_: Date.t,
 }

@@ -2,9 +2,9 @@
 
 **94** components · ✅ **94** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**50** function binding(s) → `BlendDesignSystemBindings.res`.
+**51** function binding(s) → `BlendDesignSystemBindings.res`.
 
-**1337** shared types deduplicated into **61** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**1345** shared types deduplicated into **60** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -56,6 +56,7 @@ Standalone function exports, emitted as positional `@module external` bindings i
 - `getSliderLabelStyles`
 - `getProgressBarTokens`
 - `getStepperTokens`
+- `useSkeletonBase`
 - `getSkeletonState`
 - `mergeSkeletonProps`
 - `getSkeletonDefaults`

@@ -8,7 +8,7 @@ type dropdownOption = {
   label: string,
   disabled: bool,
 }
-type chevronConfig = {
+type componentsChevronConfig = {
   className?: string,
   style?: JsxDOM.style,
   size?: float,

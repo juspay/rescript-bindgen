@@ -5,7 +5,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, JSON.t) => React.element) 
 external make: (
   ~validationMode: FormTypes.formValidationMode=?,
   ~errors: Dict.t<CommonTypes.stringOrStringArray>=?,
-  ~onFormSubmit: ('a, PositionerSharedTypes.onFormSubmitConfig) => unit=?,
+  ~onFormSubmit: ('a, PositionerSharedTypes.utilsOnFormSubmitConfig) => unit=?,
   ~style: CommonTypes.style=?,
   ~title: string=?,
   ~autoFocus: bool=?,
