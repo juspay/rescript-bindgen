@@ -2701,9 +2701,16 @@ function functionNode(sig, ctx, propName, depth = 0) {
         const n = typeName(pt)
         // hasOwnProperty guard: a param whose type resolves to a name like `toString`/`valueOf`
         // must not match an inherited Object.prototype member (which would be a native function).
-        const node = (n && Object.prototype.hasOwnProperty.call(REACT_EVENTS, n))
+        let node = (n && Object.prototype.hasOwnProperty.call(REACT_EVENTS, n))
             ? { kind: 'event', res: REACT_EVENTS[n] }
             : classify(pt, ctx, propName, depth + 1)
+        // A callback PARAM typed `T | null` (e.g. `(item: string | null) => void`) is a value the
+        // library PASSES to the consumer, so the consumer must handle null -> `Nullable.t<T>`.
+        // strictNullChecks-off strips it from the resolved type; recover from the syntactic node,
+        // mirroring the return path's `| null` recovery and top-level props. (#63 validation)
+        if (!optional && node.kind !== 'event' && pdecl && ts.isParameter(pdecl) && pdecl.type) {
+            node = applyNullable(node, syntacticNullability(pdecl.type))
+        }
         return optional ? { ...node, optional: true } : node
     })
     ctx.inFnReturn = prevRet
@@ -2738,6 +2745,11 @@ function functionNode(sig, ctx, propName, depth = 0) {
             ctx.retSynNull = synNull
             ctx.produced = P
             ret = classify(retType, ctx, propName, depth + 1)
+            // A SINGLE-typed nullable return (`(file) => Errors | null`) collapses to `Errors`
+            // under strictNullChecks-off and isn't a union, so the union path's `| null` recovery
+            // never fires — wrap it in `Nullable.t` here (the consumer must be able to produce
+            // null). A union return keeps its own (views/none) handling. (#63 validation)
+            if (synNull && !(retType.isUnion && retType.isUnion())) ret = applyNullable(ret, { hasNull: true, single: true })
             ctx.inFnReturn = prev
             ctx.retSynNull = prevNull
             ctx.produced = prevProd
