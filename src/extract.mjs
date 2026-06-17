@@ -2794,7 +2794,17 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         // references during field building resolve to its typeRef, then fill fields.
         const key = 'id:' + type.id
         if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
-        const entry = { key, kind: 'record', name: uniqueName(base, ctx.shared), home: homeOf(type, ctx), deps: new Set(), spread: undefined, fields: [] }
+        const home = homeOf(type, ctx)
+        // An ANONYMOUS `{…}` gets a DESCRIPTIVE, component-scoped name: `<home><Prop>Config`
+        // (e.g. `avatarSizeConfig`) instead of a bare `<prop>Config`. Prop names like `sm`/`value`/
+        // `gap` recur across dozens of unrelated components, so a bare base collided into ONE global
+        // numbered series (`smConfig19`, suffix ≤40) whose number shifted whenever ANY upstream
+        // component was added/removed — opaque AND unstable across versions. Prefixing with the home
+        // module makes the name say where it belongs and scopes the disambiguation counter to a
+        // single component+prop, so unrelated upstream changes no longer renumber it. A NAMED library
+        // type keeps its own name (per the user's "follow the library" rule, #62). (#63 naming)
+        const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pascal(propName) + 'Config'
+        const entry = { key, kind: 'record', name: uniqueName(sharedBase, ctx.shared), home, deps: new Set(), spread: undefined, fields: [] }
         // Heal handle (#33): keep the ts.Type + a ctx snapshot so a post-extraction pass
         // can RE-resolve fields with a fresh `visiting` set if this record was first built
         // in a degraded (mid-cycle) context and cached as an all-`string` ghost.

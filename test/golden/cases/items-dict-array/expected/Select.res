@@ -1,5 +1,5 @@
 @module("demo") @react.component
 external make: (
-  ~items: ItemsDictArrayTypes.valueOrItemsConfigArray<'a>=?,
+  ~items: ItemsDictArrayTypes.valueOrItemsDictArrayItemsConfigArray<'a>=?,
   ~itemToStringValue: 'b => string=?,
 ) => React.element = "Select"

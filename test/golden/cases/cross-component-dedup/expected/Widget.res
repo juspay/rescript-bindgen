@@ -1,6 +1,6 @@
 @module("demo") @react.component
 external make: (
-  ~badge: WidgetTypes.badgeConfig=?,
-  ~icon: WidgetTypes.badgeConfig=?,
+  ~badge: WidgetTypes.widgetBadgeConfig=?,
+  ~icon: WidgetTypes.widgetBadgeConfig=?,
   ~choice: WidgetTypes.option2=?,
 ) => React.element = "Widget"

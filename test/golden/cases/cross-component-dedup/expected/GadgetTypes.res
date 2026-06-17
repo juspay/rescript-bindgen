@@ -1,4 +1,4 @@
-type badgeConfig2 = {
+type gadgetBadgeConfig = {
   width: string,
   height: string,
 }

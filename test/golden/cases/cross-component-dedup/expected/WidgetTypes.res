@@ -1,4 +1,4 @@
-type badgeConfig = {
+type widgetBadgeConfig = {
   width: string,
   height: string,
 }

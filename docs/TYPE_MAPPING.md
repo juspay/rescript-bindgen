@@ -244,8 +244,8 @@ Fixture: [`records`](../test/golden/cases/records)
 
 | TypeScript | ReScript |
 |---|---|
-| anonymous `{ x: number; y: number }` | `type pointConfig = { x: float, y: float }` (named after the prop) |
-| named `interface MenuItemType { … }` | `type menuItemType = { … }` |
+| anonymous `{ x: number; y: number }` at prop `point` in component `Avatar` | `type avatarPointConfig = { x: float, y: float }` — named **`<home><Prop>Config`**: the owning module + the prop, not a bare `<prop>Config`. Prop names (`sm`, `value`, `gap`) recur across unrelated components; a bare base collided into one global numbered series (`smConfig19`, suffix ≤ 40) that **renumbered on any upstream add/remove**. The home prefix makes the name say where it belongs and scopes the disambiguation counter to one component+prop, so unrelated upstream changes no longer renumber it. (#63 naming) |
+| named `interface MenuItemType { … }` | `type menuItemType = { … }` — a NAMED library type keeps its own name (no home prefix), per the "follow the library" rule. (#62) |
 | self-referential `{ subItems?: MenuItemType[] }` | `type rec menuItemType = { subItems?: array<menuItemType> }` (`rec` **only** when genuinely recursive) |
 | `interface EmptyState {}` (empty object) | `JSON.t` — a real object arrives at runtime but has no modellable fields (the `unknown` precedent). Fixture: [`empty-state-and-salvage`](../test/golden/cases/empty-state-and-salvage) |
 | `Partial<BaseProps>` | record with all fields optional (utility unwrapped: `Partial`/`Required`/`Readonly`/`Pick`/`Omit`/`NonNullable`) |

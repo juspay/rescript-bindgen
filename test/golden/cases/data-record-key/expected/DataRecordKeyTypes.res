@@ -1,4 +1,4 @@
-type seriesConfig = {
+type dataRecordKeySeriesConfig = {
   key: string,
   color: string,
 }
