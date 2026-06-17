@@ -108,6 +108,6 @@ type avatarV2AvatarPropsConfig = {
   rightSlot?: React.element,
   alt?: string,
   skeleton?: avatarV2SkeletonConfig,
-  onImageError?: string => unit,
+  onImageError?: JsError.t => unit,
   onImageLoad?: unit => unit,
 }

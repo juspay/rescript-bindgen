@@ -70,11 +70,20 @@ type honoOptions = {
   router?: router,
   getPath?: (WebTypes.request, option<typesGetPathConfig>) => string,
 }
+type httpResponseError = {
+  ...JsxDOM.domProps,
+  getResponse: unit => WebTypes.response,
+}
 type typesOptionsConfig = {
   optionHandler?: InstanceTypes.context => JSON.t,
   replaceRequest?: CommonTypes.replaceRequest,
 }
 @unboxed type typesOptionsConfigOptions = Fn(InstanceTypes.context => JSON.t) | TypesOptionsConfig(typesOptionsConfig)
+module Handler = {
+  type t
+  external fromError: JsError.t => t = "%identity"
+  external fromHTTPResponseError: httpResponseError => t = "%identity"
+}
 module Input = {
   type t
   external fromString: string => t = "%identity"

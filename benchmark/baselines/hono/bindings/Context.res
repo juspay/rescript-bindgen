@@ -27,8 +27,7 @@ type t = InstanceTypes.context
 // ⚪ loose: `env` has a param/return widened to `string`.
 @get external env: t => string = "env"
 @get external finalized: t => bool = "finalized"
-// ⚪ loose: `error` has a param/return widened to `string`.
-@get external error: t => string = "error"
+@get external error: t => JsError.t = "error"
 @get external req: t => InstanceTypes.honoRequest = "req"
 @get external event: t => TypesTypes.fetchEventLike = "event"
 @get external executionCtx: t => TypesTypes.executionContext = "executionCtx"

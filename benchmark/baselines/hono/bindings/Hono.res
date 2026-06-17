@@ -22,8 +22,7 @@ type t = InstanceTypes.hono
 @send external route: (t, ~path: string, ~app: t) => t = "route"
 // 🛑 BROKEN: `basePath` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
 @send external basePath: (t, ~path: string) => t = "basePath"
-// ⚠️ REVIEW: `onError` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
-@send external onError: (t, ~handler: (string, InstanceTypes.context) => promise<WebTypes.response>) => t = "onError"
+@send external onError: (t, ~handler: (TypesTypes.Handler.t, InstanceTypes.context) => promise<WebTypes.response>) => t = "onError"
 @send external notFound: (t, ~handler: InstanceTypes.context => promise<WebTypes.response>) => t = "notFound"
 @send external mount: (t, ~path: string, ~applicationHandler: (WebTypes.request, 'a) => promise<WebTypes.response>, ~options: TypesTypes.typesOptionsConfigOptions=?, unit) => t = "mount"
 // ⚪ loose: `fetch` has a param/return widened to `string`.
