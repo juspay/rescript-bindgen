@@ -1997,8 +1997,16 @@ function indexedAccessOptional(typeNode, checker) {
  *  single `T` (primitive, array, record), not just primitives. Skips placeholder/already-
  *  nullable bases (wrapping a flagged `string` in Nullable is noise). */
 function applyNullable(baseType, nb) {
-    if (!nb || !nb.hasNull || !nb.single) return baseType
-    if (baseType.kind === 'nullable' || /^(opaque|review|unknown|any)$/.test(baseType.kind)) return baseType
+    if (!nb || !nb.hasNull) return baseType
+    // Wrap for `T | null` AND for a multi-type `(A | B) | null` (e.g. `number | string | null` ->
+    // `Nullable.t<[#String|#Number]>`) — the latter previously dropped `| null` (Drawer snap-points).
+    // Skip placeholders (wrapping a flagged `string` is noise), an already-nullable, and
+    // `React.element` (abstract — its nullability is conventional, not a `Nullable.t<React.element>`).
+    if (baseType.kind === 'nullable' || /^(opaque|review|unknown|any|reactElement)$/.test(baseType.kind)) return baseType
+    // Skip an OPAQUE-MODULE / views ref (`Anchor.t`, `Container.t`): a multi-object union's null arm
+    // is the module's own concern (a `none`/`from*` view), not an outer `Nullable.t<Module.t>` —
+    // keeps the opaque-module idiom intact and B2 scoped to value unions (`stringOrNumber`) + records.
+    if (baseType.kind === 'typeRef' && /\.t$/.test(baseType.to || '')) return baseType
     return { kind: 'nullable', of: baseType }
 }
 

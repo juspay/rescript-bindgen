@@ -5,6 +5,8 @@
 //   - `T | undefined` (required decl) -> an OPTIONAL field (`=?`); it can be omitted.
 //   - `Props["x"]` indexed access into an OPTIONAL source prop -> optional too (the `| undefined`
 //     is stripped from both syntactic and resolved types under strictNullChecks-off).
+//   - a MULTI-type `(string | number) | null` -> `Nullable.t<…>` too, not just a single `T | null`
+//     (the `| null` used to be dropped — Drawer snap-points). (#65 B2)
 // Applies to BOTH record fields and component props.
 type JsxElement = { __brand: 'element' }
 
@@ -23,4 +25,6 @@ export declare const Panel: (props: {
   rows: Row[] | null // component prop -> ~rows: Nullable.t<array<row>>
   data: PanelData
   caption: PanelData['subtitle'] // indexed access into optional -> ~caption: …=?
+  span?: string | number | null // multi-type union -> ~span: Nullable.t<[#String|#Number]>=?
+  onPick?: (v: string | number | null) => void // callback param -> Nullable.t<…> => unit
 }) => JsxElement
