@@ -1,6 +1,6 @@
 type props = {
   ...HtmlAttrs.inputHTMLAttributesOmitClassNameOnBlurOnChangeOnFocusRequiredSizeStepStyleValue,
-  value?: float,
+  value: float,
   onChange: ReactEvent.Form.t => unit,
   step?: float,
   error?: bool,

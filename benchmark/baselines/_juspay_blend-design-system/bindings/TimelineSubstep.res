@@ -1,6 +1,6 @@
 type props = {
   ...HtmlAttrs.htmlAttributesOmitTitle,
-  title?: string,
+  title: string,
   isNestedUnderHeader?: bool,
   showIndicator?: bool,
   description?: string,
