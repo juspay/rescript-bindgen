@@ -1822,7 +1822,9 @@ function enumNode(type, ctx, propName) {
             // Derive the ReScript constructor from the string VALUE (primary -> Primary)
             // so output matches canonical style; fall back to the member name for numerics.
             const basis = typeof value === 'string' ? value : (c.symbol ? c.symbol.getName() : String(value))
-            members.push({ as: String(value), ctor: pascal(basis) })
+            // `num` marks a NUMERIC enum member (`vertical = 0`) so emit prints `@as(0)` (the int
+            // runtime value), not `@as("0")` — a string tag would mismatch the library at runtime. (#63)
+            members.push({ as: String(value), ctor: pascal(basis), num: typeof value === 'number' })
         }
     }
     dedupeCtors(members) // case-only collisions ('a' vs 'A' -> A, A2) (#33)

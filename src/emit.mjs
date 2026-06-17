@@ -518,7 +518,8 @@ export function emitClass(ir, options = {}) {
 function renderEnums(enums, lines) {
     for (const e of enums || []) {
         lines.push(`type ${e.name} =`)
-        for (const m of e.members) lines.push(`  | @as(${JSON.stringify(m.as)}) ${m.ctor}`)
+        // numeric enum member -> unquoted `@as(0)` (int runtime value); string -> `@as("sm")`.
+        for (const m of e.members) lines.push(`  | @as(${m.num ? m.as : JSON.stringify(m.as)}) ${m.ctor}`)
     }
 }
 

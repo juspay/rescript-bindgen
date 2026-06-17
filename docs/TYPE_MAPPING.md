@@ -171,6 +171,11 @@ Fixture: [`dom-event-union`](../test/golden/cases/dom-event-union)
 ## ARIA / role attributes
 Fixture: [`aria`](../test/golden/cases/aria)
 
+A **numeric** TS enum (`enum Orientation { vertical = 0, horizontal = 1 }`) or numeric literal
+union emits **unquoted** `@as(0)` / `@as(1)` — the int runtime value. A string tag (`@as("0")`)
+would silently mismatch the library at runtime (it compares against the number `0`). String-literal
+members stay quoted (`@as("sm")`). Fixture: [`numeric-enum`](../test/golden/cases/numeric-enum). (#63)
+
 ARIA props map to their exact `JsxDOM` types verbatim, bypassing the generic union logic:
 
 | TypeScript | ReScript |
