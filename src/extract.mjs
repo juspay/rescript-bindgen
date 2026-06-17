@@ -620,14 +620,18 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
             // is off, so `null` already collapsed in the resolved type — recover it from
             // the SYNTACTIC node, and only for a value-position primitive (passing `null`
             // = controlled-clear, distinct from omitting the prop).
-            // Trust the syntactic `T | null` / `| undefined` recovery ONLY for a prop with a SINGLE
-            // declaration (its own, unambiguous type node). A MERGED intersection property
-            // (`HTMLAttributes & { title: string }` — `title` declared optional in HTMLAttributes
-            // AND required in the own object) has multiple declarations, and `p.declarations[0]` may
-            // pick the inherited optional one whose type is a `| undefined`-bearing union — which
-            // wrongly flipped required own props (`title`, `children`) to optional. For merged props
-            // the symbol's own optional flag + resolved type are authoritative. (#63 review)
-            const ownDecl = (d && p.declarations && p.declarations.length === 1) ? d : null
+            // Trust the syntactic `T | null` / `| undefined` recovery via the single FIRST-PARTY
+            // property signature. A MERGED intersection property (`HTMLAttributes & { title: string }`)
+            // has signatures from BOTH the own object AND an external base (`@types/react`,
+            // `@radix-ui`, …) with conflicting optionality; `p.declarations[0]` may pick the inherited
+            // one, which wrongly flipped required own props (`title`/`children`) to optional. The own
+            // signature carries the library's intent: `title: string` (required) wins over inherited
+            // `title?`, and `value: number | undefined` (UnitInput) wins over `@types/react`'s
+            // `value?: string|…` so its `| undefined` -> optional. Falls back to a lone signature,
+            // else defers to the symbol flag. (#63 review / #65 B1)
+            const propSigs = (p.declarations || []).filter((dd) => ts.isPropertySignature(dd) && dd.type)
+            const ownSigs = propSigs.filter((dd) => !isVendorDecl(dd))
+            const ownDecl = ownSigs.length === 1 ? ownSigs[0] : (propSigs.length === 1 ? propSigs[0] : null)
             const nb = !aria && !litOpen && ownDecl && syntacticNullability(ownDecl.type)
             const baseType = salvageCallbackParams(
                 aria ? { kind: 'raw', res: aria }
@@ -1508,6 +1512,16 @@ function isWebPlatformDecl(type) {
     const d = sym && sym.declarations && sym.declarations[0]
     const f = (d && d.getSourceFile && d.getSourceFile().fileName) || ''
     return /\/lib\.(dom|webworker)/.test(f)
+}
+
+/** A declaration from an EXTERNAL dependency (React types, Radix, csstype, styled-components,
+ *  lib.*) — NOT the package being bound. Used to pick the FIRST-PARTY signature of a merged
+ *  intersection property so its own optionality/type wins (`UnitInput.value: number | undefined`
+ *  own vs `@types/react`'s `value?: string|…`). (#65 B1) */
+function isVendorDecl(decl) {
+    const f = (decl && decl.getSourceFile && decl.getSourceFile().fileName) || ''
+    return /node_modules\/(@types|react|react-dom|@radix-ui|@floating-ui|csstype|styled-components|@emotion|@stitches)\b/.test(f) ||
+        /\/lib\.(dom|es|scripthost|webworker)/.test(f)
 }
 
 /** Lazily register `WebTypes.<name>` in the shared registry (module mode only) and return
@@ -3066,11 +3080,12 @@ function buildRecordFields(type, ctx, depth) {
             // Recover syntactic nullability — `data: DirectoryData[] | null` must stay
             // `Nullable.t<array<…>>`, not collapse to a required non-nullable array; a `| undefined`
             // makes the field optional. strictNullChecks is off, so it's gone from the resolved
-            // type and read from the SYNTACTIC node — same as component props. Only for a SINGLE-
-            // declaration (own) field: a merged intersection property's `p.declarations[0]` may be
-            // an inherited optional declaration with a `| undefined` union, which would wrongly flip
-            // a required own field. (#63 C5 + review)
-            const ownDecl = (p.declarations && p.declarations.length === 1) ? p.declarations[0] : null
+            // type and read from the SYNTACTIC node — same as component props. Via the single
+            // FIRST-PARTY property signature: a merged intersection field has both an own and an
+            // external (`@types`/`@radix`/…) signature; the own one is authoritative. (#63 C5 / #65 B1)
+            const propSigs = (p.declarations || []).filter((dd) => ts.isPropertySignature(dd) && dd.type)
+            const ownSigs = propSigs.filter((dd) => !isVendorDecl(dd))
+            const ownDecl = ownSigs.length === 1 ? ownSigs[0] : (propSigs.length === 1 ? propSigs[0] : null)
             const nb = ownDecl && ownDecl.type && syntacticNullability(ownDecl.type)
             return {
                 name: p.getName(),
