@@ -298,6 +298,18 @@ register hundreds of new entries, gets rolled back, and stays safely truncated. 
 `setOpenConfig2` in the benchmark baseline (the depth boundary is too fragile to pin in a synthetic
 golden).
 
+**Twin healing (depth ghost ↔ shallow full sibling).** When the re-resolve above can't run because the
+shape's sub-types are a *distinct* generic instantiation (csstype gives `CSSObject['color']` vs
+`['backgroundColor']` different type ids, so `MenuV2VariantToken<StateToken<…>>` isn't deduped across
+them), a deep occurrence still truncates to an all-`string` ghost while the SAME shape resolved fully at
+a shallower site (`text.color` → `{ default: string, action: string }` vs `backgroundColor` →
+`{ default: stateToken, action: menuV2ActionConfig }`). A second pass copies field types from a
+structurally-richer **twin** — same name-family + home, same field names, non-fallback types — onto the
+ghost. Safe: it copies already-materialized field types (no re-resolution, no new entries, no depth
+change), so it can't dangle or re-expand the Highcharts graph (bumping `MAX_DEPTH` *does* — verified, it
+breaks the chart compile). Locked by blend's `menuV2VariantToken` in the benchmark baseline (a >6-level
+token tree is too fragile to pin in a synthetic golden). (#63 review)
+
 **`@unboxed` inside a record cycle.** A field like `labelGrid?: string | ((…, Options) => string)`
 becomes an object-bearing `@unboxed`, and if its function arm references back into the record cycle
 (`Labels → Options → Locale → Labels`) the `@unboxed` is genuinely part of the recursion. It can't be

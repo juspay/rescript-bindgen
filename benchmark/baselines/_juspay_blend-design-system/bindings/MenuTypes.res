@@ -88,8 +88,8 @@ type menuOptionsLabelConfig = {
   margin: menuPaddingConfig,
 }
 type menuActionConfig2 = {
-  primary: string,
-  danger: string,
+  primary: menuPrimaryConfig,
+  danger: menuPrimaryConfig,
 }
 type menuColorConfig = {
   default: menuPrimaryConfig,

@@ -1206,6 +1206,7 @@ export function extractModule(entryFile, opts = {}) {
     }
 
     healGhostRecords(shared)
+    healGhostsFromTwin(shared)
     propagateTypeParams(shared)
 
     return { components, functions, classes, skipped, shared, namespaces }
@@ -1259,6 +1260,44 @@ function healGhostRecords(shared) {
         for (const f of rebuilt.fields) collectRefKeys(f.type, e.deps)
         const tvars = new Set()
         for (const f of rebuilt.fields) collectTypeVars(f.type, tvars)
+        e.tparams = tvars.size ? [...tvars] : undefined
+    }
+}
+
+/**
+ * Heal a fully-degraded ghost record by copying field types from a structurally-richer TWIN —
+ * a record of the same name-family + home with the same field names but non-fallback types.
+ *
+ * A deeply-nested type reached past `MAX_DEPTH` truncates to an all-`string` record (MenuV2's
+ * `text.color` / `subText.color`: `MenuV2VariantToken<…>` -> `{ default: string, action: string }`)
+ * even though the SAME shape resolved fully at a shallower site (`backgroundColor`'s
+ * `menuV2VariantToken = { default: stateToken, action: menuV2ActionConfig }`). They don't dedup
+ * because csstype gives `CSSObject['color']` / `['backgroundColor']` distinct type ids — but they
+ * are the same shape, and bumping `MAX_DEPTH` is not an option (it re-expands the unbounded
+ * Highcharts graph into dangling class refs — verified). Copying the twin's already-materialized
+ * field types is safe: no re-resolution, no new entries, no depth change. (#63 review)
+ */
+function healGhostsFromTwin(shared) {
+    const isFallback = (t) => irHasImperfection(t)
+    const baseFamily = (n) => n.replace(/\d+$/, '') // strip the uniqueName disambiguation suffix
+    const records = shared.entries.filter((e) => e.kind === 'record' && e.fields && e.fields.length)
+    for (const e of records) {
+        if (!e.fields.every((f) => isFallback(f.type))) continue // only fully-degraded ghosts
+        const names = e.fields.map((f) => f.name).slice().sort().join(',')
+        const twin = records.find((s) => s !== e && s.home === e.home &&
+            baseFamily(s.name) === baseFamily(e.name) &&
+            s.fields.map((f) => f.name).slice().sort().join(',') === names &&
+            s.fields.some((f) => !isFallback(f.type)))
+        if (!twin) continue
+        const byName = new Map(twin.fields.map((f) => [f.name, f]))
+        e.fields = e.fields.map((f) => {
+            const tf = byName.get(f.name)
+            return tf && !isFallback(tf.type) ? { ...f, type: tf.type, optional: f.optional } : f
+        })
+        e.deps = new Set()
+        for (const f of e.fields) collectRefKeys(f.type, e.deps)
+        const tvars = new Set()
+        for (const f of e.fields) collectTypeVars(f.type, tvars)
         e.tparams = tvars.size ? [...tvars] : undefined
     }
 }
