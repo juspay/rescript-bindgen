@@ -1778,6 +1778,23 @@ function classify(type, ctx, propName = '', depth = 0) {
         return enumNode(type, ctx, propName)
     }
 
+    // Fixed-arity tuple `[number, number]` -> ReScript tuple `(float, float)`. Only a plain
+    // fixed tuple of ≥2 elements: ReScript tuples can't express a variadic/rest tuple
+    // (`[number, ...string[]]`), an optional element (`[number, number?]`), or a 1-tuple (no
+    // 1-tuples in ReScript — `[ReactNode?]` stays the flagged fallback / fn route). Elements go in
+    // `params` so every type-tree walker traverses them for free. (#65 B5)
+    if (checker.isTupleType?.(type)) {
+        const tref = type.target || type
+        const variadic = (tref.elementFlags || []).some((f) => f & (ts.ElementFlags.Rest | ts.ElementFlags.Variadic | ts.ElementFlags.Optional))
+        const elems = checker.getTypeArguments(type) || []
+        if (!variadic && elems.length >= 2) {
+            const prevAE = ctx.inArrayElem; ctx.inArrayElem = true
+            const params = elems.map((e) => classify(e, ctx, propName, depth + 1))
+            ctx.inArrayElem = prevAE
+            return { kind: 'tuple', params }
+        }
+    }
+
     // arrays
     if (checker.isArrayType?.(type)) {
         const elem = checker.getTypeArguments(type)[0]
@@ -2875,6 +2892,7 @@ function typeSig(t) {
         case 'typeRef': return 'R(' + (t.key || t.to) + (t.tparams ? '<' + t.tparams.join(',') + '>' : '') + ')'
         case 'classRef': return 'C(' + t.home + '.' + t.to + ')'
         case 'array': return 'A[' + typeSig(t.of) + ']'
+        case 'tuple': return 'T[' + (t.params || []).map(typeSig).join(',') + ']'
         case 'nullable': return 'N[' + typeSig(t.of) + ']'
         case 'dict': return 'D[' + typeSig(t.of) + ']'
         case 'map': return 'M[' + typeSig(t.mapKey) + ',' + typeSig(t.mapVal) + ']'

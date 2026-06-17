@@ -156,6 +156,9 @@ function renderType(t, propName, cfg) {
         }
         case 'stringOrNumber': return '[#String(string) | #Number(float)]'
         case 'array': return `array<${renderType(t.of, propName, cfg)}>`
+        // fixed-arity tuple `[number, number]` -> `(float, float)`. Elements live in `params` so
+        // every type-tree walker (refs/typevars/imperfection/notes) traverses them for free.
+        case 'tuple': return `(${t.params.map((it) => renderType(it, propName, cfg)).join(', ')})`
         case 'dict': return `Dict.t<${renderType(t.of, propName, cfg)}>`
         // JS Map/Set -> ReScript stdlib container types
         case 'map': return `Map.t<${renderType(t.mapKey, propName, cfg)}, ${renderType(t.mapVal, propName, cfg)}>`
