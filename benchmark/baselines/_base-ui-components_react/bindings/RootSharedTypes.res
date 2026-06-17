@@ -520,7 +520,7 @@ type dialogStore<'a> = {
 }
 type dialogHandle<'a> = {
   store: dialogStore<'a>,
-  @as("open") open_: string => unit,
+  @as("open") open_: Nullable.t<string> => unit,
   openWithPayload: 'a => unit,
   close: unit => unit,
   isOpen: bool,
@@ -700,7 +700,7 @@ type menubarContext = {
   modal: bool,
   disabled: bool,
   contentElement: Nullable.t<Dom.element>,
-  setContentElement: Dom.element => unit,
+  setContentElement: Nullable.t<Dom.element> => unit,
   hasSubmenuOpen: bool,
   setHasSubmenuOpen: bool => unit,
   orientation: menuRootOrientation,
@@ -764,7 +764,7 @@ type dialogStore2<'a> = {
 }
 type dialogHandle2<'a> = {
   store: dialogStore2<'a>,
-  @as("open") open_: string => unit,
+  @as("open") open_: Nullable.t<string> => unit,
   openWithPayload: 'a => unit,
   close: unit => unit,
   isOpen: bool,
@@ -795,7 +795,7 @@ type dialogStore3<'a> = {
 }
 type dialogHandle3<'a> = {
   store: dialogStore3<'a>,
-  @as("open") open_: string => unit,
+  @as("open") open_: Nullable.t<string> => unit,
   openWithPayload: 'a => unit,
   close: unit => unit,
   isOpen: bool,

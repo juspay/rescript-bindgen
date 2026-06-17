@@ -11,7 +11,7 @@ external make: (
   ~width: CommonTypes.stringOrNumber=?,
   ~isSmallScreen: bool=?,
   ~hoveredKey: Nullable.t<string>=?,
-  ~onHoveredKeyChange: string => unit=?,
+  ~onHoveredKeyChange: Nullable.t<string> => unit=?,
   ~selectedKeys: array<string>=?,
   ~lineSeriesKeys: array<string>=?,
   ~enableHover: bool=?,

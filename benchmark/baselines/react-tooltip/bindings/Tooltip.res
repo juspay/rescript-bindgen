@@ -38,6 +38,6 @@ external make: (
   ~setIsOpen: bool => unit=?,
   ~afterShow: unit => unit=?,
   ~afterHide: unit => unit=?,
-  ~disableTooltip: Dom.element => bool=?,
+  ~disableTooltip: Nullable.t<Dom.element> => bool=?,
   ~role: string=?,
 ) => React.element = "Tooltip"

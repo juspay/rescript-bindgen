@@ -96,5 +96,5 @@ type libOptionsConfig = {
   remarkRehypeOptions?: Nullable.t<libRemarkRehypeOptionsConfig>,
   skipHtml?: Nullable.t<bool>,
   unwrapDisallowed?: Nullable.t<bool>,
-  urlTransform?: Nullable.t<(string, string, string) => string>,
+  urlTransform?: Nullable.t<(string, string, string) => Nullable.t<string>>,
 }

@@ -52,7 +52,7 @@ type presetsConfig = {
   ...JsxDOM.domProps,
 }
 type customRangeConfig = {
-  calculateEndDate?: (Date.t, option<dateRange>) => Date.t,
+  calculateEndDate?: (Date.t, option<dateRange>) => Nullable.t<Date.t>,
   fixedDayRange?: float,
   referenceRange?: dateRange,
   backwardDays?: float,

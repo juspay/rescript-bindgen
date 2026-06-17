@@ -172,12 +172,12 @@ type matchFnResult6 = {
   rest: string,
 }
 type match = {
-  ordinalNumber: (string, option<classesOrdinalNumberConfig>) => matchFnResult,
-  era: (string, option<classesEraConfig>) => matchFnResult2,
-  quarter: (string, option<classesEraConfig>) => matchFnResult3,
-  month: (string, option<classesEraConfig>) => matchFnResult4,
-  day: (string, option<classesEraConfig>) => matchFnResult5,
-  dayPeriod: (string, option<classesEraConfig>) => matchFnResult6,
+  ordinalNumber: (string, option<classesOrdinalNumberConfig>) => Nullable.t<matchFnResult>,
+  era: (string, option<classesEraConfig>) => Nullable.t<matchFnResult2>,
+  quarter: (string, option<classesEraConfig>) => Nullable.t<matchFnResult3>,
+  month: (string, option<classesEraConfig>) => Nullable.t<matchFnResult4>,
+  day: (string, option<classesEraConfig>) => Nullable.t<matchFnResult5>,
+  dayPeriod: (string, option<classesEraConfig>) => Nullable.t<matchFnResult6>,
 }
 type rec dayPickerLocaleLabels = {
   labelNav?: CommonTypes.labelNav,

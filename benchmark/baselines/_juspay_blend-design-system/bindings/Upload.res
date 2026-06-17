@@ -30,7 +30,7 @@ type props = {
   isDragActive?: bool,
   isDragAccept?: bool,
   isDragReject?: bool,
-  validator?: Webapi.File.t => UploadTypes.uploadErrorsConfig,
+  validator?: Webapi.File.t => Nullable.t<UploadTypes.uploadErrorsConfig>,
   actionSlot?: React.element,
 }
 

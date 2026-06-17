@@ -18,8 +18,8 @@ external make: (
   ~allowWheelScrub: bool=?,
   ~snapOnStep: bool=?,
   ~format: string=?,  // ⚪ loose — was `NumberFormatOptions`
-  ~onValueChange: (float, RootSharedTypes.numberFieldRootChangeEventDetails) => unit=?,
-  ~onValueCommitted: (float, RootSharedTypes.numberFieldRootCommitEventDetails) => unit=?,
+  ~onValueChange: (Nullable.t<float>, RootSharedTypes.numberFieldRootChangeEventDetails) => unit=?,
+  ~onValueCommitted: (Nullable.t<float>, RootSharedTypes.numberFieldRootCommitEventDetails) => unit=?,
   ~locale: string=?,  // ⓘ Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
   ~className: RootSharedTypes.numberFieldRootClassName=?,

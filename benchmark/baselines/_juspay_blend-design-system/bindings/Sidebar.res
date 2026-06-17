@@ -25,7 +25,7 @@ external make: (
   ~showPrimaryActionButton: bool=?,
   ~primaryActionButtonProps: ReactTypes.reactPrimaryActionButtonPropsConfig=?,
   ~activeItem: Nullable.t<string>=?,
-  ~onActiveItemChange: string => unit=?,
+  ~onActiveItemChange: Nullable.t<string> => unit=?,
   ~defaultActiveItem: Nullable.t<string>=?,
   ~onHoveringChange: bool => unit=?,
 ) => React.element = "Sidebar"
