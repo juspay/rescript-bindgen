@@ -1,21 +1,21 @@
 type props = {
   ...HtmlAttrs.buttonHTMLAttributesOmitClassNameDisabledOnClickStyle,
-  buttonType?: ButtonSharedTypes.buttonType,
-  size?: ButtonSharedTypes.buttonSize,
-  subType?: ButtonSharedTypes.buttonSubType,
+  buttonType?: ButtonTypes.buttonType,
+  size?: ButtonTypes.buttonSize,
+  subType?: ButtonTypes.buttonSubType,
   text?: string,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
   disabled?: bool,
-  onClick?: ButtonSharedTypes.OnClick.t,  // ⓘ was overloaded `function` (2 call signatures) — opaque; view with OnClick.asEvent / OnClick.asEvent2
+  onClick?: option<ReactEvent.Mouse.t> => unit,
   loading?: bool,
   showSkeleton?: bool,
   skeletonVariant?: SkeletonTypes.skeletonVariant,
-  buttonGroupPosition?: ButtonSharedTypes.buttonGroupPosition,
+  buttonGroupPosition?: ButtonTypes.buttonGroupPosition,
   fullWidth?: bool,
   width?: CommonTypes.stringOrNumber,
   justifyContent?: string,
-  state?: ButtonSharedTypes.buttonState,
+  state?: ButtonTypes.buttonState,
 }
 
 @module("@juspay/blend-design-system")

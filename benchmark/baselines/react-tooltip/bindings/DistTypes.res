@@ -22,7 +22,7 @@ type positionStrategy =
   | @as("fixed") Fixed
   | @as("absolute") Absolute
 type distRenderConfig = {
-  content: Nullable.t<React.element>,
+  content: React.element,
   activeAnchor: Nullable.t<Dom.element>,
 }
 type globalCloseEvents = {

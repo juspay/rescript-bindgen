@@ -59,7 +59,7 @@ type routerRoute = {
 }
 type router = {
   name: string,
-  add: (string, string, string) => unit,
+  add: (string, string, ((InstanceTypes.context, unit => string) => string, routerRoute)) => unit,
   match: (string, string) => string,
 }
 type typesGetPathConfig = {

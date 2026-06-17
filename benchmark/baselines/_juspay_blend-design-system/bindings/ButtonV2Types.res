@@ -128,7 +128,7 @@ type buttonV2ButtonPropsConfig = {
   leftSlot?: buttonSlot,
   rightSlot?: buttonSlot,
   skeleton?: buttonSkeleton,
-  buttonGroupPosition?: ButtonSharedTypes.buttonGroupPosition,
+  buttonGroupPosition?: ButtonTypes.buttonGroupPosition,
   buttonType?: buttonV2Type,
   subType?: buttonV2SubType,
   loading?: bool,

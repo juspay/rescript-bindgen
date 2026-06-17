@@ -104,82 +104,6 @@ type responsiveButtonTokens = {
   sm: buttonTokensType,
   lg: buttonTokensType,
 }
-module OnClick2 = {
-  type t
-  external asEvent: t => (option<ReactEvent.Mouse.t> => unit) = "%identity"
-  external asEvent2: t => (ReactEvent.Mouse.t => unit) = "%identity"
-}
-type modalButtonAction = {
-  disabled?: bool,
-  onClick?: OnClick2.t,
-  justifyContent?: string,
-  width?: CommonTypes.stringOrNumber,
-  size?: buttonSize,
-  text?: string,
-  buttonType?: buttonType,
-  subType?: buttonSubType,
-  leadingIcon?: React.element,
-  trailingIcon?: React.element,
-  loading?: bool,
-  showSkeleton?: bool,
-  skeletonVariant?: SkeletonTypes.skeletonVariant,
-  fullWidth?: bool,
-  state?: buttonState,
-}
-type bodySkeletonProps = {
-  show?: bool,
-  width?: string,
-  height?: string,
-}
-type modalSkeletonProps = {
-  show?: bool,
-  variant?: SkeletonTypes.skeletonVariant,
-  bodySkeletonProps?: bodySkeletonProps,
-}
-type modalPaddingConfig = {
-  x: string,
-  y: string,
-}
-type modalTitleConfig = {
-  color: string,
-  fontSize: string,
-  fontWeight: string,
-}
-type modalTextConfig = {
-  title: modalTitleConfig,
-  subtitle: modalTitleConfig,
-}
-type modalHeaderConfig = {
-  padding: modalPaddingConfig,
-  borderBottom: string,
-  backgroundColor: string,
-  text: modalTextConfig,
-}
-type modalBodyConfig = {
-  padding: string,
-  backgroundColor: string,
-}
-type modalFooterConfig = {
-  padding: string,
-  borderTop: string,
-  backgroundColor: string,
-  gap: string,
-}
-type modalCloseButtonConfig = {
-  color: string,
-}
-type modalTokensType = {
-  boxShadow: string,
-  borderRadius: string,
-  header: modalHeaderConfig,
-  body: modalBodyConfig,
-  footer: modalFooterConfig,
-  closeButton: modalCloseButtonConfig,
-}
-type responsiveModalTokens = {
-  sm: modalTokensType,
-  lg: modalTokensType,
-}
 type buttonProps = {
   buttonType?: buttonType,
   size?: buttonSize,
@@ -188,7 +112,7 @@ type buttonProps = {
   leadingIcon?: React.element,
   trailingIcon?: React.element,
   disabled?: bool,
-  onClick?: OnClick2.t,
+  onClick?: option<ReactEvent.Mouse.t> => unit,
   loading?: bool,
   showSkeleton?: bool,
   skeletonVariant?: SkeletonTypes.skeletonVariant,
@@ -197,9 +121,4 @@ type buttonProps = {
   width?: CommonTypes.stringOrNumber,
   justifyContent?: string,
   state?: buttonState,
-}
-module OnClick = {
-  type t
-  external asEvent: t => (option<ReactEvent.Mouse.t> => unit) = "%identity"
-  external asEvent2: t => (ReactEvent.Mouse.t => unit) = "%identity"
 }

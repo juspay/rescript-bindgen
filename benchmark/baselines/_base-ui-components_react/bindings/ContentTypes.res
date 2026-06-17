@@ -6,7 +6,7 @@ type activationDirection =
 type navigationMenuContentState = {
   @as("open") open_: bool,
   transitionStatus: PositionerSharedTypes.transitionStatus,
-  activationDirection: activationDirection,
+  activationDirection: Nullable.t<activationDirection>,
 }
 type scrollAreaContentState = {
   hasOverflowX: bool,

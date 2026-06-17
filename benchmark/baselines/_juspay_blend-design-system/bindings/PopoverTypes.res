@@ -20,19 +20,19 @@ type shadow =
   | @as("full") Full
 type popoverActionType = {
   disabled?: bool,
-  onClick?: ButtonSharedTypes.OnClick2.t,
+  onClick?: option<ReactEvent.Mouse.t> => unit,
   justifyContent?: string,
   width?: CommonTypes.stringOrNumber,
-  size?: ButtonSharedTypes.buttonSize,
+  size?: ButtonTypes.buttonSize,
   text?: string,
-  buttonType?: ButtonSharedTypes.buttonType,
+  buttonType?: ButtonTypes.buttonType,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
   loading?: bool,
   showSkeleton?: bool,
   skeletonVariant?: SkeletonTypes.skeletonVariant,
   fullWidth?: bool,
-  state?: ButtonSharedTypes.buttonState,
+  state?: ButtonTypes.buttonState,
 }
 type bodySkeletonProps2 = {
   show?: bool,

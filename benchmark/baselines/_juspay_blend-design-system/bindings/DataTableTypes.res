@@ -110,9 +110,9 @@ type bulkActionsConfig = {
 type rowActionConfig<'a> = {
   id: string,
   text?: string,
-  buttonType?: ButtonSharedTypes.buttonType,
-  size?: ButtonSharedTypes.buttonSize,
-  subType?: ButtonSharedTypes.buttonSubType,
+  buttonType?: ButtonTypes.buttonType,
+  size?: ButtonTypes.buttonSize,
+  subType?: ButtonTypes.buttonSubType,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
   disabled?: CommonTypes.disabled<'a>,

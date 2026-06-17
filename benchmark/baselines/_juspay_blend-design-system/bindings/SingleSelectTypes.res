@@ -92,7 +92,7 @@ type singleSelectProps = {
   minTriggerWidth?: float,
   allowCustomValue?: bool,
   customValueLabel?: string,
-  singleSelectGroupPosition?: ButtonSharedTypes.buttonGroupPosition,
+  singleSelectGroupPosition?: ButtonTypes.buttonGroupPosition,
   allowDeselect?: bool,
 }
 type singleSelectColorConfig = {

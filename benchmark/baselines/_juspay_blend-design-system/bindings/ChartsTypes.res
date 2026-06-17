@@ -100,7 +100,7 @@ type noDataProps = {
   title?: string,
   subtitle?: string,
   slot?: React.element,
-  button?: ButtonSharedTypes.buttonProps,
+  button?: ButtonTypes.buttonProps,
 }
 type chartsSkeletonProps = {
   show: bool,

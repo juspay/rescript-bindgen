@@ -13,5 +13,5 @@ external make: (
   ~skipHtml: Nullable.t<bool>=?,
   ~unwrapDisallowed: Nullable.t<bool>=?,
   ~urlTransform: Nullable.t<(string, string, 'e) => Nullable.t<string>>=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
-  ~fallback: Nullable.t<React.element>=?,
+  ~fallback: React.element=?,
 ) => React.element = "MarkdownHooks"

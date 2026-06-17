@@ -1228,7 +1228,7 @@ type dataGroupingOptionsObject = {
   groupAll?: bool,
   groupPixelWidth?: float,
   lastAnchor?: string,
-  units?: array<string>,
+  units?: array<(string, array<float>)>,
 }
 type seriesEventsOptionsObject = {
   afterAnimate?: string,
@@ -5528,7 +5528,7 @@ type seriesItemOptions = {
   allowPointSelect?: bool,
   animation?: string,
   borderRadius?: string,
-  center?: string,
+  center?: (string, string),
   className?: string,
   clip?: bool,
   color?: ColorType.t,
@@ -7374,7 +7374,7 @@ type seriesPieOptions = {
   borderColor?: ColorType.t,
   borderRadius?: string,
   borderWidth?: float,
-  center?: string,
+  center?: (string, string),
   className?: string,
   clip?: bool,
   color?: ColorType.t,
@@ -8578,7 +8578,7 @@ type seriesScatterOptions = {
 type plotSlowstochasticParamsOptions = {
   index?: string,
   period?: string,
-  periods?: string,
+  periods?: (float, float, float),
 }
 type seriesSlowstochasticOptions = {
   allAreas?: string,
@@ -9756,7 +9756,7 @@ type seriesVariablepieOptions = {
   borderColor?: ColorType.t,
   borderRadius?: string,
   borderWidth?: float,
-  center?: string,
+  center?: (string, string),
   className?: string,
   clip?: bool,
   color?: ColorType.t,
