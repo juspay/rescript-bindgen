@@ -1493,9 +1493,23 @@ function classify(type, ctx, propName = '', depth = 0) {
     const { checker } = ctx
     const flags = type.flags
 
-    // depth / cycle guards — complex library types resolve to deep self-
-    // referential object graphs; beyond a few levels we emit opaque + flag.
-    if (depth > MAX_DEPTH) return { kind: 'opaque', text: checker.typeToString(type) }
+    // depth / cycle guards — complex library types resolve to deep self-referential object graphs;
+    // beyond a few levels we emit opaque + flag (truncates UNBOUNDED NEW expansion).
+    if (depth > MAX_DEPTH) {
+        // Exception: a DIRECT self-reference — the field's type IS the record whose fields we're
+        // building right now (`ctx.selfId`) — is a cycle to a known type (zero new expansion), so
+        // resolve it even past the depth bound. Truncating a recursive self-ref like
+        // `subMenu?: SingleSelectV2ItemType[]` to a silent `string` is a defect (it degraded
+        // single-select while the shallower multi-select stayed recursive). Scoped to the IMMEDIATE
+        // self type only — a deep back-ref to an ANCESTOR record still truncates, so the unbounded
+        // Highcharts graph (whose deep records dangle `NavigatorOptions.t` / `Point.t`) stays
+        // bounded. (#63 validation)
+        if (type.id != null && type.id === ctx.selfId && ctx.shared) {
+            const e = ctx.shared.byKey.get('id:' + type.id)
+            if (e && e.kind === 'record') return refTo(e)
+        }
+        return { kind: 'opaque', text: checker.typeToString(type) }
+    }
     if (type.id != null) {
         if (!ctx.visiting) ctx.visiting = new Set()
         if (ctx.visiting.has(type.id)) {
@@ -2812,7 +2826,9 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         ctx.shared.byKey.set(key, entry)
         ctx.shared.entries.push(entry)
         if (type.id != null) ctx.visiting?.add(type.id)
+        const prevSelfId = ctx.selfId; ctx.selfId = type.id // direct-self-ref resolves past depth
         const built = buildRecordFields(type, ctx, depth)
+        ctx.selfId = prevSelfId
         if (type.id != null) ctx.visiting?.delete(type.id)
         entry.spread = built.spread
         entry.fields = built.fields
@@ -2855,7 +2871,9 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
     if (ctx.seenRecords.has(rname)) return { kind: 'typeRef', to: rname }
     ctx.seenRecords.set(rname, true)
     if (type.id != null) ctx.visiting?.add(type.id)
+    const prevSelfId = ctx.selfId; ctx.selfId = type.id
     const built = buildRecordFields(type, ctx, depth)
+    ctx.selfId = prevSelfId
     if (type.id != null) ctx.visiting?.delete(type.id)
     const tvars = new Set()
     for (const f of built.fields) collectTypeVars(f.type, tvars)

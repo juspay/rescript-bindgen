@@ -1779,7 +1779,7 @@ type seriesDragDropOptionsObject = {
   guideBox?: string,
   liveRedraw?: string,
 }
-type plotSeriesOptions = {
+type rec plotSeriesOptions = {
   accessibility?: string,
   allowPointSelect?: string,
   animation?: string,
@@ -1831,7 +1831,7 @@ type plotSeriesOptions = {
   lineWidth?: string,
   linkedTo?: string,
   marker?: string,
-  navigatorOptions?: string,
+  navigatorOptions?: plotSeriesOptions,
   negativeColor?: string,
   nullInteraction?: string,
   onPoint?: string,
@@ -10916,7 +10916,7 @@ and tooltip = {
   renderer?: svgRenderer,
   shared?: bool,
   split?: bool,
-  defaultFormatter: string => string,
+  defaultFormatter: tooltip => string,
   destroy: unit => unit,
   getClassName: unit => string,
   getLabel: unit => string,
@@ -10948,7 +10948,7 @@ and point = {
   percentage?: float,
   plotX?: float,
   plotY?: float,
-  points?: array<string>,
+  points?: array<point>,
   selected: bool,
   series: series,
   shapeArgs?: highchartsShapeArgsConfig,

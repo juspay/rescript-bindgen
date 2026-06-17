@@ -1,6 +1,6 @@
-type router3 = {
-  use: unit => string,
-  add: unit => string,
+type rec router3 = {
+  use: unit => router3,
+  add: unit => router3,
   build: unit => string,
 }
 type genericRecordDedupBuildConfig = {
@@ -11,11 +11,16 @@ type rec router2 = {
   add: unit => router3,
   build: unit => genericRecordDedupBuildConfig,
 }
+type rec router5 = {
+  use: unit => router5,
+  add: unit => router5,
+  build: unit => string,
+}
 type genericRecordDedupBuildConfig2 = {
   b: bool,
 }
 type rec router4 = {
-  use: unit => router3,
+  use: unit => router5,
   add: unit => router4,
   build: unit => genericRecordDedupBuildConfig2,
 }
