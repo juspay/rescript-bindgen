@@ -7,6 +7,67 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [1.2.0] — 2026-06-17
+
+The "fidelity" release, driven by exhaustively validating generated bindings against
+`@juspay/blend-design-system@0.0.37-beta.6` (a per-component review of all 212 components,
+across several rounds). It fixes an **uncompilable-output** bug, **reorganizes shared types
+per component**, and resolves **~16 silent fidelity defects** (bindings that compiled but
+mis-typed a prop). No CLI/API changes. Generated *output* is more correct and more faithfully
+shaped — but module and anonymous-type **names differ from 1.1.0**, so a regeneration will
+produce a sizable (one-time) diff.
+
+### Fixed
+- **Uncompilable output from recursive type groups** (#61). A parameterized type referenced
+  before it acquired its type argument (e.g. `option<annotation>` where `annotation<'a>`) emitted
+  uncompilable ReScript. A post-extraction fixpoint pass propagates type parameters across the
+  group and re-syncs every reference, so no constructor is left under-applied.
+- **Generated type names never shadow a pervasive** (#61). An upstream interface named `Array`/
+  `Option`/… (→ `array`/`option`) is suffixed (`array2`) so it can't shadow the builtin.
+- **`key` / `ref` stripped from nested data records** (#63). They're React-reserved only on a
+  component's top-level props; a nested data record (Highcharts `colors: { key; color }[]`) keeps
+  them.
+- **Discriminated-union props dropped** (#63). `Base & (A | B | C)` kept only the props common to
+  all arms (`Card`/`Badge`/`SelectItemV2` were unusable) — all arms' props are now emitted, with
+  arm-specific ones optional.
+- **First-party fields swallowed by the `...JsxDOM.domProps` spread** (#63). Own fields whose names
+  collide with DOM attributes (`id`/`size`/`shape`) keep their real types (`AvatarData.id`).
+- **Multi-arg / tuple-returning functions bound as `@react.component`** (#63). They now bind as
+  functions, so dropped arguments (`renderVariantFallbackValue`'s 2nd arg) are restored.
+- **`React.Context<T>` faked as a component** (#63). Binds as the context value `React.Context.t<T>`.
+- **Nullability / optionality flips** (#63, #64, #65). `T | null` → `Nullable.t<T>` for any single
+  type **and** multi-type unions (`number | string | null`), including callback params/returns;
+  `| undefined` (and indexed access into an optional first-party prop) → optional; required props
+  (`TimelineHeader.title`, `ResponsiveText.fontSize`, …) are no longer flipped optional; merged-prop
+  optionality is taken from the first-party signature (`UnitInput.value`).
+- **Numeric enums emitted as string tags** (#63). `enum { vertical = 0 }` → `@as(0)`, not `@as("0")`.
+- **Deep self-references truncated to `string`** (#63). A direct self-reference resolves past the
+  depth bound (`SingleSelectV2ItemType.subMenu` is recursive), while the bound still protects the
+  unbounded Highcharts graph.
+- **Global `Error` → unflagged `string`** (#63). Now the stdlib `JsError.t`.
+- **Intersection-of-array types built a bogus record** (#63). `Item[] & Array<Item & {…}>`
+  (`NestedSelectDrawer.items`) is now `array<…>`, not a `{ ...JsxDOM.domProps }` record.
+- **Depth-truncated token ghosts** (#63). An all-`string` ghost is healed from a structurally-richer
+  same-module twin (`MenuV2` color tokens).
+- **Single-signature functions mis-modelled as overloads** (#65). A function that is one first-party
+  signature plus an inherited one (or an optional-param expansion) — `Button.onClick` — is a plain
+  callback (`option<…> => unit`), not an opaque overload module; genuine overloads are unaffected.
+
+### Added
+- **Fixed-arity TS tuples → ReScript tuples** (#65). `[number, number]` → `(float, float)`,
+  `[string, number]` → `(string, float)`. Variadic/optional-element/1-tuples stay the flagged
+  `string` fallback (ReScript tuples are fixed-arity).
+
+### Changed
+- **Shared types are organized per home module** (#61). Anonymous-record structural dedup is scoped
+  per component, so types live in the module the library declares them in instead of fusing dozens
+  of unrelated components into one giant catch-all (`HighchartsSharedTypes` held 2409/2578 types for
+  blend). Only genuine mutual recursion now merges into a `*SharedTypes` module.
+- **Descriptive, version-stable anonymous-record names** (#63). An anonymous `{…}` is named
+  `<home><Prop>Config` (e.g. `avatarSizeConfig`) instead of a globally-numbered `<prop>Config`
+  (`smConfig19`), so names say which component they belong to and unrelated upstream changes no
+  longer renumber them.
+
 ## [1.1.0] — 2026-06-15
 
 The "real-world packages" release: the generator now targets **general TypeScript
