@@ -27,11 +27,16 @@ type selectDrawerGroup = {
   showSeparator?: bool,
 }
 type drawerItemsConfig2 = {
-  ...JsxDOM.domProps,
+  value: string,
+  label: string,
+  subLabel?: string,
+  slot1?: React.element,
+  disabled?: bool,
+  nestedItems?: array<selectDrawerGroup>,
 }
 type drawerItemsConfig = {
   groupLabel?: string,
-  items: drawerItemsConfig2,
+  items: array<drawerItemsConfig2>,
   showSeparator?: bool,
 }
 type drawerBorderRadiusConfig = {
