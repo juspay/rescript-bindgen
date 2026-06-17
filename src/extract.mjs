@@ -620,7 +620,15 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
             // is off, so `null` already collapsed in the resolved type — recover it from
             // the SYNTACTIC node, and only for a value-position primitive (passing `null`
             // = controlled-clear, distinct from omitting the prop).
-            const nb = !aria && !litOpen && d && syntacticNullability(d.type)
+            // Trust the syntactic `T | null` / `| undefined` recovery ONLY for a prop with a SINGLE
+            // declaration (its own, unambiguous type node). A MERGED intersection property
+            // (`HTMLAttributes & { title: string }` — `title` declared optional in HTMLAttributes
+            // AND required in the own object) has multiple declarations, and `p.declarations[0]` may
+            // pick the inherited optional one whose type is a `| undefined`-bearing union — which
+            // wrongly flipped required own props (`title`, `children`) to optional. For merged props
+            // the symbol's own optional flag + resolved type are authoritative. (#63 review)
+            const ownDecl = (d && p.declarations && p.declarations.length === 1) ? d : null
+            const nb = !aria && !litOpen && ownDecl && syntacticNullability(ownDecl.type)
             const baseType = salvageCallbackParams(
                 aria ? { kind: 'raw', res: aria }
                     : litOpen ? literalUnionOpenNode(litOpen, unionRefName(d.type), ctx, name)
@@ -630,7 +638,7 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
                 name,
                 // a syntactic `| undefined` on a REQUIRED prop means it can be omitted -> optional
                 // (`=?`), distinct from `| null` (an explicit value -> Nullable.t). (#63 C5)
-                optional: optional || !!(nb && nb.hasUndef) || indexedAccessOptional(d && d.type, checker),
+                optional: optional || !!(nb && nb.hasUndef) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
                 inherited: isInherited(p),
                 type: applyNullable(baseType, nb),
                 // raw TS info, used by the report to describe unmapped props
@@ -2945,15 +2953,18 @@ function buildRecordFields(type, ctx, depth) {
         .map((p) => {
             const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0
             const t = checker.getTypeOfSymbolAtLocation(p, ctx.decl)
-            const d = p.declarations && p.declarations[0]
             // Recover syntactic nullability — `data: DirectoryData[] | null` must stay
             // `Nullable.t<array<…>>`, not collapse to a required non-nullable array; a `| undefined`
             // makes the field optional. strictNullChecks is off, so it's gone from the resolved
-            // type and read from the SYNTACTIC node — same as component props. (#63 C5)
-            const nb = d && d.type && syntacticNullability(d.type)
+            // type and read from the SYNTACTIC node — same as component props. Only for a SINGLE-
+            // declaration (own) field: a merged intersection property's `p.declarations[0]` may be
+            // an inherited optional declaration with a `| undefined` union, which would wrongly flip
+            // a required own field. (#63 C5 + review)
+            const ownDecl = (p.declarations && p.declarations.length === 1) ? p.declarations[0] : null
+            const nb = ownDecl && ownDecl.type && syntacticNullability(ownDecl.type)
             return {
                 name: p.getName(),
-                optional: optional || !!(nb && nb.hasUndef) || indexedAccessOptional(d && d.type, checker),
+                optional: optional || !!(nb && nb.hasUndef) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
                 type: applyNullable(classify(t, ctx, p.getName(), depth + 1), nb),
             }
         })
