@@ -3,8 +3,8 @@ type keyValuePairSize =
   | @as("md") Md
   | @as("lg") Lg
 type keyValuePairStateType =
-  | @as("0") Vertical
-  | @as("1") Horizontal
+  | @as(0) Vertical
+  | @as(1) Horizontal
 type textOverflowMode =
   | @as("wrap") Wrap
   | @as("truncate") Truncate
