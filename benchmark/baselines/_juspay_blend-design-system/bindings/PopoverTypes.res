@@ -19,16 +19,20 @@ type shadow =
   | @as("2xl") V2xl
   | @as("full") Full
 type popoverActionType = {
-  ...JsxDOM.domProps,
+  disabled?: bool,
+  onClick?: option<ReactEvent.Mouse.t> => unit,
   justifyContent?: string,
+  width?: CommonTypes.stringOrNumber,
+  size?: ButtonTypes.buttonSize,
   text?: string,
-  buttonType?: ButtonSharedTypes.buttonType,
+  buttonType?: ButtonTypes.buttonType,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
+  loading?: bool,
   showSkeleton?: bool,
-  skeletonVariant?: ButtonSharedTypes.skeletonVariant,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
   fullWidth?: bool,
-  state?: ButtonSharedTypes.buttonState,
+  state?: ButtonTypes.buttonState,
 }
 type bodySkeletonProps2 = {
   show?: bool,
@@ -37,42 +41,42 @@ type bodySkeletonProps2 = {
 }
 type popoverSkeletonProps = {
   show?: bool,
-  variant?: ButtonSharedTypes.skeletonVariant,
+  variant?: SkeletonTypes.skeletonVariant,
   bodySkeletonProps?: bodySkeletonProps2,
 }
-type gapConfig2 = {
+type popoverGapConfig = {
   small: string,
   medium: string,
 }
-type paddingConfig6 = {
-  left: gapConfig2,
-  right: gapConfig2,
-  top: gapConfig2,
-  bottom: gapConfig2,
+type popoverPaddingConfig = {
+  left: popoverGapConfig,
+  right: popoverGapConfig,
+  top: popoverGapConfig,
+  bottom: popoverGapConfig,
 }
-type headingConfig3 = {
+type popoverHeadingConfig = {
   color: string,
-  fontSize: gapConfig2,
-  fontWeight: gapConfig2,
-  lineHeight: gapConfig2,
+  fontSize: popoverGapConfig,
+  fontWeight: popoverGapConfig,
+  lineHeight: popoverGapConfig,
 }
-type headerContainerConfig = {
-  heading: headingConfig3,
-  description: headingConfig3,
+type popoverHeaderContainerConfig = {
+  heading: popoverHeadingConfig,
+  description: popoverHeadingConfig,
 }
-type footerConfig2 = {
-  gap: gapConfig2,
+type popoverFooterConfig = {
+  gap: popoverGapConfig,
 }
 type popoverTokenType = {
   background: string,
   border: string,
-  shadow: TokensTypes.shadowsConfig,
-  gap: gapConfig2,
+  shadow: TokensTypes.tokensShadowsConfig,
+  gap: popoverGapConfig,
   zIndex: string,
-  borderRadius: gapConfig2,
-  padding: paddingConfig6,
-  headerContainer: headerContainerConfig,
-  footer: footerConfig2,
+  borderRadius: popoverGapConfig,
+  padding: popoverPaddingConfig,
+  headerContainer: popoverHeaderContainerConfig,
+  footer: popoverFooterConfig,
 }
 type responsivePopoverTokens = {
   sm: popoverTokenType,

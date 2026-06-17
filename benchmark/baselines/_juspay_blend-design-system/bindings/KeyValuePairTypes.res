@@ -3,25 +3,37 @@ type keyValuePairSize =
   | @as("md") Md
   | @as("lg") Lg
 type keyValuePairStateType =
-  | @as("0") Vertical
-  | @as("1") Horizontal
+  | @as(0) Vertical
+  | @as(1) Horizontal
 type textOverflowMode =
   | @as("wrap") Wrap
   | @as("truncate") Truncate
   | @as("wrap-clamp") WrapClamp
-type gapConfig4 = {
+type keyValuePairGapConfig = {
   horizontal: string,
   vertical: string,
 }
-type valueConfig5 = {
+type keyValuePairKeyConfig = {
   color: string,
-  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
+  fontSize: string,
+  fontWeight: string,
+  gap: string,
+}
+type keyValuePairFontSizeConfig = {
+  sm: string,
+  md: string,
+  lg: string,
+}
+type keyValuePairValueConfig = {
+  color: string,
+  fontSize: keyValuePairFontSizeConfig,
   fontWeight: string,
   gap: string,
 }
 type keyValuePairTokensType = {
-  gap: gapConfig4,
-  value: valueConfig5,
+  gap: keyValuePairGapConfig,
+  key: keyValuePairKeyConfig,
+  value: keyValuePairValueConfig,
 }
 type responsiveKeyValuePairTokens = {
   sm: keyValuePairTokensType,

@@ -1,71 +1,81 @@
 type radioSize =
   | @as("sm") Sm
   | @as("md") Md
-type backgroundColorConfig11 = {
+type radioMaxLengthConfig = {
+  label?: float,
+  subtext?: float,
+}
+type radioGroupConfig = {
+  gap: string,
+}
+type radioBackgroundColorConfig = {
   disabled: string,
   default: string,
   hover: string,
   error: string,
 }
-type activeConfig3 = {
-  backgroundColor: backgroundColorConfig11,
-  borderColor: backgroundColorConfig11,
+type radioActiveConfig = {
+  backgroundColor: radioBackgroundColorConfig,
+  borderColor: radioBackgroundColorConfig,
 }
-type indicatorConfig2 = {
-  active: activeConfig3,
-  inactive: activeConfig3,
+type radioIndicatorConfig = {
+  active: radioActiveConfig,
+  inactive: radioActiveConfig,
 }
-type backgroundColorConfig12 = {
+type radioBackgroundColorConfig2 = {
   disabled: string,
   default: string,
 }
-type activeConfig4 = {
-  backgroundColor: backgroundColorConfig12,
+type radioActiveConfig2 = {
+  backgroundColor: radioBackgroundColorConfig2,
 }
-type activeIndicatorConfig2 = {
-  active: activeConfig4,
+type radioActiveIndicatorConfig = {
+  active: radioActiveConfig2,
 }
-type fontSizeConfig5 = {
+type radioFontSizeConfig = {
   sm: string,
   md: string,
 }
-type labelConfig5 = {
+type radioLabelConfig = {
   gap: string,
-  color: backgroundColorConfig11,
-  fontSize: fontSizeConfig5,
-  fontWeight: fontSizeConfig5,
+  color: radioBackgroundColorConfig,
+  fontSize: radioFontSizeConfig,
+  fontWeight: radioFontSizeConfig,
 }
-type sublabelConfig = {
-  color: backgroundColorConfig11,
-  fontSize: fontSizeConfig5,
-  fontWeight: fontSizeConfig5,
+type radioSublabelConfig = {
+  color: radioBackgroundColorConfig,
+  fontSize: radioFontSizeConfig,
+  fontWeight: radioFontSizeConfig,
 }
-type contentConfig5 = {
-  label: labelConfig5,
-  sublabel: sublabelConfig,
+type radioContentConfig = {
+  label: radioLabelConfig,
+  sublabel: radioSublabelConfig,
 }
-type activeConfig5 = {
+type radioActiveConfig3 = {
   disabled: float,
   default: float,
   hover: float,
   error: float,
 }
-type borderWidthConfig = {
-  active: activeConfig5,
-  inactive: activeConfig5,
+type radioBorderWidthConfig = {
+  active: radioActiveConfig3,
+  inactive: radioActiveConfig3,
 }
-type smConfig12 = {
+type radioRequiredConfig = {
+  color: string,
+}
+type radioSmConfig = {
   gap: string,
-  group: ChartsTypes.slotsConfig,
-  indicator: indicatorConfig2,
-  activeIndicator: activeIndicatorConfig2,
-  content: contentConfig5,
-  height: fontSizeConfig5,
-  borderWidth: borderWidthConfig,
-  slot: fontSizeConfig5,
-  required: AvatarGroupTypes.textConfig7,
+  group: radioGroupConfig,
+  indicator: radioIndicatorConfig,
+  activeIndicator: radioActiveIndicatorConfig,
+  content: radioContentConfig,
+  height: radioFontSizeConfig,
+  borderWidth: radioBorderWidthConfig,
+  slot: radioFontSizeConfig,
+  required: radioRequiredConfig,
 }
 type responsiveRadioTokens = {
-  sm: smConfig12,
-  lg: smConfig12,
+  sm: radioSmConfig,
+  lg: radioSmConfig,
 }

@@ -156,6 +156,9 @@ function renderType(t, propName, cfg) {
         }
         case 'stringOrNumber': return '[#String(string) | #Number(float)]'
         case 'array': return `array<${renderType(t.of, propName, cfg)}>`
+        // fixed-arity tuple `[number, number]` -> `(float, float)`. Elements live in `params` so
+        // every type-tree walker (refs/typevars/imperfection/notes) traverses them for free.
+        case 'tuple': return `(${t.params.map((it) => renderType(it, propName, cfg)).join(', ')})`
         case 'dict': return `Dict.t<${renderType(t.of, propName, cfg)}>`
         // JS Map/Set -> ReScript stdlib container types
         case 'map': return `Map.t<${renderType(t.mapKey, propName, cfg)}, ${renderType(t.mapVal, propName, cfg)}>`
@@ -377,6 +380,16 @@ export function emitFunction(ir, options = {}) {
     // `label` gives a safe ReScript id (the original JS name stays in the `= "…"` string),
     // so a reserved/Capitalized export name still binds cleanly.
     const { id } = label(ir.import.name)
+
+    // A `React.Context<T>` value export binds as the context VALUE, not a call (#63 C6).
+    if (ir.context) {
+        const ofType = renderType(ir.context.ofType, '', cfg)
+        const imp = imperfection(ir.context.ofType)
+        if (imp) lines.push(`// ${imp === 'unknown' || imp === 'any' ? '🛑 BROKEN' : '⚠️ REVIEW'}: \`${ir.import.name}\` context value couldn't be typed exactly — \`${cfg.opaqueFallback}\` placeholder.`)
+        lines.push(`@module(${JSON.stringify(cfg.from)}) external ${id}: React.Context.t<${ofType}> = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
+        return lines.join('\n')
+    }
+
     const render1 = (p) => (p.type.kind === 'event' ? p.type.res : renderType(p.type, p.name, cfg))
     const params = ir.sig.params || []
     // Required params stay POSITIONAL (idiomatic for plain functions); optional params bind as
@@ -508,7 +521,8 @@ export function emitClass(ir, options = {}) {
 function renderEnums(enums, lines) {
     for (const e of enums || []) {
         lines.push(`type ${e.name} =`)
-        for (const m of e.members) lines.push(`  | @as(${JSON.stringify(m.as)}) ${m.ctor}`)
+        // numeric enum member -> unquoted `@as(0)` (int runtime value); string -> `@as("sm")`.
+        for (const m of e.members) lines.push(`  | @as(${m.num ? m.as : JSON.stringify(m.as)}) ${m.ctor}`)
     }
 }
 

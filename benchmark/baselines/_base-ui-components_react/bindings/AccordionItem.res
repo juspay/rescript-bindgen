@@ -4,7 +4,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, ItemTypes.accordionItemSta
 @module("@base-ui-components/react") @scope("Accordion") @react.component
 external make: (
   ~value: 'a=?,
-  ~onOpenChange: (bool, RootSharedTypes.accordionRootChangeEventDetails) => unit=?,
+  ~onOpenChange: (bool, ItemTypes.accordionItemChangeEventDetails) => unit=?,
   ~style: ItemTypes.accordionItemStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

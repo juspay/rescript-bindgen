@@ -8,7 +8,7 @@ type overflowY =
   | @as("auto") Auto
   | @as("scroll") Scroll
   | @as("visible") Visible
-type mobileOffsetConfig = {
+type drawerMobileOffsetConfig = {
   top?: string,
   bottom?: string,
   left?: string,
@@ -26,36 +26,54 @@ type selectDrawerGroup = {
   items: array<selectDrawerItem>,
   showSeparator?: bool,
 }
-type itemsConfig2 = {
+type drawerItemsConfig2 = {
+  value: string,
+  label: string,
+  subLabel?: string,
+  slot1?: React.element,
+  disabled?: bool,
+  nestedItems?: array<selectDrawerGroup>,
+}
+type drawerItemsConfig = {
   groupLabel?: string,
-  items: DateRangePickerTypes.presetsConfig,
+  items: array<drawerItemsConfig2>,
   showSeparator?: bool,
 }
-type overlayConfig = {
+type drawerBorderRadiusConfig = {
+  topLeft: string,
+  topRight: string,
+  bottomLeft: string,
+  bottomRight: string,
+}
+type drawerOverlayConfig = {
   backgroundColor: string,
 }
-type offsetConfig = {
+type drawerOffsetConfig = {
   top: string,
   bottom: string,
   left: string,
   right: string,
 }
-type handleConfig = {
+type drawerPaddingConfig = {
+  x: string,
+  y: string,
+}
+type drawerHandleConfig = {
   backgroundColor: string,
   borderRadius: string,
   width: string,
   height: string,
 }
-type contentConfig8 = {
+type drawerContentConfig = {
   backgroundColor: string,
-  padding: ModalTypes.paddingConfig5,
-  handle: handleConfig,
+  padding: drawerPaddingConfig,
+  handle: drawerHandleConfig,
 }
 type drawerTokensType = {
-  borderRadius: DateRangePickerTypes.borderRadiusConfig6,
-  overlay: overlayConfig,
-  offset: offsetConfig,
-  content: contentConfig8,
+  borderRadius: drawerBorderRadiusConfig,
+  overlay: drawerOverlayConfig,
+  offset: drawerOffsetConfig,
+  content: drawerContentConfig,
 }
 type responsiveDrawerTokens = {
   sm: drawerTokensType,

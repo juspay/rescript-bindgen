@@ -1,16 +1,21 @@
-type textConfig26 = {
+type tooltipV2BorderRadiusConfig = {
+  sm: string,
+  md: string,
+  lg: string,
+}
+type tooltipV2TextConfig = {
   color: string,
-  fontWeight: ButtonSharedTypes.slotMaxHeightConfig,
-  fontSize: ButtonSharedTypes.slotMaxHeightConfig,
-  lineHeight: ButtonSharedTypes.slotMaxHeightConfig,
+  fontWeight: tooltipV2BorderRadiusConfig,
+  fontSize: tooltipV2BorderRadiusConfig,
+  lineHeight: tooltipV2BorderRadiusConfig,
 }
 type tooltipV2TokensType = {
   background: string,
-  borderRadius: ButtonSharedTypes.slotMaxHeightConfig,
-  maxWidth: ButtonSharedTypes.slotMaxHeightConfig,
-  padding: ButtonSharedTypes.slotMaxHeightConfig,
-  gap: ButtonSharedTypes.slotMaxHeightConfig,
-  text: textConfig26,
+  borderRadius: tooltipV2BorderRadiusConfig,
+  maxWidth: tooltipV2BorderRadiusConfig,
+  padding: tooltipV2BorderRadiusConfig,
+  gap: tooltipV2BorderRadiusConfig,
+  text: tooltipV2TextConfig,
   zIndex: string,
 }
 type responsiveTooltipV2Tokens = {

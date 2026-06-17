@@ -1,3 +1,12 @@
+type accordionItemChangeEventDetails = {
+  reason: RootSharedTypes.reason,
+  event: Dom.event,
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
+  isCanceled: bool,
+  isPropagationAllowed: bool,
+  trigger?: Dom.element,
+}
 type accordionItemState = {
   index: int,
   @as("open") open_: bool,

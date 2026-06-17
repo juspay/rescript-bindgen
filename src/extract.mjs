@@ -129,11 +129,20 @@ function isPlaceholderArg(t, checker) {
     return false
 }
 
+/** ReScript pervasive type constructors a generated type must never shadow. An upstream
+ *  interface named `Array`/`Option`/… would lower to `array`/`option` and, emitted bare,
+ *  shadow the builtin within its module — so `array<string>` then fails to compile ("the
+ *  type array is not generic"). `uniqueName` suffixes these exactly like a name collision. */
+const RESERVED_TYPE_NAMES = new Set([
+    'array', 'option', 'list', 'string', 'int', 'float', 'bool', 'char', 'bytes',
+    'unit', 'result', 'dict', 'promise', 'lazy_t', 'exn', 'ref',
+])
+
 /** A globally-unique ReScript type name (suffix on collision) so two domains that
- *  merge into one module via SCC never clash. */
+ *  merge into one module via SCC never clash — and never a pervasive builtin name. */
 function uniqueName(base, shared) {
     let n = base, i = 2
-    while (shared.names.has(n)) n = base + i++
+    while (shared.names.has(n) || RESERVED_TYPE_NAMES.has(n)) n = base + i++
     shared.names.add(n)
     return n
 }
@@ -377,8 +386,28 @@ function isReactComponent(type, checker) {
     if (/ExoticComponent|FunctionComponent|^FC$|ComponentType|ComponentClass/.test(n)) return true
     const sigs = type.getCallSignatures()
     for (const sig of sigs) {
+        // A React FC takes 0 or 1 (props) arg. A multi-arg callable is a plain function —
+        // binding it as a component silently drops every arg past the first (#63 C4:
+        // `renderVariantFallbackValue(tokens, variant)` lost `variant`).
+        const params = sig.getParameters()
+        if (params.length > 1) continue
+        // The single arg must be a props bag, not a PRIMITIVE (`(s: string) => …` is a fn). Only
+        // reject clearly-primitive params — object / intersection (`A & B`) / union / generic
+        // props are all valid component shapes, so a blanket `!Object` check would over-reject.
+        if (params.length === 1) {
+            const d = params[0].valueDeclaration || (params[0].declarations && params[0].declarations[0])
+            const pt = d && checker.getTypeOfSymbolAtLocation(params[0], d)
+            const PRIM = ts.TypeFlags.StringLike | ts.TypeFlags.NumberLike | ts.TypeFlags.BooleanLike |
+                ts.TypeFlags.BigIntLike | ts.TypeFlags.ESSymbolLike | ts.TypeFlags.Null |
+                ts.TypeFlags.Undefined | ts.TypeFlags.Void
+            if (pt && (pt.flags & PRIM)) continue
+        }
         const ret = sig.getReturnType()
-        const rn = typeName(ret) || checker.typeToString(ret)
+        const rs = checker.typeToString(ret)
+        // The return must BE a React element, not merely CONTAIN one: a tuple `[ReactNode?]` or
+        // array `ReactNode[]` is a data-returning util, not a component (#63 C4: `getItemSlots`).
+        if (/^(readonly )?\[/.test(rs) || /\[\]$/.test(rs) || /^(Readonly)?Array</.test(rs)) continue
+        const rn = typeName(ret) || rs
         if (/Element|ReactNode|ReactElement|JSX/.test(rn)) return true
     }
     return false
@@ -544,14 +573,38 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
         }) && chainFields(attrsBase.leaf).has(p.getName())
     }
 
-    const props = checker
-        .getPropertiesOfType(propsType)
+    // Discriminated-union props — `Base & (A | B | C)` distributes to `(Base&A)|(Base&B)|(Base&C)`,
+    // and `getPropertiesOfType` returns only the props common to ALL arms (Base + the shared
+    // discriminant), silently DROPPING every variant-specific prop (blend's `Card` lost
+    // `headerTitle`/`content`/`alignment`/`children` — unusable). Gather the arm-specific props
+    // too: take the union's common props (their types are correctly merged, e.g. the `variant`
+    // discriminant), then add each arm-only prop as OPTIONAL (it only applies to its variant, and
+    // ReScript can't express the discriminated dependency — flatten-optional is the faithful,
+    // compilable model). (#63 C2)
+    const commonSyms = checker.getPropertiesOfType(propsType)
+    const unionOptional = new Set()
+    let propSyms = commonSyms
+    if (propsType.isUnion && propsType.isUnion()) {
+        const commonNames = new Set(commonSyms.map((p) => p.getName()))
+        const extra = []
+        const seen = new Set()
+        for (const arm of propsType.types) {
+            for (const p of checker.getPropertiesOfType(arm)) {
+                const nm = p.getName()
+                if (commonNames.has(nm) || seen.has(nm)) continue
+                seen.add(nm); extra.push(p); unionOptional.add(nm)
+            }
+        }
+        propSyms = [...commonSyms, ...extra]
+    }
+
+    const props = propSyms
         .filter((p) => !['ref', 'key'].includes(p.getName()))
         .filter((p) => !coveredBySpread(p))
         .filter((p) => !isInherited(p) || allow.has(p.getName()))
         .map((p) => {
             const name = p.getName()
-            const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0
+            const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0 || unionOptional.has(name)
             const t = checker.getTypeOfSymbolAtLocation(p, decl)
             const d = p.declarations && p.declarations[0]
             ctx.lastAnyAlias = null // each prop keys its implicit-any vars fresh (#31)
@@ -567,7 +620,19 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
             // is off, so `null` already collapsed in the resolved type — recover it from
             // the SYNTACTIC node, and only for a value-position primitive (passing `null`
             // = controlled-clear, distinct from omitting the prop).
-            const nullablePrim = !aria && !litOpen && d && syntacticNullablePrimitive(d.type)
+            // Trust the syntactic `T | null` / `| undefined` recovery via the single FIRST-PARTY
+            // property signature. A MERGED intersection property (`HTMLAttributes & { title: string }`)
+            // has signatures from BOTH the own object AND an external base (`@types/react`,
+            // `@radix-ui`, …) with conflicting optionality; `p.declarations[0]` may pick the inherited
+            // one, which wrongly flipped required own props (`title`/`children`) to optional. The own
+            // signature carries the library's intent: `title: string` (required) wins over inherited
+            // `title?`, and `value: number | undefined` (UnitInput) wins over `@types/react`'s
+            // `value?: string|…` so its `| undefined` -> optional. Falls back to a lone signature,
+            // else defers to the symbol flag. (#63 review / #65 B1)
+            const propSigs = (p.declarations || []).filter((dd) => ts.isPropertySignature(dd) && dd.type)
+            const ownSigs = propSigs.filter((dd) => !isVendorDecl(dd))
+            const ownDecl = ownSigs.length === 1 ? ownSigs[0] : (propSigs.length === 1 ? propSigs[0] : null)
+            const nb = !aria && !litOpen && ownDecl && syntacticNullability(ownDecl.type)
             const baseType = salvageCallbackParams(
                 aria ? { kind: 'raw', res: aria }
                     : litOpen ? literalUnionOpenNode(litOpen, unionRefName(d.type), ctx, name)
@@ -575,11 +640,11 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
                 ctx)
             return {
                 name,
-                optional,
+                // a syntactic `| undefined` on a REQUIRED prop means it can be omitted -> optional
+                // (`=?`), distinct from `| null` (an explicit value -> Nullable.t). (#63 C5)
+                optional: optional || !!(nb && nb.hasUndef) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
                 inherited: isInherited(p),
-                type: (nullablePrim && /^(string|number|boolean)$/.test(baseType.kind))
-                    ? { kind: 'nullable', of: baseType }
-                    : baseType,
+                type: applyNullable(baseType, nb),
                 // raw TS info, used by the report to describe unmapped props
                 tsType: checker.typeToString(t).replace(/\s+/g, ' ').slice(0, 200),
                 declText: (d ? d.getText() : '').replace(/\s+/g, ' ').trim().slice(0, 200),
@@ -662,6 +727,45 @@ function buildFunctionIR(checker, sym, source, importName, from, opts) {
         kind: 'function',
         enums, records, unboxed,
         sig: { params, ret },
+    }
+}
+
+/** A `React.Context<T>` value export (`import('react').Context<…>` or `React.Context<…>`).
+ *  Its alias/symbol name is `Context` and it carries one type argument (the context value). */
+function isReactContextType(type) {
+    if (typeName(type) !== 'Context') return false
+    const args = type.aliasTypeArguments || type.typeArguments || []
+    return args.length === 1
+}
+
+/**
+ * Build the IR for a `React.Context<T>` value export. Classifies the context value `T`
+ * through the shared pipeline (so a named value record lands in its `*Types.res`), and
+ * emits a VALUE binding `external <name>: React.Context.t<T> = "<jsName>"` — the honest
+ * shape of a context object, not a faked `@react.component`. (#63 C6)
+ */
+function buildContextIR(checker, sym, source, importName, from, opts) {
+    if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
+    const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0]) || source
+    const type = checker.getTypeOfSymbolAtLocation(sym, decl)
+    const inner = (type.aliasTypeArguments || type.typeArguments || [])[0]
+    const enums = []
+    const records = []
+    const unboxed = []
+    const ctx = {
+        checker, decl, enums, records, unboxed, webapi: !!opts.webapi,
+        seenEnums: new Map(), seenRecords: new Map(), seenUnboxed: new Map(),
+        shared: opts.shared || null,
+        typeVars: new Map(),
+        sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
+    }
+    const ofType = inner ? classify(inner, ctx, importName) : { kind: 'unknown' }
+    return {
+        module: importName,
+        import: { from, name: importName },
+        kind: 'function',
+        enums, records, unboxed,
+        context: { ofType },
     }
 }
 
@@ -1025,6 +1129,21 @@ export function extractModule(entryFile, opts = {}) {
         if (!decl) { skipped.push({ name, reason: 'no-declaration' }); continue }
         let type
         try { type = checker.getTypeOfSymbolAtLocation(sym, decl) } catch { skipped.push({ name, reason: 'type-error' }); continue }
+        // A `React.Context<T>` value (React 19 makes it renderable, so it has element-returning
+        // call signatures and would otherwise fake a `@react.component` taking value+children).
+        // Bind it faithfully as the context VALUE — `React.Context.t<T>` (#63 C6).
+        if (isReactContextType(type)) {
+            try {
+                const ir = buildContextIR(checker, sym, source, name, from, { ...opts, shared })
+                ir.import.jsName = jsName
+                ir.import.isDefault = isDefault
+                seen.add(name)
+                functions.push({ name, ir })
+            } catch (e) {
+                skipped.push({ name, reason: 'context-extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
+            }
+            continue
+        }
         if (!isReactComponent(type, checker)) {
             // Not a React component. Bind a CLASS (M2) as a `@new`/`@send`/`@get` module, or
             // a standalone FUNCTION / const-with-call-signature (M1) as a `@module external`.
@@ -1091,6 +1210,8 @@ export function extractModule(entryFile, opts = {}) {
     }
 
     healGhostRecords(shared)
+    healGhostsFromTwin(shared)
+    propagateTypeParams(shared)
 
     return { components, functions, classes, skipped, shared, namespaces }
 }
@@ -1145,6 +1266,113 @@ function healGhostRecords(shared) {
         for (const f of rebuilt.fields) collectTypeVars(f.type, tvars)
         e.tparams = tvars.size ? [...tvars] : undefined
     }
+}
+
+/**
+ * Heal a fully-degraded ghost record by copying field types from a structurally-richer TWIN —
+ * a record of the same name-family + home with the same field names but non-fallback types.
+ *
+ * A deeply-nested type reached past `MAX_DEPTH` truncates to an all-`string` record (MenuV2's
+ * `text.color` / `subText.color`: `MenuV2VariantToken<…>` -> `{ default: string, action: string }`)
+ * even though the SAME shape resolved fully at a shallower site (`backgroundColor`'s
+ * `menuV2VariantToken = { default: stateToken, action: menuV2ActionConfig }`). They don't dedup
+ * because csstype gives `CSSObject['color']` / `['backgroundColor']` distinct type ids — but they
+ * are the same shape, and bumping `MAX_DEPTH` is not an option (it re-expands the unbounded
+ * Highcharts graph into dangling class refs — verified). Copying the twin's already-materialized
+ * field types is safe: no re-resolution, no new entries, no depth change. (#63 review)
+ */
+function healGhostsFromTwin(shared) {
+    const isFallback = (t) => irHasImperfection(t)
+    const baseFamily = (n) => n.replace(/\d+$/, '') // strip the uniqueName disambiguation suffix
+    const records = shared.entries.filter((e) => e.kind === 'record' && e.fields && e.fields.length)
+    for (const e of records) {
+        if (!e.fields.every((f) => isFallback(f.type))) continue // only fully-degraded ghosts
+        const names = e.fields.map((f) => f.name).slice().sort().join(',')
+        const twin = records.find((s) => s !== e && s.home === e.home &&
+            baseFamily(s.name) === baseFamily(e.name) &&
+            s.fields.map((f) => f.name).slice().sort().join(',') === names &&
+            s.fields.some((f) => !isFallback(f.type)))
+        if (!twin) continue
+        const byName = new Map(twin.fields.map((f) => [f.name, f]))
+        e.fields = e.fields.map((f) => {
+            const tf = byName.get(f.name)
+            return tf && !isFallback(tf.type) ? { ...f, type: tf.type, optional: f.optional } : f
+        })
+        e.deps = new Set()
+        for (const f of e.fields) collectRefKeys(f.type, e.deps)
+        const tvars = new Set()
+        for (const f of e.fields) collectTypeVars(f.type, tvars)
+        e.tparams = tvars.size ? [...tvars] : undefined
+    }
+}
+
+/** The type nodes a shared entry directly contains — record fields' types, or union
+ *  members' types. (enums have no nested types.) */
+function entryChildTypes(e) {
+    if (e.kind === 'record') return e.fields.map((f) => f.type)
+    if (e.kind === 'unboxed') return e.members.map((m) => m.type)
+    return []
+}
+
+/** Equal tparam lists? Each is an array of `'a`-style strings, or undefined. */
+function sameTparams(a, b) {
+    const x = a || [], y = b || []
+    return x.length === y.length && x.every((v, i) => v === y[i])
+}
+
+/** Re-establish the `refTo` invariant — a typeRef carries exactly its target entry's
+ *  type parameters — across one type tree, reading the target's CURRENT tparams from the
+ *  registry. Refs to types outside the registry (no key, or external) are left untouched. */
+function syncRefTparams(t, byKey, seen) {
+    if (!t || typeof t !== 'object' || seen.has(t)) return
+    seen.add(t)
+    if (t.kind === 'typeRef' && t.key && byKey.has(t.key)) {
+        const tp = byKey.get(t.key).tparams
+        if (tp && tp.length) t.tparams = [...tp]
+        else delete t.tparams
+    }
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) if (t[k]) syncRefTparams(t[k], byKey, seen)
+    if (Array.isArray(t.params)) for (const p of t.params) syncRefTparams(p, byKey, seen)
+    if (Array.isArray(t.fields)) for (const f of t.fields) syncRefTparams(f.type, byKey, seen)
+    if (Array.isArray(t.members)) for (const m of t.members) syncRefTparams(m.type, byKey, seen)
+}
+
+/**
+ * Fixpoint pass: propagate type parameters across the shared-type reference graph.
+ *
+ * Shared records/unions are built bottom-up, but a CYCLE (Highcharts annotations:
+ * `annotationsOptions<'a>` -> `events` -> `annotation<'a>` -> `annotationsOptions<'a>`)
+ * means a member can be referenced BEFORE it has acquired its type parameter: `refTo`
+ * bakes a bare `annotation` ref (no `<'a>`), `collectTypeVars` then never sees the var,
+ * and the referencing record (`annotationsEventsOptions`) stays NON-generic while
+ * referencing a generic type. The output `option<annotation>` is under-applied —
+ * "type constructor annotation expects 1 argument(s), but is here applied to 0" — and
+ * does not compile.
+ *
+ * The bottom-up build gives a partial assignment; this closes it. Iterate to a fixpoint:
+ * any entry that transitively reaches a parameterized entry becomes parameterized too
+ * (its tparams = vars in its own fields ∪ tparams of every entry it references). Then a
+ * final sync rewrites every reference to its target's converged tparams, so no emitted
+ * type-constructor reference is left under-applied. Monotonic (param sets only grow), so
+ * it converges; the guard is a belt-and-braces backstop.
+ */
+function propagateTypeParams(shared) {
+    const byKey = shared.byKey
+    let changed = true, guard = 0
+    while (changed && guard++ < 1000) {
+        changed = false
+        for (const e of shared.entries) {
+            if (e.kind !== 'record' && e.kind !== 'unboxed') continue
+            const kids = entryChildTypes(e)
+            for (const t of kids) syncRefTparams(t, byKey, new Set())
+            const tvars = new Set()
+            for (const t of kids) collectTypeVars(t, tvars)
+            const next = tvars.size ? [...tvars] : undefined
+            if (!sameTparams(e.tparams, next)) { e.tparams = next; changed = true }
+        }
+    }
+    // Final sync: reference sites now carry the converged tparams of their target.
+    for (const e of shared.entries) for (const t of entryChildTypes(e)) syncRefTparams(t, byKey, new Set())
 }
 
 /**
@@ -1286,6 +1514,16 @@ function isWebPlatformDecl(type) {
     return /\/lib\.(dom|webworker)/.test(f)
 }
 
+/** A declaration from an EXTERNAL dependency (React types, Radix, csstype, styled-components,
+ *  lib.*) — NOT the package being bound. Used to pick the FIRST-PARTY signature of a merged
+ *  intersection property so its own optionality/type wins (`UnitInput.value: number | undefined`
+ *  own vs `@types/react`'s `value?: string|…`). (#65 B1) */
+function isVendorDecl(decl) {
+    const f = (decl && decl.getSourceFile && decl.getSourceFile().fileName) || ''
+    return /node_modules\/(@types|react|react-dom|@radix-ui|@floating-ui|csstype|styled-components|@emotion|@stitches)\b/.test(f) ||
+        /\/lib\.(dom|es|scripthost|webworker)/.test(f)
+}
+
 /** Lazily register `WebTypes.<name>` in the shared registry (module mode only) and return
  *  its classRef. Only types actually referenced get emitted. */
 function webSink(ctx, tsName) {
@@ -1316,9 +1554,23 @@ function classify(type, ctx, propName = '', depth = 0) {
     const { checker } = ctx
     const flags = type.flags
 
-    // depth / cycle guards — complex library types resolve to deep self-
-    // referential object graphs; beyond a few levels we emit opaque + flag.
-    if (depth > MAX_DEPTH) return { kind: 'opaque', text: checker.typeToString(type) }
+    // depth / cycle guards — complex library types resolve to deep self-referential object graphs;
+    // beyond a few levels we emit opaque + flag (truncates UNBOUNDED NEW expansion).
+    if (depth > MAX_DEPTH) {
+        // Exception: a DIRECT self-reference — the field's type IS the record whose fields we're
+        // building right now (`ctx.selfId`) — is a cycle to a known type (zero new expansion), so
+        // resolve it even past the depth bound. Truncating a recursive self-ref like
+        // `subMenu?: SingleSelectV2ItemType[]` to a silent `string` is a defect (it degraded
+        // single-select while the shallower multi-select stayed recursive). Scoped to the IMMEDIATE
+        // self type only — a deep back-ref to an ANCESTOR record still truncates, so the unbounded
+        // Highcharts graph (whose deep records dangle `NavigatorOptions.t` / `Point.t`) stays
+        // bounded. (#63 validation)
+        if (type.id != null && type.id === ctx.selfId && ctx.shared) {
+            const e = ctx.shared.byKey.get('id:' + type.id)
+            if (e && e.kind === 'record') return refTo(e)
+        }
+        return { kind: 'opaque', text: checker.typeToString(type) }
+    }
     if (type.id != null) {
         if (!ctx.visiting) ctx.visiting = new Set()
         if (ctx.visiting.has(type.id)) {
@@ -1457,6 +1709,16 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (name === 'FileList') return ctx.webapi ? { kind: 'raw', res: 'Webapi.FileList.t' } : (ctx.shared ? webSink(ctx, 'FileList') : { kind: 'opaque', text: 'FileList' })
     if (name === 'FormData') return ctx.webapi ? { kind: 'raw', res: 'Webapi.FormData.t' } : (ctx.shared ? webSink(ctx, 'FormData') : { kind: 'opaque', text: 'FormData' })
 
+    // The global `Error` class (lib.es*) -> ReScript stdlib `Error.t`, so an `(e: Error) => void`
+    // callback types its param faithfully instead of degrading to a bare/unflagged `string` (in a
+    // shared record the param can't salvage to a component type variable). Guarded on a lib.es
+    // declaration so a package's OWN `Error` interface is unaffected. (#63 validation)
+    if (name === 'Error') {
+        const esym = type.aliasSymbol || (type.getSymbol && type.getSymbol())
+        const ef = (esym && esym.declarations && esym.declarations[0] && esym.declarations[0].getSourceFile().fileName) || ''
+        if (/\/lib\.es/.test(ef)) return { kind: 'raw', res: 'JsError.t' }
+    }
+
     // Web-platform classes (Request, Response, Headers, URL, …) -> abstract types in the
     // dependency-free `WebTypes` sink (module mode only — it's a second output file).
     // lib.dom-declaration guarded, so a package's own `Response` class is unaffected.
@@ -1508,9 +1770,43 @@ function classify(type, ctx, propName = '', depth = 0) {
         return { kind: 'reactElement' }
     }
 
+    // An intersection of ARRAY types — `SelectDrawerItem[] & Array<SelectDrawerItem & {nestedItems}>`
+    // (TS distributes a `& { items: X[] }` override over a base `items: Y[]`). `isArrayType` is
+    // FALSE for the intersection, so without this it fell to recordNode and built a bogus record
+    // from the array's lib.es prototype methods (all inherited -> `{...JsxDOM.domProps}`, array
+    // wrapper lost — NestedSelectDrawer's `items`). Treat it as an array whose element is the
+    // intersected element type (TS's number-index type of the array intersection). (#63 review)
+    if ((flags & ts.TypeFlags.Intersection) && (type.types || []).length &&
+        type.types.every((p) => checker.isArrayType?.(p))) {
+        const elem = checker.getIndexTypeOfType(type, ts.IndexKind.Number)
+        if (elem) {
+            const prevAE = ctx.inArrayElem; ctx.inArrayElem = true
+            const of = classify(elem, ctx, propName, depth + 1)
+            ctx.inArrayElem = prevAE
+            return { kind: 'array', of }
+        }
+    }
+
     // enum (real TS enum used as a type)
     if (flags & ts.TypeFlags.EnumLike) {
         return enumNode(type, ctx, propName)
+    }
+
+    // Fixed-arity tuple `[number, number]` -> ReScript tuple `(float, float)`. Only a plain
+    // fixed tuple of ≥2 elements: ReScript tuples can't express a variadic/rest tuple
+    // (`[number, ...string[]]`), an optional element (`[number, number?]`), or a 1-tuple (no
+    // 1-tuples in ReScript — `[ReactNode?]` stays the flagged fallback / fn route). Elements go in
+    // `params` so every type-tree walker traverses them for free. (#65 B5)
+    if (checker.isTupleType?.(type)) {
+        const tref = type.target || type
+        const variadic = (tref.elementFlags || []).some((f) => f & (ts.ElementFlags.Rest | ts.ElementFlags.Variadic | ts.ElementFlags.Optional))
+        const elems = checker.getTypeArguments(type) || []
+        if (!variadic && elems.length >= 2) {
+            const prevAE = ctx.inArrayElem; ctx.inArrayElem = true
+            const params = elems.map((e) => classify(e, ctx, propName, depth + 1))
+            ctx.inArrayElem = prevAE
+            return { kind: 'tuple', params }
+        }
     }
 
     // arrays
@@ -1545,6 +1841,22 @@ function classify(type, ctx, propName = '', depth = 0) {
         // as an opaque module with one zero-cost `%identity` accessor VIEW per signature (so
         // NEITHER overload is dropped). Falls back to 🔍 review if it can't be modelled cleanly.
         if (callSigs.length > 1) {
+            // NOT every multi-call-signature type is a real overload:
+            //   (a) a MERGED function property reports an inherited signature too — `onClick?:
+            //       (e?: MouseEvent) => void` (own) merged with `@types/react`'s `MouseEventHandler`
+            //       (Button.onClick). The FIRST-PARTY signature is the library's intent.
+            //   (b) an OPTIONAL parameter expands ONE declaration into several sigs (`(e?: X) => void`
+            //       -> `() => void` + `(e: X) => void`).
+            // In both, use the most-complete relevant signature so the param maps to `option<…>`,
+            // not a misleading opaque overload module. A GENUINE overload (≥2 separate first-party
+            // declarations) still becomes the views module so no overload is dropped. (#65 B4)
+            const ownSigs = callSigs.filter((s) => s.declaration && !isVendorDecl(s.declaration))
+            const effective = ownSigs.length ? ownSigs : callSigs
+            const decls = new Set(effective.map((s) => s.declaration).filter(Boolean))
+            if (effective.length === 1 || decls.size === 1) {
+                const full = effective.slice().sort((a, b) => b.getParameters().length - a.getParameters().length)[0]
+                return functionNode(full, ctx, propName, depth)
+            }
             const ov = overloadModule(ctx, type, callSigs, propName, depth)
             return ov || { kind: 'review', note: `overloaded function (${callSigs.length} call signatures) — no single ReScript type` }
         }
@@ -1631,7 +1943,9 @@ function enumNode(type, ctx, propName) {
             // Derive the ReScript constructor from the string VALUE (primary -> Primary)
             // so output matches canonical style; fall back to the member name for numerics.
             const basis = typeof value === 'string' ? value : (c.symbol ? c.symbol.getName() : String(value))
-            members.push({ as: String(value), ctor: pascal(basis) })
+            // `num` marks a NUMERIC enum member (`vertical = 0`) so emit prints `@as(0)` (the int
+            // runtime value), not `@as("0")` — a string tag would mismatch the library at runtime. (#63)
+            members.push({ as: String(value), ctor: pascal(basis), num: typeof value === 'number' })
         }
     }
     dedupeCtors(members) // case-only collisions ('a' vs 'A' -> A, A2) (#33)
@@ -1672,18 +1986,58 @@ function literalUnionOpen(typeNode, checker) {
  *  allowed too) — exactly ONE primitive keyword (number/string/boolean) plus an explicit
  *  `null`, no other members. Used to recover the explicit-null arm that strictNullChecks-off
  *  resolution swallowed. (#34, I-5) */
-function syntacticNullablePrimitive(typeNode) {
-    if (!typeNode || !ts.isUnionTypeNode(typeNode)) return false
-    let hasNull = false, prims = 0, other = 0
+function syntacticNullability(typeNode) {
+    if (!typeNode || !ts.isUnionTypeNode(typeNode)) return null
+    let hasNull = false, hasUndef = false, nonNull = 0
     for (const m of typeNode.types) {
         const isNull = m.kind === ts.SyntaxKind.NullKeyword ||
             (ts.isLiteralTypeNode(m) && m.literal.kind === ts.SyntaxKind.NullKeyword)
         if (isNull) hasNull = true
-        else if (m.kind === ts.SyntaxKind.UndefinedKeyword) { /* optional already handles it */ }
-        else if (m.kind === ts.SyntaxKind.NumberKeyword || m.kind === ts.SyntaxKind.StringKeyword || m.kind === ts.SyntaxKind.BooleanKeyword) prims++
-        else other++
+        else if (m.kind === ts.SyntaxKind.UndefinedKeyword) hasUndef = true
+        else nonNull++
     }
-    return hasNull && prims === 1 && other === 0
+    // `single`: exactly one non-null/undefined member, so `T | null` wraps cleanly as
+    // `Nullable.t<T>` (a multi-arm `A | B | null` is a real union, handled elsewhere).
+    return { hasNull, hasUndef, single: nonNull === 1 }
+}
+
+/** A prop typed by indexed access into an OPTIONAL source prop — `value: StatCardV2Props["value"]`
+ *  where `StatCardV2Props.value?` is optional — resolves to `T | undefined`, so this field can be
+ *  omitted too. strictNullChecks is off (undefined is stripped from both the syntactic and resolved
+ *  types), so recover it from the referenced property's optional flag. (#63 C5) */
+function indexedAccessOptional(typeNode, checker) {
+    if (!typeNode || !ts.isIndexedAccessTypeNode(typeNode)) return false
+    const idx = typeNode.indexType
+    if (!ts.isLiteralTypeNode(idx) || !ts.isStringLiteral(idx.literal)) return false
+    const objType = checker.getTypeFromTypeNode(typeNode.objectType)
+    const prop = objType && objType.getProperty(idx.literal.text)
+    if (!prop || !(prop.getFlags() & ts.SymbolFlags.Optional)) return false
+    // Only propagate optionality from a FIRST-PARTY source. csstype / styled-components CSS-value
+    // types (`CSSObject`, `Properties`, …) mark EVERY property optional by convention, so
+    // `CSSObject['fontSize']` looks optional even when the consuming field is declared REQUIRED
+    // (ResponsiveText.fontSize). Only a first-party props type's optionality is meaningful
+    // (StatCardV2Props['value']). (#64)
+    const d = prop.declarations && prop.declarations[0]
+    const f = (d && d.getSourceFile && d.getSourceFile().fileName) || ''
+    if (/node_modules\/(csstype|styled-components|@emotion|@types)\b/.test(f)) return false
+    return true
+}
+
+/** Wrap a base IR type in `Nullable.t<…>` for a syntactic `T | null` (#34/#63 C5) — for ANY
+ *  single `T` (primitive, array, record), not just primitives. Skips placeholder/already-
+ *  nullable bases (wrapping a flagged `string` in Nullable is noise). */
+function applyNullable(baseType, nb) {
+    if (!nb || !nb.hasNull) return baseType
+    // Wrap for `T | null` AND for a multi-type `(A | B) | null` (e.g. `number | string | null` ->
+    // `Nullable.t<[#String|#Number]>`) — the latter previously dropped `| null` (Drawer snap-points).
+    // Skip placeholders (wrapping a flagged `string` is noise), an already-nullable, and
+    // `React.element` (abstract — its nullability is conventional, not a `Nullable.t<React.element>`).
+    if (baseType.kind === 'nullable' || /^(opaque|review|unknown|any|reactElement)$/.test(baseType.kind)) return baseType
+    // Skip an OPAQUE-MODULE / views ref (`Anchor.t`, `Container.t`): a multi-object union's null arm
+    // is the module's own concern (a `none`/`from*` view), not an outer `Nullable.t<Module.t>` —
+    // keeps the opaque-module idiom intact and B2 scoped to value unions (`stringOrNumber`) + records.
+    if (baseType.kind === 'typeRef' && /\.t$/.test(baseType.to || '')) return baseType
+    return { kind: 'nullable', of: baseType }
 }
 
 /** First TypeReference name in a union node (`ToastPosition | string` -> "ToastPosition"), for naming. */
@@ -1978,7 +2332,7 @@ function unionNode(type, ctx, propName, depth = 0) {
     const synNull = !!ctx.retSynNull
     if (ctx.retSynNull) ctx.retSynNull = false
     const hadNullish = synNull || type.types.some((t) => t.flags & (ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void))
-    const parts = type.types.filter(
+    let parts = type.types.filter(
         (t) => !(t.flags & (ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void))
     )
     if (parts.length === 1) return classify(parts[0], ctx, propName, depth + 1)
@@ -2112,6 +2466,25 @@ function unionNode(type, ctx, propName, depth = 0) {
         const elem = asArray(t, checker)
         const en = elem && typeName(elem)
         return !!(en && /ReactElement|ReactNode/.test(en))
+    }
+    // A NARROWED children type — `children: string | number` merged with an inherited
+    // `children?: ReactNode` — resolves to `ReactNode & (string | number)`, which TS distributes
+    // to `string | number | (ReactElement & string) | (ReactPortal & number) | …`. Every
+    // `<reactType> & <primitive>` part is an uninhabitable DISTRIBUTION ARTIFACT (a string isn't a
+    // React element); the real inhabitable type is just `string | number`. When there's NO genuine
+    // plain React part (a bare `ReactElement`/`ReactNode`, an array of it, or a render fn) but such
+    // reactish-intersection artifacts ARE present, keep only the plain (non-intersection) parts so
+    // the union resolves to its real narrowed type (`stringOrNumber`) instead of the lossy
+    // `React.element`. (#64)
+    const isReactishInter = (t) => (t.flags & ts.TypeFlags.Intersection) &&
+        (t.types || []).some((x) => /React(Element|Node|Portal|Fragment)/.test(typeName(x) || ''))
+    const hasPlainReactish = parts.some((t) => isReactish(t) && !(t.flags & ts.TypeFlags.Intersection))
+    if (!hasPlainReactish && parts.some(isReactishInter)) {
+        const kept = parts.filter((t) => !(t.flags & ts.TypeFlags.Intersection))
+        if (kept.length) {
+            parts = kept
+            if (parts.length === 1) return classify(parts[0], ctx, propName, depth + 1)
+        }
     }
     if (parts.some(isReactish)) {
         // `ReactElement | ((props, state) => ReactElement)` (base-ui's `render` prop).
@@ -2485,9 +2858,16 @@ function functionNode(sig, ctx, propName, depth = 0) {
         const n = typeName(pt)
         // hasOwnProperty guard: a param whose type resolves to a name like `toString`/`valueOf`
         // must not match an inherited Object.prototype member (which would be a native function).
-        const node = (n && Object.prototype.hasOwnProperty.call(REACT_EVENTS, n))
+        let node = (n && Object.prototype.hasOwnProperty.call(REACT_EVENTS, n))
             ? { kind: 'event', res: REACT_EVENTS[n] }
             : classify(pt, ctx, propName, depth + 1)
+        // A callback PARAM typed `T | null` (e.g. `(item: string | null) => void`) is a value the
+        // library PASSES to the consumer, so the consumer must handle null -> `Nullable.t<T>`.
+        // strictNullChecks-off strips it from the resolved type; recover from the syntactic node,
+        // mirroring the return path's `| null` recovery and top-level props. (#63 validation)
+        if (!optional && node.kind !== 'event' && pdecl && ts.isParameter(pdecl) && pdecl.type) {
+            node = applyNullable(node, syntacticNullability(pdecl.type))
+        }
         return optional ? { ...node, optional: true } : node
     })
     ctx.inFnReturn = prevRet
@@ -2522,6 +2902,11 @@ function functionNode(sig, ctx, propName, depth = 0) {
             ctx.retSynNull = synNull
             ctx.produced = P
             ret = classify(retType, ctx, propName, depth + 1)
+            // A SINGLE-typed nullable return (`(file) => Errors | null`) collapses to `Errors`
+            // under strictNullChecks-off and isn't a union, so the union path's `| null` recovery
+            // never fires — wrap it in `Nullable.t` here (the consumer must be able to produce
+            // null). A union return keeps its own (views/none) handling. (#63 validation)
+            if (synNull && !(retType.isUnion && retType.isUnion())) ret = applyNullable(ret, { hasNull: true, single: true })
             ctx.inFnReturn = prev
             ctx.retSynNull = prevNull
             ctx.produced = prevProd
@@ -2545,6 +2930,7 @@ function typeSig(t) {
         case 'typeRef': return 'R(' + (t.key || t.to) + (t.tparams ? '<' + t.tparams.join(',') + '>' : '') + ')'
         case 'classRef': return 'C(' + t.home + '.' + t.to + ')'
         case 'array': return 'A[' + typeSig(t.of) + ']'
+        case 'tuple': return 'T[' + (t.params || []).map(typeSig).join(',') + ']'
         case 'nullable': return 'N[' + typeSig(t.of) + ']'
         case 'dict': return 'D[' + typeSig(t.of) + ']'
         case 'map': return 'M[' + typeSig(t.mapKey) + ',' + typeSig(t.mapVal) + ']'
@@ -2594,7 +2980,17 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         // references during field building resolve to its typeRef, then fill fields.
         const key = 'id:' + type.id
         if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
-        const entry = { key, kind: 'record', name: uniqueName(base, ctx.shared), home: homeOf(type, ctx), deps: new Set(), spread: undefined, fields: [] }
+        const home = homeOf(type, ctx)
+        // An ANONYMOUS `{…}` gets a DESCRIPTIVE, component-scoped name: `<home><Prop>Config`
+        // (e.g. `avatarSizeConfig`) instead of a bare `<prop>Config`. Prop names like `sm`/`value`/
+        // `gap` recur across dozens of unrelated components, so a bare base collided into ONE global
+        // numbered series (`smConfig19`, suffix ≤40) whose number shifted whenever ANY upstream
+        // component was added/removed — opaque AND unstable across versions. Prefixing with the home
+        // module makes the name say where it belongs and scopes the disambiguation counter to a
+        // single component+prop, so unrelated upstream changes no longer renumber it. A NAMED library
+        // type keeps its own name (per the user's "follow the library" rule, #62). (#63 naming)
+        const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pascal(propName) + 'Config'
+        const entry = { key, kind: 'record', name: uniqueName(sharedBase, ctx.shared), home, deps: new Set(), spread: undefined, fields: [] }
         // Heal handle (#33): keep the ts.Type + a ctx snapshot so a post-extraction pass
         // can RE-resolve fields with a fresh `visiting` set if this record was first built
         // in a degraded (mid-cycle) context and cached as an all-`string` ghost.
@@ -2602,7 +2998,9 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         ctx.shared.byKey.set(key, entry)
         ctx.shared.entries.push(entry)
         if (type.id != null) ctx.visiting?.add(type.id)
+        const prevSelfId = ctx.selfId; ctx.selfId = type.id // direct-self-ref resolves past depth
         const built = buildRecordFields(type, ctx, depth)
+        ctx.selfId = prevSelfId
         if (type.id != null) ctx.visiting?.delete(type.id)
         entry.spread = built.spread
         entry.fields = built.fields
@@ -2618,7 +3016,16 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         // this type.id to the canonical one, and hand back its ref. Built bottom-up, so a
         // record's children are already deduped when we hash it. Recursive records carry a
         // self-key in their signature, so they never falsely merge.
-        const sig = recordSig(entry)
+        //
+        // SCOPED PER HOME MODULE. An anonymous `{…}` has no declaration file, so its home is
+        // whichever component happened to build it first; merging identical inline shapes
+        // ACROSS components (e.g. Avatar's `sizeConfig` ≡ DataTable's) pinned the canonical to
+        // that arbitrary home and drew a processing-order cross-edge — fusing dozens of
+        // unrelated component modules into ONE giant SCC (`HighchartsSharedTypes` held 2409/2578
+        // types for @juspay/blend). Keying by `home|sig` keeps the within-module collapse (Hono's
+        // 1728 share one home; component files stay compact) while a shared shape now gets its
+        // own copy per component — types stay where the library declares them. (#61 follow-up)
+        const sig = entry.home + '|' + recordSig(entry)
         const canon = ctx.shared.bySig.get(sig)
         if (canon && canon !== entry) {
             const i = ctx.shared.entries.indexOf(entry)
@@ -2636,7 +3043,9 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
     if (ctx.seenRecords.has(rname)) return { kind: 'typeRef', to: rname }
     ctx.seenRecords.set(rname, true)
     if (type.id != null) ctx.visiting?.add(type.id)
+    const prevSelfId = ctx.selfId; ctx.selfId = type.id
     const built = buildRecordFields(type, ctx, depth)
+    ctx.selfId = prevSelfId
     if (type.id != null) ctx.visiting?.delete(type.id)
     const tvars = new Set()
     for (const f of built.fields) collectTypeVars(f.type, tvars)
@@ -2659,21 +3068,46 @@ function buildRecordFields(type, ctx, depth) {
     }
     const props = type.getProperties()
     const hasHtml = props.some(isInherited)
-    const spread = hasHtml ? 'JsxDOM.domProps' : undefined
+    // A FIRST-PARTY field whose name collides with a DOM attr (`id`, `size`, `shape`, …) can't
+    // co-exist with the all-or-nothing `...JsxDOM.domProps` spread (ReScript rejects an explicit
+    // field that overlaps a spread), and JsxDOM.domProps — unlike the component path's narrowable
+    // HtmlAttrs variants — can't omit it. Previously such own fields were SILENTLY DROPPED
+    // (AvatarData lost required `id`/`size`/`shape`). The named first-party fields matter more
+    // than the generic inherited-attr bag, so on collision we keep ALL own fields and drop the
+    // spread (the inherited HTML attrs go with it). (#63 C3)
+    const ownCollides = hasHtml && props.some((p) => !isInherited(p) && DOM_PROPS_FIELDS.has(p.getName()))
+    const spread = (hasHtml && !ownCollides) ? 'JsxDOM.domProps' : undefined
 
     // Record fields must not mint implicit component type variables for `any` — a SHARED
     // record can't be component-generic, so `any` stays a flagged defect there. (#31)
     const prevInRecord = ctx.inRecordField
     ctx.inRecordField = true
     const fields = props
-        // when spreading domProps, drop ALL inherited HTML fields + any own field whose
-        // name already exists in domProps (collision); keep only the package's own fields.
-        .filter((p) => !spread || (!isInherited(p) && !DOM_PROPS_FIELDS.has(p.getName())))
-        .filter((p) => !['ref', 'key'].includes(p.getName()))
+        // Keep every FIRST-PARTY field (with its real type); drop genuinely inherited (@types/
+        // lib.dom) HTML attrs — they're covered by the domProps spread, or intentionally gone
+        // with it on collision. (#63 C3)
+        .filter((p) => !isInherited(p))
+        // NB: `key`/`ref` are React-reserved only on a COMPONENT's top-level props (filtered in
+        // buildComponentIR). A nested DATA record (`{ key: string; color: string }[]`) uses `key`
+        // as real payload, so it must NOT be stripped here (#63 C1).
         .map((p) => {
             const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0
             const t = checker.getTypeOfSymbolAtLocation(p, ctx.decl)
-            return { name: p.getName(), optional, type: classify(t, ctx, p.getName(), depth + 1) }
+            // Recover syntactic nullability — `data: DirectoryData[] | null` must stay
+            // `Nullable.t<array<…>>`, not collapse to a required non-nullable array; a `| undefined`
+            // makes the field optional. strictNullChecks is off, so it's gone from the resolved
+            // type and read from the SYNTACTIC node — same as component props. Via the single
+            // FIRST-PARTY property signature: a merged intersection field has both an own and an
+            // external (`@types`/`@radix`/…) signature; the own one is authoritative. (#63 C5 / #65 B1)
+            const propSigs = (p.declarations || []).filter((dd) => ts.isPropertySignature(dd) && dd.type)
+            const ownSigs = propSigs.filter((dd) => !isVendorDecl(dd))
+            const ownDecl = ownSigs.length === 1 ? ownSigs[0] : (propSigs.length === 1 ? propSigs[0] : null)
+            const nb = ownDecl && ownDecl.type && syntacticNullability(ownDecl.type)
+            return {
+                name: p.getName(),
+                optional: optional || !!(nb && nb.hasUndef) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
+                type: applyNullable(classify(t, ctx, p.getName(), depth + 1), nb),
+            }
         })
     ctx.inRecordField = prevInRecord
     return { spread, fields }

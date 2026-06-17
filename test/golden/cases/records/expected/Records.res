@@ -1,6 +1,6 @@
 @module("demo") @react.component
 external make: (
-  ~point: RecordsTypes.pointConfig=?,
+  ~point: RecordsTypes.recordsPointConfig=?,
   ~menu: RecordsTypes.menuItemType=?,
-  ~config: RecordsTypes.configConfig=?,
+  ~config: RecordsTypes.recordsConfigConfig=?,
 ) => React.element = "Records"

@@ -26,11 +26,11 @@ type props = {
   onDropRejected?: array<UploadTypes.fileRejection> => unit,
   onFileRemove?: string => unit,
   onReplaceFile?: unit => unit,
-  onStateChange?: UploadTypes.onStateChangeConfig => unit,
+  onStateChange?: UploadTypes.uploadOnStateChangeConfig => unit,
   isDragActive?: bool,
   isDragAccept?: bool,
   isDragReject?: bool,
-  validator?: Webapi.File.t => UploadTypes.errorsConfig,
+  validator?: Webapi.File.t => Nullable.t<UploadTypes.uploadErrorsConfig>,
   actionSlot?: React.element,
 }
 

@@ -25,7 +25,7 @@ external make: (
   ~skipQuickFiltersOnMobile: bool=?,
   ~size: DateRangePickerTypes.dateRangePickerSize=?,
   ~formatConfig: DateRangePickerTypes.dateFormatConfig=?,
-  ~triggerConfig: DateRangePickerTypes.triggerConfig3=?,
+  ~triggerConfig: DateRangePickerTypes.triggerConfig=?,
   ~maxMenuHeight: float=?,
   ~showPreset: bool=?,
   ~timezone: string=?,

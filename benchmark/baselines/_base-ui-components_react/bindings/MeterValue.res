@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, JSON.t) => React.element) 
 
 @module("@base-ui-components/react") @scope("Meter") @react.component
 external make: (
-  ~children: (string, float) => React.element=?,
+  ~children: Nullable.t<(string, float) => React.element>=?,
   ~className: CommonTypes.className=?,
   ~style: CommonTypes.style=?,
   ~title: string=?,

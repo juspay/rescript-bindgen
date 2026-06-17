@@ -13,5 +13,5 @@ external make: (
   ~subtext: string=?,
   ~slot: React.element=?,
   ~name: string=?,
-  ~maxLength: CheckboxTypes.maxLengthConfig=?,
+  ~maxLength: RadioTypes.radioMaxLengthConfig=?,
 ) => React.element = "Radio"

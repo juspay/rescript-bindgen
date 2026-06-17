@@ -1,5 +1,5 @@
 /** zero-cost wrapper: pass the FUNCTION form of `children` — `children={childrenFn((…) => …)}` */
-external childrenFn: (PopupsTypes.childrenConfig<'a> => React.element) => React.element = "%identity"
+external childrenFn: (PopupsTypes.popupsChildrenConfig<'a> => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("Menu") @react.component
 external make: (

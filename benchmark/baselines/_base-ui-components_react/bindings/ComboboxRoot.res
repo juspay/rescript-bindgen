@@ -1,6 +1,6 @@
 @module("@base-ui-components/react") @scope("Combobox") @react.component
 external make: (
-  ~filter: ('a, string, option<'a => string>) => bool=?,
+  ~filter: Nullable.t<('a, string, option<'a => string>) => bool>=?,
   ~id: string=?,
   ~children: React.element=?,
   ~disabled: bool=?,
@@ -11,14 +11,14 @@ external make: (
   ~modal: bool=?,
   ~defaultOpen: bool=?,
   ~onOpenChangeComplete: bool => unit=?,
-  ~items: PositionerSharedTypes.htmlProps=?,
+  ~items: RootSharedTypes.readonlyArray=?,
   ~required: bool=?,
   ~readOnly: bool=?,
   ~openOnInputClick: bool=?,
   ~inputValue: CommonTypes.stringOrNumberOrStringArray=?,
   ~defaultInputValue: CommonTypes.stringOrNumberOrStringArray=?,
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
-  ~filteredItems: PositionerSharedTypes.htmlProps=?,
+  ~filteredItems: RootSharedTypes.readonlyArray=?,
   ~virtualized: bool=?,
   ~limit: float=?,
   ~locale: string=?,  // ⓘ Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled

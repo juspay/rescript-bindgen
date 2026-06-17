@@ -1,15 +1,19 @@
 type modalButtonAction = {
-  ...JsxDOM.domProps,
+  disabled?: bool,
+  onClick?: option<ReactEvent.Mouse.t> => unit,
   justifyContent?: string,
+  width?: CommonTypes.stringOrNumber,
+  size?: ButtonTypes.buttonSize,
   text?: string,
-  buttonType?: ButtonSharedTypes.buttonType,
-  subType?: ButtonSharedTypes.buttonSubType,
+  buttonType?: ButtonTypes.buttonType,
+  subType?: ButtonTypes.buttonSubType,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
+  loading?: bool,
   showSkeleton?: bool,
-  skeletonVariant?: ButtonSharedTypes.skeletonVariant,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
   fullWidth?: bool,
-  state?: ButtonSharedTypes.buttonState,
+  state?: ButtonTypes.buttonState,
 }
 type bodySkeletonProps = {
   show?: bool,
@@ -18,45 +22,48 @@ type bodySkeletonProps = {
 }
 type modalSkeletonProps = {
   show?: bool,
-  variant?: ButtonSharedTypes.skeletonVariant,
+  variant?: SkeletonTypes.skeletonVariant,
   bodySkeletonProps?: bodySkeletonProps,
 }
-type paddingConfig5 = {
+type modalPaddingConfig = {
   x: string,
   y: string,
 }
-type titleConfig = {
+type modalTitleConfig = {
   color: string,
   fontSize: string,
   fontWeight: string,
 }
-type textConfig8 = {
-  title: titleConfig,
-  subtitle: titleConfig,
+type modalTextConfig = {
+  title: modalTitleConfig,
+  subtitle: modalTitleConfig,
 }
-type headerConfig = {
-  padding: paddingConfig5,
+type modalHeaderConfig = {
+  padding: modalPaddingConfig,
   borderBottom: string,
   backgroundColor: string,
-  text: textConfig8,
+  text: modalTextConfig,
 }
-type bodyConfig2 = {
+type modalBodyConfig = {
   padding: string,
   backgroundColor: string,
 }
-type footerConfig = {
+type modalFooterConfig = {
   padding: string,
   borderTop: string,
   backgroundColor: string,
   gap: string,
 }
+type modalCloseButtonConfig = {
+  color: string,
+}
 type modalTokensType = {
   boxShadow: string,
   borderRadius: string,
-  header: headerConfig,
-  body: bodyConfig2,
-  footer: footerConfig,
-  closeButton: AvatarGroupTypes.textConfig7,
+  header: modalHeaderConfig,
+  body: modalBodyConfig,
+  footer: modalFooterConfig,
+  closeButton: modalCloseButtonConfig,
 }
 type responsiveModalTokens = {
   sm: modalTokensType,

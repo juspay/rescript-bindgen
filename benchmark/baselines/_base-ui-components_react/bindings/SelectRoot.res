@@ -15,7 +15,7 @@ external make: (
   @as("open") ~open_: bool=?,
   ~modal: bool=?,
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
-  ~items: RootSharedTypes.valueOrItemsConfigArray<'c>=?,
+  ~items: RootSharedTypes.valueOrRootItemsConfigArray<'c>=?,
   ~itemToStringLabel: 'a => string=?,
   ~itemToStringValue: 'a => string=?,
   ~isItemEqualToValue: ('a, 'a) => bool=?,

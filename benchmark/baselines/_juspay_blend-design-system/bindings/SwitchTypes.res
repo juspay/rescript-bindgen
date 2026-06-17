@@ -1,62 +1,84 @@
 type switchSize =
   | @as("sm") Sm
   | @as("md") Md
-type backgroundColorConfig13 = {
-  active: RadioTypes.backgroundColorConfig11,
-  inactive: RadioTypes.backgroundColorConfig11,
+type switch_MaxLengthConfig = {
+  label?: float,
+  subtext?: float,
 }
-type borderConfig8 = {
+type switch_HeightConfig = {
+  sm: string,
+  md: string,
+}
+type switch_ActiveConfig = {
+  disabled: string,
+  default: string,
+  hover: string,
+  error: string,
+}
+type switch_BackgroundColorConfig = {
+  active: switch_ActiveConfig,
+  inactive: switch_ActiveConfig,
+}
+type switch_BorderConfig = {
   color: string,
   width: string,
 }
-type smConfig13 = {
+type switch_SmConfig = {
   width: string,
   height: string,
   top: string,
   left: string,
   offset: string,
 }
-type sizeConfig4 = {
-  sm: smConfig13,
-  md: smConfig13,
+type switch_SizeConfig = {
+  sm: switch_SmConfig,
+  md: switch_SmConfig,
 }
-type thumbConfig = {
+type switch_ThumbConfig = {
   backgroundColor: string,
-  border: borderConfig8,
-  borderRadius: RadioTypes.fontSizeConfig5,
-  size: sizeConfig4,
+  border: switch_BorderConfig,
+  borderRadius: switch_HeightConfig,
+  size: switch_SizeConfig,
   outline: string,
   outlineOffset: string,
   boxShadow: string,
 }
-type switchContainerConfig = {
-  height: RadioTypes.fontSizeConfig5,
-  width: RadioTypes.fontSizeConfig5,
-  borderRadius: RadioTypes.fontSizeConfig5,
-  backgroundColor: backgroundColorConfig13,
-  thumb: thumbConfig,
+type switch_SwitchContainerConfig = {
+  height: switch_HeightConfig,
+  width: switch_HeightConfig,
+  borderRadius: switch_HeightConfig,
+  backgroundColor: switch_BackgroundColorConfig,
+  thumb: switch_ThumbConfig,
 }
-type labelConfig6 = {
-  color: RadioTypes.backgroundColorConfig11,
-  fontSize: RadioTypes.fontSizeConfig5,
-  fontWeight: RadioTypes.fontSizeConfig5,
+type switch_LabelConfig = {
+  color: switch_ActiveConfig,
+  fontSize: switch_HeightConfig,
+  fontWeight: switch_HeightConfig,
   gap: string,
 }
-type contentConfig6 = {
-  label: labelConfig6,
-  subtext: RadioTypes.sublabelConfig,
+type switch_SubtextConfig = {
+  color: switch_ActiveConfig,
+  fontSize: switch_HeightConfig,
+  fontWeight: switch_HeightConfig,
+}
+type switch_ContentConfig = {
+  label: switch_LabelConfig,
+  subtext: switch_SubtextConfig,
   gap: string,
 }
-type slotConfig4 = {
-  width: RadioTypes.fontSizeConfig5,
-  height: RadioTypes.fontSizeConfig5,
+type switch_RequiredConfig = {
+  color: string,
+}
+type switch_SlotConfig = {
+  width: switch_HeightConfig,
+  height: switch_HeightConfig,
 }
 type switchTokensType = {
   gap: string,
-  switchContainer: switchContainerConfig,
-  content: contentConfig6,
-  required: AvatarGroupTypes.textConfig7,
-  slot: slotConfig4,
+  switchContainer: switch_SwitchContainerConfig,
+  content: switch_ContentConfig,
+  required: switch_RequiredConfig,
+  slot: switch_SlotConfig,
 }
 type responsiveSwitchTokens = {
   sm: switchTokensType,

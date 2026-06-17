@@ -1,10 +1,10 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, ButtonTypes.buttonState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.fieldsetRootState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("Fieldset") @react.component
 external make: (
   ~form: string=?,
-  ~style: ButtonTypes.buttonStyle=?,
+  ~style: RootSharedTypes.fieldsetRootStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -55,6 +55,6 @@ external make: (
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~disabled: bool=?,
   ~name: string=?,
-  ~className: ButtonTypes.buttonClassName=?,
+  ~className: RootSharedTypes.fieldsetRootClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Root"

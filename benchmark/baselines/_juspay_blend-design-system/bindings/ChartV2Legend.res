@@ -3,7 +3,7 @@ type props = {
   chartRef?: React.ref<Nullable.t<Dom.element>>,
   chartRefs?: array<React.ref<Nullable.t<Dom.element>>>,
   customLegendItems?: array<HighchartsSharedTypes.chartV2CustomLegendItem>,
-  renderItem?: HighchartsSharedTypes.renderItemConfig => React.element,
+  renderItem?: HighchartsSharedTypes.chartsV2RenderItemConfig => React.element,
   layout?: TabsTypes.orientation,
 }
 

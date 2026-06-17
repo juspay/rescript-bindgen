@@ -21,9 +21,9 @@ type variantType =
 type positionStrategy =
   | @as("fixed") Fixed
   | @as("absolute") Absolute
-type renderConfig = {
+type distRenderConfig = {
   content: React.element,
-  activeAnchor: Dom.element,
+  activeAnchor: Nullable.t<Dom.element>,
 }
 type globalCloseEvents = {
   escape?: bool,

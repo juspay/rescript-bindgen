@@ -1,9 +1,9 @@
-type itemsConfig<'a> = {
+type itemsDictArrayItemsConfig<'a> = {
   label: React.element,
   value: 'a,
 }
-type entriesConfig = {
+type itemsDictArrayEntriesConfig = {
   label: React.element,
   value: string,
 }
-@unboxed type valueOrItemsConfigArray<'a> = Dict(Dict.t<React.element>) | ItemsConfigArr(array<itemsConfig<'a>>)
+@unboxed type valueOrItemsDictArrayItemsConfigArray<'a> = Dict(Dict.t<React.element>) | ItemsDictArrayItemsConfigArr(array<itemsDictArrayItemsConfig<'a>>)

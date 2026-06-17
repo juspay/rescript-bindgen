@@ -1,9 +1,9 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, SeparatorTypes.separatorState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, LinkTypes.toolbarLinkState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("Toolbar") @react.component
 external make: (
-  ~style: SeparatorTypes.separatorStyle=?,
+  ~style: LinkTypes.toolbarLinkStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -55,6 +55,6 @@ external make: (
   @as("type") ~type_: string=?,
   ~target: ReactTypes.htmlAttributeAnchorTarget=?,
   ~href: string=?,
-  ~className: SeparatorTypes.separatorClassName=?,
+  ~className: LinkTypes.toolbarLinkClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Link"

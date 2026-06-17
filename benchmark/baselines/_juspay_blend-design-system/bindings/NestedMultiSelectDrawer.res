@@ -5,7 +5,7 @@ external make: (
   ~heading: string,
   ~description: string=?,
   ~rightSlot: React.element=?,
-  ~items: array<DrawerTypes.itemsConfig2>,
+  ~items: array<DrawerTypes.drawerItemsConfig>,
   ~selectedValues: array<string>=?,
   ~onSelectionChange: array<string> => unit=?,
   ~enableSearch: bool=?,
@@ -18,7 +18,7 @@ external make: (
   ~direction: PopoverTypes.side=?,
   ~modal: bool=?,
   ~dismissible: bool=?,
-  ~mobileOffset: DrawerTypes.mobileOffsetConfig=?,
+  ~mobileOffset: DrawerTypes.drawerMobileOffsetConfig=?,
   ~className: string=?,
   ~style: JsxDOM.style=?,
 ) => React.element = "NestedMultiSelectDrawer"

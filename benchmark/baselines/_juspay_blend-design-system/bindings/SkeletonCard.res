@@ -1,6 +1,6 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
-  ~variant: ButtonSharedTypes.skeletonVariant=?,
+  ~variant: SkeletonTypes.skeletonVariant=?,
   ~loading: bool=?,
   @as("data-testid") ~dataTestid: string=?,
   ~style: JsxDOM.style=?,
@@ -85,7 +85,7 @@ external make: (
   ~paddingBottom: CommonTypes.stringOrNumber=?,
   ~paddingLeft: CommonTypes.stringOrNumber=?,
   ~borderBottom: string=?,
-  @as("as") ~as_: TagsTypes.as_=?,
+  @as("as") ~as_: SplitTagTypes.as_=?,
   ~_hover: PrimitivesTypes.styledBlockProps=?,
   ~_focus: PrimitivesTypes.styledBlockProps=?,
   ~_active: PrimitivesTypes.styledBlockProps=?,

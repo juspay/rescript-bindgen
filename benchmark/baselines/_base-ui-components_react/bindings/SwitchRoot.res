@@ -9,7 +9,7 @@ external make: (
   ~disabled: bool=?,
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
   ~name: string=?,
-  ~onCheckedChange: (bool, PositionerSharedTypes.onCheckedChangeConfig) => unit=?,
+  ~onCheckedChange: (bool, PositionerSharedTypes.utilsOnCheckedChangeConfig) => unit=?,
   ~readOnly: bool=?,
   ~required: bool=?,
   ~uncheckedValue: string=?,

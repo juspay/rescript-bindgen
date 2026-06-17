@@ -7,7 +7,7 @@ type checkboxIndicatorState = {
   indeterminate: bool,
   touched: bool,
   dirty: bool,
-  valid: bool,
+  valid: Nullable.t<bool>,
   filled: bool,
   focused: bool,
 }
@@ -16,8 +16,8 @@ type radioIndicatorState = {
   transitionStatus: PositionerSharedTypes.transitionStatus,
 }
 type tabsIndicatorState = {
-  activeTabPosition: PositionerSharedTypes.tabsTabPosition,
-  activeTabSize: PositionerSharedTypes.anchorConfig,
+  activeTabPosition: Nullable.t<PositionerSharedTypes.tabsTabPosition>,
+  activeTabSize: Nullable.t<PositionerSharedTypes.tabsTabSize>,
   orientation: PositionerSharedTypes.orientation,
   tabActivationDirection: PositionerSharedTypes.tabsTabActivationDirection,
 }

@@ -9,7 +9,7 @@ type props = {
   onlinePosition?: AvatarTypes.avatarOnlinePosition,
   leadingSlot?: React.element,
   trailingSlot?: React.element,
-  skeleton?: AvatarTypes.skeletonConfig,
+  skeleton?: AvatarTypes.avatarSkeletonConfig,
 }
 
 @module("@juspay/blend-design-system")

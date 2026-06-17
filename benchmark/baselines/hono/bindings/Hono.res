@@ -17,15 +17,14 @@ type t = InstanceTypes.hono
 // 🛑 BROKEN: `on` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
 @send external on: (t, ~method: string, ~path: string, ~handler: (InstanceTypes.context, unit => promise<unit>) => string) => t = "on"
 @send external use: (t, ~handlers: array<(InstanceTypes.context, unit => promise<unit>) => promise<WebTypes.response>>=?, unit) => t = "use"
-@send external getPath: (t, ~request: WebTypes.request, ~options: TypesTypes.getPathConfig=?, unit) => string = "getPath"
+@send external getPath: (t, ~request: WebTypes.request, ~options: TypesTypes.typesGetPathConfig=?, unit) => string = "getPath"
 // 🛑 BROKEN: `route` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
 @send external route: (t, ~path: string, ~app: t) => t = "route"
 // 🛑 BROKEN: `basePath` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
 @send external basePath: (t, ~path: string) => t = "basePath"
-// ⚠️ REVIEW: `onError` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
-@send external onError: (t, ~handler: (string, InstanceTypes.context) => promise<WebTypes.response>) => t = "onError"
+@send external onError: (t, ~handler: (TypesTypes.Handler.t, InstanceTypes.context) => promise<WebTypes.response>) => t = "onError"
 @send external notFound: (t, ~handler: InstanceTypes.context => promise<WebTypes.response>) => t = "notFound"
-@send external mount: (t, ~path: string, ~applicationHandler: (WebTypes.request, 'a) => promise<WebTypes.response>, ~options: TypesTypes.optionsConfigOptions=?, unit) => t = "mount"
+@send external mount: (t, ~path: string, ~applicationHandler: (WebTypes.request, 'a) => promise<WebTypes.response>, ~options: TypesTypes.typesOptionsConfigOptions=?, unit) => t = "mount"
 // ⚪ loose: `fetch` has a param/return widened to `string`.
 @send external fetch: (t, ~request: WebTypes.request, ~env: string=?, ~executionCtx: TypesTypes.executionContext=?, unit) => promise<WebTypes.response> = "fetch"
 // ⚪ loose: `request` has a param/return widened to `string`.

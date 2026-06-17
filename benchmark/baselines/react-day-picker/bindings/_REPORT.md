@@ -1,8 +1,8 @@
 # Binding report — `react-day-picker@10.0.1`
 
-**27** components · ✅ **27** usable · 🔍 **0** need review · 🛑 **0** broken
+**26** components · ✅ **26** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**32** function binding(s) → `ReactDayPickerBindings.res`.
+**33** function binding(s) → `ReactDayPickerBindings.res`.
 
 **5** class module(s) → `@new`/`@send`/`@get` bindings.
 
@@ -39,6 +39,7 @@ Standalone function exports, emitted as positional `@module external` bindings i
 - `labelWeekNumberHeader`
 - `labelYearDropdown`
 - `useDayPicker`
+- `dayPickerContext`
 - `addToRange`
 - `dateMatchModifiers`
 - `rangeContainsDayOfWeek`
@@ -74,7 +75,6 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - Day
 - DayButton
 - DayPicker
-- dayPickerContext
 - Dropdown
 - DropdownNav
 - Footer

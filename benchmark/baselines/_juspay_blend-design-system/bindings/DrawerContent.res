@@ -14,5 +14,5 @@ external make: (
   ~width: CommonTypes.stringOrNumber=?,
   ~maxWidth: CommonTypes.stringOrNumber=?,
   ~offSet: CommonTypes.stringOrNumber=?,
-  ~mobileOffset: DrawerTypes.mobileOffsetConfig=?,
+  ~mobileOffset: DrawerTypes.drawerMobileOffsetConfig=?,
 ) => React.element = "DrawerContent"

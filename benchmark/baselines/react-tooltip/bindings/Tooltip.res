@@ -3,8 +3,8 @@ external make: (
   ~className: string=?,
   ~classNameArrow: string=?,
   ~content: React.element=?,
-  ~portalRoot: Dom.element=?,
-  ~render: DistTypes.renderConfig => React.element=?,
+  ~portalRoot: Nullable.t<Dom.element>=?,
+  ~render: DistTypes.distRenderConfig => React.element=?,
   ~place: DistTypes.placesType=?,
   ~offset: float=?,
   ~id: string=?,
@@ -38,6 +38,6 @@ external make: (
   ~setIsOpen: bool => unit=?,
   ~afterShow: unit => unit=?,
   ~afterHide: unit => unit=?,
-  ~disableTooltip: Dom.element => bool=?,
+  ~disableTooltip: Nullable.t<Dom.element> => bool=?,
   ~role: string=?,
 ) => React.element = "Tooltip"

@@ -1,11 +1,11 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.numberFieldRootState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, InputTypes.numberFieldInputState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("NumberField") @react.component
 external make: (
   @as("aria-roledescription") ~ariaRoledescription: string=?,
   ~form: string=?,
-  ~style: RootSharedTypes.numberFieldRootStyle=?,
+  ~style: InputTypes.numberFieldInputStyle=?,
   ~title: string=?,
   ~pattern: string=?,
   ~autoFocus: bool=?,
@@ -79,6 +79,6 @@ external make: (
   ~min: CommonTypes.stringOrNumber=?,
   ~minLength: int=?,
   ~placeholder: string=?,
-  ~className: RootSharedTypes.numberFieldRootClassName=?,
+  ~className: InputTypes.numberFieldInputClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Input"

@@ -10,7 +10,7 @@ type snackbarVariant =
   | @as("success") Success
   | @as("warning") Warning
   | @as("error") Error
-type actionButtonConfig = {
+type snackbarActionButtonConfig = {
   label: string,
   onClick: unit => unit,
   autoDismiss?: bool,
@@ -20,65 +20,65 @@ type addToastOptions = {
   description?: string,
   variant?: snackbarVariant,
   onClose?: unit => unit,
-  actionButton?: actionButtonConfig,
+  actionButton?: snackbarActionButtonConfig,
   duration?: float,
   position?: snackbarPosition,
 }
-type colorConfig5 = {
+type snackbarColorConfig = {
   info: string,
   success: string,
   warning: string,
   error: string,
 }
-type infoIconConfig = {
-  color: colorConfig5,
+type snackbarInfoIconConfig = {
+  color: snackbarColorConfig,
   height: string,
 }
-type colorConfig6 = {
+type snackbarColorConfig2 = {
   info: string,
   success: string,
   warning: string,
   error: string,
 }
-type headerConfig2 = {
-  color: colorConfig6,
+type snackbarHeaderConfig = {
+  color: snackbarColorConfig2,
   fontSize: string,
   fontWeight: string,
 }
-type textContainerConfig = {
+type snackbarTextContainerConfig = {
   gap: string,
-  header: headerConfig2,
-  description: headerConfig2,
+  header: snackbarHeaderConfig,
+  description: snackbarHeaderConfig,
 }
-type contentConfig = {
+type snackbarContentConfig = {
   gap: string,
-  textContainer: textContainerConfig,
+  textContainer: snackbarTextContainerConfig,
 }
-type primaryActionConfig = {
-  color: colorConfig5,
+type snackbarPrimaryActionConfig = {
+  color: snackbarColorConfig,
   fontSize: string,
   fontWeight: string,
 }
-type closeButtonConfig = {
+type snackbarCloseButtonConfig = {
   height: string,
-  color: colorConfig5,
+  color: snackbarColorConfig,
 }
-type actionsConfig = {
-  primaryAction: primaryActionConfig,
-  closeButton: closeButtonConfig,
+type snackbarActionsConfig = {
+  primaryAction: snackbarPrimaryActionConfig,
+  closeButton: snackbarCloseButtonConfig,
 }
-type smConfig7 = {
+type snackbarSmConfig = {
   backgroundColor: string,
   borderRadius: string,
   padding: string,
   maxWidth: string,
   boxShadow: string,
   gap: string,
-  infoIcon: infoIconConfig,
-  content: contentConfig,
-  actions: actionsConfig,
+  infoIcon: snackbarInfoIconConfig,
+  content: snackbarContentConfig,
+  actions: snackbarActionsConfig,
 }
 type responsiveSnackbarTokens = {
-  sm: smConfig7,
-  lg: smConfig7,
+  sm: snackbarSmConfig,
+  lg: snackbarSmConfig,
 }

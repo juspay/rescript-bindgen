@@ -1,48 +1,61 @@
-type itemsConfig = {
+type topbarItemsConfig = {
   label: string,
   value: string,
   icon?: React.element,
 }
 type merchantInfo = {
-  items: array<itemsConfig>,
+  items: array<topbarItemsConfig>,
   selected: string,
   onSelect: string => unit,
 }
-type iconConfig6 = {
+type topbarBackgroundColorConfig = {
+  default: string,
+  hover: string,
+  active: string,
+}
+type topbarIconConfig = {
   size: string,
   color: string,
 }
-type toggleButtonConfig2 = {
+type topbarToggleButtonConfig = {
   borderRadius: string,
   padding: string,
-  backgroundColor: BreadcrumbTypes.colorConfig3,
+  backgroundColor: topbarBackgroundColorConfig,
   transition: string,
-  icon: iconConfig6,
+  icon: topbarIconConfig,
 }
-type actionButtonConfig2 = {
+type topbarActionButtonConfig = {
   borderRadius: string,
   padding: string,
   minWidth: string,
   height: string,
-  backgroundColor: BreadcrumbTypes.colorConfig3,
+  backgroundColor: topbarBackgroundColorConfig,
   transition: string,
-  icon: iconConfig6,
+  icon: topbarIconConfig,
 }
-type tenantIconButtonConfig = {
+type topbarTenantIconButtonConfig = {
   borderRadius: string,
   minHeight: string,
-  backgroundColor: BreadcrumbTypes.colorConfig3,
+  backgroundColor: topbarBackgroundColorConfig,
   transition: string,
 }
-type merchantSelectTriggerConfig = {
-  gap: string,
-  icon: iconConfig6,
-  text: StatCardTypes.titleConfig3,
+type topbarTextConfig = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
 }
-type leftSectionConfig = {
+type topbarMerchantSelectTriggerConfig = {
+  gap: string,
+  icon: topbarIconConfig,
+  text: topbarTextConfig,
+}
+type topbarLeftSectionConfig = {
   gap: string,
   maxHeight: string,
-  divider: StatCardTypes.titleConfig3,
+  divider: topbarTextConfig,
+}
+type topbarRightSectionConfig = {
+  gap: string,
 }
 type topbarTokenType = {
   zIndex: string,
@@ -51,13 +64,13 @@ type topbarTokenType = {
   backdropFilter: string,
   padding: string,
   gap: string,
-  toggleButton: toggleButtonConfig2,
-  actionButton: actionButtonConfig2,
-  tenantIconButton: tenantIconButtonConfig,
-  merchantSelectTrigger: merchantSelectTriggerConfig,
-  leftSection: leftSectionConfig,
-  rightSection: ChartsTypes.slotsConfig,
-  sidebarSection: ChartsTypes.slotsConfig,
+  toggleButton: topbarToggleButtonConfig,
+  actionButton: topbarActionButtonConfig,
+  tenantIconButton: topbarTenantIconButtonConfig,
+  merchantSelectTrigger: topbarMerchantSelectTriggerConfig,
+  leftSection: topbarLeftSectionConfig,
+  rightSection: topbarRightSectionConfig,
+  sidebarSection: topbarRightSectionConfig,
 }
 type responsiveTopbarTokens = {
   sm: topbarTokenType,

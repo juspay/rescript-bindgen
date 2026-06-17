@@ -1,4 +1,4 @@
-type shadowsConfig = {
+type tokensShadowsConfig = {
   xs: string,
   sm: string,
   md: string,
@@ -9,7 +9,7 @@ type shadowsConfig = {
   focusPrimary: string,
   focusError: string,
 }
-type widthConfig = {
+type tokensWidthConfig = {
   @as("0") _0: string,
   @as("1") _1: string,
   @as("1.5") _1_5: string,
@@ -17,7 +17,7 @@ type widthConfig = {
   @as("3") _3: string,
   @as("4") _4: string,
 }
-type radiusConfig = {
+type tokensRadiusConfig = {
   @as("0") _0: string,
   @as("2") _2: string,
   @as("4") _4: string,
@@ -29,17 +29,17 @@ type radiusConfig = {
   @as("20") _20: string,
   full: string,
 }
-type borderConfig = {
-  width: widthConfig,
-  radius: radiusConfig,
+type tokensBorderConfig = {
+  width: tokensWidthConfig,
+  radius: tokensRadiusConfig,
 }
-type familyConfig = {
+type tokensFamilyConfig = {
   display: string,
   body: string,
   heading: string,
   mono: string,
 }
-type weightConfig = {
+type tokensWeightConfig = {
   @as("100") _100: string,
   @as("200") _200: string,
   @as("300") _300: string,
@@ -50,14 +50,14 @@ type weightConfig = {
   @as("800") _800: string,
   @as("900") _900: string,
 }
-type letterSpacingConfig = {
+type tokensLetterSpacingConfig = {
   compressed: string,
   condensed: string,
   normal: string,
   expanded: string,
   extended: string,
 }
-type fontSizeConfig = {
+type tokensFontSizeConfig = {
   @as("10") _10: string,
   @as("12") _12: string,
   @as("14") _14: string,
@@ -85,7 +85,7 @@ type fontSizeConfig = {
   @as("96") _96: string,
   @as("100") _100: string,
 }
-type lineHeightConfig = {
+type tokensLineHeightConfig = {
   @as("12") _12: string,
   @as("14") _14: string,
   @as("16") _16: string,
@@ -112,51 +112,51 @@ type lineHeightConfig = {
   @as("96") _96: string,
   @as("100") _100: string,
 }
-type xsConfig = {
+type tokensXsConfig = {
   fontSize: string,
   lineHeight: string,
   letterSpacing: string,
 }
-type bodyConfig = {
-  xs: xsConfig,
-  sm: xsConfig,
-  md: xsConfig,
-  lg: xsConfig,
+type tokensBodyConfig = {
+  xs: tokensXsConfig,
+  sm: tokensXsConfig,
+  md: tokensXsConfig,
+  lg: tokensXsConfig,
 }
-type headingConfig = {
-  sm: xsConfig,
-  md: xsConfig,
-  lg: xsConfig,
-  xl: xsConfig,
-  @as("2xl") _2xl: xsConfig,
+type tokensHeadingConfig = {
+  sm: tokensXsConfig,
+  md: tokensXsConfig,
+  lg: tokensXsConfig,
+  xl: tokensXsConfig,
+  @as("2xl") _2xl: tokensXsConfig,
 }
-type displayConfig = {
-  sm: xsConfig,
-  md: xsConfig,
-  lg: xsConfig,
-  xl: xsConfig,
+type tokensDisplayConfig = {
+  sm: tokensXsConfig,
+  md: tokensXsConfig,
+  lg: tokensXsConfig,
+  xl: tokensXsConfig,
 }
-type codeConfig = {
-  sm: xsConfig,
-  md: xsConfig,
-  lg: xsConfig,
+type tokensCodeConfig = {
+  sm: tokensXsConfig,
+  md: tokensXsConfig,
+  lg: tokensXsConfig,
 }
-type sizeConfig = {
+type tokensSizeConfig = {
   base: string,
-  body: bodyConfig,
-  heading: headingConfig,
-  display: displayConfig,
-  code: codeConfig,
+  body: tokensBodyConfig,
+  heading: tokensHeadingConfig,
+  display: tokensDisplayConfig,
+  code: tokensCodeConfig,
 }
-type fontConfig = {
-  family: familyConfig,
-  weight: weightConfig,
-  letterSpacing: letterSpacingConfig,
-  fontSize: fontSizeConfig,
-  lineHeight: lineHeightConfig,
-  size: sizeConfig,
+type tokensFontConfig = {
+  family: tokensFamilyConfig,
+  weight: tokensWeightConfig,
+  letterSpacing: tokensLetterSpacingConfig,
+  fontSize: tokensFontSizeConfig,
+  lineHeight: tokensLineHeightConfig,
+  size: tokensSizeConfig,
 }
-type opacityConfig = {
+type tokensOpacityConfig = {
   @as("0") _0: string,
   @as("5") _5: string,
   @as("10") _10: string,
@@ -170,7 +170,7 @@ type opacityConfig = {
   @as("90") _90: string,
   @as("100") _100: string,
 }
-type unitConfig = {
+type tokensUnitConfig = {
   @as("0") _0: string,
   @as("0.5") _0_5: string,
   @as("1") _1: string,
@@ -216,7 +216,7 @@ type colorTokensType = {
   green: Dict.t<string>,
   yellow: Dict.t<string>,
 }
-type zIndexConfig = {
+type tokensZIndexConfig = {
   @as("0") _0: string,
   @as("9999") _9999: string,
   @as("1000") _1000: string,
@@ -224,11 +224,11 @@ type zIndexConfig = {
   @as("1200") _1200: string,
 }
 type foundationTokenType = {
-  shadows: shadowsConfig,
-  border: borderConfig,
-  font: fontConfig,
-  opacity: opacityConfig,
-  unit: unitConfig,
+  shadows: tokensShadowsConfig,
+  border: tokensBorderConfig,
+  font: tokensFontConfig,
+  opacity: tokensOpacityConfig,
+  unit: tokensUnitConfig,
   colors: colorTokensType,
-  zIndex: zIndexConfig,
+  zIndex: tokensZIndexConfig,
 }

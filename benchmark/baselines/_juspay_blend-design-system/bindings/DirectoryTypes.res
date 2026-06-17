@@ -14,60 +14,77 @@ type directoryData = {
   isCollapsible?: bool,
   defaultOpen?: bool,
 }
-type headerConfig10 = {
-  padding: ModalTypes.paddingConfig5,
-  label: CardTypes.contentConfig3,
-  chevron: AvatarGroupTypes.borderConfig3,
+type directoryPaddingConfig = {
+  x: string,
+  y: string,
 }
-type backgroundColorConfig7 = {
+type directoryLabelConfig = {
+  fontSize: string,
+  color: string,
+  fontWeight: string,
+}
+type directoryChevronConfig = {
+  width: string,
+  color: string,
+}
+type directoryHeaderConfig = {
+  padding: directoryPaddingConfig,
+  label: directoryLabelConfig,
+  chevron: directoryChevronConfig,
+}
+type directoryPaddingConfig2 = {
+  x: string,
+  y: string,
+}
+type directoryBackgroundColorConfig = {
   default: string,
   hover: string,
   active: string,
 }
-type iconConfig3 = {
+type directoryIconConfig = {
   width: string,
 }
-type chevronConfig = {
+type directoryChevronConfig2 = {
   width: string,
   color: string,
 }
-type itemConfig5 = {
-  padding: ButtonSharedTypes.defaultConfig3,
+type directoryItemConfig = {
+  padding: directoryPaddingConfig2,
   gap: string,
   borderRadius: string,
   fontWeight: string,
   fontSize: string,
   transition: string,
-  backgroundColor: backgroundColorConfig7,
-  color: backgroundColorConfig7,
-  icon: iconConfig3,
-  chevron: chevronConfig,
+  backgroundColor: directoryBackgroundColorConfig,
+  color: directoryBackgroundColorConfig,
+  icon: directoryIconConfig,
+  chevron: directoryChevronConfig2,
 }
-type borderConfig6 = {
+type directoryBorderConfig = {
   width: string,
   color: string,
   leftOffset: string,
 }
-type nestedConfig = {
+type directoryNestedConfig = {
   paddingLeft: string,
   marginTop: string,
-  border: borderConfig6,
+  border: directoryBorderConfig,
 }
-type itemListConfig = {
+type directoryItemListConfig = {
   gap: string,
-  item: itemConfig5,
-  nested: nestedConfig,
+  item: directoryItemConfig,
+  nested: directoryNestedConfig,
 }
-type sectionConfig = {
+type directorySectionConfig = {
   gap: string,
-  header: headerConfig10,
-  itemList: itemListConfig,
+  header: directoryHeaderConfig,
+  itemList: directoryItemListConfig,
 }
 type directoryTokenType = {
   gap: string,
   paddingX: string,
   paddingY: string,
-  section: sectionConfig,
+  section: directorySectionConfig,
 }
 type responsiveDirectoryTokens = {
   sm: directoryTokenType,

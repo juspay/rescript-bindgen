@@ -2,7 +2,7 @@
 
 **0** components · ✅ **0** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**5** function binding(s) → `DemoBindings.res`.
+**7** function binding(s) → `DemoBindings.res`.
 
 **1** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
@@ -22,6 +22,8 @@ Standalone function exports, emitted as positional `@module external` bindings i
 - `now`
 - `forEach`
 - `translate`
+- `renderThing`
+- `getSlots`
 
 ## ✅ Usable
 

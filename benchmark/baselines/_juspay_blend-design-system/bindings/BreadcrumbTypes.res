@@ -1,6 +1,6 @@
 type breadcrumbSkeletonProps = {
   show: bool,
-  variant: ButtonSharedTypes.skeletonVariant,
+  variant: SkeletonTypes.skeletonVariant,
 }
 type breadcrumbItemType = {
   leftSlot?: React.element,
@@ -10,24 +10,24 @@ type breadcrumbItemType = {
   onClick?: ReactEvent.Mouse.t => unit,
   skeleton?: breadcrumbSkeletonProps,
 }
-type colorConfig3 = {
+type breadcrumbColorConfig = {
   default: string,
   hover: string,
   active: string,
 }
-type textConfig5 = {
+type breadcrumbTextConfig = {
   fontSize: string,
   fontWeight: string,
-  color: colorConfig3,
+  color: breadcrumbColorConfig,
 }
-type itemConfig = {
+type breadcrumbItemConfig = {
   padding: string,
   gap: string,
-  text: textConfig5,
+  text: breadcrumbTextConfig,
 }
 type breadcrumbTokenType = {
   gap: string,
-  item: itemConfig,
+  item: breadcrumbItemConfig,
 }
 type responsiveBreadcrumbTokens = {
   sm: breadcrumbTokenType,

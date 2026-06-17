@@ -2,7 +2,7 @@
 external make: (
   ~chartType: ChartsTypes.chartType=?,
   ~data: array<ChartsTypes.newNestedDataPoint>,
-  ~colors: array<AvatarGroupTypes.textConfig7>=?,
+  ~colors: array<ChartsTypes.chartsColorsConfig>=?,
   ~barsize: float=?,
   ~xAxis: ChartsTypes.axisConfig=?,
   ~yAxis: ChartsTypes.axisConfig=?,
@@ -11,7 +11,7 @@ external make: (
   ~width: CommonTypes.stringOrNumber=?,
   ~isSmallScreen: bool=?,
   ~hoveredKey: Nullable.t<string>=?,
-  ~onHoveredKeyChange: string => unit=?,
+  ~onHoveredKeyChange: Nullable.t<string> => unit=?,
   ~selectedKeys: array<string>=?,
   ~lineSeriesKeys: array<string>=?,
   ~enableHover: bool=?,

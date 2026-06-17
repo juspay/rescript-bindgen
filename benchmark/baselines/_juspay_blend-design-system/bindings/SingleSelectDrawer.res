@@ -20,5 +20,5 @@ external make: (
   ~direction: DrawerTypes.drawerDirection=?,
   ~modal: bool=?,
   ~dismissible: bool=?,
-  ~mobileOffset: DrawerTypes.mobileOffsetConfig=?,
+  ~mobileOffset: DrawerTypes.drawerMobileOffsetConfig=?,
 ) => React.element = "SingleSelectDrawer"

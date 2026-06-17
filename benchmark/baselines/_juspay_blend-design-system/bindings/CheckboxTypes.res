@@ -1,78 +1,85 @@
 type checkboxSize =
   | @as("sm") Sm
   | @as("md") Md
-type maxLengthConfig = {
+type checkboxMaxLengthConfig = {
   label?: float,
   subtext?: float,
 }
-type slotConfig5 = {
+type checkboxSlotConfig = {
   marginLeft: string,
 }
-type checkedConfig = {
+type checkboxWidthConfig = {
+  sm: string,
+  md: string,
+}
+type checkboxCheckedConfig = {
   default?: string,
   hover?: string,
   disabled?: string,
   error?: string,
 }
-type backgroundColorConfig14 = {
-  checked?: checkedConfig,
-  unchecked?: checkedConfig,
-  indeterminate?: checkedConfig,
+type checkboxBackgroundColorConfig = {
+  checked?: checkboxCheckedConfig,
+  unchecked?: checkboxCheckedConfig,
+  indeterminate?: checkboxCheckedConfig,
 }
-type checkedConfig2 = {
+type checkboxCheckedConfig2 = {
   default?: string,
   disabled?: string,
 }
-type colorConfig15 = {
-  checked?: checkedConfig2,
-  unchecked?: checkedConfig2,
-  indeterminate?: checkedConfig2,
+type checkboxColorConfig = {
+  checked?: checkboxCheckedConfig2,
+  unchecked?: checkboxCheckedConfig2,
+  indeterminate?: checkboxCheckedConfig2,
 }
-type iconConfig5 = {
-  color: colorConfig15,
-  width: RadioTypes.fontSizeConfig5,
-  height: RadioTypes.fontSizeConfig5,
-  strokeWidth: RadioTypes.fontSizeConfig5,
+type checkboxIconConfig = {
+  color: checkboxColorConfig,
+  width: checkboxWidthConfig,
+  height: checkboxWidthConfig,
+  strokeWidth: checkboxWidthConfig,
 }
-type indicatorConfig3 = {
-  width: RadioTypes.fontSizeConfig5,
-  height: RadioTypes.fontSizeConfig5,
-  backgroundColor: backgroundColorConfig14,
-  borderRadius: RadioTypes.fontSizeConfig5,
-  border: backgroundColorConfig14,
+type checkboxIndicatorConfig = {
+  width: checkboxWidthConfig,
+  height: checkboxWidthConfig,
+  backgroundColor: checkboxBackgroundColorConfig,
+  borderRadius: checkboxWidthConfig,
+  border: checkboxBackgroundColorConfig,
   outline: string,
   outlineOffset: string,
   boxShadow: string,
-  icon: iconConfig5,
+  icon: checkboxIconConfig,
 }
-type colorConfig16 = {
+type checkboxColorConfig2 = {
   default: string,
   hover: string,
   disabled: string,
   error: string,
 }
-type labelConfig7 = {
-  color: colorConfig16,
-  fontSize: RadioTypes.fontSizeConfig5,
-  fontWeight: RadioTypes.fontSizeConfig5,
-  lineHeight: RadioTypes.fontSizeConfig5,
+type checkboxLabelConfig = {
+  color: checkboxColorConfig2,
+  fontSize: checkboxWidthConfig,
+  fontWeight: checkboxWidthConfig,
+  lineHeight: checkboxWidthConfig,
 }
-type subtextConfig2 = {
-  color: colorConfig16,
-  fontSize: RadioTypes.fontSizeConfig5,
-  fontWeight: RadioTypes.fontSizeConfig5,
+type checkboxSubtextConfig = {
+  color: checkboxColorConfig2,
+  fontSize: checkboxWidthConfig,
+  fontWeight: checkboxWidthConfig,
 }
-type contentConfig7 = {
+type checkboxContentConfig = {
   gap: string,
-  label: labelConfig7,
-  subtext: subtextConfig2,
+  label: checkboxLabelConfig,
+  subtext: checkboxSubtextConfig,
+}
+type checkboxRequiredConfig = {
+  color: string,
 }
 type checkboxTokensType = {
   gap: string,
-  slot: slotConfig5,
-  indicator: indicatorConfig3,
-  content: contentConfig7,
-  required: AvatarGroupTypes.textConfig7,
+  slot: checkboxSlotConfig,
+  indicator: checkboxIndicatorConfig,
+  content: checkboxContentConfig,
+  required: checkboxRequiredConfig,
 }
 type responsiveCheckboxTokens = {
   sm: checkboxTokensType,

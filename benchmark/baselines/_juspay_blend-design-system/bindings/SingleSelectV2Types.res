@@ -1,34 +1,87 @@
+type stateToken = {
+  disabled: string,
+  default: string,
+  hover: string,
+  active: string,
+  focus: string,
+  focusVisible: string,
+  selected: string,
+}
+type singleSelectV2LabelConfig = {
+  fontSize: string,
+  fontWeight: string,
+  color: stateToken,
+}
+type singleSelectV2ErrorMessageConfig = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+}
+type singleSelectV2RequiredConfig = {
+  color: string,
+}
 type variantToken = {
-  container: TabsTypes.boxedConfig3,
-  @as("no-container") noContainer: TabsTypes.boxedConfig3,
+  container: string,
+  @as("no-container") noContainer: string,
 }
 type sizeToken = {
   sm: variantToken,
   md: variantToken,
   lg: variantToken,
 }
-type slotConfig9 = {
+type singleSelectV2ContainerConfig = {
+  top: string,
+  right: string,
+  bottom: string,
+  left: string,
+}
+type variantToken2 = {
+  container: singleSelectV2ContainerConfig,
+  @as("no-container") noContainer: singleSelectV2ContainerConfig,
+}
+type sizeToken2 = {
+  sm: variantToken2,
+  md: variantToken2,
+  lg: variantToken2,
+}
+type triggerStateToken = {
+  hover: string,
+  @as("open") open_: string,
+  focus: string,
+  closed: string,
+  error: string,
+}
+type variantToken3 = {
+  container: triggerStateToken,
+  @as("no-container") noContainer: triggerStateToken,
+}
+type singleSelectV2SlotConfig = {
   gap: string,
   width: string,
 }
-type triggerConfig8 = {
-  height: MultiSelectSharedTypes.heightConfig,
-  padding: sizeToken,
-  borderRadius: MultiSelectSharedTypes.heightConfig,
-  boxShadow: MultiSelectSharedTypes.smConfig8,
-  backgroundColor: MultiSelectSharedTypes.backgroundColorConfig8,
-  outline: MultiSelectSharedTypes.backgroundColorConfig8,
-  slot: slotConfig9,
-  placeholder: ModalTypes.titleConfig,
-  selectedValue: ModalTypes.titleConfig,
+type singleSelectV2PlaceholderConfig = {
+  color: string,
+  fontSize: string,
+  fontWeight: string,
 }
-type contentConfig12 = {
+type singleSelectV2TriggerConfig = {
+  height: sizeToken,
+  padding: sizeToken2,
+  borderRadius: sizeToken,
+  boxShadow: variantToken,
+  backgroundColor: variantToken3,
+  outline: variantToken3,
+  slot: singleSelectV2SlotConfig,
+  placeholder: singleSelectV2PlaceholderConfig,
+  selectedValue: singleSelectV2PlaceholderConfig,
+}
+type singleSelectV2ContentConfig = {
   backgroundColor: string,
   border: string,
   borderRadius: string,
   boxShadow: string,
 }
-type groupLabelConfig = {
+type singleSelectV2GroupLabelConfig = {
   margin: string,
   paddingTop: string,
   paddingRight: string,
@@ -36,9 +89,14 @@ type groupLabelConfig = {
   paddingLeft: string,
   fontSize: string,
   fontWeight: string,
-  color: MultiSelectSharedTypes.colorConfig12,
+  color: stateToken,
 }
-type itemConfig10 = {
+type singleSelectV2SeparatorConfig = {
+  color: string,
+  height: string,
+  margin: string,
+}
+type singleSelectV2ItemConfig = {
   paddingTop: string,
   paddingRight: string,
   paddingBottom: string,
@@ -46,18 +104,18 @@ type itemConfig10 = {
   margin: string,
   borderRadius: string,
   gap: string,
-  backgroundColor: MultiSelectSharedTypes.colorConfig12,
-  groupLabelText: MultiSelectSharedTypes.labelConfig3,
-  option: MultiSelectSharedTypes.labelConfig3,
-  description: MultiSelectSharedTypes.labelConfig3,
-  separator: MultiSelectSharedTypes.seperatorConfig2,
+  backgroundColor: stateToken,
+  groupLabelText: singleSelectV2LabelConfig,
+  option: singleSelectV2LabelConfig,
+  description: singleSelectV2LabelConfig,
+  separator: singleSelectV2SeparatorConfig,
 }
 type submenuTriggerStateToken = {
   default: string,
   hover: string,
   focus: string,
 }
-type triggerConfig9 = {
+type singleSelectV2TriggerConfig2 = {
   paddingTop: string,
   paddingRight: string,
   paddingBottom: string,
@@ -66,7 +124,7 @@ type triggerConfig9 = {
   borderRadius: string,
   backgroundColor: submenuTriggerStateToken,
 }
-type contentConfig13 = {
+type singleSelectV2ContentConfig2 = {
   backgroundColor: string,
   border: string,
   borderRadius: string,
@@ -76,39 +134,39 @@ type contentConfig13 = {
   paddingLeft: string,
   boxShadow: string,
 }
-type submenuConfig = {
-  trigger: triggerConfig9,
-  content: contentConfig13,
-  optionText: StatCardTypes.titleConfig3,
+type singleSelectV2SubmenuConfig = {
+  trigger: singleSelectV2TriggerConfig2,
+  content: singleSelectV2ContentConfig2,
+  optionText: singleSelectV2ErrorMessageConfig,
   iconColor: string,
 }
-type menuConfig4 = {
-  content: contentConfig12,
-  padding: sizeToken,
-  groupLabel: groupLabelConfig,
-  item: itemConfig10,
-  submenu: submenuConfig,
+type singleSelectV2MenuConfig = {
+  content: singleSelectV2ContentConfig,
+  padding: sizeToken2,
+  groupLabel: singleSelectV2GroupLabelConfig,
+  item: singleSelectV2ItemConfig,
+  submenu: singleSelectV2SubmenuConfig,
 }
-type headerConfig17 = {
+type singleSelectV2HeaderConfig = {
   paddingTop: string,
   paddingRight: string,
   paddingBottom: string,
   paddingLeft: string,
   borderBottom: string,
 }
-type mobilePanelConfig = {
-  header: headerConfig17,
+type singleSelectV2MobilePanelConfig = {
+  header: singleSelectV2HeaderConfig,
 }
 type singleSelectV2TokensType = {
   gap: string,
-  label: MultiSelectSharedTypes.labelConfig3,
-  subLabel: MultiSelectSharedTypes.labelConfig3,
-  hintText: MultiSelectSharedTypes.labelConfig3,
-  errorMessage: StatCardTypes.titleConfig3,
-  required: AvatarGroupTypes.textConfig7,
-  trigger: triggerConfig8,
-  menu: menuConfig4,
-  mobilePanel: mobilePanelConfig,
+  label: singleSelectV2LabelConfig,
+  subLabel: singleSelectV2LabelConfig,
+  hintText: singleSelectV2LabelConfig,
+  errorMessage: singleSelectV2ErrorMessageConfig,
+  required: singleSelectV2RequiredConfig,
+  trigger: singleSelectV2TriggerConfig,
+  menu: singleSelectV2MenuConfig,
+  mobilePanel: singleSelectV2MobilePanelConfig,
 }
 type responsiveSingleSelectV2Tokens = {
   sm: singleSelectV2TokensType,

@@ -3,7 +3,7 @@ external make: (
   ~directoryData: array<DirectoryTypes.directoryData>,
   ~idPrefix: string=?,
   ~activeItem: Nullable.t<string>=?,
-  ~onActiveItemChange: string => unit=?,
+  ~onActiveItemChange: Nullable.t<string> => unit=?,
   ~defaultActiveItem: Nullable.t<string>=?,
   ~iconOnlyMode: bool=?,
 ) => React.element = "Directory"

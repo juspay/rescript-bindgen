@@ -20,7 +20,7 @@ type props = {
   attachButtonIcon?: React.element,
   voiceButtonIcon?: React.element,
   sendButtonIcon?: React.element,
-  overflowMenuProps?: MenuTypes.overflowMenuPropsConfig,
+  overflowMenuProps?: MenuTypes.menuOverflowMenuPropsConfig,
 }
 
 @module("@juspay/blend-design-system")

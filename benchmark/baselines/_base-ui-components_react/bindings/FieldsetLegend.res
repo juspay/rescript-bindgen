@@ -1,9 +1,9 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, ButtonTypes.buttonState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, LegendTypes.fieldsetLegendState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("Fieldset") @react.component
 external make: (
-  ~style: ButtonTypes.buttonStyle=?,
+  ~style: LegendTypes.fieldsetLegendStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -52,6 +52,6 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~className: ButtonTypes.buttonClassName=?,
+  ~className: LegendTypes.fieldsetLegendClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Legend"

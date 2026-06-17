@@ -25,6 +25,9 @@ type passThrough =
   | @as("tableRow") TableRow
   | @as("thematicBreak") ThematicBreak
   | @as("yaml") Yaml
+type components = {
+  ...JsxDOM.domProps,
+}
 type vFile = {
   cwd: string,
   data: string,
@@ -45,17 +48,17 @@ type vFile = {
   toString: string,
 }
 type options = {
-  allowDangerousHtml?: bool,
-  clobberPrefix?: string,
-  file?: vFile,
+  allowDangerousHtml?: Nullable.t<bool>,
+  clobberPrefix?: Nullable.t<string>,
+  file?: Nullable.t<vFile>,
   footnoteBackContent?: string,
   footnoteBackLabel?: string,
-  footnoteLabel?: string,
-  footnoteLabelProperties?: Dict.t<string>,
-  footnoteLabelTagName?: string,
+  footnoteLabel?: Nullable.t<string>,
+  footnoteLabelProperties?: Nullable.t<Dict.t<string>>,
+  footnoteLabelTagName?: Nullable.t<string>,
   handlers?: string,
-  passThrough?: array<string>,
-  unknownHandler?: (string, string, string) => string,
+  passThrough?: Nullable.t<array<string>>,
+  unknownHandler?: Nullable.t<(string, string, string) => string>,
 }
 type state = {
   all: string => array<string>,
@@ -70,28 +73,28 @@ type state = {
   patch: (string, string) => unit,
   wrap: (array<string>, option<bool>) => array<string>,
 }
-type remarkRehypeOptionsConfig = {
-  allowDangerousHtml?: bool,
-  clobberPrefix?: string,
+type libRemarkRehypeOptionsConfig = {
+  allowDangerousHtml?: Nullable.t<bool>,
+  clobberPrefix?: Nullable.t<string>,
   footnoteBackContent?: string,
-  footnoteBackLabel?: CommonTypes.footnoteBackLabel,
-  footnoteLabel?: string,
-  footnoteLabelProperties?: Dict.t<CommonTypes.boolOrStringOrNumberOrStringOrNumberArray>,
-  footnoteLabelTagName?: string,
+  footnoteBackLabel?: Nullable.t<CommonTypes.footnoteBackLabel>,
+  footnoteLabel?: Nullable.t<string>,
+  footnoteLabelProperties?: Nullable.t<Dict.t<CommonTypes.boolOrStringOrNumberOrStringOrNumberArray>>,
+  footnoteLabelTagName?: Nullable.t<string>,
   handlers?: string,
-  passThrough?: array<passThrough>,
-  unknownHandler?: (state, string, string) => string,
+  passThrough?: Nullable.t<array<passThrough>>,
+  unknownHandler?: Nullable.t<(state, string, string) => string>,
 }
-type optionsConfig = {
-  allowElement?: (string, float, HastTypes.readonly) => bool,
-  allowedElements?: array<string>,
-  children?: string,
-  components?: HastTypes.readonly,
-  disallowedElements?: array<string>,
-  rehypePlugins?: array<string>,
-  remarkPlugins?: array<string>,
-  remarkRehypeOptions?: remarkRehypeOptionsConfig,
-  skipHtml?: bool,
-  unwrapDisallowed?: bool,
-  urlTransform?: (string, string, string) => string,
+type libOptionsConfig = {
+  allowElement?: Nullable.t<(string, float, HastTypes.readonly) => bool>,
+  allowedElements?: Nullable.t<array<string>>,
+  children?: Nullable.t<string>,
+  components?: Nullable.t<components>,
+  disallowedElements?: Nullable.t<array<string>>,
+  rehypePlugins?: Nullable.t<array<string>>,
+  remarkPlugins?: Nullable.t<array<string>>,
+  remarkRehypeOptions?: Nullable.t<libRemarkRehypeOptionsConfig>,
+  skipHtml?: Nullable.t<bool>,
+  unwrapDisallowed?: Nullable.t<bool>,
+  urlTransform?: Nullable.t<(string, string, string) => Nullable.t<string>>,
 }

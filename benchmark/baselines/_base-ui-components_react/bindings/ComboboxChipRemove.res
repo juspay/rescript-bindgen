@@ -1,11 +1,11 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, ButtonTypes.buttonState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, ChipRemoveTypes.comboboxChipRemoveState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("Combobox") @react.component
 external make: (
   ~nativeButton: bool=?,
   ~form: string=?,
-  ~style: ButtonTypes.buttonStyle=?,
+  ~style: ChipRemoveTypes.comboboxChipRemoveStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -63,6 +63,6 @@ external make: (
   ~formTarget: string=?,
   ~name: string=?,
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
-  ~className: ButtonTypes.buttonClassName=?,
+  ~className: ChipRemoveTypes.comboboxChipRemoveClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "ChipRemove"

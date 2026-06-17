@@ -16,110 +16,123 @@ type leftPanelInfo = {
   tenantSlot2?: React.element,
   tenantFooter?: React.element,
 }
-type maxWidthConfig = {
+type sidebarMaxWidthConfig = {
   withLeftPanel: string,
   withoutLeftPanel: string,
   iconOnly?: string,
 }
-type itemConfig4 = {
+type sidebarPaddingConfig = {
+  x: string,
+  y: string,
+}
+type sidebarBorderConfig = {
+  default: string,
+  hover: string,
+  active: string,
+}
+type sidebarItemConfig = {
   width: string,
   borderRadius: string,
-  border: BreadcrumbTypes.colorConfig3,
-  backgroundColor: BreadcrumbTypes.colorConfig3,
+  border: sidebarBorderConfig,
+  backgroundColor: sidebarBorderConfig,
 }
-type leftPanelConfig = {
+type sidebarLeftPanelConfig = {
   width: string,
   backgroundColor: string,
   borderRight: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: sidebarPaddingConfig,
   gap: string,
-  item: itemConfig4,
+  item: sidebarItemConfig,
 }
-type toggleButtonConfig = {
-  backgroundColor: BreadcrumbTypes.colorConfig3,
+type sidebarToggleButtonConfig = {
+  backgroundColor: sidebarBorderConfig,
   width: string,
 }
-type headerConfig9 = {
+type sidebarHeaderConfig = {
   backgroundColor: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: sidebarPaddingConfig,
   gap: string,
   borderBottom: string,
-  toggleButton: toggleButtonConfig,
+  toggleButton: sidebarToggleButtonConfig,
 }
-type directoryConfig = {
+type sidebarDirectoryConfig = {
   gap: string,
   paddingX: string,
   paddingY: string,
 }
-type footerConfig5 = {
+type sidebarFooterConfig = {
   backgroundColor: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: sidebarPaddingConfig,
   borderTop: string,
 }
 type sidebarTokenType = {
-  maxWidth: maxWidthConfig,
+  maxWidth: sidebarMaxWidthConfig,
   backgroundColor: string,
   borderRight: string,
-  leftPanel: leftPanelConfig,
-  header: headerConfig9,
-  directory: directoryConfig,
-  footer: footerConfig5,
+  leftPanel: sidebarLeftPanelConfig,
+  header: sidebarHeaderConfig,
+  directory: sidebarDirectoryConfig,
+  footer: sidebarFooterConfig,
 }
 type responsiveSidebarTokens = {
   sm: sidebarTokenType,
   lg: sidebarTokenType,
 }
-type drawerConfig3 = {
+type sidebarDrawerConfig = {
   borderRadius: string,
   borderTop: string,
 }
-type backgroundColorConfig15 = {
+type sidebarBackgroundColorConfig = {
   default: string,
   active: string,
 }
-type iconConfig7 = {
+type sidebarIconConfig = {
   width: string,
   height: string,
   borderRadius: string,
   transition: string,
 }
-type textConfig20 = {
+type sidebarTextConfig = {
   fontSize: string,
   fontWeight: string,
   textAlign: string,
 }
-type itemConfig9 = {
+type sidebarItemConfig2 = {
   width: string,
   height: string,
   borderRadius: string,
   gap: string,
-  backgroundColor: backgroundColorConfig15,
-  color: backgroundColorConfig15,
+  backgroundColor: sidebarBackgroundColorConfig,
+  color: sidebarBackgroundColorConfig,
   fontWeight: string,
-  icon: iconConfig7,
-  text: textConfig20,
+  icon: sidebarIconConfig,
+  text: sidebarTextConfig,
 }
-type primaryActionConfig2 = {
+type sidebarIconConfig2 = {
+  width: string,
+  height: string,
+}
+type sidebarPrimaryActionConfig = {
   width: string,
   height: string,
   borderRadius: string,
   background: string,
   boxShadow: string,
   color: string,
-  icon: AvatarTypes.smConfig4,
+  icon: sidebarIconConfig2,
 }
-type rowConfig4 = {
-  padding: ModalTypes.paddingConfig5,
+type sidebarRowConfig = {
+  padding: sidebarPaddingConfig,
   gap: string,
-  item: itemConfig9,
-  primaryAction: primaryActionConfig2,
+  item: sidebarItemConfig2,
+  primaryAction: sidebarPrimaryActionConfig,
 }
 type mobileNavigationTokenType = {
   backgroundColor: string,
-  drawer: drawerConfig3,
-  padding: ModalTypes.paddingConfig5,
+  drawer: sidebarDrawerConfig,
+  padding: sidebarPaddingConfig,
   gap: string,
-  row: rowConfig4,
+  row: sidebarRowConfig,
 }
 type responsiveMobileNavigationTokens = {
   sm: mobileNavigationTokenType,

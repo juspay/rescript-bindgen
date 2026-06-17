@@ -2,81 +2,93 @@ type variant =
   | @as("default") Default
   | @as("aligned") Aligned
   | @as("custom") Custom
+type cardAlignment =
+  | @as("vertical") Vertical
+  | @as("horizontal") Horizontal
 type cardSkeletonProps = {
-  variant: ButtonSharedTypes.skeletonVariant,
+  variant: SkeletonTypes.skeletonVariant,
   show: bool,
   height?: string,
   width?: string,
 }
-type paddingConfig8 = {
-  default: ModalTypes.paddingConfig5,
-  aligned: ModalTypes.paddingConfig5,
+type cardDefaultConfig = {
+  x: string,
+  y: string,
+}
+type cardPaddingConfig = {
+  default: cardDefaultConfig,
+  aligned: cardDefaultConfig,
   custom: string,
 }
-type titleConfig5 = {
+type cardTitleConfig = {
   fontSize: string,
   fontWeight: string,
   color: string,
   gap: string,
 }
-type textConfig14 = {
-  title: titleConfig5,
-  subTitle: StatCardTypes.titleConfig3,
+type cardSubTitleConfig = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+}
+type cardTextConfig = {
+  title: cardTitleConfig,
+  subTitle: cardSubTitleConfig,
   gap: string,
 }
-type defaultConfig5 = {
+type cardDefaultConfig2 = {
   backgroundColor: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: cardDefaultConfig,
   borderBottom: string,
 }
-type headerConfig7 = {
-  text: textConfig14,
-  default: defaultConfig5,
+type cardHeaderConfig = {
+  text: cardTextConfig,
+  default: cardDefaultConfig2,
   aligned: string,
   custom: string,
 }
-type paddingConfig9 = {
-  default: ModalTypes.paddingConfig5,
+type cardPaddingConfig2 = {
+  default: cardDefaultConfig,
   aligned: string,
   custom: string,
 }
-type gapConfig3 = {
+type cardGapConfig = {
   default: string,
   aligned: string,
   custom: string,
 }
-type contentConfig3 = {
+type cardContentConfig = {
   fontSize: string,
   color: string,
   fontWeight: string,
 }
-type textConfig15 = {
-  title: StatCardTypes.titleConfig3,
-  content: contentConfig3,
+type cardTextConfig2 = {
+  title: cardSubTitleConfig,
+  content: cardContentConfig,
   gap: string,
 }
-type actionsConfig2 = {
+type cardActionsConfig = {
   gap: string,
   centerAlignGap: string,
 }
-type cardSlotConfig = {
+type cardCardSlotConfig = {
   vertical: string,
   horizontal: string,
 }
-type alignedConfig = {
-  cardSlot: cardSlotConfig,
+type cardAlignedConfig = {
+  cardSlot: cardCardSlotConfig,
 }
-type alignmentConfig = {
-  aligned: alignedConfig,
+type cardAlignmentConfig = {
+  aligned: cardAlignedConfig,
   default: string,
   custom: string,
 }
-type bodyConfig3 = {
-  padding: paddingConfig9,
-  gap: gapConfig3,
-  text: textConfig15,
-  actions: actionsConfig2,
-  alignment: alignmentConfig,
+type cardBodyConfig = {
+  padding: cardPaddingConfig2,
+  gap: cardGapConfig,
+  text: cardTextConfig2,
+  actions: cardActionsConfig,
+  alignment: cardAlignmentConfig,
 }
 type cardTokenType = {
   maxWidth: string,
@@ -84,9 +96,9 @@ type cardTokenType = {
   border: string,
   boxShadow: string,
   backgroundColor: string,
-  padding: paddingConfig8,
-  header: headerConfig7,
-  body: bodyConfig3,
+  padding: cardPaddingConfig,
+  header: cardHeaderConfig,
+  body: cardBodyConfig,
 }
 type responsiveCardTokens = {
   sm: cardTokenType,

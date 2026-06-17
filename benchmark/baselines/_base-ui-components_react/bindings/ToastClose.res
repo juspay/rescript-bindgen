@@ -1,11 +1,11 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, DescriptionTypes.toastDescriptionState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, CloseTypes.toastCloseState) => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("Toast") @react.component
 external make: (
   ~nativeButton: bool=?,
   ~form: string=?,
-  ~style: DescriptionTypes.toastDescriptionStyle=?,
+  ~style: CloseTypes.toastCloseStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -63,6 +63,6 @@ external make: (
   ~formTarget: string=?,
   ~name: string=?,
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
-  ~className: DescriptionTypes.toastDescriptionClassName=?,
+  ~className: CloseTypes.toastCloseClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Close"

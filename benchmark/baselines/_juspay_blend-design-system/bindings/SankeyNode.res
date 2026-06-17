@@ -5,9 +5,9 @@ external make: (
   ~width: float=?,
   ~height: float=?,
   ~index: int=?,
-  ~payload: ChartsTypes.payloadConfig3=?,
+  ~payload: ChartsTypes.chartsPayloadConfig3=?,
   ~containerWidth: float=?,
-  ~nodeColors: array<AvatarGroupTypes.stringOrTextConfig7>=?,
+  ~nodeColors: array<ChartsTypes.stringOrChartsColorsConfig>=?,
   ~onMouseEnter: (ChartsTypes.sankeyTooltipData, ReactEvent.Mouse.t) => unit=?,
   ~onMouseLeave: unit => unit=?,
 ) => React.element = "SankeyNode"

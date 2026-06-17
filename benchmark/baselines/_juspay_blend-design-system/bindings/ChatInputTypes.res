@@ -16,48 +16,51 @@ type topQuery = {
   id: string,
   text: string,
 }
-type backgroundColorConfig10 = {
+type chatInputBackgroundColorConfig = {
   default: string,
   hover: string,
   disabled: string,
 }
-type borderRadiusConfig9 = {
+type chatInputBorderRadiusConfig = {
   default: string,
   focus: string,
 }
-type colorConfig14 = {
+type chatInputColorConfig = {
   default: string,
   hover: string,
   focus: string,
   disabled: string,
 }
-type lineHeightConfig2 = {
+type chatInputLineHeightConfig = {
   default: string,
   hover: string,
   focus: string,
 }
-type textConfig19 = {
-  color: colorConfig14,
-  fontSize: colorConfig14,
-  fontWeight: colorConfig14,
-  lineHeight: lineHeightConfig2,
+type chatInputTextConfig = {
+  color: chatInputColorConfig,
+  fontSize: chatInputColorConfig,
+  fontWeight: chatInputColorConfig,
+  lineHeight: chatInputLineHeightConfig,
 }
-type containerConfig8 = {
-  backgroundColor: backgroundColorConfig10,
-  border: borderRadiusConfig9,
+type chatInputContainerConfig = {
+  backgroundColor: chatInputBackgroundColorConfig,
+  border: chatInputBorderRadiusConfig,
   borderRadius: string,
   padding: string,
   gap: string,
   minHeight: string,
   transition: string,
-  boxShadow: lineHeightConfig2,
+  boxShadow: chatInputLineHeightConfig,
 }
-type attachmentContainerConfig = {
+type chatInputAttachmentContainerConfig = {
   backgroundColor: string,
   borderRadius: string,
   padding: string,
 }
-type textareaConfig = {
+type chatInputPlaceholderConfig = {
+  color: string,
+}
+type chatInputTextareaConfig = {
   backgroundColor: string,
   color: string,
   fontSize: string,
@@ -68,14 +71,14 @@ type textareaConfig = {
   paddingLeft: string,
   border: string,
   borderRadius: string,
-  placeholder: AvatarGroupTypes.textConfig7,
+  placeholder: chatInputPlaceholderConfig,
   resize: string,
   fontFamily: string,
   minHeight: string,
   maxHeight: string,
   overflowY: string,
 }
-type filesContainerConfig = {
+type chatInputFilesContainerConfig = {
   gap: string,
   paddingX: string,
   paddingY: string,
@@ -83,15 +86,20 @@ type filesContainerConfig = {
   overflowY: string,
   margin: string,
 }
-type bottomActionsConfig = {
+type chatInputBottomActionsConfig = {
   paddingX: string,
   paddingY: string,
   gap: string,
   justifyContent: string,
 }
-type overflowTagConfig = {
-  backgroundColor: BreadcrumbTypes.colorConfig3,
-  color: BreadcrumbTypes.colorConfig3,
+type chatInputBackgroundColorConfig2 = {
+  default: string,
+  hover: string,
+  active: string,
+}
+type chatInputOverflowTagConfig = {
+  backgroundColor: chatInputBackgroundColorConfig2,
+  color: chatInputBackgroundColorConfig2,
   border: string,
   borderRadius: string,
   paddingX: string,
@@ -102,11 +110,11 @@ type overflowTagConfig = {
   transition: string,
   cursor: string,
 }
-type containerConfig9 = {
+type chatInputContainerConfig2 = {
   borderTop: string,
   paddingTop: string,
 }
-type headerConfig13 = {
+type chatInputHeaderConfig = {
   color: string,
   fontSize: string,
   fontWeight: string,
@@ -116,19 +124,25 @@ type headerConfig13 = {
   backgroundColor: string,
   flexShrink: string,
 }
-type scrollContainerConfig = {
+type chatInputScrollContainerConfig = {
   overflowY: string,
   maxHeightOffset: float,
   backgroundColor: string,
   scrollbarColor: string,
 }
-type opacityConfig2 = {
+type chatInputBackgroundColorConfig3 = {
+  default: string,
+  hover: string,
+  active: string,
+  disabled: string,
+}
+type chatInputOpacityConfig = {
   default: string,
   disabled: string,
 }
-type itemConfig8 = {
-  backgroundColor: ButtonSharedTypes.defaultConfig,
-  color: ButtonSharedTypes.defaultConfig,
+type chatInputItemConfig = {
+  backgroundColor: chatInputBackgroundColorConfig3,
+  color: chatInputBackgroundColorConfig3,
   fontSize: string,
   fontWeight: string,
   paddingX: string,
@@ -136,36 +150,36 @@ type itemConfig8 = {
   border: string,
   transition: string,
   cursor: string,
-  opacity: opacityConfig2,
+  opacity: chatInputOpacityConfig,
 }
-type topQueriesConfig = {
-  container: containerConfig9,
-  header: headerConfig13,
-  scrollContainer: scrollContainerConfig,
-  item: itemConfig8,
+type chatInputTopQueriesConfig = {
+  container: chatInputContainerConfig2,
+  header: chatInputHeaderConfig,
+  scrollContainer: chatInputScrollContainerConfig,
+  item: chatInputItemConfig,
 }
-type smConfig11 = {
-  backgroundColor: backgroundColorConfig10,
-  borderRadius: borderRadiusConfig9,
-  border: borderRadiusConfig9,
+type chatInputSmConfig = {
+  backgroundColor: chatInputBackgroundColorConfig,
+  borderRadius: chatInputBorderRadiusConfig,
+  border: chatInputBorderRadiusConfig,
   minHeight: string,
   maxHeight: string,
   gap: string,
-  text: textConfig19,
+  text: chatInputTextConfig,
   resize: string,
   overflow: string,
   paddingLeft: string,
   paddingTop: string,
   paddingBottom: string,
-  container: containerConfig8,
-  attachmentContainer: attachmentContainerConfig,
-  textarea: textareaConfig,
-  filesContainer: filesContainerConfig,
-  bottomActions: bottomActionsConfig,
-  overflowTag: overflowTagConfig,
-  topQueries: topQueriesConfig,
+  container: chatInputContainerConfig,
+  attachmentContainer: chatInputAttachmentContainerConfig,
+  textarea: chatInputTextareaConfig,
+  filesContainer: chatInputFilesContainerConfig,
+  bottomActions: chatInputBottomActionsConfig,
+  overflowTag: chatInputOverflowTagConfig,
+  topQueries: chatInputTopQueriesConfig,
 }
 type responsiveChatInputTokensType = {
-  sm: smConfig11,
-  lg: smConfig11,
+  sm: chatInputSmConfig,
+  lg: chatInputSmConfig,
 }

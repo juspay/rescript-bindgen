@@ -1,4 +1,4 @@
-type pointConfig = {
+type recordsPointConfig = {
   x: float,
   y: float,
 }
@@ -7,7 +7,7 @@ type rec menuItemType = {
   value: string,
   subItems?: array<menuItemType>,
 }
-type configConfig = {
+type recordsConfigConfig = {
   id?: string,
   className?: string,
 }

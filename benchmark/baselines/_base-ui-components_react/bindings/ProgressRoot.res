@@ -5,7 +5,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.progressRo
 external make: (
   @as("aria-valuetext") ~ariaValuetext: string=?,
   ~format: string=?,  // ⚪ loose — was `NumberFormatOptions`
-  ~getAriaValueText: (string, float) => string=?,
+  ~getAriaValueText: (Nullable.t<string>, Nullable.t<float>) => string=?,
   ~locale: string=?,  // ⓘ Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled
   ~max: float=?,
   ~min: float=?,

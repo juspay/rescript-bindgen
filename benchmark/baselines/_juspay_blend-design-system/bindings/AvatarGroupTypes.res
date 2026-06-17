@@ -1,62 +1,85 @@
 type avatarData = {
-  ...JsxDOM.domProps,
+  id: CommonTypes.stringOrNumber,
+  alt?: string,
   fallback?: React.element,
+  size?: AvatarTypes.avatarSize,
+  shape?: AvatarTypes.avatarShape,
   online?: bool,
+  src?: string,
   onlinePosition?: AvatarTypes.avatarOnlinePosition,
   leadingSlot?: React.element,
   trailingSlot?: React.element,
-  skeleton?: AvatarTypes.skeletonConfig,
+  skeleton?: AvatarTypes.avatarSkeletonConfig,
 }
-type containerConfig3 = {
-  marginLeft: AvatarTypes.fontSizeConfig3,
+type avatarGroupSkeletonConfig = {
+  show: bool,
+  variant?: SkeletonTypes.skeletonVariant,
 }
-type selectedConfig = {
+type avatarGroupMarginLeftConfig = {
+  sm: string,
+  regular: string,
+  md: string,
+  lg: string,
+  xl: string,
+}
+type avatarGroupContainerConfig = {
+  marginLeft: avatarGroupMarginLeftConfig,
+}
+type avatarGroupSelectedConfig = {
   ringColor: string,
   ringWidth: string,
   ringOffset: string,
 }
-type borderConfig3 = {
+type avatarGroupBorderConfig = {
   width: string,
   color: string,
 }
-type avatarConfig = {
-  selected: selectedConfig,
-  border: borderConfig3,
+type avatarGroupAvatarConfig = {
+  selected: avatarGroupSelectedConfig,
+  border: avatarGroupBorderConfig,
 }
-type textConfig7 = {
+type avatarGroupBackgroundConfig = {
+  default: string,
+  hover: string,
+  active: string,
+}
+type avatarGroupTextConfig = {
   color: string,
 }
-type smConfig6 = {
+type avatarGroupSmConfig = {
   width: string,
   height: string,
   fontSize: string,
 }
-type sizeConfig3 = {
-  sm: smConfig6,
-  regular: smConfig6,
-  md: smConfig6,
-  lg: smConfig6,
-  xl: smConfig6,
+type avatarGroupSizeConfig = {
+  sm: avatarGroupSmConfig,
+  regular: avatarGroupSmConfig,
+  md: avatarGroupSmConfig,
+  lg: avatarGroupSmConfig,
+  xl: avatarGroupSmConfig,
 }
-type overflowCounterConfig = {
-  background: BreadcrumbTypes.colorConfig3,
-  text: textConfig7,
-  border: borderConfig3,
-  size: sizeConfig3,
-  borderRadius: AvatarTypes.borderRadiusConfig4,
+type avatarGroupBorderRadiusConfig = {
+  circular: string,
+  rounded: string,
 }
-type menuConfig = {
+type avatarGroupOverflowCounterConfig = {
+  background: avatarGroupBackgroundConfig,
+  text: avatarGroupTextConfig,
+  border: avatarGroupBorderConfig,
+  size: avatarGroupSizeConfig,
+  borderRadius: avatarGroupBorderRadiusConfig,
+}
+type avatarGroupMenuConfig = {
   marginTop: string,
 }
 type avatarGroupTokensType = {
   gap: string,
-  container: containerConfig3,
-  avatar: avatarConfig,
-  overflowCounter: overflowCounterConfig,
-  menu: menuConfig,
+  container: avatarGroupContainerConfig,
+  avatar: avatarGroupAvatarConfig,
+  overflowCounter: avatarGroupOverflowCounterConfig,
+  menu: avatarGroupMenuConfig,
 }
 type responsiveAvatarGroupTokens = {
   sm: avatarGroupTokensType,
   lg: avatarGroupTokensType,
 }
-@unboxed type stringOrTextConfig7 = Str(string) | TextConfig7(textConfig7)

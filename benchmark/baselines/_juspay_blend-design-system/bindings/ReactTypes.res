@@ -1,0 +1,3 @@
+type reactPrimaryActionButtonPropsConfig = {
+  ...JsxDOM.domProps,
+}

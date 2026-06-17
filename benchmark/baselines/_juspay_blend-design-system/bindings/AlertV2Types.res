@@ -12,58 +12,89 @@ type alertV2SubType =
 type alertV2ActionPosition =
   | @as("bottom") Bottom
   | @as("right") Right
-type gapConfig5 = {
+type alertV2PrimaryConfig = {
+  subtle: string,
+  noFill: string,
+}
+type alertV2BorderConfig = {
+  primary: alertV2PrimaryConfig,
+  success: alertV2PrimaryConfig,
+  warning: alertV2PrimaryConfig,
+  error: alertV2PrimaryConfig,
+  purple: alertV2PrimaryConfig,
+  orange: alertV2PrimaryConfig,
+  neutral: alertV2PrimaryConfig,
+}
+type alertV2PaddingConfig = {
+  top: string,
+  bottom: string,
+  left: string,
+  right: string,
+}
+type alertV2GapConfig = {
   bottom: string,
   right: string,
 }
-type headingConfig4 = {
-  color: AlertTypes.colorConfig2,
+type alertV2SlotConfig = {
+  maxHeight: string,
+}
+type alertV2ColorConfig = {
+  primary: string,
+  success: string,
+  warning: string,
+  error: string,
+  purple: string,
+  orange: string,
+  neutral: string,
+}
+type alertV2HeadingConfig = {
+  color: alertV2ColorConfig,
   fontWeight: string,
   fontSize: string,
   lineHeight: string,
 }
-type textContainerConfig3 = {
+type alertV2TextContainerConfig = {
   gap: string,
-  heading: headingConfig4,
-  description: headingConfig4,
+  heading: alertV2HeadingConfig,
+  description: alertV2HeadingConfig,
 }
-type actionContainerConfig = {
+type alertV2ActionContainerConfig = {
   gap: string,
-  primaryAction: headingConfig4,
-  secondaryAction: headingConfig4,
+  primaryAction: alertV2HeadingConfig,
+  secondaryAction: alertV2HeadingConfig,
 }
-type contentConfig9 = {
-  gap: gapConfig5,
-  textContainer: textContainerConfig3,
-  actionContainer: actionContainerConfig,
+type alertV2ContentConfig = {
+  gap: alertV2GapConfig,
+  textContainer: alertV2TextContainerConfig,
+  actionContainer: alertV2ActionContainerConfig,
 }
-type closeButtonConfig2 = {
-  color: AlertTypes.colorConfig2,
+type alertV2CloseButtonConfig = {
+  color: alertV2ColorConfig,
   height: string,
   width: string,
 }
-type mainContainerConfig = {
+type alertV2MainContainerConfig = {
   gap: string,
-  content: contentConfig9,
-  closeButton: closeButtonConfig2,
+  content: alertV2ContentConfig,
+  closeButton: alertV2CloseButtonConfig,
 }
 type alertV2TokensType = {
   width: string,
   maxWidth: string,
   minWidth: string,
-  border: AlertTypes.backgroundConfig,
+  border: alertV2BorderConfig,
   borderRadius: string,
-  backgroundColor: AlertTypes.backgroundConfig,
-  padding: DrawerTypes.offsetConfig,
-  gap: gapConfig5,
-  slot: ChartsTypes.dropdownConfig,
-  mainContainer: mainContainerConfig,
+  backgroundColor: alertV2BorderConfig,
+  padding: alertV2PaddingConfig,
+  gap: alertV2GapConfig,
+  slot: alertV2SlotConfig,
+  mainContainer: alertV2MainContainerConfig,
 }
 type responsiveAlertV2Tokens = {
   sm: alertV2TokensType,
   lg: alertV2TokensType,
 }
-type slotConfig11 = {
+type alertV2SlotConfig2 = {
   slot: React.element,
   maxHeight?: string,
 }
@@ -76,7 +107,7 @@ type alertV2Actions = {
   primaryAction?: alertV2Action,
   secondaryAction?: alertV2Action,
 }
-type closeButtonConfig4 = {
+type alertV2CloseButtonConfig2 = {
   show?: bool,
   onClick?: ReactEvent.Mouse.t => unit,
 }

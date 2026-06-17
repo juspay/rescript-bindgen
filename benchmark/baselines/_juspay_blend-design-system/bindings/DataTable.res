@@ -5,7 +5,7 @@ external make: (
   ~idField: string,  // ⚪ loose — was `keyof T`
   ~title: string=?,
   ~description: string=?,
-  ~descriptionTooltipProps: MultiSelectSharedTypes.tooltipPropsConfig=?,
+  ~descriptionTooltipProps: DataTableTypes.dataTableDescriptionTooltipPropsConfig=?,
   ~className: string=?,
   ~isHoverable: bool=?,
   ~defaultSort: DataTableTypes.sortConfig=?,
@@ -27,8 +27,8 @@ external make: (
   ~onColumnReorder: 'b => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~columnManagerMaxSelections: float=?,
   ~columnManagerAlwaysSelected: string=?,  // ⚪ loose — was `(keyof T)[]`
-  ~columnManagerPrimaryAction: DataTableTypes.columnManagerPrimaryActionConfig=?,
-  ~columnManagerSecondaryAction: DataTableTypes.columnManagerSecondaryActionConfig=?,
+  ~columnManagerPrimaryAction: DataTableTypes.dataTableColumnManagerPrimaryActionConfig=?,
+  ~columnManagerSecondaryAction: DataTableTypes.dataTableColumnManagerSecondaryActionConfig=?,
   ~columnManagerWidth: float=?,
   ~pagination: DataTableTypes.paginationConfig=?,
   ~serverSidePagination: bool=?,
@@ -36,7 +36,7 @@ external make: (
   ~onPageSizeChange: float => unit=?,
   ~isLoading: bool=?,
   ~showSkeleton: bool=?,
-  ~skeletonVariant: ButtonSharedTypes.skeletonVariant=?,
+  ~skeletonVariant: SkeletonTypes.skeletonVariant=?,
   ~isRowLoading: ('a, float) => bool=?,
   ~showHeader: bool=?,
   ~showToolbar: bool=?,
@@ -50,7 +50,7 @@ external make: (
   ~onRowClick: ('a, float) => unit=?,
   ~onFieldChange: (JSON.t, 'c, JSON.t) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~enableRowExpansion: bool=?,
-  ~renderExpandedRow: DataTableTypes.renderExpandedRowConfig<'a> => React.element=?,
+  ~renderExpandedRow: DataTableTypes.dataTableRenderExpandedRowConfig<'a> => React.element=?,
   ~isRowExpandable: ('a, float) => bool=?,
   ~onRowExpansionChange: (JSON.t, bool, 'a) => unit=?,
   ~enableRowSelection: bool=?,

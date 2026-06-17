@@ -15,29 +15,24 @@ type size =
   | @as("sm") Sm
   | @as("md") Md
   | @as("lg") Lg
-type as_ =
-  | @as("div") Div
-  | @as("label") Label
-  | @as("nav") Nav
-  | @as("span") Span
-  | @as("article") Article
-  | @as("footer") Footer
-  | @as("header") Header
-  | @as("hr") Hr
-  | @as("main") Main
-  | @as("section") Section
 type splitTagPosition =
   | @as("left") Left
   | @as("right") Right
-type primaryTagConfig = {
-  ...JsxDOM.domProps,
+type tagsPrimaryTagConfig = {
   color?: SplitTagTypes.color,
   left?: string,
   right?: string,
   justifyContent?: string,
   boxShadow?: string,
+  width?: string,
   borderRadius?: string,
+  letterSpacing?: string,
+  fontSize?: string,
   lineHeight?: string,
+  display?: string,
+  fontWeight?: string,
+  opacity?: string,
+  height?: string,
   gap?: string,
   padding?: CommonTypes.stringOrNumber,
   margin?: CommonTypes.stringOrNumber,
@@ -55,6 +50,7 @@ type primaryTagConfig = {
   paddingBottom?: CommonTypes.stringOrNumber,
   paddingLeft?: CommonTypes.stringOrNumber,
   borderBottom?: string,
+  @as("as") as_?: SplitTagTypes.as_,
   _hover?: PrimitivesTypes.styledBlockProps,
   _focus?: PrimitivesTypes.styledBlockProps,
   _active?: PrimitivesTypes.styledBlockProps,
@@ -62,6 +58,7 @@ type primaryTagConfig = {
   _visited?: PrimitivesTypes.styledBlockProps,
   _focusVisible?: PrimitivesTypes.styledBlockProps,
   position?: string,
+  pointerEvents?: string,
   paddingX?: CommonTypes.stringOrNumber,
   paddingY?: CommonTypes.stringOrNumber,
   marginTop?: CommonTypes.stringOrNumber,
@@ -97,12 +94,17 @@ type primaryTagConfig = {
   borderTop?: string,
   borderLeft?: string,
   borderRight?: string,
+  overflow?: string,
+  overflowX?: string,
+  overflowY?: string,
   whiteSpace?: string,
   contentCentered?: bool,
+  cursor?: string,
   textAlign?: string,
   textTransform?: string,
   textOverflow?: string,
   userSelect?: string,
+  transform?: string,
   willChange?: string,
   transformOrigin?: string,
   backfaceVisibility?: string,
@@ -114,7 +116,7 @@ type primaryTagConfig = {
   leftSlot?: React.element,
   rightSlot?: React.element,
 }
-type noFillConfig = {
+type tagsNoFillConfig = {
   neutral: string,
   primary: string,
   success: string,
@@ -122,44 +124,44 @@ type noFillConfig = {
   warning: string,
   purple: string,
 }
-type backgroundColorConfig3 = {
-  noFill: noFillConfig,
-  attentive: noFillConfig,
-  subtle: noFillConfig,
+type tagsBackgroundColorConfig = {
+  noFill: tagsNoFillConfig,
+  attentive: tagsNoFillConfig,
+  subtle: tagsNoFillConfig,
 }
-type xsConfig2 = {
+type tagsXsConfig = {
   rounded: string,
   squarical: string,
 }
-type borderRadiusConfig3 = {
-  xs: xsConfig2,
-  sm: xsConfig2,
-  md: xsConfig2,
-  lg: xsConfig2,
+type tagsBorderRadiusConfig = {
+  xs: tagsXsConfig,
+  sm: tagsXsConfig,
+  md: tagsXsConfig,
+  lg: tagsXsConfig,
 }
-type paddingConfig4 = {
+type tagsPaddingConfig = {
   xs: string,
   sm: string,
   md: string,
   lg: string,
 }
-type textConfig4 = {
-  color: backgroundColorConfig3,
-  fontSize: paddingConfig4,
-  fontWeight: paddingConfig4,
+type tagsTextConfig = {
+  color: tagsBackgroundColorConfig,
+  fontSize: tagsPaddingConfig,
+  fontWeight: tagsPaddingConfig,
 }
-type smConfig3 = {
+type tagsSmConfig = {
   minWidth: string,
   maxWidth: string,
   width: string,
   gap: string,
-  backgroundColor: backgroundColorConfig3,
-  borderRadius: borderRadiusConfig3,
-  padding: paddingConfig4,
-  border: backgroundColorConfig3,
-  text: textConfig4,
+  backgroundColor: tagsBackgroundColorConfig,
+  borderRadius: tagsBorderRadiusConfig,
+  padding: tagsPaddingConfig,
+  border: tagsBackgroundColorConfig,
+  text: tagsTextConfig,
 }
 type responsiveTagTokens = {
-  sm: smConfig3,
-  lg: smConfig3,
+  sm: tagsSmConfig,
+  lg: tagsSmConfig,
 }

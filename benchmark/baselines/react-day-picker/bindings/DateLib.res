@@ -1,5 +1,5 @@
 type t = InstanceTypes.dateLib
-@new @module("react-day-picker") external make: (~options: LocaleSharedTypes.dateLibOptions=?, ~overrides: LocaleSharedTypes.overridesConfig=?, unit) => t = "DateLib"
+@new @module("react-day-picker") external make: (~options: LocaleSharedTypes.dateLibOptions=?, ~overrides: LocaleSharedTypes.classesOverridesConfig=?, unit) => t = "DateLib"
 @send external formatNumber: (t, ~value: CommonTypes.stringOrNumber) => string = "formatNumber"
 @send external getMonthYearOrder: (t) => LocaleSharedTypes.monthYearOrder = "getMonthYearOrder"
 @send external formatMonthYear: (t, ~date: Date.t) => string = "formatMonthYear"
@@ -40,4 +40,4 @@ type t = InstanceTypes.dateLib
 @send external startOfWeek: (t, ~date: Date.t, ~_options: LocaleSharedTypes.startOfWeekOptions=?, unit) => Date.t = "startOfWeek"
 @send external startOfYear: (t, ~date: Date.t) => Date.t = "startOfYear"
 @get external options: t => LocaleSharedTypes.dateLibOptions = "options"
-@get external overrides: t => LocaleSharedTypes.overridesConfig = "overrides"
+@get external overrides: t => LocaleSharedTypes.classesOverridesConfig = "overrides"

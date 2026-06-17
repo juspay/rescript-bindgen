@@ -5,7 +5,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, ToggleGroupTypes.toggleGro
 external make: (
   ~value: array<'a>=?,
   ~defaultValue: array<'b>=?,
-  ~onValueChange: (array<'c>, PositionerSharedTypes.onCheckedChangeConfig) => unit=?,
+  ~onValueChange: (array<'c>, PositionerSharedTypes.utilsOnCheckedChangeConfig) => unit=?,
   ~disabled: bool=?,
   ~orientation: PositionerSharedTypes.orientation=?,
   ~loopFocus: bool=?,

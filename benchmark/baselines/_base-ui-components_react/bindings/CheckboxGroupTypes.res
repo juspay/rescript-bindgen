@@ -2,7 +2,7 @@ type checkboxGroupState = {
   disabled: bool,
   touched: bool,
   dirty: bool,
-  valid: bool,
+  valid: Nullable.t<bool>,
   filled: bool,
   focused: bool,
 }

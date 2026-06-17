@@ -56,6 +56,8 @@ Fixture: [`primitives`](../test/golden/cases/primitives)
 | `any` | 🛑 `string` | genuinely untyped → flagged broken |
 | `Date` | `Date.t` | |
 | `T[]` / `Array<T>` | `array<…>` | element classified recursively |
+| `[number, number]` / `[string, number]` (fixed-arity tuple) | `(float, float)` / `(string, float)` — a ReScript tuple; elements classified recursively (no prop name, so `number`→`float`). A variadic/rest tuple (`[number, ...string[]]`), an optional-element tuple (`[number, number?]`), or a 1-tuple (`[T]`) stays the flagged `string` fallback — ReScript tuples are fixed-arity with no optional slots and no 1-tuples. Fixture: [`tuples`](../test/golden/cases/tuples). (#65 B5) |
+| `Item[] & Array<Item & { nestedItems?: … }>` (intersection of array types) | `array<…>` of the **intersected element** — `isArrayType` is false for an intersection, so this is detected via the number-index type; otherwise it fell to a record built from the array's prototype methods (`{ ...JsxDOM.domProps }`, array wrapper lost — NestedSelectDrawer's `items`). Fixture: [`intersection-of-arrays`](../test/golden/cases/intersection-of-arrays). (#63 review) |
 | `Record<string, V>` | `Dict.t<…>` | `Record<string, unknown>` → `Dict.t<JSON.t>`; `Record<string, string>` → `Dict.t<string>` |
 | `Map<K, V>` / `ReadonlyMap` / `WeakMap` | `Map.t<k, v>` | detected on the resolved symbol, so a first-party alias (`type EventHandlerMap = Map<…>`) is caught too — never a `{...JsxDOM.domProps}` record ([`builtin-map-set`](../test/golden/cases/builtin-map-set)) |
 | `Set<T>` / `ReadonlySet` / `WeakSet` | `Set.t<t>` | as above |
@@ -148,10 +150,14 @@ Fixtures: [`events-callbacks`](../test/golden/cases/events-callbacks), [`overloa
 | `ChangeEventHandler<T>` (alias) | `ReactEvent.Form.t => unit` |
 | `KeyboardEventHandler<T>` (alias) | `ReactEvent.Keyboard.t => unit` |
 | `(value: string, index: number) => void` | `(string, int) => unit` |
+| `(e: Error) => void` (the global `Error`, lib.es) | `JsError.t => unit` — mapped to the stdlib JS-error type rather than degrading to a bare/unflagged `string` (in a shared record an `Error` param can't salvage to a component type variable). Guarded on a lib.es declaration so a package's own `Error` interface is unaffected. (#63 validation) |
 | `() => void \| Promise<void>` | `unit => 'a` — polymorphic return covers sync **and** async |
 | `(item: Unmodellable, label: string) => void` (callback PARAM can't be typed, return is clean) | `('a, string) => unit` **+ ⓘ note** — the bad param becomes a type variable (consumer RECEIVES it, so a hole they annotate is honest) instead of dropping the whole prop to `string`. A callback with an unmodellable **return** is NOT salvaged (a fake return feeds wrong values into the library) and stays flagged. Fixture: [`callback-param-salvage`](../test/golden/cases/callback-param-salvage). (#30 I-1a) |
 | `(reason?: boolean \| string) => void` (**optional** param) | `option<boolOrString> => unit` — an optional param becomes `option<…>` (`None` = omitted), never a required arg. |
+| `(item: string \| null) => void` (callback PARAM `\| null`) / `(row) => Row \| null` (single-typed nullable RETURN) | `Nullable.t<string> => unit` / `row => Nullable.t<row>` — `\| null` on a callback boundary is kept (recovered from the syntactic node, strictNullChecks-off strips it): a param the library passes must let the consumer handle null, and a single-typed nullable return (collapsed from a union) the consumer must be able to produce. Fixture: [`callback-nullable`](../test/golden/cases/callback-nullable). (#63 validation) |
+| `children: string \| number` (own, narrowing an inherited `children?: ReactNode`) | `~children: CommonTypes.stringOrNumber` — the merge resolves to `ReactNode & (string \| number)`, which TS distributes to `string \| number \| (ReactElement & string) \| …`; the `<reactType> & <primitive>` parts are uninhabitable distribution artifacts, so the real (narrowed) type `string \| number` wins over the lossy `React.element`. A genuine `children?: ReactNode` (a plain `ReactElement` part) stays `React.element`. Fixture: [`narrowed-children`](../test/golden/cases/narrowed-children). (#64) |
 | `((reason?: …) => void) & ((e: MouseEvent) => void)` (overload = intersection of call sigs, or a multi-call-signature interface) | an **opaque module with one zero-cost `%identity` accessor per signature** — `module CloseToastFunc = { type t; external asReason: t => (option<boolOrString> => unit) = "%identity"; external asMouse: t => (ReactEvent.Mouse.t => unit) = "%identity" }`; the prop is typed `…CloseToastFunc.t` with an `ⓘ` note. **No overload is dropped.** Falls back to 🔍 review only if a signature has an untypeable param. See [`overload-intersection`](../test/golden/cases/overload-intersection). |
+| `onClick?: (event?: React.MouseEvent) => void` merged with an inherited `MouseEventHandler` (Button) | a plain callback `option<ReactEvent.Mouse.t> => unit`, **not** an opaque overload module — a multi-call-signature type that is really one FIRST-PARTY signature plus an inherited one (or one declaration's optional-param expansion) is not a genuine overload. The first-party signature wins; a genuine overload (≥2 separate first-party declarations) still uses the views module above. (#65 B4) |
 
 Both forms work: an **inline** event param maps by the event's **name** (`MouseEvent`→`ReactEvent.Mouse.t`,
 `ChangeEvent`→`ReactEvent.Form.t`, `KeyboardEvent`→`ReactEvent.Keyboard.t`, …); a `*EventHandler<T>`
@@ -170,6 +176,11 @@ Fixture: [`dom-event-union`](../test/golden/cases/dom-event-union)
 
 ## ARIA / role attributes
 Fixture: [`aria`](../test/golden/cases/aria)
+
+A **numeric** TS enum (`enum Orientation { vertical = 0, horizontal = 1 }`) or numeric literal
+union emits **unquoted** `@as(0)` / `@as(1)` — the int runtime value. A string tag (`@as("0")`)
+would silently mismatch the library at runtime (it compares against the number `0`). String-literal
+members stay quoted (`@as("sm")`). Fixture: [`numeric-enum`](../test/golden/cases/numeric-enum). (#63)
 
 ARIA props map to their exact `JsxDOM` types verbatim, bypassing the generic union logic:
 
@@ -222,17 +233,39 @@ golden diffs. `--no-html-attrs` restores the legacy inlined output wholesale.
 
 ---
 
+## Discriminated-union props (`Base & (A | B | C)`)
+Fixture: [`discriminated-union-props`](../test/golden/cases/discriminated-union-props)
+
+A component whose props are a base intersected with a union of variant shapes —
+`{ maxWidth?, … } & (DefaultCardProps | AlignedCardProps | CustomCardProps)` — distributes to
+`(Base&A) | (Base&B) | (Base&C)`. TS's `getPropertiesOfType` on that union returns only the props
+common to **every** arm (the base + any shared discriminant), so variant-specific props were
+silently dropped — `Card` kept only `maxWidth`/`variant` and could render nothing.
+
+The binding gathers the arm-specific props too: the union's common props keep their correctly-merged
+types (e.g. the `variant` discriminant becomes one enum over all arms), and each prop that isn't in
+**every** arm is added as **optional** (it applies only to its variant; ReScript can't express the
+discriminated dependency, so flatten-optional is the faithful, compilable model — `~alignment` and
+`~children`, required within their arm, surface as optional). (#63 C2)
+
+---
+
 ## Records, recursion & utility unwrapping
 Fixture: [`records`](../test/golden/cases/records)
 
 | TypeScript | ReScript |
 |---|---|
-| anonymous `{ x: number; y: number }` | `type pointConfig = { x: float, y: float }` (named after the prop) |
-| named `interface MenuItemType { … }` | `type menuItemType = { … }` |
-| self-referential `{ subItems?: MenuItemType[] }` | `type rec menuItemType = { subItems?: array<menuItemType> }` (`rec` **only** when genuinely recursive) |
+| anonymous `{ x: number; y: number }` at prop `point` in component `Avatar` | `type avatarPointConfig = { x: float, y: float }` — named **`<home><Prop>Config`**: the owning module + the prop, not a bare `<prop>Config`. Prop names (`sm`, `value`, `gap`) recur across unrelated components; a bare base collided into one global numbered series (`smConfig19`, suffix ≤ 40) that **renumbered on any upstream add/remove**. The home prefix makes the name say where it belongs and scopes the disambiguation counter to one component+prop, so unrelated upstream changes no longer renumber it. (#63 naming) |
+| named `interface MenuItemType { … }` | `type menuItemType = { … }` — a NAMED library type keeps its own name (no home prefix), per the "follow the library" rule. (#62) |
+| self-referential `{ subItems?: MenuItemType[] }` | `type rec menuItemType = { subItems?: array<menuItemType> }` (`rec` **only** when genuinely recursive) — a DIRECT self-reference resolves even when the record is first reached past `MAX_DEPTH` (the depth bound truncates unbounded NEW expansion, but a self-ref is a zero-expansion cycle to the record itself; truncating it to a silent `string` degraded e.g. `SingleSelectV2ItemType.subMenu` while the shallower `MultiSelectV2ItemType` stayed recursive). (#63 validation) |
 | `interface EmptyState {}` (empty object) | `JSON.t` — a real object arrives at runtime but has no modellable fields (the `unknown` precedent). Fixture: [`empty-state-and-salvage`](../test/golden/cases/empty-state-and-salvage) |
 | `Partial<BaseProps>` | record with all fields optional (utility unwrapped: `Partial`/`Required`/`Readonly`/`Pick`/`Omit`/`NonNullable`) |
 | `interface X extends HTMLAttributes<…>` | `type … = { ...JsxDOM.domProps, <own fields> }` |
+| nested record `interface ItemData extends <HTML attrs> { id: string \| number; size?: … }` | first-party fields whose names collide with DOM attrs (`id`, `size`, …) are KEPT with their real types — `{ id: CommonTypes.stringOrNumber, size?: …, … }`. `...JsxDOM.domProps` is all-or-nothing (can't omit a field like the component path's HtmlAttrs variants), and ReScript rejects a field overlapping a spread, so on collision the named fields win and the spread is dropped (rather than silently dropping the fields). Fixture: [`record-html-collision`](../test/golden/cases/record-html-collision). (#63 C3) |
+| nested data record `{ key: string; color: string }[]` | `type … = { key: string, color: string }` — `key`/`ref` are React-reserved **only** on a component's top-level props (stripped there); inside a nested DATA record they are real payload and are KEPT. Fixture: [`data-record-key`](../test/golden/cases/data-record-key). (#63 C1) |
+| `data: Row[] \| null` (required) | `data: Nullable.t<array<row>>` — `T \| null` recovers to `Nullable.t<T>` for **any** single `T` (array/record/primitive), not just primitives; dropping `\| null` to a required non-nullable type flips required-ness. Applies to record fields **and** component props. Fixture: [`nullable-fields`](../test/golden/cases/nullable-fields). (#63 C5) |
+| `span: string \| number \| null` (MULTI-type union + null) | `Nullable.t<[#String(string) \| #Number(float)]>` — a multi-arm union with `\| null` is wrapped too (props and callback params/returns — Drawer snap-points), not just a single `T \| null`. Skipped for opaque-module / views refs (`Anchor.t`): their null arm is the module's own `none`/`from*` concern. Fixture: [`nullable-fields`](../test/golden/cases/nullable-fields). (#65 B2) |
+| `note: string \| undefined` (required decl) / `caption: Props['x']` (indexed access into an optional **first-party** prop) | optional field/prop (`note?`, `~caption: …=?`) — a `\| undefined` (or an indexed access into an optional source prop) means the value can be omitted. strictNullChecks is off, so recovered from the syntactic node / the source prop's optional flag. **Only a first-party source counts**: `fontSize: CSSObject['fontSize']` stays REQUIRED — csstype/styled-components mark every CSS property optional by convention, so that optionality isn't meaningful (it would wrongly drop ResponsiveText's required `fontSize`/`color`). For a MERGED property (own + an external base signature), the optionality/type come from the single **first-party property signature** — so `value: number \| undefined` (UnitInput, merged with `@types/react`'s `value?: string\|…`) becomes optional via its own `\| undefined`, while `title: string` (merged with `@types/react`'s `title?`) stays required. Fixture: [`nullable-fields`](../test/golden/cases/nullable-fields), [`merged-required-prop`](../test/golden/cases/merged-required-prop). (#63 C5 / #64 / #65 B1) |
 
 In module mode these live in per-domain `*Types.res` modules, deduplicated by type identity and
 referenced qualified (`MenuTypes.menuItemType`); cyclic groups merge via SCC into one module
@@ -240,6 +273,24 @@ named after the SCC's **largest member** + `SharedTypes` (e.g. `PositionerShared
 member concatenated. This keeps merged-module names short and, crucially, **stable**: adding or
 removing a small domain from the cycle doesn't rename the module, so consumers' qualified references
 (`PositionerSharedTypes.foo`) survive a regeneration. (#35)
+
+**Structural dedup is scoped per home module.** Distinct TS types that widen to the same record
+shape collapse to one (e.g. Hono's 1728 `honoNNN`) — but **only within the same home module**. An
+anonymous `{…}` has no declaration file, so it's homed to whichever component builds it first;
+merging identical inline shapes *across* components (Avatar's `sizeConfig` ≡ DataTable's) pinned the
+canonical to that arbitrary home and drew a processing-order cross-edge. With dense cross-references
+that fused **58 of 77** component modules into ONE artificial SCC (`HighchartsSharedTypes` held
+2409/2578 types for `@juspay/blend`). Keying the dedup by `home|sig` keeps the within-module collapse
+(Hono shares one home; component files stay compact) while a shared shape gets its own copy per
+component — types stay in the module the library declares them in, and only **genuine** mutual
+recursion merges. A named library type is never structurally merged with a *differently-named* one.
+Fixture: [`cross-component-dedup`](../test/golden/cases/cross-component-dedup). (#61)
+
+**No generated type shadows a builtin.** An upstream interface named `Array`/`Option`/… lowercases
+to `array`/`option`; emitted bare it would shadow the ReScript pervasive within its module, so
+`array<string>` fails to compile ("the type array is not generic"). `uniqueName` suffixes a base that
+collides with a pervasive (`array` → `array2`, `option` → `option2`) exactly as it does a name clash.
+Fixture: [`cross-component-dedup`](../test/golden/cases/cross-component-dedup). (#61)
 
 **Deep-record healing.** A record first reached at the `MAX_DEPTH` boundary registers, but its
 fields (one level deeper) overflow the budget and all come back opaque — an all-`string` "ghost"
@@ -251,12 +302,37 @@ register hundreds of new entries, gets rolled back, and stays safely truncated. 
 `setOpenConfig2` in the benchmark baseline (the depth boundary is too fragile to pin in a synthetic
 golden).
 
+**Twin healing (depth ghost ↔ shallow full sibling).** When the re-resolve above can't run because the
+shape's sub-types are a *distinct* generic instantiation (csstype gives `CSSObject['color']` vs
+`['backgroundColor']` different type ids, so `MenuV2VariantToken<StateToken<…>>` isn't deduped across
+them), a deep occurrence still truncates to an all-`string` ghost while the SAME shape resolved fully at
+a shallower site (`text.color` → `{ default: string, action: string }` vs `backgroundColor` →
+`{ default: stateToken, action: menuV2ActionConfig }`). A second pass copies field types from a
+structurally-richer **twin** — same name-family + home, same field names, non-fallback types — onto the
+ghost. Safe: it copies already-materialized field types (no re-resolution, no new entries, no depth
+change), so it can't dangle or re-expand the Highcharts graph (bumping `MAX_DEPTH` *does* — verified, it
+breaks the chart compile). Locked by blend's `menuV2VariantToken` in the benchmark baseline (a >6-level
+token tree is too fragile to pin in a synthetic golden). (#63 review)
+
 **`@unboxed` inside a record cycle.** A field like `labelGrid?: string | ((…, Options) => string)`
 becomes an object-bearing `@unboxed`, and if its function arm references back into the record cycle
 (`Labels → Options → Locale → Labels`) the `@unboxed` is genuinely part of the recursion. It can't be
 a separate declaration (forward reference either way), so it's **folded into the `type rec … and …`
 group** as `@unboxed and labelGrid = Str(string) | Fn(…)`. Fixture:
 [`unboxed-in-record-cycle`](../test/golden/cases/unboxed-in-record-cycle).
+
+**Type-parameter propagation across a cycle.** A genuine generic (`'a` — e.g. an input
+`{ value: any }[]` element, #50) that enters a recursive group must reach **every** member that
+transitively references it, even members with no type variable of their own. Records are built
+bottom-up, so a cycle (`annotationControlPoint<'a> → events → annotation → options →
+annotationControlPoint`) can reference a member **before** it has acquired its parameter — the
+bottom-up pass then leaves an intermediary (`annotationEvents`) non-generic while it references the
+now-generic `annotation<'a>`, emitting a bare `option<annotation>` that **won't compile** ("the type
+constructor `annotation` expects 1 argument(s), but is here applied to 0"). A post-extraction
+**fixpoint** closes the assignment: any entry that transitively reaches a parameterized member becomes
+parameterized too (`annotationEvents<'a>`), and every reference is re-synced to its target's final
+params (`option<annotation<'a>>`). No emitted type-constructor reference is ever left under-applied.
+Fixture: [`recursive-type-param-cycle`](../test/golden/cases/recursive-type-param-cycle). (#61)
 
 **Warning 30 (duplicate labels/constructors).** When a mutually-recursive `type rec A = {…} and B = {…}`
 group holds two members that share a **name** — a record field label (Highcharts
@@ -409,6 +485,9 @@ props, so named types land in the shared `*Types.res` (referenced qualified).
 | `function forEach(items: number[], fn: (v: number, i: number) => void): void` | `external forEach: (array<float>, (float, float) => unit) => unit = "forEach"` |
 | `function greet(name: string, greeting?: string): string` | `external greet: (string, ~greeting: string=?, unit) => string = "greet"` (optional → labeled `=?`) |
 | `const translate: (p: Point, dx: number, dy: number) => Point` | `external translate: (PkgTypes.point, float, float) => PkgTypes.point = "translate"` (named `Point` → shared record) |
+| `const renderThing: (a: Point, b: Point) => JSX.Element` | a **function**, not a `@react.component` — a React FC takes 0 or 1 (props) arg, so a **multi-arg** callable (even one returning JSX) binds as a function and keeps **every** arg. (#63 C4) |
+| `const getSlots: (item: Item) => [ReactNode?]` | a **function** — a React element must **be** the return, not merely appear inside a **tuple/array** (`[ReactNode?]`, `ReactNode[]`); such a data-returning util is not a component. (#63 C4) |
+| `const ThemeContext: React.Context<ThemeValue>` | `external themeContext: React.Context.t<themeValue> = "ThemeContext"` — a context VALUE, not a faked `@react.component`. React 19 makes a context renderable (element-returning call sig), but the export is a Context object (`<Ctx.Provider value=…>` / `useContext`). Fixture: [`react-context`](../test/golden/cases/react-context). (#63 C6) |
 
 Same buckets apply: a param/return that can't be typed exactly falls back to the flagged placeholder
 with a leading `// ⚪ loose` / `// ⚠️ REVIEW` / `// 🛑 BROKEN` comment above the binding (flag-don't-fake).

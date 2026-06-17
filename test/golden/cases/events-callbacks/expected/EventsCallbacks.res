@@ -5,4 +5,5 @@ external make: (
   ~onKeyDown: ReactEvent.Keyboard.t => unit=?,
   ~onSelect: (string, float) => unit=?,
   ~onSubmit: unit => 'a=?,
+  ~onImageError: JsError.t => unit=?,
 ) => React.element = "EventsCallbacks"

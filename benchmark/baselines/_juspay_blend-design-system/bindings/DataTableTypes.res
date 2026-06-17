@@ -41,6 +41,14 @@ type filterComponent =
   | @as("multiselect") Multiselect
   | @as("dateRange") DateRange
   | @as("numberRange") NumberRange
+type dataTableDescriptionTooltipPropsConfig = {
+  side?: TooltipTypes.tooltipSide,
+  align?: TooltipTypes.tooltipAlign,
+  size?: TooltipTypes.tooltipSize,
+  showArrow?: bool,
+  delayDuration?: float,
+  offset?: float,
+}
 type sortConfig = {
   field: string,
   direction: sortDirection,
@@ -56,24 +64,24 @@ type advancedFilterProps = {
   onFiltersChange: array<JSON.t> => unit,
   onClearFilters: unit => unit,
 }
-type valueConfig2 = {
+type dataTableValueConfig = {
   min: float,
   max: float,
 }
-@unboxed type stringOrStringArrayOrValueConfig2 = Str(string) | StrArr(array<string>) | ValueConfig2(valueConfig2)
+@unboxed type stringOrStringArrayOrDataTableValueConfig = Str(string) | StrArr(array<string>) | DataTableValueConfig(dataTableValueConfig)
 type columnFilter = {
   field: string,
   @as("type") type_: filterType,
-  value: stringOrStringArrayOrValueConfig2,
+  value: stringOrStringArrayOrDataTableValueConfig,
   operator: operator,
 }
-type columnManagerPrimaryActionConfig = {
+type dataTableColumnManagerPrimaryActionConfig = {
   text: string,
   onClick: array<string> => unit,
   disabled?: bool,
   loading?: bool,
 }
-type columnManagerSecondaryActionConfig = {
+type dataTableColumnManagerSecondaryActionConfig = {
   text: string,
   onClick: unit => unit,
   disabled?: bool,
@@ -85,7 +93,7 @@ type paginationConfig = {
   totalRows: float,
   pageSizeOptions?: array<float>,
 }
-type renderExpandedRowConfig<'a> = {
+type dataTableRenderExpandedRowConfig<'a> = {
   row: 'a,
   index: int,
   isExpanded: bool,
@@ -102,9 +110,9 @@ type bulkActionsConfig = {
 type rowActionConfig<'a> = {
   id: string,
   text?: string,
-  buttonType?: ButtonSharedTypes.buttonType,
-  size?: ButtonSharedTypes.buttonSize,
-  subType?: ButtonSharedTypes.buttonSubType,
+  buttonType?: ButtonTypes.buttonType,
+  size?: ButtonTypes.buttonSize,
+  subType?: ButtonTypes.buttonSubType,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
   disabled?: CommonTypes.disabled<'a>,
@@ -130,44 +138,56 @@ type columnTypeConfig = {
   enableSearch?: bool,
   filterComponent?: filterComponent,
 }
-type descriptionConfig = {
+type dataTableTitleConfig = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+}
+type dataTableDescriptionConfig = {
   fontSize: string,
   color: string,
   lineHeight: string,
   maxWidth: string,
 }
-type headerSlot1Config = {
+type dataTableHeaderSlot1Config = {
   maxHeight: string,
   flexShrink: string,
 }
-type titleRowConfig = {
+type dataTableTitleRowConfig = {
   gap: string,
   marginBottom: string,
   justifyContent: string,
   alignItems: string,
 }
-type columnManagerIconConfig = {
+type dataTableDescriptionRowConfig = {
+  marginTop: string,
+}
+type dataTableSearchIconConfig = {
+  width: string,
+  height: string,
+}
+type dataTableColumnManagerIconConfig = {
   width: string,
   height: string,
   color: string,
 }
-type focusVisibleConfig = {
+type dataTableFocusVisibleConfig = {
   outline: string,
   outlineOffset: string,
   borderRadius: string,
   boxShadow: string,
 }
-type columnManagerTriggerConfig = {
+type dataTableColumnManagerTriggerConfig = {
   backgroundColor: string,
   opacity: string,
-  focusVisible: focusVisibleConfig,
+  focusVisible: dataTableFocusVisibleConfig,
 }
-type actionIconsConfig = {
+type dataTableActionIconsConfig = {
   gap: string,
-  searchIcon: AvatarTypes.smConfig4,
-  filterIcon: AvatarTypes.smConfig4,
-  columnManagerIcon: columnManagerIconConfig,
-  columnManagerTrigger?: columnManagerTriggerConfig,
+  searchIcon: dataTableSearchIconConfig,
+  filterIcon: dataTableSearchIconConfig,
+  columnManagerIcon: dataTableColumnManagerIconConfig,
+  columnManagerTrigger?: dataTableColumnManagerTriggerConfig,
 }
 type headerType = {
   display: string,
@@ -178,16 +198,16 @@ type headerType = {
   maxWidth: string,
   overflowX: string,
   overflowY: string,
-  title: StatCardTypes.titleConfig3,
-  description: descriptionConfig,
-  headerSlot1: headerSlot1Config,
-  headerSlot2: headerSlot1Config,
-  headerSlot3: headerSlot1Config,
-  titleRow: titleRowConfig,
-  descriptionRow: AvatarGroupTypes.menuConfig,
-  actionIcons: actionIconsConfig,
+  title: dataTableTitleConfig,
+  description: dataTableDescriptionConfig,
+  headerSlot1: dataTableHeaderSlot1Config,
+  headerSlot2: dataTableHeaderSlot1Config,
+  headerSlot3: dataTableHeaderSlot1Config,
+  titleRow: dataTableTitleRowConfig,
+  descriptionRow: dataTableDescriptionRowConfig,
+  actionIcons: dataTableActionIconsConfig,
 }
-type selectTextConfig = {
+type dataTableSelectTextConfig = {
   fontSize: string,
   fontWeight: string,
   flex?: string,
@@ -210,14 +230,14 @@ type bulkActionsType = {
   width?: string,
   maxWidth?: string,
   border: string,
-  selectText: selectTextConfig,
+  selectText: dataTableSelectTextConfig,
   height: string,
 }
-type rowConfig2 = {
+type dataTableRowConfig = {
   height: string,
-  @as("&:hover") __hover: DrawerTypes.overlayConfig,
+  @as("&:hover") __hover: string,
 }
-type cellConfig2 = {
+type dataTableCellConfig = {
   padding: string,
   textAlign: string,
   fontWeight: string,
@@ -226,11 +246,11 @@ type cellConfig2 = {
   width?: string,
   backgroundColor?: string,
 }
-type sortableConfig = {
+type dataTableSortableConfig = {
   cursor: string,
   userSelect: string,
 }
-type filterConfig = {
+type dataTableFilterConfig = {
   backgroundColor: string,
   borderRadius: string,
   border: string,
@@ -258,21 +278,21 @@ type filterConfig = {
   separatorHeight: string,
   separatorColor: string,
 }
-type headerConfig8 = {
+type dataTableHeaderConfig = {
   backgroundColor: string,
   borderBottom: string,
   height: string,
-  row: rowConfig2,
-  cell: cellConfig2,
-  sortable: sortableConfig,
-  filter: filterConfig,
+  row: dataTableRowConfig,
+  cell: dataTableCellConfig,
+  sortable: dataTableSortableConfig,
+  filter: dataTableFilterConfig,
 }
-type rowConfig3 = {
+type dataTableRowConfig2 = {
   height: string,
   @as("&:hover") __hover: string,
   backgroundColor: string,
 }
-type cellConfig3 = {
+type dataTableCellConfig2 = {
   padding: string,
   fontWeight: string,
   color: string,
@@ -280,18 +300,18 @@ type cellConfig3 = {
   borderTop: string,
   expandable: string,
 }
-type bodyConfig4 = {
+type dataTableBodyConfig = {
   backgroundColor: string,
   borderTop: string,
-  row: rowConfig3,
-  cell: cellConfig3,
+  row: dataTableRowConfig2,
+  cell: dataTableCellConfig2,
 }
-type paginationConfig2 = {
+type dataTablePaginationConfig = {
   pageText: string,
   pageSizeSelector: string,
   pageNavigation: string,
 }
-type footerConfig4 = {
+type dataTableFooterConfig = {
   display: string,
   justifyContent: string,
   alignItems: string,
@@ -303,26 +323,26 @@ type footerConfig4 = {
   backgroundColor: string,
   zIndex: string,
   flexShrink: string,
-  pagination: paginationConfig2,
+  pagination: dataTablePaginationConfig,
 }
-type tableConfig = {
+type dataTableTableConfig = {
   width: string,
   tableLayout: string,
   borderCollapse: string,
   borderSpacing: string,
   position: string,
   minWidth: string,
-  header: headerConfig8,
-  body: bodyConfig4,
-  footer: footerConfig4,
+  header: dataTableHeaderConfig,
+  body: dataTableBodyConfig,
+  footer: dataTableFooterConfig,
 }
-type dataTableConfig = {
+type dataTableDataTableConfig = {
   borderRadius: string,
   border: string,
   maxHeight: string,
   minHeight?: string,
   bulkActions: bulkActionsType,
-  table: tableConfig,
+  table: dataTableTableConfig,
 }
 type tableTokenType = {
   padding?: string,
@@ -332,7 +352,7 @@ type tableTokenType = {
   flexDirection?: string,
   position?: string,
   header: headerType,
-  dataTable: dataTableConfig,
+  dataTable: dataTableDataTableConfig,
 }
 type responsiveTableTokens = {
   sm: tableTokenType,

@@ -58,10 +58,10 @@ external make: (
   ~sticky: bool=?,
   ~anchor: DistTypes.Anchor.t=?,  // ⓘ was `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — opaque; build with Anchor.fromElement / Anchor.fromVirtualElement / Anchor.fromRefObject / Anchor.fromFn
   ~positionMethod: PositionerSharedTypes.positionMethod=?,
-  ~sideOffset: PositionerSharedTypes.sideOffsetConfigSideOffset=?,
+  ~sideOffset: PositionerSharedTypes.utilsSideOffsetConfigSideOffset=?,
   ~align: PositionerSharedTypes.align=?,
-  ~alignOffset: PositionerSharedTypes.sideOffsetConfigAlignOffset=?,
-  ~collisionBoundary: DistTypes.Boundary.t=?,  // ⓘ was `Boundary` — opaque; build with Boundary.fromElement / Boundary.clippingAncestors / Boundary.fromElements / Boundary.fromCollisionBoundaryConfig
+  ~alignOffset: PositionerSharedTypes.utilsSideOffsetConfigAlignOffset=?,
+  ~collisionBoundary: DistTypes.Boundary.t=?,  // ⓘ was `Boundary` — opaque; build with Boundary.fromElement / Boundary.clippingAncestors / Boundary.fromElements / Boundary.fromDistCollisionBoundaryConfig
   ~collisionPadding: string=?,  // ⚪ loose — was `Padding`
   ~arrowPadding: float=?,
   ~disableAnchorTracking: bool=?,

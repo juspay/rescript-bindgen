@@ -19,15 +19,15 @@ type uploadedFileWithStatus = {
   status: status,
   error?: string,
 }
-type errorsConfig = {
+type uploadErrorsConfig = {
   code: string,
   message: string,
 }
 type fileRejection = {
   file: Webapi.File.t,
-  errors: array<errorsConfig>,
+  errors: array<uploadErrorsConfig>,
 }
-type onStateChangeConfig = {
+type uploadOnStateChangeConfig = {
   state: uploadState,
   hasError: bool,
   hasSuccess: bool,
@@ -35,60 +35,77 @@ type onStateChangeConfig = {
   errorFiles: array<uploadedFileWithStatus>,
   successfulFiles: array<uploadedFileWithStatus>,
 }
-type labelConfig4 = {
-  text: StatCardTypes.titleConfig3,
+type uploadTextConfig = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+}
+type uploadLabelConfig = {
+  text: uploadTextConfig,
   marginBottom: string,
   gap: string,
 }
-type requiredConfig = {
-  text: AvatarGroupTypes.textConfig7,
+type uploadTextConfig2 = {
+  color: string,
+}
+type uploadRequiredConfig = {
+  text: uploadTextConfig2,
   gap: string,
 }
-type subLabelConfig = {
-  text: StatCardTypes.titleConfig3,
+type uploadSubLabelConfig = {
+  text: uploadTextConfig,
   gap: string,
 }
-type headerConfig12 = {
-  label: labelConfig4,
-  required: requiredConfig,
-  subLabel: subLabelConfig,
-  helpIcon: AvatarGroupTypes.borderConfig3,
+type uploadHelpIconConfig = {
+  width: string,
+  color: string,
 }
-type borderConfig7 = {
+type uploadHeaderConfig = {
+  label: uploadLabelConfig,
+  required: uploadRequiredConfig,
+  subLabel: uploadSubLabelConfig,
+  helpIcon: uploadHelpIconConfig,
+}
+type uploadBorderConfig = {
   idle: string,
   uploading: string,
   success: string,
   error: string,
   dragActive: string,
 }
-type slotConfig3 = {
+type uploadSlotConfig = {
   width: string,
   gap: string,
 }
-type textConfig18 = {
-  title: DateRangePickerTypes.labelConfig,
-  subtitle: DateRangePickerTypes.labelConfig,
+type uploadTitleConfig = {
+  color: string,
+  fontSize: string,
+  fontWeight: string,
+}
+type uploadTextConfig3 = {
+  title: uploadTitleConfig,
+  subtitle: uploadTitleConfig,
   gap: string,
 }
-type actionableConfig = {
+type uploadActionableConfig = {
   gap: string,
-  errorText: DateRangePickerTypes.labelConfig,
+  errorText: uploadTitleConfig,
 }
-type contentConfig4 = {
-  slot: slotConfig3,
-  text: textConfig18,
-  actionable: actionableConfig,
+type uploadContentConfig = {
+  slot: uploadSlotConfig,
+  text: uploadTextConfig3,
+  actionable: uploadActionableConfig,
 }
-type containerConfig7 = {
-  border: borderConfig7,
-  backgroundColor: borderConfig7,
+type uploadContainerConfig = {
+  border: uploadBorderConfig,
+  backgroundColor: uploadBorderConfig,
   borderRadius: string,
   padding: string,
-  content: contentConfig4,
+  content: uploadContentConfig,
 }
 type uploadTokenType = {
-  header: headerConfig12,
-  container: containerConfig7,
+  header: uploadHeaderConfig,
+  container: uploadContainerConfig,
 }
 type responsiveUploadTokens = {
   sm: uploadTokenType,

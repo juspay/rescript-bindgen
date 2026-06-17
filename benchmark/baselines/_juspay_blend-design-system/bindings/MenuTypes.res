@@ -13,6 +13,14 @@ type menuSide =
   | @as("left") Left
   | @as("right") Right
   | @as("bottom") Bottom
+type menuTooltipPropsConfig = {
+  side?: TooltipTypes.tooltipSide,
+  align?: TooltipTypes.tooltipAlign,
+  size?: TooltipTypes.tooltipSize,
+  showArrow?: bool,
+  delayDuration?: float,
+  offset?: float,
+}
 type rec menuItemType = {
   label: string,
   subLabel?: string,
@@ -28,7 +36,7 @@ type rec menuItemType = {
   enableSubMenuSearch?: bool,
   subMenuSearchPlaceholder?: string,
   tooltip?: React.element,
-  tooltipProps?: MultiSelectSharedTypes.tooltipPropsConfig,
+  tooltipProps?: menuTooltipPropsConfig,
   enableSubMenuVirtualScrolling?: bool,
   subMenuVirtualItemHeight?: float,
   subMenuVirtualOverscan?: float,
@@ -39,7 +47,16 @@ type menuGroupType = {
   items: array<menuItemType>,
   showSeparator?: bool,
 }
-type enabledConfig = {
+type menuSkeletonProps = {
+  count?: int,
+  show?: bool,
+  variant?: SkeletonTypes.skeletonVariant,
+}
+type menuPaddingConfig = {
+  x: string,
+  y: string,
+}
+type menuEnabledConfig = {
   disabled: string,
   default: string,
   hover: string,
@@ -47,65 +64,65 @@ type enabledConfig = {
   focus: string,
   focusVisible: string,
 }
-type defaultConfig6 = {
-  enabled: enabledConfig,
-  disabled: enabledConfig,
+type menuDefaultConfig = {
+  enabled: menuEnabledConfig,
+  disabled: menuEnabledConfig,
 }
-type primaryConfig6 = {
+type menuPrimaryConfig = {
   enabled: string,
   disabled: string,
 }
-type actionConfig = {
-  primary: primaryConfig6,
-  danger: primaryConfig6,
+type menuActionConfig = {
+  primary: menuPrimaryConfig,
+  danger: menuPrimaryConfig,
 }
-type backgroundColorConfig6 = {
-  default: defaultConfig6,
-  action: actionConfig,
+type menuBackgroundColorConfig = {
+  default: menuDefaultConfig,
+  action: menuActionConfig,
 }
-type optionsLabelConfig = {
+type menuOptionsLabelConfig = {
   fontSize: string,
   fontWeight: string,
   color: string,
-  padding: ModalTypes.paddingConfig5,
-  margin: ModalTypes.paddingConfig5,
+  padding: menuPaddingConfig,
+  margin: menuPaddingConfig,
 }
-type actionConfig2 = {
-  primary: string,
-  danger: string,
+type menuActionConfig2 = {
+  primary: menuPrimaryConfig,
+  danger: menuPrimaryConfig,
 }
-type colorConfig11 = {
-  default: primaryConfig6,
-  action: actionConfig2,
+type menuColorConfig = {
+  default: menuPrimaryConfig,
+  action: menuActionConfig2,
 }
-type optionConfig = {
+type menuOptionConfig = {
   fontSize: string,
   fontWeight: string,
-  color: colorConfig11,
+  color: menuColorConfig,
 }
-type seperatorConfig = {
+type menuSeperatorConfig = {
   color: string,
   height: string,
-  margin: ModalTypes.paddingConfig5,
+  margin: menuPaddingConfig,
 }
-type itemConfig3 = {
-  padding: ModalTypes.paddingConfig5,
-  margin: ModalTypes.paddingConfig5,
+type menuItemConfig = {
+  padding: menuPaddingConfig,
+  margin: menuPaddingConfig,
   borderRadius: string,
-  backgroundColor: backgroundColorConfig6,
+  backgroundColor: menuBackgroundColorConfig,
   gap: string,
-  optionsLabel: optionsLabelConfig,
-  option: optionConfig,
-  description: optionConfig,
-  seperator: seperatorConfig,
+  optionsLabel: menuOptionsLabelConfig,
+  option: menuOptionConfig,
+  description: menuOptionConfig,
+  seperator: menuSeperatorConfig,
 }
 type menuTokensType = {
   boxShadow: string,
   backgroundColor: string,
-  padding: ModalTypes.paddingConfig5,
+  padding: menuPaddingConfig,
   border: string,
   borderRadius: string,
-  item: itemConfig3,
+  item: menuItemConfig,
 }
 type responsiveMenuTokensType = {
   sm: menuTokensType,
@@ -117,7 +134,7 @@ module CollisonBoundaryRef = {
   external fromElement: Dom.element => t = "%identity"
   external fromElements: array<Dom.element> => t = "%identity"
 }
-type overflowMenuPropsConfig = {
+type menuOverflowMenuPropsConfig = {
   trigger?: React.element,
   items?: array<menuGroupType>,
   maxHeight?: float,
@@ -138,5 +155,5 @@ type overflowMenuPropsConfig = {
   sideOffset?: float,
   alignOffset?: float,
   collisonBoundaryRef?: CollisonBoundaryRef.t,
-  skeleton?: MultiSelectSharedTypes.singleSelectSkeletonProps,
+  skeleton?: menuSkeletonProps,
 }

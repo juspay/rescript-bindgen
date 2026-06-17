@@ -3,13 +3,13 @@
   "compileOk": true,
   "warnings": 0,
   "buckets": {
-    "total": 27,
-    "usable": 27,
+    "total": 26,
+    "usable": 26,
     "review": 0,
     "broken": 0,
     "loose": 0
   },
-  "functions": 32,
+  "functions": 33,
   "classes": 5,
-  "files": 41
+  "files": 40
 }
