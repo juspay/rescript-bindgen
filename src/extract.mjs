@@ -1717,6 +1717,23 @@ function classify(type, ctx, propName = '', depth = 0) {
         return { kind: 'reactElement' }
     }
 
+    // An intersection of ARRAY types — `SelectDrawerItem[] & Array<SelectDrawerItem & {nestedItems}>`
+    // (TS distributes a `& { items: X[] }` override over a base `items: Y[]`). `isArrayType` is
+    // FALSE for the intersection, so without this it fell to recordNode and built a bogus record
+    // from the array's lib.es prototype methods (all inherited -> `{...JsxDOM.domProps}`, array
+    // wrapper lost — NestedSelectDrawer's `items`). Treat it as an array whose element is the
+    // intersected element type (TS's number-index type of the array intersection). (#63 review)
+    if ((flags & ts.TypeFlags.Intersection) && (type.types || []).length &&
+        type.types.every((p) => checker.isArrayType?.(p))) {
+        const elem = checker.getIndexTypeOfType(type, ts.IndexKind.Number)
+        if (elem) {
+            const prevAE = ctx.inArrayElem; ctx.inArrayElem = true
+            const of = classify(elem, ctx, propName, depth + 1)
+            ctx.inArrayElem = prevAE
+            return { kind: 'array', of }
+        }
+    }
+
     // enum (real TS enum used as a type)
     if (flags & ts.TypeFlags.EnumLike) {
         return enumNode(type, ctx, propName)

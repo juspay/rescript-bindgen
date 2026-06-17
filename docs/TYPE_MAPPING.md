@@ -56,6 +56,7 @@ Fixture: [`primitives`](../test/golden/cases/primitives)
 | `any` | 🛑 `string` | genuinely untyped → flagged broken |
 | `Date` | `Date.t` | |
 | `T[]` / `Array<T>` | `array<…>` | element classified recursively |
+| `Item[] & Array<Item & { nestedItems?: … }>` (intersection of array types) | `array<…>` of the **intersected element** — `isArrayType` is false for an intersection, so this is detected via the number-index type; otherwise it fell to a record built from the array's prototype methods (`{ ...JsxDOM.domProps }`, array wrapper lost — NestedSelectDrawer's `items`). Fixture: [`intersection-of-arrays`](../test/golden/cases/intersection-of-arrays). (#63 review) |
 | `Record<string, V>` | `Dict.t<…>` | `Record<string, unknown>` → `Dict.t<JSON.t>`; `Record<string, string>` → `Dict.t<string>` |
 | `Map<K, V>` / `ReadonlyMap` / `WeakMap` | `Map.t<k, v>` | detected on the resolved symbol, so a first-party alias (`type EventHandlerMap = Map<…>`) is caught too — never a `{...JsxDOM.domProps}` record ([`builtin-map-set`](../test/golden/cases/builtin-map-set)) |
 | `Set<T>` / `ReadonlySet` / `WeakSet` | `Set.t<t>` | as above |
