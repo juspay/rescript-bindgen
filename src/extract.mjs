@@ -1841,6 +1841,22 @@ function classify(type, ctx, propName = '', depth = 0) {
         // as an opaque module with one zero-cost `%identity` accessor VIEW per signature (so
         // NEITHER overload is dropped). Falls back to 🔍 review if it can't be modelled cleanly.
         if (callSigs.length > 1) {
+            // NOT every multi-call-signature type is a real overload:
+            //   (a) a MERGED function property reports an inherited signature too — `onClick?:
+            //       (e?: MouseEvent) => void` (own) merged with `@types/react`'s `MouseEventHandler`
+            //       (Button.onClick). The FIRST-PARTY signature is the library's intent.
+            //   (b) an OPTIONAL parameter expands ONE declaration into several sigs (`(e?: X) => void`
+            //       -> `() => void` + `(e: X) => void`).
+            // In both, use the most-complete relevant signature so the param maps to `option<…>`,
+            // not a misleading opaque overload module. A GENUINE overload (≥2 separate first-party
+            // declarations) still becomes the views module so no overload is dropped. (#65 B4)
+            const ownSigs = callSigs.filter((s) => s.declaration && !isVendorDecl(s.declaration))
+            const effective = ownSigs.length ? ownSigs : callSigs
+            const decls = new Set(effective.map((s) => s.declaration).filter(Boolean))
+            if (effective.length === 1 || decls.size === 1) {
+                const full = effective.slice().sort((a, b) => b.getParameters().length - a.getParameters().length)[0]
+                return functionNode(full, ctx, propName, depth)
+            }
             const ov = overloadModule(ctx, type, callSigs, propName, depth)
             return ov || { kind: 'review', note: `overloaded function (${callSigs.length} call signatures) — no single ReScript type` }
         }
