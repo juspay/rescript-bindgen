@@ -100,7 +100,7 @@ type buttonV2TextConfig = {
   lineHeight: buttonV2FontSizeConfig,
 }
 type buttonV2SmConfig = {
-  gap?: string,
+  gap: string,
   backgroundColor: buttonV2BackgroundColorConfig,
   borderRadius: buttonV2BorderRadiusConfig,
   padding: buttonV2PaddingConfig,

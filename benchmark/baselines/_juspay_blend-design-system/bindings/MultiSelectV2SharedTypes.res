@@ -8,17 +8,17 @@ type stateToken2 = {
   selected: string,
 }
 type multiSelectV2LabelConfig = {
-  fontSize?: string,
-  fontWeight?: string,
+  fontSize: string,
+  fontWeight: string,
   color: stateToken2,
 }
 type multiSelectV2ErrorMessageConfig = {
-  fontSize?: string,
-  fontWeight?: string,
-  color?: string,
+  fontSize: string,
+  fontWeight: string,
+  color: string,
 }
 type multiSelectV2RequiredConfig = {
-  color?: string,
+  color: string,
 }
 type variantToken4 = {
   container: string,
@@ -30,10 +30,10 @@ type sizeToken3 = {
   lg: variantToken4,
 }
 type multiSelectV2ContainerConfig = {
-  top?: string,
-  right?: string,
-  bottom?: string,
-  left?: string,
+  top: string,
+  right: string,
+  bottom: string,
+  left: string,
 }
 type variantToken5 = {
   container: multiSelectV2ContainerConfig,
@@ -56,17 +56,17 @@ type variantToken6 = {
   @as("no-container") noContainer: triggerStateToken2,
 }
 type multiSelectV2SlotConfig = {
-  gap?: string,
-  width?: string,
+  gap: string,
+  width: string,
 }
 type multiSelectV2CountConfig = {
-  color?: string,
-  backgroundColor?: string,
-  fontWeight?: string,
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
+  color: string,
+  backgroundColor: string,
+  fontWeight: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
 }
 type selectionTagTypeToken = {
   count: multiSelectV2CountConfig,
@@ -75,31 +75,31 @@ type selectionTagTypeToken = {
 type contextSelectionTagConfig = {
   container: selectionTagTypeToken,
   @as("no-container") noContainer: selectionTagTypeToken,
-  marginLeft?: string,
-  borderRadius?: string,
+  marginLeft: string,
+  borderRadius: string,
 }
 type multiSelectV2ChevronConfig = {
-  gap?: string,
-  width?: string,
-  height?: string,
+  gap: string,
+  width: string,
+  height: string,
   iconSize?: float,
 }
 type multiSelectV2ClearButtonConfig = {
   backgroundColor: triggerStateToken2,
   outline: triggerStateToken2,
-  color?: string,
+  color: string,
   width?: string,
 }
 type multiSelectV2FloatingLabelConfig = {
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
 }
 type multiSelectV2PlaceholderConfig = {
-  color?: string,
-  fontSize?: string,
-  fontWeight?: string,
+  color: string,
+  fontSize: string,
+  fontWeight: string,
 }
 type multiSelectV2TriggerConfig = {
   height: sizeToken3,
@@ -117,53 +117,53 @@ type multiSelectV2TriggerConfig = {
   selectedValue: multiSelectV2PlaceholderConfig,
 }
 type multiSelectV2ScrollConfig = {
-  height?: string,
-  maxHeight?: string,
+  height: string,
+  maxHeight: string,
 }
 type multiSelectV2HeaderConfig = {
-  backgroundColor?: string,
-  borderBottom?: string,
-  selectAllRowPaddingLeft?: string,
-  selectAllRowPaddingRight?: string,
+  backgroundColor: string,
+  borderBottom: string,
+  selectAllRowPaddingLeft: string,
+  selectAllRowPaddingRight: string,
 }
 type multiSelectV2SelectAllConfig = {
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
-  borderRadius?: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
+  borderRadius: string,
 }
 type multiSelectV2ActionsConfig = {
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
-  gap?: string,
-  backgroundColor?: string,
-  borderTop?: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
+  gap: string,
+  backgroundColor: string,
+  borderTop: string,
 }
 type multiSelectV2OptionsLabelConfig = {
-  fontSize?: string,
-  fontWeight?: string,
+  fontSize: string,
+  fontWeight: string,
   color: stateToken2,
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
 }
 type multiSelectV2SeperatorConfig = {
-  color?: string,
-  height?: string,
-  margin?: string,
+  color: string,
+  height: string,
+  margin: string,
 }
 type multiSelectV2ItemConfig = {
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
-  margin?: string,
-  borderRadius?: string,
-  gap?: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
+  margin: string,
+  borderRadius: string,
+  gap: string,
   backgroundColor: stateToken2,
   optionsLabel: multiSelectV2OptionsLabelConfig,
   option: multiSelectV2LabelConfig,
@@ -171,11 +171,11 @@ type multiSelectV2ItemConfig = {
   seperator: multiSelectV2SeperatorConfig,
 }
 type multiSelectV2MenuConfig = {
-  backgroundColor?: string,
-  border?: string,
-  borderRadius?: string,
+  backgroundColor: string,
+  border: string,
+  borderRadius: string,
   padding: sizeToken4,
-  minWidth?: string,
+  minWidth: string,
   scroll: multiSelectV2ScrollConfig,
   header: multiSelectV2HeaderConfig,
   selectAll: multiSelectV2SelectAllConfig,
@@ -184,41 +184,41 @@ type multiSelectV2MenuConfig = {
   item: multiSelectV2ItemConfig,
 }
 type multiSelectV2TriggerConfig2 = {
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
-  margin?: string,
-  borderRadius?: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
+  margin: string,
+  borderRadius: string,
 }
 type multiSelectV2ContentConfig = {
-  borderRadius?: string,
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
+  borderRadius: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
 }
 type multiSelectV2SubMenuConfig = {
   trigger: multiSelectV2TriggerConfig2,
   content: multiSelectV2ContentConfig,
 }
 type multiSelectV2HeaderConfig2 = {
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
-  borderBottom?: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
+  borderBottom: string,
 }
 type multiSelectV2SearchConfig = {
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
-  marginTop?: string,
-  marginBottom?: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
+  marginTop: string,
+  marginBottom: string,
 }
 type multiSelectV2ContentConfig2 = {
-  gap?: string,
+  gap: string,
 }
 type multiSelectV2DrawerConfig = {
   header: multiSelectV2HeaderConfig2,
@@ -226,7 +226,7 @@ type multiSelectV2DrawerConfig = {
   content: multiSelectV2ContentConfig2,
 }
 type multiSelectV2TokensType = {
-  gap?: string,
+  gap: string,
   label: multiSelectV2LabelConfig,
   subLabel: multiSelectV2LabelConfig,
   hintText: multiSelectV2LabelConfig,

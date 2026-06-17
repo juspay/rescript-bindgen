@@ -146,21 +146,21 @@ type sankeyLink = {
   hoverColor?: string,
 }
 type chartsPaddingConfig = {
-  x?: string,
-  y?: string,
+  x: string,
+  y: string,
 }
 type chartsSlotsConfig = {
-  gap?: string,
+  gap: string,
 }
 type chartsHeaderConfig = {
   padding: chartsPaddingConfig,
-  backgroundColor?: string,
-  borderBottom?: string,
-  borderRadius?: string,
+  backgroundColor: string,
+  borderBottom: string,
+  borderRadius: string,
   slots: chartsSlotsConfig,
 }
 type chartsDropdownConfig = {
-  maxHeight?: string,
+  maxHeight: string,
 }
 type chartsColorConfig = {
   default: string,
@@ -169,31 +169,31 @@ type chartsColorConfig = {
   total: string,
 }
 type chartsItemConfig = {
-  gap?: string,
+  gap: string,
   color: chartsColorConfig,
-  fontSize?: string,
-  fontWeight?: string,
+  fontSize: string,
+  fontWeight: string,
 }
 type chartsLegendConfig = {
-  gap?: string,
+  gap: string,
   dropdown: chartsDropdownConfig,
   item: chartsItemConfig,
 }
 type chartsPaddingConfig2 = {
-  top?: string,
-  right?: string,
-  bottom?: string,
-  left?: string,
+  top: string,
+  right: string,
+  bottom: string,
+  left: string,
 }
 type chartsContentConfig = {
   legend: chartsLegendConfig,
   padding: chartsPaddingConfig2,
-  gap?: string,
-  backgroundColor?: string,
+  gap: string,
+  backgroundColor: string,
 }
 type chartTokensType = {
-  border?: string,
-  borderRadius?: string,
+  border: string,
+  borderRadius: string,
   header: chartsHeaderConfig,
   content: chartsContentConfig,
 }

@@ -105,17 +105,17 @@ type singleSelectColorConfig = {
   selected: string,
 }
 type singleSelectLabelConfig = {
-  fontSize?: string,
-  fontWeight?: string,
+  fontSize: string,
+  fontWeight: string,
   color: singleSelectColorConfig,
 }
 type singleSelectErrorMessageConfig = {
-  fontSize?: string,
-  fontWeight?: string,
-  color?: string,
+  fontSize: string,
+  fontWeight: string,
+  color: string,
 }
 type singleSelectRequiredConfig = {
-  color?: string,
+  color: string,
 }
 type singleSelectSmConfig = {
   container: string,
@@ -127,8 +127,8 @@ type singleSelectHeightConfig = {
   lg: singleSelectSmConfig,
 }
 type singleSelectContainerConfig = {
-  x?: string,
-  y?: string,
+  x: string,
+  y: string,
 }
 type singleSelectSmConfig2 = {
   container: singleSelectContainerConfig,
@@ -151,9 +151,9 @@ type singleSelectBackgroundColorConfig = {
   @as("no-container") noContainer: singleSelectContainerConfig2,
 }
 type singleSelectPlaceholderConfig = {
-  color?: string,
-  fontSize?: string,
-  fontWeight?: string,
+  color: string,
+  fontSize: string,
+  fontWeight: string,
 }
 type singleSelectTriggerConfig = {
   height: singleSelectHeightConfig,
@@ -175,20 +175,20 @@ type singleSelectColorConfig2 = {
   selected: string,
 }
 type singleSelectOptionsLabelConfig = {
-  fontSize?: string,
-  fontWeight?: string,
+  fontSize: string,
+  fontWeight: string,
   color: singleSelectColorConfig2,
 }
 type singleSelectSeperatorConfig = {
-  color?: string,
-  height?: string,
-  margin?: string,
+  color: string,
+  height: string,
+  margin: string,
 }
 type singleSelectItemConfig = {
-  padding?: string,
-  margin?: string,
-  borderRadius?: string,
-  gap?: string,
+  padding: string,
+  margin: string,
+  borderRadius: string,
+  gap: string,
   backgroundColor: singleSelectColorConfig,
   optionsLabel: singleSelectOptionsLabelConfig,
   option: singleSelectOptionsLabelConfig,
@@ -196,22 +196,22 @@ type singleSelectItemConfig = {
   seperator: singleSelectSeperatorConfig,
 }
 type singleSelectMenuConfig = {
-  backgroundColor?: string,
-  border?: string,
-  borderRadius?: string,
+  backgroundColor: string,
+  border: string,
+  borderRadius: string,
   padding: singleSelectPaddingConfig,
   item: singleSelectItemConfig,
 }
 type singleSelectHeaderConfig = {
-  paddingX?: string,
-  paddingBottom?: string,
-  borderBottom?: string,
+  paddingX: string,
+  paddingBottom: string,
+  borderBottom: string,
 }
 type singleSelectDrawerConfig = {
   header: singleSelectHeaderConfig,
 }
 type singleSelectTokensType = {
-  gap?: string,
+  gap: string,
   label: singleSelectLabelConfig,
   subLabel: singleSelectLabelConfig,
   hintText: singleSelectLabelConfig,

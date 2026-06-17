@@ -65,8 +65,8 @@ type buttonBorderRadiusConfig = {
   lg: buttonSmConfig,
 }
 type buttonDefaultConfig3 = {
-  x?: string,
-  y?: string,
+  x: string,
+  y: string,
 }
 type buttonPrimaryConfig3 = {
   default: buttonDefaultConfig3,
@@ -90,7 +90,7 @@ type buttonTextConfig = {
   fontWeight: buttonSlotMaxHeightConfig,
 }
 type buttonTokensType = {
-  gap?: string,
+  gap: string,
   slotMaxHeight: buttonSlotMaxHeightConfig,
   backgroundColor: buttonBackgroundColorConfig,
   borderRadius: buttonBorderRadiusConfig,
@@ -137,13 +137,13 @@ type modalSkeletonProps = {
   bodySkeletonProps?: bodySkeletonProps,
 }
 type modalPaddingConfig = {
-  x?: string,
-  y?: string,
+  x: string,
+  y: string,
 }
 type modalTitleConfig = {
-  color?: string,
-  fontSize?: string,
-  fontWeight?: string,
+  color: string,
+  fontSize: string,
+  fontWeight: string,
 }
 type modalTextConfig = {
   title: modalTitleConfig,
@@ -151,26 +151,26 @@ type modalTextConfig = {
 }
 type modalHeaderConfig = {
   padding: modalPaddingConfig,
-  borderBottom?: string,
-  backgroundColor?: string,
+  borderBottom: string,
+  backgroundColor: string,
   text: modalTextConfig,
 }
 type modalBodyConfig = {
-  padding?: string,
-  backgroundColor?: string,
+  padding: string,
+  backgroundColor: string,
 }
 type modalFooterConfig = {
-  padding?: string,
-  borderTop?: string,
-  backgroundColor?: string,
-  gap?: string,
+  padding: string,
+  borderTop: string,
+  backgroundColor: string,
+  gap: string,
 }
 type modalCloseButtonConfig = {
-  color?: string,
+  color: string,
 }
 type modalTokensType = {
-  boxShadow?: string,
-  borderRadius?: string,
+  boxShadow: string,
+  borderRadius: string,
   header: modalHeaderConfig,
   body: modalBodyConfig,
   footer: modalFooterConfig,

@@ -15,14 +15,14 @@ type popoverV2IconSizeConfig = {
   lg: string,
 }
 type popoverV2HeadingConfig = {
-  color?: string,
+  color: string,
   fontSize: popoverV2GapConfig,
   fontWeight: popoverV2GapConfig,
   lineHeight: popoverV2GapConfig,
   @as("IconSize") iconSize: popoverV2IconSizeConfig,
 }
 type popoverV2DescriptionConfig = {
-  color?: string,
+  color: string,
   fontSize: popoverV2GapConfig,
   fontWeight: popoverV2GapConfig,
   lineHeight: popoverV2GapConfig,
@@ -36,11 +36,11 @@ type popoverV2BottomContainerConfig = {
   gap: popoverV2GapConfig,
 }
 type popoverV2TokenType = {
-  background?: string,
-  border?: string,
+  background: string,
+  border: string,
   shadow: TokensTypes.tokensShadowsConfig,
   gap: popoverV2GapConfig,
-  zIndex?: string,
+  zIndex: string,
   borderRadius: popoverV2GapConfig,
   padding: popoverV2PaddingConfig,
   @as("TopContainer") topContainer: popoverV2TopContainerConfig,

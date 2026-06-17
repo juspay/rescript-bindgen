@@ -40,27 +40,27 @@ type alertColorConfig = {
 }
 type alertHeadingConfig = {
   color: alertColorConfig,
-  fontWeight?: string,
-  fontSize?: string,
-  lineHeight?: string,
+  fontWeight: string,
+  fontSize: string,
+  lineHeight: string,
 }
 type alertTextConfig = {
   heading: alertHeadingConfig,
   description: alertHeadingConfig,
 }
 type alertButtonConfig = {
-  gap?: string,
+  gap: string,
   primaryAction: alertHeadingConfig,
   secondaryAction: alertHeadingConfig,
   closeButton: alertHeadingConfig,
 }
 type alertTokenType = {
-  width?: string,
-  maxWidth?: string,
-  minWidth?: string,
-  gap?: string,
-  padding?: string,
-  borderRadius?: string,
+  width: string,
+  maxWidth: string,
+  minWidth: string,
+  gap: string,
+  padding: string,
+  borderRadius: string,
   background: alertBackgroundConfig,
   border: alertBackgroundConfig,
   text: alertTextConfig,

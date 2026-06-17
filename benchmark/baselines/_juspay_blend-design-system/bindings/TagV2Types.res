@@ -48,7 +48,7 @@ type tagV2SmConfig = {
   backgroundColor: tagV2BorderConfig,
   height: tagV2HeightConfig,
   padding: tagV2PaddingConfig,
-  gap?: string,
+  gap: string,
   leftSlot: tagV2LeftSlotConfig,
   rightSlot: tagV2LeftSlotConfig,
   text: tagV2TextConfig,

@@ -14,10 +14,10 @@ type keyValuePairGapConfig = {
   vertical: string,
 }
 type keyValuePairKeyConfig = {
-  color?: string,
-  fontSize?: string,
-  fontWeight?: string,
-  gap?: string,
+  color: string,
+  fontSize: string,
+  fontWeight: string,
+  gap: string,
 }
 type keyValuePairFontSizeConfig = {
   sm: string,
@@ -25,10 +25,10 @@ type keyValuePairFontSizeConfig = {
   lg: string,
 }
 type keyValuePairValueConfig = {
-  color?: string,
+  color: string,
   fontSize: keyValuePairFontSizeConfig,
-  fontWeight?: string,
-  gap?: string,
+  fontWeight: string,
+  gap: string,
 }
 type keyValuePairTokensType = {
   gap: keyValuePairGapConfig,

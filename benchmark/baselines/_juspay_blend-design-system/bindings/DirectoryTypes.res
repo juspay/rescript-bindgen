@@ -15,17 +15,17 @@ type directoryData = {
   defaultOpen?: bool,
 }
 type directoryPaddingConfig = {
-  x?: string,
-  y?: string,
+  x: string,
+  y: string,
 }
 type directoryLabelConfig = {
-  fontSize?: string,
-  color?: string,
-  fontWeight?: string,
+  fontSize: string,
+  color: string,
+  fontWeight: string,
 }
 type directoryChevronConfig = {
-  width?: string,
-  color?: string,
+  width: string,
+  color: string,
 }
 type directoryHeaderConfig = {
   padding: directoryPaddingConfig,
@@ -33,8 +33,8 @@ type directoryHeaderConfig = {
   chevron: directoryChevronConfig,
 }
 type directoryPaddingConfig2 = {
-  x?: string,
-  y?: string,
+  x: string,
+  y: string,
 }
 type directoryBackgroundColorConfig = {
   default: string,
@@ -42,48 +42,48 @@ type directoryBackgroundColorConfig = {
   active: string,
 }
 type directoryIconConfig = {
-  width?: string,
+  width: string,
 }
 type directoryChevronConfig2 = {
-  width?: string,
-  color?: string,
+  width: string,
+  color: string,
 }
 type directoryItemConfig = {
   padding: directoryPaddingConfig2,
-  gap?: string,
-  borderRadius?: string,
-  fontWeight?: string,
-  fontSize?: string,
-  transition?: string,
+  gap: string,
+  borderRadius: string,
+  fontWeight: string,
+  fontSize: string,
+  transition: string,
   backgroundColor: directoryBackgroundColorConfig,
   color: directoryBackgroundColorConfig,
   icon: directoryIconConfig,
   chevron: directoryChevronConfig2,
 }
 type directoryBorderConfig = {
-  width?: string,
-  color?: string,
-  leftOffset?: string,
+  width: string,
+  color: string,
+  leftOffset: string,
 }
 type directoryNestedConfig = {
-  paddingLeft?: string,
-  marginTop?: string,
+  paddingLeft: string,
+  marginTop: string,
   border: directoryBorderConfig,
 }
 type directoryItemListConfig = {
-  gap?: string,
+  gap: string,
   item: directoryItemConfig,
   nested: directoryNestedConfig,
 }
 type directorySectionConfig = {
-  gap?: string,
+  gap: string,
   header: directoryHeaderConfig,
   itemList: directoryItemListConfig,
 }
 type directoryTokenType = {
-  gap?: string,
-  paddingX?: string,
-  paddingY?: string,
+  gap: string,
+  paddingX: string,
+  paddingY: string,
   section: directorySectionConfig,
 }
 type responsiveDirectoryTokens = {

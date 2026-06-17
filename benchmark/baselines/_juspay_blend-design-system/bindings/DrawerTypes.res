@@ -40,33 +40,39 @@ type drawerItemsConfig = {
   showSeparator?: bool,
 }
 type drawerBorderRadiusConfig = {
-  topLeft?: string,
-  topRight?: string,
-  bottomLeft?: string,
-  bottomRight?: string,
+  topLeft: string,
+  topRight: string,
+  bottomLeft: string,
+  bottomRight: string,
 }
 type drawerOverlayConfig = {
-  backgroundColor?: string,
+  backgroundColor: string,
+}
+type drawerOffsetConfig = {
+  top: string,
+  bottom: string,
+  left: string,
+  right: string,
 }
 type drawerPaddingConfig = {
-  x?: string,
-  y?: string,
+  x: string,
+  y: string,
 }
 type drawerHandleConfig = {
-  backgroundColor?: string,
-  borderRadius?: string,
-  width?: string,
-  height?: string,
+  backgroundColor: string,
+  borderRadius: string,
+  width: string,
+  height: string,
 }
 type drawerContentConfig = {
-  backgroundColor?: string,
+  backgroundColor: string,
   padding: drawerPaddingConfig,
   handle: drawerHandleConfig,
 }
 type drawerTokensType = {
   borderRadius: drawerBorderRadiusConfig,
   overlay: drawerOverlayConfig,
-  offset: drawerMobileOffsetConfig,
+  offset: drawerOffsetConfig,
   content: drawerContentConfig,
 }
 type responsiveDrawerTokens = {

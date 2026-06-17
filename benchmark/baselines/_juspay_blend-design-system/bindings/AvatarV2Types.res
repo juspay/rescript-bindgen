@@ -30,14 +30,14 @@ type avatarV2BorderRadiusConfig = {
   rounded: string,
 }
 type avatarV2ImageConfig = {
-  border?: string,
+  border: string,
 }
 type avatarV2FallbackTextConfig = {
-  border?: string,
+  border: string,
   fontSize: avatarV2WidthConfig,
   fontWeight: avatarV2WidthConfig,
   lineHeight: avatarV2WidthConfig,
-  color?: string,
+  color: string,
 }
 type avatarV2BackgroundColorConfig = {
   none: string,
@@ -61,13 +61,13 @@ type avatarV2StatusConfig = {
   width: avatarV2WidthConfig,
   height: avatarV2WidthConfig,
   border: avatarV2WidthConfig,
-  borderRadius?: string,
+  borderRadius: string,
   backgroundColor: avatarV2BackgroundColorConfig,
-  boxShadow?: string,
+  boxShadow: string,
   position: avatarV2PositionConfig,
 }
 type avatarV2ContainerConfig = {
-  backgroundColor?: string,
+  backgroundColor: string,
   width: avatarV2WidthConfig,
   height: avatarV2WidthConfig,
   borderRadius: avatarV2BorderRadiusConfig,
@@ -76,11 +76,11 @@ type avatarV2ContainerConfig = {
   status: avatarV2StatusConfig,
 }
 type avatarV2SlotConfig = {
-  height?: string,
-  width?: string,
+  height: string,
+  width: string,
 }
 type avatarV2TokensType = {
-  gap?: string,
+  gap: string,
   container: avatarV2ContainerConfig,
   slot: avatarV2SlotConfig,
 }

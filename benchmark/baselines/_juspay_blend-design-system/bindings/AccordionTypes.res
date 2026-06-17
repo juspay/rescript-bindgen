@@ -33,13 +33,13 @@ type accordionColorConfig = {
   @as("open") open_: string,
 }
 type accordionTitleConfig = {
-  fontSize?: string,
-  fontWeight?: string,
+  fontSize: string,
+  fontWeight: string,
   color: accordionColorConfig,
 }
 type accordionSubtextConfig = {
-  fontSize?: string,
-  gap?: string,
+  fontSize: string,
+  gap: string,
   color: accordionColorConfig,
 }
 type accordionTextConfig = {
@@ -47,7 +47,7 @@ type accordionTextConfig = {
   subtext: accordionSubtextConfig,
 }
 type accordionSlotConfig = {
-  maxWidth?: string,
+  maxWidth: string,
 }
 type accordionTriggerConfig = {
   backgroundColor: accordionBackgroundColorConfig,

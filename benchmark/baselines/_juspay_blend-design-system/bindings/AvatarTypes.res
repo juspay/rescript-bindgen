@@ -15,8 +15,8 @@ type avatarSkeletonConfig = {
   variant?: SkeletonTypes.skeletonVariant,
 }
 type avatarSmConfig = {
-  width?: string,
-  height?: string,
+  width: string,
+  height: string,
 }
 type avatarSizeConfig = {
   sm: avatarSmConfig,
@@ -56,8 +56,8 @@ type avatarTextConfig = {
   fontWeight: avatarFontSizeConfig,
 }
 type avatarDefaultConfig = {
-  color?: string,
-  width?: string,
+  color: string,
+  width: string,
 }
 type avatarSmConfig2 = {
   default: avatarDefaultConfig,
@@ -74,15 +74,15 @@ type avatarIndicatorConfig = {
   backgroundColor: avatarWithImageConfig,
   border: avatarBorderConfig,
   size: avatarSizeConfig,
-  borderRadius?: string,
-  boxShadow?: string,
+  borderRadius: string,
+  boxShadow: string,
 }
 type avatarSlotConfig = {
-  spacing?: string,
+  spacing: string,
   color: avatarWithImageConfig,
 }
 type avatarTokensType = {
-  gap?: string,
+  gap: string,
   container: avatarContainerConfig,
   text: avatarTextConfig,
   indicator: avatarIndicatorConfig,

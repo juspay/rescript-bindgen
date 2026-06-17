@@ -24,23 +24,23 @@ type diffLine = {
   @as("type") type_: diffLineType,
 }
 type codeBlockPaddingConfig = {
-  x?: string,
-  y?: string,
+  x: string,
+  y: string,
 }
 type codeBlockIconConfig = {
-  width?: string,
+  width: string,
 }
 type codeBlockTextConfig = {
-  fontSize?: string,
-  fontWeight?: string,
-  lineHeight?: string,
-  color?: string,
+  fontSize: string,
+  fontWeight: string,
+  lineHeight: string,
+  color: string,
 }
 type codeBlockHeaderConfig = {
-  backgroundColor?: string,
-  borderBottom?: string,
+  backgroundColor: string,
+  borderBottom: string,
   padding: codeBlockPaddingConfig,
-  gap?: string,
+  gap: string,
   icon: codeBlockIconConfig,
   text: codeBlockTextConfig,
 }
@@ -50,52 +50,52 @@ type codeBlockBackgroundColorConfig = {
   unchanged: string,
 }
 type codeBlockGutterConfig = {
-  width?: string,
-  color?: string,
+  width: string,
+  color: string,
   backgroundColor: codeBlockBackgroundColorConfig,
   borderLeft: codeBlockBackgroundColorConfig,
   borderColor: codeBlockBackgroundColorConfig,
 }
 type codeBlockXConfig = {
-  left?: string,
-  right?: string,
+  left: string,
+  right: string,
 }
 type codeBlockPaddingConfig2 = {
   x: codeBlockXConfig,
-  y?: string,
+  y: string,
 }
 type codeBlockCodeConfig = {
-  fontFamily?: string,
-  fontSize?: string,
-  lineHeight?: string,
+  fontFamily: string,
+  fontSize: string,
+  lineHeight: string,
   padding: codeBlockPaddingConfig2,
 }
 type codeBlockHighlightedLineConfig = {
   backgroundColor: codeBlockBackgroundColorConfig,
 }
 type codeBlockSyntaxConfig = {
-  keyword?: string,
-  function?: string,
-  string?: string,
-  number?: string,
-  operator?: string,
-  variable?: string,
-  comment?: string,
-  text?: string,
+  keyword: string,
+  function: string,
+  string: string,
+  number: string,
+  operator: string,
+  variable: string,
+  comment: string,
+  text: string,
 }
 type codeBlockBodyConfig = {
   padding: codeBlockPaddingConfig,
-  backgroundColor?: string,
+  backgroundColor: string,
   gutter: codeBlockGutterConfig,
   code: codeBlockCodeConfig,
   highlightedLine: codeBlockHighlightedLineConfig,
   syntax: codeBlockSyntaxConfig,
 }
 type codeBlockTokenType = {
-  backgroundColor?: string,
-  border?: string,
-  borderRadius?: string,
-  boxShadow?: string,
+  backgroundColor: string,
+  border: string,
+  borderRadius: string,
+  boxShadow: string,
   header: codeBlockHeaderConfig,
   body: codeBlockBodyConfig,
 }

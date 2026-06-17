@@ -151,10 +151,10 @@ type tagsTextConfig = {
   fontWeight: tagsPaddingConfig,
 }
 type tagsSmConfig = {
-  minWidth?: string,
-  maxWidth?: string,
-  width?: string,
-  gap?: string,
+  minWidth: string,
+  maxWidth: string,
+  width: string,
+  gap: string,
   backgroundColor: tagsBackgroundColorConfig,
   borderRadius: tagsBorderRadiusConfig,
   padding: tagsPaddingConfig,

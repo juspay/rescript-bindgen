@@ -42,22 +42,22 @@ type snackbarColorConfig2 = {
 }
 type snackbarHeaderConfig = {
   color: snackbarColorConfig2,
-  fontSize?: string,
-  fontWeight?: string,
+  fontSize: string,
+  fontWeight: string,
 }
 type snackbarTextContainerConfig = {
-  gap?: string,
+  gap: string,
   header: snackbarHeaderConfig,
   description: snackbarHeaderConfig,
 }
 type snackbarContentConfig = {
-  gap?: string,
+  gap: string,
   textContainer: snackbarTextContainerConfig,
 }
 type snackbarPrimaryActionConfig = {
   color: snackbarColorConfig,
-  fontSize?: string,
-  fontWeight?: string,
+  fontSize: string,
+  fontWeight: string,
 }
 type snackbarCloseButtonConfig = {
   height: string,
@@ -68,12 +68,12 @@ type snackbarActionsConfig = {
   closeButton: snackbarCloseButtonConfig,
 }
 type snackbarSmConfig = {
-  backgroundColor?: string,
-  borderRadius?: string,
-  padding?: string,
-  maxWidth?: string,
-  boxShadow?: string,
-  gap?: string,
+  backgroundColor: string,
+  borderRadius: string,
+  padding: string,
+  maxWidth: string,
+  boxShadow: string,
+  gap: string,
   infoIcon: snackbarInfoIconConfig,
   content: snackbarContentConfig,
   actions: snackbarActionsConfig,

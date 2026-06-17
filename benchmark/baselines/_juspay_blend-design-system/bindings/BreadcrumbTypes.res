@@ -16,17 +16,17 @@ type breadcrumbColorConfig = {
   active: string,
 }
 type breadcrumbTextConfig = {
-  fontSize?: string,
-  fontWeight?: string,
+  fontSize: string,
+  fontWeight: string,
   color: breadcrumbColorConfig,
 }
 type breadcrumbItemConfig = {
-  padding?: string,
-  gap?: string,
+  padding: string,
+  gap: string,
   text: breadcrumbTextConfig,
 }
 type breadcrumbTokenType = {
-  gap?: string,
+  gap: string,
   item: breadcrumbItemConfig,
 }
 type responsiveBreadcrumbTokens = {

@@ -53,8 +53,8 @@ type menuSkeletonProps = {
   variant?: SkeletonTypes.skeletonVariant,
 }
 type menuPaddingConfig = {
-  x?: string,
-  y?: string,
+  x: string,
+  y: string,
 }
 type menuEnabledConfig = {
   disabled: string,
@@ -81,9 +81,9 @@ type menuBackgroundColorConfig = {
   action: menuActionConfig,
 }
 type menuOptionsLabelConfig = {
-  fontSize?: string,
-  fontWeight?: string,
-  color?: string,
+  fontSize: string,
+  fontWeight: string,
+  color: string,
   padding: menuPaddingConfig,
   margin: menuPaddingConfig,
 }
@@ -96,32 +96,32 @@ type menuColorConfig = {
   action: menuActionConfig2,
 }
 type menuOptionConfig = {
-  fontSize?: string,
-  fontWeight?: string,
+  fontSize: string,
+  fontWeight: string,
   color: menuColorConfig,
 }
 type menuSeperatorConfig = {
-  color?: string,
-  height?: string,
+  color: string,
+  height: string,
   margin: menuPaddingConfig,
 }
 type menuItemConfig = {
   padding: menuPaddingConfig,
   margin: menuPaddingConfig,
-  borderRadius?: string,
+  borderRadius: string,
   backgroundColor: menuBackgroundColorConfig,
-  gap?: string,
+  gap: string,
   optionsLabel: menuOptionsLabelConfig,
   option: menuOptionConfig,
   description: menuOptionConfig,
   seperator: menuSeperatorConfig,
 }
 type menuTokensType = {
-  boxShadow?: string,
-  backgroundColor?: string,
+  boxShadow: string,
+  backgroundColor: string,
   padding: menuPaddingConfig,
-  border?: string,
-  borderRadius?: string,
+  border: string,
+  borderRadius: string,
   item: menuItemConfig,
 }
 type responsiveMenuTokensType = {

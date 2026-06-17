@@ -25,20 +25,20 @@ type step = {
   isExpanded?: bool,
 }
 type stepperDefaultConfig = {
-  gap?: string,
+  gap: string,
 }
 type stepperContainerConfig = {
   default: stepperDefaultConfig,
 }
 type stepperDisabledConfig = {
-  backgroundColor?: string,
-  borderColor?: string,
-  borderWidth?: string,
-  borderRadius?: string,
-  size?: string,
-  transition?: string,
-  outline?: string,
-  outlineOffset?: string,
+  backgroundColor: string,
+  borderColor: string,
+  borderWidth: string,
+  borderRadius: string,
+  size: string,
+  transition: string,
+  outline: string,
+  outlineOffset: string,
 }
 type stepperCompletedConfig = {
   disabled: stepperDisabledConfig,
@@ -54,7 +54,7 @@ type stepperCircleConfig = {
   skipped: stepperCompletedConfig,
 }
 type stepperDisabledConfig2 = {
-  color?: string,
+  color: string,
 }
 type stepperCompletedConfig2 = {
   disabled: stepperDisabledConfig2,
@@ -74,8 +74,8 @@ type stepperStepConfig = {
   icon: stepperIconConfig,
 }
 type stepperDefaultConfig2 = {
-  color?: string,
-  height?: string,
+  color: string,
+  height: string,
 }
 type stepperActiveConfig = {
   default: stepperDefaultConfig2,
@@ -88,10 +88,10 @@ type stepperConnectorConfig = {
   line: stepperLineConfig,
 }
 type stepperDisabledConfig3 = {
-  color?: string,
-  fontSize?: string,
-  fontWeight?: string,
-  gap?: string,
+  color: string,
+  fontSize: string,
+  fontWeight: string,
+  gap: string,
 }
 type stepperCompletedConfig3 = {
   disabled: stepperDisabledConfig3,

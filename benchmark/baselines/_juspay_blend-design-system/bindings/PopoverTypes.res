@@ -55,7 +55,7 @@ type popoverPaddingConfig = {
   bottom: popoverGapConfig,
 }
 type popoverHeadingConfig = {
-  color?: string,
+  color: string,
   fontSize: popoverGapConfig,
   fontWeight: popoverGapConfig,
   lineHeight: popoverGapConfig,
@@ -68,11 +68,11 @@ type popoverFooterConfig = {
   gap: popoverGapConfig,
 }
 type popoverTokenType = {
-  background?: string,
-  border?: string,
+  background: string,
+  border: string,
   shadow: TokensTypes.tokensShadowsConfig,
   gap: popoverGapConfig,
-  zIndex?: string,
+  zIndex: string,
   borderRadius: popoverGapConfig,
   padding: popoverPaddingConfig,
   headerContainer: popoverHeaderContainerConfig,

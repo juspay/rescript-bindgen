@@ -17,7 +17,7 @@ type inputsV2LabelConfig = {
   color: inputsV2ColorConfig,
 }
 type inputsV2RequiredConfig = {
-  color?: string,
+  color: string,
 }
 type inputsV2HelpIconConfig = {
   width: inputsV2FontSizeConfig,
@@ -42,11 +42,11 @@ type inputsV2PaddingConfig = {
   left: inputsV2FontSizeConfig,
 }
 type inputsV2InputContainerConfig = {
-  gap?: string,
+  gap: string,
   placeholder: inputsV2PlaceholderConfig,
   inputText: inputsV2LabelConfig,
   borderRadius: inputsV2FontSizeConfig,
-  boxShadow?: string,
+  boxShadow: string,
   padding: inputsV2PaddingConfig,
   border: inputsV2ColorConfig,
   backgroundColor: inputsV2ColorConfig,
@@ -55,14 +55,14 @@ type inputsV2ErrorMessageConfig = {
   fontSize: inputsV2FontSizeConfig,
   fontWeight: inputsV2FontSizeConfig,
   lineHeight: inputsV2FontSizeConfig,
-  color?: string,
+  color: string,
 }
 type inputsV2BottomContainerConfig = {
   hintText: inputsV2LabelConfig,
   errorMessage: inputsV2ErrorMessageConfig,
 }
 type textInputV2TokensType = {
-  gap?: string,
+  gap: string,
   topContainer: inputsV2TopContainerConfig,
   inputContainer: inputsV2InputContainerConfig,
   bottomContainer: inputsV2BottomContainerConfig,

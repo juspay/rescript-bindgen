@@ -3,7 +3,7 @@ type accordionV2GapConfig = {
   noBorder: string,
 }
 type accordionV2ContentConfig = {
-  gap?: string,
+  gap: string,
 }
 type accordionV2BorderConfig = {
   disabled: string,
@@ -24,25 +24,25 @@ type accordionV2ColorConfig = {
   @as("open") open_: string,
 }
 type accordionV2TitleConfig = {
-  fontSize?: string,
-  fontWeight?: string,
-  lineHeight?: string,
+  fontSize: string,
+  fontWeight: string,
+  lineHeight: string,
   color: accordionV2ColorConfig,
 }
 type accordionV2SubtextConfig = {
-  fontSize?: string,
-  fontWeight?: string,
-  lineHeight?: string,
-  gap?: string,
+  fontSize: string,
+  fontWeight: string,
+  lineHeight: string,
+  gap: string,
   color: accordionV2ColorConfig,
 }
 type accordionV2TextConfig = {
-  gap?: string,
+  gap: string,
   title: accordionV2TitleConfig,
   subtext: accordionV2SubtextConfig,
 }
 type accordionV2SlotConfig = {
-  height?: string,
+  height: string,
 }
 type accordionV2TriggerConfig = {
   content: accordionV2ContentConfig,
@@ -56,7 +56,7 @@ type accordionV2SeparatorConfig = {
   color: accordionV2GapConfig,
 }
 type accordionV2ChevronConfig = {
-  height?: string,
+  height: string,
   color: accordionV2BorderConfig,
 }
 type accordionV2TokensType = {

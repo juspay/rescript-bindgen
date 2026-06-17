@@ -23,7 +23,7 @@ type progressBarFillConfig = {
   borderRadius: progressBarBackgroundColorConfig,
 }
 type progressBarBackgroundImageConfig = {
-  segmented?: string,
+  segmented: string,
 }
 type progressBarEmptyConfig = {
   backgroundColor: progressBarBackgroundColorConfig,
@@ -50,9 +50,9 @@ type progressBarCircularConfig = {
   dashOffset: progressBarBackgroundColorConfig,
 }
 type progressBarLabelConfig = {
-  fontSize?: string,
-  fontWeight?: string,
-  color?: string,
+  fontSize: string,
+  fontWeight: string,
+  color: string,
 }
 type progressBarTokenType = {
   linear: progressBarLinearConfig,

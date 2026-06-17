@@ -15,11 +15,11 @@ type selectorV2BackgroundColorConfig = {
   unchecked: selectorV2CheckedConfig,
 }
 type selectorV2ThumbConfig = {
-  backgroundColor?: string,
-  border?: string,
+  backgroundColor: string,
+  border: string,
   width: selectorV2HeightConfig,
   height: selectorV2HeightConfig,
-  outline?: string,
+  outline: string,
 }
 type selectorV2SwitchConfig = {
   height: selectorV2HeightConfig,
@@ -36,7 +36,7 @@ type selectorV2SlotConfig = {
   maxHeight: selectorV2MaxHeightConfig,
 }
 type selectorV2LabelConfig = {
-  gap?: string,
+  gap: string,
   color: selectorV2CheckedConfig,
   fontSize: selectorV2HeightConfig,
   fontWeight: selectorV2HeightConfig,
@@ -50,16 +50,16 @@ type selectorV2SubLabelConfig = {
   lineHeight: selectorV2HeightConfig,
 }
 type selectorV2RequiredConfig = {
-  color?: string,
+  color: string,
 }
 type selectorV2ContentConfig = {
-  gap?: string,
+  gap: string,
   label: selectorV2LabelConfig,
   subLabel: selectorV2SubLabelConfig,
   required: selectorV2RequiredConfig,
 }
 type switchV2TokensType = {
-  gap?: string,
+  gap: string,
   @as("switch") switch_: selectorV2SwitchConfig,
   content: selectorV2ContentConfig,
 }
@@ -97,17 +97,17 @@ type selectorV2IconConfig = {
 type selectorV2CheckboxConfig = {
   height: selectorV2HeightConfig,
   width: selectorV2HeightConfig,
-  opacity?: string,
+  opacity: string,
   backgroundColor: selectorV2BackgroundColorConfig2,
   borderRadius: selectorV2HeightConfig,
   border: selectorV2BackgroundColorConfig2,
-  outline?: string,
-  outlineOffset?: string,
-  boxShadow?: string,
+  outline: string,
+  outlineOffset: string,
+  boxShadow: string,
   icon: selectorV2IconConfig,
 }
 type checkboxV2TokensType = {
-  gap?: string,
+  gap: string,
   checkbox: selectorV2CheckboxConfig,
   content: selectorV2ContentConfig,
 }
@@ -116,7 +116,7 @@ type responsiveCheckboxV2Tokens = {
   lg: checkboxV2TokensType,
 }
 type selectorV2GroupConfig = {
-  gap?: string,
+  gap: string,
 }
 type selectorV2BackgroundColorConfig3 = {
   default: string,
@@ -162,7 +162,7 @@ type selectorV2RadioConfig = {
   borderWidth: selectorV2BorderWidthConfig,
 }
 type radioV2TokensType = {
-  gap?: string,
+  gap: string,
   group: selectorV2GroupConfig,
   radio: selectorV2RadioConfig,
   content: selectorV2ContentConfig,

@@ -8,17 +8,17 @@ type stateToken = {
   selected: string,
 }
 type singleSelectV2LabelConfig = {
-  fontSize?: string,
-  fontWeight?: string,
+  fontSize: string,
+  fontWeight: string,
   color: stateToken,
 }
 type singleSelectV2ErrorMessageConfig = {
-  fontSize?: string,
-  fontWeight?: string,
-  color?: string,
+  fontSize: string,
+  fontWeight: string,
+  color: string,
 }
 type singleSelectV2RequiredConfig = {
-  color?: string,
+  color: string,
 }
 type variantToken = {
   container: string,
@@ -30,10 +30,10 @@ type sizeToken = {
   lg: variantToken,
 }
 type singleSelectV2ContainerConfig = {
-  top?: string,
-  right?: string,
-  bottom?: string,
-  left?: string,
+  top: string,
+  right: string,
+  bottom: string,
+  left: string,
 }
 type variantToken2 = {
   container: singleSelectV2ContainerConfig,
@@ -56,13 +56,13 @@ type variantToken3 = {
   @as("no-container") noContainer: triggerStateToken,
 }
 type singleSelectV2SlotConfig = {
-  gap?: string,
-  width?: string,
+  gap: string,
+  width: string,
 }
 type singleSelectV2PlaceholderConfig = {
-  color?: string,
-  fontSize?: string,
-  fontWeight?: string,
+  color: string,
+  fontSize: string,
+  fontWeight: string,
 }
 type singleSelectV2TriggerConfig = {
   height: sizeToken,
@@ -76,34 +76,34 @@ type singleSelectV2TriggerConfig = {
   selectedValue: singleSelectV2PlaceholderConfig,
 }
 type singleSelectV2ContentConfig = {
-  backgroundColor?: string,
-  border?: string,
-  borderRadius?: string,
-  boxShadow?: string,
+  backgroundColor: string,
+  border: string,
+  borderRadius: string,
+  boxShadow: string,
 }
 type singleSelectV2GroupLabelConfig = {
-  margin?: string,
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
-  fontSize?: string,
-  fontWeight?: string,
+  margin: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
+  fontSize: string,
+  fontWeight: string,
   color: stateToken,
 }
 type singleSelectV2SeparatorConfig = {
-  color?: string,
-  height?: string,
-  margin?: string,
+  color: string,
+  height: string,
+  margin: string,
 }
 type singleSelectV2ItemConfig = {
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
-  margin?: string,
-  borderRadius?: string,
-  gap?: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
+  margin: string,
+  borderRadius: string,
+  gap: string,
   backgroundColor: stateToken,
   groupLabelText: singleSelectV2LabelConfig,
   option: singleSelectV2LabelConfig,
@@ -116,29 +116,29 @@ type submenuTriggerStateToken = {
   focus: string,
 }
 type singleSelectV2TriggerConfig2 = {
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
-  margin?: string,
-  borderRadius?: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
+  margin: string,
+  borderRadius: string,
   backgroundColor: submenuTriggerStateToken,
 }
 type singleSelectV2ContentConfig2 = {
-  backgroundColor?: string,
-  border?: string,
-  borderRadius?: string,
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
-  boxShadow?: string,
+  backgroundColor: string,
+  border: string,
+  borderRadius: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
+  boxShadow: string,
 }
 type singleSelectV2SubmenuConfig = {
   trigger: singleSelectV2TriggerConfig2,
   content: singleSelectV2ContentConfig2,
   optionText: singleSelectV2ErrorMessageConfig,
-  iconColor?: string,
+  iconColor: string,
 }
 type singleSelectV2MenuConfig = {
   content: singleSelectV2ContentConfig,
@@ -148,17 +148,17 @@ type singleSelectV2MenuConfig = {
   submenu: singleSelectV2SubmenuConfig,
 }
 type singleSelectV2HeaderConfig = {
-  paddingTop?: string,
-  paddingRight?: string,
-  paddingBottom?: string,
-  paddingLeft?: string,
-  borderBottom?: string,
+  paddingTop: string,
+  paddingRight: string,
+  paddingBottom: string,
+  paddingLeft: string,
+  borderBottom: string,
 }
 type singleSelectV2MobilePanelConfig = {
   header: singleSelectV2HeaderConfig,
 }
 type singleSelectV2TokensType = {
-  gap?: string,
+  gap: string,
   label: singleSelectV2LabelConfig,
   subLabel: singleSelectV2LabelConfig,
   hintText: singleSelectV2LabelConfig,

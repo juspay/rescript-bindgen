@@ -12,8 +12,8 @@ type cardSkeletonProps = {
   width?: string,
 }
 type cardDefaultConfig = {
-  x?: string,
-  y?: string,
+  x: string,
+  y: string,
 }
 type cardPaddingConfig = {
   default: cardDefaultConfig,
@@ -21,25 +21,25 @@ type cardPaddingConfig = {
   custom: string,
 }
 type cardTitleConfig = {
-  fontSize?: string,
-  fontWeight?: string,
-  color?: string,
-  gap?: string,
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+  gap: string,
 }
 type cardSubTitleConfig = {
-  fontSize?: string,
-  fontWeight?: string,
-  color?: string,
+  fontSize: string,
+  fontWeight: string,
+  color: string,
 }
 type cardTextConfig = {
   title: cardTitleConfig,
   subTitle: cardSubTitleConfig,
-  gap?: string,
+  gap: string,
 }
 type cardDefaultConfig2 = {
-  backgroundColor?: string,
+  backgroundColor: string,
   padding: cardDefaultConfig,
-  borderBottom?: string,
+  borderBottom: string,
 }
 type cardHeaderConfig = {
   text: cardTextConfig,
@@ -58,18 +58,18 @@ type cardGapConfig = {
   custom: string,
 }
 type cardContentConfig = {
-  fontSize?: string,
-  color?: string,
-  fontWeight?: string,
+  fontSize: string,
+  color: string,
+  fontWeight: string,
 }
 type cardTextConfig2 = {
   title: cardSubTitleConfig,
   content: cardContentConfig,
-  gap?: string,
+  gap: string,
 }
 type cardActionsConfig = {
-  gap?: string,
-  centerAlignGap?: string,
+  gap: string,
+  centerAlignGap: string,
 }
 type cardCardSlotConfig = {
   vertical: string,
@@ -91,11 +91,11 @@ type cardBodyConfig = {
   alignment: cardAlignmentConfig,
 }
 type cardTokenType = {
-  maxWidth?: string,
-  borderRadius?: string,
-  border?: string,
-  boxShadow?: string,
-  backgroundColor?: string,
+  maxWidth: string,
+  borderRadius: string,
+  border: string,
+  boxShadow: string,
+  backgroundColor: string,
   padding: cardPaddingConfig,
   header: cardHeaderConfig,
   body: cardBodyConfig,

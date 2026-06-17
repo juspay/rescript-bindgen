@@ -26,30 +26,30 @@ type avatarGroupContainerConfig = {
   marginLeft: avatarGroupMarginLeftConfig,
 }
 type avatarGroupSelectedConfig = {
-  ringColor?: string,
-  ringWidth?: string,
-  ringOffset?: string,
+  ringColor: string,
+  ringWidth: string,
+  ringOffset: string,
 }
 type avatarGroupBorderConfig = {
-  width?: string,
-  color?: string,
+  width: string,
+  color: string,
 }
 type avatarGroupAvatarConfig = {
   selected: avatarGroupSelectedConfig,
   border: avatarGroupBorderConfig,
 }
 type avatarGroupBackgroundConfig = {
-  default?: string,
-  hover?: string,
-  active?: string,
+  default: string,
+  hover: string,
+  active: string,
 }
 type avatarGroupTextConfig = {
-  color?: string,
+  color: string,
 }
 type avatarGroupSmConfig = {
-  width?: string,
-  height?: string,
-  fontSize?: string,
+  width: string,
+  height: string,
+  fontSize: string,
 }
 type avatarGroupSizeConfig = {
   sm: avatarGroupSmConfig,
@@ -70,10 +70,10 @@ type avatarGroupOverflowCounterConfig = {
   borderRadius: avatarGroupBorderRadiusConfig,
 }
 type avatarGroupMenuConfig = {
-  marginTop?: string,
+  marginTop: string,
 }
 type avatarGroupTokensType = {
-  gap?: string,
+  gap: string,
   container: avatarGroupContainerConfig,
   avatar: avatarGroupAvatarConfig,
   overflowCounter: avatarGroupOverflowCounterConfig,

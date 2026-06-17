@@ -18,13 +18,13 @@ type tooltipBorderRadiusConfig = {
   lg: string,
 }
 type tooltipTextConfig = {
-  color?: string,
+  color: string,
   fontWeight: tooltipBorderRadiusConfig,
   fontSize: tooltipBorderRadiusConfig,
   lineHeight: tooltipBorderRadiusConfig,
 }
 type tooltipTokensType = {
-  background?: string,
+  background: string,
   borderRadius: tooltipBorderRadiusConfig,
   maxWidth: tooltipBorderRadiusConfig,
   padding: tooltipBorderRadiusConfig,

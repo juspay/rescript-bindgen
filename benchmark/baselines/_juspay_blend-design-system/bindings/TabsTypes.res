@@ -50,10 +50,10 @@ type tabsBorderRadiusConfig = {
   lg: tabsMdConfig,
 }
 type tabsBoxedConfig2 = {
-  top?: string,
-  right?: string,
-  bottom?: string,
-  left?: string,
+  top: string,
+  right: string,
+  bottom: string,
+  left: string,
 }
 type tabsMdConfig2 = {
   boxed: tabsBoxedConfig2,
@@ -66,10 +66,10 @@ type tabsPaddingConfig = {
   lg: tabsMdConfig2,
 }
 type tabsBoxedConfig3 = {
-  top?: string,
-  right?: string,
-  bottom?: string,
-  left?: string,
+  top: string,
+  right: string,
+  bottom: string,
+  left: string,
 }
 type tabsMdConfig3 = {
   boxed: tabsBoxedConfig3,
@@ -87,8 +87,8 @@ type tabsContainerConfig = {
   padding: tabsPaddingConfig2,
 }
 type tabsActiveIndicatorConfig = {
-  height?: string,
-  color?: string,
+  height: string,
+  color: string,
 }
 type tabsBoxedConfig4 = {
   disabled: string,
@@ -112,12 +112,12 @@ type tabsTextConfig = {
   fontWeight: tabsFontSizeConfig,
 }
 type tabsTriggerConfig = {
-  gap?: string,
+  gap: string,
   activeIndicator: tabsActiveIndicatorConfig,
   text: tabsTextConfig,
 }
 type tabsTokensType = {
-  gap?: string,
+  gap: string,
   backgroundColor: tabsBackgroundColorConfig,
   borderRadius: tabsBorderRadiusConfig,
   padding: tabsPaddingConfig,

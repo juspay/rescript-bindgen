@@ -36,7 +36,7 @@ type alertV2GapConfig = {
   right: string,
 }
 type alertV2SlotConfig = {
-  maxHeight?: string,
+  maxHeight: string,
 }
 type alertV2ColorConfig = {
   primary: string,
@@ -49,17 +49,17 @@ type alertV2ColorConfig = {
 }
 type alertV2HeadingConfig = {
   color: alertV2ColorConfig,
-  fontWeight?: string,
-  fontSize?: string,
-  lineHeight?: string,
+  fontWeight: string,
+  fontSize: string,
+  lineHeight: string,
 }
 type alertV2TextContainerConfig = {
-  gap?: string,
+  gap: string,
   heading: alertV2HeadingConfig,
   description: alertV2HeadingConfig,
 }
 type alertV2ActionContainerConfig = {
-  gap?: string,
+  gap: string,
   primaryAction: alertV2HeadingConfig,
   secondaryAction: alertV2HeadingConfig,
 }
@@ -70,20 +70,20 @@ type alertV2ContentConfig = {
 }
 type alertV2CloseButtonConfig = {
   color: alertV2ColorConfig,
-  height?: string,
-  width?: string,
+  height: string,
+  width: string,
 }
 type alertV2MainContainerConfig = {
-  gap?: string,
+  gap: string,
   content: alertV2ContentConfig,
   closeButton: alertV2CloseButtonConfig,
 }
 type alertV2TokensType = {
-  width?: string,
-  maxWidth?: string,
-  minWidth?: string,
+  width: string,
+  maxWidth: string,
+  minWidth: string,
   border: alertV2BorderConfig,
-  borderRadius?: string,
+  borderRadius: string,
   backgroundColor: alertV2BorderConfig,
   padding: alertV2PaddingConfig,
   gap: alertV2GapConfig,

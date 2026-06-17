@@ -36,29 +36,29 @@ type uploadOnStateChangeConfig = {
   successfulFiles: array<uploadedFileWithStatus>,
 }
 type uploadTextConfig = {
-  fontSize?: string,
-  fontWeight?: string,
-  color?: string,
+  fontSize: string,
+  fontWeight: string,
+  color: string,
 }
 type uploadLabelConfig = {
   text: uploadTextConfig,
-  marginBottom?: string,
-  gap?: string,
+  marginBottom: string,
+  gap: string,
 }
 type uploadTextConfig2 = {
-  color?: string,
+  color: string,
 }
 type uploadRequiredConfig = {
   text: uploadTextConfig2,
-  gap?: string,
+  gap: string,
 }
 type uploadSubLabelConfig = {
   text: uploadTextConfig,
-  gap?: string,
+  gap: string,
 }
 type uploadHelpIconConfig = {
-  width?: string,
-  color?: string,
+  width: string,
+  color: string,
 }
 type uploadHeaderConfig = {
   label: uploadLabelConfig,
@@ -67,28 +67,28 @@ type uploadHeaderConfig = {
   helpIcon: uploadHelpIconConfig,
 }
 type uploadBorderConfig = {
-  idle?: string,
-  uploading?: string,
-  success?: string,
-  error?: string,
-  dragActive?: string,
+  idle: string,
+  uploading: string,
+  success: string,
+  error: string,
+  dragActive: string,
 }
 type uploadSlotConfig = {
-  width?: string,
-  gap?: string,
+  width: string,
+  gap: string,
 }
 type uploadTitleConfig = {
-  color?: string,
-  fontSize?: string,
-  fontWeight?: string,
+  color: string,
+  fontSize: string,
+  fontWeight: string,
 }
 type uploadTextConfig3 = {
   title: uploadTitleConfig,
   subtitle: uploadTitleConfig,
-  gap?: string,
+  gap: string,
 }
 type uploadActionableConfig = {
-  gap?: string,
+  gap: string,
   errorText: uploadTitleConfig,
 }
 type uploadContentConfig = {
@@ -99,8 +99,8 @@ type uploadContentConfig = {
 type uploadContainerConfig = {
   border: uploadBorderConfig,
   backgroundColor: uploadBorderConfig,
-  borderRadius?: string,
-  padding?: string,
+  borderRadius: string,
+  padding: string,
   content: uploadContentConfig,
 }
 type uploadTokenType = {

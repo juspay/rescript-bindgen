@@ -74,17 +74,17 @@ type multiSelectColorConfig = {
   selected: string,
 }
 type multiSelectLabelConfig = {
-  fontSize?: string,
-  fontWeight?: string,
+  fontSize: string,
+  fontWeight: string,
   color: multiSelectColorConfig,
 }
 type multiSelectErrorMessageConfig = {
-  fontSize?: string,
-  fontWeight?: string,
-  color?: string,
+  fontSize: string,
+  fontWeight: string,
+  color: string,
 }
 type multiSelectRequiredConfig = {
-  color?: string,
+  color: string,
 }
 type multiSelectSmConfig = {
   container: string,
@@ -96,8 +96,8 @@ type multiSelectHeightConfig = {
   lg: multiSelectSmConfig,
 }
 type multiSelectContainerConfig = {
-  x?: string,
-  y?: string,
+  x: string,
+  y: string,
 }
 type multiSelectSmConfig2 = {
   container: multiSelectContainerConfig,
@@ -120,9 +120,9 @@ type multiSelectBackgroundColorConfig = {
   @as("no-container") noContainer: multiSelectContainerConfig2,
 }
 type multiSelectCountConfig = {
-  color?: string,
-  backgroundColor?: string,
-  fontWeight?: string,
+  color: string,
+  backgroundColor: string,
+  fontWeight: string,
 }
 type multiSelectContainerConfig3 = {
   count: multiSelectCountConfig,
@@ -133,9 +133,9 @@ type multiSelectSelectionTagConfig = {
   @as("no-container") noContainer: multiSelectContainerConfig3,
 }
 type multiSelectPlaceholderConfig = {
-  color?: string,
-  fontSize?: string,
-  fontWeight?: string,
+  color: string,
+  fontSize: string,
+  fontWeight: string,
 }
 type multiSelectTriggerConfig = {
   height: multiSelectHeightConfig,
@@ -149,15 +149,15 @@ type multiSelectTriggerConfig = {
   selectedValue: multiSelectPlaceholderConfig,
 }
 type multiSelectSeperatorConfig = {
-  color?: string,
-  height?: string,
-  margin?: string,
+  color: string,
+  height: string,
+  margin: string,
 }
 type multiSelectItemConfig = {
-  padding?: string,
-  margin?: string,
-  borderRadius?: string,
-  gap?: string,
+  padding: string,
+  margin: string,
+  borderRadius: string,
+  gap: string,
   backgroundColor: multiSelectColorConfig,
   optionsLabel: multiSelectLabelConfig,
   option: multiSelectLabelConfig,
@@ -165,24 +165,24 @@ type multiSelectItemConfig = {
   seperator: multiSelectSeperatorConfig,
 }
 type multiSelectMenuConfig = {
-  backgroundColor?: string,
-  border?: string,
-  borderRadius?: string,
+  backgroundColor: string,
+  border: string,
+  borderRadius: string,
   padding: multiSelectPaddingConfig,
   item: multiSelectItemConfig,
 }
 type multiSelectHeaderConfig = {
-  paddingX?: string,
-  paddingBottom?: string,
-  borderBottom?: string,
+  paddingX: string,
+  paddingBottom: string,
+  borderBottom: string,
 }
 type multiSelectSearchConfig = {
-  paddingX?: string,
-  marginTop?: string,
-  marginBottom?: string,
+  paddingX: string,
+  marginTop: string,
+  marginBottom: string,
 }
 type multiSelectContentConfig = {
-  gap?: string,
+  gap: string,
 }
 type multiSelectDrawerConfig = {
   header: multiSelectHeaderConfig,
@@ -190,7 +190,7 @@ type multiSelectDrawerConfig = {
   content: multiSelectContentConfig,
 }
 type multiSelectTokensType = {
-  gap?: string,
+  gap: string,
   label: multiSelectLabelConfig,
   subLabel: multiSelectLabelConfig,
   hintText: multiSelectLabelConfig,

@@ -6,7 +6,7 @@ type checkboxMaxLengthConfig = {
   subtext?: float,
 }
 type checkboxSlotConfig = {
-  marginLeft?: string,
+  marginLeft: string,
 }
 type checkboxWidthConfig = {
   sm: string,
@@ -44,9 +44,9 @@ type checkboxIndicatorConfig = {
   backgroundColor: checkboxBackgroundColorConfig,
   borderRadius: checkboxWidthConfig,
   border: checkboxBackgroundColorConfig,
-  outline?: string,
-  outlineOffset?: string,
-  boxShadow?: string,
+  outline: string,
+  outlineOffset: string,
+  boxShadow: string,
   icon: checkboxIconConfig,
 }
 type checkboxColorConfig2 = {
@@ -67,15 +67,15 @@ type checkboxSubtextConfig = {
   fontWeight: checkboxWidthConfig,
 }
 type checkboxContentConfig = {
-  gap?: string,
+  gap: string,
   label: checkboxLabelConfig,
   subtext: checkboxSubtextConfig,
 }
 type checkboxRequiredConfig = {
-  color?: string,
+  color: string,
 }
 type checkboxTokensType = {
-  gap?: string,
+  gap: string,
   slot: checkboxSlotConfig,
   indicator: checkboxIndicatorConfig,
   content: checkboxContentConfig,

@@ -6,7 +6,7 @@ type radioMaxLengthConfig = {
   subtext?: float,
 }
 type radioGroupConfig = {
-  gap?: string,
+  gap: string,
 }
 type radioBackgroundColorConfig = {
   disabled: string,
@@ -37,7 +37,7 @@ type radioFontSizeConfig = {
   md: string,
 }
 type radioLabelConfig = {
-  gap?: string,
+  gap: string,
   color: radioBackgroundColorConfig,
   fontSize: radioFontSizeConfig,
   fontWeight: radioFontSizeConfig,
@@ -62,10 +62,10 @@ type radioBorderWidthConfig = {
   inactive: radioActiveConfig3,
 }
 type radioRequiredConfig = {
-  color?: string,
+  color: string,
 }
 type radioSmConfig = {
-  gap?: string,
+  gap: string,
   group: radioGroupConfig,
   indicator: radioIndicatorConfig,
   activeIndicator: radioActiveIndicatorConfig,

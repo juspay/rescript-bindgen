@@ -17,13 +17,13 @@ type leftPanelInfo = {
   tenantFooter?: React.element,
 }
 type sidebarMaxWidthConfig = {
-  withLeftPanel?: string,
-  withoutLeftPanel?: string,
+  withLeftPanel: string,
+  withoutLeftPanel: string,
   iconOnly?: string,
 }
 type sidebarPaddingConfig = {
-  x?: string,
-  y?: string,
+  x: string,
+  y: string,
 }
 type sidebarBorderConfig = {
   default: string,
@@ -31,44 +31,44 @@ type sidebarBorderConfig = {
   active: string,
 }
 type sidebarItemConfig = {
-  width?: string,
-  borderRadius?: string,
+  width: string,
+  borderRadius: string,
   border: sidebarBorderConfig,
   backgroundColor: sidebarBorderConfig,
 }
 type sidebarLeftPanelConfig = {
-  width?: string,
-  backgroundColor?: string,
-  borderRight?: string,
+  width: string,
+  backgroundColor: string,
+  borderRight: string,
   padding: sidebarPaddingConfig,
-  gap?: string,
+  gap: string,
   item: sidebarItemConfig,
 }
 type sidebarToggleButtonConfig = {
   backgroundColor: sidebarBorderConfig,
-  width?: string,
+  width: string,
 }
 type sidebarHeaderConfig = {
-  backgroundColor?: string,
+  backgroundColor: string,
   padding: sidebarPaddingConfig,
-  gap?: string,
-  borderBottom?: string,
+  gap: string,
+  borderBottom: string,
   toggleButton: sidebarToggleButtonConfig,
 }
 type sidebarDirectoryConfig = {
-  gap?: string,
-  paddingX?: string,
-  paddingY?: string,
+  gap: string,
+  paddingX: string,
+  paddingY: string,
 }
 type sidebarFooterConfig = {
-  backgroundColor?: string,
+  backgroundColor: string,
   padding: sidebarPaddingConfig,
-  borderTop?: string,
+  borderTop: string,
 }
 type sidebarTokenType = {
   maxWidth: sidebarMaxWidthConfig,
-  backgroundColor?: string,
-  borderRight?: string,
+  backgroundColor: string,
+  borderRight: string,
   leftPanel: sidebarLeftPanelConfig,
   header: sidebarHeaderConfig,
   directory: sidebarDirectoryConfig,
@@ -79,59 +79,59 @@ type responsiveSidebarTokens = {
   lg: sidebarTokenType,
 }
 type sidebarDrawerConfig = {
-  borderRadius?: string,
-  borderTop?: string,
+  borderRadius: string,
+  borderTop: string,
 }
 type sidebarBackgroundColorConfig = {
   default: string,
   active: string,
 }
 type sidebarIconConfig = {
-  width?: string,
-  height?: string,
-  borderRadius?: string,
-  transition?: string,
+  width: string,
+  height: string,
+  borderRadius: string,
+  transition: string,
 }
 type sidebarTextConfig = {
-  fontSize?: string,
-  fontWeight?: string,
-  textAlign?: string,
+  fontSize: string,
+  fontWeight: string,
+  textAlign: string,
 }
 type sidebarItemConfig2 = {
-  width?: string,
-  height?: string,
-  borderRadius?: string,
-  gap?: string,
+  width: string,
+  height: string,
+  borderRadius: string,
+  gap: string,
   backgroundColor: sidebarBackgroundColorConfig,
   color: sidebarBackgroundColorConfig,
-  fontWeight?: string,
+  fontWeight: string,
   icon: sidebarIconConfig,
   text: sidebarTextConfig,
 }
 type sidebarIconConfig2 = {
-  width?: string,
-  height?: string,
+  width: string,
+  height: string,
 }
 type sidebarPrimaryActionConfig = {
-  width?: string,
-  height?: string,
-  borderRadius?: string,
-  background?: string,
-  boxShadow?: string,
-  color?: string,
+  width: string,
+  height: string,
+  borderRadius: string,
+  background: string,
+  boxShadow: string,
+  color: string,
   icon: sidebarIconConfig2,
 }
 type sidebarRowConfig = {
   padding: sidebarPaddingConfig,
-  gap?: string,
+  gap: string,
   item: sidebarItemConfig2,
   primaryAction: sidebarPrimaryActionConfig,
 }
 type mobileNavigationTokenType = {
-  backgroundColor?: string,
+  backgroundColor: string,
   drawer: sidebarDrawerConfig,
   padding: sidebarPaddingConfig,
-  gap?: string,
+  gap: string,
   row: sidebarRowConfig,
 }
 type responsiveMobileNavigationTokens = {

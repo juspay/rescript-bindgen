@@ -20,37 +20,37 @@ type skeletonValueConfig = {
   prefersReducedMotion: bool,
 }
 type skeletonAnimationConfig = {
-  duration?: string,
-  timingFunction?: string,
-  iterationCount?: string,
-  direction?: string,
+  duration: string,
+  timingFunction: string,
+  iterationCount: string,
+  direction: string,
 }
 type skeletonColorsConfig = {
-  base?: string,
-  highlight?: string,
-  shimmer?: string,
+  base: string,
+  highlight: string,
+  shimmer: string,
 }
 type skeletonBorderRadiusConfig = {
-  rectangle?: string,
-  rounded?: string,
-  circle?: string,
+  rectangle: string,
+  rounded: string,
+  circle: string,
 }
 type skeletonSpacingConfig = {
-  gap?: string,
-  margin?: string,
+  gap: string,
+  margin: string,
 }
 type skeletonTextConfig = {
-  height?: string,
-  minWidth?: string,
+  height: string,
+  minWidth: string,
 }
 type skeletonAvatarConfig = {
-  sm?: string,
-  md?: string,
-  lg?: string,
+  sm: string,
+  md: string,
+  lg: string,
 }
 type skeletonSmConfig = {
-  height?: string,
-  minWidth?: string,
+  height: string,
+  minWidth: string,
 }
 type skeletonButtonConfig = {
   sm: skeletonSmConfig,
