@@ -1964,7 +1964,16 @@ function indexedAccessOptional(typeNode, checker) {
     if (!ts.isLiteralTypeNode(idx) || !ts.isStringLiteral(idx.literal)) return false
     const objType = checker.getTypeFromTypeNode(typeNode.objectType)
     const prop = objType && objType.getProperty(idx.literal.text)
-    return !!(prop && (prop.getFlags() & ts.SymbolFlags.Optional))
+    if (!prop || !(prop.getFlags() & ts.SymbolFlags.Optional)) return false
+    // Only propagate optionality from a FIRST-PARTY source. csstype / styled-components CSS-value
+    // types (`CSSObject`, `Properties`, …) mark EVERY property optional by convention, so
+    // `CSSObject['fontSize']` looks optional even when the consuming field is declared REQUIRED
+    // (ResponsiveText.fontSize). Only a first-party props type's optionality is meaningful
+    // (StatCardV2Props['value']). (#64)
+    const d = prop.declarations && prop.declarations[0]
+    const f = (d && d.getSourceFile && d.getSourceFile().fileName) || ''
+    if (/node_modules\/(csstype|styled-components|@emotion|@types)\b/.test(f)) return false
+    return true
 }
 
 /** Wrap a base IR type in `Nullable.t<…>` for a syntactic `T | null` (#34/#63 C5) — for ANY
@@ -2268,7 +2277,7 @@ function unionNode(type, ctx, propName, depth = 0) {
     const synNull = !!ctx.retSynNull
     if (ctx.retSynNull) ctx.retSynNull = false
     const hadNullish = synNull || type.types.some((t) => t.flags & (ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void))
-    const parts = type.types.filter(
+    let parts = type.types.filter(
         (t) => !(t.flags & (ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void))
     )
     if (parts.length === 1) return classify(parts[0], ctx, propName, depth + 1)
@@ -2402,6 +2411,25 @@ function unionNode(type, ctx, propName, depth = 0) {
         const elem = asArray(t, checker)
         const en = elem && typeName(elem)
         return !!(en && /ReactElement|ReactNode/.test(en))
+    }
+    // A NARROWED children type — `children: string | number` merged with an inherited
+    // `children?: ReactNode` — resolves to `ReactNode & (string | number)`, which TS distributes
+    // to `string | number | (ReactElement & string) | (ReactPortal & number) | …`. Every
+    // `<reactType> & <primitive>` part is an uninhabitable DISTRIBUTION ARTIFACT (a string isn't a
+    // React element); the real inhabitable type is just `string | number`. When there's NO genuine
+    // plain React part (a bare `ReactElement`/`ReactNode`, an array of it, or a render fn) but such
+    // reactish-intersection artifacts ARE present, keep only the plain (non-intersection) parts so
+    // the union resolves to its real narrowed type (`stringOrNumber`) instead of the lossy
+    // `React.element`. (#64)
+    const isReactishInter = (t) => (t.flags & ts.TypeFlags.Intersection) &&
+        (t.types || []).some((x) => /React(Element|Node|Portal|Fragment)/.test(typeName(x) || ''))
+    const hasPlainReactish = parts.some((t) => isReactish(t) && !(t.flags & ts.TypeFlags.Intersection))
+    if (!hasPlainReactish && parts.some(isReactishInter)) {
+        const kept = parts.filter((t) => !(t.flags & ts.TypeFlags.Intersection))
+        if (kept.length) {
+            parts = kept
+            if (parts.length === 1) return classify(parts[0], ctx, propName, depth + 1)
+        }
     }
     if (parts.some(isReactish)) {
         // `ReactElement | ((props, state) => ReactElement)` (base-ui's `render` prop).
