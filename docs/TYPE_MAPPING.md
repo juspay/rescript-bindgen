@@ -148,6 +148,7 @@ Fixtures: [`events-callbacks`](../test/golden/cases/events-callbacks), [`overloa
 | `ChangeEventHandler<T>` (alias) | `ReactEvent.Form.t => unit` |
 | `KeyboardEventHandler<T>` (alias) | `ReactEvent.Keyboard.t => unit` |
 | `(value: string, index: number) => void` | `(string, int) => unit` |
+| `(e: Error) => void` (the global `Error`, lib.es) | `JsError.t => unit` — mapped to the stdlib JS-error type rather than degrading to a bare/unflagged `string` (in a shared record an `Error` param can't salvage to a component type variable). Guarded on a lib.es declaration so a package's own `Error` interface is unaffected. (#63 validation) |
 | `() => void \| Promise<void>` | `unit => 'a` — polymorphic return covers sync **and** async |
 | `(item: Unmodellable, label: string) => void` (callback PARAM can't be typed, return is clean) | `('a, string) => unit` **+ ⓘ note** — the bad param becomes a type variable (consumer RECEIVES it, so a hole they annotate is honest) instead of dropping the whole prop to `string`. A callback with an unmodellable **return** is NOT salvaged (a fake return feeds wrong values into the library) and stays flagged. Fixture: [`callback-param-salvage`](../test/golden/cases/callback-param-salvage). (#30 I-1a) |
 | `(reason?: boolean \| string) => void` (**optional** param) | `option<boolOrString> => unit` — an optional param becomes `option<…>` (`None` = omitted), never a required arg. |

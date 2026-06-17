@@ -1648,6 +1648,16 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (name === 'FileList') return ctx.webapi ? { kind: 'raw', res: 'Webapi.FileList.t' } : (ctx.shared ? webSink(ctx, 'FileList') : { kind: 'opaque', text: 'FileList' })
     if (name === 'FormData') return ctx.webapi ? { kind: 'raw', res: 'Webapi.FormData.t' } : (ctx.shared ? webSink(ctx, 'FormData') : { kind: 'opaque', text: 'FormData' })
 
+    // The global `Error` class (lib.es*) -> ReScript stdlib `Error.t`, so an `(e: Error) => void`
+    // callback types its param faithfully instead of degrading to a bare/unflagged `string` (in a
+    // shared record the param can't salvage to a component type variable). Guarded on a lib.es
+    // declaration so a package's OWN `Error` interface is unaffected. (#63 validation)
+    if (name === 'Error') {
+        const esym = type.aliasSymbol || (type.getSymbol && type.getSymbol())
+        const ef = (esym && esym.declarations && esym.declarations[0] && esym.declarations[0].getSourceFile().fileName) || ''
+        if (/\/lib\.es/.test(ef)) return { kind: 'raw', res: 'JsError.t' }
+    }
+
     // Web-platform classes (Request, Response, Headers, URL, …) -> abstract types in the
     // dependency-free `WebTypes` sink (module mode only — it's a second output file).
     // lib.dom-declaration guarded, so a package's own `Response` class is unaffected.

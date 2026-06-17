@@ -16,4 +16,5 @@ export declare const EventsCallbacks: (props: {
   onKeyDown?: KeyboardEventHandler<HTMLDivElement>   // alias    -> ReactEvent.Keyboard.t => unit
   onSelect?: (value: string, index: number) => void  // multi    -> (string, int) => unit
   onSubmit?: () => void | Promise<void>              // async    -> unit => 'a
+  onImageError?: (e: Error) => void                  // global Error -> JsError.t => unit (#63)
 }) => JsxElement
