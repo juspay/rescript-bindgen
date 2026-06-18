@@ -64,7 +64,7 @@ external make: (
   ~letterSpacing: string=?,
   ~fontSize: string=?,
   ~lineHeight: string=?,
-  ~size: SkeletonTypes.size2=?,
+  ~size: DataTableTypes.size2=?,
   ~display: string=?,
   ~fontWeight: string=?,
   ~opacity: string=?,

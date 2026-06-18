@@ -1,7 +1,7 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
   ~data: array<'a>,
-  ~columns: string,  // ⚪ loose — was `ColumnDefinition<T>[]`
+  ~columns: array<DataTableTypes.ColumnDefinition.t>,  // ⓘ was `ColumnDefinition<T>` — opaque; build with ColumnDefinition.fromDataTableColumnsConfig / ColumnDefinition.fromDataTableColumnsConfig2 / ColumnDefinition.fromDataTableColumnsConfig3 / ColumnDefinition.fromDataTableColumnsConfig4 / ColumnDefinition.fromDataTableColumnsConfig5 / ColumnDefinition.fromDataTableColumnsConfig6 / ColumnDefinition.fromDataTableColumnsConfig7 / ColumnDefinition.fromDataTableColumnsConfig8 / ColumnDefinition.fromDataTableColumnsConfig9 / ColumnDefinition.fromDataTableColumnsConfig10
   ~idField: string,  // ⚪ loose — was `keyof T`
   ~title: string=?,
   ~description: string=?,
@@ -24,7 +24,7 @@ external make: (
   ~columnFreeze: float=?,
   ~enableColumnManager: bool=?,
   ~enableColumnReordering: bool=?,
-  ~onColumnReorder: 'b => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
+  ~onColumnReorder: array<DataTableTypes.ColumnDefinition.t> => unit=?,  // ⓘ was `ColumnDefinition<T>` — opaque; build with ColumnDefinition.fromDataTableColumnsConfig / ColumnDefinition.fromDataTableColumnsConfig2 / ColumnDefinition.fromDataTableColumnsConfig3 / ColumnDefinition.fromDataTableColumnsConfig4 / ColumnDefinition.fromDataTableColumnsConfig5 / ColumnDefinition.fromDataTableColumnsConfig6 / ColumnDefinition.fromDataTableColumnsConfig7 / ColumnDefinition.fromDataTableColumnsConfig8 / ColumnDefinition.fromDataTableColumnsConfig9 / ColumnDefinition.fromDataTableColumnsConfig10
   ~columnManagerMaxSelections: float=?,
   ~columnManagerAlwaysSelected: string=?,  // ⚪ loose — was `(keyof T)[]`
   ~columnManagerPrimaryAction: DataTableTypes.dataTableColumnManagerPrimaryActionConfig=?,
@@ -48,7 +48,7 @@ external make: (
   ~onRowSave: (JSON.t, 'a) => unit=?,
   ~onRowCancel: JSON.t => unit=?,
   ~onRowClick: ('a, float) => unit=?,
-  ~onFieldChange: (JSON.t, 'c, JSON.t) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
+  ~onFieldChange: (JSON.t, 'b, JSON.t) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~enableRowExpansion: bool=?,
   ~renderExpandedRow: DataTableTypes.dataTableRenderExpandedRowConfig<'a> => React.element=?,
   ~isRowExpandable: ('a, float) => bool=?,

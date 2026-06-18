@@ -4,8 +4,8 @@ type uploadState =
   | @as("success") Success
   | @as("error") Error
 type status =
-  | @as("error") Error
   | @as("success") Success
+  | @as("error") Error
 type uploadFile = {
   file: Webapi.File.t,
   progress: float,

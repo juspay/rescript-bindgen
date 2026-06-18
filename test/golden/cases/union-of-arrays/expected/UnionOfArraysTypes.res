@@ -23,3 +23,9 @@ module PresetsConfig = {
   external fromRangeConfig: rangeConfig => t = "%identity"
   external fromRangeDefinition: rangeDefinition => t = "%identity"
 }
+module PresetsConfigSingle = {
+  type t
+  external fromPreset: preset => t = "%identity"
+  external fromRangeConfig: rangeConfig => t = "%identity"
+  external fromRangeDefinition: rangeDefinition => t = "%identity"
+}

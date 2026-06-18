@@ -143,8 +143,8 @@ type singleSelectContainerConfig2 = {
   hover: string,
   @as("open") open_: string,
   focus: string,
-  closed: string,
   error: string,
+  closed: string,
 }
 type singleSelectBackgroundColorConfig = {
   container: singleSelectContainerConfig2,

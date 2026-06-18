@@ -12,6 +12,6 @@ external make: (
   ~remarkRehypeOptions: Nullable.t<LibTypes.libRemarkRehypeOptionsConfig>=?,
   ~skipHtml: Nullable.t<bool>=?,
   ~unwrapDisallowed: Nullable.t<bool>=?,
-  ~urlTransform: Nullable.t<(string, string, 'e) => Nullable.t<string>>=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
+  ~urlTransform: Nullable.t<(string, string, 'f) => Nullable.t<string>>=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~fallback: React.element=?,
 ) => React.element = "MarkdownHooks"
