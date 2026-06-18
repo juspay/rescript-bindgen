@@ -9,3 +9,4 @@
 @unboxed type themeOrString = @as("light") Light | @as("dark") Dark | Custom(string)
 @unboxed type v0OrV100 = @as(0) N0 | @as(100) N100
 @unboxed type boolOrStringOrNumber = Bool(bool) | Str(string) | Num(float)
+@unboxed type stringOrValueArray = Str(string) | Arr(array<JSON.t>)

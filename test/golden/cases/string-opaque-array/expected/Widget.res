@@ -1,4 +1,4 @@
 @module("demo") @react.component
 external make: (
-  ~names: CommonTypes.stringOrNumberOrValueArray=?,
+  ~tokens: CommonTypes.stringOrValueArray=?,
 ) => React.element = "Widget"

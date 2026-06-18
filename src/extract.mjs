@@ -1815,6 +1815,8 @@ function classify(type, ctx, propName = '', depth = 0) {
     // arrays
     if (checker.isArrayType?.(type)) {
         const elem = checker.getTypeArguments(type)[0]
+        const seg = taggedTupleSegment(elem, ctx, propName, depth) // SVG path-data `[Lit, …number]` (#72)
+        if (seg) return { kind: 'array', of: seg }
         const prevAE = ctx.inArrayElem; ctx.inArrayElem = true // element-record field-any may go generic (#50)
         const of = classify(elem, ctx, propName, depth + 1)
         ctx.inArrayElem = prevAE
@@ -1868,6 +1870,19 @@ function classify(type, ctx, propName = '', depth = 0) {
 
     // unions
     if (flags & ts.TypeFlags.Union) {
+        // SELF-RECURSION guard (#72): a union that transitively references itself (clsx's
+        // `ClassValue = string | number | ClassValue[]`) must not unroll into a per-depth monster.
+        // Track active union ids on a stack; on re-entry into the same union, terminate the cycle
+        // as the opaque value `JSON.t` (so e.g. the self `ClassValue[]` arm becomes
+        // `array<JSON.t>` and the union stays a single finite `@unboxed`). Plain REUSE of a union
+        // in two positions is separate classify calls (stack popped between them) and unaffected.
+        if (type.id != null) {
+            ctx.unionStack = ctx.unionStack || new Set()
+            if (ctx.unionStack.has(type.id)) return { kind: 'raw', res: 'JSON.t' }
+            ctx.unionStack.add(type.id)
+            try { return unionNode(type, ctx, propName, depth) }
+            finally { ctx.unionStack.delete(type.id) }
+        }
         return unionNode(type, ctx, propName, depth)
     }
 
@@ -2091,6 +2106,47 @@ function registerNamed(ctx, type, kind, base, data) {
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
     return refTo(entry)
+}
+
+/**
+ * A TAGGED-TUPLE array element (#72): an array whose element is a tuple — or a UNION of tuples —
+ * each shaped `[Lit, …number]` (a finite string-literal head + a numeric tail). This is the SVG
+ * path-data shape (`SVGPathArray = Array<[SVGPathCommand] | [SVGPathCommand, number] | …>`). Model
+ * the element as a SEGMENT tuple `(<command polyvariant>, array<float>)`: the literal heads become a
+ * named polyvariant (`type svgPathCommand = [#M | #L | …]` — the tag serializes to the exact letter),
+ * and the variadic numeric tail collapses to `array<float>`. Returns the segment IR, or null if the
+ * element isn't this shape (caller then falls back to the honest `array<JSON.t>`). Module mode only
+ * (the polyvariant is a named shared type), and requires a STRING-LITERAL head — a numeric-headed
+ * tuple like `[number, number]` does NOT match, so plain tuple handling is untouched.
+ * @returns {{kind:'tuple', params:object[]} | null}
+ */
+function taggedTupleSegment(elem, ctx, propName, depth) {
+    if (!ctx.shared || !elem) return null
+    const { checker } = ctx
+    const tuples = (elem.isUnion && elem.isUnion()) ? elem.types : [elem]
+    if (!tuples.length) return null
+    const tags = [], seen = new Set()
+    let headType = null
+    for (const tup of tuples) {
+        if (!checker.isTupleType?.(tup)) return null
+        const parts = checker.getTypeArguments(tup) || []
+        if (!parts.length) return null
+        const head = parts[0]
+        const headLits = (head.isUnion && head.isUnion()) ? head.types : [head]
+        for (const h of headLits) {
+            if (!(h.flags & ts.TypeFlags.StringLiteral)) return null
+            const v = String(h.value)
+            if (!seen.has(v)) { seen.add(v); tags.push(v) }
+        }
+        for (let i = 1; i < parts.length; i++) {
+            if (!(parts[i].flags & (ts.TypeFlags.Number | ts.TypeFlags.NumberLiteral))) return null
+        }
+        if (!headType) headType = head
+    }
+    if (!tags.length) return null
+    const base = lower(pascal(typeName(headType) || (pascal(propName) + 'Command')))
+    const polyRef = registerNamed(ctx, headType, 'polyvariant', base, { tags })
+    return { kind: 'tuple', params: [polyRef, { kind: 'array', of: { kind: 'number', _float: true } }] }
 }
 
 /**
@@ -2737,21 +2793,24 @@ function memberOf(t, ctx, propName, depth) {
     if (t.flags & (ts.TypeFlags.BigInt | ts.TypeFlags.BigIntLiteral)) return { ctor: 'Big', rt: 'bigint', type: { kind: 'bigint' } }
     const elem = asArray(t, c)
     if (elem) {
+        // SVG path-data tagged-tuple array `[Lit, …number]` -> a typed segment array (#72).
+        const seg = taggedTupleSegment(elem, ctx, propName, depth)
+        if (seg) return { ctor: 'Arr', rt: 'array', type: { kind: 'array', of: seg } }
         // inArrayElem: an element record's field-`any` may become a generic (`item<'a>`) —
         // it threads cleanly through `array<…>` (proven by `items`). Set BEFORE memberOf,
         // which is what actually builds the element record. (#50)
         const prevAE = ctx.inArrayElem; ctx.inArrayElem = true
         const inner = memberOf(elem, ctx, propName, depth)
-        const ctor = inner ? inner.ctor + 'Arr' : 'Arr'
-        const elemType = inner ? inner.type : classify(elem, ctx, propName, depth + 1)
+        let elemType = inner ? inner.type : classify(elem, ctx, propName, depth + 1)
         ctx.inArrayElem = prevAE
-        // FLAG-DON'T-FAKE GATE on the ELEMENT (mirrors the fn-return gate below): an array whose
-        // element can't be modelled (opaque/review/unknown) must not become a silent
-        // `array<string>` inside a shared @unboxed. This also stops a SELF-RECURSIVE union
-        // (clsx's `ClassValue = … | ClassValue[]`) from unrolling into a monster: the recursion
-        // bottoms out at MAX_DEPTH → opaque, which bubbles up here and keeps the whole union an
-        // honest 🔍 REVIEW flag rather than a 5-deep nested @unboxed.
-        if (irHasImperfection(elemType)) return null
+        // HONEST-OPAQUE element (#72): an array whose element can't be modelled (opaque/review/
+        // unknown) must NOT silently fake the element as `string` (old `Arr(array<string>)`), and
+        // must NOT drop the whole arm (the #71 regression → bare `string`). Keep the array and type
+        // the element as `JSON.t` — the sanctioned opaque-value mapping — so `string | X[]` stays
+        // `Str(string) | Arr(array<JSON.t>)`. (A self-recursive union bottoms out at the unionNode
+        // recursion guard → JSON.t, so it stays finite here too.)
+        if (irHasImperfection(elemType)) elemType = { kind: 'raw', res: 'JSON.t' }
+        const ctor = inner ? inner.ctor + 'Arr' : 'Arr'
         return { ctor, rt: 'array', type: { kind: 'array', of: elemType } }
     }
     // A single function member -> runtime `typeof "function"` (distinct from string/number/

@@ -1,30 +1,22 @@
-# Binding report — `clsx@2.1.1`
+# Binding report — `demo`
 
-**0** components · ✅ **0** usable · 🔍 **0** need review · 🛑 **0** broken
+**1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**1** function binding(s) → `ClsxBindings.res`.
-
-**1** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**2** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
 | Kind | Package | Provides | Status |
 |------|---------|----------|--------|
 | required | `@rescript/react + stdlib` | JsxDOM, Dom, React, ReactEvent | ✓ present |
-| optional | `rescript-webapi` | File, FileList | ✓ present → used |
-
-## 🔧 Function bindings
-
-Standalone function exports, emitted as positional `@module external` bindings in `ClsxBindings.res`.
-
-- `clsx`
+| optional | `rescript-webapi` | File, FileList | ✗ not installed |
 
 ## ✅ Usable
 
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-_(none)_
+- Path
 
 ## ⚪ Loosely typed (widened to `string`)
 
