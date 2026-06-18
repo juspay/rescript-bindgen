@@ -2420,7 +2420,14 @@ function unionNode(type, ctx, propName, depth = 0) {
         const args = [...(t.aliasTypeArguments || []), ...((checker.getTypeArguments && (t.objectFlags & ts.ObjectFlags.Reference) && checker.getTypeArguments(t)) || [])]
         return args.some((a) => armHasTypeParam(a, d + 1))
     }
+    // Guard 3: skip when every arm is an ARRAY instantiation (`DateRangePreset[] |
+    // CustomPresetConfig[] | …` — DateRangePicker's `PresetsConfig`). All arrays share the
+    // global `Array` symbol, so `armSym` matches across arms and the union would WRONGLY
+    // collapse to one record built from `Array`'s lib.es prototype methods (all inherited ->
+    // `{...JsxDOM.domProps}`, the array shape lost). A union of arrays belongs to the
+    // union-of-arrays handler below (→ `array<element-union>`). (#65 union-of-arrays)
     if (parts.length >= 2 && type.getProperties().length > 0 && parts.every((t) =>
+        !checker.isArrayType?.(t) &&
         armSym(t) && armSym(t) === armSym(parts[0]) &&
         (t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) &&
         !(t.getCallSignatures && t.getCallSignatures().length) &&

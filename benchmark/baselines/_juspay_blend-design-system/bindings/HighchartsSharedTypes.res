@@ -8310,12 +8310,9 @@ type seriesRsiOptions = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
-type array2 = {
-  ...JsxDOM.domProps,
-}
 type seriesSankeyOptions = {
   borderRadius?: string,
-  data?: array2,
+  data?: array<JSON.t>,
   dataParser?: string,
   dataURL?: string,
   depth?: string,

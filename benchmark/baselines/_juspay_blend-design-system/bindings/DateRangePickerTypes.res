@@ -48,8 +48,16 @@ type presetSelectionData = {
   formattedStartTime: string,
   formattedEndTime: string,
 }
-type presetsConfig = {
-  ...JsxDOM.domProps,
+type customPresetConfig = {
+  preset: dateRangePreset,
+  label?: string,
+  visible?: bool,
+}
+type customPresetDefinition = {
+  id: string,
+  label: string,
+  getDateRange: unit => dateRange,
+  visible?: bool,
 }
 type customRangeConfig = {
   calculateEndDate?: (Date.t, option<dateRange>) => Nullable.t<Date.t>,
@@ -263,4 +271,10 @@ type calendarTokenType = {
 type responsiveCalendarTokens = {
   sm: calendarTokenType,
   lg: calendarTokenType,
+}
+module PresetsConfig = {
+  type t
+  external fromDateRangePreset: dateRangePreset => t = "%identity"
+  external fromCustomPresetConfig: customPresetConfig => t = "%identity"
+  external fromCustomPresetDefinition: customPresetDefinition => t = "%identity"
 }

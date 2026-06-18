@@ -539,9 +539,6 @@ type highlightEventDetails = {
   event: Dom.event,
   index: int,
 }
-type readonlyArray = {
-  ...JsxDOM.domProps,
-}
 type avatarRootState = {
   imageLoadingStatus: imageLoadingStatus,
 }

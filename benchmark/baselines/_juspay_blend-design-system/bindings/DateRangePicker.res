@@ -5,7 +5,7 @@ external make: (
   ~onPresetSelection: DateRangePickerTypes.presetSelectionData => unit=?,
   ~showDateTimePicker: bool=?,
   ~showPresets: bool=?,
-  ~customPresets: DateRangePickerTypes.presetsConfig=?,
+  ~customPresets: array<DateRangePickerTypes.PresetsConfig.t>=?,  // ⓘ was `PresetsConfig` — opaque; build with PresetsConfig.fromDateRangePreset / PresetsConfig.fromCustomPresetConfig / PresetsConfig.fromCustomPresetDefinition
   ~placeholder: string=?,
   ~isDisabled: bool=?,
   ~icon: React.element=?,
