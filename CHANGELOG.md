@@ -7,6 +7,21 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [1.2.3] — 2026-06-18
+
+A fidelity fix for deep SVG-path-data props. No CLI/API changes.
+
+### Fixed
+- **A deep `string | <tagged-tuple array>` was truncated to `array<JSON.t>`** (#72). A union whose arms
+  are tagged tuples (`[string-literal head, …number]`) and/or `Array<literal>` — Highcharts'
+  `SVGAttributes.d` (`string | SVGPathArray`) — is a *provably-bounded* leaf (literals + numbers, no
+  nested records), so it's now modelled even past `MAX_DEPTH` (the depth bound only truncates *unbounded*
+  record graphs). The deep `d` now binds as the faithful opaque module —
+  `@unboxed Str(string) | Arr(array<D.t>)` with `D.fromSVGPathCommands` / `D.fromTupleN` `%identity`
+  views — instead of `array<JSON.t>`. Verified: the full generated blend output compiles (408 modules).
+  Letting this bounded shape build also lets the richer Highcharts records (e.g. `SVGAttributes` fields)
+  win structural dedup over their depth-truncated all-`string` copies. Fixture: `svg-path-array`.
+
 ## [1.2.2] — 2026-06-18
 
 More fidelity fixes found validating against `@juspay/blend-design-system@0.0.37-beta.x`. No CLI/API
