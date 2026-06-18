@@ -130,6 +130,7 @@ function renderType(t, propName, cfg) {
         // untagged-variant members force float (JS can't untag int vs float)
         case 'number': return t._float ? 'float' : numberType(propName)
         case 'boolean': return 'bool'
+        case 'bigint': return 'bigint'
         case 'reactElement': return 'React.element'
         // a component-valued prop: `React.component<propsRecord>`
         case 'reactComponent': return `React.component<${renderType(t.of, propName, cfg)}>`

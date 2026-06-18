@@ -1633,6 +1633,9 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (flags & ts.TypeFlags.String) return { kind: 'string' }
     if (flags & ts.TypeFlags.Number) return { kind: 'number' }
     if (flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) return { kind: 'boolean' }
+    // `bigint` is a first-class ReScript 12 type (`Stdlib_BigInt`, `123n` literals). A bigint
+    // LITERAL (`123n`) folds into the `bigint` type — ReScript has no `@as` for bigint literals.
+    if (flags & (ts.TypeFlags.BigInt | ts.TypeFlags.BigIntLiteral)) return { kind: 'bigint' }
 
     // CSS property values (csstype) are correctly `string`, not a loose fallback.
     if (isCssType(type)) return { kind: 'string' }
@@ -2347,6 +2350,7 @@ function unionNode(type, ctx, propName, depth = 0) {
         if (t.flags & ts.TypeFlags.String) return 'string'
         if (t.flags & ts.TypeFlags.Number) return 'number'
         if (t.flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) return 'boolean'
+        if (t.flags & ts.TypeFlags.BigInt) return 'bigint'
         if (t.flags & ts.TypeFlags.Intersection) {
             const p = (t.types || []).map(primOf).find(Boolean)
             if (p) return p
@@ -2355,7 +2359,7 @@ function unionNode(type, ctx, propName, depth = 0) {
     }
     const prims = parts.map(primOf)
     if (prims.every(Boolean) && new Set(prims).size === 1) {
-        return { kind: prims[0] === 'boolean' ? 'boolean' : prims[0] === 'number' ? 'number' : 'string' }
+        return { kind: prims[0] } // 'string' | 'number' | 'boolean' | 'bigint' — all valid IR kinds
     }
 
     // Sync-or-async VALUE: `T | Promise<T>` (hono's `fetch` returns
@@ -2563,7 +2567,7 @@ function unionNode(type, ctx, propName, depth = 0) {
     // number LITERALS may coexist as bare `@as("…")` constructors (distinct constant
     // values) — e.g. `boolean | "indeterminate"` -> Bool(bool) | @as("indeterminate") Indeterminate.
     // TS expands `boolean` into `true | false`, so collapse those into one `bool`.
-    let hasBool = false, hasString = false, hasNumber = false
+    let hasBool = false, hasString = false, hasNumber = false, hasBigInt = false
     const strLits = [], numLits = [], others = []
     let buildable = true
     for (const p of parts) {
@@ -2572,6 +2576,9 @@ function unionNode(type, ctx, propName, depth = 0) {
         else if (p.flags & ts.TypeFlags.NumberLiteral) numLits.push(p)
         else if (p.flags & ts.TypeFlags.String) hasString = true
         else if (p.flags & ts.TypeFlags.Number) hasNumber = true
+        // `bigint` is its own JS `typeof` bucket; broad `bigint` AND bigint literals (`1n`) fold
+        // into one `Big(bigint)` arm (no `@as` for bigint literals).
+        else if (p.flags & (ts.TypeFlags.BigInt | ts.TypeFlags.BigIntLiteral)) hasBigInt = true
         else {
             const m = memberOf(p, ctx, propName, depth)
             if (!m) { buildable = false; break }
@@ -2595,6 +2602,7 @@ function unionNode(type, ctx, propName, depth = 0) {
         else if (numLits.length && claim('number')) {
             for (const l of numLits) members.push({ ctor: uniqueCtor('N' + String(l.value).replace(/[^0-9a-zA-Z]/g, '_')), as: l.value, _num: true })
         }
+        if (hasBigInt && claim('bigint')) members.push({ ctor: uniqueCtor('Big'), type: { kind: 'bigint' } })
         for (const m of others) { if (!claim(m.rt)) { buildable = false; break } members.push({ ctor: uniqueCtor(m.ctor), type: m.type }) }
 
         if (buildable && members.length >= 2) {
@@ -2726,6 +2734,7 @@ function memberOf(t, ctx, propName, depth) {
     if (t.flags & (ts.TypeFlags.String | ts.TypeFlags.StringLiteral)) return { ctor: 'Str', rt: 'string', type: { kind: 'string' } }
     if (t.flags & (ts.TypeFlags.Number | ts.TypeFlags.NumberLiteral)) return { ctor: 'Num', rt: 'number', type: { kind: 'number', _float: true } }
     if (t.flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) return { ctor: 'Bool', rt: 'boolean', type: { kind: 'boolean' } }
+    if (t.flags & (ts.TypeFlags.BigInt | ts.TypeFlags.BigIntLiteral)) return { ctor: 'Big', rt: 'bigint', type: { kind: 'bigint' } }
     const elem = asArray(t, c)
     if (elem) {
         // inArrayElem: an element record's field-`any` may become a generic (`item<'a>`) —
@@ -2736,6 +2745,13 @@ function memberOf(t, ctx, propName, depth) {
         const ctor = inner ? inner.ctor + 'Arr' : 'Arr'
         const elemType = inner ? inner.type : classify(elem, ctx, propName, depth + 1)
         ctx.inArrayElem = prevAE
+        // FLAG-DON'T-FAKE GATE on the ELEMENT (mirrors the fn-return gate below): an array whose
+        // element can't be modelled (opaque/review/unknown) must not become a silent
+        // `array<string>` inside a shared @unboxed. This also stops a SELF-RECURSIVE union
+        // (clsx's `ClassValue = … | ClassValue[]`) from unrolling into a monster: the recursion
+        // bottoms out at MAX_DEPTH → opaque, which bubbles up here and keeps the whole union an
+        // honest 🔍 REVIEW flag rather than a 5-deep nested @unboxed.
+        if (irHasImperfection(elemType)) return null
         return { ctor, rt: 'array', type: { kind: 'array', of: elemType } }
     }
     // A single function member -> runtime `typeof "function"` (distinct from string/number/
@@ -2818,6 +2834,7 @@ function unboxedName(members) {
             case 'string': return 'String'
             case 'number': return 'Number'
             case 'boolean': return 'Bool'
+            case 'bigint': return 'BigInt'
             case 'array': return tokType(t.of) + 'Array'
             case 'reactElement': return 'Element'
             case 'typeRef': return pascal(t.to)

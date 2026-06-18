@@ -10879,7 +10879,7 @@ module SeriesOptionsType = {
   external fromSeriesZigzagOptions: seriesZigzagOptions => t = "%identity"
 }
 type svgAttributes = {
-  d?: CommonTypes.stringOrValueArray,
+  d?: string,
   dx?: float,
   dy?: float,
   fill?: ColorType.t,
