@@ -70,6 +70,10 @@ type utilsSetOpenConfig = {
   isPropagationAllowed: bool,
   trigger?: Dom.element,
 }
+type group<'f> = {
+  value: JSON.t,
+  items: array<'f>,
+}
 type utilsOnCheckedChangeConfig = {
   reason: string,
   event: Dom.event,
@@ -198,6 +202,11 @@ type toastPositionerState = {
 @unboxed type tabsTabClassName = Str(string) | Fn(tabsTabState => string)
 @unboxed type toastPositionerClassName = Str(string) | Fn(toastPositionerState => string)
 @unboxed type toastPositionerStyle = Style(JsxDOM.style) | Fn(toastPositionerState => JsxDOM.style)
+module FilteredItems = {
+  type t
+  external fromTypeVar: 'e => t = "%identity"
+  external fromGroup: group<'f> => t = "%identity"
+}
 module CollisionAvoidance = {
   type t
   external fromSideFlipMode: sideFlipMode => t = "%identity"
