@@ -708,7 +708,10 @@ function renderOpaque(t, lines, cfg) {
         // A function-typed member (`(e) => void` -> `string => unit`) must be parenthesized as
         // the constructor's arg, else `string => unit => t` misparses as `string => (unit => t)`.
         const rendered = renderType(m.type, '', cfg)
-        const arg = m.type.kind === 'callback' ? `(${rendered})` : rendered
+        // A callback (`string => unit`) must be parenthesized so `… => t` doesn't misparse; a TUPLE
+        // (`(cmd, float, float)`, #72) must be wrapped too, else it reads as a multi-ARG function
+        // instead of one tuple arg — `((cmd, float, float)) => t`.
+        const arg = (m.type.kind === 'callback' || m.type.kind === 'tuple') ? `(${rendered})` : rendered
         lines.push(`  external ${fn}: ${arg} => t = "%identity"`)
     }
     lines.push(`}`)

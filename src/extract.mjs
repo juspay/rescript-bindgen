@@ -1815,8 +1815,6 @@ function classify(type, ctx, propName = '', depth = 0) {
     // arrays
     if (checker.isArrayType?.(type)) {
         const elem = checker.getTypeArguments(type)[0]
-        const seg = taggedTupleSegment(elem, ctx, propName, depth) // SVG path-data `[Lit, …number]` (#72)
-        if (seg) return { kind: 'array', of: seg }
         const prevAE = ctx.inArrayElem; ctx.inArrayElem = true // element-record field-any may go generic (#50)
         const of = classify(elem, ctx, propName, depth + 1)
         ctx.inArrayElem = prevAE
@@ -2109,47 +2107,6 @@ function registerNamed(ctx, type, kind, base, data) {
 }
 
 /**
- * A TAGGED-TUPLE array element (#72): an array whose element is a tuple — or a UNION of tuples —
- * each shaped `[Lit, …number]` (a finite string-literal head + a numeric tail). This is the SVG
- * path-data shape (`SVGPathArray = Array<[SVGPathCommand] | [SVGPathCommand, number] | …>`). Model
- * the element as a SEGMENT tuple `(<command polyvariant>, array<float>)`: the literal heads become a
- * named polyvariant (`type svgPathCommand = [#M | #L | …]` — the tag serializes to the exact letter),
- * and the variadic numeric tail collapses to `array<float>`. Returns the segment IR, or null if the
- * element isn't this shape (caller then falls back to the honest `array<JSON.t>`). Module mode only
- * (the polyvariant is a named shared type), and requires a STRING-LITERAL head — a numeric-headed
- * tuple like `[number, number]` does NOT match, so plain tuple handling is untouched.
- * @returns {{kind:'tuple', params:object[]} | null}
- */
-function taggedTupleSegment(elem, ctx, propName, depth) {
-    if (!ctx.shared || !elem) return null
-    const { checker } = ctx
-    const tuples = (elem.isUnion && elem.isUnion()) ? elem.types : [elem]
-    if (!tuples.length) return null
-    const tags = [], seen = new Set()
-    let headType = null
-    for (const tup of tuples) {
-        if (!checker.isTupleType?.(tup)) return null
-        const parts = checker.getTypeArguments(tup) || []
-        if (!parts.length) return null
-        const head = parts[0]
-        const headLits = (head.isUnion && head.isUnion()) ? head.types : [head]
-        for (const h of headLits) {
-            if (!(h.flags & ts.TypeFlags.StringLiteral)) return null
-            const v = String(h.value)
-            if (!seen.has(v)) { seen.add(v); tags.push(v) }
-        }
-        for (let i = 1; i < parts.length; i++) {
-            if (!(parts[i].flags & (ts.TypeFlags.Number | ts.TypeFlags.NumberLiteral))) return null
-        }
-        if (!headType) headType = head
-    }
-    if (!tags.length) return null
-    const base = lower(pascal(typeName(headType) || (pascal(propName) + 'Command')))
-    const polyRef = registerNamed(ctx, headType, 'polyvariant', base, { tags })
-    return { kind: 'tuple', params: [polyRef, { kind: 'array', of: { kind: 'number', _float: true } }] }
-}
-
-/**
  * The "logical" members of a union, re-grouping flattened enum literals back into their
  * enum type. TS represents `DateRangePreset | Foo` as `(CUSTOM | TODAY | … | Foo)` (the
  * enum is spread into its literals); this collapses each enum's literals back to the one
@@ -2244,7 +2201,11 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
         const raw = typeName(mt)
         const en = elem && typeName(elem)
         const refName = (n) => (n && n.kind === 'typeRef' ? n.to.replace(/\.t$/, '') : null)
-        const name = elem
+        // A TUPLE arm (SVG path `[cmd, …number]`, #72) is anonymous — name the `from*` view by its
+        // ARITY (`Tuple3` -> fromTuple3) so distinct-arity arms don't collide on one ident.
+        const name = (node && node.kind === 'tuple')
+            ? 'Tuple' + node.params.length
+            : elem
             ? (en && en !== '__type' ? en + 's' : (refName(node && node.of) ? refName(node.of) + 's' : undefined))
             : (raw && raw !== '__type') ? raw
             : (mt.getCallSignatures && mt.getCallSignatures().length) ? 'Fn'
@@ -2709,8 +2670,20 @@ function unionNode(type, ctx, propName, depth = 0) {
     // genuinely structured (function / array / named object) — those need a real
     // decision. String-ish unions (CSSObject['width'] = string & {} | Globals |
     // number, etc.) are fine as `string` → loose, matching the canonical bindings.
+    // A TAGGED tuple — a fixed tuple whose FIRST element is a string-literal (or literal-union), i.e.
+    // a discriminant-headed `[cmd, …payload]` (SVG path segments, #72). Only these become opaque-module
+    // views; an UNtagged tuple union (hono's `(handler, route)`) is left to its existing behavior.
+    const isTaggedTuple = (t) => {
+        if (!checker.isTupleType?.(t)) return false
+        const ps = checker.getTypeArguments(t) || []
+        if (!ps.length) return false
+        const head = ps[0]
+        const lits = (head.isUnion && head.isUnion()) ? head.types : [head]
+        return lits.length > 0 && lits.every((h) => h.flags & ts.TypeFlags.StringLiteral)
+    }
     const isStructured = (t) => {
         if (t.getCallSignatures && t.getCallSignatures().length) return true // function
+        if (isTaggedTuple(t)) return true // tagged tuple (SVG path `[cmd, …number]` arms, #72)
         if (asArray(t, checker)) return true // array
         const s = t.getSymbol && t.getSymbol()
         if ((t.flags & ts.TypeFlags.Object) && s && s.getName() !== '__type' && t.getProperties().length) return true // named object
@@ -2724,6 +2697,7 @@ function unionNode(type, ctx, propName, depth = 0) {
         // `Element | Element[]`, `File | File[]`) — the array is structured too,
         // so we count it. A single object alone still falls through to review.
         const structuredParts = parts.filter((t) => {
+            if (isTaggedTuple(t)) return true // tagged tuple arm (#72)
             if (asArray(t, checker)) return true
             const s = t.getSymbol && t.getSymbol()
             return (t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) && s && t.getProperties().length
@@ -2793,9 +2767,6 @@ function memberOf(t, ctx, propName, depth) {
     if (t.flags & (ts.TypeFlags.BigInt | ts.TypeFlags.BigIntLiteral)) return { ctor: 'Big', rt: 'bigint', type: { kind: 'bigint' } }
     const elem = asArray(t, c)
     if (elem) {
-        // SVG path-data tagged-tuple array `[Lit, …number]` -> a typed segment array (#72).
-        const seg = taggedTupleSegment(elem, ctx, propName, depth)
-        if (seg) return { ctor: 'Arr', rt: 'array', type: { kind: 'array', of: seg } }
         // inArrayElem: an element record's field-`any` may become a generic (`item<'a>`) —
         // it threads cleanly through `array<…>` (proven by `items`). Set BEFORE memberOf,
         // which is what actually builds the element record. (#50)

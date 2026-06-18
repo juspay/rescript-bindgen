@@ -1,5 +1,5 @@
 @module("demo") @react.component
 external make: (
-  ~d: SvgPathArrayTypes.stringOrValueArray=?,
+  ~d: SvgPathArrayTypes.stringOrSegTArray=?,
   ~box: (float, float)=?,
 ) => React.element = "Path"
