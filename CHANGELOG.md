@@ -7,6 +7,26 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [1.2.1] — 2026-06-18
+
+A small fidelity fix found while validating generated bindings against
+`@juspay/blend-design-system`. No CLI/API changes — the affected props are now correctly shaped
+(a one-time regeneration diff limited to those props).
+
+### Fixed
+- **Union-of-arrays props emitted as a `{ ...JsxDOM.domProps }` record** (#65). A prop whose type is
+  a union whose every arm is an array — `DateRangePreset[] | CustomPresetConfig[] |
+  CustomPresetDefinition[] | (DateRangePreset | CustomPresetConfig | CustomPresetDefinition)[]`
+  (DateRangePicker's `customPresets`) — collapsed to a bogus record built from `Array`'s lib.es
+  prototype methods (all inherited → the domProps catch-all), losing the `array<>` shape entirely.
+  Every arm shares the global `Array` symbol, so the "same-generic-record" union collapse (added for
+  `BaseUIChangeEventDetails<R>`) wrongly matched; array instantiations are now excluded from it. The
+  prop binds correctly as `array<…>` of the element union — here an opaque module with zero-cost
+  `from*` views (`array<DateRangePickerTypes.PresetsConfig.t>`), since the element is multiple object
+  shapes that can't be `@unboxed`-discriminated. Also fixes the same latent bug in base-ui's
+  `filteredItems`/`items`. Follow-up #68 tracks closing the broader builtin-container class
+  (`Map<A> | Map<B>`, `Set`, `Promise`, …) in one place.
+
 ## [1.2.0] — 2026-06-17
 
 The "fidelity" release, driven by exhaustively validating generated bindings against
