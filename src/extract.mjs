@@ -1815,8 +1815,11 @@ function classify(type, ctx, propName = '', depth = 0) {
     // arrays
     if (checker.isArrayType?.(type)) {
         const elem = checker.getTypeArguments(type)[0]
+        // A bounded tagged-tuple union element (SVG path data) is safe to classify past MAX_DEPTH
+        // (it can't expand unboundedly) — reset depth so it reaches the opaque-module path. (#72)
+        const ed = isBoundedTaggedTupleUnion(elem, checker) ? 0 : depth + 1
         const prevAE = ctx.inArrayElem; ctx.inArrayElem = true // element-record field-any may go generic (#50)
-        const of = classify(elem, ctx, propName, depth + 1)
+        const of = classify(elem, ctx, propName, ed)
         ctx.inArrayElem = prevAE
         return { kind: 'array', of }
     }
@@ -2749,6 +2752,39 @@ function asArray(t, checker) {
 }
 
 /**
+ * A PROVABLY-BOUNDED leaf shape (#72): an array element that is a union whose every arm is a TAGGED
+ * tuple (`[string-literal head, …string|number]`) and/or `Array<literal|primitive>` — the SVG
+ * path-data shape (`Array<SVGPathCommand> | [SVGPathCommand, number] | …`). It bottoms out at
+ * literals/numbers in ≤2 levels (no records, no object/union refs), so it CANNOT expand unboundedly —
+ * safe to classify even past `MAX_DEPTH` (the depth bound exists only to truncate UNBOUNDED record
+ * graphs). Lets the deep Highcharts `d` reach the opaque-module-views path instead of `array<JSON.t>`.
+ * Requires ≥1 tagged tuple (the discriminant) so plain primitive-array unions don't match.
+ */
+function isBoundedTaggedTupleUnion(elem, checker) {
+    if (!elem || !(elem.isUnion && elem.isUnion())) return false
+    const PRIM = ts.TypeFlags.String | ts.TypeFlags.StringLiteral | ts.TypeFlags.Number |
+        ts.TypeFlags.NumberLiteral | ts.TypeFlags.EnumLike
+    let sawTagged = false
+    for (const a of elem.types) {
+        if (checker.isTupleType?.(a)) {
+            const ps = checker.getTypeArguments(a) || []
+            if (!ps.length) return false
+            const head = ps[0]
+            const lits = (head.isUnion && head.isUnion()) ? head.types : [head]
+            if (!(lits.length && lits.every((h) => h.flags & ts.TypeFlags.StringLiteral))) return false
+            for (let i = 1; i < ps.length; i++) if (!(ps[i].flags & PRIM)) return false
+            sawTagged = true
+        } else {
+            const ae = asArray(a, checker)
+            if (!ae) return false
+            const lits = (ae.isUnion && ae.isUnion()) ? ae.types : [ae]
+            if (!lits.every((h) => h.flags & PRIM)) return false
+        }
+    }
+    return sawTagged
+}
+
+/**
  * Map one union member to an `@unboxed` variant constructor, or null if it can't
  * be one (objects/functions). `rt` is the runtime kind (`string`/`number`/
  * `boolean`/`array`) used to check discriminability — two members may NOT share
@@ -2772,7 +2808,9 @@ function memberOf(t, ctx, propName, depth) {
         // which is what actually builds the element record. (#50)
         const prevAE = ctx.inArrayElem; ctx.inArrayElem = true
         const inner = memberOf(elem, ctx, propName, depth)
-        let elemType = inner ? inner.type : classify(elem, ctx, propName, depth + 1)
+        // bounded tagged-tuple union element (SVG path data) — safe past MAX_DEPTH (#72)
+        const ed = isBoundedTaggedTupleUnion(elem, c) ? 0 : depth + 1
+        let elemType = inner ? inner.type : classify(elem, ctx, propName, ed)
         ctx.inArrayElem = prevAE
         // HONEST-OPAQUE element (#72): an array whose element can't be modelled (opaque/review/
         // unknown) must NOT silently fake the element as `string` (old `Arr(array<string>)`), and
