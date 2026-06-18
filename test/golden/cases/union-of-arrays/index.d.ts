@@ -36,8 +36,18 @@ type PresetsConfig =
   | RangeDefinition[]
   | (Preset | RangeConfig | RangeDefinition)[]
 
+// The SINGLE-array form — what the union above reduces to when a library simplifies it (real blend
+// did exactly this). A plain `Array<(A|B|C)>` of a mixed enum/record union: it reaches the array
+// branch (not the union-of-arrays handler), and its record arms are `type X = {…}` aliases (`__type`
+// symbol) which `unionNode`'s `isStructured` gate rejects → it used to degrade to `string`. It must
+// produce the SAME opaque module as the union form, named after the array alias. (#65 ↩ — single array)
+type PresetsConfigSingle = (Preset | RangeConfig | RangeDefinition)[]
+
 export declare const Picker: (props: {
   // -> ~presets: array<PickerTypes.PresetsConfig.t>=? (opaque module: fromPreset / fromRangeConfig /
   //    fromRangeDefinition); NOT `{ ...JsxDOM.domProps }`, NOT a flat `string`.
   presets?: PresetsConfig
+  // -> ~presetsSingle: array<PickerTypes.PresetsConfigSingle.t>=? — the SAME faithful module shape as
+  //    `presets`, NOT a `string`. Proves the single `(A|B|C)[]` form matches the union-of-arrays form.
+  presetsSingle?: PresetsConfigSingle
 }) => JsxElement

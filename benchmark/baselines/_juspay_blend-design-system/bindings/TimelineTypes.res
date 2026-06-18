@@ -3,7 +3,7 @@ type timelineNodeStatus =
   | @as("warning") Warning
   | @as("error") Error
   | @as("neutral") Neutral
-type variant2 =
+type variant3 =
   | @as("pulse") Pulse
   | @as("wave") Wave
 type timelineTrackConfig = {

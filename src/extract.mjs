@@ -1815,6 +1815,23 @@ function classify(type, ctx, propName = '', depth = 0) {
     // arrays
     if (checker.isArrayType?.(type)) {
         const elem = checker.getTypeArguments(type)[0]
+        // A single array of a MIXED union — `(DateRangePreset | CustomPresetConfig |
+        // CustomPresetDefinition)[]` (DateRangePicker's `PresetsConfig` after the lib collapsed its
+        // `A[] | B[] | … | (A|B|C)[]` to just the general arm). Its element is multiple object/record
+        // shapes that can't be `@unboxed`-discriminated, so bind it as the same opaque-module-views as
+        // the union-of-arrays form — `opaqueUnion` directly on the distinct element members. Done HERE
+        // (not via `unionNode`'s isStructured-gated path) because the record arms are `type X = {…}`
+        // aliases of object literals (`__type` symbol), which that gate rejects → `string`. Named after
+        // the array's alias so `(A|B|C)[]` and `A[]|…|(A|B|C)[]` yield the SAME binding (no churn). (#65 ↩)
+        if (elem && elem.isUnion && elem.isUnion()) {
+            const members = unionMembers(checker, elem)
+            const objArms = members.filter((m) => asArray(m, checker) || checker.isTupleType?.(m) ||
+                ((m.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) && m.getProperties && m.getProperties().length))
+            if (objArms.length >= 2) {
+                const opaque = opaqueUnion(ctx, elem, members, propName, depth, type.aliasSymbol ? { nameHint: typeName(type) } : {})
+                if (opaque) return { kind: 'array', of: opaque }
+            }
+        }
         // A bounded tagged-tuple union element (SVG path data) is safe to classify past MAX_DEPTH
         // (it can't expand unboundedly) — reset depth so it reaches the opaque-module path. (#72)
         const ed = isBoundedTaggedTupleUnion(elem, checker) ? 0 : depth + 1
