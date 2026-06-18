@@ -130,6 +130,7 @@ function renderType(t, propName, cfg) {
         // untagged-variant members force float (JS can't untag int vs float)
         case 'number': return t._float ? 'float' : numberType(propName)
         case 'boolean': return 'bool'
+        case 'bigint': return 'bigint'
         case 'reactElement': return 'React.element'
         // a component-valued prop: `React.component<propsRecord>`
         case 'reactComponent': return `React.component<${renderType(t.of, propName, cfg)}>`
@@ -526,6 +527,16 @@ function renderEnums(enums, lines) {
     }
 }
 
+/** Named polyvariant types — `type svgPathCommand = [#M | #L | …]` (#72). A tag's runtime value is
+ *  its string (`#M` ⟶ "M"); a non-identifier value is quoted (`#"icon-only"`). Dependency-free leaf
+ *  types (like enums), so emitted in the same early pass. */
+function renderPolyvariants(polys, lines) {
+    for (const p of polys || []) {
+        const tags = (p.tags || []).map((t) => (/^[A-Za-z_][A-Za-z0-9_]*$/.test(t) ? `#${t}` : `#${JSON.stringify(t)}`)).join(' | ')
+        lines.push(`type ${p.name} = [${tags}]`)
+    }
+}
+
 /** An `@unboxed` variant must be emitted AFTER any record it references (so it's defined
  *  before use). True if a member's type tree contains ANY `typeRef` — directly
  *  (`string | {key,color}`) or nested (a `Fn` over `menuItemType`). Primitive-only ones
@@ -697,7 +708,10 @@ function renderOpaque(t, lines, cfg) {
         // A function-typed member (`(e) => void` -> `string => unit`) must be parenthesized as
         // the constructor's arg, else `string => unit => t` misparses as `string => (unit => t)`.
         const rendered = renderType(m.type, '', cfg)
-        const arg = m.type.kind === 'callback' ? `(${rendered})` : rendered
+        // A callback (`string => unit`) must be parenthesized so `… => t` doesn't misparse; a TUPLE
+        // (`(cmd, float, float)`, #72) must be wrapped too, else it reads as a multi-ARG function
+        // instead of one tuple arg — `((cmd, float, float)) => t`.
+        const arg = (m.type.kind === 'callback' || m.type.kind === 'tuple') ? `(${rendered})` : rendered
         lines.push(`  external ${fn}: ${arg} => t = "%identity"`)
     }
     lines.push(`}`)
@@ -899,6 +913,7 @@ export function emitSharedModule(mod, entries, finalOf, options = {}) {
     // Abstract instance types for class exports — `type counter` (no deps; the dependency sink).
     for (const n of entries.filter((e) => e.kind === 'nominal')) lines.push(`type ${n.name}`)
     renderEnums(entries.filter((e) => e.kind === 'enum'), lines)
+    renderPolyvariants(entries.filter((e) => e.kind === 'polyvariant'), lines) // leaf types, before referrers
     renderUnboxed(unboxed.filter((u) => !isObjectUnboxed(u)), lines, cfg) // primitive: before records
     // records + object-bearing variants + opaque-type modules in dependency order
     emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg)
