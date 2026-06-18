@@ -7,6 +7,28 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [1.2.2] — 2026-06-18
+
+More fidelity fixes found validating against `@juspay/blend-design-system@0.0.37-beta.x`. No CLI/API
+changes — types that previously mis-mapped now map correctly (a one-time regeneration diff on those props).
+
+### Fixed
+- **`bigint` mis-mapped to `string`** (#70). `bigint` (and a `bigint` literal) now → ReScript `bigint`,
+  and `string | number | bigint` → a faithful 3-arm `@unboxed Str(string) | Num(float) | Big(bigint)`
+  (each arm a distinct JS `typeof`) instead of silently collapsing to bare `string`. Fixture: `bigint`.
+- **A `scalar | <array>` union collapsing to a bare scalar** (#72). An array arm whose element can't be
+  modelled now keeps the array and types the element as `JSON.t` (`array<JSON.t>`) — never a faked
+  `array<string>`, never a dropped arm. Fixture: `string-opaque-array`.
+- **Self-recursive unions unrolling into a monster** (#72). `type ClassValue = string | number |
+  ClassValue[]` (clsx) now binds as a single `@unboxed Str(string) | Num(float) | Arr(array<JSON.t>)`,
+  not a per-`MAX_DEPTH` nested type. Fixture: `recursive-union`.
+- **Tagged-tuple arrays modelled faithfully** (#72). A union whose arms are tagged tuples
+  (`[string-literal head, …number]`) and/or `Array<literal>` — SVG path data (`string | SVGPathArray`) —
+  binds as an opaque module with one zero-cost `%identity` view per arm (`fromTupleN` / `fromCmds`),
+  each arm's exact flat shape preserved (not a runtime-wrong `(cmd, array<float>)` nested tuple).
+  Construct-only; gated to a string-literal tuple head (plain numeric tuples untouched). Fires for
+  shallow occurrences; a deep one past `MAX_DEPTH` stays the honest `array<JSON.t>`. Fixture: `svg-path-array`.
+
 ## [1.2.1] — 2026-06-18
 
 A small fidelity fix found while validating generated bindings against
