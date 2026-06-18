@@ -114,6 +114,27 @@ type optionsSpiralValue =
   | @as("square") Square
   | @as("archimedean") Archimedean
   | @as("rectangular") Rectangular
+type svgPathCommand =
+  | @as("a") A
+  | @as("q") Q
+  | @as("s") S
+  | @as("z") Z
+  | @as("c") C
+  | @as("h") H
+  | @as("l") L
+  | @as("m") M
+  | @as("t") T
+  | @as("v") V
+  | @as("A") A2
+  | @as("C") C2
+  | @as("H") H2
+  | @as("L") L2
+  | @as("M") M2
+  | @as("Q") Q2
+  | @as("S") S2
+  | @as("T") T2
+  | @as("V") V2
+  | @as("Z") Z2
 type setState =
   | @as("") Value
   | @as("normal") Normal
@@ -314,23 +335,75 @@ type pointOptionsObject = {
   y?: string,
   z?: string,
 }
+module D = {
+  type t
+  external fromSVGPathCommands: array<svgPathCommand> => t = "%identity"
+  external fromTuple2: ((svgPathCommand, float)) => t = "%identity"
+  external fromTuple3: ((svgPathCommand, float, float)) => t = "%identity"
+  external fromTuple5: ((svgPathCommand, float, float, float, float)) => t = "%identity"
+  external fromTuple7: ((svgPathCommand, float, float, float, float, float, float)) => t = "%identity"
+  external fromTuple8: ((svgPathCommand, float, float, float, float, float, float, float)) => t = "%identity"
+}
+@unboxed type stringOrDTArray = Str(string) | Arr(array<D.t>)
+type linearGradientColorObject = {
+  x1: float,
+  x2: float,
+  y1: float,
+  y2: float,
+}
+type radialGradientColorObject = {
+  cx: float,
+  cy: float,
+  r: float,
+}
+type gradientColorObject = {
+  linearGradient?: linearGradientColorObject,
+  radialGradient?: radialGradientColorObject,
+  stops: array<string>,
+}
+type patternOptionsObject = {
+  anchorToPoint?: bool,
+  aspectRatio?: float,
+  backgroundColor?: string,
+  color?: string,
+  height?: float,
+  id?: string,
+  image?: string,
+  opacity?: float,
+  path?: string,
+  patternTransform?: string,
+  width?: float,
+  x?: float,
+  y?: float,
+}
+type patternObject = {
+  animation?: string,
+  pattern: patternOptionsObject,
+  patternIndex?: float,
+}
+module ColorType = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromGradientColorObject: gradientColorObject => t = "%identity"
+  external fromPatternObject: patternObject => t = "%identity"
+}
 type highchartsShapeArgsConfig = {
-  d?: string,
-  dx?: string,
-  dy?: string,
-  fill?: string,
-  inverted?: string,
-  matrix?: string,
-  rotation?: string,
-  rotationOriginX?: string,
-  rotationOriginY?: string,
-  scaleX?: string,
-  scaleY?: string,
-  stroke?: string,
+  d?: stringOrDTArray,
+  dx?: float,
+  dy?: float,
+  fill?: ColorType.t,
+  inverted?: bool,
+  matrix?: array<float>,
+  rotation?: float,
+  rotationOriginX?: float,
+  rotationOriginY?: float,
+  scaleX?: float,
+  scaleY?: float,
+  stroke?: ColorType.t,
   style?: string,
-  translateX?: string,
-  translateY?: string,
-  zIndex?: string,
+  translateX?: float,
+  translateY?: float,
+  zIndex?: int,
 }
 type legendOptions = {
   accessibility?: string,
@@ -848,48 +921,6 @@ type rangeSelectorOptions = {
 }
 type responsiveOptions = {
   rules?: string,
-}
-type linearGradientColorObject = {
-  x1: float,
-  x2: float,
-  y1: float,
-  y2: float,
-}
-type radialGradientColorObject = {
-  cx: float,
-  cy: float,
-  r: float,
-}
-type gradientColorObject = {
-  linearGradient?: linearGradientColorObject,
-  radialGradient?: radialGradientColorObject,
-  stops: array<string>,
-}
-type patternOptionsObject = {
-  anchorToPoint?: bool,
-  aspectRatio?: float,
-  backgroundColor?: string,
-  color?: string,
-  height?: float,
-  id?: string,
-  image?: string,
-  opacity?: float,
-  path?: string,
-  patternTransform?: string,
-  width?: float,
-  x?: float,
-  y?: float,
-}
-type patternObject = {
-  animation?: string,
-  pattern: patternOptionsObject,
-  patternIndex?: float,
-}
-module ColorType = {
-  type t
-  external fromString: string => t = "%identity"
-  external fromGradientColorObject: gradientColorObject => t = "%identity"
-  external fromPatternObject: patternObject => t = "%identity"
 }
 type scrollbarOptions = {
   barBackgroundColor?: ColorType.t,
@@ -4921,15 +4952,15 @@ type seriesGanttOptions = {
   zIndex?: int,
 }
 type plotGaugeDialOptions = {
-  backgroundColor?: string,
+  backgroundColor?: ColorType.t,
   baseLength?: string,
-  baseWidth?: string,
-  borderColor?: string,
-  borderWidth?: string,
-  path?: string,
+  baseWidth?: float,
+  borderColor?: ColorType.t,
+  borderWidth?: float,
+  path?: array<D.t>,
   radius?: string,
   rearLength?: string,
-  topWidth?: string,
+  topWidth?: float,
 }
 type plotGaugePivotOptions = {
   backgroundColor?: ColorType.t,
@@ -10879,7 +10910,7 @@ module SeriesOptionsType = {
   external fromSeriesZigzagOptions: seriesZigzagOptions => t = "%identity"
 }
 type svgAttributes = {
-  d?: CommonTypes.stringOrValueArray,
+  d?: stringOrDTArray,
   dx?: float,
   dy?: float,
   fill?: ColorType.t,
