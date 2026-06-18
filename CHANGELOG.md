@@ -7,6 +7,22 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [1.2.4] — 2026-06-18
+
+A fidelity fix for single-array-of-mixed-union props. No CLI/API changes.
+
+### Fixed
+- **A single `(A | B | C)[]` array of a mixed enum/record union regressed to `string`** (#65 follow-up).
+  When a library simplifies `A[] | B[] | C[] | (A|B|C)[]` to just `(A|B|C)[]` (blend did this to
+  DateRangePicker's `PresetsConfig`), 1.2.3 emitted `~customPresets: string` instead of the faithful
+  `array<…PresetsConfig.t>` opaque module. The single-array form took a different path than the
+  union-of-arrays form and got stuck in `unionNode`'s `isStructured` gate (its record arms are
+  `type X = {…}` aliases → `__type` symbol). Now the array branch binds an element union with ≥2
+  object/array arms via `opaqueUnion` directly, named after the array's alias — so both forms produce
+  the **identical** binding. Also upgrades `DataTable.columns` (`ColumnDefinition<T>[]`: `string` →
+  faithful module) and similar array-of-union props (MultiSelect / SingleSelect / Skeleton / Timeline /
+  Upload). Fixture: `union-of-arrays` (`presetsSingle`).
+
 ## [1.2.3] — 2026-06-18
 
 A fidelity fix for deep SVG-path-data props. No CLI/API changes.
