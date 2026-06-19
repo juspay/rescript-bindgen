@@ -2,7 +2,7 @@
 external make: (
   ~data: array<'a>,
   ~columns: array<DataTableTypes.ColumnDefinition.t>,  // ⓘ was `ColumnDefinition<T>` — opaque; build with ColumnDefinition.fromDataTableColumnsConfig / ColumnDefinition.fromDataTableColumnsConfig2 / ColumnDefinition.fromDataTableColumnsConfig3 / ColumnDefinition.fromDataTableColumnsConfig4 / ColumnDefinition.fromDataTableColumnsConfig5 / ColumnDefinition.fromDataTableColumnsConfig6 / ColumnDefinition.fromDataTableColumnsConfig7 / ColumnDefinition.fromDataTableColumnsConfig8 / ColumnDefinition.fromDataTableColumnsConfig9 / ColumnDefinition.fromDataTableColumnsConfig10
-  ~idField: string,  // ⚪ loose — was `keyof T`
+  ~idField: string,
   ~title: string=?,
   ~description: string=?,
   ~descriptionTooltipProps: DataTableTypes.dataTableDescriptionTooltipPropsConfig=?,
@@ -26,7 +26,7 @@ external make: (
   ~enableColumnReordering: bool=?,
   ~onColumnReorder: array<DataTableTypes.ColumnDefinition.t> => unit=?,  // ⓘ was `ColumnDefinition<T>` — opaque; build with ColumnDefinition.fromDataTableColumnsConfig / ColumnDefinition.fromDataTableColumnsConfig2 / ColumnDefinition.fromDataTableColumnsConfig3 / ColumnDefinition.fromDataTableColumnsConfig4 / ColumnDefinition.fromDataTableColumnsConfig5 / ColumnDefinition.fromDataTableColumnsConfig6 / ColumnDefinition.fromDataTableColumnsConfig7 / ColumnDefinition.fromDataTableColumnsConfig8 / ColumnDefinition.fromDataTableColumnsConfig9 / ColumnDefinition.fromDataTableColumnsConfig10
   ~columnManagerMaxSelections: float=?,
-  ~columnManagerAlwaysSelected: string=?,  // ⚪ loose — was `(keyof T)[]`
+  ~columnManagerAlwaysSelected: array<string>=?,
   ~columnManagerPrimaryAction: DataTableTypes.dataTableColumnManagerPrimaryActionConfig=?,
   ~columnManagerSecondaryAction: DataTableTypes.dataTableColumnManagerSecondaryActionConfig=?,
   ~columnManagerWidth: float=?,
@@ -48,7 +48,7 @@ external make: (
   ~onRowSave: (JSON.t, 'a) => unit=?,
   ~onRowCancel: JSON.t => unit=?,
   ~onRowClick: ('a, float) => unit=?,
-  ~onFieldChange: (JSON.t, 'b, JSON.t) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
+  ~onFieldChange: (JSON.t, string, JSON.t) => unit=?,
   ~enableRowExpansion: bool=?,
   ~renderExpandedRow: DataTableTypes.dataTableRenderExpandedRowConfig<'a> => React.element=?,
   ~isRowExpandable: ('a, float) => bool=?,
