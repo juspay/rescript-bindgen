@@ -7,6 +7,31 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [1.2.5-beta.0] — 2026-06-19
+
+A **beta** prerelease (npm `beta` dist-tag) with three more shape-collapse fidelity fixes for
+`@juspay/blend-design-system@0.0.37-beta.5`. No CLI/API changes. Promotes to stable `1.2.5` on the
+next Monday release.
+
+### Fixed
+- **Three array/object props still collapsed to bare `string`** (#79, follow-up to #77). Each is a
+  distinct pattern, now bound to its faithful type:
+  - `(keyof T)[]` → **`array<string>`** (was a flat `string`). `keyof T` is an index type with no
+    `classify` handler, so the whole prop went opaque; a key is a string at runtime, so an index type
+    now maps to `string` and the array survives. (`DataTable.columnManagerAlwaysSelected`)
+  - `React.ComponentProps<'div'>` / `DetailedHTMLProps<HTMLAttributes<…>, …>` → **`JsxDOM.domProps`**
+    (was `string`). The all-DOM-attrs escape only matched `HTMLAttributes` on the inner name; now the
+    `DetailedHTMLProps` / `ComponentProps` / `ComponentPropsWith(out)Ref` wrappers are recognized.
+    (`StatCardV2NoData.filteredProps`)
+  - `Rec | Rec[]` where the object arm is an **intersection** (`A & {…}`) → an **opaque module**
+    (`fromRec` / `fromRecs`), was `string`. An intersection has no own `getSymbol()`, so it was dropped
+    from the union's structured arms; it's now counted by its properties. (`TextInputV2.dropdown`)
+
+  Blast radius audited — zero regressions: base-ui byte-identical (the structured-arm change is gated to
+  intersections, so `number | Partial<{…}>` stays loose, not review); other 6 benchmark packages
+  unchanged; the full beta.5 output compiles (0 broken, 0 review, 209/209 usable). Fixture:
+  `shape-collapse`.
+
 ## [1.2.4] — 2026-06-18
 
 A fidelity fix for single-array-of-mixed-union props. No CLI/API changes.
