@@ -1636,11 +1636,24 @@ function classify(type, ctx, propName = '', depth = 0) {
     // `bigint` is a first-class ReScript 12 type (`Stdlib_BigInt`, `123n` literals). A bigint
     // LITERAL (`123n`) folds into the `bigint` type — ReScript has no `@as` for bigint literals.
     if (flags & (ts.TypeFlags.BigInt | ts.TypeFlags.BigIntLiteral)) return { kind: 'bigint' }
+    // `keyof T` (an index type, incl. over a generic param) — a key is a string at runtime. Mapping it
+    // to `string` keeps an array faithful: `(keyof T)[]` → `array<string>` (without this it classified
+    // opaque, and the whole prop collapsed to a flat `string`). (#79)
+    if (flags & ts.TypeFlags.Index) return { kind: 'string' }
 
     // CSS property values (csstype) are correctly `string`, not a loose fallback.
     if (isCssType(type)) return { kind: 'string' }
 
     const name = typeName(type)
+    // React's "all DOM attributes of an element" wrappers — `ComponentProps<'div'>` (resolves to
+    // `DetailedHTMLProps<HTMLAttributes<…>, …>`) and `ComponentPropsWith(out)Ref` — are exactly the
+    // DOM-attribute bag `JsxDOM.domProps` already models. Map them so a prop typed
+    // `React.ComponentProps<'div'>` is `JsxDOM.domProps`, not a flagged `string`. (#79)
+    // (`HTMLProps` is deliberately NOT included — base-ui uses it for render-prop params already modelled
+    // as a record; mapping it here would churn ~180 files beyond this fix's scope.)
+    if (name && /^(DetailedHTMLProps|ComponentProps|ComponentPropsWithRef|ComponentPropsWithoutRef)$/.test(name)) {
+        return { kind: 'raw', res: 'JsxDOM.domProps' }
+    }
     // Remember the most recent ALIAS on the way down, so an `any` leaf deep inside it
     // (`AccordionValue = (any | null)[]` -> array -> union -> any) can key its implicit
     // type variable by the alias that carried it. (#31)
@@ -2719,8 +2732,13 @@ function unionNode(type, ctx, propName, depth = 0) {
         const structuredParts = parts.filter((t) => {
             if (isTaggedTuple(t)) return true // tagged tuple arm (#72)
             if (asArray(t, checker)) return true
+            // An INTERSECTION object (`TextInputV2Dropdown = SingleSelectV2Props & { position }`) usually
+            // has no `getSymbol()` of its own (only an aliasSymbol), so it was dropped here — leaving an
+            // `Obj | Obj[]` union with just 1 structured part → `string`. Count it by its properties so
+            // `Obj | Obj[]` reaches `opaqueUnion`. (#79)
+            if (t.flags & ts.TypeFlags.Intersection) return (t.getProperties && t.getProperties().length) > 0
             const s = t.getSymbol && t.getSymbol()
-            return (t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) && s && t.getProperties().length
+            return (t.flags & ts.TypeFlags.Object) && s && t.getProperties().length
         })
         if (structuredParts.length >= 2) {
             const opaque = opaqueUnion(ctx, type, unionMembers(checker, type), propName, depth, retViewOpts(ctx, propName, hadNullish))

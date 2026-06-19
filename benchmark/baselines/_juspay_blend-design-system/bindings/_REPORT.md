@@ -101,7 +101,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - CodeBlock
 - CodeEditor
 - CoreChart
-- DataTable  _(2 loose)_
+- DataTable
 - DateRangePicker
 - Directory
 - Drawer
@@ -173,10 +173,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 
 These resolved to a real but complex type and were widened to `string` (they compile and work). Grouped by type so you can review each pattern once — confirm `string` is acceptable, or it may deserve a tighter mapping.
 
-| Resolved TypeScript type | → emitted | count | example props |
-|--------------------------|-----------|-------|---------------|
-| `keyof T` | `string` | 1 | idField |
-| `(keyof T)[]` | `string` | 1 | columnManagerAlwaysSelected |
+_(none)_
 
 ## 🔍 Needs review
 
