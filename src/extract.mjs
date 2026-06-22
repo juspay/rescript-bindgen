@@ -1749,6 +1749,15 @@ function classify(type, ctx, propName = '', depth = 0) {
     // and the field goes opaque, poisoning its record (probe I-1/I-6). (#30)
     if (name && /Event$/.test(name) && isWebPlatformDecl(type)) return { kind: 'raw', res: 'Dom.event' }
 
+    // A React synthetic event TYPE in ANY position (param / return / field), not only an `on*`
+    // handler prop — e.g. `createStubAnchorClickEvent(): React.MouseEvent<…>` -> `ReactEvent.Mouse.t`.
+    // The REACT_EVENTS map was previously consulted only in the handler paths (sigToMembers /
+    // functionNode), so a bare event type elsewhere went opaque -> `string`. Gated to React's
+    // @types/react declarations: a DOM `MouseEvent` is lib.dom and already became `Dom.event` above,
+    // so `!isWebPlatformDecl` leaves it untouched (never hijacks the native event). (#83)
+    if (name && Object.prototype.hasOwnProperty.call(REACT_EVENTS, name) && isLibraryType(type) && !isWebPlatformDecl(type))
+        return { kind: 'event', res: REACT_EVENTS[name] }
+
     // `Promise<T>` -> `promise<t>` (ReScript built-in). Handled here so async APIs
     // (`json(): Promise<unknown>`, `arrayBuffer(): Promise<ArrayBuffer>`) type as real
     // promises instead of falling to the library-object gate; an unresolvable `T` still
@@ -1810,13 +1819,21 @@ function classify(type, ctx, propName = '', depth = 0) {
 
     // Fixed-arity tuple `[number, number]` -> ReScript tuple `(float, float)`. Only a plain
     // fixed tuple of ≥2 elements: ReScript tuples can't express a variadic/rest tuple
-    // (`[number, ...string[]]`), an optional element (`[number, number?]`), or a 1-tuple (no
-    // 1-tuples in ReScript — `[ReactNode?]` stays the flagged fallback / fn route). Elements go in
-    // `params` so every type-tree walker traverses them for free. (#65 B5)
+    // (`[number, ...string[]]`) or an optional element (`[number, number?]`) — those stay the
+    // flagged fallback. A 1-tuple (`[T]` / `[T?]`) has no ReScript tuple form either, but it IS
+    // faithfully an `array<T>` (a 0-or-1 sequence — `getItemSlots(): [ReactNode?]` →
+    // `array<React.element>`), so map it there instead of collapsing the whole thing to `string`.
+    // Elements go in `params` so every type-tree walker traverses them for free. (#65 B5, #83)
     if (checker.isTupleType?.(type)) {
         const tref = type.target || type
         const variadic = (tref.elementFlags || []).some((f) => f & (ts.ElementFlags.Rest | ts.ElementFlags.Variadic | ts.ElementFlags.Optional))
         const elems = checker.getTypeArguments(type) || []
+        if (elems.length === 1) {
+            const prevAE = ctx.inArrayElem; ctx.inArrayElem = true
+            const of = classify(elems[0], ctx, propName, depth + 1)
+            ctx.inArrayElem = prevAE
+            return { kind: 'array', of }
+        }
         if (!variadic && elems.length >= 2) {
             const prevAE = ctx.inArrayElem; ctx.inArrayElem = true
             const params = elems.map((e) => classify(e, ctx, propName, depth + 1))
@@ -2490,6 +2507,27 @@ function unionNode(type, ctx, propName, depth = 0) {
         const symName = armSym(parts[0]).getName()
         const named = (aliasName && /^[A-Z]/.test(aliasName)) ? aliasName : (/^[A-Z]/.test(symName || '') ? symName : null)
         return recordNode(type, ctx, propName, depth, named)
+    }
+
+    // A union of ANONYMOUS object literals that all share an IDENTICAL key set — e.g. useSkeletonBase's
+    // return `{shouldRender,fallback:ReactNode,tokens:null,…} | {…,fallback:null,tokens:SkeletonTokensType,…}`.
+    // Each anonymous `{…}` has its OWN `__type` symbol (so the same-generic-record collapse above, which
+    // needs a SHARED symbol, misses them), and `isStructured` rejects `__type` objects → the union fell
+    // to opaque → `string`. With identical keys they ARE one record whose fields are unioned across arms;
+    // collapse via recordNode (the checker unions each field → `fallback: ReactNode|null`,
+    // `tokens: null|Tokens` → option fields). Narrow gate (all anon objects + identical keys) keeps a
+    // mixed `number | Partial<{…}>` out — arm 1 isn't an object. (#83)
+    const isAnonObj = (t) => {
+        if (checker.isArrayType?.(t)) return false
+        if (t.getCallSignatures && t.getCallSignatures().length) return false
+        if (!(t.flags & ts.TypeFlags.Object)) return false
+        const s = t.getSymbol && t.getSymbol()
+        return !!(s && s.getName() === '__type' && t.getProperties().length)
+    }
+    if (parts.length >= 2 && parts.every(isAnonObj)) {
+        const keysOf = (t) => t.getProperties().map((p) => p.getName()).sort().join(',')
+        const k0 = keysOf(parts[0])
+        if (parts.every((t) => keysOf(t) === k0)) return recordNode(type, ctx, propName, depth)
     }
 
     // String-literal union -> `@as` variant. Also covers the `"a" | "b" | (string & {})`

@@ -4,5 +4,5 @@ external make: (
   ~pair: (string, float)=?,
   ~variadic: string=?,  // ⚪ loose — was `[number, ...string[]]`
   ~optionalEl: string=?,  // ⚪ loose — was `[number, number?]`
-  ~single: string=?,  // ⚪ loose — was `[number]`
+  ~single: array<float>=?,
 ) => React.element = "Widget"

@@ -63,7 +63,7 @@ external make: (
   ~onDayMouseLeave: (Date.t, Dict.t<bool>, ReactEvent.Mouse.t) => unit=?,
   ~dateLib: LocaleSharedTypes.classesOverridesConfig=?,
   ~selected: Date.t=?,
-  ~onSelect: (Date.t, Date.t, Dict.t<bool>, 'a) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
+  ~onSelect: (Date.t, Date.t, Dict.t<bool>, LocaleSharedTypes.OnSelect.t) => unit=?,  // ⓘ was `MouseEvent<Element, MouseEvent> | KeyboardEvent<Element>` — opaque; build with OnSelect.fromMouseEvent / OnSelect.fromKeyboardEvent
   ~min: float=?,
   ~max: float=?,
   ~excludeDisabled: bool=?,

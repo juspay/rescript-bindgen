@@ -16,7 +16,7 @@
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- Widget  _(3 loose)_
+- Widget  _(2 loose)_
 
 ## ⚪ Loosely typed (widened to `string`)
 
@@ -26,7 +26,6 @@ These resolved to a real but complex type and were widened to `string` (they com
 |--------------------------|-----------|-------|---------------|
 | `[number, ...string[]]` | `string` | 1 | variadic |
 | `[number, number?]` | `string` | 1 | optionalEl |
-| `[number]` | `string` | 1 | single |
 
 ## 🔍 Needs review
 

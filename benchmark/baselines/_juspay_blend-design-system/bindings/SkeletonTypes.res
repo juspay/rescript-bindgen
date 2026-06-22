@@ -9,12 +9,6 @@ type skeletonShape =
 type shape =
   | @as("circle") Circle
   | @as("square") Square
-type skeletonValueConfig = {
-  shouldRender: bool,
-  fallback: React.element,
-  tokens: string,
-  prefersReducedMotion: bool,
-}
 type skeletonAnimationConfig = {
   duration: string,
   timingFunction: string,
@@ -44,14 +38,10 @@ type skeletonAvatarConfig = {
   md: string,
   lg: string,
 }
-type skeletonSmConfig = {
-  height: string,
-  minWidth: string,
-}
 type skeletonButtonConfig = {
-  sm: skeletonSmConfig,
-  md: skeletonSmConfig,
-  lg: skeletonSmConfig,
+  sm: skeletonTextConfig,
+  md: skeletonTextConfig,
+  lg: skeletonTextConfig,
 }
 type skeletonSizesConfig = {
   text: skeletonTextConfig,
@@ -65,13 +55,13 @@ type skeletonTokensType = {
   spacing: skeletonSpacingConfig,
   sizes: skeletonSizesConfig,
 }
-type skeletonValueConfig2 = {
+type skeletonValueConfig = {
   shouldRender: bool,
-  fallback: string,
+  fallback: React.element,
   tokens: skeletonTokensType,
   prefersReducedMotion: bool,
 }
-type skeletonValueConfig3 = {
+type skeletonValueConfig2 = {
   shouldShowSkeleton: bool,
   shouldShowContent: bool,
 }

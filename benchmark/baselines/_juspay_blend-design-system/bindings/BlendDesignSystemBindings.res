@@ -37,9 +37,8 @@
 @module("@juspay/blend-design-system") external getSliderLabelStyles: (~position: SliderTypes.position=?, unit) => SliderTypes.sliderCSSProperties = "getSliderLabelStyles"
 @module("@juspay/blend-design-system") external getProgressBarTokens: (TokensTypes.foundationTokenType) => ProgressBarTypes.responsiveProgressBarTokens = "getProgressBarTokens"
 @module("@juspay/blend-design-system") external getStepperTokens: (TokensTypes.foundationTokenType) => StepperTypes.responsiveStepperTokens = "getStepperTokens"
-// ⚪ loose: `useSkeletonBase` has a param/return widened to `string`.
-@module("@juspay/blend-design-system") external useSkeletonBase: (bool, ~children: React.element=?, unit) => string = "useSkeletonBase"
-@module("@juspay/blend-design-system") external getSkeletonState: (bool) => SkeletonTypes.skeletonValueConfig3 = "getSkeletonState"
+@module("@juspay/blend-design-system") external useSkeletonBase: (bool, ~children: React.element=?, unit) => SkeletonTypes.skeletonValueConfig = "useSkeletonBase"
+@module("@juspay/blend-design-system") external getSkeletonState: (bool) => SkeletonTypes.skeletonValueConfig2 = "getSkeletonState"
 @module("@juspay/blend-design-system") external mergeSkeletonProps: ('a, ~skeletonProps: JSON.t=?, unit) => JSON.t = "mergeSkeletonProps"
 // ⚪ loose: `getSkeletonDefaults` has a param/return widened to `string`.
 @module("@juspay/blend-design-system") external getSkeletonDefaults: ('a, Dict.t<string>) => 'a = "getSkeletonDefaults"
