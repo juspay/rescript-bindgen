@@ -7,6 +7,30 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [1.2.6-beta.0] — 2026-06-25
+
+A **beta** prerelease (npm `beta` dist-tag) fixing standalone-function shape-collapse for
+`@juspay/blend-design-system@0.0.37-beta.6`. No CLI/API changes. Promotes to stable `1.2.6` on the
+next Monday release.
+
+### Fixed
+- **Standalone function exports collapsed object/array/event param & return types to `string`** (#83) —
+  the same shape-collapse family as the component-prop fixes, but in function param/return position.
+  Three cases now bind faithfully:
+  - a **React synthetic event** type in any position (not just `on*` handlers) → `ReactEvent.*.t`;
+    `createStubAnchorClickEvent(): React.MouseEvent<…>` → `(string) => ReactEvent.Mouse.t`. Gated to
+    `@types/react` decls, so a **DOM** `MouseEvent` still maps to `Dom.event`.
+  - a union of **same-keyed anonymous object literals** → one merged record (`useSkeletonBase`'s
+    return), instead of `string`. Narrow gate (all anonymous + identical keys) leaves a mixed
+    `number | Partial<{…}>` untouched.
+  - a **1-tuple** `[T]` / `[T?]` → `array<T>` (ReScript has no 1-tuples; a 0-or-1 sequence is an
+    array); `getItemSlots(): [ReactNode?]` → `array<React.element>`.
+
+  A param that is an entire external module namespace (`configureLanguageDefaults(monaco: typeof
+  import('monaco-editor'))`) stays an honest `string` (flag-don't-fake). Blast radius audited: base-ui
+  byte-identical, other 6 benchmark packages equal-or-better, full blend output compiles. Fixtures:
+  `fn-exports`, `tuples`.
+
 ## [1.2.5-beta.0] — 2026-06-19
 
 A **beta** prerelease (npm `beta` dist-tag) with three more shape-collapse fidelity fixes for
