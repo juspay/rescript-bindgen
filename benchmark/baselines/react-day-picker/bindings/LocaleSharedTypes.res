@@ -599,6 +599,11 @@ module Select = {
   external fromDates: array<Date.t> => t = "%identity"
   external fromDateRange: dateRange => t = "%identity"
 }
+module OnSelect = {
+  type t
+  external fromMouseEvent: ReactEvent.Mouse.t => t = "%identity"
+  external fromKeyboardEvent: ReactEvent.Keyboard.t => t = "%identity"
+}
 type customComponents = {
   @as("Chevron") chevron: ComponentsTypes.componentsChevronConfig => Dom.element,
   @as("CaptionLabel") captionLabel: ReactTypes.htmlAttributes => Dom.element,
@@ -744,7 +749,7 @@ type dayPickerContext = {
   goToMonth: Date.t => unit,
   getModifiers: calendarDay2 => Dict.t<bool>,
   selected?: string,
-  select?: (Date.t, Dict.t<bool>, string) => Select.t,
+  select?: (Date.t, Dict.t<bool>, OnSelect.t) => Select.t,
   isSelected?: Date.t => bool,
   components: customComponents,
   classNames: classNames,

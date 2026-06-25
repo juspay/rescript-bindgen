@@ -127,6 +127,10 @@ function renderType(t, propName, cfg) {
         case 'string': return 'string'
         // verbatim ReScript type (e.g. aria poly variants from JsxDOM) — passed through as-is
         case 'raw': return t.res
+        // a React synthetic event type (`ReactEvent.Mouse.t`, …) reached in a NON-handler position —
+        // a function return/field. Handler params special-case 'event' inline; this makes it render
+        // anywhere renderType is used (e.g. a standalone fn's return). (#83)
+        case 'event': return t.res
         // untagged-variant members force float (JS can't untag int vs float)
         case 'number': return t._float ? 'float' : numberType(propName)
         case 'boolean': return 'bool'
