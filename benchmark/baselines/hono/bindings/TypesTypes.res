@@ -62,13 +62,13 @@ type router = {
   add: (string, string, ((InstanceTypes.context, unit => string) => string, routerRoute)) => unit,
   match: (string, string) => string,
 }
-type typesGetPathConfig = {
+type typesHonoOptionsGetPathConfig = {
   env?: string,
 }
 type honoOptions = {
   strict?: bool,
   router?: router,
-  getPath?: (WebTypes.request, option<typesGetPathConfig>) => string,
+  getPath?: (WebTypes.request, option<typesHonoOptionsGetPathConfig>) => string,
 }
 type httpResponseError = {
   ...JsxDOM.domProps,

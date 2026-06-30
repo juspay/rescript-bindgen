@@ -1,4 +1,4 @@
-type tokensShadowsConfig = {
+type tokensFoundationTokenTypeShadowsConfig = {
   xs: string,
   sm: string,
   md: string,
@@ -9,7 +9,7 @@ type tokensShadowsConfig = {
   focusPrimary: string,
   focusError: string,
 }
-type tokensWidthConfig = {
+type tokensFoundationTokenTypeBorderWidthConfig = {
   @as("0") _0: string,
   @as("1") _1: string,
   @as("1.5") _1_5: string,
@@ -17,7 +17,7 @@ type tokensWidthConfig = {
   @as("3") _3: string,
   @as("4") _4: string,
 }
-type tokensRadiusConfig = {
+type tokensFoundationTokenTypeBorderRadiusConfig = {
   @as("0") _0: string,
   @as("2") _2: string,
   @as("4") _4: string,
@@ -29,17 +29,17 @@ type tokensRadiusConfig = {
   @as("20") _20: string,
   full: string,
 }
-type tokensBorderConfig = {
-  width: tokensWidthConfig,
-  radius: tokensRadiusConfig,
+type tokensFoundationTokenTypeBorderConfig = {
+  width: tokensFoundationTokenTypeBorderWidthConfig,
+  radius: tokensFoundationTokenTypeBorderRadiusConfig,
 }
-type tokensFamilyConfig = {
+type tokensFoundationTokenTypeFontFamilyConfig = {
   display: string,
   body: string,
   heading: string,
   mono: string,
 }
-type tokensWeightConfig = {
+type tokensFoundationTokenTypeFontWeightConfig = {
   @as("100") _100: string,
   @as("200") _200: string,
   @as("300") _300: string,
@@ -50,14 +50,14 @@ type tokensWeightConfig = {
   @as("800") _800: string,
   @as("900") _900: string,
 }
-type tokensLetterSpacingConfig = {
+type tokensFoundationTokenTypeFontLetterSpacingConfig = {
   compressed: string,
   condensed: string,
   normal: string,
   expanded: string,
   extended: string,
 }
-type tokensFontSizeConfig = {
+type tokensFoundationTokenTypeFontFontSizeConfig = {
   @as("10") _10: string,
   @as("12") _12: string,
   @as("14") _14: string,
@@ -85,7 +85,7 @@ type tokensFontSizeConfig = {
   @as("96") _96: string,
   @as("100") _100: string,
 }
-type tokensLineHeightConfig = {
+type tokensFoundationTokenTypeFontLineHeightConfig = {
   @as("12") _12: string,
   @as("14") _14: string,
   @as("16") _16: string,
@@ -112,51 +112,51 @@ type tokensLineHeightConfig = {
   @as("96") _96: string,
   @as("100") _100: string,
 }
-type tokensXsConfig = {
+type tokensFoundationTokenTypeFontSizeBodyXsConfig = {
   fontSize: string,
   lineHeight: string,
   letterSpacing: string,
 }
-type tokensBodyConfig = {
-  xs: tokensXsConfig,
-  sm: tokensXsConfig,
-  md: tokensXsConfig,
-  lg: tokensXsConfig,
+type tokensFoundationTokenTypeFontSizeBodyConfig = {
+  xs: tokensFoundationTokenTypeFontSizeBodyXsConfig,
+  sm: tokensFoundationTokenTypeFontSizeBodyXsConfig,
+  md: tokensFoundationTokenTypeFontSizeBodyXsConfig,
+  lg: tokensFoundationTokenTypeFontSizeBodyXsConfig,
 }
-type tokensHeadingConfig = {
-  sm: tokensXsConfig,
-  md: tokensXsConfig,
-  lg: tokensXsConfig,
-  xl: tokensXsConfig,
-  @as("2xl") _2xl: tokensXsConfig,
+type tokensFoundationTokenTypeFontSizeHeadingConfig = {
+  sm: tokensFoundationTokenTypeFontSizeBodyXsConfig,
+  md: tokensFoundationTokenTypeFontSizeBodyXsConfig,
+  lg: tokensFoundationTokenTypeFontSizeBodyXsConfig,
+  xl: tokensFoundationTokenTypeFontSizeBodyXsConfig,
+  @as("2xl") _2xl: tokensFoundationTokenTypeFontSizeBodyXsConfig,
 }
-type tokensDisplayConfig = {
-  sm: tokensXsConfig,
-  md: tokensXsConfig,
-  lg: tokensXsConfig,
-  xl: tokensXsConfig,
+type tokensFoundationTokenTypeFontSizeDisplayConfig = {
+  sm: tokensFoundationTokenTypeFontSizeBodyXsConfig,
+  md: tokensFoundationTokenTypeFontSizeBodyXsConfig,
+  lg: tokensFoundationTokenTypeFontSizeBodyXsConfig,
+  xl: tokensFoundationTokenTypeFontSizeBodyXsConfig,
 }
-type tokensCodeConfig = {
-  sm: tokensXsConfig,
-  md: tokensXsConfig,
-  lg: tokensXsConfig,
+type tokensFoundationTokenTypeFontSizeCodeConfig = {
+  sm: tokensFoundationTokenTypeFontSizeBodyXsConfig,
+  md: tokensFoundationTokenTypeFontSizeBodyXsConfig,
+  lg: tokensFoundationTokenTypeFontSizeBodyXsConfig,
 }
-type tokensSizeConfig = {
+type tokensFoundationTokenTypeFontSizeConfig = {
   base: string,
-  body: tokensBodyConfig,
-  heading: tokensHeadingConfig,
-  display: tokensDisplayConfig,
-  code: tokensCodeConfig,
+  body: tokensFoundationTokenTypeFontSizeBodyConfig,
+  heading: tokensFoundationTokenTypeFontSizeHeadingConfig,
+  display: tokensFoundationTokenTypeFontSizeDisplayConfig,
+  code: tokensFoundationTokenTypeFontSizeCodeConfig,
 }
-type tokensFontConfig = {
-  family: tokensFamilyConfig,
-  weight: tokensWeightConfig,
-  letterSpacing: tokensLetterSpacingConfig,
-  fontSize: tokensFontSizeConfig,
-  lineHeight: tokensLineHeightConfig,
-  size: tokensSizeConfig,
+type tokensFoundationTokenTypeFontConfig = {
+  family: tokensFoundationTokenTypeFontFamilyConfig,
+  weight: tokensFoundationTokenTypeFontWeightConfig,
+  letterSpacing: tokensFoundationTokenTypeFontLetterSpacingConfig,
+  fontSize: tokensFoundationTokenTypeFontFontSizeConfig,
+  lineHeight: tokensFoundationTokenTypeFontLineHeightConfig,
+  size: tokensFoundationTokenTypeFontSizeConfig,
 }
-type tokensOpacityConfig = {
+type tokensFoundationTokenTypeOpacityConfig = {
   @as("0") _0: string,
   @as("5") _5: string,
   @as("10") _10: string,
@@ -170,7 +170,7 @@ type tokensOpacityConfig = {
   @as("90") _90: string,
   @as("100") _100: string,
 }
-type tokensUnitConfig = {
+type tokensFoundationTokenTypeUnitConfig = {
   @as("0") _0: string,
   @as("0.5") _0_5: string,
   @as("1") _1: string,
@@ -216,7 +216,7 @@ type colorTokensType = {
   green: Dict.t<string>,
   yellow: Dict.t<string>,
 }
-type tokensZIndexConfig = {
+type tokensFoundationTokenTypeZIndexConfig = {
   @as("0") _0: string,
   @as("9999") _9999: string,
   @as("1000") _1000: string,
@@ -224,11 +224,11 @@ type tokensZIndexConfig = {
   @as("1200") _1200: string,
 }
 type foundationTokenType = {
-  shadows: tokensShadowsConfig,
-  border: tokensBorderConfig,
-  font: tokensFontConfig,
-  opacity: tokensOpacityConfig,
-  unit: tokensUnitConfig,
+  shadows: tokensFoundationTokenTypeShadowsConfig,
+  border: tokensFoundationTokenTypeBorderConfig,
+  font: tokensFoundationTokenTypeFontConfig,
+  opacity: tokensFoundationTokenTypeOpacityConfig,
+  unit: tokensFoundationTokenTypeUnitConfig,
   colors: colorTokensType,
-  zIndex: tokensZIndexConfig,
+  zIndex: tokensFoundationTokenTypeZIndexConfig,
 }

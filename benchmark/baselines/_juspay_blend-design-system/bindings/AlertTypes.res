@@ -16,20 +16,20 @@ type alertAction = {
   label: string,
   onClick: unit => unit,
 }
-type alertPrimaryConfig = {
+type alertAlertTokenTypeBackgroundPrimaryConfig = {
   subtle: string,
   noFill: string,
 }
-type alertBackgroundConfig = {
-  primary: alertPrimaryConfig,
-  success: alertPrimaryConfig,
-  warning: alertPrimaryConfig,
-  error: alertPrimaryConfig,
-  purple: alertPrimaryConfig,
-  orange: alertPrimaryConfig,
-  neutral: alertPrimaryConfig,
+type alertAlertTokenTypeBackgroundConfig = {
+  primary: alertAlertTokenTypeBackgroundPrimaryConfig,
+  success: alertAlertTokenTypeBackgroundPrimaryConfig,
+  warning: alertAlertTokenTypeBackgroundPrimaryConfig,
+  error: alertAlertTokenTypeBackgroundPrimaryConfig,
+  purple: alertAlertTokenTypeBackgroundPrimaryConfig,
+  orange: alertAlertTokenTypeBackgroundPrimaryConfig,
+  neutral: alertAlertTokenTypeBackgroundPrimaryConfig,
 }
-type alertColorConfig = {
+type alertAlertTokenTypeTextHeadingColorConfig = {
   primary: string,
   success: string,
   warning: string,
@@ -38,21 +38,21 @@ type alertColorConfig = {
   orange: string,
   neutral: string,
 }
-type alertHeadingConfig = {
-  color: alertColorConfig,
+type alertAlertTokenTypeTextHeadingConfig = {
+  color: alertAlertTokenTypeTextHeadingColorConfig,
   fontWeight: string,
   fontSize: string,
   lineHeight: string,
 }
-type alertTextConfig = {
-  heading: alertHeadingConfig,
-  description: alertHeadingConfig,
+type alertAlertTokenTypeTextConfig = {
+  heading: alertAlertTokenTypeTextHeadingConfig,
+  description: alertAlertTokenTypeTextHeadingConfig,
 }
-type alertButtonConfig = {
+type alertAlertTokenTypeButtonConfig = {
   gap: string,
-  primaryAction: alertHeadingConfig,
-  secondaryAction: alertHeadingConfig,
-  closeButton: alertHeadingConfig,
+  primaryAction: alertAlertTokenTypeTextHeadingConfig,
+  secondaryAction: alertAlertTokenTypeTextHeadingConfig,
+  closeButton: alertAlertTokenTypeTextHeadingConfig,
 }
 type alertTokenType = {
   width: string,
@@ -61,10 +61,10 @@ type alertTokenType = {
   gap: string,
   padding: string,
   borderRadius: string,
-  background: alertBackgroundConfig,
-  border: alertBackgroundConfig,
-  text: alertTextConfig,
-  button: alertButtonConfig,
+  background: alertAlertTokenTypeBackgroundConfig,
+  border: alertAlertTokenTypeBackgroundConfig,
+  text: alertAlertTokenTypeTextConfig,
+  button: alertAlertTokenTypeButtonConfig,
 }
 type responsiveAlertTokens = {
   sm: alertTokenType,

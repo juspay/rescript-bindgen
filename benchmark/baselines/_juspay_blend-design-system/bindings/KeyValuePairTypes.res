@@ -9,31 +9,31 @@ type textOverflowMode =
   | @as("wrap") Wrap
   | @as("truncate") Truncate
   | @as("wrap-clamp") WrapClamp
-type keyValuePairGapConfig = {
+type keyValuePairKeyValuePairTokensTypeGapConfig = {
   horizontal: string,
   vertical: string,
 }
-type keyValuePairKeyConfig = {
+type keyValuePairKeyValuePairTokensTypeKeyConfig = {
   color: string,
   fontSize: string,
   fontWeight: string,
   gap: string,
 }
-type keyValuePairFontSizeConfig = {
+type keyValuePairKeyValuePairTokensTypeValueFontSizeConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type keyValuePairValueConfig = {
+type keyValuePairKeyValuePairTokensTypeValueConfig = {
   color: string,
-  fontSize: keyValuePairFontSizeConfig,
+  fontSize: keyValuePairKeyValuePairTokensTypeValueFontSizeConfig,
   fontWeight: string,
   gap: string,
 }
 type keyValuePairTokensType = {
-  gap: keyValuePairGapConfig,
-  key: keyValuePairKeyConfig,
-  value: keyValuePairValueConfig,
+  gap: keyValuePairKeyValuePairTokensTypeGapConfig,
+  key: keyValuePairKeyValuePairTokensTypeKeyConfig,
+  value: keyValuePairKeyValuePairTokensTypeValueConfig,
 }
 type responsiveKeyValuePairTokens = {
   sm: keyValuePairTokensType,

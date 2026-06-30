@@ -13,7 +13,7 @@ type menuSide =
   | @as("left") Left
   | @as("right") Right
   | @as("bottom") Bottom
-type menuTooltipPropsConfig = {
+type menuMenuItemTypeTooltipPropsConfig = {
   side?: TooltipTypes.tooltipSide,
   align?: TooltipTypes.tooltipAlign,
   size?: TooltipTypes.tooltipSize,
@@ -36,7 +36,7 @@ type rec menuItemType = {
   enableSubMenuSearch?: bool,
   subMenuSearchPlaceholder?: string,
   tooltip?: React.element,
-  tooltipProps?: menuTooltipPropsConfig,
+  tooltipProps?: menuMenuItemTypeTooltipPropsConfig,
   enableSubMenuVirtualScrolling?: bool,
   subMenuVirtualItemHeight?: float,
   subMenuVirtualOverscan?: float,
@@ -52,11 +52,11 @@ type menuSkeletonProps = {
   show?: bool,
   variant?: SkeletonTypes.skeletonVariant,
 }
-type menuPaddingConfig = {
+type menuMenuTokensTypePaddingConfig = {
   x: string,
   y: string,
 }
-type menuEnabledConfig = {
+type menuMenuTokensTypeItemBackgroundColorDefaultEnabledConfig = {
   disabled: string,
   default: string,
   hover: string,
@@ -64,65 +64,65 @@ type menuEnabledConfig = {
   focus: string,
   focusVisible: string,
 }
-type menuDefaultConfig = {
-  enabled: menuEnabledConfig,
-  disabled: menuEnabledConfig,
+type menuMenuTokensTypeItemBackgroundColorDefaultConfig = {
+  enabled: menuMenuTokensTypeItemBackgroundColorDefaultEnabledConfig,
+  disabled: menuMenuTokensTypeItemBackgroundColorDefaultEnabledConfig,
 }
-type menuPrimaryConfig = {
+type menuMenuTokensTypeItemBackgroundColorActionPrimaryConfig = {
   enabled: string,
   disabled: string,
 }
-type menuActionConfig = {
-  primary: menuPrimaryConfig,
-  danger: menuPrimaryConfig,
+type menuMenuTokensTypeItemBackgroundColorActionConfig = {
+  primary: menuMenuTokensTypeItemBackgroundColorActionPrimaryConfig,
+  danger: menuMenuTokensTypeItemBackgroundColorActionPrimaryConfig,
 }
-type menuBackgroundColorConfig = {
-  default: menuDefaultConfig,
-  action: menuActionConfig,
+type menuMenuTokensTypeItemBackgroundColorConfig = {
+  default: menuMenuTokensTypeItemBackgroundColorDefaultConfig,
+  action: menuMenuTokensTypeItemBackgroundColorActionConfig,
 }
-type menuOptionsLabelConfig = {
+type menuMenuTokensTypeItemOptionsLabelConfig = {
   fontSize: string,
   fontWeight: string,
   color: string,
-  padding: menuPaddingConfig,
-  margin: menuPaddingConfig,
+  padding: menuMenuTokensTypePaddingConfig,
+  margin: menuMenuTokensTypePaddingConfig,
 }
-type menuActionConfig2 = {
-  primary: menuPrimaryConfig,
-  danger: menuPrimaryConfig,
+type menuMenuTokensTypeItemOptionColorActionConfig = {
+  primary: string,
+  danger: string,
 }
-type menuColorConfig = {
-  default: menuPrimaryConfig,
-  action: menuActionConfig2,
+type menuMenuTokensTypeItemOptionColorConfig = {
+  default: menuMenuTokensTypeItemBackgroundColorActionPrimaryConfig,
+  action: menuMenuTokensTypeItemOptionColorActionConfig,
 }
-type menuOptionConfig = {
+type menuMenuTokensTypeItemOptionConfig = {
   fontSize: string,
   fontWeight: string,
-  color: menuColorConfig,
+  color: menuMenuTokensTypeItemOptionColorConfig,
 }
-type menuSeperatorConfig = {
+type menuMenuTokensTypeItemSeperatorConfig = {
   color: string,
   height: string,
-  margin: menuPaddingConfig,
+  margin: menuMenuTokensTypePaddingConfig,
 }
-type menuItemConfig = {
-  padding: menuPaddingConfig,
-  margin: menuPaddingConfig,
+type menuMenuTokensTypeItemConfig = {
+  padding: menuMenuTokensTypePaddingConfig,
+  margin: menuMenuTokensTypePaddingConfig,
   borderRadius: string,
-  backgroundColor: menuBackgroundColorConfig,
+  backgroundColor: menuMenuTokensTypeItemBackgroundColorConfig,
   gap: string,
-  optionsLabel: menuOptionsLabelConfig,
-  option: menuOptionConfig,
-  description: menuOptionConfig,
-  seperator: menuSeperatorConfig,
+  optionsLabel: menuMenuTokensTypeItemOptionsLabelConfig,
+  option: menuMenuTokensTypeItemOptionConfig,
+  description: menuMenuTokensTypeItemOptionConfig,
+  seperator: menuMenuTokensTypeItemSeperatorConfig,
 }
 type menuTokensType = {
   boxShadow: string,
   backgroundColor: string,
-  padding: menuPaddingConfig,
+  padding: menuMenuTokensTypePaddingConfig,
   border: string,
   borderRadius: string,
-  item: menuItemConfig,
+  item: menuMenuTokensTypeItemConfig,
 }
 type responsiveMenuTokensType = {
   sm: menuTokensType,

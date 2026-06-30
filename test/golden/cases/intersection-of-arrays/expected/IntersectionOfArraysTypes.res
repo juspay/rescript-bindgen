@@ -6,12 +6,12 @@ type group = {
   groupLabel?: string,
   items: array<item>,
 }
-type intersectionOfArraysItemsConfig = {
+type intersectionOfArraysDataItemsConfig = {
   value: string,
   label: string,
   nestedItems?: array<group>,
 }
 type intersectionOfArraysDataConfig = {
   groupLabel?: string,
-  items: array<intersectionOfArraysItemsConfig>,
+  items: array<intersectionOfArraysDataItemsConfig>,
 }

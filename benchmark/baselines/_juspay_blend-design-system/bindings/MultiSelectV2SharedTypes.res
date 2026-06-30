@@ -7,17 +7,17 @@ type stateToken2 = {
   focusVisible: string,
   selected: string,
 }
-type multiSelectV2LabelConfig = {
+type multiSelectV2MultiSelectV2TokensTypeLabelConfig = {
   fontSize: string,
   fontWeight: string,
   color: stateToken2,
 }
-type multiSelectV2ErrorMessageConfig = {
+type multiSelectV2MultiSelectV2TokensTypeErrorMessageConfig = {
   fontSize: string,
   fontWeight: string,
   color: string,
 }
-type multiSelectV2RequiredConfig = {
+type multiSelectV2MultiSelectV2TokensTypeRequiredConfig = {
   color: string,
 }
 type variantToken4 = {
@@ -29,15 +29,15 @@ type sizeToken3 = {
   md: variantToken4,
   lg: variantToken4,
 }
-type multiSelectV2ContainerConfig = {
+type multiSelectV2VariantTokenContainerConfig = {
   top: string,
   right: string,
   bottom: string,
   left: string,
 }
 type variantToken5 = {
-  container: multiSelectV2ContainerConfig,
-  @as("no-container") noContainer: multiSelectV2ContainerConfig,
+  container: multiSelectV2VariantTokenContainerConfig,
+  @as("no-container") noContainer: multiSelectV2VariantTokenContainerConfig,
 }
 type sizeToken4 = {
   sm: variantToken5,
@@ -55,11 +55,11 @@ type variantToken6 = {
   container: triggerStateToken2,
   @as("no-container") noContainer: triggerStateToken2,
 }
-type multiSelectV2SlotConfig = {
+type multiSelectV2MultiSelectV2TokensTypeTriggerSlotConfig = {
   gap: string,
   width: string,
 }
-type multiSelectV2CountConfig = {
+type multiSelectV2SelectionTagTypeTokenCountConfig = {
   color: string,
   backgroundColor: string,
   fontWeight: string,
@@ -69,71 +69,71 @@ type multiSelectV2CountConfig = {
   paddingLeft: string,
 }
 type selectionTagTypeToken = {
-  count: multiSelectV2CountConfig,
-  text: multiSelectV2CountConfig,
+  count: multiSelectV2SelectionTagTypeTokenCountConfig,
+  text: multiSelectV2SelectionTagTypeTokenCountConfig,
 }
-type contextSelectionTagConfig = {
+type contextMultiSelectV2TokensTypeTriggerSelectionTagConfig = {
   container: selectionTagTypeToken,
   @as("no-container") noContainer: selectionTagTypeToken,
   marginLeft: string,
   borderRadius: string,
 }
-type multiSelectV2ChevronConfig = {
+type multiSelectV2MultiSelectV2TokensTypeTriggerChevronConfig = {
   gap: string,
   width: string,
   height: string,
   iconSize?: float,
 }
-type multiSelectV2ClearButtonConfig = {
+type multiSelectV2MultiSelectV2TokensTypeTriggerClearButtonConfig = {
   backgroundColor: triggerStateToken2,
   outline: triggerStateToken2,
   color: string,
   width?: string,
 }
-type multiSelectV2FloatingLabelConfig = {
+type multiSelectV2MultiSelectV2TokensTypeTriggerFloatingLabelConfig = {
   paddingTop: string,
   paddingRight: string,
   paddingBottom: string,
   paddingLeft: string,
 }
-type multiSelectV2PlaceholderConfig = {
+type multiSelectV2MultiSelectV2TokensTypeTriggerPlaceholderConfig = {
   color: string,
   fontSize: string,
   fontWeight: string,
 }
-type multiSelectV2TriggerConfig = {
+type multiSelectV2MultiSelectV2TokensTypeTriggerConfig = {
   height: sizeToken3,
   padding: sizeToken4,
   borderRadius: sizeToken3,
   boxShadow: variantToken4,
   backgroundColor: variantToken6,
   outline: variantToken6,
-  slot: multiSelectV2SlotConfig,
-  selectionTag: contextSelectionTagConfig,
-  chevron: multiSelectV2ChevronConfig,
-  clearButton?: multiSelectV2ClearButtonConfig,
-  floatingLabel: multiSelectV2FloatingLabelConfig,
-  placeholder: multiSelectV2PlaceholderConfig,
-  selectedValue: multiSelectV2PlaceholderConfig,
+  slot: multiSelectV2MultiSelectV2TokensTypeTriggerSlotConfig,
+  selectionTag: contextMultiSelectV2TokensTypeTriggerSelectionTagConfig,
+  chevron: multiSelectV2MultiSelectV2TokensTypeTriggerChevronConfig,
+  clearButton?: multiSelectV2MultiSelectV2TokensTypeTriggerClearButtonConfig,
+  floatingLabel: multiSelectV2MultiSelectV2TokensTypeTriggerFloatingLabelConfig,
+  placeholder: multiSelectV2MultiSelectV2TokensTypeTriggerPlaceholderConfig,
+  selectedValue: multiSelectV2MultiSelectV2TokensTypeTriggerPlaceholderConfig,
 }
-type multiSelectV2ScrollConfig = {
+type multiSelectV2MultiSelectV2TokensTypeMenuScrollConfig = {
   height: string,
   maxHeight: string,
 }
-type multiSelectV2HeaderConfig = {
+type multiSelectV2MultiSelectV2TokensTypeMenuHeaderConfig = {
   backgroundColor: string,
   borderBottom: string,
   selectAllRowPaddingLeft: string,
   selectAllRowPaddingRight: string,
 }
-type multiSelectV2SelectAllConfig = {
+type multiSelectV2MultiSelectV2TokensTypeMenuSelectAllConfig = {
   paddingTop: string,
   paddingRight: string,
   paddingBottom: string,
   paddingLeft: string,
   borderRadius: string,
 }
-type multiSelectV2ActionsConfig = {
+type multiSelectV2MultiSelectV2TokensTypeMenuActionsConfig = {
   paddingTop: string,
   paddingRight: string,
   paddingBottom: string,
@@ -142,7 +142,7 @@ type multiSelectV2ActionsConfig = {
   backgroundColor: string,
   borderTop: string,
 }
-type multiSelectV2OptionsLabelConfig = {
+type multiSelectV2MultiSelectV2TokensTypeMenuItemOptionsLabelConfig = {
   fontSize: string,
   fontWeight: string,
   color: stateToken2,
@@ -151,12 +151,12 @@ type multiSelectV2OptionsLabelConfig = {
   paddingBottom: string,
   paddingLeft: string,
 }
-type multiSelectV2SeperatorConfig = {
+type multiSelectV2MultiSelectV2TokensTypeMenuItemSeperatorConfig = {
   color: string,
   height: string,
   margin: string,
 }
-type multiSelectV2ItemConfig = {
+type multiSelectV2MultiSelectV2TokensTypeMenuItemConfig = {
   paddingTop: string,
   paddingRight: string,
   paddingBottom: string,
@@ -165,25 +165,25 @@ type multiSelectV2ItemConfig = {
   borderRadius: string,
   gap: string,
   backgroundColor: stateToken2,
-  optionsLabel: multiSelectV2OptionsLabelConfig,
-  option: multiSelectV2LabelConfig,
-  description: multiSelectV2LabelConfig,
-  seperator: multiSelectV2SeperatorConfig,
+  optionsLabel: multiSelectV2MultiSelectV2TokensTypeMenuItemOptionsLabelConfig,
+  option: multiSelectV2MultiSelectV2TokensTypeLabelConfig,
+  description: multiSelectV2MultiSelectV2TokensTypeLabelConfig,
+  seperator: multiSelectV2MultiSelectV2TokensTypeMenuItemSeperatorConfig,
 }
-type multiSelectV2MenuConfig = {
+type multiSelectV2MultiSelectV2TokensTypeMenuConfig = {
   backgroundColor: string,
   border: string,
   borderRadius: string,
   padding: sizeToken4,
   minWidth: string,
-  scroll: multiSelectV2ScrollConfig,
-  header: multiSelectV2HeaderConfig,
-  selectAll: multiSelectV2SelectAllConfig,
-  list: multiSelectV2FloatingLabelConfig,
-  actions: multiSelectV2ActionsConfig,
-  item: multiSelectV2ItemConfig,
+  scroll: multiSelectV2MultiSelectV2TokensTypeMenuScrollConfig,
+  header: multiSelectV2MultiSelectV2TokensTypeMenuHeaderConfig,
+  selectAll: multiSelectV2MultiSelectV2TokensTypeMenuSelectAllConfig,
+  list: multiSelectV2MultiSelectV2TokensTypeTriggerFloatingLabelConfig,
+  actions: multiSelectV2MultiSelectV2TokensTypeMenuActionsConfig,
+  item: multiSelectV2MultiSelectV2TokensTypeMenuItemConfig,
 }
-type multiSelectV2TriggerConfig2 = {
+type multiSelectV2MultiSelectV2TokensTypeSubMenuTriggerConfig = {
   paddingTop: string,
   paddingRight: string,
   paddingBottom: string,
@@ -191,25 +191,25 @@ type multiSelectV2TriggerConfig2 = {
   margin: string,
   borderRadius: string,
 }
-type multiSelectV2ContentConfig = {
+type multiSelectV2MultiSelectV2TokensTypeSubMenuContentConfig = {
   borderRadius: string,
   paddingTop: string,
   paddingRight: string,
   paddingBottom: string,
   paddingLeft: string,
 }
-type multiSelectV2SubMenuConfig = {
-  trigger: multiSelectV2TriggerConfig2,
-  content: multiSelectV2ContentConfig,
+type multiSelectV2MultiSelectV2TokensTypeSubMenuConfig = {
+  trigger: multiSelectV2MultiSelectV2TokensTypeSubMenuTriggerConfig,
+  content: multiSelectV2MultiSelectV2TokensTypeSubMenuContentConfig,
 }
-type multiSelectV2HeaderConfig2 = {
+type multiSelectV2MultiSelectV2TokensTypeDrawerHeaderConfig = {
   paddingTop: string,
   paddingRight: string,
   paddingBottom: string,
   paddingLeft: string,
   borderBottom: string,
 }
-type multiSelectV2SearchConfig = {
+type multiSelectV2MultiSelectV2TokensTypeDrawerSearchConfig = {
   paddingTop: string,
   paddingRight: string,
   paddingBottom: string,
@@ -217,25 +217,25 @@ type multiSelectV2SearchConfig = {
   marginTop: string,
   marginBottom: string,
 }
-type multiSelectV2ContentConfig2 = {
+type multiSelectV2MultiSelectV2TokensTypeDrawerContentConfig = {
   gap: string,
 }
-type multiSelectV2DrawerConfig = {
-  header: multiSelectV2HeaderConfig2,
-  search: multiSelectV2SearchConfig,
-  content: multiSelectV2ContentConfig2,
+type multiSelectV2MultiSelectV2TokensTypeDrawerConfig = {
+  header: multiSelectV2MultiSelectV2TokensTypeDrawerHeaderConfig,
+  search: multiSelectV2MultiSelectV2TokensTypeDrawerSearchConfig,
+  content: multiSelectV2MultiSelectV2TokensTypeDrawerContentConfig,
 }
 type multiSelectV2TokensType = {
   gap: string,
-  label: multiSelectV2LabelConfig,
-  subLabel: multiSelectV2LabelConfig,
-  hintText: multiSelectV2LabelConfig,
-  errorMessage: multiSelectV2ErrorMessageConfig,
-  required: multiSelectV2RequiredConfig,
-  trigger: multiSelectV2TriggerConfig,
-  menu: multiSelectV2MenuConfig,
-  subMenu: multiSelectV2SubMenuConfig,
-  drawer: multiSelectV2DrawerConfig,
+  label: multiSelectV2MultiSelectV2TokensTypeLabelConfig,
+  subLabel: multiSelectV2MultiSelectV2TokensTypeLabelConfig,
+  hintText: multiSelectV2MultiSelectV2TokensTypeLabelConfig,
+  errorMessage: multiSelectV2MultiSelectV2TokensTypeErrorMessageConfig,
+  required: multiSelectV2MultiSelectV2TokensTypeRequiredConfig,
+  trigger: multiSelectV2MultiSelectV2TokensTypeTriggerConfig,
+  menu: multiSelectV2MultiSelectV2TokensTypeMenuConfig,
+  subMenu: multiSelectV2MultiSelectV2TokensTypeSubMenuConfig,
+  drawer: multiSelectV2MultiSelectV2TokensTypeDrawerConfig,
 }
 type responsiveMultiSelectV2Tokens = {
   sm: multiSelectV2TokensType,
@@ -303,7 +303,7 @@ type componentTokenType = {
   @as("RADIOV2") rADIOV2?: SelectorV2Types.responsiveRadioV2Tokens,
   @as("POPOVERV2") pOPOVERV2?: PopoverV2Types.responsivePopoverV2Tokens,
 }
-type contextComponentTokensConfig = {
+type contextThemeContextTypeComponentTokensConfig = {
   @as("TAGS") tAGS: TagsTypes.responsiveTagTokens,
   @as("SEARCH_INPUT") sEARCH_INPUT: InputsTypes.responsiveSearchInputTokens,
   @as("TEXT_AREA") tEXT_AREA: InputsTypes.responsiveTextAreaTokens,
@@ -367,7 +367,7 @@ type contextComponentTokensConfig = {
 }
 type themeContextType = {
   foundationTokens: TokensTypes.foundationTokenType,
-  componentTokens: contextComponentTokensConfig,
+  componentTokens: contextThemeContextTypeComponentTokensConfig,
   breakpoints: BreakpointsTypes.breakpointType,
   theme: string,
 }

@@ -24,13 +24,13 @@ type step = {
   isExpandable?: bool,
   isExpanded?: bool,
 }
-type stepperDefaultConfig = {
+type stepperStepperTokensTypeContainerDefaultConfig = {
   gap: string,
 }
-type stepperContainerConfig = {
-  default: stepperDefaultConfig,
+type stepperStepperTokensTypeContainerConfig = {
+  default: stepperStepperTokensTypeContainerDefaultConfig,
 }
-type stepperDisabledConfig = {
+type stepperStepperTokensTypeStepCircleCompletedDisabledConfig = {
   backgroundColor: string,
   borderColor: string,
   borderWidth: string,
@@ -40,80 +40,80 @@ type stepperDisabledConfig = {
   outline: string,
   outlineOffset: string,
 }
-type stepperCompletedConfig = {
-  disabled: stepperDisabledConfig,
-  default: stepperDisabledConfig,
-  hover: stepperDisabledConfig,
-  focus: stepperDisabledConfig,
+type stepperStepperTokensTypeStepCircleCompletedConfig = {
+  disabled: stepperStepperTokensTypeStepCircleCompletedDisabledConfig,
+  default: stepperStepperTokensTypeStepCircleCompletedDisabledConfig,
+  hover: stepperStepperTokensTypeStepCircleCompletedDisabledConfig,
+  focus: stepperStepperTokensTypeStepCircleCompletedDisabledConfig,
 }
-type stepperCircleConfig = {
-  completed: stepperCompletedConfig,
-  current: stepperCompletedConfig,
-  pending: stepperCompletedConfig,
-  disabled: stepperCompletedConfig,
-  skipped: stepperCompletedConfig,
+type stepperStepperTokensTypeStepCircleConfig = {
+  completed: stepperStepperTokensTypeStepCircleCompletedConfig,
+  current: stepperStepperTokensTypeStepCircleCompletedConfig,
+  pending: stepperStepperTokensTypeStepCircleCompletedConfig,
+  disabled: stepperStepperTokensTypeStepCircleCompletedConfig,
+  skipped: stepperStepperTokensTypeStepCircleCompletedConfig,
 }
-type stepperDisabledConfig2 = {
+type stepperStepperTokensTypeStepIconCompletedDisabledConfig = {
   color: string,
 }
-type stepperCompletedConfig2 = {
-  disabled: stepperDisabledConfig2,
-  default: stepperDisabledConfig2,
-  hover: stepperDisabledConfig2,
-  focus: stepperDisabledConfig2,
+type stepperStepperTokensTypeStepIconCompletedConfig = {
+  disabled: stepperStepperTokensTypeStepIconCompletedDisabledConfig,
+  default: stepperStepperTokensTypeStepIconCompletedDisabledConfig,
+  hover: stepperStepperTokensTypeStepIconCompletedDisabledConfig,
+  focus: stepperStepperTokensTypeStepIconCompletedDisabledConfig,
 }
-type stepperIconConfig = {
-  completed: stepperCompletedConfig2,
-  current: stepperCompletedConfig2,
-  pending: stepperCompletedConfig2,
-  disabled: stepperCompletedConfig2,
-  skipped: stepperCompletedConfig2,
+type stepperStepperTokensTypeStepIconConfig = {
+  completed: stepperStepperTokensTypeStepIconCompletedConfig,
+  current: stepperStepperTokensTypeStepIconCompletedConfig,
+  pending: stepperStepperTokensTypeStepIconCompletedConfig,
+  disabled: stepperStepperTokensTypeStepIconCompletedConfig,
+  skipped: stepperStepperTokensTypeStepIconCompletedConfig,
 }
-type stepperStepConfig = {
-  circle: stepperCircleConfig,
-  icon: stepperIconConfig,
+type stepperStepperTokensTypeStepConfig = {
+  circle: stepperStepperTokensTypeStepCircleConfig,
+  icon: stepperStepperTokensTypeStepIconConfig,
 }
-type stepperDefaultConfig2 = {
+type stepperStepperTokensTypeConnectorLineActiveDefaultConfig = {
   color: string,
   height: string,
 }
-type stepperActiveConfig = {
-  default: stepperDefaultConfig2,
+type stepperStepperTokensTypeConnectorLineActiveConfig = {
+  default: stepperStepperTokensTypeConnectorLineActiveDefaultConfig,
 }
-type stepperLineConfig = {
-  active: stepperActiveConfig,
-  inactive: stepperActiveConfig,
+type stepperStepperTokensTypeConnectorLineConfig = {
+  active: stepperStepperTokensTypeConnectorLineActiveConfig,
+  inactive: stepperStepperTokensTypeConnectorLineActiveConfig,
 }
-type stepperConnectorConfig = {
-  line: stepperLineConfig,
+type stepperStepperTokensTypeConnectorConfig = {
+  line: stepperStepperTokensTypeConnectorLineConfig,
 }
-type stepperDisabledConfig3 = {
+type stepperStepperTokensTypeTitleTextCompletedDisabledConfig = {
   color: string,
   fontSize: string,
   fontWeight: string,
   gap: string,
 }
-type stepperCompletedConfig3 = {
-  disabled: stepperDisabledConfig3,
-  default: stepperDisabledConfig3,
-  hover: stepperDisabledConfig3,
-  focus: stepperDisabledConfig3,
+type stepperStepperTokensTypeTitleTextCompletedConfig = {
+  disabled: stepperStepperTokensTypeTitleTextCompletedDisabledConfig,
+  default: stepperStepperTokensTypeTitleTextCompletedDisabledConfig,
+  hover: stepperStepperTokensTypeTitleTextCompletedDisabledConfig,
+  focus: stepperStepperTokensTypeTitleTextCompletedDisabledConfig,
 }
-type stepperTextConfig = {
-  completed: stepperCompletedConfig3,
-  current: stepperCompletedConfig3,
-  pending: stepperCompletedConfig3,
-  disabled: stepperCompletedConfig3,
-  skipped: stepperCompletedConfig3,
+type stepperStepperTokensTypeTitleTextConfig = {
+  completed: stepperStepperTokensTypeTitleTextCompletedConfig,
+  current: stepperStepperTokensTypeTitleTextCompletedConfig,
+  pending: stepperStepperTokensTypeTitleTextCompletedConfig,
+  disabled: stepperStepperTokensTypeTitleTextCompletedConfig,
+  skipped: stepperStepperTokensTypeTitleTextCompletedConfig,
 }
-type stepperTitleConfig = {
-  text: stepperTextConfig,
+type stepperStepperTokensTypeTitleConfig = {
+  text: stepperStepperTokensTypeTitleTextConfig,
 }
 type stepperTokensType = {
-  container: stepperContainerConfig,
-  step: stepperStepConfig,
-  connector: stepperConnectorConfig,
-  title: stepperTitleConfig,
+  container: stepperStepperTokensTypeContainerConfig,
+  step: stepperStepperTokensTypeStepConfig,
+  connector: stepperStepperTokensTypeConnectorConfig,
+  title: stepperStepperTokensTypeTitleConfig,
 }
 type responsiveStepperTokens = {
   sm: stepperTokensType,

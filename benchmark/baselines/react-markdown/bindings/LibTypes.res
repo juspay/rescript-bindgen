@@ -73,7 +73,7 @@ type state = {
   patch: (string, string) => unit,
   wrap: (array<string>, option<bool>) => array<string>,
 }
-type libRemarkRehypeOptionsConfig = {
+type libMarkdownAsyncOptionsRemarkRehypeOptionsConfig = {
   allowDangerousHtml?: Nullable.t<bool>,
   clobberPrefix?: Nullable.t<string>,
   footnoteBackContent?: string,
@@ -85,7 +85,7 @@ type libRemarkRehypeOptionsConfig = {
   passThrough?: Nullable.t<array<passThrough>>,
   unknownHandler?: Nullable.t<(state, string, string) => string>,
 }
-type libOptionsConfig = {
+type libMarkdownAsyncOptionsConfig = {
   allowElement?: Nullable.t<(string, float, HastTypes.readonly) => bool>,
   allowedElements?: Nullable.t<array<string>>,
   children?: Nullable.t<string>,
@@ -93,7 +93,7 @@ type libOptionsConfig = {
   disallowedElements?: Nullable.t<array<string>>,
   rehypePlugins?: Nullable.t<array<string>>,
   remarkPlugins?: Nullable.t<array<string>>,
-  remarkRehypeOptions?: Nullable.t<libRemarkRehypeOptionsConfig>,
+  remarkRehypeOptions?: Nullable.t<libMarkdownAsyncOptionsRemarkRehypeOptionsConfig>,
   skipHtml?: Nullable.t<bool>,
   unwrapDisallowed?: Nullable.t<bool>,
   urlTransform?: Nullable.t<(string, string, string) => Nullable.t<string>>,

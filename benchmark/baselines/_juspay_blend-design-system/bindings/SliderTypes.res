@@ -25,17 +25,17 @@ type sliderValueFormatConfig = {
   showLabels?: bool,
   formatter?: float => string,
 }
-type sliderHoverConfig = {
+type sliderSliderCSSPropertiesHoverConfig = {
   boxShadow?: string,
 }
-type sliderFocusConfig = {
+type sliderSliderCSSPropertiesFocusConfig = {
   outline?: string,
   boxShadow?: string,
 }
-type sliderActiveConfig = {
+type sliderSliderCSSPropertiesActiveConfig = {
   cursor?: string,
 }
-type sliderDisabledConfig = {
+type sliderSliderCSSPropertiesDisabledConfig = {
   cursor?: string,
   opacity?: CommonTypes.stringOrNumber,
 }
@@ -897,11 +897,11 @@ type sliderCSSProperties = {
   colorInterpolation?: string,
   colorRendering?: string,
   glyphOrientationVertical?: string,
-  @as("&:hover") __hover?: sliderHoverConfig,
-  @as("&:focus") __focus?: sliderFocusConfig,
-  @as("&:focus-visible") __focusVisible?: sliderFocusConfig,
-  @as("&:active") __active?: sliderActiveConfig,
-  @as("&:disabled") __disabled?: sliderDisabledConfig,
+  @as("&:hover") __hover?: sliderSliderCSSPropertiesHoverConfig,
+  @as("&:focus") __focus?: sliderSliderCSSPropertiesFocusConfig,
+  @as("&:focus-visible") __focusVisible?: sliderSliderCSSPropertiesFocusConfig,
+  @as("&:active") __active?: sliderSliderCSSPropertiesActiveConfig,
+  @as("&:disabled") __disabled?: sliderSliderCSSPropertiesDisabledConfig,
 }
 type sliderTokenStyles = {
   root: sliderCSSProperties,
@@ -909,19 +909,19 @@ type sliderTokenStyles = {
   range: sliderCSSProperties,
   thumb: sliderCSSProperties,
 }
-type sliderOptionsConfig = {
+type sliderCreateSliderRangeOptionsConfig = {
   prefix?: string,
   suffix?: string,
   decimalPlaces?: float,
 }
-type sliderValueConfig = {
+type sliderCreateSliderRangeConfig = {
   min: float,
   max: float,
   step: float,
   defaultValue: array<float>,
   valueFormat: sliderValueFormatConfig,
 }
-type sliderOptionsConfig2 = {
+type sliderBuildThumbAriaAttributesOptionsConfig = {
   min: float,
   max: float,
   value: float,

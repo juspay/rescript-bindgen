@@ -11,84 +11,84 @@ type cardSkeletonProps = {
   height?: string,
   width?: string,
 }
-type cardDefaultConfig = {
+type cardCardTokenTypePaddingDefaultConfig = {
   x: string,
   y: string,
 }
-type cardPaddingConfig = {
-  default: cardDefaultConfig,
-  aligned: cardDefaultConfig,
+type cardCardTokenTypePaddingConfig = {
+  default: cardCardTokenTypePaddingDefaultConfig,
+  aligned: cardCardTokenTypePaddingDefaultConfig,
   custom: string,
 }
-type cardTitleConfig = {
+type cardCardTokenTypeHeaderTextTitleConfig = {
   fontSize: string,
   fontWeight: string,
   color: string,
   gap: string,
 }
-type cardSubTitleConfig = {
+type cardCardTokenTypeHeaderTextSubTitleConfig = {
   fontSize: string,
   fontWeight: string,
   color: string,
 }
-type cardTextConfig = {
-  title: cardTitleConfig,
-  subTitle: cardSubTitleConfig,
+type cardCardTokenTypeHeaderTextConfig = {
+  title: cardCardTokenTypeHeaderTextTitleConfig,
+  subTitle: cardCardTokenTypeHeaderTextSubTitleConfig,
   gap: string,
 }
-type cardDefaultConfig2 = {
+type cardCardTokenTypeHeaderDefaultConfig = {
   backgroundColor: string,
-  padding: cardDefaultConfig,
+  padding: cardCardTokenTypePaddingDefaultConfig,
   borderBottom: string,
 }
-type cardHeaderConfig = {
-  text: cardTextConfig,
-  default: cardDefaultConfig2,
+type cardCardTokenTypeHeaderConfig = {
+  text: cardCardTokenTypeHeaderTextConfig,
+  default: cardCardTokenTypeHeaderDefaultConfig,
   aligned: string,
   custom: string,
 }
-type cardPaddingConfig2 = {
-  default: cardDefaultConfig,
+type cardCardTokenTypeBodyPaddingConfig = {
+  default: cardCardTokenTypePaddingDefaultConfig,
   aligned: string,
   custom: string,
 }
-type cardGapConfig = {
+type cardCardTokenTypeBodyGapConfig = {
   default: string,
   aligned: string,
   custom: string,
 }
-type cardContentConfig = {
+type cardCardTokenTypeBodyTextContentConfig = {
   fontSize: string,
   color: string,
   fontWeight: string,
 }
-type cardTextConfig2 = {
-  title: cardSubTitleConfig,
-  content: cardContentConfig,
+type cardCardTokenTypeBodyTextConfig = {
+  title: cardCardTokenTypeHeaderTextSubTitleConfig,
+  content: cardCardTokenTypeBodyTextContentConfig,
   gap: string,
 }
-type cardActionsConfig = {
+type cardCardTokenTypeBodyActionsConfig = {
   gap: string,
   centerAlignGap: string,
 }
-type cardCardSlotConfig = {
+type cardCardTokenTypeBodyAlignmentAlignedCardSlotConfig = {
   vertical: string,
   horizontal: string,
 }
-type cardAlignedConfig = {
-  cardSlot: cardCardSlotConfig,
+type cardCardTokenTypeBodyAlignmentAlignedConfig = {
+  cardSlot: cardCardTokenTypeBodyAlignmentAlignedCardSlotConfig,
 }
-type cardAlignmentConfig = {
-  aligned: cardAlignedConfig,
+type cardCardTokenTypeBodyAlignmentConfig = {
+  aligned: cardCardTokenTypeBodyAlignmentAlignedConfig,
   default: string,
   custom: string,
 }
-type cardBodyConfig = {
-  padding: cardPaddingConfig2,
-  gap: cardGapConfig,
-  text: cardTextConfig2,
-  actions: cardActionsConfig,
-  alignment: cardAlignmentConfig,
+type cardCardTokenTypeBodyConfig = {
+  padding: cardCardTokenTypeBodyPaddingConfig,
+  gap: cardCardTokenTypeBodyGapConfig,
+  text: cardCardTokenTypeBodyTextConfig,
+  actions: cardCardTokenTypeBodyActionsConfig,
+  alignment: cardCardTokenTypeBodyAlignmentConfig,
 }
 type cardTokenType = {
   maxWidth: string,
@@ -96,9 +96,9 @@ type cardTokenType = {
   border: string,
   boxShadow: string,
   backgroundColor: string,
-  padding: cardPaddingConfig,
-  header: cardHeaderConfig,
-  body: cardBodyConfig,
+  padding: cardCardTokenTypePaddingConfig,
+  header: cardCardTokenTypeHeaderConfig,
+  body: cardCardTokenTypeBodyConfig,
 }
 type responsiveCardTokens = {
   sm: cardTokenType,

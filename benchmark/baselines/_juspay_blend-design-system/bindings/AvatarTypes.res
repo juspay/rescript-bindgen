@@ -14,79 +14,79 @@ type avatarSkeletonConfig = {
   show: bool,
   variant?: SkeletonTypes.skeletonVariant,
 }
-type avatarSmConfig = {
+type avatarAvatarTokensTypeContainerSizeSmConfig = {
   width: string,
   height: string,
 }
-type avatarSizeConfig = {
-  sm: avatarSmConfig,
-  regular: avatarSmConfig,
-  md: avatarSmConfig,
-  lg: avatarSmConfig,
-  xl: avatarSmConfig,
+type avatarAvatarTokensTypeContainerSizeConfig = {
+  sm: avatarAvatarTokensTypeContainerSizeSmConfig,
+  regular: avatarAvatarTokensTypeContainerSizeSmConfig,
+  md: avatarAvatarTokensTypeContainerSizeSmConfig,
+  lg: avatarAvatarTokensTypeContainerSizeSmConfig,
+  xl: avatarAvatarTokensTypeContainerSizeSmConfig,
 }
-type avatarWithImageConfig = {
+type avatarAvatarTokensTypeContainerBackgroundColorWithImageConfig = {
   default: string,
   online: string,
 }
-type avatarBackgroundColorConfig = {
-  withImage: avatarWithImageConfig,
-  withoutImage: avatarWithImageConfig,
+type avatarAvatarTokensTypeContainerBackgroundColorConfig = {
+  withImage: avatarAvatarTokensTypeContainerBackgroundColorWithImageConfig,
+  withoutImage: avatarAvatarTokensTypeContainerBackgroundColorWithImageConfig,
 }
-type avatarBorderRadiusConfig = {
+type avatarAvatarTokensTypeContainerBorderRadiusConfig = {
   circular: string,
   rounded: string,
 }
-type avatarContainerConfig = {
-  size: avatarSizeConfig,
-  backgroundColor: avatarBackgroundColorConfig,
-  border: avatarBackgroundColorConfig,
-  borderRadius: avatarBorderRadiusConfig,
+type avatarAvatarTokensTypeContainerConfig = {
+  size: avatarAvatarTokensTypeContainerSizeConfig,
+  backgroundColor: avatarAvatarTokensTypeContainerBackgroundColorConfig,
+  border: avatarAvatarTokensTypeContainerBackgroundColorConfig,
+  borderRadius: avatarAvatarTokensTypeContainerBorderRadiusConfig,
 }
-type avatarFontSizeConfig = {
+type avatarAvatarTokensTypeTextFontSizeConfig = {
   sm: string,
   regular: string,
   md: string,
   lg: string,
   xl: string,
 }
-type avatarTextConfig = {
-  color: avatarWithImageConfig,
-  fontSize: avatarFontSizeConfig,
-  fontWeight: avatarFontSizeConfig,
+type avatarAvatarTokensTypeTextConfig = {
+  color: avatarAvatarTokensTypeContainerBackgroundColorWithImageConfig,
+  fontSize: avatarAvatarTokensTypeTextFontSizeConfig,
+  fontWeight: avatarAvatarTokensTypeTextFontSizeConfig,
 }
-type avatarDefaultConfig = {
+type avatarAvatarTokensTypeIndicatorBorderSmDefaultConfig = {
   color: string,
   width: string,
 }
-type avatarSmConfig2 = {
-  default: avatarDefaultConfig,
-  online: avatarDefaultConfig,
+type avatarAvatarTokensTypeIndicatorBorderSmConfig = {
+  default: avatarAvatarTokensTypeIndicatorBorderSmDefaultConfig,
+  online: avatarAvatarTokensTypeIndicatorBorderSmDefaultConfig,
 }
-type avatarBorderConfig = {
-  sm: avatarSmConfig2,
-  regular: avatarSmConfig2,
-  md: avatarSmConfig2,
-  lg: avatarSmConfig2,
-  xl: avatarSmConfig2,
+type avatarAvatarTokensTypeIndicatorBorderConfig = {
+  sm: avatarAvatarTokensTypeIndicatorBorderSmConfig,
+  regular: avatarAvatarTokensTypeIndicatorBorderSmConfig,
+  md: avatarAvatarTokensTypeIndicatorBorderSmConfig,
+  lg: avatarAvatarTokensTypeIndicatorBorderSmConfig,
+  xl: avatarAvatarTokensTypeIndicatorBorderSmConfig,
 }
-type avatarIndicatorConfig = {
-  backgroundColor: avatarWithImageConfig,
-  border: avatarBorderConfig,
-  size: avatarSizeConfig,
+type avatarAvatarTokensTypeIndicatorConfig = {
+  backgroundColor: avatarAvatarTokensTypeContainerBackgroundColorWithImageConfig,
+  border: avatarAvatarTokensTypeIndicatorBorderConfig,
+  size: avatarAvatarTokensTypeContainerSizeConfig,
   borderRadius: string,
   boxShadow: string,
 }
-type avatarSlotConfig = {
+type avatarAvatarTokensTypeSlotConfig = {
   spacing: string,
-  color: avatarWithImageConfig,
+  color: avatarAvatarTokensTypeContainerBackgroundColorWithImageConfig,
 }
 type avatarTokensType = {
   gap: string,
-  container: avatarContainerConfig,
-  text: avatarTextConfig,
-  indicator: avatarIndicatorConfig,
-  slot: avatarSlotConfig,
+  container: avatarAvatarTokensTypeContainerConfig,
+  text: avatarAvatarTokensTypeTextConfig,
+  indicator: avatarAvatarTokensTypeIndicatorConfig,
+  slot: avatarAvatarTokensTypeSlotConfig,
 }
 type responsiveAvatarTokens = {
   sm: avatarTokensType,

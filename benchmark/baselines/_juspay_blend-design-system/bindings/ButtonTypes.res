@@ -20,85 +20,85 @@ type buttonState =
   | @as("hover") Hover
   | @as("active") Active
   | @as("disabled") Disabled
-type buttonSlotMaxHeightConfig = {
+type buttonButtonTokensTypeSlotMaxHeightConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type buttonDefaultConfig = {
+type buttonButtonTokensTypeBackgroundColorPrimaryDefaultConfig = {
   default: string,
   hover: string,
   active: string,
   disabled: string,
 }
-type buttonPrimaryConfig = {
-  default: buttonDefaultConfig,
-  iconOnly: buttonDefaultConfig,
-  inline: buttonDefaultConfig,
+type buttonButtonTokensTypeBackgroundColorPrimaryConfig = {
+  default: buttonButtonTokensTypeBackgroundColorPrimaryDefaultConfig,
+  iconOnly: buttonButtonTokensTypeBackgroundColorPrimaryDefaultConfig,
+  inline: buttonButtonTokensTypeBackgroundColorPrimaryDefaultConfig,
 }
-type buttonBackgroundColorConfig = {
-  primary: buttonPrimaryConfig,
-  secondary: buttonPrimaryConfig,
-  danger: buttonPrimaryConfig,
-  success: buttonPrimaryConfig,
+type buttonButtonTokensTypeBackgroundColorConfig = {
+  primary: buttonButtonTokensTypeBackgroundColorPrimaryConfig,
+  secondary: buttonButtonTokensTypeBackgroundColorPrimaryConfig,
+  danger: buttonButtonTokensTypeBackgroundColorPrimaryConfig,
+  success: buttonButtonTokensTypeBackgroundColorPrimaryConfig,
 }
-type buttonDefaultConfig2 = {
+type buttonButtonTokensTypeBorderRadiusSmPrimaryDefaultConfig = {
   default: string,
   hover: string,
   active: string,
   disabled: string,
 }
-type buttonPrimaryConfig2 = {
-  default: buttonDefaultConfig2,
-  iconOnly: buttonDefaultConfig2,
-  inline: buttonDefaultConfig2,
+type buttonButtonTokensTypeBorderRadiusSmPrimaryConfig = {
+  default: buttonButtonTokensTypeBorderRadiusSmPrimaryDefaultConfig,
+  iconOnly: buttonButtonTokensTypeBorderRadiusSmPrimaryDefaultConfig,
+  inline: buttonButtonTokensTypeBorderRadiusSmPrimaryDefaultConfig,
 }
-type buttonSmConfig = {
-  primary: buttonPrimaryConfig2,
-  secondary: buttonPrimaryConfig2,
-  danger: buttonPrimaryConfig2,
-  success: buttonPrimaryConfig2,
+type buttonButtonTokensTypeBorderRadiusSmConfig = {
+  primary: buttonButtonTokensTypeBorderRadiusSmPrimaryConfig,
+  secondary: buttonButtonTokensTypeBorderRadiusSmPrimaryConfig,
+  danger: buttonButtonTokensTypeBorderRadiusSmPrimaryConfig,
+  success: buttonButtonTokensTypeBorderRadiusSmPrimaryConfig,
 }
-type buttonBorderRadiusConfig = {
-  sm: buttonSmConfig,
-  md: buttonSmConfig,
-  lg: buttonSmConfig,
+type buttonButtonTokensTypeBorderRadiusConfig = {
+  sm: buttonButtonTokensTypeBorderRadiusSmConfig,
+  md: buttonButtonTokensTypeBorderRadiusSmConfig,
+  lg: buttonButtonTokensTypeBorderRadiusSmConfig,
 }
-type buttonDefaultConfig3 = {
+type buttonButtonTokensTypePaddingSmPrimaryDefaultConfig = {
   x: string,
   y: string,
 }
-type buttonPrimaryConfig3 = {
-  default: buttonDefaultConfig3,
-  iconOnly: buttonDefaultConfig3,
-  inline: buttonDefaultConfig3,
+type buttonButtonTokensTypePaddingSmPrimaryConfig = {
+  default: buttonButtonTokensTypePaddingSmPrimaryDefaultConfig,
+  iconOnly: buttonButtonTokensTypePaddingSmPrimaryDefaultConfig,
+  inline: buttonButtonTokensTypePaddingSmPrimaryDefaultConfig,
 }
-type buttonSmConfig2 = {
-  primary: buttonPrimaryConfig3,
-  secondary: buttonPrimaryConfig3,
-  danger: buttonPrimaryConfig3,
-  success: buttonPrimaryConfig3,
+type buttonButtonTokensTypePaddingSmConfig = {
+  primary: buttonButtonTokensTypePaddingSmPrimaryConfig,
+  secondary: buttonButtonTokensTypePaddingSmPrimaryConfig,
+  danger: buttonButtonTokensTypePaddingSmPrimaryConfig,
+  success: buttonButtonTokensTypePaddingSmPrimaryConfig,
 }
-type buttonPaddingConfig = {
-  sm: buttonSmConfig2,
-  md: buttonSmConfig2,
-  lg: buttonSmConfig2,
+type buttonButtonTokensTypePaddingConfig = {
+  sm: buttonButtonTokensTypePaddingSmConfig,
+  md: buttonButtonTokensTypePaddingSmConfig,
+  lg: buttonButtonTokensTypePaddingSmConfig,
 }
-type buttonTextConfig = {
-  color: buttonSmConfig,
-  fontSize: buttonSlotMaxHeightConfig,
-  fontWeight: buttonSlotMaxHeightConfig,
+type buttonButtonTokensTypeTextConfig = {
+  color: buttonButtonTokensTypeBorderRadiusSmConfig,
+  fontSize: buttonButtonTokensTypeSlotMaxHeightConfig,
+  fontWeight: buttonButtonTokensTypeSlotMaxHeightConfig,
 }
 type buttonTokensType = {
   gap: string,
-  slotMaxHeight: buttonSlotMaxHeightConfig,
-  backgroundColor: buttonBackgroundColorConfig,
-  borderRadius: buttonBorderRadiusConfig,
-  padding: buttonPaddingConfig,
-  border: buttonBackgroundColorConfig,
-  shadow: buttonBackgroundColorConfig,
-  outline: buttonBackgroundColorConfig,
-  text: buttonTextConfig,
+  slotMaxHeight: buttonButtonTokensTypeSlotMaxHeightConfig,
+  backgroundColor: buttonButtonTokensTypeBackgroundColorConfig,
+  borderRadius: buttonButtonTokensTypeBorderRadiusConfig,
+  padding: buttonButtonTokensTypePaddingConfig,
+  border: buttonButtonTokensTypeBackgroundColorConfig,
+  shadow: buttonButtonTokensTypeBackgroundColorConfig,
+  outline: buttonButtonTokensTypeBackgroundColorConfig,
+  text: buttonButtonTokensTypeTextConfig,
 }
 type responsiveButtonTokens = {
   sm: buttonTokensType,

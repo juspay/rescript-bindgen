@@ -1,7 +1,7 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
   ~data: array<'a>,
-  ~columns: array<DataTableTypes.ColumnDefinition.t>,  // ⓘ was `ColumnDefinition<T>` — opaque; build with ColumnDefinition.fromDataTableColumnsConfig / ColumnDefinition.fromDataTableColumnsConfig2 / ColumnDefinition.fromDataTableColumnsConfig3 / ColumnDefinition.fromDataTableColumnsConfig4 / ColumnDefinition.fromDataTableColumnsConfig5 / ColumnDefinition.fromDataTableColumnsConfig6 / ColumnDefinition.fromDataTableColumnsConfig7 / ColumnDefinition.fromDataTableColumnsConfig8 / ColumnDefinition.fromDataTableColumnsConfig9 / ColumnDefinition.fromDataTableColumnsConfig10
+  ~columns: array<DataTableTypes.ColumnDefinition.t>,  // ⓘ was `ColumnDefinition<T>` — opaque; build with ColumnDefinition.fromDataTableColumnsTextConfig / ColumnDefinition.fromDataTableColumnsNumberConfig / ColumnDefinition.fromDataTableColumnsAvatarConfig / ColumnDefinition.fromDataTableColumnsTagConfig / ColumnDefinition.fromDataTableColumnsProgressConfig / ColumnDefinition.fromDataTableColumnsDropdownConfig / ColumnDefinition.fromDataTableColumnsDateConfig / ColumnDefinition.fromDataTableColumnsSliderConfig / ColumnDefinition.fromDataTableColumnsReactElementConfig / ColumnDefinition.fromDataTableColumnsFilterTypeConfig
   ~idField: string,
   ~title: string=?,
   ~description: string=?,
@@ -24,7 +24,7 @@ external make: (
   ~columnFreeze: float=?,
   ~enableColumnManager: bool=?,
   ~enableColumnReordering: bool=?,
-  ~onColumnReorder: array<DataTableTypes.ColumnDefinition.t> => unit=?,  // ⓘ was `ColumnDefinition<T>` — opaque; build with ColumnDefinition.fromDataTableColumnsConfig / ColumnDefinition.fromDataTableColumnsConfig2 / ColumnDefinition.fromDataTableColumnsConfig3 / ColumnDefinition.fromDataTableColumnsConfig4 / ColumnDefinition.fromDataTableColumnsConfig5 / ColumnDefinition.fromDataTableColumnsConfig6 / ColumnDefinition.fromDataTableColumnsConfig7 / ColumnDefinition.fromDataTableColumnsConfig8 / ColumnDefinition.fromDataTableColumnsConfig9 / ColumnDefinition.fromDataTableColumnsConfig10
+  ~onColumnReorder: array<DataTableTypes.ColumnDefinition.t> => unit=?,  // ⓘ was `ColumnDefinition<T>` — opaque; build with ColumnDefinition.fromDataTableColumnsTextConfig / ColumnDefinition.fromDataTableColumnsNumberConfig / ColumnDefinition.fromDataTableColumnsAvatarConfig / ColumnDefinition.fromDataTableColumnsTagConfig / ColumnDefinition.fromDataTableColumnsProgressConfig / ColumnDefinition.fromDataTableColumnsDropdownConfig / ColumnDefinition.fromDataTableColumnsDateConfig / ColumnDefinition.fromDataTableColumnsSliderConfig / ColumnDefinition.fromDataTableColumnsReactElementConfig / ColumnDefinition.fromDataTableColumnsFilterTypeConfig
   ~columnManagerMaxSelections: float=?,
   ~columnManagerAlwaysSelected: array<string>=?,
   ~columnManagerPrimaryAction: DataTableTypes.dataTableColumnManagerPrimaryActionConfig=?,

@@ -5,81 +5,81 @@ type checkboxMaxLengthConfig = {
   label?: float,
   subtext?: float,
 }
-type checkboxSlotConfig = {
+type checkboxCheckboxTokensTypeSlotConfig = {
   marginLeft: string,
 }
-type checkboxWidthConfig = {
+type checkboxCheckboxTokensTypeIndicatorWidthConfig = {
   sm: string,
   md: string,
 }
-type checkboxCheckedConfig = {
+type checkboxCheckboxTokensTypeIndicatorBackgroundColorCheckedConfig = {
   default?: string,
   hover?: string,
   disabled?: string,
   error?: string,
 }
-type checkboxBackgroundColorConfig = {
-  checked?: checkboxCheckedConfig,
-  unchecked?: checkboxCheckedConfig,
-  indeterminate?: checkboxCheckedConfig,
+type checkboxCheckboxTokensTypeIndicatorBackgroundColorConfig = {
+  checked?: checkboxCheckboxTokensTypeIndicatorBackgroundColorCheckedConfig,
+  unchecked?: checkboxCheckboxTokensTypeIndicatorBackgroundColorCheckedConfig,
+  indeterminate?: checkboxCheckboxTokensTypeIndicatorBackgroundColorCheckedConfig,
 }
-type checkboxCheckedConfig2 = {
+type checkboxCheckboxTokensTypeIndicatorIconColorCheckedConfig = {
   default?: string,
   disabled?: string,
 }
-type checkboxColorConfig = {
-  checked?: checkboxCheckedConfig2,
-  unchecked?: checkboxCheckedConfig2,
-  indeterminate?: checkboxCheckedConfig2,
+type checkboxCheckboxTokensTypeIndicatorIconColorConfig = {
+  checked?: checkboxCheckboxTokensTypeIndicatorIconColorCheckedConfig,
+  unchecked?: checkboxCheckboxTokensTypeIndicatorIconColorCheckedConfig,
+  indeterminate?: checkboxCheckboxTokensTypeIndicatorIconColorCheckedConfig,
 }
-type checkboxIconConfig = {
-  color: checkboxColorConfig,
-  width: checkboxWidthConfig,
-  height: checkboxWidthConfig,
-  strokeWidth: checkboxWidthConfig,
+type checkboxCheckboxTokensTypeIndicatorIconConfig = {
+  color: checkboxCheckboxTokensTypeIndicatorIconColorConfig,
+  width: checkboxCheckboxTokensTypeIndicatorWidthConfig,
+  height: checkboxCheckboxTokensTypeIndicatorWidthConfig,
+  strokeWidth: checkboxCheckboxTokensTypeIndicatorWidthConfig,
 }
-type checkboxIndicatorConfig = {
-  width: checkboxWidthConfig,
-  height: checkboxWidthConfig,
-  backgroundColor: checkboxBackgroundColorConfig,
-  borderRadius: checkboxWidthConfig,
-  border: checkboxBackgroundColorConfig,
+type checkboxCheckboxTokensTypeIndicatorConfig = {
+  width: checkboxCheckboxTokensTypeIndicatorWidthConfig,
+  height: checkboxCheckboxTokensTypeIndicatorWidthConfig,
+  backgroundColor: checkboxCheckboxTokensTypeIndicatorBackgroundColorConfig,
+  borderRadius: checkboxCheckboxTokensTypeIndicatorWidthConfig,
+  border: checkboxCheckboxTokensTypeIndicatorBackgroundColorConfig,
   outline: string,
   outlineOffset: string,
   boxShadow: string,
-  icon: checkboxIconConfig,
+  icon: checkboxCheckboxTokensTypeIndicatorIconConfig,
 }
-type checkboxColorConfig2 = {
+type checkboxCheckboxTokensTypeContentLabelColorConfig = {
   default: string,
   hover: string,
   disabled: string,
   error: string,
 }
-type checkboxLabelConfig = {
-  color: checkboxColorConfig2,
-  fontSize: checkboxWidthConfig,
-  fontWeight: checkboxWidthConfig,
-  lineHeight: checkboxWidthConfig,
+type checkboxCheckboxTokensTypeContentLabelConfig = {
+  color: checkboxCheckboxTokensTypeContentLabelColorConfig,
+  fontSize: checkboxCheckboxTokensTypeIndicatorWidthConfig,
+  fontWeight: checkboxCheckboxTokensTypeIndicatorWidthConfig,
+  lineHeight: checkboxCheckboxTokensTypeIndicatorWidthConfig,
 }
-type checkboxSubtextConfig = {
-  color: checkboxColorConfig2,
-  fontSize: checkboxWidthConfig,
-  fontWeight: checkboxWidthConfig,
+type checkboxCheckboxTokensTypeContentSubtextConfig = {
+  color: checkboxCheckboxTokensTypeContentLabelColorConfig,
+  fontSize: checkboxCheckboxTokensTypeIndicatorWidthConfig,
+  fontWeight: checkboxCheckboxTokensTypeIndicatorWidthConfig,
 }
-type checkboxContentConfig = {
+type checkboxCheckboxTokensTypeContentConfig = {
   gap: string,
-  label: checkboxLabelConfig,
-  subtext: checkboxSubtextConfig,
+  label: checkboxCheckboxTokensTypeContentLabelConfig,
+  subtext: checkboxCheckboxTokensTypeContentSubtextConfig,
 }
-type checkboxRequiredConfig = {
+type checkboxCheckboxTokensTypeRequiredConfig = {
   color: string,
 }
 type checkboxTokensType = {
   gap: string,
-  slot: checkboxSlotConfig,
-  indicator: checkboxIndicatorConfig,
-  content: checkboxContentConfig,
-  required: checkboxRequiredConfig,
+  slot: checkboxCheckboxTokensTypeSlotConfig,
+  indicator: checkboxCheckboxTokensTypeIndicatorConfig,
+  content: checkboxCheckboxTokensTypeContentConfig,
+  required: checkboxCheckboxTokensTypeRequiredConfig,
 }
 type responsiveCheckboxTokens = {
   sm: checkboxTokensType,

@@ -14,77 +14,77 @@ type directoryData = {
   isCollapsible?: bool,
   defaultOpen?: bool,
 }
-type directoryPaddingConfig = {
+type directoryDirectoryTokenTypeSectionHeaderPaddingConfig = {
   x: string,
   y: string,
 }
-type directoryLabelConfig = {
+type directoryDirectoryTokenTypeSectionHeaderLabelConfig = {
   fontSize: string,
   color: string,
   fontWeight: string,
 }
-type directoryChevronConfig = {
+type directoryDirectoryTokenTypeSectionHeaderChevronConfig = {
   width: string,
   color: string,
 }
-type directoryHeaderConfig = {
-  padding: directoryPaddingConfig,
-  label: directoryLabelConfig,
-  chevron: directoryChevronConfig,
+type directoryDirectoryTokenTypeSectionHeaderConfig = {
+  padding: directoryDirectoryTokenTypeSectionHeaderPaddingConfig,
+  label: directoryDirectoryTokenTypeSectionHeaderLabelConfig,
+  chevron: directoryDirectoryTokenTypeSectionHeaderChevronConfig,
 }
-type directoryPaddingConfig2 = {
+type directoryDirectoryTokenTypeSectionItemListItemPaddingConfig = {
   x: string,
   y: string,
 }
-type directoryBackgroundColorConfig = {
+type directoryDirectoryTokenTypeSectionItemListItemBackgroundColorConfig = {
   default: string,
   hover: string,
   active: string,
 }
-type directoryIconConfig = {
+type directoryDirectoryTokenTypeSectionItemListItemIconConfig = {
   width: string,
 }
-type directoryChevronConfig2 = {
+type directoryDirectoryTokenTypeSectionItemListItemChevronConfig = {
   width: string,
   color: string,
 }
-type directoryItemConfig = {
-  padding: directoryPaddingConfig2,
+type directoryDirectoryTokenTypeSectionItemListItemConfig = {
+  padding: directoryDirectoryTokenTypeSectionItemListItemPaddingConfig,
   gap: string,
   borderRadius: string,
   fontWeight: string,
   fontSize: string,
   transition: string,
-  backgroundColor: directoryBackgroundColorConfig,
-  color: directoryBackgroundColorConfig,
-  icon: directoryIconConfig,
-  chevron: directoryChevronConfig2,
+  backgroundColor: directoryDirectoryTokenTypeSectionItemListItemBackgroundColorConfig,
+  color: directoryDirectoryTokenTypeSectionItemListItemBackgroundColorConfig,
+  icon: directoryDirectoryTokenTypeSectionItemListItemIconConfig,
+  chevron: directoryDirectoryTokenTypeSectionItemListItemChevronConfig,
 }
-type directoryBorderConfig = {
+type directoryDirectoryTokenTypeSectionItemListNestedBorderConfig = {
   width: string,
   color: string,
   leftOffset: string,
 }
-type directoryNestedConfig = {
+type directoryDirectoryTokenTypeSectionItemListNestedConfig = {
   paddingLeft: string,
   marginTop: string,
-  border: directoryBorderConfig,
+  border: directoryDirectoryTokenTypeSectionItemListNestedBorderConfig,
 }
-type directoryItemListConfig = {
+type directoryDirectoryTokenTypeSectionItemListConfig = {
   gap: string,
-  item: directoryItemConfig,
-  nested: directoryNestedConfig,
+  item: directoryDirectoryTokenTypeSectionItemListItemConfig,
+  nested: directoryDirectoryTokenTypeSectionItemListNestedConfig,
 }
-type directorySectionConfig = {
+type directoryDirectoryTokenTypeSectionConfig = {
   gap: string,
-  header: directoryHeaderConfig,
-  itemList: directoryItemListConfig,
+  header: directoryDirectoryTokenTypeSectionHeaderConfig,
+  itemList: directoryDirectoryTokenTypeSectionItemListConfig,
 }
 type directoryTokenType = {
   gap: string,
   paddingX: string,
   paddingY: string,
-  section: directorySectionConfig,
+  section: directoryDirectoryTokenTypeSectionConfig,
 }
 type responsiveDirectoryTokens = {
   sm: directoryTokenType,

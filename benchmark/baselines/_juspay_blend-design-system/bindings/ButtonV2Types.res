@@ -16,101 +16,101 @@ type buttonV2State =
   | @as("hover") Hover
   | @as("active") Active
   | @as("disabled") Disabled
-type buttonV2DefaultConfig = {
+type buttonV2ResponsiveButtonV2TokensSmBackgroundColorPrimaryDefaultConfig = {
   default: string,
   hover: string,
   active: string,
   disabled: string,
 }
-type buttonV2PrimaryConfig = {
-  default: buttonV2DefaultConfig,
-  iconOnly: buttonV2DefaultConfig,
-  inline: buttonV2DefaultConfig,
+type buttonV2ResponsiveButtonV2TokensSmBackgroundColorPrimaryConfig = {
+  default: buttonV2ResponsiveButtonV2TokensSmBackgroundColorPrimaryDefaultConfig,
+  iconOnly: buttonV2ResponsiveButtonV2TokensSmBackgroundColorPrimaryDefaultConfig,
+  inline: buttonV2ResponsiveButtonV2TokensSmBackgroundColorPrimaryDefaultConfig,
 }
-type buttonV2BackgroundColorConfig = {
-  primary: buttonV2PrimaryConfig,
-  secondary: buttonV2PrimaryConfig,
-  danger: buttonV2PrimaryConfig,
-  success: buttonV2PrimaryConfig,
+type buttonV2ResponsiveButtonV2TokensSmBackgroundColorConfig = {
+  primary: buttonV2ResponsiveButtonV2TokensSmBackgroundColorPrimaryConfig,
+  secondary: buttonV2ResponsiveButtonV2TokensSmBackgroundColorPrimaryConfig,
+  danger: buttonV2ResponsiveButtonV2TokensSmBackgroundColorPrimaryConfig,
+  success: buttonV2ResponsiveButtonV2TokensSmBackgroundColorPrimaryConfig,
 }
-type buttonV2PrimaryConfig2 = {
+type buttonV2ResponsiveButtonV2TokensSmBorderRadiusSmPrimaryConfig = {
   default: string,
   iconOnly: string,
   inline: string,
 }
-type buttonV2SmConfig2 = {
-  primary: buttonV2PrimaryConfig2,
-  secondary: buttonV2PrimaryConfig2,
-  danger: buttonV2PrimaryConfig2,
-  success: buttonV2PrimaryConfig2,
+type buttonV2ResponsiveButtonV2TokensSmBorderRadiusSmConfig = {
+  primary: buttonV2ResponsiveButtonV2TokensSmBorderRadiusSmPrimaryConfig,
+  secondary: buttonV2ResponsiveButtonV2TokensSmBorderRadiusSmPrimaryConfig,
+  danger: buttonV2ResponsiveButtonV2TokensSmBorderRadiusSmPrimaryConfig,
+  success: buttonV2ResponsiveButtonV2TokensSmBorderRadiusSmPrimaryConfig,
 }
-type buttonV2BorderRadiusConfig = {
-  sm: buttonV2SmConfig2,
-  md: buttonV2SmConfig2,
-  lg: buttonV2SmConfig2,
+type buttonV2ResponsiveButtonV2TokensSmBorderRadiusConfig = {
+  sm: buttonV2ResponsiveButtonV2TokensSmBorderRadiusSmConfig,
+  md: buttonV2ResponsiveButtonV2TokensSmBorderRadiusSmConfig,
+  lg: buttonV2ResponsiveButtonV2TokensSmBorderRadiusSmConfig,
 }
-type buttonV2PrimaryConfig3 = {
+type buttonV2ResponsiveButtonV2TokensSmPaddingTopSmPrimaryConfig = {
   default: string,
   iconOnly: string,
   inline: string,
 }
-type buttonV2SmConfig3 = {
-  primary: buttonV2PrimaryConfig3,
-  secondary: buttonV2PrimaryConfig3,
-  danger: buttonV2PrimaryConfig3,
-  success: buttonV2PrimaryConfig3,
+type buttonV2ResponsiveButtonV2TokensSmPaddingTopSmConfig = {
+  primary: buttonV2ResponsiveButtonV2TokensSmPaddingTopSmPrimaryConfig,
+  secondary: buttonV2ResponsiveButtonV2TokensSmPaddingTopSmPrimaryConfig,
+  danger: buttonV2ResponsiveButtonV2TokensSmPaddingTopSmPrimaryConfig,
+  success: buttonV2ResponsiveButtonV2TokensSmPaddingTopSmPrimaryConfig,
 }
-type buttonV2TopConfig = {
-  sm: buttonV2SmConfig3,
-  md: buttonV2SmConfig3,
-  lg: buttonV2SmConfig3,
+type buttonV2ResponsiveButtonV2TokensSmPaddingTopConfig = {
+  sm: buttonV2ResponsiveButtonV2TokensSmPaddingTopSmConfig,
+  md: buttonV2ResponsiveButtonV2TokensSmPaddingTopSmConfig,
+  lg: buttonV2ResponsiveButtonV2TokensSmPaddingTopSmConfig,
 }
-type buttonV2PaddingConfig = {
-  top: buttonV2TopConfig,
-  right: buttonV2TopConfig,
-  bottom: buttonV2TopConfig,
-  left: buttonV2TopConfig,
+type buttonV2ResponsiveButtonV2TokensSmPaddingConfig = {
+  top: buttonV2ResponsiveButtonV2TokensSmPaddingTopConfig,
+  right: buttonV2ResponsiveButtonV2TokensSmPaddingTopConfig,
+  bottom: buttonV2ResponsiveButtonV2TokensSmPaddingTopConfig,
+  left: buttonV2ResponsiveButtonV2TokensSmPaddingTopConfig,
 }
-type buttonV2DefaultConfig2 = {
+type buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryDefaultConfig = {
   default: string,
   hover: string,
   active: string,
   disabled: string,
 }
-type buttonV2PrimaryConfig4 = {
-  default: buttonV2DefaultConfig2,
-  iconOnly: buttonV2DefaultConfig2,
-  inline: buttonV2DefaultConfig2,
+type buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryConfig = {
+  default: buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryDefaultConfig,
+  iconOnly: buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryDefaultConfig,
+  inline: buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryDefaultConfig,
 }
-type buttonV2ColorConfig = {
-  primary: buttonV2PrimaryConfig4,
-  secondary: buttonV2PrimaryConfig4,
-  danger: buttonV2PrimaryConfig4,
-  success: buttonV2PrimaryConfig4,
+type buttonV2ResponsiveButtonV2TokensSmTextColorConfig = {
+  primary: buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryConfig,
+  secondary: buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryConfig,
+  danger: buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryConfig,
+  success: buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryConfig,
 }
-type buttonV2FontSizeConfig = {
+type buttonV2ResponsiveButtonV2TokensSmTextFontSizeConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type buttonV2TextConfig = {
-  color: buttonV2ColorConfig,
-  fontSize: buttonV2FontSizeConfig,
-  fontWeight: buttonV2FontSizeConfig,
-  lineHeight: buttonV2FontSizeConfig,
+type buttonV2ResponsiveButtonV2TokensSmTextConfig = {
+  color: buttonV2ResponsiveButtonV2TokensSmTextColorConfig,
+  fontSize: buttonV2ResponsiveButtonV2TokensSmTextFontSizeConfig,
+  fontWeight: buttonV2ResponsiveButtonV2TokensSmTextFontSizeConfig,
+  lineHeight: buttonV2ResponsiveButtonV2TokensSmTextFontSizeConfig,
 }
-type buttonV2SmConfig = {
+type buttonV2ResponsiveButtonV2TokensSmConfig = {
   gap: string,
-  backgroundColor: buttonV2BackgroundColorConfig,
-  borderRadius: buttonV2BorderRadiusConfig,
-  padding: buttonV2PaddingConfig,
-  border: buttonV2BackgroundColorConfig,
-  shadow: buttonV2BackgroundColorConfig,
-  text: buttonV2TextConfig,
+  backgroundColor: buttonV2ResponsiveButtonV2TokensSmBackgroundColorConfig,
+  borderRadius: buttonV2ResponsiveButtonV2TokensSmBorderRadiusConfig,
+  padding: buttonV2ResponsiveButtonV2TokensSmPaddingConfig,
+  border: buttonV2ResponsiveButtonV2TokensSmBackgroundColorConfig,
+  shadow: buttonV2ResponsiveButtonV2TokensSmBackgroundColorConfig,
+  text: buttonV2ResponsiveButtonV2TokensSmTextConfig,
 }
 type responsiveButtonV2Tokens = {
-  sm: buttonV2SmConfig,
-  lg: buttonV2SmConfig,
+  sm: buttonV2ResponsiveButtonV2TokensSmConfig,
+  lg: buttonV2ResponsiveButtonV2TokensSmConfig,
 }
 type buttonSlot = {
   slot: React.element,

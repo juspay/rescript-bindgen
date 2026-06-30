@@ -10,60 +10,60 @@ type slotRenderProps = {
   value: string,
   isDisabled: bool,
 }
-type accordionGapConfig = {
+type accordionAccordionTokenTypeGapConfig = {
   border: string,
   noBorder: string,
 }
-type accordionBorderConfig = {
+type accordionAccordionTokenTypeTriggerBackgroundColorBorderConfig = {
   disabled: string,
   default: string,
   hover: string,
   active: string,
   @as("open") open_: string,
 }
-type accordionBackgroundColorConfig = {
-  border: accordionBorderConfig,
-  noBorder: accordionBorderConfig,
+type accordionAccordionTokenTypeTriggerBackgroundColorConfig = {
+  border: accordionAccordionTokenTypeTriggerBackgroundColorBorderConfig,
+  noBorder: accordionAccordionTokenTypeTriggerBackgroundColorBorderConfig,
 }
-type accordionColorConfig = {
+type accordionAccordionTokenTypeTriggerTextTitleColorConfig = {
   disabled: string,
   default: string,
   hover: string,
   active: string,
   @as("open") open_: string,
 }
-type accordionTitleConfig = {
+type accordionAccordionTokenTypeTriggerTextTitleConfig = {
   fontSize: string,
   fontWeight: string,
-  color: accordionColorConfig,
+  color: accordionAccordionTokenTypeTriggerTextTitleColorConfig,
 }
-type accordionSubtextConfig = {
+type accordionAccordionTokenTypeTriggerTextSubtextConfig = {
   fontSize: string,
   gap: string,
-  color: accordionColorConfig,
+  color: accordionAccordionTokenTypeTriggerTextTitleColorConfig,
 }
-type accordionTextConfig = {
-  title: accordionTitleConfig,
-  subtext: accordionSubtextConfig,
+type accordionAccordionTokenTypeTriggerTextConfig = {
+  title: accordionAccordionTokenTypeTriggerTextTitleConfig,
+  subtext: accordionAccordionTokenTypeTriggerTextSubtextConfig,
 }
-type accordionSlotConfig = {
+type accordionAccordionTokenTypeTriggerSlotConfig = {
   maxWidth: string,
 }
-type accordionTriggerConfig = {
-  backgroundColor: accordionBackgroundColorConfig,
-  border: accordionBackgroundColorConfig,
-  padding: accordionGapConfig,
-  text: accordionTextConfig,
-  slot?: accordionSlotConfig,
+type accordionAccordionTokenTypeTriggerConfig = {
+  backgroundColor: accordionAccordionTokenTypeTriggerBackgroundColorConfig,
+  border: accordionAccordionTokenTypeTriggerBackgroundColorConfig,
+  padding: accordionAccordionTokenTypeGapConfig,
+  text: accordionAccordionTokenTypeTriggerTextConfig,
+  slot?: accordionAccordionTokenTypeTriggerSlotConfig,
 }
-type accordionSeparatorConfig = {
-  color: accordionGapConfig,
+type accordionAccordionTokenTypeSeparatorConfig = {
+  color: accordionAccordionTokenTypeGapConfig,
 }
 type accordionTokenType = {
-  gap: accordionGapConfig,
-  borderRadius: accordionGapConfig,
-  trigger: accordionTriggerConfig,
-  separator: accordionSeparatorConfig,
+  gap: accordionAccordionTokenTypeGapConfig,
+  borderRadius: accordionAccordionTokenTypeGapConfig,
+  trigger: accordionAccordionTokenTypeTriggerConfig,
+  separator: accordionAccordionTokenTypeSeparatorConfig,
 }
 type responsiveAccordionTokens = {
   sm: accordionTokenType,

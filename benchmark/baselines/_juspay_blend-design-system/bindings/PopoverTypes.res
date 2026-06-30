@@ -44,39 +44,39 @@ type popoverSkeletonProps = {
   variant?: SkeletonTypes.skeletonVariant,
   bodySkeletonProps?: bodySkeletonProps2,
 }
-type popoverGapConfig = {
+type popoverPopoverTokenTypeGapConfig = {
   small: string,
   medium: string,
 }
-type popoverPaddingConfig = {
-  left: popoverGapConfig,
-  right: popoverGapConfig,
-  top: popoverGapConfig,
-  bottom: popoverGapConfig,
+type popoverPopoverTokenTypePaddingConfig = {
+  left: popoverPopoverTokenTypeGapConfig,
+  right: popoverPopoverTokenTypeGapConfig,
+  top: popoverPopoverTokenTypeGapConfig,
+  bottom: popoverPopoverTokenTypeGapConfig,
 }
-type popoverHeadingConfig = {
+type popoverPopoverTokenTypeHeaderContainerHeadingConfig = {
   color: string,
-  fontSize: popoverGapConfig,
-  fontWeight: popoverGapConfig,
-  lineHeight: popoverGapConfig,
+  fontSize: popoverPopoverTokenTypeGapConfig,
+  fontWeight: popoverPopoverTokenTypeGapConfig,
+  lineHeight: popoverPopoverTokenTypeGapConfig,
 }
-type popoverHeaderContainerConfig = {
-  heading: popoverHeadingConfig,
-  description: popoverHeadingConfig,
+type popoverPopoverTokenTypeHeaderContainerConfig = {
+  heading: popoverPopoverTokenTypeHeaderContainerHeadingConfig,
+  description: popoverPopoverTokenTypeHeaderContainerHeadingConfig,
 }
-type popoverFooterConfig = {
-  gap: popoverGapConfig,
+type popoverPopoverTokenTypeFooterConfig = {
+  gap: popoverPopoverTokenTypeGapConfig,
 }
 type popoverTokenType = {
   background: string,
   border: string,
-  shadow: TokensTypes.tokensShadowsConfig,
-  gap: popoverGapConfig,
+  shadow: TokensTypes.tokensFoundationTokenTypeShadowsConfig,
+  gap: popoverPopoverTokenTypeGapConfig,
   zIndex: string,
-  borderRadius: popoverGapConfig,
-  padding: popoverPaddingConfig,
-  headerContainer: popoverHeaderContainerConfig,
-  footer: popoverFooterConfig,
+  borderRadius: popoverPopoverTokenTypeGapConfig,
+  padding: popoverPopoverTokenTypePaddingConfig,
+  headerContainer: popoverPopoverTokenTypeHeaderContainerConfig,
+  footer: popoverPopoverTokenTypeFooterConfig,
 }
 type responsivePopoverTokens = {
   sm: popoverTokenType,

@@ -5,7 +5,7 @@ external make: (
   ~width: float=?,
   ~height: float=?,
   ~index: int=?,
-  ~payload: ChartsTypes.chartsPayloadConfig3=?,
+  ~payload: ChartsTypes.chartsPayloadConfig=?,
   ~containerWidth: float=?,
   ~nodeColors: array<ChartsTypes.stringOrChartsColorsConfig>=?,
   ~onMouseEnter: (ChartsTypes.sankeyTooltipData, ReactEvent.Mouse.t) => unit=?,

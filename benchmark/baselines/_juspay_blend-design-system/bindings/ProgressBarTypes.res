@@ -9,55 +9,55 @@ type progressBarVariant =
 type progressBarType =
   | @as("solid") Solid
   | @as("segmented") Segmented
-type progressBarHeightConfig = {
+type progressBarProgressBarTokenTypeLinearHeightConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type progressBarBackgroundColorConfig = {
+type progressBarProgressBarTokenTypeLinearFillBackgroundColorConfig = {
   solid: string,
   segmented: string,
 }
-type progressBarFillConfig = {
-  backgroundColor: progressBarBackgroundColorConfig,
-  borderRadius: progressBarBackgroundColorConfig,
+type progressBarProgressBarTokenTypeLinearFillConfig = {
+  backgroundColor: progressBarProgressBarTokenTypeLinearFillBackgroundColorConfig,
+  borderRadius: progressBarProgressBarTokenTypeLinearFillBackgroundColorConfig,
 }
-type progressBarBackgroundImageConfig = {
+type progressBarProgressBarTokenTypeLinearEmptyBackgroundImageConfig = {
   segmented: string,
 }
-type progressBarEmptyConfig = {
-  backgroundColor: progressBarBackgroundColorConfig,
-  backgroundImage: progressBarBackgroundImageConfig,
-  backgroundSize: progressBarBackgroundImageConfig,
+type progressBarProgressBarTokenTypeLinearEmptyConfig = {
+  backgroundColor: progressBarProgressBarTokenTypeLinearFillBackgroundColorConfig,
+  backgroundImage: progressBarProgressBarTokenTypeLinearEmptyBackgroundImageConfig,
+  backgroundSize: progressBarProgressBarTokenTypeLinearEmptyBackgroundImageConfig,
 }
-type progressBarLinearConfig = {
-  height: progressBarHeightConfig,
-  fill: progressBarFillConfig,
-  empty: progressBarEmptyConfig,
-  borderRadius: progressBarBackgroundColorConfig,
+type progressBarProgressBarTokenTypeLinearConfig = {
+  height: progressBarProgressBarTokenTypeLinearHeightConfig,
+  fill: progressBarProgressBarTokenTypeLinearFillConfig,
+  empty: progressBarProgressBarTokenTypeLinearEmptyConfig,
+  borderRadius: progressBarProgressBarTokenTypeLinearFillBackgroundColorConfig,
 }
-type progressBarStrokeWidthConfig = {
+type progressBarProgressBarTokenTypeCircularStrokeWidthConfig = {
   sm: float,
   md: float,
   lg: float,
 }
-type progressBarCircularConfig = {
-  size: progressBarHeightConfig,
-  strokeWidth: progressBarStrokeWidthConfig,
-  stroke: progressBarBackgroundColorConfig,
-  background: progressBarBackgroundColorConfig,
-  dashArray: progressBarBackgroundColorConfig,
-  dashOffset: progressBarBackgroundColorConfig,
+type progressBarProgressBarTokenTypeCircularConfig = {
+  size: progressBarProgressBarTokenTypeLinearHeightConfig,
+  strokeWidth: progressBarProgressBarTokenTypeCircularStrokeWidthConfig,
+  stroke: progressBarProgressBarTokenTypeLinearFillBackgroundColorConfig,
+  background: progressBarProgressBarTokenTypeLinearFillBackgroundColorConfig,
+  dashArray: progressBarProgressBarTokenTypeLinearFillBackgroundColorConfig,
+  dashOffset: progressBarProgressBarTokenTypeLinearFillBackgroundColorConfig,
 }
-type progressBarLabelConfig = {
+type progressBarProgressBarTokenTypeLabelConfig = {
   fontSize: string,
   fontWeight: string,
   color: string,
 }
 type progressBarTokenType = {
-  linear: progressBarLinearConfig,
-  circular: progressBarCircularConfig,
-  label: progressBarLabelConfig,
+  linear: progressBarProgressBarTokenTypeLinearConfig,
+  circular: progressBarProgressBarTokenTypeCircularConfig,
+  label: progressBarProgressBarTokenTypeLabelConfig,
   transition: string,
 }
 type responsiveProgressBarTokens = {

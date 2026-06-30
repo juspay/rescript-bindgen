@@ -1,71 +1,71 @@
-type inputsV2FontSizeConfig = {
+type inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type inputsV2ColorConfig = {
+type inputsV2TextInputV2TokensTypeTopContainerLabelColorConfig = {
   default: string,
   hover: string,
   focus: string,
   error: string,
   disabled: string,
 }
-type inputsV2LabelConfig = {
-  fontSize: inputsV2FontSizeConfig,
-  fontWeight: inputsV2FontSizeConfig,
-  lineHeight: inputsV2FontSizeConfig,
-  color: inputsV2ColorConfig,
+type inputsV2TextInputV2TokensTypeTopContainerLabelConfig = {
+  fontSize: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
+  fontWeight: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
+  lineHeight: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
+  color: inputsV2TextInputV2TokensTypeTopContainerLabelColorConfig,
 }
-type inputsV2RequiredConfig = {
+type inputsV2TextInputV2TokensTypeTopContainerRequiredConfig = {
   color: string,
 }
-type inputsV2HelpIconConfig = {
-  width: inputsV2FontSizeConfig,
-  color: inputsV2ColorConfig,
+type inputsV2TextInputV2TokensTypeTopContainerHelpIconConfig = {
+  width: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
+  color: inputsV2TextInputV2TokensTypeTopContainerLabelColorConfig,
 }
-type inputsV2TopContainerConfig = {
-  label: inputsV2LabelConfig,
-  subLabel: inputsV2LabelConfig,
-  required: inputsV2RequiredConfig,
-  helpIcon: inputsV2HelpIconConfig,
+type inputsV2TextInputV2TokensTypeTopContainerConfig = {
+  label: inputsV2TextInputV2TokensTypeTopContainerLabelConfig,
+  subLabel: inputsV2TextInputV2TokensTypeTopContainerLabelConfig,
+  required: inputsV2TextInputV2TokensTypeTopContainerRequiredConfig,
+  helpIcon: inputsV2TextInputV2TokensTypeTopContainerHelpIconConfig,
 }
-type inputsV2PlaceholderConfig = {
-  color: inputsV2ColorConfig,
-  fontSize: inputsV2FontSizeConfig,
-  fontWeight: inputsV2FontSizeConfig,
-  lineHeight: inputsV2FontSizeConfig,
+type inputsV2TextInputV2TokensTypeInputContainerPlaceholderConfig = {
+  color: inputsV2TextInputV2TokensTypeTopContainerLabelColorConfig,
+  fontSize: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
+  fontWeight: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
+  lineHeight: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
 }
-type inputsV2PaddingConfig = {
-  top: inputsV2FontSizeConfig,
-  right: inputsV2FontSizeConfig,
-  bottom: inputsV2FontSizeConfig,
-  left: inputsV2FontSizeConfig,
+type inputsV2TextInputV2TokensTypeInputContainerPaddingConfig = {
+  top: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
+  right: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
+  bottom: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
+  left: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
 }
-type inputsV2InputContainerConfig = {
+type inputsV2TextInputV2TokensTypeInputContainerConfig = {
   gap: string,
-  placeholder: inputsV2PlaceholderConfig,
-  inputText: inputsV2LabelConfig,
-  borderRadius: inputsV2FontSizeConfig,
+  placeholder: inputsV2TextInputV2TokensTypeInputContainerPlaceholderConfig,
+  inputText: inputsV2TextInputV2TokensTypeTopContainerLabelConfig,
+  borderRadius: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
   boxShadow: string,
-  padding: inputsV2PaddingConfig,
-  border: inputsV2ColorConfig,
-  backgroundColor: inputsV2ColorConfig,
+  padding: inputsV2TextInputV2TokensTypeInputContainerPaddingConfig,
+  border: inputsV2TextInputV2TokensTypeTopContainerLabelColorConfig,
+  backgroundColor: inputsV2TextInputV2TokensTypeTopContainerLabelColorConfig,
 }
-type inputsV2ErrorMessageConfig = {
-  fontSize: inputsV2FontSizeConfig,
-  fontWeight: inputsV2FontSizeConfig,
-  lineHeight: inputsV2FontSizeConfig,
+type inputsV2TextInputV2TokensTypeBottomContainerErrorMessageConfig = {
+  fontSize: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
+  fontWeight: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
+  lineHeight: inputsV2TextInputV2TokensTypeTopContainerLabelFontSizeConfig,
   color: string,
 }
-type inputsV2BottomContainerConfig = {
-  hintText: inputsV2LabelConfig,
-  errorMessage: inputsV2ErrorMessageConfig,
+type inputsV2TextInputV2TokensTypeBottomContainerConfig = {
+  hintText: inputsV2TextInputV2TokensTypeTopContainerLabelConfig,
+  errorMessage: inputsV2TextInputV2TokensTypeBottomContainerErrorMessageConfig,
 }
 type textInputV2TokensType = {
   gap: string,
-  topContainer: inputsV2TopContainerConfig,
-  inputContainer: inputsV2InputContainerConfig,
-  bottomContainer: inputsV2BottomContainerConfig,
+  topContainer: inputsV2TextInputV2TokensTypeTopContainerConfig,
+  inputContainer: inputsV2TextInputV2TokensTypeInputContainerConfig,
+  bottomContainer: inputsV2TextInputV2TokensTypeBottomContainerConfig,
 }
 type responsiveTextInputV2Tokens = {
   sm: textInputV2TokensType,

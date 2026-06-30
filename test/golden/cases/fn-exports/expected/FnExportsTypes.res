@@ -1,4 +1,4 @@
-type fnExportsValueConfig = {
+type fnExportsUseThingConfig = {
   ok: bool,
   value: CommonTypes.stringOrNumber,
 }
