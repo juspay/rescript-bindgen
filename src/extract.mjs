@@ -38,6 +38,20 @@ function isLibraryType(type) {
         /\/lib\.(dom|es|scripthost)/.test(file)
 }
 
+/** Builtin generic containers whose instantiations all share ONE global `lib.es` symbol
+ *  (`Array<A>` and `Array<B>` are the same `Array` symbol; likewise `Map`/`Set`/`Promise`/…).
+ *  That shared symbol fools the same-generic-record union collapse into treating `Map<A> | Map<B>`
+ *  as one record and building it from the container's prototype methods. Detected by name + a
+ *  `isLibraryType` guard so a first-party type coincidentally named `Map` is NOT excluded. (#68) */
+const BUILTIN_CONTAINERS = new Set([
+    'Array', 'ReadonlyArray', 'Map', 'ReadonlyMap', 'WeakMap', 'Set', 'ReadonlySet', 'WeakSet', 'Promise',
+])
+function isBuiltinContainer(type, checker) {
+    if (checker.isArrayType?.(type)) return true
+    const s = (type.getSymbol && type.getSymbol()) || type.symbol
+    return !!(s && BUILTIN_CONTAINERS.has(s.getName()) && isLibraryType(type))
+}
+
 /** A VENDOR library type: declared in a dependency package the library gate blocks, but
  *  NOT a platform surface (lib.*, @types/react, typescript, csstype — those have dedicated
  *  handling). Since isLibraryType's denylist is what blocks, this is EFFECTIVELY an
@@ -2307,12 +2321,22 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
         const raw = typeName(mt)
         const en = elem && typeName(elem)
         const refName = (n) => (n && n.kind === 'typeRef' ? n.to.replace(/\.t$/, '') : null)
+        // A non-array builtin container arm (`Map<string, OnClick>`) has the bare container name
+        // (`Map`) for EVERY arm, so distinguish it by its value/element type — `MapOnClick` /
+        // `MapOnHover` — else `from*` views collide. (#68)
+        const contArg = (t) => {
+            const args = (checker.getTypeArguments && (t.objectFlags & ts.ObjectFlags.Reference)) ? checker.getTypeArguments(t) : []
+            const last = args[args.length - 1]
+            const n = last && typeName(last)
+            return (n && n !== '__type') ? pascal(n) : ''
+        }
         // A TUPLE arm (SVG path `[cmd, …number]`, #72) is anonymous — name the `from*` view by its
         // ARITY (`Tuple3` -> fromTuple3) so distinct-arity arms don't collide on one ident.
         const name = (node && node.kind === 'tuple')
             ? 'Tuple' + node.params.length
             : elem
             ? (en && en !== '__type' ? en + 's' : (refName(node && node.of) ? refName(node.of) + 's' : undefined))
+            : (raw && raw !== '__type' && isBuiltinContainer(mt, checker)) ? (raw + contArg(mt))
             : (raw && raw !== '__type') ? raw
             : (mt.getCallSignatures && mt.getCallSignatures().length) ? 'Fn'
             : refName(node) || undefined
@@ -2547,14 +2571,19 @@ function unionNode(type, ctx, propName, depth = 0) {
         const args = [...(t.aliasTypeArguments || []), ...((checker.getTypeArguments && (t.objectFlags & ts.ObjectFlags.Reference) && checker.getTypeArguments(t)) || [])]
         return args.some((a) => armHasTypeParam(a, d + 1))
     }
-    // Guard 3: skip when every arm is an ARRAY instantiation (`DateRangePreset[] |
-    // CustomPresetConfig[] | …` — DateRangePicker's `PresetsConfig`). All arrays share the
-    // global `Array` symbol, so `armSym` matches across arms and the union would WRONGLY
-    // collapse to one record built from `Array`'s lib.es prototype methods (all inherited ->
-    // `{...JsxDOM.domProps}`, the array shape lost). A union of arrays belongs to the
-    // union-of-arrays handler below (→ `array<element-union>`). (#65 union-of-arrays)
+    // Guard 3: skip when the arms are instantiations of a BUILTIN generic container, not a
+    // user record. Every `Array<A> | Array<B>` (DateRangePicker's `PresetsConfig`), and equally
+    // `Map<A> | Map<B>`, `Set<…>`, `Promise<…>`, `WeakMap<…>`, shares ONE global lib.es symbol
+    // across its instantiations, so `armSym` matches across arms and the union would WRONGLY
+    // collapse to one record built from the container's prototype methods (all inherited ->
+    // `{...JsxDOM.domProps}`, the real shape lost). `#67` closed only arrays (`!isArrayType`);
+    // `isBuiltinContainer` closes the whole container class (Map/Set/Promise/WeakMap/…) in one
+    // check. NOT the broader `!isLibraryType` — that also excludes `@types`/csstype records that
+    // legitimately collapse (regressed hono's `headerRecord` and react-markdown's `HastTypes.readonly`
+    // to `string` in the bench). A first-party record like `@base-ui`'s `BaseUIChangeEventDetails<R>`
+    // is no container, so the collapse this branch was built for still fires. (#68, was #65/#67)
     if (parts.length >= 2 && type.getProperties().length > 0 && parts.every((t) =>
-        !checker.isArrayType?.(t) &&
+        !isBuiltinContainer(t, checker) &&
         armSym(t) && armSym(t) === armSym(parts[0]) &&
         (t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) &&
         !(t.getCallSignatures && t.getCallSignatures().length) &&
@@ -2701,6 +2730,18 @@ function unionNode(type, ctx, propName, depth = 0) {
         for (const e of elemTypes) { if (e.id != null && !seen.has(e.id)) { seen.add(e.id); distinct.push(e) } }
         const opaque = distinct.length >= 2 ? opaqueUnion(ctx, type, distinct, propName, depth) : null
         return { kind: 'array', of: opaque || { kind: 'raw', res: 'JSON.t' } }
+    }
+
+    // Union of BUILTIN CONTAINERS — `Map<string, OnClick> | Map<string, OnHover>`, `Set<A> | Set<B>`,
+    // `Promise<A> | Promise<B>`. Each arm types cleanly on its own (a single `Map<K,V>` → `Map.t<K,V>`),
+    // but all arms are `object` at runtime, so the @unboxed variant below can't discriminate them and
+    // would drop the whole union to `string`. Bind it as an opaque module with one construct-only
+    // `from*` view per arm — the SAME faithful treatment the array-union above gets. Arms are named by
+    // their value/element type (`fromMapOnClick`/`fromMapOnHover`) since the bare container name repeats.
+    // (#68 — the union-of-arrays companion for the other lib.es containers)
+    if (parts.length >= 2 && parts.every((t) => isBuiltinContainer(t, checker))) {
+        const opaque = opaqueUnion(ctx, type, parts, propName, depth)
+        if (opaque) return opaque
     }
 
     // Genuine multi-runtime-type union (string|number, string|string[],
