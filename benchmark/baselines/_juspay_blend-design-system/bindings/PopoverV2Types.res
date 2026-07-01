@@ -1,50 +1,50 @@
-type popoverV2GapConfig = {
+type popoverV2PopoverV2TokenTypeGapConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type popoverV2PaddingConfig = {
-  left: popoverV2GapConfig,
-  right: popoverV2GapConfig,
-  top: popoverV2GapConfig,
-  bottom: popoverV2GapConfig,
+type popoverV2PopoverV2TokenTypePaddingConfig = {
+  left: popoverV2PopoverV2TokenTypeGapConfig,
+  right: popoverV2PopoverV2TokenTypeGapConfig,
+  top: popoverV2PopoverV2TokenTypeGapConfig,
+  bottom: popoverV2PopoverV2TokenTypeGapConfig,
 }
-type popoverV2IconSizeConfig = {
+type popoverV2PopoverV2TokenTypeTopContainerHeadingIconSizeConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type popoverV2HeadingConfig = {
+type popoverV2PopoverV2TokenTypeTopContainerHeadingConfig = {
   color: string,
-  fontSize: popoverV2GapConfig,
-  fontWeight: popoverV2GapConfig,
-  lineHeight: popoverV2GapConfig,
-  @as("IconSize") iconSize: popoverV2IconSizeConfig,
+  fontSize: popoverV2PopoverV2TokenTypeGapConfig,
+  fontWeight: popoverV2PopoverV2TokenTypeGapConfig,
+  lineHeight: popoverV2PopoverV2TokenTypeGapConfig,
+  @as("IconSize") iconSize: popoverV2PopoverV2TokenTypeTopContainerHeadingIconSizeConfig,
 }
-type popoverV2DescriptionConfig = {
+type popoverV2PopoverV2TokenTypeTopContainerDescriptionConfig = {
   color: string,
-  fontSize: popoverV2GapConfig,
-  fontWeight: popoverV2GapConfig,
-  lineHeight: popoverV2GapConfig,
+  fontSize: popoverV2PopoverV2TokenTypeGapConfig,
+  fontWeight: popoverV2PopoverV2TokenTypeGapConfig,
+  lineHeight: popoverV2PopoverV2TokenTypeGapConfig,
 }
-type popoverV2TopContainerConfig = {
-  gap: popoverV2GapConfig,
-  heading: popoverV2HeadingConfig,
-  description: popoverV2DescriptionConfig,
+type popoverV2PopoverV2TokenTypeTopContainerConfig = {
+  gap: popoverV2PopoverV2TokenTypeGapConfig,
+  heading: popoverV2PopoverV2TokenTypeTopContainerHeadingConfig,
+  description: popoverV2PopoverV2TokenTypeTopContainerDescriptionConfig,
 }
-type popoverV2BottomContainerConfig = {
-  gap: popoverV2GapConfig,
+type popoverV2PopoverV2TokenTypeBottomContainerConfig = {
+  gap: popoverV2PopoverV2TokenTypeGapConfig,
 }
 type popoverV2TokenType = {
   background: string,
   border: string,
-  shadow: TokensTypes.tokensShadowsConfig,
-  gap: popoverV2GapConfig,
+  shadow: TokensTypes.tokensFoundationTokenTypeShadowsConfig,
+  gap: popoverV2PopoverV2TokenTypeGapConfig,
   zIndex: string,
-  borderRadius: popoverV2GapConfig,
-  padding: popoverV2PaddingConfig,
-  @as("TopContainer") topContainer: popoverV2TopContainerConfig,
-  bottomContainer: popoverV2BottomContainerConfig,
+  borderRadius: popoverV2PopoverV2TokenTypeGapConfig,
+  padding: popoverV2PopoverV2TokenTypePaddingConfig,
+  @as("TopContainer") topContainer: popoverV2PopoverV2TokenTypeTopContainerConfig,
+  bottomContainer: popoverV2PopoverV2TokenTypeBottomContainerConfig,
 }
 type responsivePopoverV2Tokens = {
   sm: popoverV2TokenType,

@@ -61,7 +61,7 @@ type baseUIEvent = {
 type htmlProps = {
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
-type utilsSetOpenConfig = {
+type utilsFloatingRootStoreSetOpenConfig = {
   reason: string,
   event: Dom.event,
   cancel: unit => unit,
@@ -83,15 +83,15 @@ type utilsOnCheckedChangeConfig = {
   isPropagationAllowed: bool,
   trigger?: Dom.element,
 }
-type utilsAnchorConfig = {
+type utilsSideOffsetAnchorConfig = {
   width: float,
   height: float,
 }
 type utilsSideOffsetConfig = {
   side: side,
   align: align,
-  anchor: utilsAnchorConfig,
-  positioner: utilsAnchorConfig,
+  anchor: utilsSideOffsetAnchorConfig,
+  positioner: utilsSideOffsetAnchorConfig,
 }
 type sideFlipMode = {
   side?: side2,

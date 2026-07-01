@@ -5,77 +5,77 @@ type radioMaxLengthConfig = {
   label?: float,
   subtext?: float,
 }
-type radioGroupConfig = {
+type radioResponsiveRadioTokensSmGroupConfig = {
   gap: string,
 }
-type radioBackgroundColorConfig = {
+type radioResponsiveRadioTokensSmIndicatorActiveBackgroundColorConfig = {
   disabled: string,
   default: string,
   hover: string,
   error: string,
 }
-type radioActiveConfig = {
-  backgroundColor: radioBackgroundColorConfig,
-  borderColor: radioBackgroundColorConfig,
+type radioResponsiveRadioTokensSmIndicatorActiveConfig = {
+  backgroundColor: radioResponsiveRadioTokensSmIndicatorActiveBackgroundColorConfig,
+  borderColor: radioResponsiveRadioTokensSmIndicatorActiveBackgroundColorConfig,
 }
-type radioIndicatorConfig = {
-  active: radioActiveConfig,
-  inactive: radioActiveConfig,
+type radioResponsiveRadioTokensSmIndicatorConfig = {
+  active: radioResponsiveRadioTokensSmIndicatorActiveConfig,
+  inactive: radioResponsiveRadioTokensSmIndicatorActiveConfig,
 }
-type radioBackgroundColorConfig2 = {
+type radioResponsiveRadioTokensSmActiveIndicatorActiveBackgroundColorConfig = {
   disabled: string,
   default: string,
 }
-type radioActiveConfig2 = {
-  backgroundColor: radioBackgroundColorConfig2,
+type radioResponsiveRadioTokensSmActiveIndicatorActiveConfig = {
+  backgroundColor: radioResponsiveRadioTokensSmActiveIndicatorActiveBackgroundColorConfig,
 }
-type radioActiveIndicatorConfig = {
-  active: radioActiveConfig2,
+type radioResponsiveRadioTokensSmActiveIndicatorConfig = {
+  active: radioResponsiveRadioTokensSmActiveIndicatorActiveConfig,
 }
-type radioFontSizeConfig = {
+type radioResponsiveRadioTokensSmContentLabelFontSizeConfig = {
   sm: string,
   md: string,
 }
-type radioLabelConfig = {
+type radioResponsiveRadioTokensSmContentLabelConfig = {
   gap: string,
-  color: radioBackgroundColorConfig,
-  fontSize: radioFontSizeConfig,
-  fontWeight: radioFontSizeConfig,
+  color: radioResponsiveRadioTokensSmIndicatorActiveBackgroundColorConfig,
+  fontSize: radioResponsiveRadioTokensSmContentLabelFontSizeConfig,
+  fontWeight: radioResponsiveRadioTokensSmContentLabelFontSizeConfig,
 }
-type radioSublabelConfig = {
-  color: radioBackgroundColorConfig,
-  fontSize: radioFontSizeConfig,
-  fontWeight: radioFontSizeConfig,
+type radioResponsiveRadioTokensSmContentSublabelConfig = {
+  color: radioResponsiveRadioTokensSmIndicatorActiveBackgroundColorConfig,
+  fontSize: radioResponsiveRadioTokensSmContentLabelFontSizeConfig,
+  fontWeight: radioResponsiveRadioTokensSmContentLabelFontSizeConfig,
 }
-type radioContentConfig = {
-  label: radioLabelConfig,
-  sublabel: radioSublabelConfig,
+type radioResponsiveRadioTokensSmContentConfig = {
+  label: radioResponsiveRadioTokensSmContentLabelConfig,
+  sublabel: radioResponsiveRadioTokensSmContentSublabelConfig,
 }
-type radioActiveConfig3 = {
+type radioResponsiveRadioTokensSmBorderWidthActiveConfig = {
   disabled: float,
   default: float,
   hover: float,
   error: float,
 }
-type radioBorderWidthConfig = {
-  active: radioActiveConfig3,
-  inactive: radioActiveConfig3,
+type radioResponsiveRadioTokensSmBorderWidthConfig = {
+  active: radioResponsiveRadioTokensSmBorderWidthActiveConfig,
+  inactive: radioResponsiveRadioTokensSmBorderWidthActiveConfig,
 }
-type radioRequiredConfig = {
+type radioResponsiveRadioTokensSmRequiredConfig = {
   color: string,
 }
-type radioSmConfig = {
+type radioResponsiveRadioTokensSmConfig = {
   gap: string,
-  group: radioGroupConfig,
-  indicator: radioIndicatorConfig,
-  activeIndicator: radioActiveIndicatorConfig,
-  content: radioContentConfig,
-  height: radioFontSizeConfig,
-  borderWidth: radioBorderWidthConfig,
-  slot: radioFontSizeConfig,
-  required: radioRequiredConfig,
+  group: radioResponsiveRadioTokensSmGroupConfig,
+  indicator: radioResponsiveRadioTokensSmIndicatorConfig,
+  activeIndicator: radioResponsiveRadioTokensSmActiveIndicatorConfig,
+  content: radioResponsiveRadioTokensSmContentConfig,
+  height: radioResponsiveRadioTokensSmContentLabelFontSizeConfig,
+  borderWidth: radioResponsiveRadioTokensSmBorderWidthConfig,
+  slot: radioResponsiveRadioTokensSmContentLabelFontSizeConfig,
+  required: radioResponsiveRadioTokensSmRequiredConfig,
 }
 type responsiveRadioTokens = {
-  sm: radioSmConfig,
-  lg: radioSmConfig,
+  sm: radioResponsiveRadioTokensSmConfig,
+  lg: radioResponsiveRadioTokensSmConfig,
 }

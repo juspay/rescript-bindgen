@@ -3,7 +3,7 @@
 @module("demo") external now: unit => float = "now"
 @module("demo") external forEach: (array<float>, (float, float) => unit) => unit = "forEach"
 @module("demo") external makeClick: (string) => ReactEvent.Mouse.t = "makeClick"
-@module("demo") external useThing: (bool) => FnExportsTypes.fnExportsValueConfig = "useThing"
+@module("demo") external useThing: (bool) => FnExportsTypes.fnExportsUseThingConfig = "useThing"
 @module("demo") external translate: (FnExportsTypes.point, float, float) => FnExportsTypes.point = "translate"
 @module("demo") external renderThing: (FnExportsTypes.point, FnExportsTypes.point) => Dom.element = "renderThing"
 @module("demo") external getSlots: (FnExportsTypes.point) => array<React.element> = "getSlots"

@@ -1,4 +1,4 @@
-type recursiveTypeParamCycleControlPointsConfig<'a> = {
+type recursiveTypeParamCycleAnnotationControlPointControlPointsConfig<'a> = {
   id: string,
   value: 'a,
 }
@@ -11,6 +11,6 @@ and annotationEvents<'a> = {
   remove?: annotation<'a> => bool,
 }
 and annotationControlPoint<'a> = {
-  controlPoints?: array<recursiveTypeParamCycleControlPointsConfig<'a>>,
+  controlPoints?: array<recursiveTypeParamCycleAnnotationControlPointControlPointsConfig<'a>>,
   events?: annotationEvents<'a>,
 }

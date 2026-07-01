@@ -7,14 +7,14 @@ type rangeConfig = {
   label?: string,
   visible?: bool,
 }
-type unionOfArraysGetRangeConfig = {
+type unionOfArraysRangeDefinitionGetRangeConfig = {
   start: string,
   end: string,
 }
 type rangeDefinition = {
   id: string,
   label: string,
-  getRange: unit => unionOfArraysGetRangeConfig,
+  getRange: unit => unionOfArraysRangeDefinitionGetRangeConfig,
   visible?: bool,
 }
 module PresetsConfig = {

@@ -16,51 +16,51 @@ type topQuery = {
   id: string,
   text: string,
 }
-type chatInputBackgroundColorConfig = {
+type chatInputResponsiveChatInputTokensTypeSmBackgroundColorConfig = {
   default: string,
   hover: string,
   disabled: string,
 }
-type chatInputBorderRadiusConfig = {
+type chatInputResponsiveChatInputTokensTypeSmBorderRadiusConfig = {
   default: string,
   focus: string,
 }
-type chatInputColorConfig = {
+type chatInputResponsiveChatInputTokensTypeSmTextColorConfig = {
   default: string,
   hover: string,
   focus: string,
   disabled: string,
 }
-type chatInputLineHeightConfig = {
+type chatInputResponsiveChatInputTokensTypeSmTextLineHeightConfig = {
   default: string,
   hover: string,
   focus: string,
 }
-type chatInputTextConfig = {
-  color: chatInputColorConfig,
-  fontSize: chatInputColorConfig,
-  fontWeight: chatInputColorConfig,
-  lineHeight: chatInputLineHeightConfig,
+type chatInputResponsiveChatInputTokensTypeSmTextConfig = {
+  color: chatInputResponsiveChatInputTokensTypeSmTextColorConfig,
+  fontSize: chatInputResponsiveChatInputTokensTypeSmTextColorConfig,
+  fontWeight: chatInputResponsiveChatInputTokensTypeSmTextColorConfig,
+  lineHeight: chatInputResponsiveChatInputTokensTypeSmTextLineHeightConfig,
 }
-type chatInputContainerConfig = {
-  backgroundColor: chatInputBackgroundColorConfig,
-  border: chatInputBorderRadiusConfig,
+type chatInputResponsiveChatInputTokensTypeSmContainerConfig = {
+  backgroundColor: chatInputResponsiveChatInputTokensTypeSmBackgroundColorConfig,
+  border: chatInputResponsiveChatInputTokensTypeSmBorderRadiusConfig,
   borderRadius: string,
   padding: string,
   gap: string,
   minHeight: string,
   transition: string,
-  boxShadow: chatInputLineHeightConfig,
+  boxShadow: chatInputResponsiveChatInputTokensTypeSmTextLineHeightConfig,
 }
-type chatInputAttachmentContainerConfig = {
+type chatInputResponsiveChatInputTokensTypeSmAttachmentContainerConfig = {
   backgroundColor: string,
   borderRadius: string,
   padding: string,
 }
-type chatInputPlaceholderConfig = {
+type chatInputResponsiveChatInputTokensTypeSmTextareaPlaceholderConfig = {
   color: string,
 }
-type chatInputTextareaConfig = {
+type chatInputResponsiveChatInputTokensTypeSmTextareaConfig = {
   backgroundColor: string,
   color: string,
   fontSize: string,
@@ -71,14 +71,14 @@ type chatInputTextareaConfig = {
   paddingLeft: string,
   border: string,
   borderRadius: string,
-  placeholder: chatInputPlaceholderConfig,
+  placeholder: chatInputResponsiveChatInputTokensTypeSmTextareaPlaceholderConfig,
   resize: string,
   fontFamily: string,
   minHeight: string,
   maxHeight: string,
   overflowY: string,
 }
-type chatInputFilesContainerConfig = {
+type chatInputResponsiveChatInputTokensTypeSmFilesContainerConfig = {
   gap: string,
   paddingX: string,
   paddingY: string,
@@ -86,20 +86,20 @@ type chatInputFilesContainerConfig = {
   overflowY: string,
   margin: string,
 }
-type chatInputBottomActionsConfig = {
+type chatInputResponsiveChatInputTokensTypeSmBottomActionsConfig = {
   paddingX: string,
   paddingY: string,
   gap: string,
   justifyContent: string,
 }
-type chatInputBackgroundColorConfig2 = {
+type chatInputResponsiveChatInputTokensTypeSmOverflowTagBackgroundColorConfig = {
   default: string,
   hover: string,
   active: string,
 }
-type chatInputOverflowTagConfig = {
-  backgroundColor: chatInputBackgroundColorConfig2,
-  color: chatInputBackgroundColorConfig2,
+type chatInputResponsiveChatInputTokensTypeSmOverflowTagConfig = {
+  backgroundColor: chatInputResponsiveChatInputTokensTypeSmOverflowTagBackgroundColorConfig,
+  color: chatInputResponsiveChatInputTokensTypeSmOverflowTagBackgroundColorConfig,
   border: string,
   borderRadius: string,
   paddingX: string,
@@ -110,11 +110,11 @@ type chatInputOverflowTagConfig = {
   transition: string,
   cursor: string,
 }
-type chatInputContainerConfig2 = {
+type chatInputResponsiveChatInputTokensTypeSmTopQueriesContainerConfig = {
   borderTop: string,
   paddingTop: string,
 }
-type chatInputHeaderConfig = {
+type chatInputResponsiveChatInputTokensTypeSmTopQueriesHeaderConfig = {
   color: string,
   fontSize: string,
   fontWeight: string,
@@ -124,25 +124,25 @@ type chatInputHeaderConfig = {
   backgroundColor: string,
   flexShrink: string,
 }
-type chatInputScrollContainerConfig = {
+type chatInputResponsiveChatInputTokensTypeSmTopQueriesScrollContainerConfig = {
   overflowY: string,
   maxHeightOffset: float,
   backgroundColor: string,
   scrollbarColor: string,
 }
-type chatInputBackgroundColorConfig3 = {
+type chatInputResponsiveChatInputTokensTypeSmTopQueriesItemBackgroundColorConfig = {
   default: string,
   hover: string,
   active: string,
   disabled: string,
 }
-type chatInputOpacityConfig = {
+type chatInputResponsiveChatInputTokensTypeSmTopQueriesItemOpacityConfig = {
   default: string,
   disabled: string,
 }
-type chatInputItemConfig = {
-  backgroundColor: chatInputBackgroundColorConfig3,
-  color: chatInputBackgroundColorConfig3,
+type chatInputResponsiveChatInputTokensTypeSmTopQueriesItemConfig = {
+  backgroundColor: chatInputResponsiveChatInputTokensTypeSmTopQueriesItemBackgroundColorConfig,
+  color: chatInputResponsiveChatInputTokensTypeSmTopQueriesItemBackgroundColorConfig,
   fontSize: string,
   fontWeight: string,
   paddingX: string,
@@ -150,36 +150,36 @@ type chatInputItemConfig = {
   border: string,
   transition: string,
   cursor: string,
-  opacity: chatInputOpacityConfig,
+  opacity: chatInputResponsiveChatInputTokensTypeSmTopQueriesItemOpacityConfig,
 }
-type chatInputTopQueriesConfig = {
-  container: chatInputContainerConfig2,
-  header: chatInputHeaderConfig,
-  scrollContainer: chatInputScrollContainerConfig,
-  item: chatInputItemConfig,
+type chatInputResponsiveChatInputTokensTypeSmTopQueriesConfig = {
+  container: chatInputResponsiveChatInputTokensTypeSmTopQueriesContainerConfig,
+  header: chatInputResponsiveChatInputTokensTypeSmTopQueriesHeaderConfig,
+  scrollContainer: chatInputResponsiveChatInputTokensTypeSmTopQueriesScrollContainerConfig,
+  item: chatInputResponsiveChatInputTokensTypeSmTopQueriesItemConfig,
 }
-type chatInputSmConfig = {
-  backgroundColor: chatInputBackgroundColorConfig,
-  borderRadius: chatInputBorderRadiusConfig,
-  border: chatInputBorderRadiusConfig,
+type chatInputResponsiveChatInputTokensTypeSmConfig = {
+  backgroundColor: chatInputResponsiveChatInputTokensTypeSmBackgroundColorConfig,
+  borderRadius: chatInputResponsiveChatInputTokensTypeSmBorderRadiusConfig,
+  border: chatInputResponsiveChatInputTokensTypeSmBorderRadiusConfig,
   minHeight: string,
   maxHeight: string,
   gap: string,
-  text: chatInputTextConfig,
+  text: chatInputResponsiveChatInputTokensTypeSmTextConfig,
   resize: string,
   overflow: string,
   paddingLeft: string,
   paddingTop: string,
   paddingBottom: string,
-  container: chatInputContainerConfig,
-  attachmentContainer: chatInputAttachmentContainerConfig,
-  textarea: chatInputTextareaConfig,
-  filesContainer: chatInputFilesContainerConfig,
-  bottomActions: chatInputBottomActionsConfig,
-  overflowTag: chatInputOverflowTagConfig,
-  topQueries: chatInputTopQueriesConfig,
+  container: chatInputResponsiveChatInputTokensTypeSmContainerConfig,
+  attachmentContainer: chatInputResponsiveChatInputTokensTypeSmAttachmentContainerConfig,
+  textarea: chatInputResponsiveChatInputTokensTypeSmTextareaConfig,
+  filesContainer: chatInputResponsiveChatInputTokensTypeSmFilesContainerConfig,
+  bottomActions: chatInputResponsiveChatInputTokensTypeSmBottomActionsConfig,
+  overflowTag: chatInputResponsiveChatInputTokensTypeSmOverflowTagConfig,
+  topQueries: chatInputResponsiveChatInputTokensTypeSmTopQueriesConfig,
 }
 type responsiveChatInputTokensType = {
-  sm: chatInputSmConfig,
-  lg: chatInputSmConfig,
+  sm: chatInputResponsiveChatInputTokensTypeSmConfig,
+  lg: chatInputResponsiveChatInputTokensTypeSmConfig,
 }

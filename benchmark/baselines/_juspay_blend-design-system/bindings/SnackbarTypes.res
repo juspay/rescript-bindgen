@@ -10,7 +10,7 @@ type snackbarVariant =
   | @as("success") Success
   | @as("warning") Warning
   | @as("error") Error
-type snackbarActionButtonConfig = {
+type snackbarAddToastOptionsActionButtonConfig = {
   label: string,
   onClick: unit => unit,
   autoDismiss?: bool,
@@ -20,65 +20,65 @@ type addToastOptions = {
   description?: string,
   variant?: snackbarVariant,
   onClose?: unit => unit,
-  actionButton?: snackbarActionButtonConfig,
+  actionButton?: snackbarAddToastOptionsActionButtonConfig,
   duration?: float,
   position?: snackbarPosition,
 }
-type snackbarColorConfig = {
+type snackbarResponsiveSnackbarTokensSmInfoIconColorConfig = {
   info: string,
   success: string,
   warning: string,
   error: string,
 }
-type snackbarInfoIconConfig = {
-  color: snackbarColorConfig,
+type snackbarResponsiveSnackbarTokensSmInfoIconConfig = {
+  color: snackbarResponsiveSnackbarTokensSmInfoIconColorConfig,
   height: string,
 }
-type snackbarColorConfig2 = {
+type snackbarResponsiveSnackbarTokensSmContentTextContainerHeaderColorConfig = {
   info: string,
   success: string,
   warning: string,
   error: string,
 }
-type snackbarHeaderConfig = {
-  color: snackbarColorConfig2,
+type snackbarResponsiveSnackbarTokensSmContentTextContainerHeaderConfig = {
+  color: snackbarResponsiveSnackbarTokensSmContentTextContainerHeaderColorConfig,
   fontSize: string,
   fontWeight: string,
 }
-type snackbarTextContainerConfig = {
+type snackbarResponsiveSnackbarTokensSmContentTextContainerConfig = {
   gap: string,
-  header: snackbarHeaderConfig,
-  description: snackbarHeaderConfig,
+  header: snackbarResponsiveSnackbarTokensSmContentTextContainerHeaderConfig,
+  description: snackbarResponsiveSnackbarTokensSmContentTextContainerHeaderConfig,
 }
-type snackbarContentConfig = {
+type snackbarResponsiveSnackbarTokensSmContentConfig = {
   gap: string,
-  textContainer: snackbarTextContainerConfig,
+  textContainer: snackbarResponsiveSnackbarTokensSmContentTextContainerConfig,
 }
-type snackbarPrimaryActionConfig = {
-  color: snackbarColorConfig,
+type snackbarResponsiveSnackbarTokensSmActionsPrimaryActionConfig = {
+  color: snackbarResponsiveSnackbarTokensSmInfoIconColorConfig,
   fontSize: string,
   fontWeight: string,
 }
-type snackbarCloseButtonConfig = {
+type snackbarResponsiveSnackbarTokensSmActionsCloseButtonConfig = {
   height: string,
-  color: snackbarColorConfig,
+  color: snackbarResponsiveSnackbarTokensSmInfoIconColorConfig,
 }
-type snackbarActionsConfig = {
-  primaryAction: snackbarPrimaryActionConfig,
-  closeButton: snackbarCloseButtonConfig,
+type snackbarResponsiveSnackbarTokensSmActionsConfig = {
+  primaryAction: snackbarResponsiveSnackbarTokensSmActionsPrimaryActionConfig,
+  closeButton: snackbarResponsiveSnackbarTokensSmActionsCloseButtonConfig,
 }
-type snackbarSmConfig = {
+type snackbarResponsiveSnackbarTokensSmConfig = {
   backgroundColor: string,
   borderRadius: string,
   padding: string,
   maxWidth: string,
   boxShadow: string,
   gap: string,
-  infoIcon: snackbarInfoIconConfig,
-  content: snackbarContentConfig,
-  actions: snackbarActionsConfig,
+  infoIcon: snackbarResponsiveSnackbarTokensSmInfoIconConfig,
+  content: snackbarResponsiveSnackbarTokensSmContentConfig,
+  actions: snackbarResponsiveSnackbarTokensSmActionsConfig,
 }
 type responsiveSnackbarTokens = {
-  sm: snackbarSmConfig,
-  lg: snackbarSmConfig,
+  sm: snackbarResponsiveSnackbarTokensSmConfig,
+  lg: snackbarResponsiveSnackbarTokensSmConfig,
 }

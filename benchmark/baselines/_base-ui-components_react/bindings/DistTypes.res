@@ -1,4 +1,4 @@
-type distGetBoundingClientRectConfig = {
+type distVirtualElementGetBoundingClientRectConfig = {
   x: float,
   y: float,
   height: float,
@@ -10,11 +10,11 @@ type distGetBoundingClientRectConfig = {
 }
 module GetClientRectsTarget = {
   type t
-  external fromDistGetBoundingClientRectConfigs: array<distGetBoundingClientRectConfig> => t = "%identity"
+  external fromDistVirtualElementGetBoundingClientRectConfigs: array<distVirtualElementGetBoundingClientRectConfig> => t = "%identity"
   external fromDOMRectList: WebTypes.domRectList => t = "%identity"
 }
 type virtualElement = {
-  getBoundingClientRect: unit => distGetBoundingClientRectConfig,
+  getBoundingClientRect: unit => distVirtualElementGetBoundingClientRectConfig,
   getClientRects?: unit => GetClientRectsTarget.t,
   contextElement?: Dom.element,
 }

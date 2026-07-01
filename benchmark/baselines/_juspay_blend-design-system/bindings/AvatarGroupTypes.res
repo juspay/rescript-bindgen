@@ -15,69 +15,69 @@ type avatarGroupSkeletonConfig = {
   show: bool,
   variant?: SkeletonTypes.skeletonVariant,
 }
-type avatarGroupMarginLeftConfig = {
+type avatarGroupAvatarGroupTokensTypeContainerMarginLeftConfig = {
   sm: string,
   regular: string,
   md: string,
   lg: string,
   xl: string,
 }
-type avatarGroupContainerConfig = {
-  marginLeft: avatarGroupMarginLeftConfig,
+type avatarGroupAvatarGroupTokensTypeContainerConfig = {
+  marginLeft: avatarGroupAvatarGroupTokensTypeContainerMarginLeftConfig,
 }
-type avatarGroupSelectedConfig = {
+type avatarGroupAvatarGroupTokensTypeAvatarSelectedConfig = {
   ringColor: string,
   ringWidth: string,
   ringOffset: string,
 }
-type avatarGroupBorderConfig = {
+type avatarGroupAvatarGroupTokensTypeAvatarBorderConfig = {
   width: string,
   color: string,
 }
-type avatarGroupAvatarConfig = {
-  selected: avatarGroupSelectedConfig,
-  border: avatarGroupBorderConfig,
+type avatarGroupAvatarGroupTokensTypeAvatarConfig = {
+  selected: avatarGroupAvatarGroupTokensTypeAvatarSelectedConfig,
+  border: avatarGroupAvatarGroupTokensTypeAvatarBorderConfig,
 }
-type avatarGroupBackgroundConfig = {
+type avatarGroupAvatarGroupTokensTypeOverflowCounterBackgroundConfig = {
   default: string,
   hover: string,
   active: string,
 }
-type avatarGroupTextConfig = {
+type avatarGroupAvatarGroupTokensTypeOverflowCounterTextConfig = {
   color: string,
 }
-type avatarGroupSmConfig = {
+type avatarGroupAvatarGroupTokensTypeOverflowCounterSizeSmConfig = {
   width: string,
   height: string,
   fontSize: string,
 }
-type avatarGroupSizeConfig = {
-  sm: avatarGroupSmConfig,
-  regular: avatarGroupSmConfig,
-  md: avatarGroupSmConfig,
-  lg: avatarGroupSmConfig,
-  xl: avatarGroupSmConfig,
+type avatarGroupAvatarGroupTokensTypeOverflowCounterSizeConfig = {
+  sm: avatarGroupAvatarGroupTokensTypeOverflowCounterSizeSmConfig,
+  regular: avatarGroupAvatarGroupTokensTypeOverflowCounterSizeSmConfig,
+  md: avatarGroupAvatarGroupTokensTypeOverflowCounterSizeSmConfig,
+  lg: avatarGroupAvatarGroupTokensTypeOverflowCounterSizeSmConfig,
+  xl: avatarGroupAvatarGroupTokensTypeOverflowCounterSizeSmConfig,
 }
-type avatarGroupBorderRadiusConfig = {
+type avatarGroupAvatarGroupTokensTypeOverflowCounterBorderRadiusConfig = {
   circular: string,
   rounded: string,
 }
-type avatarGroupOverflowCounterConfig = {
-  background: avatarGroupBackgroundConfig,
-  text: avatarGroupTextConfig,
-  border: avatarGroupBorderConfig,
-  size: avatarGroupSizeConfig,
-  borderRadius: avatarGroupBorderRadiusConfig,
+type avatarGroupAvatarGroupTokensTypeOverflowCounterConfig = {
+  background: avatarGroupAvatarGroupTokensTypeOverflowCounterBackgroundConfig,
+  text: avatarGroupAvatarGroupTokensTypeOverflowCounterTextConfig,
+  border: avatarGroupAvatarGroupTokensTypeAvatarBorderConfig,
+  size: avatarGroupAvatarGroupTokensTypeOverflowCounterSizeConfig,
+  borderRadius: avatarGroupAvatarGroupTokensTypeOverflowCounterBorderRadiusConfig,
 }
-type avatarGroupMenuConfig = {
+type avatarGroupAvatarGroupTokensTypeMenuConfig = {
   marginTop: string,
 }
 type avatarGroupTokensType = {
   gap: string,
-  container: avatarGroupContainerConfig,
-  avatar: avatarGroupAvatarConfig,
-  overflowCounter: avatarGroupOverflowCounterConfig,
-  menu: avatarGroupMenuConfig,
+  container: avatarGroupAvatarGroupTokensTypeContainerConfig,
+  avatar: avatarGroupAvatarGroupTokensTypeAvatarConfig,
+  overflowCounter: avatarGroupAvatarGroupTokensTypeOverflowCounterConfig,
+  menu: avatarGroupAvatarGroupTokensTypeMenuConfig,
 }
 type responsiveAvatarGroupTokens = {
   sm: avatarGroupTokensType,

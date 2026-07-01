@@ -379,7 +379,7 @@ type alertDialogRootChangeEventDetails = {
   trigger?: Dom.element,
   preventUnmountOnClose: unit => unit,
 }
-type rootSetOpenConfig = {
+type rootDialogStoreSetOpenConfig = {
   reason: reason2,
   event: Dom.event,
   cancel: unit => unit,
@@ -406,7 +406,7 @@ type floatingRootStoreContext = {
   noEmit: bool,
   triggerElements: PopupsTypes.popupTriggerMap,
 }
-type componentsUseSyncedValuesConfig = {
+type componentsFloatingRootStoreUseSyncedValuesConfig = {
   @as("open") open_?: string,
   domReferenceElement?: string,
   referenceElement?: string,
@@ -414,7 +414,7 @@ type componentsUseSyncedValuesConfig = {
   positionReference?: string,
   floatingId?: string,
 }
-type componentsSetStateConfig = {
+type componentsFloatingRootStoreSetStateConfig = {
   @as("open") open_: string,
   domReferenceElement: string,
   referenceElement: string,
@@ -423,30 +423,30 @@ type componentsSetStateConfig = {
   floatingId?: string,
 }
 type floatingRootStore = {
-  setOpen: (bool, PositionerSharedTypes.utilsSetOpenConfig) => unit,
+  setOpen: (bool, PositionerSharedTypes.utilsFloatingRootStoreSetOpenConfig) => unit,
   context: floatingRootStoreContext,
   controlledValues: string,
   selectors: string,
   useSyncedValue: (useSyncedValue2, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
-  useSyncedValues: componentsUseSyncedValuesConfig => unit,
+  useSyncedValues: componentsFloatingRootStoreUseSyncedValuesConfig => unit,
   useControlledProp: (useSyncedValue2, string, string) => unit,
   set: (useSyncedValue2, string) => unit,
-  update: componentsUseSyncedValuesConfig => unit,
-  setState: componentsSetStateConfig => unit,
+  update: componentsFloatingRootStoreUseSyncedValuesConfig => unit,
+  setState: componentsFloatingRootStoreSetStateConfig => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (string, string) => unit) => unit,
   useStateSetter: useSyncedValue2 => string => unit,
   observe: string,
-  state: componentsSetStateConfig,
+  state: componentsFloatingRootStoreSetStateConfig,
   listeners: string,
   updateTick: string,
   subscribe: string => unit => unit => unit,
-  getSnapshot: unit => componentsSetStateConfig,
+  getSnapshot: unit => componentsFloatingRootStoreSetStateConfig,
   notifyAll: unit => unit,
 }
-type storeUseSyncedValuesConfig<'a> = {
+type storeDialogStoreUseSyncedValuesConfig<'a> = {
   @as("open") open_?: bool,
   mounted?: bool,
   transitionStatus?: PositionerSharedTypes.transitionStatus,
@@ -470,7 +470,7 @@ type storeUseSyncedValuesConfig<'a> = {
   viewportElement?: Nullable.t<Dom.element>,
   role?: role,
 }
-type storeSetStateConfig<'a> = {
+type storeDialogStoreSetStateConfig<'a> = {
   @as("open") open_: bool,
   mounted: bool,
   transitionStatus: PositionerSharedTypes.transitionStatus,
@@ -495,27 +495,27 @@ type storeSetStateConfig<'a> = {
   role: role,
 }
 type dialogStore<'a> = {
-  setOpen: (bool, rootSetOpenConfig) => unit,
+  setOpen: (bool, rootDialogStoreSetOpenConfig) => unit,
   context: context,
   controlledValues: string,
   selectors: string,
   useSyncedValue: (useSyncedValue, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
-  useSyncedValues: storeUseSyncedValuesConfig<'a> => unit,
+  useSyncedValues: storeDialogStoreUseSyncedValuesConfig<'a> => unit,
   useControlledProp: (useSyncedValue, string, string) => unit,
   set: (useSyncedValue, string) => unit,
-  update: storeUseSyncedValuesConfig<'a> => unit,
-  setState: storeSetStateConfig<'a> => unit,
+  update: storeDialogStoreUseSyncedValuesConfig<'a> => unit,
+  setState: storeDialogStoreSetStateConfig<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (string, alertDialogRootChangeEventDetails) => unit) => unit,
   useStateSetter: useSyncedValue => string => unit,
   observe: string,
-  state: storeSetStateConfig<'a>,
+  state: storeDialogStoreSetStateConfig<'a>,
   listeners: string,
   updateTick: string,
-  subscribe: storeSetStateConfig<'a> => unit => unit => unit,
-  getSnapshot: unit => storeSetStateConfig<'a>,
+  subscribe: storeDialogStoreSetStateConfig<'a> => unit => unit => unit,
+  getSnapshot: unit => storeDialogStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
 type dialogHandle<'a> = {
@@ -596,7 +596,7 @@ type floatingTreeStore = {
   addNode: FloatingUiReactTypes.floatingNodeType => unit,
   removeNode: FloatingUiReactTypes.floatingNodeType => unit,
 }
-type storeUseSyncedValuesConfig2 = {
+type storeMenuStoreUseSyncedValuesConfig = {
   @as("open") open_?: bool,
   mounted?: bool,
   transitionStatus?: PositionerSharedTypes.transitionStatus,
@@ -627,7 +627,7 @@ type storeUseSyncedValuesConfig2 = {
   closeDelay?: float,
   keyboardEventRelay?: ReactEvent.Keyboard.t => unit,
 }
-type storeSetStateConfig2 = {
+type storeMenuStoreSetStateConfig = {
   @as("open") open_: bool,
   mounted: bool,
   transitionStatus: PositionerSharedTypes.transitionStatus,
@@ -666,21 +666,21 @@ type menuStore = {
   selectors: string,
   useSyncedValue: (useSyncedValue3, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
-  useSyncedValues: storeUseSyncedValuesConfig2 => unit,
+  useSyncedValues: storeMenuStoreUseSyncedValuesConfig => unit,
   useControlledProp: (useSyncedValue3, string, string) => unit,
   set: (useSyncedValue3, string) => unit,
-  update: storeUseSyncedValuesConfig2 => unit,
-  setState: storeSetStateConfig2 => unit,
+  update: storeMenuStoreUseSyncedValuesConfig => unit,
+  setState: storeMenuStoreSetStateConfig => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (bool, menuRootChangeEventDetails) => unit) => unit,
   useStateSetter: useSyncedValue3 => string => unit,
   observe: string,
-  state: storeSetStateConfig2,
+  state: storeMenuStoreSetStateConfig,
   listeners: string,
   updateTick: string,
-  subscribe: storeSetStateConfig2 => unit => unit => unit,
-  getSnapshot: unit => storeSetStateConfig2,
+  subscribe: storeMenuStoreSetStateConfig => unit => unit => unit,
+  getSnapshot: unit => storeMenuStoreSetStateConfig,
   notifyAll: unit => unit,
 }
 type menuHandle = {
@@ -689,7 +689,7 @@ type menuHandle = {
   close: unit => unit,
   isOpen: bool,
 }
-type rootParentConfig = {
+type rootMenuStoreUseSyncedValuesParentConfig = {
   @as("type") type_: string,
   store: menuStore,
 }
@@ -704,7 +704,7 @@ type menubarContext = {
   allowMouseUpTriggerRef: React.ref<Nullable.t<Dom.element>>,
   rootId?: string,
 }
-type rootParentConfig2 = {
+type rootMenuStoreUseSyncedValuesParentConfig2 = {
   @as("type") type_: string,
   context: menubarContext,
 }
@@ -719,7 +719,7 @@ type contextMenuRootContext = {
   initialCursorPointRef: string,
   rootId?: string,
 }
-type rootParentConfig3 = {
+type rootMenuStoreUseSyncedValuesParentConfig3 = {
   @as("type") type_: string,
   context: contextMenuRootContext,
 }
@@ -727,36 +727,36 @@ type menuRootContext = {
   store: menuStore,
   parent: string,
 }
-type rootParentConfig4 = {
+type rootMenuStoreUseSyncedValuesParentConfig4 = {
   @as("type") type_: string,
   context: contextMenuRootContext,
   menuContext: menuRootContext,
 }
-type rootParentConfig5 = {
+type rootMenuStoreUseSyncedValuesParentConfig5 = {
   @as("type") type_: string,
 }
 type dialogStore2<'a> = {
-  setOpen: (bool, rootSetOpenConfig) => unit,
+  setOpen: (bool, rootDialogStoreSetOpenConfig) => unit,
   context: context,
   controlledValues: string,
   selectors: string,
   useSyncedValue: (useSyncedValue4, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
-  useSyncedValues: storeUseSyncedValuesConfig<'a> => unit,
+  useSyncedValues: storeDialogStoreUseSyncedValuesConfig<'a> => unit,
   useControlledProp: (useSyncedValue4, string, string) => unit,
   set: (useSyncedValue4, string) => unit,
-  update: storeUseSyncedValuesConfig<'a> => unit,
-  setState: storeSetStateConfig<'a> => unit,
+  update: storeDialogStoreUseSyncedValuesConfig<'a> => unit,
+  setState: storeDialogStoreSetStateConfig<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (string, alertDialogRootChangeEventDetails) => unit) => unit,
   useStateSetter: useSyncedValue4 => string => unit,
   observe: string,
-  state: storeSetStateConfig<'a>,
+  state: storeDialogStoreSetStateConfig<'a>,
   listeners: string,
   updateTick: string,
-  subscribe: storeSetStateConfig<'a> => unit => unit => unit,
-  getSnapshot: unit => storeSetStateConfig<'a>,
+  subscribe: storeDialogStoreSetStateConfig<'a> => unit => unit => unit,
+  getSnapshot: unit => storeDialogStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
 type dialogHandle2<'a> = {
@@ -767,27 +767,27 @@ type dialogHandle2<'a> = {
   isOpen: bool,
 }
 type dialogStore3<'a> = {
-  setOpen: (bool, rootSetOpenConfig) => unit,
+  setOpen: (bool, rootDialogStoreSetOpenConfig) => unit,
   context: context,
   controlledValues: string,
   selectors: string,
   useSyncedValue: (TriggerTypes.useSyncedValue5, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
-  useSyncedValues: storeUseSyncedValuesConfig<'a> => unit,
+  useSyncedValues: storeDialogStoreUseSyncedValuesConfig<'a> => unit,
   useControlledProp: (TriggerTypes.useSyncedValue5, string, string) => unit,
   set: (TriggerTypes.useSyncedValue5, string) => unit,
-  update: storeUseSyncedValuesConfig<'a> => unit,
-  setState: storeSetStateConfig<'a> => unit,
+  update: storeDialogStoreUseSyncedValuesConfig<'a> => unit,
+  setState: storeDialogStoreSetStateConfig<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (string, alertDialogRootChangeEventDetails) => unit) => unit,
   useStateSetter: TriggerTypes.useSyncedValue5 => string => unit,
   observe: string,
-  state: storeSetStateConfig<'a>,
+  state: storeDialogStoreSetStateConfig<'a>,
   listeners: string,
   updateTick: string,
-  subscribe: storeSetStateConfig<'a> => unit => unit => unit,
-  getSnapshot: unit => storeSetStateConfig<'a>,
+  subscribe: storeDialogStoreSetStateConfig<'a> => unit => unit => unit,
+  getSnapshot: unit => storeDialogStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
 type dialogHandle3<'a> = {
@@ -805,7 +805,7 @@ type fieldRootState = {
   filled: bool,
   focused: bool,
 }
-type rootValidityConfig = {
+type rootFieldValidityStateValidityConfig = {
   badInput: bool,
   customError: bool,
   patternMismatch: bool,
@@ -821,7 +821,7 @@ type rootValidityConfig = {
 type fieldsetRootState = {
   disabled: bool,
 }
-type storeUseSyncedValuesConfig3<'a> = {
+type storeMenuStoreUseSyncedValuesConfig2<'a> = {
   @as("open") open_?: bool,
   mounted?: bool,
   transitionStatus?: PositionerSharedTypes.transitionStatus,
@@ -852,7 +852,7 @@ type storeUseSyncedValuesConfig3<'a> = {
   closeDelay?: float,
   keyboardEventRelay?: ReactEvent.Keyboard.t => unit,
 }
-type storeSetStateConfig3<'a> = {
+type storeMenuStoreSetStateConfig2<'a> = {
   @as("open") open_: bool,
   mounted: bool,
   transitionStatus: PositionerSharedTypes.transitionStatus,
@@ -891,21 +891,21 @@ type menuStore2<'a> = {
   selectors: string,
   useSyncedValue: (useSyncedValue6, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
-  useSyncedValues: storeUseSyncedValuesConfig3<'a> => unit,
+  useSyncedValues: storeMenuStoreUseSyncedValuesConfig2<'a> => unit,
   useControlledProp: (useSyncedValue6, string, string) => unit,
   set: (useSyncedValue6, string) => unit,
-  update: storeUseSyncedValuesConfig3<'a> => unit,
-  setState: storeSetStateConfig3<'a> => unit,
+  update: storeMenuStoreUseSyncedValuesConfig2<'a> => unit,
+  setState: storeMenuStoreSetStateConfig2<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (bool, menuRootChangeEventDetails) => unit) => unit,
   useStateSetter: useSyncedValue6 => string => unit,
   observe: string,
-  state: storeSetStateConfig3<'a>,
+  state: storeMenuStoreSetStateConfig2<'a>,
   listeners: string,
   updateTick: string,
-  subscribe: storeSetStateConfig3<'a> => unit => unit => unit,
-  getSnapshot: unit => storeSetStateConfig3<'a>,
+  subscribe: storeMenuStoreSetStateConfig2<'a> => unit => unit => unit,
+  getSnapshot: unit => storeMenuStoreSetStateConfig2<'a>,
   notifyAll: unit => unit,
 }
 type menuHandle2<'a> = {
@@ -922,21 +922,21 @@ type menuStore3<'a> = {
   selectors: string,
   useSyncedValue: (TriggerTypes.useSyncedValue7, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
-  useSyncedValues: storeUseSyncedValuesConfig3<'a> => unit,
+  useSyncedValues: storeMenuStoreUseSyncedValuesConfig2<'a> => unit,
   useControlledProp: (TriggerTypes.useSyncedValue7, string, string) => unit,
   set: (TriggerTypes.useSyncedValue7, string) => unit,
-  update: storeUseSyncedValuesConfig3<'a> => unit,
-  setState: storeSetStateConfig3<'a> => unit,
+  update: storeMenuStoreUseSyncedValuesConfig2<'a> => unit,
+  setState: storeMenuStoreSetStateConfig2<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (bool, menuRootChangeEventDetails) => unit) => unit,
   useStateSetter: TriggerTypes.useSyncedValue7 => string => unit,
   observe: string,
-  state: storeSetStateConfig3<'a>,
+  state: storeMenuStoreSetStateConfig2<'a>,
   listeners: string,
   updateTick: string,
-  subscribe: storeSetStateConfig3<'a> => unit => unit => unit,
-  getSnapshot: unit => storeSetStateConfig3<'a>,
+  subscribe: storeMenuStoreSetStateConfig2<'a> => unit => unit => unit,
+  getSnapshot: unit => storeMenuStoreSetStateConfig2<'a>,
   notifyAll: unit => unit,
 }
 type menuHandle3<'a> = {
@@ -1000,7 +1000,7 @@ type popoverRootChangeEventDetails = {
   trigger?: Dom.element,
   preventUnmountOnClose: unit => unit,
 }
-type rootSetOpenConfig2 = {
+type rootPopoverStoreSetOpenConfig = {
   reason: reason9,
   event: Dom.event,
   cancel: unit => unit,
@@ -1020,7 +1020,7 @@ type context3 = {
   beforeContentFocusGuardRef: React.ref<Nullable.t<Dom.element>>,
   stickIfOpenTimeout: PositionerSharedTypes.timeout,
 }
-type storeUseSyncedValuesConfig4<'a> = {
+type storePopoverStoreUseSyncedValuesConfig<'a> = {
   @as("open") open_?: bool,
   mounted?: bool,
   transitionStatus?: PositionerSharedTypes.transitionStatus,
@@ -1046,7 +1046,7 @@ type storeUseSyncedValuesConfig4<'a> = {
   openOnHover?: bool,
   closeDelay?: float,
 }
-type storeSetStateConfig4<'a> = {
+type storePopoverStoreSetStateConfig<'a> = {
   @as("open") open_: bool,
   mounted: bool,
   transitionStatus: PositionerSharedTypes.transitionStatus,
@@ -1073,28 +1073,28 @@ type storeSetStateConfig4<'a> = {
   closeDelay: float,
 }
 type popoverStore<'a> = {
-  setOpen: (bool, rootSetOpenConfig2) => unit,
+  setOpen: (bool, rootPopoverStoreSetOpenConfig) => unit,
   disposeEffect: string,
   context: context3,
   controlledValues: string,
   selectors: string,
   useSyncedValue: (useSyncedValue8, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
-  useSyncedValues: storeUseSyncedValuesConfig4<'a> => unit,
+  useSyncedValues: storePopoverStoreUseSyncedValuesConfig<'a> => unit,
   useControlledProp: (useSyncedValue8, string, string) => unit,
   set: (useSyncedValue8, string) => unit,
-  update: storeUseSyncedValuesConfig4<'a> => unit,
-  setState: storeSetStateConfig4<'a> => unit,
+  update: storePopoverStoreUseSyncedValuesConfig<'a> => unit,
+  setState: storePopoverStoreSetStateConfig<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (bool, popoverRootChangeEventDetails) => unit) => unit,
   useStateSetter: useSyncedValue8 => string => unit,
   observe: string,
-  state: storeSetStateConfig4<'a>,
+  state: storePopoverStoreSetStateConfig<'a>,
   listeners: string,
   updateTick: string,
-  subscribe: storeSetStateConfig4<'a> => unit => unit => unit,
-  getSnapshot: unit => storeSetStateConfig4<'a>,
+  subscribe: storePopoverStoreSetStateConfig<'a> => unit => unit => unit,
+  getSnapshot: unit => storePopoverStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
 type popoverHandle<'a> = {
@@ -1104,28 +1104,28 @@ type popoverHandle<'a> = {
   isOpen: bool,
 }
 type popoverStore2<'a> = {
-  setOpen: (bool, rootSetOpenConfig2) => unit,
+  setOpen: (bool, rootPopoverStoreSetOpenConfig) => unit,
   disposeEffect: string,
   context: context3,
   controlledValues: string,
   selectors: string,
   useSyncedValue: (TriggerTypes.useSyncedValue9, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
-  useSyncedValues: storeUseSyncedValuesConfig4<'a> => unit,
+  useSyncedValues: storePopoverStoreUseSyncedValuesConfig<'a> => unit,
   useControlledProp: (TriggerTypes.useSyncedValue9, string, string) => unit,
   set: (TriggerTypes.useSyncedValue9, string) => unit,
-  update: storeUseSyncedValuesConfig4<'a> => unit,
-  setState: storeSetStateConfig4<'a> => unit,
+  update: storePopoverStoreUseSyncedValuesConfig<'a> => unit,
+  setState: storePopoverStoreSetStateConfig<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (bool, popoverRootChangeEventDetails) => unit) => unit,
   useStateSetter: TriggerTypes.useSyncedValue9 => string => unit,
   observe: string,
-  state: storeSetStateConfig4<'a>,
+  state: storePopoverStoreSetStateConfig<'a>,
   listeners: string,
   updateTick: string,
-  subscribe: storeSetStateConfig4<'a> => unit => unit => unit,
-  getSnapshot: unit => storeSetStateConfig4<'a>,
+  subscribe: storePopoverStoreSetStateConfig<'a> => unit => unit => unit,
+  getSnapshot: unit => storePopoverStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
 type popoverHandle2<'a> = {
@@ -1322,7 +1322,7 @@ type tooltipRootChangeEventDetails = {
   trigger?: Dom.element,
   preventUnmountOnClose: unit => unit,
 }
-type rootSetOpenConfig3 = {
+type rootTooltipStoreSetOpenConfig = {
   reason: reason13,
   event: Dom.event,
   cancel: unit => unit,
@@ -1337,7 +1337,7 @@ type context4 = {
   onOpenChange?: (bool, tooltipRootChangeEventDetails) => unit,
   onOpenChangeComplete?: bool => unit,
 }
-type storeUseSyncedValuesConfig5<'a> = {
+type storeTooltipStoreUseSyncedValuesConfig<'a> = {
   @as("open") open_?: bool,
   mounted?: bool,
   transitionStatus?: PositionerSharedTypes.transitionStatus,
@@ -1359,7 +1359,7 @@ type storeUseSyncedValuesConfig5<'a> = {
   openChangeReason?: Nullable.t<tooltipRootChangeEventReason>,
   closeDelay?: float,
 }
-type storeSetStateConfig5<'a> = {
+type storeTooltipStoreSetStateConfig<'a> = {
   @as("open") open_: bool,
   mounted: bool,
   transitionStatus: PositionerSharedTypes.transitionStatus,
@@ -1382,27 +1382,27 @@ type storeSetStateConfig5<'a> = {
   closeDelay: float,
 }
 type tooltipStore<'a> = {
-  setOpen: (bool, rootSetOpenConfig3) => unit,
+  setOpen: (bool, rootTooltipStoreSetOpenConfig) => unit,
   context: context4,
   controlledValues: string,
   selectors: string,
   useSyncedValue: (useSyncedValue10, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
-  useSyncedValues: storeUseSyncedValuesConfig5<'a> => unit,
+  useSyncedValues: storeTooltipStoreUseSyncedValuesConfig<'a> => unit,
   useControlledProp: (useSyncedValue10, string, string) => unit,
   set: (useSyncedValue10, string) => unit,
-  update: storeUseSyncedValuesConfig5<'a> => unit,
-  setState: storeSetStateConfig5<'a> => unit,
+  update: storeTooltipStoreUseSyncedValuesConfig<'a> => unit,
+  setState: storeTooltipStoreSetStateConfig<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (bool, tooltipRootChangeEventDetails) => unit) => unit,
   useStateSetter: useSyncedValue10 => string => unit,
   observe: string,
-  state: storeSetStateConfig5<'a>,
+  state: storeTooltipStoreSetStateConfig<'a>,
   listeners: string,
   updateTick: string,
-  subscribe: storeSetStateConfig5<'a> => unit => unit => unit,
-  getSnapshot: unit => storeSetStateConfig5<'a>,
+  subscribe: storeTooltipStoreSetStateConfig<'a> => unit => unit => unit,
+  getSnapshot: unit => storeTooltipStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
 type tooltipHandle<'a> = {
@@ -1412,27 +1412,27 @@ type tooltipHandle<'a> = {
   isOpen: bool,
 }
 type tooltipStore2<'a> = {
-  setOpen: (bool, rootSetOpenConfig3) => unit,
+  setOpen: (bool, rootTooltipStoreSetOpenConfig) => unit,
   context: context4,
   controlledValues: string,
   selectors: string,
   useSyncedValue: (TriggerTypes.useSyncedValue11, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
-  useSyncedValues: storeUseSyncedValuesConfig5<'a> => unit,
+  useSyncedValues: storeTooltipStoreUseSyncedValuesConfig<'a> => unit,
   useControlledProp: (TriggerTypes.useSyncedValue11, string, string) => unit,
   set: (TriggerTypes.useSyncedValue11, string) => unit,
-  update: storeUseSyncedValuesConfig5<'a> => unit,
-  setState: storeSetStateConfig5<'a> => unit,
+  update: storeTooltipStoreUseSyncedValuesConfig<'a> => unit,
+  setState: storeTooltipStoreSetStateConfig<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (bool, tooltipRootChangeEventDetails) => unit) => unit,
   useStateSetter: TriggerTypes.useSyncedValue11 => string => unit,
   observe: string,
-  state: storeSetStateConfig5<'a>,
+  state: storeTooltipStoreSetStateConfig<'a>,
   listeners: string,
   updateTick: string,
-  subscribe: storeSetStateConfig5<'a> => unit => unit => unit,
-  getSnapshot: unit => storeSetStateConfig5<'a>,
+  subscribe: storeTooltipStoreSetStateConfig<'a> => unit => unit => unit,
+  getSnapshot: unit => storeTooltipStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
 type tooltipHandle2<'a> = {

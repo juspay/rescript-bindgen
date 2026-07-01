@@ -1,5 +1,5 @@
 type fieldValidityState = {
-  validity: RootSharedTypes.rootValidityConfig,
+  validity: RootSharedTypes.rootFieldValidityStateValidityConfig,
   value: JSON.t,
   error: string,
   errors: array<string>,

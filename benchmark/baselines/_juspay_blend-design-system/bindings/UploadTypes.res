@@ -19,13 +19,13 @@ type uploadedFileWithStatus = {
   status: status,
   error?: string,
 }
-type uploadErrorsConfig = {
+type uploadFileRejectionErrorsConfig = {
   code: string,
   message: string,
 }
 type fileRejection = {
   file: Webapi.File.t,
-  errors: array<uploadErrorsConfig>,
+  errors: array<uploadFileRejectionErrorsConfig>,
 }
 type uploadOnStateChangeConfig = {
   state: uploadState,
@@ -35,77 +35,77 @@ type uploadOnStateChangeConfig = {
   errorFiles: array<uploadedFileWithStatus>,
   successfulFiles: array<uploadedFileWithStatus>,
 }
-type uploadTextConfig = {
+type uploadUploadTokenTypeHeaderLabelTextConfig = {
   fontSize: string,
   fontWeight: string,
   color: string,
 }
-type uploadLabelConfig = {
-  text: uploadTextConfig,
+type uploadUploadTokenTypeHeaderLabelConfig = {
+  text: uploadUploadTokenTypeHeaderLabelTextConfig,
   marginBottom: string,
   gap: string,
 }
-type uploadTextConfig2 = {
+type uploadUploadTokenTypeHeaderRequiredTextConfig = {
   color: string,
 }
-type uploadRequiredConfig = {
-  text: uploadTextConfig2,
+type uploadUploadTokenTypeHeaderRequiredConfig = {
+  text: uploadUploadTokenTypeHeaderRequiredTextConfig,
   gap: string,
 }
-type uploadSubLabelConfig = {
-  text: uploadTextConfig,
+type uploadUploadTokenTypeHeaderSubLabelConfig = {
+  text: uploadUploadTokenTypeHeaderLabelTextConfig,
   gap: string,
 }
-type uploadHelpIconConfig = {
+type uploadUploadTokenTypeHeaderHelpIconConfig = {
   width: string,
   color: string,
 }
-type uploadHeaderConfig = {
-  label: uploadLabelConfig,
-  required: uploadRequiredConfig,
-  subLabel: uploadSubLabelConfig,
-  helpIcon: uploadHelpIconConfig,
+type uploadUploadTokenTypeHeaderConfig = {
+  label: uploadUploadTokenTypeHeaderLabelConfig,
+  required: uploadUploadTokenTypeHeaderRequiredConfig,
+  subLabel: uploadUploadTokenTypeHeaderSubLabelConfig,
+  helpIcon: uploadUploadTokenTypeHeaderHelpIconConfig,
 }
-type uploadBorderConfig = {
+type uploadUploadTokenTypeContainerBorderConfig = {
   idle: string,
   uploading: string,
   success: string,
   error: string,
   dragActive: string,
 }
-type uploadSlotConfig = {
+type uploadUploadTokenTypeContainerContentSlotConfig = {
   width: string,
   gap: string,
 }
-type uploadTitleConfig = {
+type uploadUploadTokenTypeContainerContentTextTitleConfig = {
   color: string,
   fontSize: string,
   fontWeight: string,
 }
-type uploadTextConfig3 = {
-  title: uploadTitleConfig,
-  subtitle: uploadTitleConfig,
+type uploadUploadTokenTypeContainerContentTextConfig = {
+  title: uploadUploadTokenTypeContainerContentTextTitleConfig,
+  subtitle: uploadUploadTokenTypeContainerContentTextTitleConfig,
   gap: string,
 }
-type uploadActionableConfig = {
+type uploadUploadTokenTypeContainerContentActionableConfig = {
   gap: string,
-  errorText: uploadTitleConfig,
+  errorText: uploadUploadTokenTypeContainerContentTextTitleConfig,
 }
-type uploadContentConfig = {
-  slot: uploadSlotConfig,
-  text: uploadTextConfig3,
-  actionable: uploadActionableConfig,
+type uploadUploadTokenTypeContainerContentConfig = {
+  slot: uploadUploadTokenTypeContainerContentSlotConfig,
+  text: uploadUploadTokenTypeContainerContentTextConfig,
+  actionable: uploadUploadTokenTypeContainerContentActionableConfig,
 }
-type uploadContainerConfig = {
-  border: uploadBorderConfig,
-  backgroundColor: uploadBorderConfig,
+type uploadUploadTokenTypeContainerConfig = {
+  border: uploadUploadTokenTypeContainerBorderConfig,
+  backgroundColor: uploadUploadTokenTypeContainerBorderConfig,
   borderRadius: string,
   padding: string,
-  content: uploadContentConfig,
+  content: uploadUploadTokenTypeContainerContentConfig,
 }
 type uploadTokenType = {
-  header: uploadHeaderConfig,
-  container: uploadContainerConfig,
+  header: uploadUploadTokenTypeHeaderConfig,
+  container: uploadUploadTokenTypeContainerConfig,
 }
 type responsiveUploadTokens = {
   sm: uploadTokenType,

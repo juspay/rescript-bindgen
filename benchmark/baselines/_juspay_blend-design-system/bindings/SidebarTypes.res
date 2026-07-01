@@ -16,123 +16,123 @@ type leftPanelInfo = {
   tenantSlot2?: React.element,
   tenantFooter?: React.element,
 }
-type sidebarMaxWidthConfig = {
+type sidebarSidebarTokenTypeMaxWidthConfig = {
   withLeftPanel: string,
   withoutLeftPanel: string,
   iconOnly?: string,
 }
-type sidebarPaddingConfig = {
+type sidebarSidebarTokenTypeLeftPanelPaddingConfig = {
   x: string,
   y: string,
 }
-type sidebarBorderConfig = {
+type sidebarSidebarTokenTypeLeftPanelItemBorderConfig = {
   default: string,
   hover: string,
   active: string,
 }
-type sidebarItemConfig = {
+type sidebarSidebarTokenTypeLeftPanelItemConfig = {
   width: string,
   borderRadius: string,
-  border: sidebarBorderConfig,
-  backgroundColor: sidebarBorderConfig,
+  border: sidebarSidebarTokenTypeLeftPanelItemBorderConfig,
+  backgroundColor: sidebarSidebarTokenTypeLeftPanelItemBorderConfig,
 }
-type sidebarLeftPanelConfig = {
+type sidebarSidebarTokenTypeLeftPanelConfig = {
   width: string,
   backgroundColor: string,
   borderRight: string,
-  padding: sidebarPaddingConfig,
+  padding: sidebarSidebarTokenTypeLeftPanelPaddingConfig,
   gap: string,
-  item: sidebarItemConfig,
+  item: sidebarSidebarTokenTypeLeftPanelItemConfig,
 }
-type sidebarToggleButtonConfig = {
-  backgroundColor: sidebarBorderConfig,
+type sidebarSidebarTokenTypeHeaderToggleButtonConfig = {
+  backgroundColor: sidebarSidebarTokenTypeLeftPanelItemBorderConfig,
   width: string,
 }
-type sidebarHeaderConfig = {
+type sidebarSidebarTokenTypeHeaderConfig = {
   backgroundColor: string,
-  padding: sidebarPaddingConfig,
+  padding: sidebarSidebarTokenTypeLeftPanelPaddingConfig,
   gap: string,
   borderBottom: string,
-  toggleButton: sidebarToggleButtonConfig,
+  toggleButton: sidebarSidebarTokenTypeHeaderToggleButtonConfig,
 }
-type sidebarDirectoryConfig = {
+type sidebarSidebarTokenTypeDirectoryConfig = {
   gap: string,
   paddingX: string,
   paddingY: string,
 }
-type sidebarFooterConfig = {
+type sidebarSidebarTokenTypeFooterConfig = {
   backgroundColor: string,
-  padding: sidebarPaddingConfig,
+  padding: sidebarSidebarTokenTypeLeftPanelPaddingConfig,
   borderTop: string,
 }
 type sidebarTokenType = {
-  maxWidth: sidebarMaxWidthConfig,
+  maxWidth: sidebarSidebarTokenTypeMaxWidthConfig,
   backgroundColor: string,
   borderRight: string,
-  leftPanel: sidebarLeftPanelConfig,
-  header: sidebarHeaderConfig,
-  directory: sidebarDirectoryConfig,
-  footer: sidebarFooterConfig,
+  leftPanel: sidebarSidebarTokenTypeLeftPanelConfig,
+  header: sidebarSidebarTokenTypeHeaderConfig,
+  directory: sidebarSidebarTokenTypeDirectoryConfig,
+  footer: sidebarSidebarTokenTypeFooterConfig,
 }
 type responsiveSidebarTokens = {
   sm: sidebarTokenType,
   lg: sidebarTokenType,
 }
-type sidebarDrawerConfig = {
+type sidebarMobileNavigationTokenTypeDrawerConfig = {
   borderRadius: string,
   borderTop: string,
 }
-type sidebarBackgroundColorConfig = {
+type sidebarMobileNavigationTokenTypeRowItemBackgroundColorConfig = {
   default: string,
   active: string,
 }
-type sidebarIconConfig = {
+type sidebarMobileNavigationTokenTypeRowItemIconConfig = {
   width: string,
   height: string,
   borderRadius: string,
   transition: string,
 }
-type sidebarTextConfig = {
+type sidebarMobileNavigationTokenTypeRowItemTextConfig = {
   fontSize: string,
   fontWeight: string,
   textAlign: string,
 }
-type sidebarItemConfig2 = {
+type sidebarMobileNavigationTokenTypeRowItemConfig = {
   width: string,
   height: string,
   borderRadius: string,
   gap: string,
-  backgroundColor: sidebarBackgroundColorConfig,
-  color: sidebarBackgroundColorConfig,
+  backgroundColor: sidebarMobileNavigationTokenTypeRowItemBackgroundColorConfig,
+  color: sidebarMobileNavigationTokenTypeRowItemBackgroundColorConfig,
   fontWeight: string,
-  icon: sidebarIconConfig,
-  text: sidebarTextConfig,
+  icon: sidebarMobileNavigationTokenTypeRowItemIconConfig,
+  text: sidebarMobileNavigationTokenTypeRowItemTextConfig,
 }
-type sidebarIconConfig2 = {
+type sidebarMobileNavigationTokenTypeRowPrimaryActionIconConfig = {
   width: string,
   height: string,
 }
-type sidebarPrimaryActionConfig = {
+type sidebarMobileNavigationTokenTypeRowPrimaryActionConfig = {
   width: string,
   height: string,
   borderRadius: string,
   background: string,
   boxShadow: string,
   color: string,
-  icon: sidebarIconConfig2,
+  icon: sidebarMobileNavigationTokenTypeRowPrimaryActionIconConfig,
 }
-type sidebarRowConfig = {
-  padding: sidebarPaddingConfig,
+type sidebarMobileNavigationTokenTypeRowConfig = {
+  padding: sidebarSidebarTokenTypeLeftPanelPaddingConfig,
   gap: string,
-  item: sidebarItemConfig2,
-  primaryAction: sidebarPrimaryActionConfig,
+  item: sidebarMobileNavigationTokenTypeRowItemConfig,
+  primaryAction: sidebarMobileNavigationTokenTypeRowPrimaryActionConfig,
 }
 type mobileNavigationTokenType = {
   backgroundColor: string,
-  drawer: sidebarDrawerConfig,
-  padding: sidebarPaddingConfig,
+  drawer: sidebarMobileNavigationTokenTypeDrawerConfig,
+  padding: sidebarSidebarTokenTypeLeftPanelPaddingConfig,
   gap: string,
-  row: sidebarRowConfig,
+  row: sidebarMobileNavigationTokenTypeRowConfig,
 }
 type responsiveMobileNavigationTokens = {
   sm: mobileNavigationTokenType,

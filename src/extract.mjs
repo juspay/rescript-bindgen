@@ -147,6 +147,53 @@ function uniqueName(base, shared) {
     return n
 }
 
+/** Run `fn` with `seg` pushed onto the property-path stack, so an anonymous record
+ *  reached underneath is named after WHERE it lives (home + field chain) rather than a
+ *  bare field name disambiguated by a global encounter-order counter. That counter made a
+ *  byte-identical shape's name (`fooConfig` vs `fooConfig2`/`fooConfig3`) depend on which
+ *  unrelated sibling shapes happened to register first, so an unrelated upstream edit
+ *  renumbered it and broke downstream consumers. The path is intrinsic to the shape's
+ *  location, so the name is stable across versions. (#90) */
+function withPath(ctx, seg, fn) {
+    if (!ctx.path) ctx.path = []
+    ctx.path.push(seg)
+    try { return fn() } finally { ctx.path.pop() }
+}
+
+/** Conventional discriminant property names, tried first when anchoring a discriminated
+ *  union's arm to its own tag (#90). */
+const DISCRIMINANT_NAMES = ['type', 'kind', 'variant', 'tag', 'mode', 'status', 'discriminator']
+
+/** The discriminant VALUE of a union arm — the literal tag that tells it apart from its
+ *  siblings (`type: ColumnType.TEXT` -> `"TEXT"`). Used as a path segment so each arm of a
+ *  discriminated union (e.g. blend's `ColumnDefinition<T>`, 10 arms all at prop `columns`) is
+ *  named after ITS tag — `dataTableColumnsTextConfig`, `…NumberConfig`, … — instead of a
+ *  registration-order counter (`…Config2`/`…Config10`) that renumbers when an arm is added or
+ *  removed. The tag is intrinsic to the arm, so the name is stable. Returns null when no single
+ *  literal-typed property identifies the arm (then the arm keeps its path-only name). */
+function discriminantSeg(type, ctx) {
+    if (!type || !type.getProperties) return null
+    const { checker } = ctx
+    const litVal = (p) => {
+        const d = p.valueDeclaration || (p.declarations && p.declarations[0]) || ctx.decl
+        let pt; try { pt = checker.getTypeOfSymbolAtLocation(p, d) } catch { return null }
+        if (!pt) return null
+        if (pt.flags & ts.TypeFlags.EnumLiteral) return pt.symbol && pt.symbol.getName() // ColumnType.TEXT -> "TEXT"
+        if (pt.isStringLiteral && pt.isStringLiteral()) return String(pt.value)
+        return null
+    }
+    // SCREAMING_SNAKE enum members (`TEXT`, `DATE_RANGE`) -> lowercase so `pascal` Title-cases
+    // them (`Text`, `DateRange`); mixed-case string literals are left as-is.
+    const norm = (v) => (/^[A-Z0-9_]+$/.test(v) ? v.toLowerCase() : v)
+    const props = type.getProperties()
+    for (const name of DISCRIMINANT_NAMES) {        // a conventional discriminant first
+        const p = props.find((x) => x.getName() === name)
+        if (p) { const v = litVal(p); if (v) return norm(v) }
+    }
+    for (const p of props) { const v = litVal(p); if (v) return norm(v) } // else any literal-tagged prop
+    return null
+}
+
 /** Build an IR typeRef from a registry entry, carrying its key + home so emit can
  *  qualify it by the entry's final (post-SCC) module. */
 function refTo(entry) {
@@ -633,11 +680,12 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
             const ownSigs = propSigs.filter((dd) => !isVendorDecl(dd))
             const ownDecl = ownSigs.length === 1 ? ownSigs[0] : (propSigs.length === 1 ? propSigs[0] : null)
             const nb = !aria && !litOpen && ownDecl && syntacticNullability(ownDecl.type)
-            const baseType = salvageCallbackParams(
+            // push the prop name so a nested anonymous `{…}` under it is path-anchored (#90)
+            const baseType = withPath(ctx, name, () => salvageCallbackParams(
                 aria ? { kind: 'raw', res: aria }
                     : litOpen ? literalUnionOpenNode(litOpen, unionRefName(d.type), ctx, name)
                     : classify(t, ctx, name),
-                ctx)
+                ctx))
             return {
                 name,
                 // a syntactic `| undefined` on a REQUIRED prop means it can be omitted -> optional
@@ -712,6 +760,9 @@ function buildFunctionIR(checker, sym, source, importName, from, opts) {
         shared: opts.shared || null,
         typeVars,
         sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
+        // anchor anonymous param/return `{…}` to the function name, so a standalone function's
+        // return record is `<fn>ResultConfig` (stable) not a bare encounter-numbered name. (#90)
+        path: [importName],
     }
 
     // sigToMembers keeps each param's NAME + optionality (so the emitter can bind optional
@@ -825,7 +876,7 @@ function sigToMembers(sig, ctx, depth = 0) {
         const n = typeName(pt)
         const type = (n && Object.prototype.hasOwnProperty.call(REACT_EVENTS, n))
             ? { kind: 'event', res: REACT_EVENTS[n] }
-            : classify(pt, ctx, pp.getName(), depth + 1)
+            : withPath(ctx, pp.getName(), () => classify(pt, ctx, pp.getName(), depth + 1)) // path-anchor param `{…}` (#90)
         return { name: pp.getName(), optional, type }
     })
     ctx.produced = false
@@ -2232,7 +2283,12 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
             if (!sawBool) { sawBool = true; members.push({ type: { kind: 'boolean' }, name: 'Bool' }) }
             continue
         }
-        const node = classify(mt, ctx, propName, depth + 1)
+        // Anchor a discriminated arm to its own tag so distinct arms at the same prop path get
+        // stable, tag-named records (`…TextConfig`) not order-numbered ones (`…Config2`). (#90)
+        const disc = discriminantSeg(mt, ctx)
+        const node = disc
+            ? withPath(ctx, disc, () => classify(mt, ctx, propName, depth + 1))
+            : classify(mt, ctx, propName, depth + 1)
         // DEEP imperfection check (#39): a member that is itself clean-KINDED can still
         // carry a fake inside (a callback whose return classified opaque renders as an
         // UNFLAGGED `=> string`). Reject the whole module — flag-don't-fake.
@@ -3138,7 +3194,14 @@ function recordSig(entry) {
  * @returns {{kind:'typeRef', to:string}}
  */
 function recordNode(type, ctx, propName, depth = 0, typeName = null) {
-    const base = typeName ? lower(typeName) : lower(pascal(propName)) + 'Config'
+    // An anonymous `{…}` is named after its PROPERTY PATH (the field chain that reaches it,
+    // maintained by `withPath`), not just its immediate field name. Distinct shapes that share
+    // a leaf name (`completed`/`sm`/`value` recur across a token tree) are then disambiguated by
+    // WHERE they sit (`stepperCircleCompletedConfig` vs `stepperIconCompletedConfig`) instead of
+    // by a global encounter-order counter (`stepperCompletedConfig2`/`3`) that renumbered an
+    // unchanged shape whenever an unrelated sibling was added/removed upstream. (#90)
+    const pathPascal = (ctx.path && ctx.path.length ? ctx.path : [propName]).map(pascal).join('')
+    const base = typeName ? lower(typeName) : lower(pathPascal) + 'Config'
 
     if (ctx.shared) {
         // Module mode: register the entry EARLY (with its final name) so self/mutual
@@ -3154,7 +3217,9 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         // module makes the name say where it belongs and scopes the disambiguation counter to a
         // single component+prop, so unrelated upstream changes no longer renumber it. A NAMED library
         // type keeps its own name (per the user's "follow the library" rule, #62). (#63 naming)
-        const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pascal(propName) + 'Config'
+        // The path segments (`pathPascal`, #90) make the per-home base distinct by location, so the
+        // disambiguation counter is now a last-resort tiebreak for genuine same-home/same-path clashes.
+        const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pathPascal + 'Config'
         const entry = { key, kind: 'record', name: uniqueName(sharedBase, ctx.shared), home, deps: new Set(), spread: undefined, fields: [] }
         // Heal handle (#33): keep the ts.Type + a ctx snapshot so a post-extraction pass
         // can RE-resolve fields with a fresh `visiting` set if this record was first built
@@ -3164,7 +3229,17 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         ctx.shared.entries.push(entry)
         if (type.id != null) ctx.visiting?.add(type.id)
         const prevSelfId = ctx.selfId; ctx.selfId = type.id // direct-self-ref resolves past depth
+        // A NAMED type is a fresh anchor root SEEDED WITH ITS OWN NAME — its fields are named
+        // relative to IT, not to the (use-site-dependent) chain that reached it, so the same
+        // library type gets one stable name wherever it's consumed. Seeding with the type name
+        // (not an empty root) keeps DISTINCT named owners apart: blend declares an inline
+        // `inputContainer: {…}` of a different shape inside ~8 separate `*TokensType` records, all
+        // homed to `Inputs` — an empty root collapsed them to one `inputsInputContainerConfig` +
+        // counter; the owner seed gives `inputsTextInputTokensInputContainerConfig` etc., stable &
+        // hash-free. Anonymous shapes keep accumulating the path. (#90)
+        const prevPath = ctx.path; if (typeName) ctx.path = [typeName]
         const built = buildRecordFields(type, ctx, depth)
+        ctx.path = prevPath
         ctx.selfId = prevSelfId
         if (type.id != null) ctx.visiting?.delete(type.id)
         entry.spread = built.spread
@@ -3209,7 +3284,9 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
     ctx.seenRecords.set(rname, true)
     if (type.id != null) ctx.visiting?.add(type.id)
     const prevSelfId = ctx.selfId; ctx.selfId = type.id
+    const prevPath = ctx.path; if (typeName) ctx.path = [typeName] // named type = anchor root seeded with its own name (#90)
     const built = buildRecordFields(type, ctx, depth)
+    ctx.path = prevPath
     ctx.selfId = prevSelfId
     if (type.id != null) ctx.visiting?.delete(type.id)
     const tvars = new Set()
@@ -3271,7 +3348,8 @@ function buildRecordFields(type, ctx, depth) {
             return {
                 name: p.getName(),
                 optional: optional || !!(nb && nb.hasUndef) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
-                type: applyNullable(classify(t, ctx, p.getName(), depth + 1), nb),
+                // push the field name so a nested anonymous `{…}` is path-anchored (#90)
+                type: applyNullable(withPath(ctx, p.getName(), () => classify(t, ctx, p.getName(), depth + 1)), nb),
             }
         })
     ctx.inRecordField = prevInRecord

@@ -1,4 +1,4 @@
-type utilsRangeConfig = {
+type utilsRangeContainsDayOfWeekRangeConfig = {
   from: Date.t,
   @as("to") to_: Date.t,
 }

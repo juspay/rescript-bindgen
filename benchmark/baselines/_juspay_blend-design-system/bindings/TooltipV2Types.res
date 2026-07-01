@@ -1,21 +1,21 @@
-type tooltipV2BorderRadiusConfig = {
+type tooltipV2TooltipV2TokensTypeBorderRadiusConfig = {
   sm: string,
   md: string,
   lg: string,
 }
-type tooltipV2TextConfig = {
+type tooltipV2TooltipV2TokensTypeTextConfig = {
   color: string,
-  fontWeight: tooltipV2BorderRadiusConfig,
-  fontSize: tooltipV2BorderRadiusConfig,
-  lineHeight: tooltipV2BorderRadiusConfig,
+  fontWeight: tooltipV2TooltipV2TokensTypeBorderRadiusConfig,
+  fontSize: tooltipV2TooltipV2TokensTypeBorderRadiusConfig,
+  lineHeight: tooltipV2TooltipV2TokensTypeBorderRadiusConfig,
 }
 type tooltipV2TokensType = {
   background: string,
-  borderRadius: tooltipV2BorderRadiusConfig,
-  maxWidth: tooltipV2BorderRadiusConfig,
-  padding: tooltipV2BorderRadiusConfig,
-  gap: tooltipV2BorderRadiusConfig,
-  text: tooltipV2TextConfig,
+  borderRadius: tooltipV2TooltipV2TokensTypeBorderRadiusConfig,
+  maxWidth: tooltipV2TooltipV2TokensTypeBorderRadiusConfig,
+  padding: tooltipV2TooltipV2TokensTypeBorderRadiusConfig,
+  gap: tooltipV2TooltipV2TokensTypeBorderRadiusConfig,
+  text: tooltipV2TooltipV2TokensTypeTextConfig,
   zIndex: string,
 }
 type responsiveTooltipV2Tokens = {

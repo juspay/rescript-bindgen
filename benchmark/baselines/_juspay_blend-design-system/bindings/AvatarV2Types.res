@@ -18,77 +18,77 @@ type avatarV2StatusPosition =
 type avatarV2Shape =
   | @as("circular") Circular
   | @as("rounded") Rounded
-type avatarV2WidthConfig = {
+type avatarV2AvatarV2TokensTypeContainerWidthConfig = {
   sm: string,
   regular: string,
   md: string,
   lg: string,
   xl: string,
 }
-type avatarV2BorderRadiusConfig = {
+type avatarV2AvatarV2TokensTypeContainerBorderRadiusConfig = {
   circular: string,
   rounded: string,
 }
-type avatarV2ImageConfig = {
+type avatarV2AvatarV2TokensTypeContainerImageConfig = {
   border: string,
 }
-type avatarV2FallbackTextConfig = {
+type avatarV2AvatarV2TokensTypeContainerFallbackTextConfig = {
   border: string,
-  fontSize: avatarV2WidthConfig,
-  fontWeight: avatarV2WidthConfig,
-  lineHeight: avatarV2WidthConfig,
+  fontSize: avatarV2AvatarV2TokensTypeContainerWidthConfig,
+  fontWeight: avatarV2AvatarV2TokensTypeContainerWidthConfig,
+  lineHeight: avatarV2AvatarV2TokensTypeContainerWidthConfig,
   color: string,
 }
-type avatarV2BackgroundColorConfig = {
+type avatarV2AvatarV2TokensTypeContainerStatusBackgroundColorConfig = {
   none: string,
   online: string,
   offline: string,
   away: string,
   busy: string,
 }
-type avatarV2CircularConfig = {
+type avatarV2AvatarV2TokensTypeContainerStatusPositionCircularConfig = {
   sm: string,
   regular: string,
   md: string,
   lg: string,
   xl: string,
 }
-type avatarV2PositionConfig = {
-  circular: avatarV2CircularConfig,
-  rounded: avatarV2CircularConfig,
+type avatarV2AvatarV2TokensTypeContainerStatusPositionConfig = {
+  circular: avatarV2AvatarV2TokensTypeContainerStatusPositionCircularConfig,
+  rounded: avatarV2AvatarV2TokensTypeContainerStatusPositionCircularConfig,
 }
-type avatarV2StatusConfig = {
-  width: avatarV2WidthConfig,
-  height: avatarV2WidthConfig,
-  border: avatarV2WidthConfig,
+type avatarV2AvatarV2TokensTypeContainerStatusConfig = {
+  width: avatarV2AvatarV2TokensTypeContainerWidthConfig,
+  height: avatarV2AvatarV2TokensTypeContainerWidthConfig,
+  border: avatarV2AvatarV2TokensTypeContainerWidthConfig,
   borderRadius: string,
-  backgroundColor: avatarV2BackgroundColorConfig,
+  backgroundColor: avatarV2AvatarV2TokensTypeContainerStatusBackgroundColorConfig,
   boxShadow: string,
-  position: avatarV2PositionConfig,
+  position: avatarV2AvatarV2TokensTypeContainerStatusPositionConfig,
 }
-type avatarV2ContainerConfig = {
+type avatarV2AvatarV2TokensTypeContainerConfig = {
   backgroundColor: string,
-  width: avatarV2WidthConfig,
-  height: avatarV2WidthConfig,
-  borderRadius: avatarV2BorderRadiusConfig,
-  image: avatarV2ImageConfig,
-  fallbackText: avatarV2FallbackTextConfig,
-  status: avatarV2StatusConfig,
+  width: avatarV2AvatarV2TokensTypeContainerWidthConfig,
+  height: avatarV2AvatarV2TokensTypeContainerWidthConfig,
+  borderRadius: avatarV2AvatarV2TokensTypeContainerBorderRadiusConfig,
+  image: avatarV2AvatarV2TokensTypeContainerImageConfig,
+  fallbackText: avatarV2AvatarV2TokensTypeContainerFallbackTextConfig,
+  status: avatarV2AvatarV2TokensTypeContainerStatusConfig,
 }
-type avatarV2SlotConfig = {
+type avatarV2AvatarV2TokensTypeSlotConfig = {
   height: string,
   width: string,
 }
 type avatarV2TokensType = {
   gap: string,
-  container: avatarV2ContainerConfig,
-  slot: avatarV2SlotConfig,
+  container: avatarV2AvatarV2TokensTypeContainerConfig,
+  slot: avatarV2AvatarV2TokensTypeSlotConfig,
 }
 type responsiveAvatarV2Tokens = {
   sm: avatarV2TokensType,
   lg: avatarV2TokensType,
 }
-type avatarV2StatusConfig2 = {
+type avatarV2StatusConfig = {
   @as("type") type_: avatarV2Status,
   position?: avatarV2StatusPosition,
 }
@@ -101,7 +101,7 @@ type avatarV2AvatarPropsConfig = {
   width?: string,
   size?: avatarV2Size,
   height?: string,
-  status?: avatarV2StatusConfig2,
+  status?: avatarV2StatusConfig,
   backgroundColor?: string,
   shape?: avatarV2Shape,
   leftSlot?: React.element,

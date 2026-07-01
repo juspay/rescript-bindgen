@@ -116,7 +116,7 @@ type tagsPrimaryTagConfig = {
   leftSlot?: React.element,
   rightSlot?: React.element,
 }
-type tagsNoFillConfig = {
+type tagsResponsiveTagTokensSmBackgroundColorNoFillConfig = {
   neutral: string,
   primary: string,
   success: string,
@@ -124,44 +124,44 @@ type tagsNoFillConfig = {
   warning: string,
   purple: string,
 }
-type tagsBackgroundColorConfig = {
-  noFill: tagsNoFillConfig,
-  attentive: tagsNoFillConfig,
-  subtle: tagsNoFillConfig,
+type tagsResponsiveTagTokensSmBackgroundColorConfig = {
+  noFill: tagsResponsiveTagTokensSmBackgroundColorNoFillConfig,
+  attentive: tagsResponsiveTagTokensSmBackgroundColorNoFillConfig,
+  subtle: tagsResponsiveTagTokensSmBackgroundColorNoFillConfig,
 }
-type tagsXsConfig = {
+type tagsResponsiveTagTokensSmBorderRadiusXsConfig = {
   rounded: string,
   squarical: string,
 }
-type tagsBorderRadiusConfig = {
-  xs: tagsXsConfig,
-  sm: tagsXsConfig,
-  md: tagsXsConfig,
-  lg: tagsXsConfig,
+type tagsResponsiveTagTokensSmBorderRadiusConfig = {
+  xs: tagsResponsiveTagTokensSmBorderRadiusXsConfig,
+  sm: tagsResponsiveTagTokensSmBorderRadiusXsConfig,
+  md: tagsResponsiveTagTokensSmBorderRadiusXsConfig,
+  lg: tagsResponsiveTagTokensSmBorderRadiusXsConfig,
 }
-type tagsPaddingConfig = {
+type tagsResponsiveTagTokensSmPaddingConfig = {
   xs: string,
   sm: string,
   md: string,
   lg: string,
 }
-type tagsTextConfig = {
-  color: tagsBackgroundColorConfig,
-  fontSize: tagsPaddingConfig,
-  fontWeight: tagsPaddingConfig,
+type tagsResponsiveTagTokensSmTextConfig = {
+  color: tagsResponsiveTagTokensSmBackgroundColorConfig,
+  fontSize: tagsResponsiveTagTokensSmPaddingConfig,
+  fontWeight: tagsResponsiveTagTokensSmPaddingConfig,
 }
-type tagsSmConfig = {
+type tagsResponsiveTagTokensSmConfig = {
   minWidth: string,
   maxWidth: string,
   width: string,
   gap: string,
-  backgroundColor: tagsBackgroundColorConfig,
-  borderRadius: tagsBorderRadiusConfig,
-  padding: tagsPaddingConfig,
-  border: tagsBackgroundColorConfig,
-  text: tagsTextConfig,
+  backgroundColor: tagsResponsiveTagTokensSmBackgroundColorConfig,
+  borderRadius: tagsResponsiveTagTokensSmBorderRadiusConfig,
+  padding: tagsResponsiveTagTokensSmPaddingConfig,
+  border: tagsResponsiveTagTokensSmBackgroundColorConfig,
+  text: tagsResponsiveTagTokensSmTextConfig,
 }
 type responsiveTagTokens = {
-  sm: tagsSmConfig,
-  lg: tagsSmConfig,
+  sm: tagsResponsiveTagTokensSmConfig,
+  lg: tagsResponsiveTagTokensSmConfig,
 }

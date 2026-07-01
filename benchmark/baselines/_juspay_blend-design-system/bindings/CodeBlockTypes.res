@@ -23,57 +23,57 @@ type diffLine = {
   content: string,
   @as("type") type_: diffLineType,
 }
-type codeBlockPaddingConfig = {
+type codeBlockCodeBlockTokenTypeHeaderPaddingConfig = {
   x: string,
   y: string,
 }
-type codeBlockIconConfig = {
+type codeBlockCodeBlockTokenTypeHeaderIconConfig = {
   width: string,
 }
-type codeBlockTextConfig = {
+type codeBlockCodeBlockTokenTypeHeaderTextConfig = {
   fontSize: string,
   fontWeight: string,
   lineHeight: string,
   color: string,
 }
-type codeBlockHeaderConfig = {
+type codeBlockCodeBlockTokenTypeHeaderConfig = {
   backgroundColor: string,
   borderBottom: string,
-  padding: codeBlockPaddingConfig,
+  padding: codeBlockCodeBlockTokenTypeHeaderPaddingConfig,
   gap: string,
-  icon: codeBlockIconConfig,
-  text: codeBlockTextConfig,
+  icon: codeBlockCodeBlockTokenTypeHeaderIconConfig,
+  text: codeBlockCodeBlockTokenTypeHeaderTextConfig,
 }
-type codeBlockBackgroundColorConfig = {
+type codeBlockCodeBlockTokenTypeBodyGutterBackgroundColorConfig = {
   added: string,
   removed: string,
   unchanged: string,
 }
-type codeBlockGutterConfig = {
+type codeBlockCodeBlockTokenTypeBodyGutterConfig = {
   width: string,
   color: string,
-  backgroundColor: codeBlockBackgroundColorConfig,
-  borderLeft: codeBlockBackgroundColorConfig,
-  borderColor: codeBlockBackgroundColorConfig,
+  backgroundColor: codeBlockCodeBlockTokenTypeBodyGutterBackgroundColorConfig,
+  borderLeft: codeBlockCodeBlockTokenTypeBodyGutterBackgroundColorConfig,
+  borderColor: codeBlockCodeBlockTokenTypeBodyGutterBackgroundColorConfig,
 }
-type codeBlockXConfig = {
+type codeBlockCodeBlockTokenTypeBodyCodePaddingXConfig = {
   left: string,
   right: string,
 }
-type codeBlockPaddingConfig2 = {
-  x: codeBlockXConfig,
+type codeBlockCodeBlockTokenTypeBodyCodePaddingConfig = {
+  x: codeBlockCodeBlockTokenTypeBodyCodePaddingXConfig,
   y: string,
 }
-type codeBlockCodeConfig = {
+type codeBlockCodeBlockTokenTypeBodyCodeConfig = {
   fontFamily: string,
   fontSize: string,
   lineHeight: string,
-  padding: codeBlockPaddingConfig2,
+  padding: codeBlockCodeBlockTokenTypeBodyCodePaddingConfig,
 }
-type codeBlockHighlightedLineConfig = {
-  backgroundColor: codeBlockBackgroundColorConfig,
+type codeBlockCodeBlockTokenTypeBodyHighlightedLineConfig = {
+  backgroundColor: codeBlockCodeBlockTokenTypeBodyGutterBackgroundColorConfig,
 }
-type codeBlockSyntaxConfig = {
+type codeBlockCodeBlockTokenTypeBodySyntaxConfig = {
   keyword: string,
   function: string,
   string: string,
@@ -83,21 +83,21 @@ type codeBlockSyntaxConfig = {
   comment: string,
   text: string,
 }
-type codeBlockBodyConfig = {
-  padding: codeBlockPaddingConfig,
+type codeBlockCodeBlockTokenTypeBodyConfig = {
+  padding: codeBlockCodeBlockTokenTypeHeaderPaddingConfig,
   backgroundColor: string,
-  gutter: codeBlockGutterConfig,
-  code: codeBlockCodeConfig,
-  highlightedLine: codeBlockHighlightedLineConfig,
-  syntax: codeBlockSyntaxConfig,
+  gutter: codeBlockCodeBlockTokenTypeBodyGutterConfig,
+  code: codeBlockCodeBlockTokenTypeBodyCodeConfig,
+  highlightedLine: codeBlockCodeBlockTokenTypeBodyHighlightedLineConfig,
+  syntax: codeBlockCodeBlockTokenTypeBodySyntaxConfig,
 }
 type codeBlockTokenType = {
   backgroundColor: string,
   border: string,
   borderRadius: string,
   boxShadow: string,
-  header: codeBlockHeaderConfig,
-  body: codeBlockBodyConfig,
+  header: codeBlockCodeBlockTokenTypeHeaderConfig,
+  body: codeBlockCodeBlockTokenTypeBodyConfig,
 }
 type responsiveCodeBlockTokens = {
   sm: codeBlockTokenType,

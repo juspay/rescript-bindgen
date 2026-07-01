@@ -27,104 +27,104 @@ type tabItem = {
   rightSlot?: React.element,
   newItem?: bool,
 }
-type tabsBoxedConfig = {
+type tabsTabsTokensTypeBackgroundColorBoxedConfig = {
   disabled: string,
   default: string,
   hover: string,
   active: string,
 }
-type tabsBackgroundColorConfig = {
-  boxed: tabsBoxedConfig,
-  floating: tabsBoxedConfig,
-  underline: tabsBoxedConfig,
-  pills: tabsBoxedConfig,
+type tabsTabsTokensTypeBackgroundColorConfig = {
+  boxed: tabsTabsTokensTypeBackgroundColorBoxedConfig,
+  floating: tabsTabsTokensTypeBackgroundColorBoxedConfig,
+  underline: tabsTabsTokensTypeBackgroundColorBoxedConfig,
+  pills: tabsTabsTokensTypeBackgroundColorBoxedConfig,
 }
-type tabsMdConfig = {
+type tabsTabsTokensTypeBorderRadiusMdConfig = {
   boxed: string,
   floating: string,
   underline: string,
   pills: string,
 }
-type tabsBorderRadiusConfig = {
-  md: tabsMdConfig,
-  lg: tabsMdConfig,
+type tabsTabsTokensTypeBorderRadiusConfig = {
+  md: tabsTabsTokensTypeBorderRadiusMdConfig,
+  lg: tabsTabsTokensTypeBorderRadiusMdConfig,
 }
-type tabsBoxedConfig2 = {
+type tabsTabsTokensTypePaddingMdBoxedConfig = {
   top: string,
   right: string,
   bottom: string,
   left: string,
 }
-type tabsMdConfig2 = {
-  boxed: tabsBoxedConfig2,
-  floating: tabsBoxedConfig2,
-  underline: tabsBoxedConfig2,
-  pills: tabsBoxedConfig2,
+type tabsTabsTokensTypePaddingMdConfig = {
+  boxed: tabsTabsTokensTypePaddingMdBoxedConfig,
+  floating: tabsTabsTokensTypePaddingMdBoxedConfig,
+  underline: tabsTabsTokensTypePaddingMdBoxedConfig,
+  pills: tabsTabsTokensTypePaddingMdBoxedConfig,
 }
-type tabsPaddingConfig = {
-  md: tabsMdConfig2,
-  lg: tabsMdConfig2,
+type tabsTabsTokensTypePaddingConfig = {
+  md: tabsTabsTokensTypePaddingMdConfig,
+  lg: tabsTabsTokensTypePaddingMdConfig,
 }
-type tabsBoxedConfig3 = {
+type tabsTabsTokensTypeContainerPaddingMdBoxedConfig = {
   top: string,
   right: string,
   bottom: string,
   left: string,
 }
-type tabsMdConfig3 = {
-  boxed: tabsBoxedConfig3,
-  floating: tabsBoxedConfig3,
-  underline: tabsBoxedConfig3,
-  pills: tabsBoxedConfig3,
+type tabsTabsTokensTypeContainerPaddingMdConfig = {
+  boxed: tabsTabsTokensTypeContainerPaddingMdBoxedConfig,
+  floating: tabsTabsTokensTypeContainerPaddingMdBoxedConfig,
+  underline: tabsTabsTokensTypeContainerPaddingMdBoxedConfig,
+  pills: tabsTabsTokensTypeContainerPaddingMdBoxedConfig,
 }
-type tabsPaddingConfig2 = {
-  md: tabsMdConfig3,
-  lg: tabsMdConfig3,
+type tabsTabsTokensTypeContainerPaddingConfig = {
+  md: tabsTabsTokensTypeContainerPaddingMdConfig,
+  lg: tabsTabsTokensTypeContainerPaddingMdConfig,
 }
-type tabsContainerConfig = {
-  backgroundColor: tabsMdConfig,
-  borderRadius: tabsBorderRadiusConfig,
-  padding: tabsPaddingConfig2,
+type tabsTabsTokensTypeContainerConfig = {
+  backgroundColor: tabsTabsTokensTypeBorderRadiusMdConfig,
+  borderRadius: tabsTabsTokensTypeBorderRadiusConfig,
+  padding: tabsTabsTokensTypeContainerPaddingConfig,
 }
-type tabsActiveIndicatorConfig = {
+type tabsTabsTokensTypeTriggerActiveIndicatorConfig = {
   height: string,
   color: string,
 }
-type tabsBoxedConfig4 = {
+type tabsTabsTokensTypeTriggerTextColorBoxedConfig = {
   disabled: string,
   default: string,
   hover: string,
   active: string,
 }
-type tabsColorConfig = {
-  boxed: tabsBoxedConfig4,
-  floating: tabsBoxedConfig4,
-  underline: tabsBoxedConfig4,
-  pills: tabsBoxedConfig4,
+type tabsTabsTokensTypeTriggerTextColorConfig = {
+  boxed: tabsTabsTokensTypeTriggerTextColorBoxedConfig,
+  floating: tabsTabsTokensTypeTriggerTextColorBoxedConfig,
+  underline: tabsTabsTokensTypeTriggerTextColorBoxedConfig,
+  pills: tabsTabsTokensTypeTriggerTextColorBoxedConfig,
 }
-type tabsFontSizeConfig = {
+type tabsTabsTokensTypeTriggerTextFontSizeConfig = {
   md: string,
   lg: string,
 }
-type tabsTextConfig = {
-  color: tabsColorConfig,
-  fontSize: tabsFontSizeConfig,
-  fontWeight: tabsFontSizeConfig,
+type tabsTabsTokensTypeTriggerTextConfig = {
+  color: tabsTabsTokensTypeTriggerTextColorConfig,
+  fontSize: tabsTabsTokensTypeTriggerTextFontSizeConfig,
+  fontWeight: tabsTabsTokensTypeTriggerTextFontSizeConfig,
 }
-type tabsTriggerConfig = {
+type tabsTabsTokensTypeTriggerConfig = {
   gap: string,
-  activeIndicator: tabsActiveIndicatorConfig,
-  text: tabsTextConfig,
+  activeIndicator: tabsTabsTokensTypeTriggerActiveIndicatorConfig,
+  text: tabsTabsTokensTypeTriggerTextConfig,
 }
 type tabsTokensType = {
   gap: string,
-  backgroundColor: tabsBackgroundColorConfig,
-  borderRadius: tabsBorderRadiusConfig,
-  padding: tabsPaddingConfig,
-  border: tabsMdConfig,
-  borderBottom: tabsMdConfig,
-  container: tabsContainerConfig,
-  trigger: tabsTriggerConfig,
+  backgroundColor: tabsTabsTokensTypeBackgroundColorConfig,
+  borderRadius: tabsTabsTokensTypeBorderRadiusConfig,
+  padding: tabsTabsTokensTypePaddingConfig,
+  border: tabsTabsTokensTypeBorderRadiusMdConfig,
+  borderBottom: tabsTabsTokensTypeBorderRadiusMdConfig,
+  container: tabsTabsTokensTypeContainerConfig,
+  trigger: tabsTabsTokensTypeTriggerConfig,
 }
 type responsiveTabsTokens = {
   sm: tabsTokensType,

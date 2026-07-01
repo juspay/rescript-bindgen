@@ -5,80 +5,80 @@ type switch_MaxLengthConfig = {
   label?: float,
   subtext?: float,
 }
-type switch_HeightConfig = {
+type switch_SwitchTokensTypeSwitchContainerHeightConfig = {
   sm: string,
   md: string,
 }
-type switch_ActiveConfig = {
+type switch_SwitchTokensTypeSwitchContainerBackgroundColorActiveConfig = {
   disabled: string,
   default: string,
   hover: string,
   error: string,
 }
-type switch_BackgroundColorConfig = {
-  active: switch_ActiveConfig,
-  inactive: switch_ActiveConfig,
+type switch_SwitchTokensTypeSwitchContainerBackgroundColorConfig = {
+  active: switch_SwitchTokensTypeSwitchContainerBackgroundColorActiveConfig,
+  inactive: switch_SwitchTokensTypeSwitchContainerBackgroundColorActiveConfig,
 }
-type switch_BorderConfig = {
+type switch_SwitchTokensTypeSwitchContainerThumbBorderConfig = {
   color: string,
   width: string,
 }
-type switch_SmConfig = {
+type switch_SwitchTokensTypeSwitchContainerThumbSizeSmConfig = {
   width: string,
   height: string,
   top: string,
   left: string,
   offset: string,
 }
-type switch_SizeConfig = {
-  sm: switch_SmConfig,
-  md: switch_SmConfig,
+type switch_SwitchTokensTypeSwitchContainerThumbSizeConfig = {
+  sm: switch_SwitchTokensTypeSwitchContainerThumbSizeSmConfig,
+  md: switch_SwitchTokensTypeSwitchContainerThumbSizeSmConfig,
 }
-type switch_ThumbConfig = {
+type switch_SwitchTokensTypeSwitchContainerThumbConfig = {
   backgroundColor: string,
-  border: switch_BorderConfig,
-  borderRadius: switch_HeightConfig,
-  size: switch_SizeConfig,
+  border: switch_SwitchTokensTypeSwitchContainerThumbBorderConfig,
+  borderRadius: switch_SwitchTokensTypeSwitchContainerHeightConfig,
+  size: switch_SwitchTokensTypeSwitchContainerThumbSizeConfig,
   outline: string,
   outlineOffset: string,
   boxShadow: string,
 }
-type switch_SwitchContainerConfig = {
-  height: switch_HeightConfig,
-  width: switch_HeightConfig,
-  borderRadius: switch_HeightConfig,
-  backgroundColor: switch_BackgroundColorConfig,
-  thumb: switch_ThumbConfig,
+type switch_SwitchTokensTypeSwitchContainerConfig = {
+  height: switch_SwitchTokensTypeSwitchContainerHeightConfig,
+  width: switch_SwitchTokensTypeSwitchContainerHeightConfig,
+  borderRadius: switch_SwitchTokensTypeSwitchContainerHeightConfig,
+  backgroundColor: switch_SwitchTokensTypeSwitchContainerBackgroundColorConfig,
+  thumb: switch_SwitchTokensTypeSwitchContainerThumbConfig,
 }
-type switch_LabelConfig = {
-  color: switch_ActiveConfig,
-  fontSize: switch_HeightConfig,
-  fontWeight: switch_HeightConfig,
+type switch_SwitchTokensTypeContentLabelConfig = {
+  color: switch_SwitchTokensTypeSwitchContainerBackgroundColorActiveConfig,
+  fontSize: switch_SwitchTokensTypeSwitchContainerHeightConfig,
+  fontWeight: switch_SwitchTokensTypeSwitchContainerHeightConfig,
   gap: string,
 }
-type switch_SubtextConfig = {
-  color: switch_ActiveConfig,
-  fontSize: switch_HeightConfig,
-  fontWeight: switch_HeightConfig,
+type switch_SwitchTokensTypeContentSubtextConfig = {
+  color: switch_SwitchTokensTypeSwitchContainerBackgroundColorActiveConfig,
+  fontSize: switch_SwitchTokensTypeSwitchContainerHeightConfig,
+  fontWeight: switch_SwitchTokensTypeSwitchContainerHeightConfig,
 }
-type switch_ContentConfig = {
-  label: switch_LabelConfig,
-  subtext: switch_SubtextConfig,
+type switch_SwitchTokensTypeContentConfig = {
+  label: switch_SwitchTokensTypeContentLabelConfig,
+  subtext: switch_SwitchTokensTypeContentSubtextConfig,
   gap: string,
 }
-type switch_RequiredConfig = {
+type switch_SwitchTokensTypeRequiredConfig = {
   color: string,
 }
-type switch_SlotConfig = {
-  width: switch_HeightConfig,
-  height: switch_HeightConfig,
+type switch_SwitchTokensTypeSlotConfig = {
+  width: switch_SwitchTokensTypeSwitchContainerHeightConfig,
+  height: switch_SwitchTokensTypeSwitchContainerHeightConfig,
 }
 type switchTokensType = {
   gap: string,
-  switchContainer: switch_SwitchContainerConfig,
-  content: switch_ContentConfig,
-  required: switch_RequiredConfig,
-  slot: switch_SlotConfig,
+  switchContainer: switch_SwitchTokensTypeSwitchContainerConfig,
+  content: switch_SwitchTokensTypeContentConfig,
+  required: switch_SwitchTokensTypeRequiredConfig,
+  slot: switch_SwitchTokensTypeSlotConfig,
 }
 type responsiveSwitchTokens = {
   sm: switchTokensType,

@@ -67,7 +67,7 @@ type customRangeConfig = {
   allowManualEndDateSelection?: bool,
   applyToPresets?: bool,
 }
-type dateRangePickerCustomFormatConfig = {
+type dateRangePickerDateFormatConfigCustomFormatConfig = {
   includeTime?: bool,
   includeYear?: bool,
   separator?: string,
@@ -75,14 +75,14 @@ type dateRangePickerCustomFormatConfig = {
 }
 type dateFormatConfig = {
   preset?: dateFormatPreset,
-  customFormat?: (dateRange, option<dateRangePickerCustomFormatConfig>) => string,
+  customFormat?: (dateRange, option<dateRangePickerDateFormatConfigCustomFormatConfig>) => string,
   includeTime?: bool,
   includeYear?: bool,
   separator?: string,
   locale?: string,
   timeFormat?: timeFormat,
 }
-type dateRangePickerRenderTriggerConfig = {
+type dateRangePickerTriggerConfigRenderTriggerConfig = {
   selectedRange?: dateRange,
   isOpen: bool,
   isDisabled: bool,
@@ -95,130 +95,130 @@ type triggerConfig = {
   showIcon?: bool,
   icon?: React.element,
   style?: JsxDOM.style,
-  renderTrigger?: dateRangePickerRenderTriggerConfig => React.element,
+  renderTrigger?: dateRangePickerTriggerConfigRenderTriggerConfig => React.element,
 }
-type dateRangePickerBorderRadiusConfig = {
+type dateRangePickerCalendarTokenTypeTriggerQuickSelectorBorderRadiusConfig = {
   topLeft: string,
   topRight: string,
   bottomLeft: string,
   bottomRight: string,
 }
-type dateRangePickerSmConfig = {
+type dateRangePickerCalendarTokenTypeTriggerQuickSelectorPaddingSmConfig = {
   x: string,
   y: string,
 }
-type dateRangePickerPaddingConfig = {
-  sm: dateRangePickerSmConfig,
-  lg: dateRangePickerSmConfig,
-  md: dateRangePickerSmConfig,
+type dateRangePickerCalendarTokenTypeTriggerQuickSelectorPaddingConfig = {
+  sm: dateRangePickerCalendarTokenTypeTriggerQuickSelectorPaddingSmConfig,
+  lg: dateRangePickerCalendarTokenTypeTriggerQuickSelectorPaddingSmConfig,
+  md: dateRangePickerCalendarTokenTypeTriggerQuickSelectorPaddingSmConfig,
 }
-type dateRangePickerDisabledConfig = {
+type dateRangePickerCalendarTokenTypeTriggerQuickSelectorBorderDisabledConfig = {
   left: string,
   top: string,
   bottom: string,
   right: string,
 }
-type dateRangePickerBorderConfig = {
-  disabled: dateRangePickerDisabledConfig,
-  default: dateRangePickerDisabledConfig,
-  hover: dateRangePickerDisabledConfig,
-  active: dateRangePickerDisabledConfig,
+type dateRangePickerCalendarTokenTypeTriggerQuickSelectorBorderConfig = {
+  disabled: dateRangePickerCalendarTokenTypeTriggerQuickSelectorBorderDisabledConfig,
+  default: dateRangePickerCalendarTokenTypeTriggerQuickSelectorBorderDisabledConfig,
+  hover: dateRangePickerCalendarTokenTypeTriggerQuickSelectorBorderDisabledConfig,
+  active: dateRangePickerCalendarTokenTypeTriggerQuickSelectorBorderDisabledConfig,
 }
-type dateRangePickerFontSizeConfig = {
+type dateRangePickerCalendarTokenTypeTriggerQuickSelectorTextFontSizeConfig = {
   sm: string,
   lg: string,
   md: string,
 }
-type dateRangePickerTextConfig = {
+type dateRangePickerCalendarTokenTypeTriggerQuickSelectorTextConfig = {
   color: string,
   fontWeight: string,
-  fontSize: dateRangePickerFontSizeConfig,
+  fontSize: dateRangePickerCalendarTokenTypeTriggerQuickSelectorTextFontSizeConfig,
 }
-type dateRangePickerQuickSelectorConfig = {
-  borderRadius: dateRangePickerBorderRadiusConfig,
+type dateRangePickerCalendarTokenTypeTriggerQuickSelectorConfig = {
+  borderRadius: dateRangePickerCalendarTokenTypeTriggerQuickSelectorBorderRadiusConfig,
   backgroundColor: string,
   gap: string,
-  padding: dateRangePickerPaddingConfig,
-  border: dateRangePickerBorderConfig,
-  text: dateRangePickerTextConfig,
+  padding: dateRangePickerCalendarTokenTypeTriggerQuickSelectorPaddingConfig,
+  border: dateRangePickerCalendarTokenTypeTriggerQuickSelectorBorderConfig,
+  text: dateRangePickerCalendarTokenTypeTriggerQuickSelectorTextConfig,
   iconSize: string,
 }
-type dateRangePickerBorderRadiusConfig2 = {
+type dateRangePickerCalendarTokenTypeTriggerDateInputBorderRadiusConfig = {
   withQuickSelector: string,
   withoutQuickSelector: string,
 }
-type dateRangePickerTextConfig2 = {
+type dateRangePickerCalendarTokenTypeTriggerDateInputTextConfig = {
   color: string,
-  fontSize: dateRangePickerFontSizeConfig,
+  fontSize: dateRangePickerCalendarTokenTypeTriggerQuickSelectorTextFontSizeConfig,
   fontWeight: string,
 }
-type dateRangePickerBorderConfig2 = {
+type dateRangePickerCalendarTokenTypeTriggerDateInputBorderConfig = {
   disabled: string,
   default: string,
   hover: string,
   active: string,
 }
-type dateRangePickerDateInputConfig = {
-  borderRadius: dateRangePickerBorderRadiusConfig2,
-  padding: dateRangePickerPaddingConfig,
-  text: dateRangePickerTextConfig2,
-  border: dateRangePickerBorderConfig2,
+type dateRangePickerCalendarTokenTypeTriggerDateInputConfig = {
+  borderRadius: dateRangePickerCalendarTokenTypeTriggerDateInputBorderRadiusConfig,
+  padding: dateRangePickerCalendarTokenTypeTriggerQuickSelectorPaddingConfig,
+  text: dateRangePickerCalendarTokenTypeTriggerDateInputTextConfig,
+  border: dateRangePickerCalendarTokenTypeTriggerDateInputBorderConfig,
   backgroundColor: string,
   iconSize: string,
   gap: string,
 }
-type dateRangePickerTriggerConfig = {
-  quickSelector: dateRangePickerQuickSelectorConfig,
-  dateInput: dateRangePickerDateInputConfig,
+type dateRangePickerCalendarTokenTypeTriggerConfig = {
+  quickSelector: dateRangePickerCalendarTokenTypeTriggerQuickSelectorConfig,
+  dateInput: dateRangePickerCalendarTokenTypeTriggerDateInputConfig,
 }
-type dateRangePickerPaddingConfig2 = {
+type dateRangePickerCalendarTokenTypeCalendarHeaderPaddingConfig = {
   x: string,
   y: string,
 }
-type dateRangePickerLabelConfig = {
+type dateRangePickerCalendarTokenTypeCalendarHeaderDateInputLabelConfig = {
   color: string,
   fontSize: string,
   fontWeight: string,
 }
-type dateRangePickerDateInputConfig2 = {
+type dateRangePickerCalendarTokenTypeCalendarHeaderDateInputConfig = {
   gap: string,
-  label: dateRangePickerLabelConfig,
+  label: dateRangePickerCalendarTokenTypeCalendarHeaderDateInputLabelConfig,
 }
-type dateRangePickerHeaderConfig = {
-  padding: dateRangePickerPaddingConfig2,
-  dateInput: dateRangePickerDateInputConfig2,
+type dateRangePickerCalendarTokenTypeCalendarHeaderConfig = {
+  padding: dateRangePickerCalendarTokenTypeCalendarHeaderPaddingConfig,
+  dateInput: dateRangePickerCalendarTokenTypeCalendarHeaderDateInputConfig,
 }
-type dateRangePickerHeaderConfig2 = {
+type dateRangePickerCalendarTokenTypeCalendarCalendarGridMonthHeaderConfig = {
   fontSize: string,
   fontWeight: string,
   color: string,
-  padding: dateRangePickerPaddingConfig2,
+  padding: dateRangePickerCalendarTokenTypeCalendarHeaderPaddingConfig,
   gap: string,
 }
-type dateRangePickerMonthConfig = {
-  header: dateRangePickerHeaderConfig2,
+type dateRangePickerCalendarTokenTypeCalendarCalendarGridMonthConfig = {
+  header: dateRangePickerCalendarTokenTypeCalendarCalendarGridMonthHeaderConfig,
 }
-type dateRangePickerRowConfig = {
+type dateRangePickerCalendarTokenTypeCalendarCalendarGridWeekRowConfig = {
   gap: string,
 }
-type dateRangePickerWeekConfig = {
+type dateRangePickerCalendarTokenTypeCalendarCalendarGridWeekConfig = {
   gap: string,
   fontSize: string,
   fontWeight: string,
   boxShadow: string,
   color: string,
-  padding: dateRangePickerSmConfig,
-  row: dateRangePickerRowConfig,
+  padding: dateRangePickerCalendarTokenTypeTriggerQuickSelectorPaddingSmConfig,
+  row: dateRangePickerCalendarTokenTypeCalendarCalendarGridWeekRowConfig,
 }
-type dateRangePickerCellConfig = {
-  padding: dateRangePickerPaddingConfig2,
+type dateRangePickerCalendarTokenTypeCalendarCalendarGridDayCellConfig = {
+  padding: dateRangePickerCalendarTokenTypeCalendarHeaderPaddingConfig,
   fontWeight: string,
   fontSize: string,
   lineHeight: string,
-  border: dateRangePickerBorderConfig2,
+  border: dateRangePickerCalendarTokenTypeTriggerDateInputBorderConfig,
   borderRadius: string,
 }
-type dateRangePickerStatesConfig = {
+type dateRangePickerCalendarTokenTypeCalendarCalendarGridDayStatesConfig = {
   startDate: string,
   endDate: string,
   singleDate: string,
@@ -226,47 +226,47 @@ type dateRangePickerStatesConfig = {
   todayDay: string,
   disabledDay: string,
 }
-type dateRangePickerTextConfig3 = {
+type dateRangePickerCalendarTokenTypeCalendarCalendarGridDayTextConfig = {
   dayNumber: string,
   selectedDay: string,
   rangeDay: string,
   todayDay: string,
   disabledDate: string,
 }
-type dateRangePickerTodayIndicatorConfig = {
+type dateRangePickerCalendarTokenTypeCalendarCalendarGridDayTodayIndicatorConfig = {
   width: string,
   backgroundColor: string,
 }
-type dateRangePickerDayConfig = {
-  cell: dateRangePickerCellConfig,
-  states: dateRangePickerStatesConfig,
-  text: dateRangePickerTextConfig3,
-  todayIndicator: dateRangePickerTodayIndicatorConfig,
+type dateRangePickerCalendarTokenTypeCalendarCalendarGridDayConfig = {
+  cell: dateRangePickerCalendarTokenTypeCalendarCalendarGridDayCellConfig,
+  states: dateRangePickerCalendarTokenTypeCalendarCalendarGridDayStatesConfig,
+  text: dateRangePickerCalendarTokenTypeCalendarCalendarGridDayTextConfig,
+  todayIndicator: dateRangePickerCalendarTokenTypeCalendarCalendarGridDayTodayIndicatorConfig,
 }
-type dateRangePickerCalendarGridConfig = {
-  month: dateRangePickerMonthConfig,
-  week: dateRangePickerWeekConfig,
-  day: dateRangePickerDayConfig,
+type dateRangePickerCalendarTokenTypeCalendarCalendarGridConfig = {
+  month: dateRangePickerCalendarTokenTypeCalendarCalendarGridMonthConfig,
+  week: dateRangePickerCalendarTokenTypeCalendarCalendarGridWeekConfig,
+  day: dateRangePickerCalendarTokenTypeCalendarCalendarGridDayConfig,
 }
-type dateRangePickerFooterConfig = {
-  padding: dateRangePickerPaddingConfig2,
+type dateRangePickerCalendarTokenTypeCalendarFooterConfig = {
+  padding: dateRangePickerCalendarTokenTypeCalendarHeaderPaddingConfig,
   borderTop: string,
   gap: string,
 }
-type dateRangePickerCalendarConfig = {
+type dateRangePickerCalendarTokenTypeCalendarConfig = {
   minWidth: string,
   width: string,
   backgroundColor: string,
   border: string,
   borderRadius: string,
   boxShadow: string,
-  header: dateRangePickerHeaderConfig,
-  calendarGrid: dateRangePickerCalendarGridConfig,
-  footer: dateRangePickerFooterConfig,
+  header: dateRangePickerCalendarTokenTypeCalendarHeaderConfig,
+  calendarGrid: dateRangePickerCalendarTokenTypeCalendarCalendarGridConfig,
+  footer: dateRangePickerCalendarTokenTypeCalendarFooterConfig,
 }
 type calendarTokenType = {
-  trigger: dateRangePickerTriggerConfig,
-  calendar: dateRangePickerCalendarConfig,
+  trigger: dateRangePickerCalendarTokenTypeTriggerConfig,
+  calendar: dateRangePickerCalendarTokenTypeCalendarConfig,
 }
 type responsiveCalendarTokens = {
   sm: calendarTokenType,
