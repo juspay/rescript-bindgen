@@ -1,4 +1,4 @@
-type type_4 =
+type chatInputAttachedFileType =
   | @as("image") Image
   | @as("text") Text
   | @as("pdf") Pdf
@@ -7,7 +7,7 @@ type type_4 =
 type attachedFile = {
   id: string,
   name: string,
-  @as("type") type_: type_4,
+  @as("type") type_: chatInputAttachedFileType,
   size?: float,
   url?: string,
   preview?: string,

@@ -1,12 +1,12 @@
-type position =
+type shapeCollapseDropdownPosition =
   | @as("top") Top
   | @as("bottom") Bottom
 type dropdown = {
   id: string,
   label: string,
-  position: position,
+  position: shapeCollapseDropdownPosition,
 }
-module Dropdown = {
+module ShapeCollapseDropdown = {
   type t
   external fromDropdown: dropdown => t = "%identity"
   external fromDropdowns: array<dropdown> => t = "%identity"

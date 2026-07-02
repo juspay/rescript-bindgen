@@ -13,7 +13,7 @@ type sliderLabelPosition =
   | @as("bottom") Bottom
   | @as("top") Top
   | @as("inline") Inline
-type position =
+type sliderGetSliderLabelStylesPosition =
   | @as("bottom") Bottom
   | @as("top") Top
   | @as("inline") Inline

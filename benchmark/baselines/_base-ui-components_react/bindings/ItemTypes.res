@@ -1,5 +1,5 @@
 type accordionItemChangeEventDetails = {
-  reason: RootSharedTypes.reason,
+  reason: RootSharedTypes.rootAccordionRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,

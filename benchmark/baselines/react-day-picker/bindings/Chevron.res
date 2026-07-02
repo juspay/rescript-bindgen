@@ -4,5 +4,5 @@ external make: (
   ~style: JsxDOM.style=?,
   ~size: float=?,
   ~disabled: bool=?,
-  ~orientation: ComponentsTypes.orientation=?,
+  ~orientation: ComponentsTypes.componentsOrientation=?,
 ) => React.element = "Chevron"

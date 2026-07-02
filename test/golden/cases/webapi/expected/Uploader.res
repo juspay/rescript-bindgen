@@ -3,6 +3,6 @@ external make: (
   ~file: Webapi.File.t=?,
   ~files: Webapi.FileList.t=?,
   ~data: Webapi.FormData.t=?,
-  ~value: WebapiTypes.Value.t=?,  // ⓘ was `File | File[]` — opaque; build with Value.fromFile / Value.fromFiles
+  ~value: WebapiTypes.WebapiValue.t=?,  // ⓘ was `File | File[]` — opaque; build with WebapiValue.fromFile / WebapiValue.fromFiles
   ~formAction: Webapi.FormData.t => 'a=?,
 ) => React.element = "Uploader"

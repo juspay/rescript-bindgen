@@ -1,5 +1,5 @@
 @module("demo") @react.component
 external make: (
-  ~preset: OpaqueModulesTypes.Preset.t=?,  // ⓘ was `DateRangePreset | CustomConfig | CustomDefinition` — opaque; build with Preset.fromDateRangePreset / Preset.fromCustomConfig / Preset.fromCustomDefinition
-  ~boundary: OpaqueModulesTypes.Boundary.t=?,  // ⓘ was `Element | Element[]` — opaque; build with Boundary.fromElement / Boundary.fromElements
+  ~preset: OpaqueModulesTypes.OpaqueModulesPreset.t=?,  // ⓘ was `DateRangePreset | CustomConfig | CustomDefinition` — opaque; build with OpaqueModulesPreset.fromDateRangePreset / OpaqueModulesPreset.fromCustomConfig / OpaqueModulesPreset.fromCustomDefinition
+  ~boundary: OpaqueModulesTypes.OpaqueModulesBoundary.t=?,  // ⓘ was `Element | Element[]` — opaque; build with OpaqueModulesBoundary.fromElement / OpaqueModulesBoundary.fromElements
 ) => React.element = "OpaqueModules"

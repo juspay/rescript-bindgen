@@ -1,5 +1,5 @@
-@unboxed type labelNav = Str(string) | Fn(unit => string)
-@unboxed type labelPrevious = Str(string) | Fn(Date.t => string)
+@unboxed type classesDayPickerLocaleLabelsLabelNav = Str(string) | Fn(unit => string)
+@unboxed type classesDayPickerLocaleLabelsLabelPrevious = Str(string) | Fn(Date.t => string)
 @unboxed type v0OrV1OrV1 = @as(0) N0 | @as(1) N1 | @as(-1) N_1
 @unboxed type v0OrV1OrV2OrV3OrV4OrV5OrV6 = @as(0) N0 | @as(1) N1 | @as(2) N2 | @as(3) N3 | @as(4) N4 | @as(5) N5 | @as(6) N6
 @unboxed type v0OrV1 = @as(0) N0 | @as(1) N1

@@ -56,8 +56,8 @@ external make: (
   ~className: PositionerSharedTypes.popoverPositionerClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
   ~sticky: bool=?,
-  ~anchor: DistTypes.Anchor.t=?,  // ⓘ was `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — opaque; build with Anchor.fromElement / Anchor.fromVirtualElement / Anchor.fromRefObject / Anchor.fromFn
-  ~positionMethod: PositionerSharedTypes.positionMethod=?,
+  ~anchor: DistTypes.PositionerAnchor.t=?,  // ⓘ was `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — opaque; build with PositionerAnchor.fromElement / PositionerAnchor.fromVirtualElement / PositionerAnchor.fromRefObject / PositionerAnchor.fromFn
+  ~positionMethod: PositionerSharedTypes.positionerPositionMethod=?,
   ~sideOffset: PositionerSharedTypes.utilsSideOffsetConfigSideOffset=?,
   ~align: PositionerSharedTypes.align=?,
   ~alignOffset: PositionerSharedTypes.utilsSideOffsetConfigAlignOffset=?,

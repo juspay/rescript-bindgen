@@ -58,8 +58,8 @@ external make: (
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
   ~form: string=?,
-  @as("type") ~type_: TriggerTypes.type_=?,
-  ~formAction: CommonTypes.formAction<'a>=?,
+  @as("type") ~type_: TriggerTypes.triggerType=?,
+  ~formAction: CommonTypes.buttonFormAction<'a>=?,
   ~formEncType: string=?,
   ~formMethod: string=?,
   ~formNoValidate: bool=?,

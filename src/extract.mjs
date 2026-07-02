@@ -153,10 +153,15 @@ const RESERVED_TYPE_NAMES = new Set([
 ])
 
 /** A globally-unique ReScript type name (suffix on collision) so two domains that
- *  merge into one module via SCC never clash — and never a pervasive builtin name. */
+ *  merge into one module via SCC never clash — and never a pervasive builtin name.
+ *  With every anonymous base path-anchored (#90/#96), the numeric suffix is a LAST RESORT
+ *  (same-name distinct library types, or distinct shapes at one path); each hit is recorded
+ *  on `shared.counterHits` so the CLI can surface it — a counter firing means a name that
+ *  can renumber across versions, a stability smell worth seeing, not business as usual. */
 function uniqueName(base, shared) {
     let n = base, i = 2
     while (shared.names.has(n) || RESERVED_TYPE_NAMES.has(n)) n = base + i++
+    if (n !== base && !RESERVED_TYPE_NAMES.has(base)) (shared.counterHits || (shared.counterHits = [])).push(n)
     shared.names.add(n)
     return n
 }
@@ -172,6 +177,20 @@ function withPath(ctx, seg, fn) {
     if (!ctx.path) ctx.path = []
     ctx.path.push(seg)
     try { return fn() } finally { ctx.path.pop() }
+}
+
+/** Stable base name for an ANONYMOUS generated type — the home module's stem + the property
+ *  path that reaches it (`dataTableColumnsAvatarColor`), generalizing #90's record recipe to
+ *  EVERY naming site (#96). A bare prop-derived base (`color`) collided across siblings into a
+ *  registration-order counter (`color2`/`color3`) that renumbered unchanged types whenever
+ *  anything upstream — or the generator itself — changed what registers first (blend-rescript#106).
+ *  The path is intrinsic to where the type lives, so the name survives unrelated changes.
+ *  Library-NAMED types never come here (follow-the-library, #62). `type` may be null (skips the
+ *  home lookup — e.g. the CommonTypes literal-open variants). `pascal()` the result for MODULE names. */
+function stableAnonBase(ctx, type, propName) {
+    const segs = (ctx.path && ctx.path.length ? ctx.path : [propName]).map(pascal).join('')
+    const home = (type && ctx.shared) ? homeOf(type, ctx).replace(/Types$/, '') : ''
+    return lower(home + segs)
 }
 
 /** Conventional discriminant property names, tried first when anchoring a discriminated
@@ -2285,7 +2304,8 @@ function literalUnionOpenNode(literals, baseName, ctx, propName) {
     members.push({ ctor: 'Custom', type: { kind: 'string' } }) // the `| string` escape hatch
     // `<base>OrString` (matches the `boolOrString` / `stringOrNumber` convention) — the `OrString`
     // signals the open `Custom(string)` arm and leaves the bare name free for the closed enum.
-    const sname = lower(pascal(baseName || propName)) + 'OrString'
+    // No named alias -> path-anchored base, not a bare prop name + churny counter (#96).
+    const sname = (baseName ? lower(pascal(baseName)) : stableAnonBase(ctx, null, propName)) + 'OrString'
     if (ctx.shared) {
         // Key by the literal SET (NOT the collapsed `string` type.id, which every `| string`
         // prop shares) so distinct literal sets get distinct types and identical ones dedupe.
@@ -2461,7 +2481,8 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     const identOf = (m) => m.tagSet ? 'fromTag' : m.literal !== undefined ? lower(pascal(m.literal)) : m.none ? 'none' : ('from' + (m.name ? pascal(m.name) : (m.type && m.type.kind) || 'value'))
     const idents = members.map(identOf)
     if (new Set(idents).size !== idents.length) return null
-    const name = uniqueName(pascal(opts.nameHint || typeName(type) || propName), ctx.shared) // a MODULE name
+    // MODULE name: named alias/hint wins; an anonymous union is path-anchored, not bare-prop + counter (#96)
+    const name = uniqueName(pascal(opts.nameHint || typeName(type) || stableAnonBase(ctx, type, propName)), ctx.shared)
     const deps = new Set()
     for (const m of members) { if (m.type) collectRefKeys(m.type, deps) }
     // Sit with the records it references (first dep's home); else the prop's own
@@ -2526,7 +2547,7 @@ function overloadModule(ctx, type, callSigs, propName, depth) {
         sigs.push({ accessor, fn })
     }
     if (sigs.length < 2) return null
-    const name = uniqueName(pascal(typeName(type) || propName), ctx.shared) // a MODULE name
+    const name = uniqueName(pascal(typeName(type) || stableAnonBase(ctx, type, propName)), ctx.shared) // a MODULE name; anonymous -> path-anchored (#96)
     const deps = new Set()
     for (const s of sigs) collectRefKeys(s.fn, deps)
     let home = homeOf(type, ctx)
@@ -2721,7 +2742,10 @@ function unionNode(type, ctx, propName, depth = 0) {
     const litParts = parts.filter(isLit)
     if (litParts.length >= 2 && parts.every((t) => isLit(t) || isStrBrand(t))) {
         const members = dedupeCtors(litParts.map((t) => ({ as: t.value, ctor: pascal(t.value) }))) // (#33)
-        if (ctx.shared) return registerNamed(ctx, type, 'enum', lower(typeName(type) || pascal(propName)), { members })
+        // ANONYMOUS union -> path-anchored base (`dataTableColumnsTagColor`), never a bare prop
+        // name whose collision counter renumbers on unrelated changes (#96); named alias keeps
+        // its own name (#62).
+        if (ctx.shared) return registerNamed(ctx, type, 'enum', typeName(type) ? lower(typeName(type)) : stableAnonBase(ctx, type, propName), { members })
         const key = lower(pascal(propName))
         if (!ctx.seenEnums.has(key)) {
             ctx.seenEnums.set(key, true)
@@ -2895,7 +2919,9 @@ function unionNode(type, ctx, propName, depth = 0) {
             const hasFn = members.some((m) => m.type && m.type.kind === 'callback')
             const deps = new Set()
             for (const m of members) collectRefKeys(m.type, deps)
-            let sname = hasFn ? lower(pascal(propName)) : unboxedName(members)
+            // Function-bearing variants can't be named structurally (a signature has no short
+            // token) — anchor by path, not the bare prop name + churny counter (#96).
+            let sname = hasFn ? stableAnonBase(ctx, type, propName) : unboxedName(members)
             // A fn-bearing union over ONE record/enum (base-ui's per-component
             // `style`/`className` over its state record) is named after that dep
             // (`accordionRootState` + `style` -> `accordionRootStyle`) — otherwise 178

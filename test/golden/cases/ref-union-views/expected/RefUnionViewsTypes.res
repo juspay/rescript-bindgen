@@ -6,7 +6,7 @@ module FinalFocusTarget = {
   let none: t = fromUnit()
 }
 @unboxed type finalFocusTargetFinalFocus = Bool(bool) | Ref(React.ref<Nullable.t<Dom.element>>) | Fn(string => FinalFocusTarget.t)
-module Container = {
+module RefUnionViewsContainer = {
   type t
   external fromHTMLElement: Dom.element => t = "%identity"
   external fromShadowRoot: Dom.shadowRoot => t = "%identity"

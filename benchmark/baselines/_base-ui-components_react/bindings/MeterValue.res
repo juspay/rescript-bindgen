@@ -4,8 +4,8 @@ external renderFn: ((PositionerSharedTypes.htmlProps, JSON.t) => React.element) 
 @module("@base-ui-components/react") @scope("Meter") @react.component
 external make: (
   ~children: Nullable.t<(string, float) => React.element>=?,
-  ~className: CommonTypes.className=?,
-  ~style: CommonTypes.style=?,
+  ~className: CommonTypes.valueClassName=?,
+  ~style: CommonTypes.valueStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,

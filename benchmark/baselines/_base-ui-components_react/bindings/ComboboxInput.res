@@ -58,7 +58,7 @@ external make: (
   ~multiple: bool=?,
   ~step: CommonTypes.stringOrNumber=?,
   @as("type") ~type_: ReactTypes.htmlInputTypeAttribute=?,
-  ~formAction: CommonTypes.formAction<'a>=?,
+  ~formAction: CommonTypes.inputFormAction<'a>=?,
   ~formEncType: string=?,
   ~formMethod: string=?,
   ~formNoValidate: bool=?,

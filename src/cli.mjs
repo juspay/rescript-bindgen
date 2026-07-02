@@ -397,6 +397,15 @@ async function main() {
     // shout it, don't bury it among ordinary skips. (#105)
     const brokenReexports = skipped.filter((s) => s.reason.startsWith('unresolvable-reexport'))
     if (brokenReexports.length) console.error(`\n[bindgen] ⚠ ${brokenReexports.length} BROKEN re-export(s) — the package's own .d.ts re-exports a name its target module doesn't export (upstream types bug; the symbol is \`any\` for every TS consumer): ${brokenReexports.map((s) => s.name).join(', ')}`)
+    // A numeric name suffix means the stable anchors (library name / property path / discriminant)
+    // couldn't separate two types — such a name CAN renumber across versions. Rare by design (#96);
+    // surface the SURVIVING ones (raw counterHits includes names later discarded by structural
+    // dedup / healing) so churn risk is visible at generation time, not at downstream upgrade time.
+    if (shared && shared.counterHits && shared.counterHits.length) {
+        const hitSet = new Set(shared.counterHits)
+        const live = [...new Set(shared.entries.filter((e) => hitSet.has(e.name)).map((e) => e.name))]
+        if (live.length) console.error(`\n[bindgen] ⚠ ${live.length} counter-suffixed type name(s) — same base at the same anchor; these can renumber across versions: ${live.slice(0, 12).join(', ')}${live.length > 12 ? '…' : ''}`)
+    }
     if (totalDefects) console.error(`\n[bindgen] ⚠ ${totalDefects} unknown/any prop(s) flagged as defects — review.`)
 
     // Dependencies

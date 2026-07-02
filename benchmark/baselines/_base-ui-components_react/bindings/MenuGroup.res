@@ -4,7 +4,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, JSON.t) => React.element) 
 @module("@base-ui-components/react") @scope("ContextMenu") @react.component
 external make: (
   ~children: React.element=?,
-  ~style: CommonTypes.style=?,
+  ~style: CommonTypes.groupStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -52,6 +52,6 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~className: CommonTypes.className=?,
+  ~className: CommonTypes.groupClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Group"

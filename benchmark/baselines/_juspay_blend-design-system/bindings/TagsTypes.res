@@ -10,16 +10,16 @@ type tagSize =
 type tagShape =
   | @as("rounded") Rounded
   | @as("squarical") Squarical
-type size =
+type tagsSize =
   | @as("xs") Xs
   | @as("sm") Sm
   | @as("md") Md
   | @as("lg") Lg
-type splitTagPosition =
+type tagsSplitTagPosition =
   | @as("left") Left
   | @as("right") Right
 type tagsPrimaryTagConfig = {
-  color?: SplitTagTypes.color,
+  color?: SplitTagTypes.splitTagPrimaryTagColor,
   left?: string,
   right?: string,
   justifyContent?: string,
@@ -50,7 +50,7 @@ type tagsPrimaryTagConfig = {
   paddingBottom?: CommonTypes.stringOrNumber,
   paddingLeft?: CommonTypes.stringOrNumber,
   borderBottom?: string,
-  @as("as") as_?: SplitTagTypes.as_,
+  @as("as") as_?: SplitTagTypes.splitTagPrimaryTagAs,
   _hover?: PrimitivesTypes.styledBlockProps,
   _focus?: PrimitivesTypes.styledBlockProps,
   _active?: PrimitivesTypes.styledBlockProps,

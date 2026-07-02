@@ -1,4 +1,4 @@
-type defaultTagName =
+type useRenderParametersDefaultTagName =
   | @as("symbol") Symbol
   | @as("object") Object
   | @as("div") Div
@@ -184,5 +184,5 @@ type parameters<'a, 'c> = {
   stateAttributesMapping?: Dict.t<string => Nullable.t<Dict.t<string>>>,
   props?: Dict.t<JSON.t>,
   enabled?: 'c,
-  defaultTagName?: defaultTagName,
+  defaultTagName?: useRenderParametersDefaultTagName,
 }

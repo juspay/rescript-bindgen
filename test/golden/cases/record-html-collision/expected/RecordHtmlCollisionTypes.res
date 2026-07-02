@@ -1,8 +1,8 @@
-type size =
+type recordHtmlCollisionItemDataSize =
   | @as("sm") Sm
   | @as("lg") Lg
 type itemData = {
   id: CommonTypes.stringOrNumber,
-  size?: size,
+  size?: recordHtmlCollisionItemDataSize,
   label: string,
 }

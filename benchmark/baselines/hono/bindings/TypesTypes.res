@@ -1,4 +1,4 @@
-type target =
+type typesTarget =
   | @as("json") Json
   | @as("form") Form
   | @as("query") Query
@@ -17,14 +17,14 @@ type executionContext = {
   props: string,
   exports?: string,
 }
-module ExecutionCtx = {
+module TypesContextOptionsExecutionCtx = {
   type t
   external fromFetchEventLike: fetchEventLike => t = "%identity"
   external fromExecutionContext: executionContext => t = "%identity"
 }
 type contextOptions = {
   env?: string,
-  executionCtx?: ExecutionCtx.t,
+  executionCtx?: TypesContextOptionsExecutionCtx.t,
   notFoundHandler?: InstanceTypes.context => promise<WebTypes.response>,
   matchResult?: string,
   path?: string,
@@ -76,15 +76,15 @@ type httpResponseError = {
 }
 type typesOptionsConfig = {
   optionHandler?: InstanceTypes.context => JSON.t,
-  replaceRequest?: CommonTypes.replaceRequest,
+  replaceRequest?: CommonTypes.typesOptionsReplaceRequest,
 }
 @unboxed type typesOptionsConfigOptions = Fn(InstanceTypes.context => JSON.t) | TypesOptionsConfig(typesOptionsConfig)
-module Handler = {
+module TypesHandler = {
   type t
   external fromError: JsError.t => t = "%identity"
   external fromHTTPResponseError: httpResponseError => t = "%identity"
 }
-module Input = {
+module TypesInput = {
   type t
   external fromString: string => t = "%identity"
   external fromRequest: WebTypes.request => t = "%identity"

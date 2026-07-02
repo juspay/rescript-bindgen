@@ -4,7 +4,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.toastRootS
 @module("@base-ui-components/react") @scope("Toast") @react.component
 external make: (
   ~toast: RootSharedTypes.toastRootToastObject,
-  ~swipeDirection: ContentTypes.leftOrRightOrUpOrDownOrActivationDirectionArray=?,
+  ~swipeDirection: ContentTypes.leftOrRightOrUpOrDownOrContentNavigationMenuContentStateActivationDirectionArray=?,
   ~style: RootSharedTypes.toastRootStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

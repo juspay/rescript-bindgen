@@ -9,4 +9,4 @@ module FinalFocusTarget = {
   external fromUnit: unit => t = "%identity"
   let none: t = fromUnit()
 }
-@unboxed type finalFocus = Bool(bool) | Ref(React.ref<Nullable.t<Dom.element>>) | Fn(interactionType => FinalFocusTarget.t)
+@unboxed type vendorViewsFinalFocus = Bool(bool) | Ref(React.ref<Nullable.t<Dom.element>>) | Fn(interactionType => FinalFocusTarget.t)

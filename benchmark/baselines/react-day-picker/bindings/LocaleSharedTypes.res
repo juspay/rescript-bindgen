@@ -30,7 +30,7 @@ type localeWidth =
   | @as("abbreviated") Abbreviated
   | @as("wide") Wide
   | @as("any") Any
-type context =
+type classesLocalizeFnOptionsContext =
   | @as("formatting") Formatting
   | @as("standalone") Standalone
 type localeUnit =
@@ -81,19 +81,19 @@ type numerals =
 type monthYearOrder =
   | @as("month-first") MonthFirst
   | @as("year-first") YearFirst
-type mode =
+type cjsMode =
   | @as("multiple") Multiple
   | @as("single") Single
   | @as("range") Range
-type captionLayout =
+type cjsCaptionLayout =
   | @as("label") Label
   | @as("dropdown") Dropdown
   | @as("dropdown-months") DropdownMonths
   | @as("dropdown-years") DropdownYears
-type navLayout =
+type cjsNavLayout =
   | @as("around") Around
   | @as("after") After
-type role =
+type cjsDayPickerPropsRole =
   | @as("application") Application
   | @as("dialog") Dialog
 type formatDistanceFnOptions = {
@@ -114,7 +114,7 @@ type formatRelativeFnOptions = {
 }
 type localizeFnOptions = {
   width?: localeWidth,
-  context?: context,
+  context?: classesLocalizeFnOptionsContext,
   unit?: localeUnit,
 }
 type formatPart = {
@@ -180,13 +180,13 @@ type match = {
   dayPeriod: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResult6>,
 }
 type rec dayPickerLocaleLabels = {
-  labelNav?: CommonTypes.labelNav,
+  labelNav?: CommonTypes.classesDayPickerLocaleLabelsLabelNav,
   labelGrid?: dateLibOptionsLabelGrid,
   labelGridcell?: dateLibOptionsLabelGridcell,
   labelMonthDropdown?: dateLibOptionsLabelMonthDropdown,
   labelYearDropdown?: dateLibOptionsLabelYearDropdown,
   labelNext?: dateLibOptionsLabelNext,
-  labelPrevious?: CommonTypes.labelPrevious,
+  labelPrevious?: CommonTypes.classesDayPickerLocaleLabelsLabelPrevious,
   labelDayButton?: dateLibOptionsLabelDayButton,
   labelWeekday?: dateLibOptionsLabelWeekday,
   labelWeekNumber?: dateLibOptionsLabelWeekNumber,
@@ -593,13 +593,13 @@ type classNames = {
   caption_before_enter: string,
   caption_before_exit: string,
 }
-module Select = {
+module CjsDayPickerContextSelect = {
   type t
   external fromDate: Date.t => t = "%identity"
   external fromDates: array<Date.t> => t = "%identity"
   external fromDateRange: dateRange => t = "%identity"
 }
-module OnSelect = {
+module CjsOnSelect = {
   type t
   external fromMouseEvent: ReactEvent.Mouse.t => t = "%identity"
   external fromKeyboardEvent: ReactEvent.Keyboard.t => t = "%identity"
@@ -665,7 +665,7 @@ module Matcher = {
   external fromDateInterval: dateInterval => t = "%identity"
   external fromDayOfWeek: dayOfWeek => t = "%identity"
 }
-module Disabled = {
+module CjsDisabled = {
   type t
   external fromBool: bool => t = "%identity"
   external fromDate: Date.t => t = "%identity"
@@ -679,7 +679,7 @@ module Disabled = {
   external fromMatchers: array<Matcher.t> => t = "%identity"
 }
 type dayPickerProps = {
-  mode?: mode,
+  mode?: cjsMode,
   required?: bool,
   className?: string,
   classNames?: typesClassNamesConfig,
@@ -697,9 +697,9 @@ type dayPickerProps = {
   reverseMonths?: bool,
   hideNavigation?: bool,
   disableNavigation?: bool,
-  captionLayout?: captionLayout,
+  captionLayout?: cjsCaptionLayout,
   reverseYears?: bool,
-  navLayout?: navLayout,
+  navLayout?: cjsNavLayout,
   fixedWeeks?: bool,
   hideWeekdays?: bool,
   showOutsideDays?: bool,
@@ -712,16 +712,16 @@ type dayPickerProps = {
   components?: typesComponentsConfig,
   footer?: React.element,
   autoFocus?: bool,
-  disabled?: Disabled.t,
-  hidden?: Disabled.t,
+  disabled?: CjsDisabled.t,
+  hidden?: CjsDisabled.t,
   today?: Date.t,
-  modifiers?: Dict.t<Disabled.t>,
+  modifiers?: Dict.t<CjsDisabled.t>,
   labels?: typesLabelsConfig,
   formatters?: typesFormattersConfig,
   dir?: string,
   @as("aria-label") ariaLabel?: string,
   @as("aria-labelledby") ariaLabelledby?: string,
-  role?: role,
+  role?: cjsDayPickerPropsRole,
   nonce?: string,
   title?: string,
   lang?: string,
@@ -749,7 +749,7 @@ type dayPickerContext = {
   goToMonth: Date.t => unit,
   getModifiers: calendarDay2 => Dict.t<bool>,
   selected?: string,
-  select?: (Date.t, Dict.t<bool>, OnSelect.t) => Select.t,
+  select?: (Date.t, Dict.t<bool>, CjsOnSelect.t) => CjsDayPickerContextSelect.t,
   isSelected?: Date.t => bool,
   components: customComponents,
   classNames: classNames,

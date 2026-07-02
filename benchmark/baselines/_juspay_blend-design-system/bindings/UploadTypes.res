@@ -3,7 +3,7 @@ type uploadState =
   | @as("uploading") Uploading
   | @as("success") Success
   | @as("error") Error
-type status =
+type uploadUploadedFileWithStatusStatus =
   | @as("error") Error
   | @as("success") Success
 type uploadFile = {
@@ -16,7 +16,7 @@ type uploadFile = {
 type uploadedFileWithStatus = {
   file: Webapi.File.t,
   id: string,
-  status: status,
+  status: uploadUploadedFileWithStatusStatus,
   error?: string,
 }
 type uploadFileRejectionErrorsConfig = {

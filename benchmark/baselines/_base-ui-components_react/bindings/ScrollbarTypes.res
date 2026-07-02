@@ -1,7 +1,7 @@
 type scrollAreaScrollbarState = {
   hovering: bool,
   scrolling: bool,
-  orientation: RootSharedTypes.orientation2,
+  orientation: RootSharedTypes.rootOrientation,
   hasOverflowX: bool,
   hasOverflowY: bool,
   overflowXStart: bool,

@@ -1,6 +1,6 @@
 @module("react-day-picker") @react.component
 external make: (
-  ~mode: LocaleSharedTypes.mode=?,
+  ~mode: LocaleSharedTypes.cjsMode=?,
   ~required: bool=?,
   ~className: string=?,
   ~classNames: LocaleSharedTypes.typesClassNamesConfig=?,
@@ -18,9 +18,9 @@ external make: (
   ~reverseMonths: bool=?,
   ~hideNavigation: bool=?,
   ~disableNavigation: bool=?,
-  ~captionLayout: LocaleSharedTypes.captionLayout=?,
+  ~captionLayout: LocaleSharedTypes.cjsCaptionLayout=?,
   ~reverseYears: bool=?,
-  ~navLayout: LocaleSharedTypes.navLayout=?,
+  ~navLayout: LocaleSharedTypes.cjsNavLayout=?,
   ~fixedWeeks: bool=?,
   ~hideWeekdays: bool=?,
   ~showOutsideDays: bool=?,
@@ -33,10 +33,10 @@ external make: (
   ~components: LocaleSharedTypes.typesComponentsConfig=?,
   ~footer: React.element=?,
   ~autoFocus: bool=?,
-  ~disabled: LocaleSharedTypes.Disabled.t=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with Disabled.fromBool / Disabled.fromDate / Disabled.fromDates / Disabled.fromFn / Disabled.fromDateRange / Disabled.fromDateBefore / Disabled.fromDateAfter / Disabled.fromDateInterval / Disabled.fromDayOfWeek / Disabled.fromMatchers
-  ~hidden: LocaleSharedTypes.Disabled.t=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with Disabled.fromBool / Disabled.fromDate / Disabled.fromDates / Disabled.fromFn / Disabled.fromDateRange / Disabled.fromDateBefore / Disabled.fromDateAfter / Disabled.fromDateInterval / Disabled.fromDayOfWeek / Disabled.fromMatchers
+  ~disabled: LocaleSharedTypes.CjsDisabled.t=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with CjsDisabled.fromBool / CjsDisabled.fromDate / CjsDisabled.fromDates / CjsDisabled.fromFn / CjsDisabled.fromDateRange / CjsDisabled.fromDateBefore / CjsDisabled.fromDateAfter / CjsDisabled.fromDateInterval / CjsDisabled.fromDayOfWeek / CjsDisabled.fromMatchers
+  ~hidden: LocaleSharedTypes.CjsDisabled.t=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with CjsDisabled.fromBool / CjsDisabled.fromDate / CjsDisabled.fromDates / CjsDisabled.fromFn / CjsDisabled.fromDateRange / CjsDisabled.fromDateBefore / CjsDisabled.fromDateAfter / CjsDisabled.fromDateInterval / CjsDisabled.fromDayOfWeek / CjsDisabled.fromMatchers
   ~today: Date.t=?,
-  ~modifiers: Dict.t<LocaleSharedTypes.Disabled.t>=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with Disabled.fromBool / Disabled.fromDate / Disabled.fromDates / Disabled.fromFn / Disabled.fromDateRange / Disabled.fromDateBefore / Disabled.fromDateAfter / Disabled.fromDateInterval / Disabled.fromDayOfWeek / Disabled.fromMatchers
+  ~modifiers: Dict.t<LocaleSharedTypes.CjsDisabled.t>=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with CjsDisabled.fromBool / CjsDisabled.fromDate / CjsDisabled.fromDates / CjsDisabled.fromFn / CjsDisabled.fromDateRange / CjsDisabled.fromDateBefore / CjsDisabled.fromDateAfter / CjsDisabled.fromDateInterval / CjsDisabled.fromDayOfWeek / CjsDisabled.fromMatchers
   ~labels: LocaleSharedTypes.typesLabelsConfig=?,
   ~formatters: LocaleSharedTypes.typesFormattersConfig=?,
   ~dir: string=?,
@@ -63,7 +63,7 @@ external make: (
   ~onDayMouseLeave: (Date.t, Dict.t<bool>, ReactEvent.Mouse.t) => unit=?,
   ~dateLib: LocaleSharedTypes.classesOverridesConfig=?,
   ~selected: Date.t=?,
-  ~onSelect: (Date.t, Date.t, Dict.t<bool>, LocaleSharedTypes.OnSelect.t) => unit=?,  // ⓘ was `MouseEvent<Element, MouseEvent> | KeyboardEvent<Element>` — opaque; build with OnSelect.fromMouseEvent / OnSelect.fromKeyboardEvent
+  ~onSelect: (Date.t, Date.t, Dict.t<bool>, LocaleSharedTypes.CjsOnSelect.t) => unit=?,  // ⓘ was `MouseEvent<Element, MouseEvent> | KeyboardEvent<Element>` — opaque; build with CjsOnSelect.fromMouseEvent / CjsOnSelect.fromKeyboardEvent
   ~min: float=?,
   ~max: float=?,
   ~excludeDisabled: bool=?,

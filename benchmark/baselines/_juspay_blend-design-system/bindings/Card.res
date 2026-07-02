@@ -4,7 +4,7 @@ external make: (
   ~maxHeight: string=?,
   ~minHeight: string=?,
   ~skeleton: CardTypes.cardSkeletonProps=?,
-  ~variant: CardTypes.variant=?,
+  ~variant: CardTypes.cardVariant=?,
   ~headerSlot1: React.element=?,
   ~headerTitle: string=?,
   ~headerTag: React.element=?,

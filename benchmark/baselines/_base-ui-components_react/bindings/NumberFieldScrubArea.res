@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, ScrubAreaTypes.numberField
 
 @module("@base-ui-components/react") @scope("NumberField") @react.component
 external make: (
-  ~direction: RootSharedTypes.orientation2=?,
+  ~direction: RootSharedTypes.rootOrientation=?,
   ~pixelSensitivity: float=?,
   ~teleportDistance: float=?,
   ~style: ScrubAreaTypes.numberFieldScrubAreaStyle=?,

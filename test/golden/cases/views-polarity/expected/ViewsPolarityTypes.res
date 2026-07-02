@@ -4,7 +4,7 @@ type virtualBox = {
 type plainSpot = {
   y: float,
 }
-module Mode = {
+module ViewsPolarityMode = {
   type t
   external fromTrue: [#"true"] => t = "%identity"
   let true_: t = fromTrue(#"true")

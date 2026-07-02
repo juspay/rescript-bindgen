@@ -2,7 +2,7 @@ type textInputSize =
   | @as("sm") Sm
   | @as("md") Md
   | @as("lg") Lg
-type cursor =
+type inputsCursor =
   | @as("text") Text
   | @as("default") Default
   | @as("not-allowed") NotAllowed
@@ -24,7 +24,7 @@ type unitInputSize =
 type unitPosition =
   | @as("left") Left
   | @as("right") Right
-type resize =
+type inputsResize =
   | @as("none") None
   | @as("horizontal") Horizontal
   | @as("vertical") Vertical

@@ -3,7 +3,7 @@ type timelineNodeStatus =
   | @as("warning") Warning
   | @as("error") Error
   | @as("neutral") Neutral
-type variant3 =
+type timelineAvatarV2SkeletonConfigVariant =
   | @as("pulse") Pulse
   | @as("wave") Wave
 type timelineTimelineTokensTypeTrackConfig = {

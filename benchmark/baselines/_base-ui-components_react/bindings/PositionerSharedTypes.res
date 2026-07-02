@@ -22,24 +22,24 @@ type align =
   | @as("center") Center
   | @as("end") End
   | @as("start") Start
-type positionMethod =
+type positionerPositionMethod =
   | @as("fixed") Fixed
   | @as("absolute") Absolute
-type side2 =
+type positionerSideFlipModeSide =
   | @as("none") None
   | @as("flip") Flip
-type align2 =
+type positionerSideFlipModeAlign =
   | @as("none") None
   | @as("flip") Flip
   | @as("shift") Shift
-type fallbackAxisSide =
+type positionerSideFlipModeFallbackAxisSide =
   | @as("none") None
   | @as("end") End
   | @as("start") Start
-type side3 =
+type positionerSideShiftModeSide =
   | @as("none") None
   | @as("shift") Shift
-type side4 =
+type positionerSelectPositionerStateSide =
   | @as("none") None
   | @as("left") Left
   | @as("right") Right
@@ -94,14 +94,14 @@ type utilsSideOffsetConfig = {
   positioner: utilsSideOffsetAnchorConfig,
 }
 type sideFlipMode = {
-  side?: side2,
-  align?: align2,
-  fallbackAxisSide?: fallbackAxisSide,
+  side?: positionerSideFlipModeSide,
+  align?: positionerSideFlipModeAlign,
+  fallbackAxisSide?: positionerSideFlipModeFallbackAxisSide,
 }
 type sideShiftMode = {
-  side?: side3,
-  align?: side3,
-  fallbackAxisSide?: fallbackAxisSide,
+  side?: positionerSideShiftModeSide,
+  align?: positionerSideShiftModeSide,
+  fallbackAxisSide?: positionerSideFlipModeFallbackAxisSide,
 }
 type comboboxPositionerState = {
   @as("open") open_: bool,
@@ -150,7 +150,7 @@ type previewCardPositionerState = {
 }
 type selectPositionerState = {
   @as("open") open_: bool,
-  side: side4,
+  side: positionerSelectPositionerStateSide,
   align: align,
   anchorHidden: bool,
 }
@@ -202,7 +202,7 @@ type toastPositionerState = {
 @unboxed type tabsTabClassName = Str(string) | Fn(tabsTabState => string)
 @unboxed type toastPositionerClassName = Str(string) | Fn(toastPositionerState => string)
 @unboxed type toastPositionerStyle = Style(JsxDOM.style) | Fn(toastPositionerState => JsxDOM.style)
-module FilteredItems = {
+module RootFilteredItems = {
   type t
   external fromTypeVar: 'e => t = "%identity"
   external fromGroup: group<'f> => t = "%identity"

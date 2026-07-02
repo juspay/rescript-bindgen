@@ -4,8 +4,8 @@ external renderFn: ((PositionerSharedTypes.htmlProps, JSON.t) => React.element) 
 @module("@base-ui-components/react") @scope("NavigationMenu") @react.component
 external make: (
   ~keepMounted: bool=?,
-  ~container: PortalTypes.Container.t=?,  // ⓘ was `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot>` — opaque; build with Container.fromHTMLElement / Container.fromShadowRoot / Container.fromRefObject
-  ~style: CommonTypes.style=?,
+  ~container: PortalTypes.PortalContainer.t=?,  // ⓘ was `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot>` — opaque; build with PortalContainer.fromHTMLElement / PortalContainer.fromShadowRoot / PortalContainer.fromRefObject
+  ~style: CommonTypes.portalStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -54,6 +54,6 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~className: CommonTypes.className=?,
+  ~className: CommonTypes.portalClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Portal"

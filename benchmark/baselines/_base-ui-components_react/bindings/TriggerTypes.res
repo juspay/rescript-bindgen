@@ -1,8 +1,8 @@
-type type_ =
+type triggerType =
   | @as("button") Button
   | @as("reset") Reset
   | @as("submit") Submit
-type useSyncedValue5 =
+type triggerDialogStoreUseSyncedValue =
   | @as("role") Role
   | @as("open") Open
   | @as("modal") Modal
@@ -25,7 +25,7 @@ type useSyncedValue5 =
   | @as("titleElementId") TitleElementId
   | @as("descriptionElementId") DescriptionElementId
   | @as("viewportElement") ViewportElement
-type useSyncedValue7 =
+type triggerMenuStoreUseSyncedValue =
   | @as("disabled") Disabled
   | @as("open") Open
   | @as("modal") Modal
@@ -55,7 +55,7 @@ type useSyncedValue7 =
   | @as("floatingParentNodeId") FloatingParentNodeId
   | @as("itemProps") ItemProps
   | @as("keyboardEventRelay") KeyboardEventRelay
-type useSyncedValue9 =
+type triggerPopoverStoreUseSyncedValue =
   | @as("disabled") Disabled
   | @as("open") Open
   | @as("modal") Modal
@@ -80,7 +80,7 @@ type useSyncedValue9 =
   | @as("stickIfOpen") StickIfOpen
   | @as("instantType") InstantType
   | @as("openChangeReason") OpenChangeReason
-type useSyncedValue11 =
+type triggerTooltipStoreUseSyncedValue =
   | @as("disabled") Disabled
   | @as("open") Open
   | @as("mounted") Mounted

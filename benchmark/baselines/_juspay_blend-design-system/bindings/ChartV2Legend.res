@@ -4,7 +4,7 @@ type props = {
   chartRefs?: array<React.ref<Nullable.t<Dom.element>>>,
   customLegendItems?: array<ChartsV2Types.chartV2CustomLegendItem>,
   renderItem?: ChartsV2Types.chartsV2RenderItemConfig => React.element,
-  layout?: TabsTypes.orientation,
+  layout?: TabsTypes.tabsOrientation,
 }
 
 @module("@juspay/blend-design-system")

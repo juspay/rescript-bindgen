@@ -1,4 +1,4 @@
-type passThrough =
+type libMarkdownAsyncOptionsRemarkRehypeOptionsPassThrough =
   | @as("text") Text
   | @as("root") Root
   | @as("blockquote") Blockquote
@@ -77,12 +77,12 @@ type libMarkdownAsyncOptionsRemarkRehypeOptionsConfig = {
   allowDangerousHtml?: Nullable.t<bool>,
   clobberPrefix?: Nullable.t<string>,
   footnoteBackContent?: string,
-  footnoteBackLabel?: Nullable.t<CommonTypes.footnoteBackLabel>,
+  footnoteBackLabel?: Nullable.t<CommonTypes.libMarkdownAsyncOptionsRemarkRehypeOptionsFootnoteBackLabel>,
   footnoteLabel?: Nullable.t<string>,
   footnoteLabelProperties?: Nullable.t<Dict.t<CommonTypes.boolOrStringOrNumberOrStringOrNumberArray>>,
   footnoteLabelTagName?: Nullable.t<string>,
   handlers?: string,
-  passThrough?: Nullable.t<array<passThrough>>,
+  passThrough?: Nullable.t<array<libMarkdownAsyncOptionsRemarkRehypeOptionsPassThrough>>,
   unknownHandler?: Nullable.t<(state, string, string) => string>,
 }
 type libMarkdownAsyncOptionsConfig = {

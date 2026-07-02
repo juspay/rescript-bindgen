@@ -5,7 +5,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, JSON.t) => React.element) 
 external make: (
   ~nativeButton: bool=?,
   ~form: string=?,
-  ~style: CommonTypes.style=?,
+  ~style: CommonTypes.closeStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -55,14 +55,14 @@ external make: (
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~disabled: bool=?,
-  @as("type") ~type_: TriggerTypes.type_=?,
-  ~formAction: CommonTypes.formAction<'a>=?,
+  @as("type") ~type_: TriggerTypes.triggerType=?,
+  ~formAction: CommonTypes.closeFormAction<'a>=?,
   ~formEncType: string=?,
   ~formMethod: string=?,
   ~formNoValidate: bool=?,
   ~formTarget: string=?,
   ~name: string=?,
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
-  ~className: CommonTypes.className=?,
+  ~className: CommonTypes.closeClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Close"

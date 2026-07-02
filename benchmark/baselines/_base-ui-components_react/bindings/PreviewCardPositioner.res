@@ -3,8 +3,8 @@ external renderFn: ((PositionerSharedTypes.htmlProps, PositionerSharedTypes.prev
 
 @module("@base-ui-components/react") @scope("PreviewCard") @react.component
 external make: (
-  ~anchor: DistTypes.Anchor.t=?,  // ⓘ was `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — opaque; build with Anchor.fromElement / Anchor.fromVirtualElement / Anchor.fromRefObject / Anchor.fromFn
-  ~positionMethod: PositionerSharedTypes.positionMethod=?,
+  ~anchor: DistTypes.PositionerAnchor.t=?,  // ⓘ was `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — opaque; build with PositionerAnchor.fromElement / PositionerAnchor.fromVirtualElement / PositionerAnchor.fromRefObject / PositionerAnchor.fromFn
+  ~positionMethod: PositionerSharedTypes.positionerPositionMethod=?,
   ~side: PositionerSharedTypes.side=?,
   ~sideOffset: PositionerSharedTypes.utilsSideOffsetConfigSideOffset=?,
   ~align: PositionerSharedTypes.align=?,

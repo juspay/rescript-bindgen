@@ -23,13 +23,13 @@ external make: (
   ~highlightItemOnHover: bool=?,
   ~onItemHighlighted: ('d, RootSharedTypes.highlightEventDetails) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
-  ~filteredItems: array<PositionerSharedTypes.FilteredItems.t>=?,
+  ~filteredItems: array<PositionerSharedTypes.RootFilteredItems.t>=?,
   ~itemToStringValue: 't6 => string=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~virtualized: bool=?,
   ~limit: float=?,
   ~locale: string=?,  // ⓘ Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled
   ~submitOnItemClick: bool=?,
-  ~mode: RootSharedTypes.mode=?,
+  ~mode: RootSharedTypes.rootMode=?,
   ~onValueChange: (string, RootSharedTypes.changeEventDetails) => unit=?,
   ~items: 'a,
 ) => React.element = "Root"

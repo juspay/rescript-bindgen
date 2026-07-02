@@ -26,5 +26,5 @@ external make: (
   ~visibleLabelId: string=?,
   ~visibleItemLabelIds: array<string>=?,
   ~resetLabel: string=?,
-  ~preventDefault: DistTypes.preventDefault=?,
+  ~preventDefault: DistTypes.distPreventDefault=?,
 ) => React.element = "Rating"

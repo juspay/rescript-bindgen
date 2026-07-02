@@ -1,8 +1,8 @@
-type size =
+type stringEnumsSize =
   | @as("sm") Sm
   | @as("md") Md
   | @as("lg") Lg
-type variant =
+type stringEnumsVariant =
   | @as("primary") Primary
   | @as("secondary") Secondary
 type htmlInputTypeAttribute =

@@ -15,7 +15,7 @@ external make: (
   ~onCancel: unit => unit=?,
   ~onConfirm: unit => unit=?,
   ~showCancelButton: bool=?,
-  ~direction: PopoverTypes.side=?,
+  ~direction: PopoverTypes.popoverSide=?,
   ~modal: bool=?,
   ~dismissible: bool=?,
   ~mobileOffset: DrawerTypes.drawerMobileOffsetConfig=?,

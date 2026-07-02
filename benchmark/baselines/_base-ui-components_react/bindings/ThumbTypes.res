@@ -1,5 +1,5 @@
 type scrollAreaThumbState = {
-  orientation?: RootSharedTypes.orientation2,
+  orientation?: RootSharedTypes.rootOrientation,
 }
 type sliderThumbState = {
   activeThumbIndex: float,

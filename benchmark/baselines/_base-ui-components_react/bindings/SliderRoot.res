@@ -14,8 +14,8 @@ external make: (
   ~orientation: PositionerSharedTypes.orientation=?,
   ~step: float=?,
   ~largeStep: float=?,
-  ~thumbAlignment: RootSharedTypes.thumbAlignment=?,
-  ~thumbCollisionBehavior: RootSharedTypes.thumbCollisionBehavior=?,
+  ~thumbAlignment: RootSharedTypes.rootThumbAlignment=?,
+  ~thumbCollisionBehavior: RootSharedTypes.rootThumbCollisionBehavior=?,
   ~value: 'a=?,
   ~onValueChange: ('b, RootSharedTypes.sliderRootChangeEventDetails) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   ~onValueCommitted: ('c, RootSharedTypes.sliderRootCommitEventDetails) => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site

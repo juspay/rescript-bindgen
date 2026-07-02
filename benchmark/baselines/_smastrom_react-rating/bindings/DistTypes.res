@@ -16,7 +16,7 @@ type transitions =
   | @as("position") Position
   | @as("opacity") Opacity
   | @as("colors") Colors
-type preventDefault =
+type distPreventDefault =
   | @as("none") None
   | @as("click") Click
   | @as("keydown") Keydown

@@ -94,7 +94,7 @@ type avatarV2StatusConfig = {
 }
 type avatarV2SkeletonConfig = {
   show: bool,
-  variant?: TimelineTypes.variant3,
+  variant?: TimelineTypes.timelineAvatarV2SkeletonConfigVariant,
 }
 type avatarV2AvatarPropsConfig = {
   disabled?: bool,

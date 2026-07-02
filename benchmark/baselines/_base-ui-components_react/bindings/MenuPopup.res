@@ -5,7 +5,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, PopupTypes.menuPopupState)
 external make: (
   ~children: React.element=?,
   ~id: string=?,
-  ~finalFocus: PopupTypes.finalFocus=?,
+  ~finalFocus: PopupTypes.popupFinalFocus=?,
   ~style: PopupTypes.menuPopupStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

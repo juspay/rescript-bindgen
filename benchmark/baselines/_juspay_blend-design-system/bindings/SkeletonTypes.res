@@ -6,7 +6,7 @@ type skeletonShape =
   | @as("circle") Circle
   | @as("rectangle") Rectangle
   | @as("rounded") Rounded
-type shape =
+type skeletonShape2 =
   | @as("circle") Circle
   | @as("square") Square
 type skeletonSkeletonTokensTypeAnimationConfig = {

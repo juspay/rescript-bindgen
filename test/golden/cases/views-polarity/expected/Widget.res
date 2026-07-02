@@ -1,6 +1,6 @@
 @module("demo") @react.component
 external make: (
-  ~mode: ViewsPolarityTypes.Mode.t=?,  // ⓘ was `"true" | "lazy" | VirtualBox | PlainSpot` — opaque; build with Mode.true_ / Mode.lazy_ / Mode.fromVirtualBox / Mode.fromPlainSpot
+  ~mode: ViewsPolarityTypes.ViewsPolarityMode.t=?,  // ⓘ was `"true" | "lazy" | VirtualBox | PlainSpot` — opaque; build with ViewsPolarityMode.true_ / ViewsPolarityMode.lazy_ / ViewsPolarityMode.fromVirtualBox / ViewsPolarityMode.fromPlainSpot
   // ⚠️ REVIEW: `collide` is `VirtualBox | PlainSpot | "trap-focus" | "trapFocus"` — couldn't be auto-typed exactly; emitted as `string` placeholder. Match the real type by hand.
   ~collide: string=?,
   ~onState: 'a => unit=?,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
