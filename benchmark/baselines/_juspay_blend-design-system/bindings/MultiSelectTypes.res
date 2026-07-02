@@ -69,9 +69,9 @@ type multiSelectMultiSelectTokensTypeLabelColorConfig = {
   default: string,
   hover: string,
   active: string,
+  selected: string,
   focus: string,
   focusVisible: string,
-  selected: string,
 }
 type multiSelectMultiSelectTokensTypeLabelConfig = {
   fontSize: string,
@@ -111,8 +111,8 @@ type multiSelectMultiSelectTokensTypeTriggerPaddingConfig = {
 type multiSelectMultiSelectTokensTypeTriggerBackgroundColorContainerConfig = {
   hover: string,
   @as("open") open_: string,
-  focus: string,
   error: string,
+  focus: string,
   closed: string,
 }
 type multiSelectMultiSelectTokensTypeTriggerBackgroundColorConfig = {

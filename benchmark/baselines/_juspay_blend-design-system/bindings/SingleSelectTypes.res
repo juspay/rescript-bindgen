@@ -100,9 +100,9 @@ type singleSelectSingleSelectTokensTypeLabelColorConfig = {
   default: string,
   hover: string,
   active: string,
+  selected: string,
   focus: string,
   focusVisible: string,
-  selected: string,
 }
 type singleSelectSingleSelectTokensTypeLabelConfig = {
   fontSize: string,
@@ -142,8 +142,8 @@ type singleSelectSingleSelectTokensTypeTriggerPaddingConfig = {
 type singleSelectSingleSelectTokensTypeTriggerBackgroundColorContainerConfig = {
   hover: string,
   @as("open") open_: string,
-  focus: string,
   error: string,
+  focus: string,
   closed: string,
 }
 type singleSelectSingleSelectTokensTypeTriggerBackgroundColorConfig = {
@@ -170,9 +170,9 @@ type singleSelectSingleSelectTokensTypeMenuItemOptionsLabelColorConfig = {
   default: string,
   hover: string,
   active: string,
+  selected: string,
   focus: string,
   focusVisible: string,
-  selected: string,
 }
 type singleSelectSingleSelectTokensTypeMenuItemOptionsLabelConfig = {
   fontSize: string,

@@ -1,10 +1,10 @@
 # Binding report — `@juspay/blend-design-system@0.0.36`
 
-**94** components · ✅ **94** usable · 🔍 **0** need review · 🛑 **0** broken
+**96** components · ✅ **96** usable · 🔍 **0** need review · 🛑 **0** broken
 
 **51** function binding(s) → `BlendDesignSystemBindings.res`.
 
-**1380** shared types deduplicated into **61** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**2327** shared types deduplicated into **62** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -80,6 +80,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - AlertV2
 - Avatar
 - AvatarGroup
+- BlendChart  _(2 loose)_
 - BlendChartContainer
 - BlendChartHeader
 - Breadcrumb
@@ -92,6 +93,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - ChartHeaderV2
 - ChartLegends
 - Charts
+- ChartV2  _(1 loose)_
 - ChartV2Fullscreen
 - ChartV2Legend
 - ChartV2NoData
@@ -173,7 +175,10 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 
 These resolved to a real but complex type and were widened to `string` (they compile and work). Grouped by type so you can review each pattern once — confirm `string` is acceptable, or it may deserve a tighter mapping.
 
-_(none)_
+| Resolved TypeScript type | → emitted | count | example props |
+|--------------------------|-----------|-------|---------------|
+| `typeof import("/Users/roshan.chourasiya/work/FE/opensource/rescript-bindgen/benchmark/.work/_juspay_blend-design-system/sandbox/node_modules/highcharts/highcharts")` | `string` | 2 | highcharts |
+| `[boolean] \| [boolean, boolean] \| [boolean, boolean, boolean]` | `string` | 1 | updateArgs |
 
 ## 🔍 Needs review
 

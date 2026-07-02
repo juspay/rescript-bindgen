@@ -543,6 +543,25 @@ function detectAttrsBase(propsType, checker) {
     return { leaf, omitKeys }
 }
 
+/** `Omit<X, K>` → `{ base: X, omit: Set<string> }` (K's string-literal members), else null.
+ *  Recovers named props that TypeScript collapses when `Omit` is applied over a type carrying a
+ *  string index signature (`[key: string]: any`): the index sig swallows every named property, so
+ *  `Omit<{ [k:string]: any; options?: … }, "ref">` degrades to just `{ [k:string]: any }` and the
+ *  real props vanish. A forwardRef component built on such props (e.g. highcharts-react's
+ *  `HighchartsReactProps`, blend's `BlendChart`/`ChartV2`) then extracted ZERO props and was
+ *  silently dropped as a non-component. (#92) */
+function unwrapOmit(t, checker) {
+    if (!(t.aliasSymbol && t.aliasSymbol.getName() === 'Omit') || !t.aliasTypeArguments || t.aliasTypeArguments.length < 2) return null
+    const [base, keys] = t.aliasTypeArguments
+    const omit = new Set()
+    const collect = (k) => {
+        if (k.isStringLiteral && k.isStringLiteral()) omit.add(String(k.value))
+        else if (k.isUnion && k.isUnion()) (k.types || []).forEach(collect)
+    }
+    collect(keys)
+    return { base, omit }
+}
+
 function buildComponentIR(checker, sym, source, importName, from, opts) {
     if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
     const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0]) || source
@@ -642,7 +661,23 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     // discriminant), then add each arm-only prop as OPTIONAL (it only applies to its variant, and
     // ReScript can't express the discriminated dependency — flatten-optional is the faithful,
     // compilable model). (#63 C2)
-    const commonSyms = checker.getPropertiesOfType(propsType)
+    let commonSyms = checker.getPropertiesOfType(propsType)
+    // A string index signature (`[key: string]: any`) in the props collapses every NAMED prop
+    // through `Omit<…>` (a TS quirk), so a forwardRef component reads only `ref`/`key` and gets
+    // dropped as `no-props`. Recover the named props from the pre-`Omit` type (`X` in `Omit<X, K>`,
+    // minus the omitted keys), so the component binds with its real surface instead of vanishing.
+    // Only fires when an index signature is actually present, so normal components are untouched. (#92)
+    if (checker.getIndexInfoOfType?.(propsType, ts.IndexKind.String)) {
+        const arms = (propsType.flags & ts.TypeFlags.Intersection) ? propsType.types : [propsType]
+        const byName = new Map(commonSyms.map((s) => [s.getName(), s]))
+        for (const arm of arms) {
+            const u = unwrapOmit(arm, checker)
+            if (!u) continue
+            for (const p of checker.getPropertiesOfType(u.base))
+                if (!u.omit.has(p.getName()) && !byName.has(p.getName())) byName.set(p.getName(), p)
+        }
+        if (byName.size > commonSyms.length) commonSyms = [...byName.values()]
+    }
     const unionOptional = new Set()
     let propSyms = commonSyms
     if (propsType.isUnion && propsType.isUnion()) {

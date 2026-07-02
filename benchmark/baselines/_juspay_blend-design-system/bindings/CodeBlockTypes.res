@@ -8,12 +8,12 @@ type diffLineType =
   | @as("unchanged") Unchanged
 type supportedLanguage =
   | @as("html") Html
+  | @as("css") Css
   | @as("javascript") Javascript
   | @as("typescript") Typescript
   | @as("jsx") Jsx
   | @as("tsx") Tsx
   | @as("json") Json
-  | @as("css") Css
   | @as("markdown") Markdown
   | @as("yaml") Yaml
   | @as("python") Python

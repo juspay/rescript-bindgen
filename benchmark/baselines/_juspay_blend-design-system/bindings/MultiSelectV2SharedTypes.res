@@ -3,9 +3,9 @@ type stateToken2 = {
   default: string,
   hover: string,
   active: string,
+  selected: string,
   focus: string,
   focusVisible: string,
-  selected: string,
 }
 type multiSelectV2MultiSelectV2TokensTypeLabelConfig = {
   fontSize: string,
@@ -47,8 +47,8 @@ type sizeToken4 = {
 type triggerStateToken2 = {
   hover: string,
   @as("open") open_: string,
-  focus: string,
   error: string,
+  focus: string,
   closed: string,
 }
 type variantToken6 = {
@@ -296,7 +296,7 @@ type componentTokenType = {
   @as("MULTI_SELECT_V2") mULTI_SELECT_V2?: responsiveMultiSelectV2Tokens,
   @as("AVATARV2") aVATARV2?: AvatarV2Types.responsiveAvatarV2Tokens,
   @as("TEXT_INPUTV2") tEXT_INPUTV2?: InputsV2Types.responsiveTextInputV2Tokens,
-  @as("CHARTSV2") cHARTSV2?: HighchartsSharedTypes.responsiveChartV2Tokens,
+  @as("CHARTSV2") cHARTSV2?: ChartsV2Types.responsiveChartV2Tokens,
   @as("CHECKBOXV2") cHECKBOXV2?: SelectorV2Types.responsiveCheckboxV2Tokens,
   @as("KEYVALUEPAIRV2") kEYVALUEPAIRV2?: KeyValuePairV2Types.responsiveKeyValuePairV2Tokens,
   @as("TOOLTIPV2") tOOLTIPV2?: TooltipV2Types.responsiveTooltipV2Tokens,
@@ -358,7 +358,7 @@ type contextThemeContextTypeComponentTokensConfig = {
   @as("MULTI_SELECT_V2") mULTI_SELECT_V2: responsiveMultiSelectV2Tokens,
   @as("AVATARV2") aVATARV2: AvatarV2Types.responsiveAvatarV2Tokens,
   @as("TEXT_INPUTV2") tEXT_INPUTV2: InputsV2Types.responsiveTextInputV2Tokens,
-  @as("CHARTSV2") cHARTSV2: HighchartsSharedTypes.responsiveChartV2Tokens,
+  @as("CHARTSV2") cHARTSV2: ChartsV2Types.responsiveChartV2Tokens,
   @as("CHECKBOXV2") cHECKBOXV2: SelectorV2Types.responsiveCheckboxV2Tokens,
   @as("KEYVALUEPAIRV2") kEYVALUEPAIRV2: KeyValuePairV2Types.responsiveKeyValuePairV2Tokens,
   @as("TOOLTIPV2") tOOLTIPV2: TooltipV2Types.responsiveTooltipV2Tokens,

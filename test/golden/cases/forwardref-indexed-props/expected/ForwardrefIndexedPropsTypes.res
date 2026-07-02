@@ -1,0 +1,3 @@
+type forwardrefIndexedPropsOptionsConfig = {
+  title: string,
+}
