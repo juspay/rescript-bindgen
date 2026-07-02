@@ -395,6 +395,17 @@ becomes `JSON.t`, `keyof T` becomes `string`, and nested records carry the type 
 > how real libraries ship it). A generic **`interface`** instantiation is not currently
 > re-genericized (no `aliasSymbol`) — it would surface as `Record<string,unknown>` → `Dict.t<JSON.t>`.
 
+**Index-signature prop recovery (#92).** Props carrying a string index signature (`[key: string]: any`,
+common in third-party libs — e.g. highcharts-react's `HighchartsReactProps`, so blend's `BlendChart` /
+`ChartV2`) lose every NAMED property when wrapped in `Omit<…>`: TypeScript collapses
+`Omit<{ [k:string]: any; options?: … }, "ref">` down to just `{ [k:string]: any }`. The component then
+extracted only `ref`/`key` (both filtered) → **zero props → silently dropped as `no-props`**. Fix:
+when the props type has a string index signature, recover the named props from the pre-`Omit` type
+(`X` in `Omit<X, K>`, minus the omitted keys `K`), so the component binds with its real surface
+(`options` / `immutable` / `callback` / …, some `⚪ loose` where the vendor type is unmodellable)
+instead of vanishing. Scoped to index-signature props, so ordinary components are untouched. Fixture:
+[`forwardref-indexed-props`](../test/golden/cases/forwardref-indexed-props). (#92)
+
 ---
 
 ## Opaque-module unions

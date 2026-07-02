@@ -47,6 +47,6 @@
 @module("@juspay/blend-design-system") external getUploadTokens: (TokensTypes.foundationTokenType) => UploadTypes.responsiveUploadTokens = "getUploadTokens"
 @module("@juspay/blend-design-system") external getChatInputTokens: (TokensTypes.foundationTokenType) => ChatInputTypes.responsiveChatInputTokensType = "getChatInputTokens"
 @module("@juspay/blend-design-system") external useTheme: unit => MultiSelectV2SharedTypes.themeContextType = "useTheme"
-@module("@juspay/blend-design-system") external getChartV2Tokens: (TokensTypes.foundationTokenType, ~theme: string=?, unit) => HighchartsSharedTypes.responsiveChartV2Tokens = "getChartV2Tokens"
+@module("@juspay/blend-design-system") external getChartV2Tokens: (TokensTypes.foundationTokenType, ~theme: string=?, unit) => ChartsV2Types.responsiveChartV2Tokens = "getChartV2Tokens"
 @module("@juspay/blend-design-system") external getTimelineTokens: (TokensTypes.foundationTokenType, ~theme: string=?, unit) => TimelineTypes.responsiveTimelineTokens = "getTimelineTokens"
 @module("@juspay/blend-design-system") external getAlertV2Tokens: (TokensTypes.foundationTokenType, ~theme: string=?, unit) => AlertV2Types.responsiveAlertV2Tokens = "getAlertV2Tokens"

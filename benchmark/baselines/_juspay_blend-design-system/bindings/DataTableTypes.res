@@ -12,9 +12,9 @@ type nUMBER =
   | @as("number") Number
 type format =
   | @as("decimal") Decimal
+  | @as("percentage") Percentage
   | @as("integer") Integer
   | @as("currency") Currency
-  | @as("percentage") Percentage
 type aVATAR =
   | @as("avatar") Avatar
 type tAG =
@@ -24,12 +24,12 @@ type variant2 =
   | @as("subtle") Subtle
   | @as("outlined") Outlined
   | @as("no_fill") NoFill
-type color2 =
+type color3 =
+  | @as("error") Error
   | @as("primary") Primary
   | @as("secondary") Secondary
   | @as("success") Success
   | @as("warning") Warning
-  | @as("error") Error
   | @as("neutral") Neutral
 type size2 =
   | @as("sm") Sm
@@ -37,12 +37,12 @@ type size2 =
   | @as("md") Md
 type pROGRESS =
   | @as("progress") Progress
-type color3 =
+type color4 =
+  | @as("error") Error
   | @as("primary") Primary
   | @as("secondary") Secondary
   | @as("success") Success
   | @as("warning") Warning
-  | @as("error") Error
 type dROPDOWN =
   | @as("dropdown") Dropdown
 type dATE =
@@ -55,7 +55,7 @@ type valueType =
   | @as("percentage") Percentage
 type rEACT_ELEMENT =
   | @as("react_element") ReactElement
-type type_2 =
+type type_3 =
   | @as("select") Select
   | @as("multiselect") Multiselect
   | @as("date_range") DateRange
@@ -68,12 +68,12 @@ type operator =
   | @as("endsWith") EndsWith
   | @as("startsWith") StartsWith
   | @as("contains") Contains
+  | @as("range") Range
   | @as("equals") Equals
   | @as("gt") Gt
   | @as("lt") Lt
   | @as("gte") Gte
   | @as("lte") Lte
-  | @as("range") Range
 type columnType =
   | @as("text") Text
   | @as("number") Number
@@ -181,7 +181,7 @@ type dataTableColumnsAvatarConfig<'a> = {
 type tagColumnProps = {
   text: string,
   variant?: variant2,
-  color?: color2,
+  color?: color3,
   size?: size2,
   leftSlot?: React.element,
   rightSlot?: React.element,
@@ -214,7 +214,7 @@ type progressColumnProps = {
   max?: float,
   label?: string,
   showPercentage?: bool,
-  color?: color3,
+  color?: color4,
 }
 type dataTableColumnsProgressConfig<'a> = {
   field: string,
@@ -386,7 +386,7 @@ type dataTableColumnsFilterTypeConfig<'a> = {
   getSortField?: option<string> => string,
   isDeltaSortable?: bool,
   sortValueFormatter?: (JSON.t, 'a, string, option<string>) => JSON.t,
-  @as("type") type_: type_2,
+  @as("type") type_: type_3,
   renderCell?: (JSON.t, 'a, option<float>) => React.element,
 }
 type dataTableDescriptionTooltipPropsConfig = {

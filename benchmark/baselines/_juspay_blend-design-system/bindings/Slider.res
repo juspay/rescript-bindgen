@@ -63,12 +63,12 @@ external make: (
   ~orientation: TabsTypes.orientation=?,
   ~step: float=?,
   ~variant: SliderTypes.sliderVariant=?,
+  ~inverted: bool=?,
   ~max: float=?,
   ~min: float=?,
   ~valueFormat: SliderTypes.sliderValueFormatConfig=?,
   ~showValueLabels: bool=?,
   ~labelPosition: SliderTypes.sliderLabelPosition=?,
-  ~inverted: bool=?,
   ~minStepsBetweenThumbs: float=?,
   ~onValueCommit: array<float> => unit=?,
 ) => React.element = "Slider"

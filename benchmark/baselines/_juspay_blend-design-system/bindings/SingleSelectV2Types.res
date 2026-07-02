@@ -3,9 +3,9 @@ type stateToken = {
   default: string,
   hover: string,
   active: string,
+  selected: string,
   focus: string,
   focusVisible: string,
-  selected: string,
 }
 type singleSelectV2SingleSelectV2TokensTypeLabelConfig = {
   fontSize: string,
@@ -47,8 +47,8 @@ type sizeToken2 = {
 type triggerStateToken = {
   hover: string,
   @as("open") open_: string,
-  focus: string,
   error: string,
+  focus: string,
   closed: string,
 }
 type variantToken3 = {
