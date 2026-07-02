@@ -1256,7 +1256,17 @@ export function extractModule(entryFile, opts = {}) {
         const jsName = isDefault ? 'default' : exportName
         if (seen.has(name)) continue
         const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0])
-        if (!decl) { skipped.push({ name, reason: 'no-declaration' }); continue }
+        if (!decl) {
+            // Distinguish a BROKEN RE-EXPORT from a plain declarationless symbol: the export
+            // specifier exists but de-aliasing resolved to nothing — the package's own types are
+            // inconsistent (e.g. blend 0.0.37's `export { FOUNDATION_THEME } from './tokens'`
+            // where a new `tokens.d.ts` shadows the `tokens/` directory, so the target module
+            // doesn't export the name). Every TS consumer sees `any` for such an export; surface
+            // it loudly instead of burying it in the generic skip pile. (#105)
+            const brokenReexport = exp !== sym && (exp.flags & ts.SymbolFlags.Alias)
+            skipped.push({ name, reason: brokenReexport ? 'unresolvable-reexport (upstream .d.ts bug? the re-export target does not export this name)' : 'no-declaration' })
+            continue
+        }
         let type
         try { type = checker.getTypeOfSymbolAtLocation(sym, decl) } catch { skipped.push({ name, reason: 'type-error' }); continue }
         // A `React.Context<T>` value (React 19 makes it renderable, so it has element-returning
