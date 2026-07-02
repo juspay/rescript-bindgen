@@ -2,9 +2,9 @@
 
 **96** components · ✅ **96** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**51** function binding(s) → `BlendDesignSystemBindings.res`.
+**53** function binding(s) → `BlendDesignSystemBindings.res`.
 
-**2327** shared types deduplicated into **62** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**2328** shared types deduplicated into **62** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -42,6 +42,7 @@ Standalone function exports, emitted as positional `@module external` bindings i
 - `getUnitInputTokens`
 - `getMultiValueInputTokens`
 - `getMenuTokens`
+- `validateColumnData`
 - `getColumnTypeConfig`
 - `getTableToken`
 - `getSidebarTokens`
@@ -65,6 +66,7 @@ Standalone function exports, emitted as positional `@module external` bindings i
 - `getUploadTokens`
 - `getChatInputTokens`
 - `useTheme`
+- `FOUNDATION_THEME`
 - `getChartV2Tokens`
 - `getTimelineTokens`
 - `getAlertV2Tokens`

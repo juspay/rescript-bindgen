@@ -1,35 +1,33 @@
-# Binding report — `@smastrom/react-rating@1.5.0`
+# Binding report — `demo`
 
 **1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**6** function binding(s) → `ReactRatingBindings.res`.
+**4** function binding(s) → `DemoBindings.res`.
 
-**9** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**3** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
 | Kind | Package | Provides | Status |
 |------|---------|----------|--------|
 | required | `@rescript/react + stdlib` | JsxDOM, Dom, React, ReactEvent | ✓ present |
-| optional | `rescript-webapi` | File, FileList | ✓ present → used |
+| optional | `rescript-webapi` | File, FileList | ✗ not installed |
 
 ## 🔧 Function bindings
 
-Standalone function exports, emitted as positional `@module external` bindings in `ReactRatingBindings.res`.
+Standalone function exports, emitted as positional `@module external` bindings in `DemoBindings.res`.
 
-- `Heart`
-- `RoundedStar`
-- `Star`
-- `StickerStar`
-- `ThinRoundedStar`
-- `ThinStar`
+- `THEME_TOKENS`
+- `defaultConfig`
+- `VERSION`
+- `LIMITS`
 
 ## ✅ Usable
 
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- Rating
+- Widget
 
 ## ⚪ Loosely typed (widened to `string`)
 

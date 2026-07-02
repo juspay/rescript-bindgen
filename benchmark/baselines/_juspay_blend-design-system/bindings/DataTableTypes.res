@@ -472,6 +472,21 @@ type rowActionsConfig<'a> = {
   slot1?: rowActionConfig<'a>,
   slot2?: rowActionConfig<'a>,
 }
+type dataTableValidateColumnDataConfig = {
+  text: JSON.t => bool,
+  number: JSON.t => bool,
+  select: JSON.t => bool,
+  multiselect: JSON.t => bool,
+  date: JSON.t => bool,
+  date_range: JSON.t => bool,
+  avatar: JSON.t => bool,
+  tag: JSON.t => bool,
+  slider: JSON.t => bool,
+  custom: JSON.t => bool,
+  progress: JSON.t => bool,
+  dropdown: JSON.t => bool,
+  react_element: JSON.t => bool,
+}
 type columnTypeConfig = {
   @as("type") type_: columnType,
   filterType: filterType,

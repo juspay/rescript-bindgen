@@ -1,3 +1,5 @@
+@module("react-day-picker") external defaultLocale: LocaleSharedTypes.dayPickerLocale = "defaultLocale"
+@module("react-day-picker") external defaultDateLib: LocaleSharedTypes.dateLib2 = "defaultDateLib"
 @module("react-day-picker") external formatCaption: (Date.t, ~options: LocaleSharedTypes.dateLibOptions=?, ~dateLib: LocaleSharedTypes.dateLib2=?, unit) => string = "formatCaption"
 @module("react-day-picker") external formatDay: (Date.t, ~options: LocaleSharedTypes.dateLibOptions=?, ~dateLib: LocaleSharedTypes.dateLib2=?, unit) => string = "formatDay"
 @module("react-day-picker") external formatMonthDropdown: (Date.t, ~dateLib: LocaleSharedTypes.dateLib2=?, unit) => string = "formatMonthDropdown"

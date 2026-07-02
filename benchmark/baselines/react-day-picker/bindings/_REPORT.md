@@ -2,7 +2,7 @@
 
 **26** components · ✅ **26** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**33** function binding(s) → `ReactDayPickerBindings.res`.
+**35** function binding(s) → `ReactDayPickerBindings.res`.
 
 **5** class module(s) → `@new`/`@send`/`@get` bindings.
 
@@ -19,6 +19,8 @@
 
 Standalone function exports, emitted as positional `@module external` bindings in `ReactDayPickerBindings.res`.
 
+- `defaultLocale`
+- `defaultDateLib`
 - `formatCaption`
 - `formatDay`
 - `formatMonthDropdown`
