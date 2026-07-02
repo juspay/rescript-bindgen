@@ -393,6 +393,10 @@ async function main() {
     console.error(`\n[bindgen] wrote ${units.length} component + ${functions.length} function + ${classes.length} class binding(s) to ${outDir}`)
     for (const r of rows) console.error(`  ${r.name.padEnd(24)} props=${String(r.props).padStart(3)} enums=${String(r.enums).padStart(2)} loose=${String(r.loose).padStart(2)} review=${r.review} defects=${r.defects}`)
     if (skipped.length) console.error(`\n[bindgen] skipped ${skipped.length} non-component export(s): ${skipped.slice(0, 15).map((s) => s.name).join(', ')}${skipped.length > 15 ? '…' : ''}`)
+    // A broken re-export is an UPSTREAM types bug (every TS consumer sees `any` for that name) —
+    // shout it, don't bury it among ordinary skips. (#105)
+    const brokenReexports = skipped.filter((s) => s.reason.startsWith('unresolvable-reexport'))
+    if (brokenReexports.length) console.error(`\n[bindgen] ⚠ ${brokenReexports.length} BROKEN re-export(s) — the package's own .d.ts re-exports a name its target module doesn't export (upstream types bug; the symbol is \`any\` for every TS consumer): ${brokenReexports.map((s) => s.name).join(', ')}`)
     if (totalDefects) console.error(`\n[bindgen] ⚠ ${totalDefects} unknown/any prop(s) flagged as defects — review.`)
 
     // Dependencies

@@ -95,6 +95,13 @@ export function label(name) {
     const isPlainIdent = /^[a-z_][a-zA-Z0-9_]*$/.test(name)
     if (isPlainIdent && !RESERVED.has(name)) return { as: null, id: name }
     if (RESERVED.has(name)) return { as: name, id: name + '_' }
+    // SCREAMING_SNAKE (`FOUNDATION_THEME`, `DEFAULT_POSITION` — the const-export convention) →
+    // camelCase (`foundationTheme`), not a bare first-char lowering (`fOUNDATION_THEME`). The
+    // original JS name is preserved in the `= "…"` / `@as`. (#105)
+    if (/^[A-Z][A-Z0-9_]*$/.test(name)) {
+        const id = name.toLowerCase().replace(/_+([a-z0-9])/g, (_, c) => c.toUpperCase()).replace(/_+$/, '')
+        return { as: name, id: RESERVED.has(id) ? id + '_' : id }
+    }
     // Anything else (kebab `aria-label`, PascalCase `CustomizedDot`, etc.):
     // emit @as with the original name and a safe lowercase-leading id.
     let id = camelFromKebab(name).replace(/[^a-zA-Z0-9_]/g, '_')
@@ -392,6 +399,19 @@ export function emitFunction(ir, options = {}) {
         const imp = imperfection(ir.context.ofType)
         if (imp) lines.push(`// ${imp === 'unknown' || imp === 'any' ? '🛑 BROKEN' : '⚠️ REVIEW'}: \`${ir.import.name}\` context value couldn't be typed exactly — \`${cfg.opaqueFallback}\` placeholder.`)
         lines.push(`@module(${JSON.stringify(cfg.from)}) external ${id}: React.Context.t<${ofType}> = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
+        return lines.join('\n')
+    }
+
+    // A plain exported const VALUE (#105) — `@module external <name>: <type> = "…"`. The extractor
+    // only produces this when the type models cleanly, so the imperfection flags are defensive.
+    if (ir.value) {
+        const vt = renderType(ir.value.type, ir.import.name, cfg)
+        const imp = imperfection(ir.value.type)
+        if (imp === 'unknown' || imp === 'any') lines.push(`// 🛑 BROKEN: \`${ir.import.name}\` value couldn't be typed exactly — \`${cfg.opaqueFallback}\` placeholder.`)
+        else if (imp === 'review') lines.push(`// ⚠️ REVIEW: \`${ir.import.name}\` value couldn't be auto-typed exactly — \`${cfg.opaqueFallback}\` placeholder.`)
+        else if (imp === 'opaque') lines.push(`// ⚪ loose: \`${ir.import.name}\` value widened to \`${cfg.opaqueFallback}\`.`)
+        if (ir.import.isDefault) lines.push(defaultExportNote(ir.import.name))
+        lines.push(`@module(${JSON.stringify(cfg.from)}) external ${id}: ${vt} = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
         return lines.join('\n')
     }
 

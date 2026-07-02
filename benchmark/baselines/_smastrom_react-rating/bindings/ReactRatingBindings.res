@@ -1,0 +1,6 @@
+@module("@smastrom/react-rating") external heart: Dom.element = "Heart"
+@module("@smastrom/react-rating") external roundedStar: Dom.element = "RoundedStar"
+@module("@smastrom/react-rating") external star: Dom.element = "Star"
+@module("@smastrom/react-rating") external stickerStar: Dom.element = "StickerStar"
+@module("@smastrom/react-rating") external thinRoundedStar: Dom.element = "ThinRoundedStar"
+@module("@smastrom/react-rating") external thinStar: Dom.element = "ThinStar"

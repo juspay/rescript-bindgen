@@ -830,6 +830,36 @@ function buildFunctionIR(checker, sym, source, importName, from, opts) {
     }
 }
 
+/**
+ * Build the IR for a plain exported const VALUE with no call signature — e.g. blend's
+ * `declare const FOUNDATION_THEME: FoundationTokenType`. Binds as a typed
+ * `@module external <name>: <type> = "<jsName>"`, reusing the shared type registry so the
+ * value's type (the same `foundationTokenType` record consumed by `getButtonTokens`) is one
+ * canonical type. Used only when the type models cleanly; the caller keeps an unmodellable
+ * value in the skipped bucket rather than emit a bogus binding. (#105)
+ * @returns {import('../types').ValueIR}
+ */
+function buildValueIR(checker, sym, source, importName, from, opts) {
+    const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0]) || source
+    const type = checker.getTypeOfSymbolAtLocation(sym, decl)
+    const enums = [], records = [], unboxed = []
+    const ctx = {
+        checker, decl, enums, records, unboxed, webapi: !!opts.webapi,
+        seenEnums: new Map(), seenRecords: new Map(), seenUnboxed: new Map(),
+        // typeVars: null — a const value has NO signature to thread a generic through, and it is
+        // library-PRODUCED / consumer-RECEIVED (class-getter polarity): an `any` inside must stay a
+        // flagged defect, never generalize to an output-only `'a` that unifies with anything
+        // (rule #4). With no var map, `any` classifies as `{kind:'any'}` → irHasImperfection →
+        // the value stays skipped. (#105)
+        shared: opts.shared || null, typeVars: null,
+        sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
+        path: [importName],
+        produced: false,
+    }
+    const valueType = classify(type, ctx, importName, 0)
+    return { module: importName, import: { from, name: importName }, kind: 'value', enums, records, unboxed, value: { type: valueType } }
+}
+
 /** A `React.Context<T>` value export (`import('react').Context<…>` or `React.Context<…>`).
  *  Its alias/symbol name is `Context` and it carries one type argument (the context value). */
 function isReactContextType(type) {
@@ -1226,7 +1256,17 @@ export function extractModule(entryFile, opts = {}) {
         const jsName = isDefault ? 'default' : exportName
         if (seen.has(name)) continue
         const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0])
-        if (!decl) { skipped.push({ name, reason: 'no-declaration' }); continue }
+        if (!decl) {
+            // Distinguish a BROKEN RE-EXPORT from a plain declarationless symbol: the export
+            // specifier exists but de-aliasing resolved to nothing — the package's own types are
+            // inconsistent (e.g. blend 0.0.37's `export { FOUNDATION_THEME } from './tokens'`
+            // where a new `tokens.d.ts` shadows the `tokens/` directory, so the target module
+            // doesn't export the name). Every TS consumer sees `any` for such an export; surface
+            // it loudly instead of burying it in the generic skip pile. (#105)
+            const brokenReexport = exp !== sym && (exp.flags & ts.SymbolFlags.Alias)
+            skipped.push({ name, reason: brokenReexport ? 'unresolvable-reexport (upstream .d.ts bug? the re-export target does not export this name)' : 'no-declaration' })
+            continue
+        }
         let type
         try { type = checker.getTypeOfSymbolAtLocation(sym, decl) } catch { skipped.push({ name, reason: 'type-error' }); continue }
         // A `React.Context<T>` value (React 19 makes it renderable, so it has element-returning
@@ -1267,6 +1307,28 @@ export function extractModule(entryFile, opts = {}) {
                     functions.push({ name, ir })
                 } catch (e) {
                     skipped.push({ name, reason: 'fn-extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
+                }
+            } else if ((sym.flags & ts.SymbolFlags.Value) && !(sym.flags & (ts.SymbolFlags.Enum | ts.SymbolFlags.Module))) {
+                // A plain exported const VALUE (no call signature, not a class/enum/namespace) — e.g.
+                // `declare const FOUNDATION_THEME: FoundationTokenType`. Bind it as a typed `@module
+                // external` value, but ONLY when its type models cleanly (flag-don't-fake: an
+                // unmodellable value stays in the skipped bucket rather than becoming a bogus binding).
+                // Gated on SymbolFlags.Value, NOT `sym.valueDeclaration` — a cross-file re-exported
+                // DEFAULT const (`export default X` → `export { default as X } from '…'`) de-aliases
+                // to a symbol whose valueDeclaration is often undefined while declarations[0] is
+                // populated; the `decl` above already carries that fallback. (#105)
+                try {
+                    const ir = buildValueIR(checker, sym, source, name, from, { ...opts, shared })
+                    if (ir.value && !irHasImperfection(ir.value.type)) {
+                        ir.import.jsName = jsName
+                        ir.import.isDefault = isDefault
+                        seen.add(name)
+                        functions.push({ name, ir })
+                    } else {
+                        skipped.push({ name, reason: 'value-not-modellable' })
+                    }
+                } catch (e) {
+                    skipped.push({ name, reason: 'value-extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
                 }
             } else {
                 skipped.push({ name, reason: 'not-a-component' })
