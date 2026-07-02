@@ -1,7 +1,7 @@
 @module("demo") @react.component
 external make: (
-  ~toggleFocus: CommonTypes.toggleFocus=?,
+  ~toggleFocus: CommonTypes.refUnionViewsToggleFocus=?,
   ~finalFocus: RefUnionViewsTypes.finalFocusTargetFinalFocus=?,
-  ~container: RefUnionViewsTypes.Container.t=?,  // ⓘ was `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot>` — opaque; build with Container.fromHTMLElement / Container.fromShadowRoot / Container.fromRefObject
+  ~container: RefUnionViewsTypes.RefUnionViewsContainer.t=?,  // ⓘ was `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot>` — opaque; build with RefUnionViewsContainer.fromHTMLElement / RefUnionViewsContainer.fromShadowRoot / RefUnionViewsContainer.fromRefObject
   ~locale: CommonTypes.stringOrStringArray=?,
 ) => React.element = "Focusable"

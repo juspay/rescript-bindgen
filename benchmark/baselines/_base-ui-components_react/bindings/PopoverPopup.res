@@ -3,8 +3,8 @@ external renderFn: ((PositionerSharedTypes.htmlProps, PopupTypes.popoverPopupSta
 
 @module("@base-ui-components/react") @scope("Popover") @react.component
 external make: (
-  ~initialFocus: PopupTypes.initialFocus=?,
-  ~finalFocus: PopupTypes.finalFocus=?,
+  ~initialFocus: PopupTypes.popupInitialFocus=?,
+  ~finalFocus: PopupTypes.popupFinalFocus=?,
   ~style: PopupTypes.popoverPopupStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

@@ -6,7 +6,7 @@ type comboboxArrowState = {
 }
 type selectArrowState = {
   @as("open") open_: bool,
-  side: PositionerSharedTypes.side4,
+  side: PositionerSharedTypes.positionerSelectPositionerStateSide,
   align: PositionerSharedTypes.align,
   uncentered: bool,
 }

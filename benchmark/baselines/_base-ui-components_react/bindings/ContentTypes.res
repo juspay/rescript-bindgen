@@ -1,4 +1,4 @@
-type activationDirection =
+type contentNavigationMenuContentStateActivationDirection =
   | @as("left") Left
   | @as("right") Right
   | @as("up") Up
@@ -6,7 +6,7 @@ type activationDirection =
 type navigationMenuContentState = {
   @as("open") open_: bool,
   transitionStatus: PositionerSharedTypes.transitionStatus,
-  activationDirection: Nullable.t<activationDirection>,
+  activationDirection: Nullable.t<contentNavigationMenuContentStateActivationDirection>,
 }
 type scrollAreaContentState = {
   hasOverflowX: bool,
@@ -25,6 +25,6 @@ type toastContentState = {
 @unboxed type navigationMenuContentClassName = Str(string) | Fn(navigationMenuContentState => string)
 @unboxed type scrollAreaContentStyle = Style(JsxDOM.style) | Fn(scrollAreaContentState => JsxDOM.style)
 @unboxed type scrollAreaContentClassName = Str(string) | Fn(scrollAreaContentState => string)
-@unboxed type leftOrRightOrUpOrDownOrActivationDirectionArray = @as("left") Left | @as("right") Right | @as("up") Up | @as("down") Down | Arr(array<activationDirection>)
+@unboxed type leftOrRightOrUpOrDownOrContentNavigationMenuContentStateActivationDirectionArray = @as("left") Left | @as("right") Right | @as("up") Up | @as("down") Down | Arr(array<contentNavigationMenuContentStateActivationDirection>)
 @unboxed type toastContentStyle = Style(JsxDOM.style) | Fn(toastContentState => JsxDOM.style)
 @unboxed type toastContentClassName = Str(string) | Fn(toastContentState => string)

@@ -1,7 +1,7 @@
-type orientation =
+type tabsOrientation =
   | @as("horizontal") Horizontal
   | @as("vertical") Vertical
-type activationMode =
+type tabsActivationMode =
   | @as("manual") Manual
   | @as("automatic") Automatic
 type tabsVariant =
@@ -12,7 +12,7 @@ type tabsVariant =
 type tabsSize =
   | @as("md") Md
   | @as("lg") Lg
-type type_ =
+type tabsType =
   | @as("button") Button
   | @as("submit") Submit
   | @as("reset") Reset

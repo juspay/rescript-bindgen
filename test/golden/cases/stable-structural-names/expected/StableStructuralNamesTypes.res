@@ -46,7 +46,7 @@ type stableStructuralNamesItemsIconConfig = {
   kind: string,
   glyph: string,
 }
-module Items = {
+module StableStructuralNamesItems = {
   type t
   external fromStableStructuralNamesItemsTextConfig: stableStructuralNamesItemsTextConfig => t = "%identity"
   external fromStableStructuralNamesItemsIconConfig: stableStructuralNamesItemsIconConfig => t = "%identity"

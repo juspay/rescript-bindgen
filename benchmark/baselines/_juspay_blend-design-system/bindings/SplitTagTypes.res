@@ -1,11 +1,11 @@
-type color =
+type splitTagPrimaryTagColor =
   | @as("neutral") Neutral
   | @as("primary") Primary
   | @as("success") Success
   | @as("error") Error
   | @as("warning") Warning
   | @as("purple") Purple
-type as_ =
+type splitTagPrimaryTagAs =
   | @as("div") Div
   | @as("label") Label
   | @as("nav") Nav

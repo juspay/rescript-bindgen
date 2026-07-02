@@ -31,7 +31,7 @@ module AnchorTarget = {
   external fromUnit: unit => t = "%identity"
   let none: t = fromUnit()
 }
-module Anchor = {
+module PositionerAnchor = {
   type t
   external fromElement: Dom.element => t = "%identity"
   external fromVirtualElement: virtualElement => t = "%identity"

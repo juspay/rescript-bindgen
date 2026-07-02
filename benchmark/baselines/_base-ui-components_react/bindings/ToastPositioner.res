@@ -58,7 +58,7 @@ external make: (
   ~className: PositionerSharedTypes.toastPositionerClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
   ~sticky: bool=?,
-  ~positionMethod: PositionerSharedTypes.positionMethod=?,
+  ~positionMethod: PositionerSharedTypes.positionerPositionMethod=?,
   ~sideOffset: PositionerSharedTypes.utilsSideOffsetConfigSideOffset=?,
   ~align: PositionerSharedTypes.align=?,
   ~alignOffset: PositionerSharedTypes.utilsSideOffsetConfigAlignOffset=?,

@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, ScrollbarTypes.scrollAreaS
 
 @module("@base-ui-components/react") @scope("ScrollArea") @react.component
 external make: (
-  ~orientation: RootSharedTypes.orientation2=?,
+  ~orientation: RootSharedTypes.rootOrientation=?,
   ~keepMounted: bool=?,
   ~style: ScrollbarTypes.scrollAreaScrollbarStyle=?,
   ~title: string=?,

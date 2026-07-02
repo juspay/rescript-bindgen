@@ -3,8 +3,8 @@ external renderFn: ((PositionerSharedTypes.htmlProps, 'a) => React.element) => R
 
 @module("@base-ui-components/react") @scope("Toast") @react.component
 external make: (
-  ~container: PortalTypes.Container.t=?,  // ⓘ was `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot>` — opaque; build with Container.fromHTMLElement / Container.fromShadowRoot / Container.fromRefObject
-  ~style: CommonTypes.style2<'a>=?,
+  ~container: PortalTypes.PortalContainer.t=?,  // ⓘ was `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot>` — opaque; build with PortalContainer.fromHTMLElement / PortalContainer.fromShadowRoot / PortalContainer.fromRefObject
+  ~style: CommonTypes.portalStyle2<'a>=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -53,6 +53,6 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~className: CommonTypes.className2<'a>=?,
+  ~className: CommonTypes.portalClassName2<'a>=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Portal"

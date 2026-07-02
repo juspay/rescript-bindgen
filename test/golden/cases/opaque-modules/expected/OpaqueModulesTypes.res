@@ -9,13 +9,13 @@ type customConfig = {
 type customDefinition = {
   compute: string,
 }
-module Preset = {
+module OpaqueModulesPreset = {
   type t
   external fromDateRangePreset: dateRangePreset => t = "%identity"
   external fromCustomConfig: customConfig => t = "%identity"
   external fromCustomDefinition: customDefinition => t = "%identity"
 }
-module Boundary = {
+module OpaqueModulesBoundary = {
   type t
   external fromElement: Dom.element => t = "%identity"
   external fromElements: array<Dom.element> => t = "%identity"

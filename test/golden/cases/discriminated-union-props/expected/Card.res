@@ -1,10 +1,10 @@
 @module("demo") @react.component
 external make: (
   ~maxWidth: string=?,
-  ~variant: DiscriminatedUnionPropsTypes.variant=?,
+  ~variant: DiscriminatedUnionPropsTypes.discriminatedUnionPropsVariant=?,
   ~title: string=?,
   ~content: string=?,
-  ~alignment: DiscriminatedUnionPropsTypes.alignment=?,
+  ~alignment: DiscriminatedUnionPropsTypes.discriminatedUnionPropsAlignment=?,
   ~centerAlign: bool=?,
   ~children: string=?,
 ) => React.element = "Card"

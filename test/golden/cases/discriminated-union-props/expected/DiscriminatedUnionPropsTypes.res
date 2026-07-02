@@ -1,7 +1,7 @@
-type variant =
+type discriminatedUnionPropsVariant =
   | @as("default") Default
   | @as("aligned") Aligned
   | @as("custom") Custom
-type alignment =
+type discriminatedUnionPropsAlignment =
   | @as("left") Left
   | @as("right") Right

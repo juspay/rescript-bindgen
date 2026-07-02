@@ -8,7 +8,7 @@ external make: (
   ~onOpenChange: (bool, RootSharedTypes.tooltipRootChangeEventDetails) => unit=?,
   ~onOpenChangeComplete: bool => unit=?,
   ~disableHoverablePopup: bool=?,
-  ~trackCursorAxis: RootSharedTypes.trackCursorAxis=?,
+  ~trackCursorAxis: RootSharedTypes.rootTrackCursorAxis=?,
   ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
   ~disabled: bool=?,
   ~handle: RootSharedTypes.tooltipHandle<'a>=?,

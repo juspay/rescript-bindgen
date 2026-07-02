@@ -1,4 +1,4 @@
-type orientation =
+type componentsOrientation =
   | @as("up") Up
   | @as("down") Down
   | @as("left") Left
@@ -13,5 +13,5 @@ type componentsComponentsChevronConfig = {
   style?: JsxDOM.style,
   size?: float,
   disabled?: bool,
-  orientation?: orientation,
+  orientation?: componentsOrientation,
 }

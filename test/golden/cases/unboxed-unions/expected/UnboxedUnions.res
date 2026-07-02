@@ -3,5 +3,5 @@ external make: (
   ~width: CommonTypes.stringOrNumber=?,
   ~tags: CommonTypes.stringOrStringArray=?,
   ~checked: CommonTypes.boolOrIndeterminate=?,
-  ~itemHeight: CommonTypes.itemHeight=?,
+  ~itemHeight: CommonTypes.unboxedUnionsItemHeight=?,
 ) => React.element = "UnboxedUnions"

@@ -1,4 +1,4 @@
-type action =
+type providerToastManagerEventAction =
   | @as("add") Add
   | @as("update") Update
   | @as("close") Close

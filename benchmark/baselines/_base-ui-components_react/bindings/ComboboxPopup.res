@@ -3,8 +3,8 @@ external renderFn: ((PositionerSharedTypes.htmlProps, PopupTypes.comboboxPopupSt
 
 @module("@base-ui-components/react") @scope("Autocomplete") @react.component
 external make: (
-  ~initialFocus: PopupTypes.initialFocus=?,
-  ~finalFocus: PopupTypes.finalFocus=?,
+  ~initialFocus: PopupTypes.popupInitialFocus=?,
+  ~finalFocus: PopupTypes.popupFinalFocus=?,
   ~style: PopupTypes.comboboxPopupStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

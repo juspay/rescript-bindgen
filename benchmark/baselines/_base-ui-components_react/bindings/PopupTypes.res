@@ -30,7 +30,7 @@ type popoverPopupState = {
   transitionStatus: PositionerSharedTypes.transitionStatus,
 }
 type selectPopupState = {
-  side: PositionerSharedTypes.side4,
+  side: PositionerSharedTypes.positionerSelectPositionerStateSide,
   align: PositionerSharedTypes.align,
   @as("open") open_: bool,
   transitionStatus: PositionerSharedTypes.transitionStatus,
@@ -39,7 +39,7 @@ type tooltipPopupState = {
   @as("open") open_: bool,
   side: PositionerSharedTypes.side,
   align: PositionerSharedTypes.align,
-  instant?: RootSharedTypes.instantType3,
+  instant?: RootSharedTypes.rootTooltipStoreUseSyncedValuesInstantType,
   transitionStatus: PositionerSharedTypes.transitionStatus,
 }
 module InitialFocusTarget = {
@@ -49,8 +49,8 @@ module InitialFocusTarget = {
   external fromUnit: unit => t = "%identity"
   let none: t = fromUnit()
 }
-@unboxed type initialFocus = Bool(bool) | Ref(React.ref<Nullable.t<Dom.element>>) | Fn(PositionerSharedTypes.interactionType => InitialFocusTarget.t)
-@unboxed type finalFocus = Bool(bool) | Ref(React.ref<Nullable.t<Dom.element>>) | Fn(PositionerSharedTypes.interactionType => InitialFocusTarget.t)
+@unboxed type popupInitialFocus = Bool(bool) | Ref(React.ref<Nullable.t<Dom.element>>) | Fn(PositionerSharedTypes.interactionType => InitialFocusTarget.t)
+@unboxed type popupFinalFocus = Bool(bool) | Ref(React.ref<Nullable.t<Dom.element>>) | Fn(PositionerSharedTypes.interactionType => InitialFocusTarget.t)
 @unboxed type comboboxPopupStyle = Style(JsxDOM.style) | Fn(comboboxPopupState => JsxDOM.style)
 @unboxed type comboboxPopupClassName = Str(string) | Fn(comboboxPopupState => string)
 @unboxed type dialogPopupStyle = Style(JsxDOM.style) | Fn(dialogPopupState => JsxDOM.style)

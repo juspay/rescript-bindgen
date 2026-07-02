@@ -60,7 +60,7 @@ external make: (
   ~size: SliderTypes.sliderSize=?,
   ~asChild: bool=?,
   ~onValueChange: array<float> => unit=?,
-  ~orientation: TabsTypes.orientation=?,
+  ~orientation: TabsTypes.tabsOrientation=?,
   ~step: float=?,
   ~variant: SliderTypes.sliderVariant=?,
   ~inverted: bool=?,

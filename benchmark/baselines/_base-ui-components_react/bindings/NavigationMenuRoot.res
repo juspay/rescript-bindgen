@@ -10,7 +10,7 @@ external make: (
   ~onValueChange: ('c, RootSharedTypes.navigationMenuRootChangeEventDetails) => unit=?,
   ~delay: float=?,
   ~closeDelay: float=?,
-  ~orientation: RootSharedTypes.orientation2=?,
+  ~orientation: RootSharedTypes.rootOrientation=?,
   ~style: RootSharedTypes.navigationMenuRootStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

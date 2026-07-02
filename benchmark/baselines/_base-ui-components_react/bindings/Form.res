@@ -6,7 +6,7 @@ external make: (
   ~validationMode: FormTypes.formValidationMode=?,
   ~errors: Dict.t<CommonTypes.stringOrStringArray>=?,
   ~onFormSubmit: ('a, PositionerSharedTypes.utilsOnFormSubmitConfig) => unit=?,
-  ~style: CommonTypes.style=?,
+  ~style: CommonTypes.formStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -57,6 +57,6 @@ external make: (
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~name: string=?,
   ~target: string=?,
-  ~className: CommonTypes.className=?,
+  ~className: CommonTypes.formClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 ) => React.element = "Form"

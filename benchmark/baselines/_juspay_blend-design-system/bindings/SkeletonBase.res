@@ -85,7 +85,7 @@ external make: (
   ~paddingBottom: CommonTypes.stringOrNumber=?,
   ~paddingLeft: CommonTypes.stringOrNumber=?,
   ~borderBottom: string=?,
-  @as("as") ~as_: SplitTagTypes.as_=?,
+  @as("as") ~as_: SplitTagTypes.splitTagPrimaryTagAs=?,
   ~_hover: PrimitivesTypes.styledBlockProps=?,
   ~_focus: PrimitivesTypes.styledBlockProps=?,
   ~_active: PrimitivesTypes.styledBlockProps=?,

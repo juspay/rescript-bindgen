@@ -3,8 +3,8 @@ external renderFn: ((PositionerSharedTypes.htmlProps, PopupTypes.dialogPopupStat
 
 @module("@base-ui-components/react") @scope("AlertDialog") @react.component
 external make: (
-  ~initialFocus: PopupTypes.initialFocus=?,
-  ~finalFocus: PopupTypes.finalFocus=?,
+  ~initialFocus: PopupTypes.popupInitialFocus=?,
+  ~finalFocus: PopupTypes.popupFinalFocus=?,
   ~style: PopupTypes.dialogPopupStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

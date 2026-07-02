@@ -1,7 +1,7 @@
-type reason =
+type rootAccordionRootChangeEventDetailsReason =
   | @as("trigger-press") TriggerPress
   | @as("none") None
-type reason2 =
+type rootAlertDialogRootChangeEventDetailsReason =
   | @as("trigger-press") TriggerPress
   | @as("none") None
   | @as("outside-press") OutsidePress
@@ -9,7 +9,7 @@ type reason2 =
   | @as("focus-out") FocusOut
   | @as("escape-key") EscapeKey
   | @as("imperative-action") ImperativeAction
-type useSyncedValue =
+type rootDialogStoreUseSyncedValue =
   | @as("role") Role
   | @as("open") Open
   | @as("modal") Modal
@@ -32,17 +32,17 @@ type useSyncedValue =
   | @as("titleElementId") TitleElementId
   | @as("descriptionElementId") DescriptionElementId
   | @as("viewportElement") ViewportElement
-type useSyncedValue2 =
+type rootFloatingRootStoreUseSyncedValue =
   | @as("open") Open
   | @as("domReferenceElement") DomReferenceElement
   | @as("referenceElement") ReferenceElement
   | @as("floatingElement") FloatingElement
   | @as("positionReference") PositionReference
   | @as("floatingId") FloatingId
-type role =
+type rootDialogStoreUseSyncedValuesRole =
   | @as("dialog") Dialog
   | @as("alertdialog") Alertdialog
-type reason3 =
+type rootChangeEventDetailsReason =
   | @as("trigger-press") TriggerPress
   | @as("none") None
   | @as("outside-press") OutsidePress
@@ -54,11 +54,11 @@ type reason3 =
   | @as("focus-out") FocusOut
   | @as("escape-key") EscapeKey
   | @as("list-navigation") ListNavigation
-type reason4 =
+type rootHighlightEventDetailsReason =
   | @as("none") None
   | @as("keyboard") Keyboard
   | @as("pointer") Pointer
-type mode =
+type rootMode =
   | @as("none") None
   | @as("both") Both
   | @as("inline") Inline
@@ -68,7 +68,7 @@ type imageLoadingStatus =
   | @as("loading") Loading
   | @as("loaded") Loaded
   | @as("error") Error
-type reason5 =
+type rootContextMenuRootChangeEventDetailsReason =
   | @as("trigger-press") TriggerPress
   | @as("none") None
   | @as("trigger-hover") TriggerHover
@@ -82,7 +82,7 @@ type reason5 =
   | @as("cancel-open") CancelOpen
   | @as("sibling-open") SiblingOpen
   | @as("imperative-action") ImperativeAction
-type useSyncedValue3 =
+type rootMenuStoreUseSyncedValue =
   | @as("disabled") Disabled
   | @as("open") Open
   | @as("modal") Modal
@@ -112,7 +112,7 @@ type useSyncedValue3 =
   | @as("floatingParentNodeId") FloatingParentNodeId
   | @as("itemProps") ItemProps
   | @as("keyboardEventRelay") KeyboardEventRelay
-type instantType =
+type rootMenuStoreUseSyncedValuesInstantType =
   | @as("group") Group
   | @as("click") Click
   | @as("dismiss") Dismiss
@@ -133,7 +133,7 @@ type menuRootChangeEventReason =
 type menuRootOrientation =
   | @as("horizontal") Horizontal
   | @as("vertical") Vertical
-type useSyncedValue4 =
+type rootDialogStoreUseSyncedValue2 =
   | @as("role") Role
   | @as("open") Open
   | @as("modal") Modal
@@ -156,7 +156,7 @@ type useSyncedValue4 =
   | @as("titleElementId") TitleElementId
   | @as("descriptionElementId") DescriptionElementId
   | @as("viewportElement") ViewportElement
-type useSyncedValue6 =
+type rootMenuStoreUseSyncedValue2 =
   | @as("disabled") Disabled
   | @as("open") Open
   | @as("modal") Modal
@@ -186,7 +186,7 @@ type useSyncedValue6 =
   | @as("floatingParentNodeId") FloatingParentNodeId
   | @as("itemProps") ItemProps
   | @as("keyboardEventRelay") KeyboardEventRelay
-type reason6 =
+type rootNavigationMenuRootChangeEventDetailsReason =
   | @as("trigger-press") TriggerPress
   | @as("none") None
   | @as("trigger-hover") TriggerHover
@@ -195,10 +195,10 @@ type reason6 =
   | @as("focus-out") FocusOut
   | @as("escape-key") EscapeKey
   | @as("list-navigation") ListNavigation
-type orientation2 =
+type rootOrientation =
   | @as("horizontal") Horizontal
   | @as("vertical") Vertical
-type reason7 =
+type rootNumberFieldRootChangeEventDetailsReason =
   | @as("none") None
   | @as("increment-press") IncrementPress
   | @as("decrement-press") DecrementPress
@@ -209,7 +209,7 @@ type reason7 =
   | @as("keyboard") Keyboard
   | @as("wheel") Wheel
   | @as("scrub") Scrub
-type reason8 =
+type rootNumberFieldRootCommitEventDetailsReason =
   | @as("none") None
   | @as("increment-press") IncrementPress
   | @as("decrement-press") DecrementPress
@@ -218,7 +218,7 @@ type reason8 =
   | @as("keyboard") Keyboard
   | @as("wheel") Wheel
   | @as("scrub") Scrub
-type reason9 =
+type rootPopoverRootChangeEventDetailsReason =
   | @as("trigger-press") TriggerPress
   | @as("none") None
   | @as("trigger-hover") TriggerHover
@@ -228,7 +228,7 @@ type reason9 =
   | @as("focus-out") FocusOut
   | @as("escape-key") EscapeKey
   | @as("imperative-action") ImperativeAction
-type useSyncedValue8 =
+type rootPopoverStoreUseSyncedValue =
   | @as("disabled") Disabled
   | @as("open") Open
   | @as("modal") Modal
@@ -253,7 +253,7 @@ type useSyncedValue8 =
   | @as("stickIfOpen") StickIfOpen
   | @as("instantType") InstantType
   | @as("openChangeReason") OpenChangeReason
-type instantType2 =
+type rootPopoverStoreUseSyncedValuesInstantType =
   | @as("click") Click
   | @as("dismiss") Dismiss
 type popoverRootChangeEventReason =
@@ -266,7 +266,7 @@ type popoverRootChangeEventReason =
   | @as("focus-out") FocusOut
   | @as("escape-key") EscapeKey
   | @as("imperative-action") ImperativeAction
-type reason10 =
+type rootPreviewCardRootChangeEventDetailsReason =
   | @as("trigger-press") TriggerPress
   | @as("none") None
   | @as("trigger-hover") TriggerHover
@@ -277,7 +277,7 @@ type progressStatus =
   | @as("indeterminate") Indeterminate
   | @as("progressing") Progressing
   | @as("complete") Complete
-type reason11 =
+type rootSelectRootChangeEventDetailsReason =
   | @as("trigger-press") TriggerPress
   | @as("none") None
   | @as("outside-press") OutsidePress
@@ -287,27 +287,27 @@ type reason11 =
   | @as("list-navigation") ListNavigation
   | @as("cancel-open") CancelOpen
   | @as("window-resize") WindowResize
-type thumbAlignment =
+type rootThumbAlignment =
   | @as("center") Center
   | @as("edge") Edge
   | @as("edge-client-only") EdgeClientOnly
-type thumbCollisionBehavior =
+type rootThumbCollisionBehavior =
   | @as("none") None
   | @as("push") Push
   | @as("swap") Swap
-type reason12 =
+type rootSliderRootChangeEventDetailsReason =
   | @as("none") None
   | @as("track-press") TrackPress
   | @as("input-change") InputChange
   | @as("keyboard") Keyboard
   | @as("drag") Drag
-type priority =
+type rootToastRootToastObjectPriority =
   | @as("low") Low
   | @as("high") High
-type transitionStatus2 =
+type rootToastRootToastObjectTransitionStatus =
   | @as("starting") Starting
   | @as("ending") Ending
-type reason13 =
+type rootTooltipRootChangeEventDetailsReason =
   | @as("trigger-press") TriggerPress
   | @as("none") None
   | @as("trigger-hover") TriggerHover
@@ -316,12 +316,12 @@ type reason13 =
   | @as("escape-key") EscapeKey
   | @as("disabled") Disabled
   | @as("imperative-action") ImperativeAction
-type trackCursorAxis =
+type rootTrackCursorAxis =
   | @as("none") None
   | @as("both") Both
   | @as("x") X
   | @as("y") Y
-type useSyncedValue10 =
+type rootTooltipStoreUseSyncedValue =
   | @as("disabled") Disabled
   | @as("open") Open
   | @as("mounted") Mounted
@@ -342,7 +342,7 @@ type useSyncedValue10 =
   | @as("isInstantPhase") IsInstantPhase
   | @as("trackCursorAxis") TrackCursorAxis
   | @as("disableHoverablePopup") DisableHoverablePopup
-type instantType3 =
+type rootTooltipStoreUseSyncedValuesInstantType =
   | @as("focus") Focus
   | @as("delay") Delay
   | @as("dismiss") Dismiss
@@ -356,7 +356,7 @@ type tooltipRootChangeEventReason =
   | @as("disabled") Disabled
   | @as("imperative-action") ImperativeAction
 type accordionRootChangeEventDetails = {
-  reason: reason,
+  reason: rootAccordionRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -370,7 +370,7 @@ type accordionRootState = {
   orientation: PositionerSharedTypes.orientation,
 }
 type alertDialogRootChangeEventDetails = {
-  reason: reason2,
+  reason: rootAlertDialogRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -380,7 +380,7 @@ type alertDialogRootChangeEventDetails = {
   preventUnmountOnClose: unit => unit,
 }
 type rootDialogStoreSetOpenConfig = {
-  reason: reason2,
+  reason: rootAlertDialogRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -427,17 +427,17 @@ type floatingRootStore = {
   context: floatingRootStoreContext,
   controlledValues: string,
   selectors: string,
-  useSyncedValue: (useSyncedValue2, string) => unit,
+  useSyncedValue: (rootFloatingRootStoreUseSyncedValue, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
   useSyncedValues: componentsFloatingRootStoreUseSyncedValuesConfig => unit,
-  useControlledProp: (useSyncedValue2, string, string) => unit,
-  set: (useSyncedValue2, string) => unit,
+  useControlledProp: (rootFloatingRootStoreUseSyncedValue, string, string) => unit,
+  set: (rootFloatingRootStoreUseSyncedValue, string) => unit,
   update: componentsFloatingRootStoreUseSyncedValuesConfig => unit,
   setState: componentsFloatingRootStoreSetStateConfig => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (string, string) => unit) => unit,
-  useStateSetter: useSyncedValue2 => string => unit,
+  useStateSetter: rootFloatingRootStoreUseSyncedValue => string => unit,
   observe: string,
   state: componentsFloatingRootStoreSetStateConfig,
   listeners: string,
@@ -468,7 +468,7 @@ type storeDialogStoreUseSyncedValuesConfig<'a> = {
   titleElementId?: string,
   descriptionElementId?: string,
   viewportElement?: Nullable.t<Dom.element>,
-  role?: role,
+  role?: rootDialogStoreUseSyncedValuesRole,
 }
 type storeDialogStoreSetStateConfig<'a> = {
   @as("open") open_: bool,
@@ -492,24 +492,24 @@ type storeDialogStoreSetStateConfig<'a> = {
   titleElementId?: string,
   descriptionElementId?: string,
   viewportElement: Nullable.t<Dom.element>,
-  role: role,
+  role: rootDialogStoreUseSyncedValuesRole,
 }
 type dialogStore<'a> = {
   setOpen: (bool, rootDialogStoreSetOpenConfig) => unit,
   context: context,
   controlledValues: string,
   selectors: string,
-  useSyncedValue: (useSyncedValue, string) => unit,
+  useSyncedValue: (rootDialogStoreUseSyncedValue, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
   useSyncedValues: storeDialogStoreUseSyncedValuesConfig<'a> => unit,
-  useControlledProp: (useSyncedValue, string, string) => unit,
-  set: (useSyncedValue, string) => unit,
+  useControlledProp: (rootDialogStoreUseSyncedValue, string, string) => unit,
+  set: (rootDialogStoreUseSyncedValue, string) => unit,
   update: storeDialogStoreUseSyncedValuesConfig<'a> => unit,
   setState: storeDialogStoreSetStateConfig<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (string, alertDialogRootChangeEventDetails) => unit) => unit,
-  useStateSetter: useSyncedValue => string => unit,
+  useStateSetter: rootDialogStoreUseSyncedValue => string => unit,
   observe: string,
   state: storeDialogStoreSetStateConfig<'a>,
   listeners: string,
@@ -526,7 +526,7 @@ type dialogHandle<'a> = {
   isOpen: bool,
 }
 type changeEventDetails = {
-  reason: reason3,
+  reason: rootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -535,7 +535,7 @@ type changeEventDetails = {
   trigger?: Dom.element,
 }
 type highlightEventDetails = {
-  reason: reason4,
+  reason: rootHighlightEventDetailsReason,
   event: Dom.event,
   index: int,
 }
@@ -559,7 +559,7 @@ type collapsibleRootState = {
   @as("open") open_: bool,
 }
 type contextMenuRootChangeEventDetails = {
-  reason: reason5,
+  reason: rootContextMenuRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -568,7 +568,7 @@ type contextMenuRootChangeEventDetails = {
   trigger?: Dom.element,
 }
 type menuRootChangeEventDetails = {
-  reason: reason5,
+  reason: rootContextMenuRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -618,7 +618,7 @@ type storeMenuStoreUseSyncedValuesConfig = {
   activeIndex?: Nullable.t<float>,
   hoverEnabled?: bool,
   stickIfOpen?: bool,
-  instantType?: instantType,
+  instantType?: rootMenuStoreUseSyncedValuesInstantType,
   openChangeReason?: Nullable.t<menuRootChangeEventReason>,
   floatingTreeRoot?: floatingTreeStore,
   floatingNodeId?: string,
@@ -649,7 +649,7 @@ type storeMenuStoreSetStateConfig = {
   activeIndex: Nullable.t<float>,
   hoverEnabled: bool,
   stickIfOpen: bool,
-  instantType?: instantType,
+  instantType?: rootMenuStoreUseSyncedValuesInstantType,
   openChangeReason: Nullable.t<menuRootChangeEventReason>,
   floatingTreeRoot: floatingTreeStore,
   floatingNodeId?: string,
@@ -664,17 +664,17 @@ type menuStore = {
   context: context2,
   controlledValues: string,
   selectors: string,
-  useSyncedValue: (useSyncedValue3, string) => unit,
+  useSyncedValue: (rootMenuStoreUseSyncedValue, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
   useSyncedValues: storeMenuStoreUseSyncedValuesConfig => unit,
-  useControlledProp: (useSyncedValue3, string, string) => unit,
-  set: (useSyncedValue3, string) => unit,
+  useControlledProp: (rootMenuStoreUseSyncedValue, string, string) => unit,
+  set: (rootMenuStoreUseSyncedValue, string) => unit,
   update: storeMenuStoreUseSyncedValuesConfig => unit,
   setState: storeMenuStoreSetStateConfig => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (bool, menuRootChangeEventDetails) => unit) => unit,
-  useStateSetter: useSyncedValue3 => string => unit,
+  useStateSetter: rootMenuStoreUseSyncedValue => string => unit,
   observe: string,
   state: storeMenuStoreSetStateConfig,
   listeners: string,
@@ -740,17 +740,17 @@ type dialogStore2<'a> = {
   context: context,
   controlledValues: string,
   selectors: string,
-  useSyncedValue: (useSyncedValue4, string) => unit,
+  useSyncedValue: (rootDialogStoreUseSyncedValue2, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
   useSyncedValues: storeDialogStoreUseSyncedValuesConfig<'a> => unit,
-  useControlledProp: (useSyncedValue4, string, string) => unit,
-  set: (useSyncedValue4, string) => unit,
+  useControlledProp: (rootDialogStoreUseSyncedValue2, string, string) => unit,
+  set: (rootDialogStoreUseSyncedValue2, string) => unit,
   update: storeDialogStoreUseSyncedValuesConfig<'a> => unit,
   setState: storeDialogStoreSetStateConfig<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (string, alertDialogRootChangeEventDetails) => unit) => unit,
-  useStateSetter: useSyncedValue4 => string => unit,
+  useStateSetter: rootDialogStoreUseSyncedValue2 => string => unit,
   observe: string,
   state: storeDialogStoreSetStateConfig<'a>,
   listeners: string,
@@ -771,17 +771,17 @@ type dialogStore3<'a> = {
   context: context,
   controlledValues: string,
   selectors: string,
-  useSyncedValue: (TriggerTypes.useSyncedValue5, string) => unit,
+  useSyncedValue: (TriggerTypes.triggerDialogStoreUseSyncedValue, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
   useSyncedValues: storeDialogStoreUseSyncedValuesConfig<'a> => unit,
-  useControlledProp: (TriggerTypes.useSyncedValue5, string, string) => unit,
-  set: (TriggerTypes.useSyncedValue5, string) => unit,
+  useControlledProp: (TriggerTypes.triggerDialogStoreUseSyncedValue, string, string) => unit,
+  set: (TriggerTypes.triggerDialogStoreUseSyncedValue, string) => unit,
   update: storeDialogStoreUseSyncedValuesConfig<'a> => unit,
   setState: storeDialogStoreSetStateConfig<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (string, alertDialogRootChangeEventDetails) => unit) => unit,
-  useStateSetter: TriggerTypes.useSyncedValue5 => string => unit,
+  useStateSetter: TriggerTypes.triggerDialogStoreUseSyncedValue => string => unit,
   observe: string,
   state: storeDialogStoreSetStateConfig<'a>,
   listeners: string,
@@ -843,7 +843,7 @@ type storeMenuStoreUseSyncedValuesConfig2<'a> = {
   activeIndex?: Nullable.t<float>,
   hoverEnabled?: bool,
   stickIfOpen?: bool,
-  instantType?: instantType,
+  instantType?: rootMenuStoreUseSyncedValuesInstantType,
   openChangeReason?: Nullable.t<menuRootChangeEventReason>,
   floatingTreeRoot?: floatingTreeStore,
   floatingNodeId?: string,
@@ -874,7 +874,7 @@ type storeMenuStoreSetStateConfig2<'a> = {
   activeIndex: Nullable.t<float>,
   hoverEnabled: bool,
   stickIfOpen: bool,
-  instantType?: instantType,
+  instantType?: rootMenuStoreUseSyncedValuesInstantType,
   openChangeReason: Nullable.t<menuRootChangeEventReason>,
   floatingTreeRoot: floatingTreeStore,
   floatingNodeId?: string,
@@ -889,17 +889,17 @@ type menuStore2<'a> = {
   context: context2,
   controlledValues: string,
   selectors: string,
-  useSyncedValue: (useSyncedValue6, string) => unit,
+  useSyncedValue: (rootMenuStoreUseSyncedValue2, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
   useSyncedValues: storeMenuStoreUseSyncedValuesConfig2<'a> => unit,
-  useControlledProp: (useSyncedValue6, string, string) => unit,
-  set: (useSyncedValue6, string) => unit,
+  useControlledProp: (rootMenuStoreUseSyncedValue2, string, string) => unit,
+  set: (rootMenuStoreUseSyncedValue2, string) => unit,
   update: storeMenuStoreUseSyncedValuesConfig2<'a> => unit,
   setState: storeMenuStoreSetStateConfig2<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (bool, menuRootChangeEventDetails) => unit) => unit,
-  useStateSetter: useSyncedValue6 => string => unit,
+  useStateSetter: rootMenuStoreUseSyncedValue2 => string => unit,
   observe: string,
   state: storeMenuStoreSetStateConfig2<'a>,
   listeners: string,
@@ -920,17 +920,17 @@ type menuStore3<'a> = {
   context: context2,
   controlledValues: string,
   selectors: string,
-  useSyncedValue: (TriggerTypes.useSyncedValue7, string) => unit,
+  useSyncedValue: (TriggerTypes.triggerMenuStoreUseSyncedValue, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
   useSyncedValues: storeMenuStoreUseSyncedValuesConfig2<'a> => unit,
-  useControlledProp: (TriggerTypes.useSyncedValue7, string, string) => unit,
-  set: (TriggerTypes.useSyncedValue7, string) => unit,
+  useControlledProp: (TriggerTypes.triggerMenuStoreUseSyncedValue, string, string) => unit,
+  set: (TriggerTypes.triggerMenuStoreUseSyncedValue, string) => unit,
   update: storeMenuStoreUseSyncedValuesConfig2<'a> => unit,
   setState: storeMenuStoreSetStateConfig2<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (bool, menuRootChangeEventDetails) => unit) => unit,
-  useStateSetter: TriggerTypes.useSyncedValue7 => string => unit,
+  useStateSetter: TriggerTypes.triggerMenuStoreUseSyncedValue => string => unit,
   observe: string,
   state: storeMenuStoreSetStateConfig2<'a>,
   listeners: string,
@@ -951,7 +951,7 @@ type menubarState = {
   hasSubmenuOpen: bool,
 }
 type navigationMenuRootChangeEventDetails = {
-  reason: reason6,
+  reason: rootNavigationMenuRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -964,7 +964,7 @@ type navigationMenuRootState = {
   nested: bool,
 }
 type numberFieldRootChangeEventDetails = {
-  reason: reason7,
+  reason: rootNumberFieldRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -974,7 +974,7 @@ type numberFieldRootChangeEventDetails = {
   direction?: CommonTypes.v1OrV1,
 }
 type numberFieldRootCommitEventDetails = {
-  reason: reason8,
+  reason: rootNumberFieldRootCommitEventDetailsReason,
   event: Dom.event,
 }
 type numberFieldRootState = {
@@ -991,7 +991,7 @@ type numberFieldRootState = {
   focused: bool,
 }
 type popoverRootChangeEventDetails = {
-  reason: reason9,
+  reason: rootPopoverRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -1001,7 +1001,7 @@ type popoverRootChangeEventDetails = {
   preventUnmountOnClose: unit => unit,
 }
 type rootPopoverStoreSetOpenConfig = {
-  reason: reason9,
+  reason: rootPopoverRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -1035,7 +1035,7 @@ type storePopoverStoreUseSyncedValuesConfig<'a> = {
   inactiveTriggerProps?: PositionerSharedTypes.htmlProps,
   popupProps?: PositionerSharedTypes.htmlProps,
   disabled?: bool,
-  instantType?: instantType2,
+  instantType?: rootPopoverStoreUseSyncedValuesInstantType,
   modal?: CommonTypes.boolOrTrapFocus,
   openMethod?: Nullable.t<PositionerSharedTypes.interactionType>,
   openChangeReason?: Nullable.t<popoverRootChangeEventReason>,
@@ -1061,7 +1061,7 @@ type storePopoverStoreSetStateConfig<'a> = {
   inactiveTriggerProps: PositionerSharedTypes.htmlProps,
   popupProps: PositionerSharedTypes.htmlProps,
   disabled: bool,
-  instantType?: instantType2,
+  instantType?: rootPopoverStoreUseSyncedValuesInstantType,
   modal: CommonTypes.boolOrTrapFocus,
   openMethod: Nullable.t<PositionerSharedTypes.interactionType>,
   openChangeReason: Nullable.t<popoverRootChangeEventReason>,
@@ -1078,17 +1078,17 @@ type popoverStore<'a> = {
   context: context3,
   controlledValues: string,
   selectors: string,
-  useSyncedValue: (useSyncedValue8, string) => unit,
+  useSyncedValue: (rootPopoverStoreUseSyncedValue, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
   useSyncedValues: storePopoverStoreUseSyncedValuesConfig<'a> => unit,
-  useControlledProp: (useSyncedValue8, string, string) => unit,
-  set: (useSyncedValue8, string) => unit,
+  useControlledProp: (rootPopoverStoreUseSyncedValue, string, string) => unit,
+  set: (rootPopoverStoreUseSyncedValue, string) => unit,
   update: storePopoverStoreUseSyncedValuesConfig<'a> => unit,
   setState: storePopoverStoreSetStateConfig<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (bool, popoverRootChangeEventDetails) => unit) => unit,
-  useStateSetter: useSyncedValue8 => string => unit,
+  useStateSetter: rootPopoverStoreUseSyncedValue => string => unit,
   observe: string,
   state: storePopoverStoreSetStateConfig<'a>,
   listeners: string,
@@ -1109,17 +1109,17 @@ type popoverStore2<'a> = {
   context: context3,
   controlledValues: string,
   selectors: string,
-  useSyncedValue: (TriggerTypes.useSyncedValue9, string) => unit,
+  useSyncedValue: (TriggerTypes.triggerPopoverStoreUseSyncedValue, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
   useSyncedValues: storePopoverStoreUseSyncedValuesConfig<'a> => unit,
-  useControlledProp: (TriggerTypes.useSyncedValue9, string, string) => unit,
-  set: (TriggerTypes.useSyncedValue9, string) => unit,
+  useControlledProp: (TriggerTypes.triggerPopoverStoreUseSyncedValue, string, string) => unit,
+  set: (TriggerTypes.triggerPopoverStoreUseSyncedValue, string) => unit,
   update: storePopoverStoreUseSyncedValuesConfig<'a> => unit,
   setState: storePopoverStoreSetStateConfig<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (bool, popoverRootChangeEventDetails) => unit) => unit,
-  useStateSetter: TriggerTypes.useSyncedValue9 => string => unit,
+  useStateSetter: TriggerTypes.triggerPopoverStoreUseSyncedValue => string => unit,
   observe: string,
   state: storePopoverStoreSetStateConfig<'a>,
   listeners: string,
@@ -1135,7 +1135,7 @@ type popoverHandle2<'a> = {
   isOpen: bool,
 }
 type previewCardRootChangeEventDetails = {
-  reason: reason10,
+  reason: rootPreviewCardRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -1167,7 +1167,7 @@ type scrollAreaRootState = {
   cornerHidden: bool,
 }
 type selectRootChangeEventDetails = {
-  reason: reason11,
+  reason: rootSelectRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -1180,7 +1180,7 @@ type rootItemsConfig<'c> = {
   value: 'c,
 }
 type sliderRootChangeEventDetails = {
-  reason: reason12,
+  reason: rootSliderRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -1190,7 +1190,7 @@ type sliderRootChangeEventDetails = {
   activeThumbIndex: float,
 }
 type sliderRootCommitEventDetails = {
-  reason: reason12,
+  reason: rootSliderRootChangeEventDetailsReason,
   event: Dom.event,
 }
 type sliderRootState = {
@@ -1219,7 +1219,7 @@ type toastManagerPositionerProps = {
   sticky?: bool,
   render?: React.element,
   side?: PositionerSharedTypes.side,
-  positionMethod?: PositionerSharedTypes.positionMethod,
+  positionMethod?: PositionerSharedTypes.positionerPositionMethod,
   sideOffset?: PositionerSharedTypes.utilsSideOffsetConfigSideOffset,
   align?: PositionerSharedTypes.align,
   alignOffset?: PositionerSharedTypes.utilsSideOffsetConfigAlignOffset,
@@ -1236,8 +1236,8 @@ type toastRootToastObject = {
   @as("type") type_?: string,
   description?: React.element,
   timeout?: float,
-  priority?: priority,
-  transitionStatus?: transitionStatus2,
+  priority?: rootToastRootToastObjectPriority,
+  transitionStatus?: rootToastRootToastObjectTransitionStatus,
   limited?: bool,
   height?: float,
   onClose?: unit => unit,
@@ -1252,10 +1252,10 @@ type toastRootState = {
   limited: bool,
   @as("type") type_?: string,
   swiping: bool,
-  swipeDirection?: ContentTypes.activationDirection,
+  swipeDirection?: ContentTypes.contentNavigationMenuContentStateActivationDirection,
 }
 type toastManagerEvent = {
-  action: ProviderTypes.action,
+  action: ProviderTypes.providerToastManagerEventAction,
   options: string,
 }
 type toastManagerAddOptions = {
@@ -1263,10 +1263,10 @@ type toastManagerAddOptions = {
   data?: string,
   title?: React.element,
   @as("type") type_?: string,
-  transitionStatus?: transitionStatus2,
+  transitionStatus?: rootToastRootToastObjectTransitionStatus,
   description?: React.element,
   timeout?: float,
-  priority?: priority,
+  priority?: rootToastRootToastObjectPriority,
   onClose?: unit => unit,
   onRemove?: unit => unit,
   actionProps?: string,
@@ -1291,8 +1291,8 @@ type toastObject = {
   @as("type") type_?: string,
   description?: React.element,
   timeout?: float,
-  priority?: priority,
-  transitionStatus?: transitionStatus2,
+  priority?: rootToastRootToastObjectPriority,
+  transitionStatus?: rootToastRootToastObjectTransitionStatus,
   limited?: bool,
   height?: float,
   onClose?: unit => unit,
@@ -1313,7 +1313,7 @@ type toolbarRootState = {
   orientation: PositionerSharedTypes.orientation,
 }
 type tooltipRootChangeEventDetails = {
-  reason: reason13,
+  reason: rootTooltipRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -1323,7 +1323,7 @@ type tooltipRootChangeEventDetails = {
   preventUnmountOnClose: unit => unit,
 }
 type rootTooltipStoreSetOpenConfig = {
-  reason: reason13,
+  reason: rootTooltipRootChangeEventDetailsReason,
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -1352,9 +1352,9 @@ type storeTooltipStoreUseSyncedValuesConfig<'a> = {
   inactiveTriggerProps?: PositionerSharedTypes.htmlProps,
   popupProps?: PositionerSharedTypes.htmlProps,
   disabled?: bool,
-  instantType?: instantType3,
+  instantType?: rootTooltipStoreUseSyncedValuesInstantType,
   isInstantPhase?: bool,
-  trackCursorAxis?: trackCursorAxis,
+  trackCursorAxis?: rootTrackCursorAxis,
   disableHoverablePopup?: bool,
   openChangeReason?: Nullable.t<tooltipRootChangeEventReason>,
   closeDelay?: float,
@@ -1374,9 +1374,9 @@ type storeTooltipStoreSetStateConfig<'a> = {
   inactiveTriggerProps: PositionerSharedTypes.htmlProps,
   popupProps: PositionerSharedTypes.htmlProps,
   disabled: bool,
-  instantType?: instantType3,
+  instantType?: rootTooltipStoreUseSyncedValuesInstantType,
   isInstantPhase: bool,
-  trackCursorAxis: trackCursorAxis,
+  trackCursorAxis: rootTrackCursorAxis,
   disableHoverablePopup: bool,
   openChangeReason: Nullable.t<tooltipRootChangeEventReason>,
   closeDelay: float,
@@ -1386,17 +1386,17 @@ type tooltipStore<'a> = {
   context: context4,
   controlledValues: string,
   selectors: string,
-  useSyncedValue: (useSyncedValue10, string) => unit,
+  useSyncedValue: (rootTooltipStoreUseSyncedValue, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
   useSyncedValues: storeTooltipStoreUseSyncedValuesConfig<'a> => unit,
-  useControlledProp: (useSyncedValue10, string, string) => unit,
-  set: (useSyncedValue10, string) => unit,
+  useControlledProp: (rootTooltipStoreUseSyncedValue, string, string) => unit,
+  set: (rootTooltipStoreUseSyncedValue, string) => unit,
   update: storeTooltipStoreUseSyncedValuesConfig<'a> => unit,
   setState: storeTooltipStoreSetStateConfig<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (bool, tooltipRootChangeEventDetails) => unit) => unit,
-  useStateSetter: useSyncedValue10 => string => unit,
+  useStateSetter: rootTooltipStoreUseSyncedValue => string => unit,
   observe: string,
   state: storeTooltipStoreSetStateConfig<'a>,
   listeners: string,
@@ -1416,17 +1416,17 @@ type tooltipStore2<'a> = {
   context: context4,
   controlledValues: string,
   selectors: string,
-  useSyncedValue: (TriggerTypes.useSyncedValue11, string) => unit,
+  useSyncedValue: (TriggerTypes.triggerTooltipStoreUseSyncedValue, string) => unit,
   useSyncedValueWithCleanup: (string, string) => unit,
   useSyncedValues: storeTooltipStoreUseSyncedValuesConfig<'a> => unit,
-  useControlledProp: (TriggerTypes.useSyncedValue11, string, string) => unit,
-  set: (TriggerTypes.useSyncedValue11, string) => unit,
+  useControlledProp: (TriggerTypes.triggerTooltipStoreUseSyncedValue, string, string) => unit,
+  set: (TriggerTypes.triggerTooltipStoreUseSyncedValue, string) => unit,
   update: storeTooltipStoreUseSyncedValuesConfig<'a> => unit,
   setState: storeTooltipStoreSetStateConfig<'a> => unit,
   select: (string, string) => string,
   useState: (string, string) => string,
   useContextCallback: (string, (bool, tooltipRootChangeEventDetails) => unit) => unit,
-  useStateSetter: TriggerTypes.useSyncedValue11 => string => unit,
+  useStateSetter: TriggerTypes.triggerTooltipStoreUseSyncedValue => string => unit,
   observe: string,
   state: storeTooltipStoreSetStateConfig<'a>,
   listeners: string,

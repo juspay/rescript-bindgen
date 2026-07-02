@@ -17,7 +17,7 @@ type props = {
   required?: bool,
   error?: bool,
   errorMessage?: string,
-  resize?: InputsTypes.resize,
+  resize?: InputsTypes.inputsResize,
   wrap?: string,
 }
 

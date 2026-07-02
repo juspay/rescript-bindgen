@@ -129,7 +129,7 @@ type responsiveMenuTokensType = {
   lg: menuTokensType,
 }
 @unboxed type menuItemTypeVirtualItemHeight = Num(float) | Fn((menuItemType, float) => float)
-module CollisonBoundaryRef = {
+module MenuCollisonBoundaryRef = {
   type t
   external fromElement: Dom.element => t = "%identity"
   external fromElements: array<Dom.element> => t = "%identity"
@@ -154,6 +154,6 @@ type menuOverflowMenuPropsConfig = {
   side?: menuSide,
   sideOffset?: float,
   alignOffset?: float,
-  collisonBoundaryRef?: CollisonBoundaryRef.t,
+  collisonBoundaryRef?: MenuCollisonBoundaryRef.t,
   skeleton?: menuSkeletonProps,
 }

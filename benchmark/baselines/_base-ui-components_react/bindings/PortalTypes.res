@@ -1,4 +1,4 @@
-module Container = {
+module PortalContainer = {
   type t
   external fromHTMLElement: Dom.element => t = "%identity"
   external fromShadowRoot: Dom.shadowRoot => t = "%identity"

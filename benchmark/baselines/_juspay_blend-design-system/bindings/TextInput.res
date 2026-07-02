@@ -13,7 +13,7 @@ type props = {
   onChange: ReactEvent.Form.t => unit,
   onBlur?: ReactEvent.Focus.t => unit,
   onFocus?: ReactEvent.Focus.t => unit,
-  cursor?: InputsTypes.cursor,
+  cursor?: InputsTypes.inputsCursor,
   passwordToggle?: bool,
   textInputGroupPosition?: InputsTypes.textInputGroupPosition,
 }

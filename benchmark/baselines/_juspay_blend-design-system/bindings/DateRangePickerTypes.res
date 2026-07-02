@@ -31,7 +31,7 @@ type dateFormatPreset =
   | @as("iso-range") IsoRange
   | @as("us-range") UsRange
   | @as("custom") Custom
-type timeFormat =
+type dateRangePickerDateFormatConfigTimeFormat =
   | @as("12h") V12h
   | @as("24h") V24h
 type dateRange = {
@@ -80,7 +80,7 @@ type dateFormatConfig = {
   includeYear?: bool,
   separator?: string,
   locale?: string,
-  timeFormat?: timeFormat,
+  timeFormat?: dateRangePickerDateFormatConfigTimeFormat,
 }
 type dateRangePickerTriggerConfigRenderTriggerConfig = {
   selectedRange?: dateRange,

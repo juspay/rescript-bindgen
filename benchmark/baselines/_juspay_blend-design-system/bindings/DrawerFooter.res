@@ -2,5 +2,5 @@
 external make: (
   ~children: React.element,
   ~className: string=?,
-  ~direction: PopoverTypes.side=?,
+  ~direction: PopoverTypes.popoverSide=?,
 ) => React.element = "DrawerFooter"
