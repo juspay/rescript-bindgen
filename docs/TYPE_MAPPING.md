@@ -141,7 +141,7 @@ Fixture: [`react-dom`](../test/golden/cases/react-dom)
 | `Node` | `Dom.node` | broader than Element (covers DocumentFragment/Text/…) |
 | `HTMLDivElement`, `HTMLInputElement`, … | `Dom.htmlDivElement`, … | specific DOM elements, no dependency |
 | `RefObject<T>` / `Ref<T>` / `MutableRefObject<T>` | `React.ref<Nullable.t<Dom.element>>` | configurable via `refType` |
-| `Ref<HTMLInputElement>` (concrete element arg) | `React.ref<Nullable.t<Dom.htmlInputElement>>` — the element arg is read for specificity (a `HTMLElement \| null` arg strips null); falls back to `Dom.element`. (#34) |
+| `Ref<HTMLInputElement>` (concrete element arg) | position-dependent (#34, #98): in **component-prop position** → the generic `React.ref<Nullable.t<Dom.element>>` — the consumer must CREATE the ref, and ReScript JSX can only produce the generic one (`ReactDOM.Ref.domRef`), so an element-specific ref prop forced an `%identity` widening in every consumer; reads of the node don't need the specific element type. In **nested positions** (record fields, callback params — the read side) → `React.ref<Nullable.t<Dom.htmlInputElement>>` for specificity (a `HTMLElement \| null` arg strips null); falls back to `Dom.element`. |
 | `Element \| DocumentFragment` (all DOM nodes) | `Dom.element` **+ note** | collapses to one node type; an `// ⓘ` note records that DocumentFragment isn't covered |
 | `ShadowRoot` | `Dom.shadowRoot` | base-ui portal `container` targets |
 | `HTMLElement \| ShadowRoot \| RefObject<…>` (multi-object union) | opaque module with **`from*` views** — `Container.fromHTMLElement / fromShadowRoot / fromRefObject` | objects can't be `@unboxed`-discriminated; views are zero-cost. Fixture: [`ref-union-views`](../test/golden/cases/ref-union-views) |

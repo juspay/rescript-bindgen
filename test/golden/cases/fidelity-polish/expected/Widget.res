@@ -6,6 +6,6 @@ external make: (
   ~value: Nullable.t<float>=?,
   ~count: int=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
-  ~inputRef: React.ref<Nullable.t<Dom.htmlInputElement>>=?,
+  ~inputRef: React.ref<Nullable.t<Dom.element>>=?,
   ~anyRef: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Widget"

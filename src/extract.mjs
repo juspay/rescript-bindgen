@@ -1923,7 +1923,16 @@ function classify(type, ctx, propName = '', depth = 0) {
         const argParts = arg && arg.isUnion?.() ? arg.types : [arg]
         const elemPart = (argParts || []).find((t) => { const n = t && typeName(t); return n && /Element$/.test(n) && /^(HTML|SVG)/.test(n) })
         const en = elemPart && typeName(elemPart)
-        if (en && DOM_ELEMENT_BY_LOWER.has(en.toLowerCase())) return { kind: 'raw', res: `React.ref<Nullable.t<${domElementType(en)}>>` }
+        if (en && DOM_ELEMENT_BY_LOWER.has(en.toLowerCase())) {
+            // In component-PROP position (depth 0) the consumer must CREATE the ref, and ReScript
+            // JSX can only produce the generic `React.ref<Nullable.t<Dom.element>>`
+            // (`ReactDOM.Ref.domRef`) — an element-specific ref prop is unconstructable without an
+            // %identity widening, in every single consumer (#98). Reads of the node don't need the
+            // specific element type, so the generic domRef is the USABLE faithful form there.
+            // Nested positions (record fields, callback params — the read side) keep specificity.
+            if (depth === 0 && !ctx.inRecordField) return { kind: 'domRef' }
+            return { kind: 'raw', res: `React.ref<Nullable.t<${domElementType(en)}>>` }
+        }
         return { kind: 'domRef' }
     }
     // Specific DOM elements -> Dom.htmlDivElement etc. (built-in, no dep);
