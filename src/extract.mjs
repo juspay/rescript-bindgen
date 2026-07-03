@@ -1763,6 +1763,19 @@ function classify(type, ctx, propName = '', depth = 0) {
             const e = ctx.shared.byKey.get('id:' + type.id)
             if (e && e.kind === 'record') return refTo(e)
         }
+        // Zero-cost leaves resolve even past the bound — a primitive CANNOT expand the graph, so
+        // truncating `enabled?: boolean` to an opaque `string` was pure loss. Without this, every
+        // record first reached past MAX_DEPTH (Highcharts' `TooltipOptions`) emitted ALL its fields
+        // as `string`, primitives included. A literal folds to its base primitive here: past the
+        // bound the alternative was an opaque `string` anyway, so `number` for `1000` is strictly
+        // more faithful. (#98)
+        if (flags & ts.TypeFlags.Unknown) return { kind: 'raw', res: 'JSON.t' }
+        if (flags & (ts.TypeFlags.String | ts.TypeFlags.StringLiteral)) return { kind: 'string' }
+        if (flags & (ts.TypeFlags.Number | ts.TypeFlags.NumberLiteral)) return { kind: 'number' }
+        if (flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) return { kind: 'boolean' }
+        if (flags & (ts.TypeFlags.BigInt | ts.TypeFlags.BigIntLiteral)) return { kind: 'bigint' }
+        if (flags & ts.TypeFlags.Index) return { kind: 'string' }
+        if (isCssType(type)) return { kind: 'string' }
         return { kind: 'opaque', text: checker.typeToString(type) }
     }
     if (type.id != null) {

@@ -756,10 +756,35 @@ function renderRecordGroup(records, lines, cfg, isRec) {
             seenIds.add(id)
             const asPrefix = as ? `@as(${JSON.stringify(as)}) ` : ''
             const ty = renderType(f.type, f.name, cfg)
-            lines.push(`  ${asPrefix}${id}${f.optional ? '?' : ''}: ${ty},`)
+            // Degraded fields carry the SAME flags props do. A record first reached past MAX_DEPTH
+            // used to freeze ~40 `string` fields with zero markers — wrong types with no signal in
+            // the file or the report (#98). The types still render structurally (unlike propLine's
+            // whole-prop placeholder — a record field's shape is often partly right); only the
+            // comment is added, so consumers can see exactly which fields to hand-match.
+            lines.push(`  ${asPrefix}${id}${f.optional ? '?' : ''}: ${ty},${looseMark(f, cfg)}`)
         }
         lines.push('}')
     })
+}
+
+/** The trailing flag comment for a degraded record FIELD (mirrors propLine's buckets), or ''. */
+function looseMark(f, cfg) {
+    const imp = imperfection(f.type)
+    if (!imp) return ''
+    const realTs = (f.tsType || findLooseText(f.type) || '').replace(/\s+/g, ' ').slice(0, 110)
+    const was = realTs ? ` — was \`${realTs}\`` : ''
+    if (imp === 'unknown' || imp === 'any') return `  // 🛑 BROKEN — contains \`${imp}\`${was}`
+    if (imp === 'review') return `  // ⚠️ REVIEW${was} — match the real type by hand`
+    return `  // ⚪ loose${was}`
+}
+
+/** The first original-TS `text` on an imperfect node anywhere in an IR type tree, or null. */
+function findLooseText(t) {
+    if (!t || typeof t !== 'object') return null
+    if ((t.kind === 'opaque' || t.kind === 'review') && t.text) return t.text
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) { if (t[k]) { const n = findLooseText(t[k]); if (n) return n } }
+    if (Array.isArray(t.params)) for (const p of t.params) { const n = findLooseText(p); if (n) return n }
+    return null
 }
 
 /** Return the first `note` (an "approximate mapping, here's the caveat" message) anywhere

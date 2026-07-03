@@ -315,6 +315,17 @@ register hundreds of new entries, gets rolled back, and stays safely truncated. 
 `setOpenConfig2` in the benchmark baseline (the depth boundary is too fragile to pin in a synthetic
 golden).
 
+**Leaf types resolve past `MAX_DEPTH`; degraded record fields are flagged (#98).** The depth bound
+exists to truncate *unbounded new expansion* — but a primitive cannot expand anything, so a leaf
+first reached past the bound resolves exactly: `string`/`number`/`boolean`/`bigint`/`unknown → JSON.t`/
+`keyof → string`/csstype values, with literals folding to their base primitive (past the bound the
+alternative was an opaque `string` anyway). Before this, a record first reached past `MAX_DEPTH`
+(Highcharts' `TooltipOptions`) froze **every** field as `string` — `enabled?: boolean` included. The
+fields that DO still degrade (deep objects, callbacks like `formatter?: TooltipFormatterCallbackFunction`)
+now carry the same flag comments props get (`⚪ loose — was …` / `⚠️ REVIEW` / `🛑 BROKEN — contains any`)
+instead of being silent — record fields render structurally (a field's shape is often partly right), so
+only the trailing comment is added. Fixture: [`deep-record-leaves`](../test/golden/cases/deep-record-leaves). (#98)
+
 **Twin healing (depth ghost ↔ shallow full sibling).** When the re-resolve above can't run because the
 shape's sub-types are a *distinct* generic instantiation (csstype gives `CSSObject['color']` vs
 `['backgroundColor']` different type ids, so `MenuV2VariantToken<StateToken<…>>` isn't deduped across
