@@ -687,15 +687,28 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     // minus the omitted keys), so the component binds with its real surface instead of vanishing.
     // Only fires when an index signature is actually present, so normal components are untouched. (#92)
     if (checker.getIndexInfoOfType?.(propsType, ts.IndexKind.String)) {
-        const arms = (propsType.flags & ts.TypeFlags.Intersection) ? propsType.types : [propsType]
         const byName = new Map(commonSyms.map((s) => [s.getName(), s]))
-        for (const arm of arms) {
-            const u = unwrapOmit(arm, checker)
-            if (!u) continue
-            for (const p of checker.getPropertiesOfType(u.base))
-                if (!u.omit.has(p.getName()) && !byName.has(p.getName())) byName.set(p.getName(), p)
+        const before = byName.size
+        // The collapse compounds through EVERY `Omit` layer: `Omit<Omit<Poisoned, K2> & Extra, K1>`
+        // loses the whole `Poisoned` side, because the unwrapped base is itself still
+        // index-signature-poisoned (blend's `ChartV2` lost all 8 `HighchartsReactProps` members
+        // this way, #98). Descend recursively: unwrap each `Omit` (accumulating its keys), split
+        // intersections that still carry the index signature, and read properties only off leaves —
+        // where no mapped type has been applied, so the named members are intact.
+        const visit = (t, omitAcc, depth) => {
+            if (depth > 8) return
+            const u = unwrapOmit(t, checker)
+            if (u) return visit(u.base, new Set([...omitAcc, ...u.omit]), depth + 1)
+            if ((t.flags & ts.TypeFlags.Intersection) && checker.getIndexInfoOfType?.(t, ts.IndexKind.String)) {
+                for (const arm of t.types) visit(arm, omitAcc, depth + 1)
+                return
+            }
+            for (const p of checker.getPropertiesOfType(t))
+                if (!omitAcc.has(p.getName()) && !byName.has(p.getName())) byName.set(p.getName(), p)
         }
-        if (byName.size > commonSyms.length) commonSyms = [...byName.values()]
+        const arms = (propsType.flags & ts.TypeFlags.Intersection) ? propsType.types : [propsType]
+        for (const arm of arms) if (unwrapOmit(arm, checker)) visit(arm, new Set(), 0)
+        if (byName.size > before) commonSyms = [...byName.values()]
     }
     const unionOptional = new Set()
     let propSyms = commonSyms

@@ -406,6 +406,14 @@ when the props type has a string index signature, recover the named props from t
 instead of vanishing. Scoped to index-signature props, so ordinary components are untouched. Fixture:
 [`forwardref-indexed-props`](../test/golden/cases/forwardref-indexed-props). (#92)
 
+The recovery is **recursive** (#98): the collapse compounds through every `Omit` layer, so
+`Omit<Omit<Poisoned, 'className' | 'style'> & Extra, 'ref'>` (blend's `ChartV2` — an inner `Omit`
+inside an intersection, wrapped by the standard forwardRef `Omit<…, "ref">`) is descended layer by
+layer — each `Omit` unwrapped with its keys accumulated, still-poisoned intersections split into
+arms — and the named props are read only off leaf types, where no mapped type has been applied. All
+accumulated omit keys are subtracted, so `className`/`style` stay excluded while the seven real
+members survive. Fixture: [`forwardref-nested-omit`](../test/golden/cases/forwardref-nested-omit). (#98)
+
 ---
 
 ## Opaque-module unions
