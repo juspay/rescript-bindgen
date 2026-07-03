@@ -1876,6 +1876,25 @@ function classify(type, ctx, propName = '', depth = 0) {
         return { kind: 'classRef', to: sink, home: INSTANCE_MODULE, self: cn === ctx.currentClass }
     }
 
+    // `typeof import("highcharts")` / `typeof SomeNamespace` — a MODULE OBJECT in value position
+    // (highcharts-react's `highcharts?: typeof Highcharts` prop). Its hundreds of members are
+    // useless to model structurally, but the value must be PASSABLE: an abstract nominal type in
+    // the InstanceTypes sink lets the consumer thread the module object through untouched (they
+    // hold it via their own import binding). Was: opaque → loose `string`, which can never carry
+    // the module object, forcing an %identity cast downstream. (#98)
+    if (ctx.shared && type.symbol && (type.symbol.flags & ts.SymbolFlags.ValueModule)) {
+        const raw = type.symbol.getName().replace(/^"|"$/g, '')
+        const last = raw.split(/[\\/]/).pop().replace(/\.d\.(m|c)?ts$|\.(m|c)?ts$/, '') || 'module'
+        const key = 'module:' + raw
+        let entry = ctx.shared.byKey.get(key)
+        if (!entry) {
+            entry = { key, kind: 'nominal', name: uniqueName(lower(pascal(last)) + 'Module', ctx.shared), home: INSTANCE_MODULE, deps: new Set() }
+            ctx.shared.byKey.set(key, entry)
+            ctx.shared.entries.push(entry)
+        }
+        return { kind: 'classRef', to: entry.name, home: INSTANCE_MODULE }
+    }
+
     // JS built-in containers -> precise ReScript stdlib types (`Map.t` / `Set.t`). Detected by
     // the RESOLVED symbol name, so a first-party alias (`type EventHandlerMap = Map<…>`) is
     // caught too. MUST precede the object/record branch: a Map/Set's methods are all
@@ -2651,6 +2670,23 @@ function unionNode(type, ctx, propName, depth = 0) {
     const prims = parts.map(primOf)
     if (prims.every(Boolean) && new Set(prims).size === 1) {
         return { kind: prims[0] } // 'string' | 'number' | 'boolean' | 'bigint' — all valid IR kinds
+    }
+
+    // Union of FIXED tuples over ONE primitive — `[boolean] | [boolean, boolean] | [boolean,
+    // boolean, boolean]` (highcharts-react's `updateArgs`). Every arm is a runtime array of the
+    // same element, differing only in LENGTH — which ReScript can't express anyway — so
+    // `array<bool>` is the faithful shape. Was: fell through to a loose `string`, which can never
+    // carry the array. Same-primitive only: a mixed tuple union stays the flagged fallback. (#98)
+    const tupleElem = (t) => {
+        if (!checker.isTupleType?.(t)) return null
+        const es = checker.getTypeArguments(t) || []
+        if (!es.length) return null
+        const ps = es.map(primOf)
+        return ps.every(Boolean) && new Set(ps).size === 1 ? ps[0] : null
+    }
+    const tElems = parts.map(tupleElem)
+    if (tElems.every(Boolean) && new Set(tElems).size === 1) {
+        return { kind: 'array', of: { kind: tElems[0] } }
     }
 
     // Sync-or-async VALUE: `T | Promise<T>` (hono's `fetch` returns
