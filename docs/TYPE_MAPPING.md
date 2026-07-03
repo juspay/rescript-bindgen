@@ -419,6 +419,17 @@ when the props type has a string index signature, recover the named props from t
 instead of vanishing. Scoped to index-signature props, so ordinary components are untouched. Fixture:
 [`forwardref-indexed-props`](../test/golden/cases/forwardref-indexed-props). (#92)
 
+**Multi-signature components prefer the concrete signature (#84).** A styled-components export
+(`IStyledComponentBase<…> & string`) exposes TWO call signatures: first the polymorphic
+`as`-rebinding form (`<AsTarget, ForwardedAsTarget>(props)`), whose visible props are only the
+styling plumbing — `theme`/`as`/`forwardedAs`/`style` — as giant unresolved conditional types; then
+the concrete zero-typeparam forwardRef form carrying the component's real props. Reading `sigs[0]`
+bound the plumbing and dropped every functional prop (`children` included) — blend's 8 `Styled*`
+exports emitted 4 loose strings each and nothing else. When several signatures exist, the one with
+parameters and **no type parameters** is preferred; a single-signature generic component
+(`VirtualList<T>`) is untouched. Fixture:
+[`styled-concrete-signature`](../test/golden/cases/styled-concrete-signature). (#84, #98)
+
 The recovery is **recursive** (#98): the collapse compounds through every `Omit` layer, so
 `Omit<Omit<Poisoned, 'className' | 'style'> & Extra, 'ref'>` (blend's `ChartV2` — an inner `Omit`
 inside an intersection, wrapped by the standard forwardRef `Omit<…, "ref">`) is descended layer by

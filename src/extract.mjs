@@ -587,9 +587,17 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     const compType = checker.getTypeOfSymbolAtLocation(sym, decl)
 
     const sigs = compType.getCallSignatures()
+    // A styled-components export (`IStyledComponentBase<…> & string`) exposes TWO call signatures:
+    // first the polymorphic `as`-rebinding form (`<AsTarget, ForwardedAsTarget>(…)`), whose visible
+    // props are only the styling plumbing — theme/as/forwardedAs/style — as giant unresolved
+    // conditionals; then the CONCRETE zero-typeparam forwardRef form carrying the component's real
+    // props (the tab/checkbox props a hand-writer binds). Reading sigs[0] bound the plumbing and
+    // dropped every functional prop (`children` included). Prefer the concrete signature when
+    // several exist; a single-signature generic component (VirtualList<T>) is untouched. (#84)
+    const sig = (sigs.length > 1 && sigs.find((s) => s.parameters.length && !(s.typeParameters || []).length)) || sigs[0]
     let propsType
-    if (sigs.length && sigs[0].parameters.length) {
-        propsType = checker.getTypeOfSymbolAtLocation(sigs[0].parameters[0], decl)
+    if (sigs.length && sig.parameters.length) {
+        propsType = checker.getTypeOfSymbolAtLocation(sig.parameters[0], decl)
     } else {
         const args = checker.getTypeArguments?.(compType) || []
         propsType = args[0] || compType
@@ -602,7 +610,7 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     // hand-written DataTable binding).
     const typeVars = new Map()
     const TV = ['a', 'b', 'c', 'd', 'e', 'f']
-    const tparams = (sigs.length && sigs[0].typeParameters) || []
+    const tparams = (sigs.length && sig.typeParameters) || []
     tparams.forEach((tp, i) => { if (tp.symbol) typeVars.set(tp.symbol, "'" + (TV[i] || `t${i}`)) })
 
     // Erased generic: a `forwardRef`/`memo` export pins a generic props alias to a
