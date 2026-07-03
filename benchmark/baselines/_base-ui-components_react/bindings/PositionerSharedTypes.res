@@ -63,19 +63,19 @@ type htmlProps = {
 }
 type utilsFloatingRootStoreSetOpenConfig = {
   reason: string,
-  event: Dom.event,
-  cancel: unit => unit,
-  allowPropagation: unit => unit,
+  event: string,  // ⚪ loose — was `Event`
+  cancel: string,  // ⚪ loose — was `() => void`
+  allowPropagation: string,  // ⚪ loose — was `() => void`
   isCanceled: bool,
   isPropagationAllowed: bool,
-  trigger?: Dom.element,
+  trigger?: string,  // ⚪ loose — was `Element`
 }
 type group<'f> = {
   value: JSON.t,
   items: array<'f>,
 }
 type utilsOnCheckedChangeConfig = {
-  reason: string,
+  reason: string,  // ⚪ loose — was `"none"`
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -111,7 +111,7 @@ type comboboxPositionerState = {
   empty: bool,
 }
 type utilsOnFormSubmitConfig = {
-  reason: string,
+  reason: string,  // ⚪ loose — was `"none"`
   event: Dom.event,
 }
 type menuPositionerState = {
@@ -130,7 +130,7 @@ type navigationMenuPositionerState = {
 }
 type timeout = {
   currentId: float,
-  start: (float, string) => unit,
+  start: (float, string) => unit,  // ⚪ loose — was `Function`
   isStarted: unit => bool,
   clear: unit => unit,
   disposeEffect: unit => unit => unit,
@@ -155,7 +155,7 @@ type selectPositionerState = {
   anchorHidden: bool,
 }
 type baseUIChangeEventDetail = {
-  reason: string,
+  reason: string,  // ⚪ loose — was `"none"`
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,

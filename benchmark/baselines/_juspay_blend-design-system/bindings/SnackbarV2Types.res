@@ -10,7 +10,7 @@ type snackbarV2SnackbarV2TokensTypeSlotConfig = {
   color: snackbarV2SnackbarV2TokensTypeSlotColorConfig,
 }
 type snackbarV2SnackbarV2TokensTypeMainContainerContentTextContainerHeaderConfig = {
-  color: snackbarV2SnackbarV2TokensTypeSlotColorConfig,
+  color: string,  // ⚪ loose — was `{ info: Color; success: Color; warning: Color; error: Color; }`
   fontSize: string,
   fontWeight: string,
   lineHeight: string,

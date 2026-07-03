@@ -18,7 +18,7 @@ type cardCardTokenTypePaddingDefaultConfig = {
 type cardCardTokenTypePaddingConfig = {
   default: cardCardTokenTypePaddingDefaultConfig,
   aligned: cardCardTokenTypePaddingDefaultConfig,
-  custom: string,
+  custom: string,  // ⚪ loose — was `undefined`
 }
 type cardCardTokenTypeHeaderTextTitleConfig = {
   fontSize: string,
@@ -44,13 +44,13 @@ type cardCardTokenTypeHeaderDefaultConfig = {
 type cardCardTokenTypeHeaderConfig = {
   text: cardCardTokenTypeHeaderTextConfig,
   default: cardCardTokenTypeHeaderDefaultConfig,
-  aligned: string,
-  custom: string,
+  aligned: string,  // ⚪ loose — was `undefined`
+  custom: string,  // ⚪ loose — was `undefined`
 }
 type cardCardTokenTypeBodyPaddingConfig = {
   default: cardCardTokenTypePaddingDefaultConfig,
-  aligned: string,
-  custom: string,
+  aligned: string,  // ⚪ loose — was `undefined`
+  custom: string,  // ⚪ loose — was `undefined`
 }
 type cardCardTokenTypeBodyGapConfig = {
   default: string,
@@ -72,16 +72,16 @@ type cardCardTokenTypeBodyActionsConfig = {
   centerAlignGap: string,
 }
 type cardCardTokenTypeBodyAlignmentAlignedCardSlotConfig = {
-  vertical: string,
-  horizontal: string,
+  vertical: string,  // ⚪ loose — was `{ marginBottom: MarginBottom<number | (string & {})>; minHeight: MinHeight<number | (string & {})>; }`
+  horizontal: string,  // ⚪ loose — was `{ marginRight: MarginRight<number | (string & {})>; width: Width<number | (string & {})>; height: Height<numbe`
 }
 type cardCardTokenTypeBodyAlignmentAlignedConfig = {
   cardSlot: cardCardTokenTypeBodyAlignmentAlignedCardSlotConfig,
 }
 type cardCardTokenTypeBodyAlignmentConfig = {
   aligned: cardCardTokenTypeBodyAlignmentAlignedConfig,
-  default: string,
-  custom: string,
+  default: string,  // ⚪ loose — was `undefined`
+  custom: string,  // ⚪ loose — was `undefined`
 }
 type cardCardTokenTypeBodyConfig = {
   padding: cardCardTokenTypeBodyPaddingConfig,

@@ -106,7 +106,7 @@ type localeOptions = {
 }
 type localeFormatRelativeFnOptionsLocaleConfig = {
   options?: localeOptions,
-  formatRelative: (string, string, string, option<string>) => string,
+  formatRelative: (string, string, string, option<string>) => string,  // ⚪ loose — was `FormatRelativeToken`
 }
 type formatRelativeFnOptions = {
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
@@ -128,7 +128,7 @@ type localize = {
   month: (CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6OrV7OrV8OrV9OrV10OrV11, option<localizeFnOptions>) => string,
   day: (CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6, option<localizeFnOptions>) => string,
   dayPeriod: (localeDayPeriod, option<localizeFnOptions>) => string,
-  preprocessor?: (string, array<formatPart>) => array<formatPart>,
+  preprocessor?: (string, array<formatPart>) => array<formatPart>,  // 🛑 BROKEN — contains `unknown`
 }
 type formatLongFnOptions = {
   width?: formatLongWidth,
@@ -144,7 +144,7 @@ type matchFnResult = {
 }
 type classesMatchOrdinalNumberConfig = {
   width?: localeWidth,
-  valueCallback?: string => string,
+  valueCallback?: string => float,
   unit: localeUnit,
 }
 type matchFnResult2 = {
@@ -153,7 +153,7 @@ type matchFnResult2 = {
 }
 type classesMatchEraConfig = {
   width?: localeWidth,
-  valueCallback?: string => string,
+  valueCallback?: string => string,  // ⚪ loose — was `Era`
 }
 type matchFnResult3 = {
   value: CommonTypes.v1OrV2OrV3OrV4,
@@ -196,7 +196,7 @@ and dayPickerLocale = {
   labels?: dayPickerLocaleLabels,
   code: string,
   formatDistance: (formatDistanceToken, float, option<formatDistanceFnOptions>) => string,
-  formatRelative: (formatRelativeToken, string, string, option<formatRelativeFnOptions>) => string,
+  formatRelative: (formatRelativeToken, string, string, option<formatRelativeFnOptions>) => string,  // 🛑 BROKEN — contains `unknown`
   localize: localize,
   formatLong: formatLong,
   match: match,
@@ -211,7 +211,7 @@ and dateLibOptions = {
   firstWeekContainsDate?: CommonTypes.v1OrV4,
   useAdditionalWeekYearTokens?: bool,
   useAdditionalDayOfYearTokens?: bool,
-  @as("in") in_?: string => Date.t,
+  @as("in") in_?: string => Date.t,  // ⚠️ REVIEW — was `string | number | Date` — match the real type by hand
 }
 @unboxed and dateLibOptionsLabelWeekNumberHeader = Str(string) | Fn(option<dateLibOptions> => string)
 @unboxed and dateLibOptionsLabelWeekNumber = Str(string) | Fn((float, option<dateLibOptions>) => string)
@@ -223,8 +223,8 @@ and dateLibOptions = {
 @unboxed and dateLibOptionsLabelGridcell = Str(string) | Fn((Date.t, option<Dict.t<bool>>, option<dateLibOptions>, option<InstanceTypes.dateLib>) => string)
 @unboxed and dateLibOptionsLabelGrid = Str(string) | Fn((Date.t, option<dateLibOptions>, option<InstanceTypes.dateLib>) => string)
 type interval = {
-  start: string,
-  end: string,
+  start: string,  // ⚠️ REVIEW — was `DateArg<Date>` — match the real type by hand
+  end: string,  // ⚠️ REVIEW — was `DateArg<Date>` — match the real type by hand
 }
 type localeEndOfWeekOptionsLocaleConfig = {
   options?: localeOptions,
@@ -232,7 +232,7 @@ type localeEndOfWeekOptionsLocaleConfig = {
 type endOfWeekOptions = {
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
   locale?: localeEndOfWeekOptionsLocaleConfig,
-  @as("in") in_?: string => Date.t,
+  @as("in") in_?: string => Date.t,  // ⚠️ REVIEW — was `string | number | Date` — match the real type by hand
 }
 type localeFormatOptionsLocaleConfig = {
   options?: localeOptions,
@@ -245,21 +245,21 @@ type formatOptions = {
   firstWeekContainsDate?: CommonTypes.v1OrV4,
   useAdditionalWeekYearTokens?: bool,
   useAdditionalDayOfYearTokens?: bool,
-  @as("in") in_?: string => Date.t,
+  @as("in") in_?: string => Date.t,  // ⚠️ REVIEW — was `string | number | Date` — match the real type by hand
 }
 type getMonthOptions = {
-  @as("in") in_?: string => Date.t,
+  @as("in") in_?: string => Date.t,  // ⚠️ REVIEW — was `string | number | Date` — match the real type by hand
 }
 type getWeekOptions = {
   locale?: localeEndOfWeekOptionsLocaleConfig,
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
   firstWeekContainsDate?: CommonTypes.v1OrV4,
-  @as("in") in_?: string => Date.t,
+  @as("in") in_?: string => Date.t,  // ⚠️ REVIEW — was `string | number | Date` — match the real type by hand
 }
 type startOfWeekOptions = {
   locale?: localeEndOfWeekOptionsLocaleConfig,
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
-  @as("in") in_?: string => Date.t,
+  @as("in") in_?: string => Date.t,  // ⚠️ REVIEW — was `string | number | Date` — match the real type by hand
 }
 type rec classesOverridesConfig = {
   options?: dateLibOptions,
@@ -307,8 +307,8 @@ type rec classesOverridesConfig = {
 type rec dateLib2 = {
   options: dateLibOptions,
   overrides?: classesOverridesConfig,
-  getDigitMap: string,
-  replaceDigits: string,
+  getDigitMap: string,  // 🛑 BROKEN — contains `any`
+  replaceDigits: string,  // 🛑 BROKEN — contains `any`
   formatNumber: CommonTypes.stringOrNumber => string,
   getMonthYearOrder: unit => monthYearOrder,
   formatMonthYear: Date.t => string,
@@ -544,7 +544,7 @@ type classesLocaleConfig = {
   labels?: dayPickerLocaleLabels,
   code?: string,
   formatDistance?: (formatDistanceToken, float, option<formatDistanceFnOptions>) => string,
-  formatRelative?: (formatRelativeToken, string, string, option<formatRelativeFnOptions>) => string,
+  formatRelative?: (formatRelativeToken, string, string, option<formatRelativeFnOptions>) => string,  // 🛑 BROKEN — contains `unknown`
   localize?: localize,
   formatLong?: formatLong,
   match?: match,
@@ -748,7 +748,7 @@ type dayPickerContext = {
   previousMonth?: Date.t,
   goToMonth: Date.t => unit,
   getModifiers: calendarDay2 => Dict.t<bool>,
-  selected?: string,
+  selected?: string,  // ⚪ loose — was `SelectedValue<T>`
   select?: (Date.t, Dict.t<bool>, CjsOnSelect.t) => CjsDayPickerContextSelect.t,
   isSelected?: Date.t => bool,
   components: customComponents,
@@ -764,8 +764,8 @@ type dayPickerContext2 = {
   previousMonth?: Date.t,
   goToMonth: Date.t => unit,
   getModifiers: calendarDay2 => Dict.t<bool>,
-  selected?: string,
-  select?: string,
+  selected?: string,  // ⚪ loose — was `undefined`
+  select?: string,  // ⚪ loose — was `undefined`
   isSelected?: Date.t => bool,
   components: customComponents,
   classNames: classNames,

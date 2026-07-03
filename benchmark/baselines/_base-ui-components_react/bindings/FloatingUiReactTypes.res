@@ -1,10 +1,10 @@
 type floatingEvents = {
-  emit: string,
-  on: string,
-  off: string,
+  emit: string,  // ⚪ loose — was `<T extends string>(event: T, data?: any) => void`
+  on: string,  // ⚪ loose — was `(event: string, handler: (data: any) => void) => void`
+  off: string,  // ⚪ loose — was `(event: string, handler: (data: any) => void) => void`
 }
 type floatingNodeType = {
   id?: string,
-  parentId: string,
-  context?: string,
+  parentId: Nullable.t<string>,
+  context?: string,  // ⚪ loose — was `FloatingContext`
 }

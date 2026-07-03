@@ -3,9 +3,9 @@ external make: (
   ~allowChartUpdate: bool=?,
   ~constructorType: ChartsTypes.chartsConstructorType=?,
   ~containerProps: Dict.t<'a>=?,
-  ~highcharts: string=?,  // ⚪ loose — was `typeof import("/Users/roshan.chourasiya/work/FE/opensource/rescript-bindgen/benchmark/.work/_juspay_blend-desi`
+  ~highcharts: InstanceTypes.highchartsModule=?,
   ~immutable: bool=?,
   ~options: HighchartsSharedTypes.options<'b>=?,
-  ~updateArgs: string=?,  // ⚪ loose — was `[boolean] | [boolean, boolean] | [boolean, boolean, boolean]`
+  ~updateArgs: array<bool>=?,
   ~callback: HighchartsSharedTypes.chart => unit=?,
 ) => React.element = "BlendChart"

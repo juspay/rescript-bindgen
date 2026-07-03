@@ -4,7 +4,7 @@
 
 **2** function binding(s) → `ReactMarkdownBindings.res`.
 
-**11** shared types deduplicated into **3** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**12** shared types deduplicated into **3** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 

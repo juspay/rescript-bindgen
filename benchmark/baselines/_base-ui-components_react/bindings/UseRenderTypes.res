@@ -179,9 +179,9 @@ type useRenderParametersDefaultTagName =
   | @as("view") View
 type parameters<'a, 'c> = {
   render?: React.element,
-  ref?: string,
+  ref?: string,  // ⚠️ REVIEW — was `Ref<RenderedElementType> | Ref<RenderedElementType>[]` — match the real type by hand
   state?: 'a,
-  stateAttributesMapping?: Dict.t<string => Nullable.t<Dict.t<string>>>,
+  stateAttributesMapping?: Dict.t<string => Nullable.t<Dict.t<string>>>,  // ⚪ loose — was `State[string]`
   props?: Dict.t<JSON.t>,
   enabled?: 'c,
   defaultTagName?: useRenderParametersDefaultTagName,

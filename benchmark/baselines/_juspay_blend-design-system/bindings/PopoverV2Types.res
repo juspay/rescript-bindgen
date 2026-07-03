@@ -10,9 +10,9 @@ type popoverV2PopoverV2TokenTypePaddingConfig = {
   bottom: popoverV2PopoverV2TokenTypeGapConfig,
 }
 type popoverV2PopoverV2TokenTypeTopContainerHeadingIconSizeConfig = {
-  sm: string,
-  md: string,
-  lg: string,
+  sm: string,  // ⚠️ REVIEW — was `string | number | RuleSet<any> | StyledObject<BaseObject> | StyleFunction<BaseObject>` — match the real type by hand
+  md: string,  // ⚠️ REVIEW — was `string | number | RuleSet<any> | StyledObject<BaseObject> | StyleFunction<BaseObject>` — match the real type by hand
+  lg: string,  // ⚠️ REVIEW — was `string | number | RuleSet<any> | StyledObject<BaseObject> | StyleFunction<BaseObject>` — match the real type by hand
 }
 type popoverV2PopoverV2TokenTypeTopContainerHeadingConfig = {
   color: string,

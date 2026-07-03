@@ -42,27 +42,10 @@ type buttonButtonTokensTypeBackgroundColorConfig = {
   danger: buttonButtonTokensTypeBackgroundColorPrimaryConfig,
   success: buttonButtonTokensTypeBackgroundColorPrimaryConfig,
 }
-type buttonButtonTokensTypeBorderRadiusSmPrimaryDefaultConfig = {
-  default: string,
-  hover: string,
-  active: string,
-  disabled: string,
-}
-type buttonButtonTokensTypeBorderRadiusSmPrimaryConfig = {
-  default: buttonButtonTokensTypeBorderRadiusSmPrimaryDefaultConfig,
-  iconOnly: buttonButtonTokensTypeBorderRadiusSmPrimaryDefaultConfig,
-  inline: buttonButtonTokensTypeBorderRadiusSmPrimaryDefaultConfig,
-}
-type buttonButtonTokensTypeBorderRadiusSmConfig = {
-  primary: buttonButtonTokensTypeBorderRadiusSmPrimaryConfig,
-  secondary: buttonButtonTokensTypeBorderRadiusSmPrimaryConfig,
-  danger: buttonButtonTokensTypeBorderRadiusSmPrimaryConfig,
-  success: buttonButtonTokensTypeBorderRadiusSmPrimaryConfig,
-}
 type buttonButtonTokensTypeBorderRadiusConfig = {
-  sm: buttonButtonTokensTypeBorderRadiusSmConfig,
-  md: buttonButtonTokensTypeBorderRadiusSmConfig,
-  lg: buttonButtonTokensTypeBorderRadiusSmConfig,
+  sm: buttonButtonTokensTypeBackgroundColorConfig,
+  md: buttonButtonTokensTypeBackgroundColorConfig,
+  lg: buttonButtonTokensTypeBackgroundColorConfig,
 }
 type buttonButtonTokensTypePaddingSmPrimaryDefaultConfig = {
   x: string,
@@ -85,7 +68,7 @@ type buttonButtonTokensTypePaddingConfig = {
   lg: buttonButtonTokensTypePaddingSmConfig,
 }
 type buttonButtonTokensTypeTextConfig = {
-  color: buttonButtonTokensTypeBorderRadiusSmConfig,
+  color: buttonButtonTokensTypeBackgroundColorConfig,
   fontSize: buttonButtonTokensTypeSlotMaxHeightConfig,
   fontWeight: buttonButtonTokensTypeSlotMaxHeightConfig,
 }

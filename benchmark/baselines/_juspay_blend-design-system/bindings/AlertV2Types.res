@@ -38,17 +38,8 @@ type alertV2AlertV2TokensTypeGapConfig = {
 type alertV2AlertV2TokensTypeSlotConfig = {
   maxHeight: string,
 }
-type alertV2AlertV2TokensTypeMainContainerCloseButtonColorConfig = {
-  primary: string,
-  success: string,
-  warning: string,
-  error: string,
-  purple: string,
-  orange: string,
-  neutral: string,
-}
 type alertV2AlertV2TokensTypeMainContainerContentTextContainerHeadingConfig = {
-  color: alertV2AlertV2TokensTypeMainContainerCloseButtonColorConfig,
+  color: string,  // ⚪ loose — was `{ primary: Color; success: Color; warning: Color; error: Color; purple: Color; orange: Color; neutral: Color; `
   fontWeight: string,
   fontSize: string,
   lineHeight: string,
@@ -67,6 +58,15 @@ type alertV2AlertV2TokensTypeMainContainerContentConfig = {
   gap: alertV2AlertV2TokensTypeGapConfig,
   textContainer: alertV2AlertV2TokensTypeMainContainerContentTextContainerConfig,
   actionContainer: alertV2AlertV2TokensTypeMainContainerContentActionContainerConfig,
+}
+type alertV2AlertV2TokensTypeMainContainerCloseButtonColorConfig = {
+  primary: string,
+  success: string,
+  warning: string,
+  error: string,
+  purple: string,
+  orange: string,
+  neutral: string,
 }
 type alertV2AlertV2TokensTypeMainContainerCloseButtonConfig = {
   color: alertV2AlertV2TokensTypeMainContainerCloseButtonColorConfig,

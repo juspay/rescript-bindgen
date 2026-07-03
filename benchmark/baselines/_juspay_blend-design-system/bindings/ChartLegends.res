@@ -1,6 +1,6 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
-  ~chartContainerRef: React.ref<Nullable.t<Dom.htmlDivElement>>,
+  ~chartContainerRef: React.ref<Nullable.t<Dom.element>>,
   ~keys: array<string>,
   ~colors: array<ChartsTypes.chartsColorsConfig>,
   ~handleLegendClick: string => unit,

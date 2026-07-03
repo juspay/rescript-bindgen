@@ -14,8 +14,8 @@ type fetchEventLike = {
 type executionContext = {
   waitUntil: promise<JSON.t> => unit,
   passThroughOnException: unit => unit,
-  props: string,
-  exports?: string,
+  props: string,  // 🛑 BROKEN — contains `any`
+  exports?: string,  // 🛑 BROKEN — contains `any`
 }
 module TypesContextOptionsExecutionCtx = {
   type t
@@ -23,14 +23,14 @@ module TypesContextOptionsExecutionCtx = {
   external fromExecutionContext: executionContext => t = "%identity"
 }
 type contextOptions = {
-  env?: string,
+  env?: string,  // ⚪ loose — was `E["Bindings"]`
   executionCtx?: TypesContextOptionsExecutionCtx.t,
   notFoundHandler?: InstanceTypes.context => promise<WebTypes.response>,
-  matchResult?: string,
+  matchResult?: string,  // ⚪ loose — was `Result<[H, RouterRoute]>`
   path?: string,
 }
 type typesLayoutConfig = {
-  @as("Layout") layout: Dict.t<string> => string,
+  @as("Layout") layout: Dict.t<string> => string,  // 🛑 BROKEN — contains `any`
 }
 type setHeadersOptions = {
   append?: bool,
@@ -40,14 +40,14 @@ type headerRecord = {
 }
 type typesValueConfig = {
   ...JsxDOM.domProps,
-  _data: string,
-  _status: string,
-  _format: string,
+  _data: string,  // 🛑 BROKEN — contains `unknown`
+  _status: string,  // 🛑 BROKEN — contains `unknown`
+  _format: string,  // ⚪ loose — was `"body"`
 }
 type typesBodyCacheConfig = {
-  json?: string,
+  json?: string,  // 🛑 BROKEN — contains `any`
   text?: string,
-  arrayBuffer?: string,
+  arrayBuffer?: string,  // ⚪ loose — was `ArrayBuffer`
   blob?: WebTypes.blob,
   formData?: Webapi.FormData.t,
 }
@@ -55,15 +55,15 @@ type routerRoute = {
   basePath: string,
   path: string,
   method: string,
-  handler: (InstanceTypes.context, unit => promise<unit>) => string,
+  handler: (InstanceTypes.context, unit => promise<unit>) => string,  // 🛑 BROKEN — contains `any`
 }
 type router = {
   name: string,
-  add: (string, string, ((InstanceTypes.context, unit => string) => string, routerRoute)) => unit,
-  match: (string, string) => string,
+  add: (string, string, ((InstanceTypes.context, unit => string) => string, routerRoute)) => unit,  // 🛑 BROKEN — contains `any` — was `Promise<void>`
+  match: (string, string) => string,  // ⚪ loose — was `Result<[H, RouterRoute]>`
 }
 type typesHonoOptionsGetPathConfig = {
-  env?: string,
+  env?: string,  // ⚪ loose — was `E["Bindings"]`
 }
 type honoOptions = {
   strict?: bool,
