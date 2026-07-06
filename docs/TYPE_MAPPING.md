@@ -317,6 +317,13 @@ register hundreds of new entries, gets rolled back, and stays safely truncated. 
 `setOpenConfig2` in the benchmark baseline (the depth boundary is too fragile to pin in a synthetic
 golden).
 
+**`this`-typed callbacks → `@this` (#98).** `(this: Point, tooltip: Tooltip) => string` (Highcharts'
+formatter family) binds as `@this ((point, tooltip) => string)` — the first param binds the JS `this`
+the library invokes the function with. The `this` parameter was previously dropped silently, so the
+emitted callback type-checked but couldn't reach the value it's about. The `this` type is classified
+like a param (library-produced); if it can't be modelled the whole prop stays flagged. Fixture:
+[`this-typed-callback`](../test/golden/cases/this-typed-callback). (#98)
+
 **Leaf types resolve past `MAX_DEPTH`; degraded record fields are flagged (#98).** The depth bound
 exists to truncate *unbounded new expansion* — but a primitive cannot expand anything, so a leaf
 first reached past the bound resolves exactly: `string`/`number`/`boolean`/`bigint`/`unknown → JSON.t`/
@@ -326,7 +333,14 @@ alternative was an opaque `string` anyway). Before this, a record first reached 
 fields that DO still degrade (deep objects, callbacks like `formatter?: TooltipFormatterCallbackFunction`)
 now carry the same flag comments props get (`⚪ loose — was …` / `⚠️ REVIEW` / `🛑 BROKEN — contains any`)
 instead of being silent — record fields render structurally (a field's shape is often partly right), so
-only the trailing comment is added. Fixture: [`deep-record-leaves`](../test/golden/cases/deep-record-leaves). (#98)
+only the trailing comment is added. Two zero-expansion escapes extend this: a reference to an
+already-**completed** shared entry links (`refTo`) even past the bound — the self-ref exception
+generalized; the entry exists, so no new registry growth is possible (in-progress ancestors still
+truncate, keeping the unbounded-graph bound) — and a **function** type classifies through its
+signature (its params/return each link, resolve as leaves, or truncate flagged). Net effect on
+Highcharts: `TooltipOptions.formatter` emits a real `@this ((point, …) => string)` with `point`
+linked to the record materialized at a shallow site, instead of an opaque `string`. Fixture:
+[`deep-record-leaves`](../test/golden/cases/deep-record-leaves). (#98)
 
 **Twin healing (depth ghost ↔ shallow full sibling).** When the re-resolve above can't run because the
 shape's sub-types are a *distinct* generic instantiation (csstype gives `CSSObject['color']` vs

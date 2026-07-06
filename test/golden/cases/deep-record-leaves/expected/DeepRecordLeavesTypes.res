@@ -5,7 +5,7 @@ type deepTip = {
   count?: int,
   label?: string,
   payload?: JSON.t,
-  formatter?: string,  // ⚪ loose — was `(value: number) => string`
+  formatter?: float => string,
   extra?: string,  // ⚪ loose — was `Extra1`
 }
 type l6 = {

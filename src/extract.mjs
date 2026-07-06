@@ -243,6 +243,7 @@ function collectRefKeys(t, out) {
     if (t.kind === 'typeRef' && t.key) out.add(t.key)
     if (t.of) collectRefKeys(t.of, out)
     if (t.ret) collectRefKeys(t.ret, out)
+    if (t.thisArg) collectRefKeys(t.thisArg, out)
     if (t.arg) collectRefKeys(t.arg, out)
     if (t.mapKey) collectRefKeys(t.mapKey, out)
     if (t.mapVal) collectRefKeys(t.mapVal, out)
@@ -257,6 +258,7 @@ function collectTypeVars(t, out) {
     if (t.kind === 'typeRef' && Array.isArray(t.tparams)) t.tparams.forEach((x) => out.add(x))
     if (t.of) collectTypeVars(t.of, out)
     if (t.ret) collectTypeVars(t.ret, out)
+    if (t.thisArg) collectTypeVars(t.thisArg, out)
     if (t.arg) collectTypeVars(t.arg, out)
     if (t.mapKey) collectTypeVars(t.mapKey, out)
     if (t.mapVal) collectTypeVars(t.mapVal, out)
@@ -1009,7 +1011,7 @@ function substTypeVars(node, subst) {
     if (!node || typeof node !== 'object') return node
     if (node.kind === 'typeVar' && subst[node.name]) return subst[node.name]
     const out = { ...node }
-    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) if (out[k]) out[k] = substTypeVars(out[k], subst)
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal', 'thisArg']) if (out[k]) out[k] = substTypeVars(out[k], subst)
     if (Array.isArray(out.params)) out.params = out.params.map((p) => substTypeVars(p, subst))
     return out
 }
@@ -1533,7 +1535,7 @@ function syncRefTparams(t, byKey, seen) {
         if (tp && tp.length) t.tparams = [...tp]
         else delete t.tparams
     }
-    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) if (t[k]) syncRefTparams(t[k], byKey, seen)
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal', 'thisArg']) if (t[k]) syncRefTparams(t[k], byKey, seen)
     if (Array.isArray(t.params)) for (const p of t.params) syncRefTparams(p, byKey, seen)
     if (Array.isArray(t.fields)) for (const f of t.fields) syncRefTparams(f.type, byKey, seen)
     if (Array.isArray(t.members)) for (const m of t.members) syncRefTparams(m.type, byKey, seen)
@@ -1688,7 +1690,7 @@ function salvageCallbackParams(node, ctx) {
 function irHasImperfection(t) {
     if (!t || typeof t !== 'object') return false
     if (t.kind === 'opaque' || t.kind === 'review' || t.kind === 'unknown' || t.kind === 'any') return true
-    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) if (t[k] && irHasImperfection(t[k])) return true
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal', 'thisArg']) if (t[k] && irHasImperfection(t[k])) return true
     if (Array.isArray(t.params)) for (const p of t.params) if (irHasImperfection(p)) return true
     return false
 }
@@ -1770,6 +1772,29 @@ function classify(type, ctx, propName = '', depth = 0) {
         if (type.id != null && type.id === ctx.selfId && ctx.shared) {
             const e = ctx.shared.byKey.get('id:' + type.id)
             if (e && e.kind === 'record') return refTo(e)
+        }
+        // The self-ref exception, GENERALIZED (#98): a reference to an already-COMPLETED shared
+        // entry (registered, not currently being built) is a zero-expansion link — the entry
+        // exists, so no new registry growth is possible. Lets a past-depth field keep its real
+        // type when the same type already resolved at a shallow site (Highcharts' `Point`, reached
+        // deep inside `TooltipOptions`, links to the materialized `point` record instead of
+        // truncating). In-progress ancestors (ctx.visiting) still truncate exactly as before, so
+        // the unbounded-graph bound holds. Non-generic entries only: a typeRef with type vars
+        // can't thread its <'a> through a shared record.
+        if (type.id != null && ctx.shared && !(ctx.visiting && ctx.visiting.has(type.id))) {
+            const e = ctx.shared.byKey.get('id:' + type.id)
+            if (e && !(e.tparams && e.tparams.length)) return refTo(e)
+        }
+        // A FUNCTION reached past the bound classifies through its signature: the function node
+        // itself cannot expand the registry — only its params/return can, and each of those either
+        // links to an already-materialized record (above), resolves as a leaf (below), or truncates
+        // flagged. Recovers deep `formatter?: TooltipFormatterCallbackFunction` as a real `@this`
+        // callback instead of an opaque string. (#98)
+        if (type.getCallSignatures) {
+            const dSigs = type.getCallSignatures()
+            if (dSigs.length === 1 && !(type.getProperties && type.getProperties().length)) {
+                return functionNode(dSigs[0], ctx, propName, depth)
+            }
         }
         // Zero-cost leaves resolve even past the bound — a primitive CANNOT expand the graph, so
         // truncating `enabled?: boolean` to an opaque `string` was pure loss. Without this, every
@@ -2569,6 +2594,7 @@ function nodeImperfect(t) {
     if (['unknown', 'any', 'review', 'opaque'].includes(t.kind)) return true
     if (t.of && nodeImperfect(t.of)) return true
     if (t.ret && nodeImperfect(t.ret)) return true
+    if (t.thisArg && nodeImperfect(t.thisArg)) return true
     if (t.arg && nodeImperfect(t.arg)) return true
     if (Array.isArray(t.params)) return t.params.some(nodeImperfect)
     return false
@@ -3310,6 +3336,14 @@ function functionNode(sig, ctx, propName, depth = 0) {
     const prevRet = ctx.inFnReturn, prevProduced = ctx.produced
     ctx.inFnReturn = false
     ctx.produced = !P
+    // A `this`-typed callback — `(this: Point, tooltip: Tooltip) => …` (Highcharts formatters):
+    // JS invokes the consumer's function with `this` bound to the DATA CARRIER. Dropping it
+    // produced a callback that type-checks but can't reach the value it's about (the tooltip
+    // formatter's Point). ReScript expresses this exactly — `@this ((point, tooltip) => …)`,
+    // where the first param binds `this` — so classify it like a param (library-produced). (#98)
+    const thisArg = sig.thisParameter
+        ? classify(checker.getTypeOfSymbolAtLocation(sig.thisParameter, ctx.decl), ctx, propName, depth + 1)
+        : null
     const params = sig.getParameters().map((pp) => {
         // An optional param `reason?: T` (or one with a default) -> `option<T>` (emit wraps it).
         // Parameter symbols don't carry SymbolFlags.Optional reliably, so read the declaration's
@@ -3376,7 +3410,7 @@ function functionNode(sig, ctx, propName, depth = 0) {
             ctx.produced = prevProd
         }
     }
-    return { kind: 'callback', params, ret }
+    return thisArg ? { kind: 'callback', params, ret, thisArg } : { kind: 'callback', params, ret }
 }
 
 /**

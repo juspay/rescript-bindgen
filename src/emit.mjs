@@ -185,6 +185,13 @@ function renderType(t, propName, cfg) {
             }
             const ps = !t.params || t.params.length === 0 ? 'unit' : t.params.map(render1).join(', ')
             const ret = renderType(t.ret || { kind: 'unit' }, propName, cfg)
+            // `this`-typed callback: `@this ((point, tooltip) => ret)` — the first param binds the
+            // JS `this` the library invokes the function with (Highcharts formatters). (#98)
+            if (t.thisArg) {
+                const th = render1(t.thisArg)
+                const inner = !t.params || t.params.length === 0 ? th : `${th}, ${ps}`
+                return `@this ((${inner}) => ${ret})`
+            }
             return (t.params && t.params.length > 1) ? `(${ps}) => ${ret}` : `${ps} => ${ret}`
         }
         case 'unit': return 'unit'
@@ -313,7 +320,7 @@ export function emitNamespace(ns, from) {
 function collectVarNames(t, out) {
     if (!t || typeof t !== 'object') return
     if (t.kind === 'typeVar' && t.name) out.add(t.name)
-    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) if (t[k]) collectVarNames(t[k], out)
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal', 'thisArg']) if (t[k]) collectVarNames(t[k], out)
     if (Array.isArray(t.params)) for (const p of t.params) collectVarNames(p, out)
     if (Array.isArray(t.tparams)) for (const v of t.tparams) if (typeof v === 'string') out.add(v)
 }
@@ -606,6 +613,7 @@ function collectRefNames(t, out) {
     if (t.kind === 'typeRef' && t.to) out.add(t.to)
     if (t.of) collectRefNames(t.of, out)
     if (t.ret) collectRefNames(t.ret, out)
+    if (t.thisArg) collectRefNames(t.thisArg, out)
     if (t.arg) collectRefNames(t.arg, out)
     if (t.mapKey) collectRefNames(t.mapKey, out)
     if (t.mapVal) collectRefNames(t.mapVal, out)
@@ -782,7 +790,7 @@ function looseMark(f, cfg) {
 function findLooseText(t) {
     if (!t || typeof t !== 'object') return null
     if ((t.kind === 'opaque' || t.kind === 'review') && t.text) return t.text
-    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) { if (t[k]) { const n = findLooseText(t[k]); if (n) return n } }
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal', 'thisArg']) { if (t[k]) { const n = findLooseText(t[k]); if (n) return n } }
     if (Array.isArray(t.params)) for (const p of t.params) { const n = findLooseText(p); if (n) return n }
     return null
 }
@@ -792,7 +800,7 @@ function findLooseText(t) {
 function findNote(t) {
     if (!t || typeof t !== 'object') return null
     if (t.note) return t.note
-    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) { if (t[k]) { const n = findNote(t[k]); if (n) return n } }
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal', 'thisArg']) { if (t[k]) { const n = findNote(t[k]); if (n) return n } }
     if (Array.isArray(t.params)) for (const p of t.params) { const n = findNote(p); if (n) return n }
     return null
 }
@@ -816,6 +824,7 @@ function imperfection(t) {
     }
     if (t.of) consider(t.of)
     if (t.ret) consider(t.ret)
+    if (t.thisArg) consider(t.thisArg)
     if (t.arg) consider(t.arg)
     if (t.mapKey) consider(t.mapKey)
     if (t.mapVal) consider(t.mapVal)

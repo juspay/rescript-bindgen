@@ -3,13 +3,16 @@
 // leaves like `enabled?: boolean` truncated (Highcharts' `TooltipOptions`: ~40 all-string fields,
 // zero markers, `formatter?: string` inexpressible downstream).
 //
-// Two guarantees locked here, on `deepTip` (first reached at depth 7 via the l1→…→l6 chain):
+// Three guarantees locked here, on `deepTip` (first reached at depth 7 via the l1→…→l6 chain):
 //   1. leaf fields keep their EXACT types past the bound — `enabled: bool`, `padding: float`,
 //      `mode: string` (a literal folds to its base primitive: past the bound the alternative
 //      was an opaque `string` anyway), `payload: JSON.t`;
-//   2. fields that DO degrade (the `formatter` callback, the `extra` object — each dangling a
-//      NEW record so deep-record healing rolls back rather than materializing the graph) carry
-//      the same `⚪ loose — was …` flag props get, instead of silently reading as real strings.
+//   2. a FUNCTION field classifies through its signature past the bound (`formatter: float =>
+//      string` — the function node can't expand the registry; its params/ret link, resolve as
+//      leaves, or truncate flagged);
+//   3. fields that DO degrade (the `extra` object — dangling NEW records, so deep-record healing
+//      rolls back rather than materializing the graph) carry the same `⚪ loose — was …` flag
+//      props get, instead of silently reading as real strings.
 type JsxElement = { __brand: 'element' }
 
 // each level dangles a `sibling` record so the chain is "unbounded-ish": the healing pass would
