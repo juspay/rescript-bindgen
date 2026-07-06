@@ -67,4 +67,5 @@ external make: (
   ~arrowPadding: float=?,
   ~disableAnchorTracking: bool=?,
   ~collisionAvoidance: PositionerSharedTypes.CollisionAvoidance.t=?,  // ⓘ was `CollisionAvoidance` — opaque; build with CollisionAvoidance.fromSideFlipMode / CollisionAvoidance.fromSideShiftMode
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Positioner"

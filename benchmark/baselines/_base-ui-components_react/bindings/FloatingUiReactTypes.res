@@ -1,7 +1,7 @@
 type floatingEvents = {
-  emit: string,  // ⚪ loose — was `<T extends string>(event: T, data?: any) => void`
-  on: string,  // ⚪ loose — was `(event: string, handler: (data: any) => void) => void`
-  off: string,  // ⚪ loose — was `(event: string, handler: (data: any) => void) => void`
+  emit: (string, option<string>) => unit,  // ⚪ loose — was `T`
+  on: (string, string => unit) => unit,  // ⚪ loose — was `any`
+  off: (string, string => unit) => unit,  // ⚪ loose — was `any`
 }
 type floatingNodeType = {
   id?: string,

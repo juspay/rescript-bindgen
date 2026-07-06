@@ -57,4 +57,5 @@ external make: (
   ~className: ItemTypes.accordionItemClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
   ~disabled: bool=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Item"

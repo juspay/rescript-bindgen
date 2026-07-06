@@ -12,4 +12,5 @@ external make: (
   ~hasMore: bool=?,
   ~className: string=?,
   ~style: JsxDOM.style=?,
+  ~ref: React.ref<Nullable.t<VirtualListTypes.virtualListRef>>=?,
 ) => React.element = "VirtualList"

@@ -8,4 +8,5 @@ external make: (
   ~value: array<string>=?,
   ~defaultValue: array<string>=?,
   ~onChange: array<string> => unit=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "SwitchGroup"

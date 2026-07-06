@@ -12,4 +12,5 @@ external make: (
   ~maxWidth: string=?,
   ~minWidth: string=?,
   ~width: string=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Alert"

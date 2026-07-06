@@ -64,8 +64,8 @@ type htmlProps = {
 type utilsFloatingRootStoreSetOpenConfig = {
   reason: string,
   event: string,  // ⚪ loose — was `Event`
-  cancel: string,  // ⚪ loose — was `() => void`
-  allowPropagation: string,  // ⚪ loose — was `() => void`
+  cancel: unit => unit,
+  allowPropagation: unit => unit,
   isCanceled: bool,
   isPropagationAllowed: bool,
   trigger?: string,  // ⚪ loose — was `Element`

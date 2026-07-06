@@ -66,4 +66,5 @@ external make: (
   ~formTarget: string=?,
   ~name: string=?,
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Button"

@@ -45,7 +45,7 @@ type vFile = {
   fail: string,  // ⚪ loose — was `{ (reason: string, options?: Options): never; (reason: string, parent: Node | NodeLike, origin?: string): neve`
   info: string,  // ⚪ loose — was `{ (reason: string, options?: Options): VFileMessage; (reason: string, parent: Node | NodeLike, origin?: string`
   message: string,  // ⚪ loose — was `{ (reason: string, options?: Options): VFileMessage; (reason: string, parent: Node | NodeLike, origin?: string`
-  toString: string,  // ⚪ loose — was `(encoding?: string) => string`
+  toString: option<string> => string,
 }
 type options = {
   allowDangerousHtml?: Nullable.t<bool>,
@@ -57,7 +57,7 @@ type options = {
   footnoteLabelProperties?: Nullable.t<Dict.t<string>>,  // ⚪ loose — was `string | number | boolean | (string | number)[]`
   footnoteLabelTagName?: Nullable.t<string>,
   handlers?: string,  // ⚪ loose — was `Partial<Record<"text" | "root" | "blockquote" | "code" | "html" | "link" | "strong" | "table" | "image" | "bre`
-  passThrough?: Nullable.t<array<string>>,  // ⚪ loose — was `"text" | "root" | "blockquote" | "code" | "html" | "link" | "strong" | "table" | "image" | "break" | "definiti`
+  passThrough?: Nullable.t<array<libMarkdownAsyncOptionsRemarkRehypeOptionsPassThrough>>,
   unknownHandler?: Nullable.t<(string, string, string) => string>,  // ⚪ loose — was `ElementContent | ElementContent[]`
 }
 type state = {

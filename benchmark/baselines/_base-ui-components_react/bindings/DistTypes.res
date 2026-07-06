@@ -34,8 +34,8 @@ module AnchorTarget = {
 module PositionerAnchor = {
   type t
   external fromElement: Dom.element => t = "%identity"
-  external fromVirtualElement: virtualElement => t = "%identity"
   external fromRefObject: React.ref<Nullable.t<Dom.element>> => t = "%identity"
+  external fromVirtualElement: virtualElement => t = "%identity"
   external fromFn: (unit => AnchorTarget.t) => t = "%identity"
 }
 module Boundary = {

@@ -1817,11 +1817,18 @@ function classify(type, ctx, propName = '', depth = 0) {
         // itself cannot expand the registry — only its params/return can, and each of those either
         // links to an already-materialized record (above), resolves as a leaf (below), or truncates
         // flagged. Recovers deep `formatter?: TooltipFormatterCallbackFunction` as a real `@this`
-        // callback instead of an opaque string. (#98)
-        if (type.getCallSignatures) {
+        // callback instead of an opaque string. Guarded against SELF-recursive function types
+        // (react-rating's `HF`, whose param references `HF`): past the bound the normal
+        // ctx.visiting check never runs, so without this guard the re-entry loops forever — a
+        // function id already on the visiting path (or anything past the hard cap) truncates to
+        // the flagged opaque instead. (#98)
+        if (type.getCallSignatures && depth <= MAX_DEPTH * 3 &&
+            !(type.id != null && ctx.visiting && ctx.visiting.has(type.id))) {
             const dSigs = type.getCallSignatures()
             if (dSigs.length === 1 && !(type.getProperties && type.getProperties().length)) {
-                return functionNode(dSigs[0], ctx, propName, depth)
+                if (type.id != null) (ctx.visiting || (ctx.visiting = new Set())).add(type.id)
+                try { return functionNode(dSigs[0], ctx, propName, depth) }
+                finally { if (type.id != null) ctx.visiting.delete(type.id) }
             }
         }
         // Zero-cost leaves resolve even past the bound — a primitive CANNOT expand the graph, so

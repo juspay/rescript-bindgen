@@ -379,6 +379,10 @@ type alertDialogRootChangeEventDetails = {
   trigger?: Dom.element,
   preventUnmountOnClose: unit => unit,
 }
+type dialogRootActions = {
+  unmount: unit => unit,
+  close: unit => unit,
+}
 type rootDialogStoreSetOpenConfig = {
   reason: rootAlertDialogRootChangeEventDetailsReason,
   event: Dom.event,
@@ -399,7 +403,7 @@ type context = {
   onNestedDialogClose?: unit => unit,
 }
 type floatingRootStoreContext = {
-  onOpenChange?: (bool, string) => unit,  // ⚪ loose — was `{ reason: string; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropa`
+  onOpenChange?: (bool, PositionerSharedTypes.utilsFloatingRootStoreSetOpenConfig) => unit,
   dataRef: React.ref<Nullable.t<Dom.element>>,
   events: FloatingUiReactTypes.floatingEvents,
   nested: bool,
@@ -436,13 +440,13 @@ type floatingRootStore = {
   setState: componentsFloatingRootStoreSetStateConfig => unit,
   select: (string, string) => string,  // 🛑 BROKEN — contains `unknown` — was `ReturnType<{ open: (state: FloatingRootState) => boolean; domReferenceElement: (state: FloatingRootState) => E`
   useState: (string, string) => string,  // 🛑 BROKEN — contains `unknown` — was `ReturnType<{ open: (state: FloatingRootState) => boolean; domReferenceElement: (state: FloatingRootState) => E`
-  useContextCallback: (string, (bool, string) => unit) => unit,  // 🛑 BROKEN — contains `unknown` — was `{ reason: string; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropa`
+  useContextCallback: (string, (bool, PositionerSharedTypes.utilsFloatingRootStoreSetOpenConfig) => unit) => unit,  // 🛑 BROKEN — contains `unknown`
   useStateSetter: rootFloatingRootStoreUseSyncedValue => string => unit,  // ⚪ loose — was `Value`
   observe: string,  // ⚠️ REVIEW — match the real type by hand
   state: componentsFloatingRootStoreSetStateConfig,
   listeners: string,  // 🛑 BROKEN — contains `any`
   updateTick: string,  // 🛑 BROKEN — contains `any`
-  subscribe: string => unit => unit => unit,  // ⚪ loose — was `Readonly<FloatingRootState>`
+  subscribe: componentsFloatingRootStoreSetStateConfig => unit => unit => unit,
   getSnapshot: unit => componentsFloatingRootStoreSetStateConfig,
   notifyAll: unit => unit,
 }
@@ -534,6 +538,9 @@ type changeEventDetails = {
   isPropagationAllowed: bool,
   trigger?: Dom.element,
 }
+type autocompleteRootActions = {
+  unmount: unit => unit,
+}
 type highlightEventDetails = {
   reason: rootHighlightEventDetailsReason,
   event: Dom.event,
@@ -584,8 +591,8 @@ type context2 = {
   onOpenChangeComplete?: bool => unit,
   positionerRef: React.ref<Nullable.t<Dom.element>>,
   typingRef: React.ref<Nullable.t<Dom.element>>,
-  itemDomElements: React.ref<Nullable.t<Dom.element>>,
-  itemLabels: React.ref<Nullable.t<Dom.element>>,
+  itemDomElements: React.ref<Nullable.t<array<Dom.element>>>,
+  itemLabels: React.ref<Nullable.t<array<string>>>,
   allowMouseUpTriggerRef: React.ref<Nullable.t<Dom.element>>,
   triggerFocusTargetRef: React.ref<Nullable.t<Dom.element>>,
   beforeContentFocusGuardRef: React.ref<Nullable.t<Dom.element>>,
@@ -697,9 +704,9 @@ type menubarContext = {
   modal: bool,
   disabled: bool,
   contentElement: string,  // ⚪ loose — was `HTMLElement`
-  setContentElement: string,  // ⚪ loose — was `(element: HTMLElement) => void`
+  setContentElement: string => unit,  // ⚪ loose — was `HTMLElement`
   hasSubmenuOpen: bool,
-  setHasSubmenuOpen: string,  // ⚪ loose — was `(open: boolean) => void`
+  setHasSubmenuOpen: bool => unit,
   orientation: string,  // ⚪ loose — was `MenuRootOrientation`
   allowMouseUpTriggerRef: string,  // ⚪ loose — was `RefObject<boolean>`
   rootId?: string,
@@ -710,7 +717,7 @@ type rootMenuStoreUseSyncedValuesParentConfig2 = {
 }
 type contextMenuRootContext = {
   anchor: string,  // ⚪ loose — was `{ getBoundingClientRect: () => DOMRect; }`
-  setAnchor: string,  // ⚪ loose — was `Dispatch<SetStateAction<{ getBoundingClientRect: () => DOMRect; }>>`
+  setAnchor: string => unit,  // ⚪ loose — was `SetStateAction<{ getBoundingClientRect: () => DOMRect; }>`
   backdropRef: string,  // ⚪ loose — was `RefObject<HTMLDivElement>`
   internalBackdropRef: string,  // ⚪ loose — was `RefObject<HTMLDivElement>`
   actionsRef: string,  // ⚪ loose — was `RefObject<{ setOpen: (nextOpen: boolean, eventDetails: ContextMenuRootChangeEventDetails) => void; }>`

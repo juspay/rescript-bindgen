@@ -21,6 +21,7 @@ type props = {
   voiceButtonIcon?: React.element,
   sendButtonIcon?: React.element,
   overflowMenuProps?: MenuTypes.menuOverflowMenuPropsConfig,
+  ref?: React.ref<Nullable.t<Dom.element>>,
 }
 
 @module("@juspay/blend-design-system")

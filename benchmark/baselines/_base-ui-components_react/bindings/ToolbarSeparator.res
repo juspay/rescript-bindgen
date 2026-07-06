@@ -55,4 +55,5 @@ external make: (
   ~className: SeparatorTypes.separatorClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
   ~orientation: PositionerSharedTypes.orientation=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Separator"

@@ -8,6 +8,7 @@ type props = {
   allowClear?: bool,
   onClear?: unit => unit,
   clearIcon?: React.element,
+  ref?: React.ref<Nullable.t<Dom.element>>,
 }
 
 @module("@juspay/blend-design-system")

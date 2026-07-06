@@ -55,4 +55,5 @@ external make: (
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: RootSharedTypes.avatarRootClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Fallback"

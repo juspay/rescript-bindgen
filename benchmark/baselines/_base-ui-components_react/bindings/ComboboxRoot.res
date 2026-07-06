@@ -29,7 +29,7 @@ external make: (
   ~itemToStringValue: 'a => string=?,
   ~isItemEqualToValue: ('a, 'a) => bool=?,
   ~defaultValue: string=?,  // ⚪ loose — was `ComboboxValueType<Value, Multiple>`
-  ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
+  ~actionsRef: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>=?,
   ~onOpenChange: (bool, RootSharedTypes.changeEventDetails) => unit=?,
   ~onInputValueChange: (string, RootSharedTypes.changeEventDetails) => unit=?,
   ~onItemHighlighted: ('a, RootSharedTypes.highlightEventDetails) => unit=?,

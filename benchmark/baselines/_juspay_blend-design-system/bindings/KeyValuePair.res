@@ -11,4 +11,5 @@ external make: (
   ~textOverflow: KeyValuePairTypes.textOverflowMode=?,
   ~maxLines: float=?,
   ~showTooltipOnTruncate: bool=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "KeyValuePair"

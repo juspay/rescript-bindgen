@@ -56,7 +56,7 @@ external make: (
   ~className: PositionerSharedTypes.popoverPositionerClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
   ~sticky: bool=?,
-  ~anchor: DistTypes.PositionerAnchor.t=?,  // ⓘ was `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — opaque; build with PositionerAnchor.fromElement / PositionerAnchor.fromVirtualElement / PositionerAnchor.fromRefObject / PositionerAnchor.fromFn
+  ~anchor: DistTypes.PositionerAnchor.t=?,  // ⓘ was `Element | RefObject<Element> | VirtualElement | (() => Element | VirtualElement)` — opaque; build with PositionerAnchor.fromElement / PositionerAnchor.fromRefObject / PositionerAnchor.fromVirtualElement / PositionerAnchor.fromFn
   ~positionMethod: PositionerSharedTypes.positionerPositionMethod=?,
   ~sideOffset: PositionerSharedTypes.utilsSideOffsetConfigSideOffset=?,
   ~align: PositionerSharedTypes.align=?,
@@ -66,4 +66,5 @@ external make: (
   ~arrowPadding: float=?,
   ~disableAnchorTracking: bool=?,
   ~collisionAvoidance: PositionerSharedTypes.CollisionAvoidance.t=?,  // ⓘ was `CollisionAvoidance` — opaque; build with CollisionAvoidance.fromSideFlipMode / CollisionAvoidance.fromSideShiftMode
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Positioner"

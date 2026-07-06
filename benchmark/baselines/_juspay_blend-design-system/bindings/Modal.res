@@ -22,4 +22,5 @@ external make: (
   ~maxWidth: string=?,
   ~maxHeight: string=?,
   ~minHeight: string=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Modal"

@@ -9,7 +9,7 @@ external make: (
   ~onOpenChangeComplete: bool => unit=?,
   ~disableHoverablePopup: bool=?,
   ~trackCursorAxis: RootSharedTypes.rootTrackCursorAxis=?,
-  ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
+  ~actionsRef: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>=?,
   ~disabled: bool=?,
   ~handle: RootSharedTypes.tooltipHandle<'a>=?,
   ~children: React.element=?,  // ⓘ function form: wrap with `childrenFn` (zero-cost)

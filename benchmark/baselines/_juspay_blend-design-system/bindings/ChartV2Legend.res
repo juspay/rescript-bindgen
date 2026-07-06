@@ -1,7 +1,7 @@
 type props = {
   ...HtmlAttrs.htmlAttributesOmitClassNameStyle,
-  chartRef?: React.ref<Nullable.t<Dom.element>>,
-  chartRefs?: array<React.ref<Nullable.t<Dom.element>>>,
+  chartRef?: React.ref<Nullable.t<DistTypes.highchartsReactRefObject>>,
+  chartRefs?: array<React.ref<Nullable.t<DistTypes.highchartsReactRefObject>>>,
   customLegendItems?: array<ChartsV2Types.chartV2CustomLegendItem>,
   renderItem?: ChartsV2Types.chartsV2RenderItemConfig => React.element,
   layout?: TabsTypes.tabsOrientation,

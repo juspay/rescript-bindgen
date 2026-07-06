@@ -328,7 +328,7 @@ type optionsDropdownValue =
 type optionsOrderValue =
   | @as("sequential") Sequential
   | @as("simultaneous") Simultaneous
-type chart = {
+type rec chart = {
   axes: string,  // ⚪ loose — was `Axis[]`
   chartHeight: float,
   chartWidth: float,
@@ -340,7 +340,7 @@ type chart = {
   index: int,
   inverted?: bool,
   legend: string,  // ⚪ loose — was `Legend`
-  numberFormatter: string,  // ⚪ loose — was `NumberFormatterCallbackFunction`
+  numberFormatter: (float, float, option<string>, option<string>, option<chart>) => string,
   options: string,  // ⚪ loose — was `Options`
   plotHeight: float,
   plotLeft: float,
@@ -357,29 +357,29 @@ type chart = {
   userOptions: string,  // ⚪ loose — was `Options`
   xAxis: string,  // ⚪ loose — was `Axis[]`
   yAxis: string,  // ⚪ loose — was `Axis[]`
-  addAxis: string,  // ⚪ loose — was `(options: AxisOptions, isX?: boolean, redraw?: boolean, animation?: boolean | Partial<AnimationOptionsObject>)`
-  addColorAxis: string,  // ⚪ loose — was `(options: ColorAxisOptions, redraw?: boolean, animation?: boolean | Partial<AnimationOptionsObject>) => Axis`
-  addCredits: string,  // ⚪ loose — was `(credits?: CreditsOptions) => void`
-  addSeries: string,  // ⚪ loose — was `(options: SeriesOptionsType, redraw?: boolean, animation?: boolean | Partial<AnimationOptionsObject>) => Serie`
-  destroy: string,  // ⚪ loose — was `() => void`
-  get: string,  // ⚪ loose — was `(id: string) => Series | Axis | Point`
-  getOptions: string,  // ⚪ loose — was `() => void`
-  getSelectedPoints: string,  // ⚪ loose — was `() => Point[]`
-  getSelectedSeries: string,  // ⚪ loose — was `() => Series[]`
-  hideLoading: string,  // ⚪ loose — was `() => void`
-  init: string,  // ⚪ loose — was `(userOptions: Options, callback?: Function) => void`
-  isInsidePlot: string,  // ⚪ loose — was `(plotX: number, plotY: number, options?: ChartIsInsideOptionsObject) => boolean`
-  redraw: string,  // ⚪ loose — was `(animation?: boolean | Partial<AnimationOptionsObject>) => void`
-  reflow: string,  // ⚪ loose — was `(e?: Event) => void`
-  setCaption: string,  // ⚪ loose — was `(options: CaptionOptions) => void`
-  setClassName: string,  // ⚪ loose — was `(className?: string) => void`
-  setSize: string,  // ⚪ loose — was `(width?: number, height?: number, animation?: boolean | Partial<AnimationOptionsObject>) => void`
-  setSubtitle: string,  // ⚪ loose — was `(options: SubtitleOptions) => void`
-  setTitle: string,  // ⚪ loose — was `(titleOptions?: TitleOptions, subtitleOptions?: SubtitleOptions, redraw?: boolean) => void`
-  showLoading: string,  // ⚪ loose — was `(str?: string) => void`
-  showResetZoom: string,  // ⚪ loose — was `() => void`
-  update: string,  // ⚪ loose — was `(options: Options, redraw?: boolean, oneToOne?: boolean, animation?: boolean | Partial<AnimationOptionsObject>`
-  zoomOut: string,  // ⚪ loose — was `() => void`
+  addAxis: (string, option<bool>, option<bool>, option<string>) => string,  // ⚪ loose — was `Axis`
+  addColorAxis: (string, option<bool>, option<string>) => string,  // ⚪ loose — was `Axis`
+  addCredits: option<string> => unit,  // ⚪ loose — was `CreditsOptions`
+  addSeries: (string, option<bool>, option<string>) => string,  // ⚪ loose — was `Series`
+  destroy: unit => unit,
+  get: string => string,  // ⚪ loose — was `Series | Axis | Point`
+  getOptions: unit => unit,
+  getSelectedPoints: unit => string,  // ⚪ loose — was `Point[]`
+  getSelectedSeries: unit => string,  // ⚪ loose — was `Series[]`
+  hideLoading: unit => unit,
+  init: (string, option<string>) => unit,  // ⚪ loose — was `Options`
+  isInsidePlot: (float, float, option<string>) => bool,  // ⚪ loose — was `ChartIsInsideOptionsObject`
+  redraw: option<string> => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  reflow: option<string> => unit,  // ⚪ loose — was `Event`
+  setCaption: string => unit,  // ⚪ loose — was `CaptionOptions`
+  setClassName: option<string> => unit,
+  setSize: (option<float>, option<float>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  setSubtitle: string => unit,  // ⚪ loose — was `SubtitleOptions`
+  setTitle: (option<string>, option<string>, option<bool>) => unit,  // ⚪ loose — was `TitleOptions`
+  showLoading: option<string> => unit,
+  showResetZoom: unit => unit,
+  update: (string, option<bool>, option<bool>, option<string>) => unit,  // ⚪ loose — was `Options`
+  zoomOut: unit => unit,
 }
 type legendItemObject = {
   item?: Dom.element,
@@ -389,7 +389,7 @@ type legendItemObject = {
 }
 type axis = {
   categories: string,  // ⚪ loose — was `string[]`
-  chart: string,  // ⚪ loose — was `Chart`
+  chart: chart,
   coll: string,
   crosshair: string,  // ⚪ loose — was `boolean | AxisCrosshairOptions`
   horiz?: bool,
@@ -406,34 +406,34 @@ type axis = {
   tickPositions?: string,  // ⚪ loose — was `AxisTickPositionsArray`
   ticks: string,  // ⚪ loose — was `Dictionary<Tick>`
   userOptions: string,  // ⚪ loose — was `AxisOptions`
-  addPlotBand: string,  // ⚪ loose — was `(options: AxisPlotBandsOptions) => PlotLineOrBand`
-  addPlotLine: string,  // ⚪ loose — was `(options: AxisPlotLinesOptions) => PlotLineOrBand`
-  addTitle: string,  // ⚪ loose — was `(display?: boolean) => void`
-  defaultLabelFormatter: string,  // ⚪ loose — was `(this: AxisLabelsFormatterContextObject) => string`
-  drawCrosshair: string,  // ⚪ loose — was `(e?: PointerEventObject, point?: Point) => void`
-  getExtremes: string,  // ⚪ loose — was `() => ExtremesObject`
-  getLinearTickPositions: string,  // ⚪ loose — was `(tickInterval: number, min: number, max: number) => number[]`
-  getLinePath: string,  // ⚪ loose — was `(lineWidth: number) => SVGPathArray`
-  getMinorTickInterval: string,  // ⚪ loose — was `() => number | "auto"`
-  getMinorTickPositions: string,  // ⚪ loose — was `() => number[]`
-  getPlotBandPath: string,  // ⚪ loose — was `(from: number, to: number, options: AxisPlotBandsOptions | AxisPlotLinesOptions) => SVGPathArray`
-  getPlotLinePath: string,  // ⚪ loose — was `(options: AxisPlotLinePathOptionsObject) => SVGPathArray`
-  getThreshold: string,  // ⚪ loose — was `(threshold: number) => number`
-  hasData: string,  // ⚪ loose — was `() => boolean`
-  hideCrosshair: string,  // ⚪ loose — was `() => void`
-  init: string,  // ⚪ loose — was `(chart: Chart, userOptions: AxisOptions) => void`
-  remove: string,  // ⚪ loose — was `(redraw?: boolean) => void`
-  removePlotBand: string,  // ⚪ loose — was `(id: string) => void`
-  removePlotLine: string,  // ⚪ loose — was `(id: string) => void`
-  renderLine: string,  // ⚪ loose — was `() => void`
-  renderMinorTick: string,  // ⚪ loose — was `(pos: number, slideIn: boolean) => void`
-  renderTick: string,  // ⚪ loose — was `(pos: number, i: number, slideIn: boolean) => void`
-  setCategories: string,  // ⚪ loose — was `(categories: string[], redraw?: boolean) => void`
-  setExtremes: string,  // ⚪ loose — was `(min?: string | number, max?: string | number, redraw?: boolean, animation?: boolean | Partial<AnimationOption`
-  setTitle: string,  // ⚪ loose — was `(titleOptions: AxisTitleOptions, redraw?: boolean) => void`
-  toPixels: string,  // ⚪ loose — was `(value: string | number, paneCoordinates?: boolean) => number`
-  toValue: string,  // ⚪ loose — was `(pixel: number, paneCoordinates?: boolean) => number`
-  update: string,  // ⚪ loose — was `(options: AxisOptions, redraw?: boolean) => void`
+  addPlotBand: string => string,  // ⚪ loose — was `PlotLineOrBand`
+  addPlotLine: string => string,  // ⚪ loose — was `PlotLineOrBand`
+  addTitle: option<bool> => unit,
+  defaultLabelFormatter: @this ((string) => string),  // ⚪ loose — was `AxisLabelsFormatterContextObject`
+  drawCrosshair: (option<string>, option<string>) => unit,  // ⚪ loose — was `PointerEventObject`
+  getExtremes: unit => string,  // ⚪ loose — was `ExtremesObject`
+  getLinearTickPositions: (float, float, float) => string,  // ⚪ loose — was `number[]`
+  getLinePath: float => string,  // ⚪ loose — was `SVGPathArray`
+  getMinorTickInterval: unit => string,  // ⚪ loose — was `number | "auto"`
+  getMinorTickPositions: unit => string,  // ⚪ loose — was `number[]`
+  getPlotBandPath: (float, float, string) => string,  // ⚪ loose — was `SVGPathArray`
+  getPlotLinePath: string => string,  // ⚪ loose — was `SVGPathArray`
+  getThreshold: float => float,
+  hasData: unit => bool,
+  hideCrosshair: unit => unit,
+  init: (chart, string) => unit,  // ⚪ loose — was `AxisOptions`
+  remove: option<bool> => unit,
+  removePlotBand: string => unit,
+  removePlotLine: string => unit,
+  renderLine: unit => unit,
+  renderMinorTick: (float, bool) => unit,
+  renderTick: (float, float, bool) => unit,
+  setCategories: (string, option<bool>) => unit,  // ⚪ loose — was `string[]`
+  setExtremes: (option<string>, option<string>, option<bool>, option<string>, option<string>) => unit,  // ⚪ loose — was `string | number`
+  setTitle: (string, option<bool>) => unit,  // ⚪ loose — was `AxisTitleOptions`
+  toPixels: (string, option<bool>) => float,  // ⚪ loose — was `string | number`
+  toValue: (float, option<bool>) => float,
+  update: (string, option<bool>) => unit,  // ⚪ loose — was `AxisOptions`
 }
 type rec series = {
   area?: Dom.element,
@@ -515,17 +515,17 @@ type seriesLineDataDragDropOptions = {
   liveRedraw?: bool,
 }
 type pointEventsOptionsObject = {
-  click?: string,  // ⚪ loose — was `PointClickCallbackFunction`
-  drag?: string,  // ⚪ loose — was `PointDragCallbackFunction`
-  dragStart?: string,  // ⚪ loose — was `PointDragStartCallbackFunction`
-  drop?: string,  // ⚪ loose — was `PointDropCallbackFunction`
-  legendItemClick?: string,  // ⚪ loose — was `PointLegendItemClickCallbackFunction`
-  mouseOut?: string,  // ⚪ loose — was `PointMouseOutCallbackFunction`
-  mouseOver?: string,  // ⚪ loose — was `PointMouseOverCallbackFunction`
-  remove?: string,  // ⚪ loose — was `PointRemoveCallbackFunction`
-  select?: string,  // ⚪ loose — was `PointSelectCallbackFunction`
-  unselect?: string,  // ⚪ loose — was `PointUnselectCallbackFunction`
-  update?: string,  // ⚪ loose — was `PointUpdateCallbackFunction`
+  click?: @this ((string, string) => unit),  // ⚪ loose — was `Point`
+  drag?: @this ((string, string) => unit),  // ⚪ loose — was `Point`
+  dragStart?: @this ((string, string) => unit),  // ⚪ loose — was `Point`
+  drop?: @this ((string, string) => unit),  // ⚪ loose — was `Point`
+  legendItemClick?: @this ((string, string) => unit),  // ⚪ loose — was `Point`
+  mouseOut?: @this ((string, string) => unit),  // ⚪ loose — was `Point`
+  mouseOver?: @this ((string, string) => unit),  // ⚪ loose — was `Point`
+  remove?: @this ((string, string) => unit),  // ⚪ loose — was `Point`
+  select?: @this ((string, string) => unit),  // ⚪ loose — was `Point`
+  unselect?: @this ((string, string) => unit),  // ⚪ loose — was `Point`
+  update?: @this ((string, string) => unit),  // ⚪ loose — was `Point`
 }
 type pointMarkerOptionsObject = {
   animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
@@ -651,7 +651,7 @@ type highchartsPointShapeArgsConfig = {
 type seriesZonesOptionsObject = {
   className?: string,
   color?: string,  // ⚪ loose — was `ColorType`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   fillColor?: string,  // ⚪ loose — was `ColorType`
   value?: float,
 }
@@ -809,6 +809,10 @@ module ChartsAnnotationsOptionsAnimation = {
 type positionObject = {
   x: float,
   y: float,
+}
+type annotationControlPoint = {
+  setVisibility: bool => unit,
+  update: string => unit,  // ⚪ loose — was `Partial<AnnotationControlPointOptionsObject>`
 }
 type annotationsControlPointStyleOptions = {
   cursor?: string,
@@ -1212,7 +1216,7 @@ type annotationsLabelOptions = {
   crop?: bool,
   distance?: float,
   format?: string,
-  formatter?: option<point> => string,
+  formatter?: @this ((point, option<point>) => string),
   includeInDataExport?: bool,
   overflow?: optionsOverflowValue,
   padding?: float,
@@ -1238,7 +1242,7 @@ type annotationsLabelsOptions = {
   crop?: bool,
   distance?: float,
   format?: string,
-  formatter?: option<point> => string,
+  formatter?: @this ((point, option<point>) => string),
   includeInDataExport?: bool,
   overflow?: optionsOverflowValue,
   padding?: float,
@@ -1297,31 +1301,6 @@ type annotationsTypeOptions = {
   xAxis?: float,
   yAxis?: float,
 }
-type annotationsTypesCrookedLineLabelOptions = {
-  accessibility?: annotationLabelAccessibilityOptionsObject,
-  align?: alignValue,
-  allowOverlap?: bool,
-  backgroundColor?: ColorType.t,
-  borderColor?: ColorType.t,
-  borderRadius?: float,
-  borderWidth?: float,
-  className?: string,
-  crop?: bool,
-  distance?: float,
-  format?: string,
-  formatter?: option<string> => string,  // ⚪ loose — was `Point`
-  includeInDataExport?: bool,
-  overflow?: optionsOverflowValue,
-  padding?: float,
-  shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
-  shape?: string,
-  style?: cssObject,
-  text?: string,
-  useHTML?: bool,
-  verticalAlign?: verticalAlignValue,
-  x?: float,
-  y?: float,
-}
 type annotationsTypesCrookedLineTypeLineOptions = {
   fill?: string,
 }
@@ -1343,7 +1322,7 @@ type annotationsTypesElliottWaveLabelOptions = {
   crop?: bool,
   distance?: float,
   format?: string,
-  formatter?: option<string> => string,  // ⚪ loose — was `Point`
+  formatter?: @this ((point, option<point>) => string),
   includeInDataExport?: bool,
   overflow?: optionsOverflowValue,
   padding?: float,
@@ -1379,7 +1358,7 @@ type annotationsTypesFibonacciLabelOptions = {
   crop?: bool,
   distance?: float,
   format?: string,
-  formatter?: option<string> => string,  // ⚪ loose — was `Point`
+  formatter?: @this ((point, option<point>) => string),
   includeInDataExport?: bool,
   overflow?: optionsOverflowValue,
   padding?: float,
@@ -1420,13 +1399,13 @@ type annotationsTypesFibonacciTimeZonesTypeOptions = {
   yAxis?: float,
 }
 type annotationsTypesMeasureTypeCrosshairXOptions = {
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   enabled?: bool,
   markerEnd?: string,
   zIndex?: int,
 }
 type annotationsTypesMeasureTypeCrosshairYOptions = {
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   enabled?: bool,
   markerEnd?: string,  // ⚪ loose — was `OptionsMarkerEndValue`
   zIndex?: int,
@@ -1448,7 +1427,7 @@ type annotationsTypesMeasureTypeOptions = {
   yAxis?: float,
 }
 type annotationsTypesPitchforkTypeInnerBackgroundOptions = {
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   fill?: string,
   ry?: float,
   snap?: float,
@@ -1477,7 +1456,7 @@ type annotationsTypesVerticalLineLabelOptions = {
   crop?: bool,
   distance?: float,
   format?: string,
-  formatter?: option<string> => string,  // ⚪ loose — was `Point`
+  formatter?: @this ((point, option<point>) => string),
   includeInDataExport?: bool,
   overflow?: optionsOverflowValue,
   padding?: float,
@@ -1491,7 +1470,7 @@ type annotationsTypesVerticalLineLabelOptions = {
   y?: float,
 }
 type annotationsTypesVerticalLineTypeConnectorOptions = {
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   fill?: string,  // ⚪ loose — was `ColorType`
   markerEnd?: string,
   ry?: float,
@@ -1503,8 +1482,8 @@ type annotationsTypesVerticalLineTypeConnectorOptions = {
   yAxis?: float,
 }
 type annotationsTypesVerticalLineTypeLabelOptions = {
-  accessibility?: string,  // ⚪ loose — was `AnnotationLabelAccessibilityOptionsObject`
-  align?: string,  // ⚪ loose — was `AlignValue`
+  accessibility?: annotationLabelAccessibilityOptionsObject,
+  align?: alignValue,
   allowOverlap?: bool,
   backgroundColor?: string,
   borderColor?: string,  // ⚪ loose — was `ColorType`
@@ -1514,17 +1493,17 @@ type annotationsTypesVerticalLineTypeLabelOptions = {
   crop?: bool,
   distance?: float,
   format?: string,
-  formatter?: string,  // ⚪ loose — was `FormatterCallbackFunction<Point>`
+  formatter?: @this ((point, option<point>) => string),
   includeInDataExport?: bool,
   offset?: float,
-  overflow?: string,  // ⚪ loose — was `OptionsOverflowValue`
+  overflow?: optionsOverflowValue,
   padding?: float,
   shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
   shape?: string,
-  style?: string,  // ⚪ loose — was `CSSObject`
+  style?: cssObject,
   text?: string,
   useHTML?: bool,
-  verticalAlign?: string,  // ⚪ loose — was `VerticalAlignValue`
+  verticalAlign?: verticalAlignValue,
   x?: float,
   y?: float,
 }
@@ -1551,7 +1530,7 @@ type rec annotationsTypesTunnelTypeOptions<'b> = {
 }
 and annotationsTypesTunnelOptions<'b> = {
   controlPointOptions?: annotationControlPointOptionsObject<'b>,
-  labelOptions?: annotationsTypesCrookedLineLabelOptions,
+  labelOptions?: annotationsLabelOptions,
   typeOptions?: annotationsTypesTunnelTypeOptions<'b>,
 }
 and annotationsTypesTimeCyclesOptions<'b> = {
@@ -1560,7 +1539,7 @@ and annotationsTypesTimeCyclesOptions<'b> = {
 }
 and annotationsTypesPitchforkOptions<'b> = {
   controlPointOptions?: annotationControlPointOptionsObject<'b>,
-  labelOptions?: annotationsTypesCrookedLineLabelOptions,
+  labelOptions?: annotationsLabelOptions,
   typeOptions?: annotationsTypesPitchforkTypeOptions,
 }
 and annotationsTypesMeasureOptions<'b> = {
@@ -1569,7 +1548,7 @@ and annotationsTypesMeasureOptions<'b> = {
 }
 and annotationsTypesFibonacciTimeZonesOptions<'b> = {
   controlPointOptions?: annotationControlPointOptionsObject<'b>,
-  labelOptions?: annotationsTypesCrookedLineLabelOptions,
+  labelOptions?: annotationsLabelOptions,
   typeOptions?: annotationsTypesFibonacciTimeZonesTypeOptions,
 }
 and annotationsTypesFibonacciOptions<'b> = {
@@ -1584,7 +1563,7 @@ and annotationsTypesElliottWaveOptions<'b> = {
 }
 and annotationsTypesCrookedLineOptions<'b> = {
   controlPointOptions?: annotationControlPointOptionsObject<'b>,
-  labelOptions?: annotationsTypesCrookedLineLabelOptions,
+  labelOptions?: annotationsLabelOptions,
   typeOptions?: annotationsTypesCrookedLineTypeOptions,
 }
 and annotationsTypesOptions<'b> = {
@@ -1600,11 +1579,11 @@ and annotationsTypesOptions<'b> = {
   verticalLine?: annotationsTypesVerticalLineOptions,
 }
 and annotationsEventsOptions<'b> = {
-  add?: (option<string>, option<annotation<'b>>) => bool,  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  afterUpdate?: (option<string>, option<annotation<'b>>) => bool,  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  click?: (option<string>, option<annotation<'b>>) => bool,  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  drag?: (option<string>, option<annotation<'b>>) => bool,  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  remove?: (option<string>, option<annotation<'b>>) => bool,  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  add?: @this ((annotation<'b>, option<string>, option<annotation<'b>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  afterUpdate?: @this ((annotation<'b>, option<string>, option<annotation<'b>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  click?: @this ((annotation<'b>, option<string>, option<annotation<'b>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  drag?: @this ((annotation<'b>, option<string>, option<annotation<'b>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  remove?: @this ((annotation<'b>, option<string>, option<annotation<'b>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
 }
 and annotation<'b> = {
   chart: chart,
@@ -1620,12 +1599,12 @@ and annotationControllable<'b> = {
   annotation: annotation<'b>,
   chart: chart,
   collection: string,
-  points: array<string>,  // ⚪ loose — was `Point`
+  points: array<point>,
 }
 and annotationControlPointOptionsObject<'b> = {
   events?: 'b,
   height?: float,
-  positioner?: annotationControllable<'b> => positionObject,
+  positioner?: @this ((annotationControlPoint, annotationControllable<'b>) => positionObject),
   style?: ChartsAnnotationControlPointOptionsObjectStyle.t,
   symbol?: string,
   visible?: bool,
@@ -1713,7 +1692,7 @@ type seriesAbandsOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotAbandsDataLabelsOptions | PlotAbandsDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotAbandsDataSortingOptions`
@@ -1735,7 +1714,7 @@ type seriesAbandsOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -1753,7 +1732,7 @@ type seriesAbandsOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -1799,7 +1778,7 @@ type seriesAdOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotAdDataLabelsOptions | PlotAdDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotAdDataSortingOptions`
@@ -1820,7 +1799,7 @@ type seriesAdOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -1838,7 +1817,7 @@ type seriesAdOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -1884,7 +1863,7 @@ type seriesAoOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotAoDataLabelsOptions | PlotAoDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotAoDataSortingOptions`
@@ -1908,7 +1887,7 @@ type seriesAoOptions = {
   lineWidth?: float,
   linkedTo?: string,
   lowerBarColor?: string,  // ⚪ loose — was `ColorType`
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -1927,7 +1906,7 @@ type seriesAoOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -1973,7 +1952,7 @@ type seriesApoOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotApoDataLabelsOptions | PlotApoDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotApoDataSortingOptions`
@@ -1994,7 +1973,7 @@ type seriesApoOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -2012,7 +1991,7 @@ type seriesApoOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -2058,7 +2037,7 @@ type seriesArcdiagramOptions = {
   colors?: string,  // ⚪ loose — was `ColorType[]`
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `SeriesArcDiagramDataLabelsOptionsObject | SeriesArcDiagramDataLabelsOptionsObject[]`
   description?: string,
   enableMouseTracking?: bool,
@@ -2073,7 +2052,7 @@ type seriesArcdiagramOptions = {
   linkColorMode?: string,  // ⚪ loose — was `"from" | "gradient" | "to"`
   linkedTo?: string,
   linkOpacity?: float,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   minLinkWidth?: float,
   nodeDistance?: string,  // ⚪ loose — was `string | number`
   nodeWidth?: string,  // ⚪ loose — was `string | number`
@@ -2089,7 +2068,7 @@ type seriesArcdiagramOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -2131,7 +2110,7 @@ type seriesAreaOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotAreaDataLabelsOptions | PlotAreaDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotAreaDataSortingOptions`
@@ -2157,7 +2136,7 @@ type seriesAreaOptions = {
   lineColor?: string,  // ⚪ loose — was `ColorType`
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   negativeFillColor?: string,  // ⚪ loose — was `ColorType`
@@ -2182,7 +2161,7 @@ type seriesAreaOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -2232,7 +2211,7 @@ type seriesArearangeOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotArearangeDataSortingOptions`
@@ -2258,8 +2237,8 @@ type seriesArearangeOptions = {
   lineColor?: string,  // ⚪ loose — was `ColorType`
   lineWidth?: float,
   linkedTo?: string,
-  lowMarker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  lowMarker?: pointMarkerOptionsObject,
+  marker?: pointMarkerOptionsObject,
   navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   negativeFillColor?: string,  // ⚪ loose — was `ColorType`
@@ -2283,7 +2262,7 @@ type seriesArearangeOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -2329,7 +2308,7 @@ type seriesAreasplineOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotAreasplineDataLabelsOptions | PlotAreasplineDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotAreasplineDataSortingOptions`
@@ -2355,7 +2334,7 @@ type seriesAreasplineOptions = {
   lineColor?: string,  // ⚪ loose — was `ColorType`
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   negativeFillColor?: string,  // ⚪ loose — was `ColorType`
@@ -2380,7 +2359,7 @@ type seriesAreasplineOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -2427,7 +2406,7 @@ type seriesAreasplinerangeOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotAreasplinerangeDataSortingOptions`
@@ -2453,8 +2432,8 @@ type seriesAreasplinerangeOptions = {
   lineColor?: string,  // ⚪ loose — was `ColorType`
   lineWidth?: float,
   linkedTo?: string,
-  lowMarker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  lowMarker?: pointMarkerOptionsObject,
+  marker?: pointMarkerOptionsObject,
   navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   negativeFillColor?: string,  // ⚪ loose — was `ColorType`
@@ -2478,7 +2457,7 @@ type seriesAreasplinerangeOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -2523,7 +2502,7 @@ type seriesAroonOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotAroonDataLabelsOptions | PlotAroonDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotAroonDataSortingOptions`
@@ -2544,7 +2523,7 @@ type seriesAroonOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -2562,7 +2541,7 @@ type seriesAroonOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -2607,7 +2586,7 @@ type seriesAroonoscillatorOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotAroonoscillatorDataLabelsOptions | PlotAroonoscillatorDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotAroonoscillatorDataSortingOptions`
@@ -2628,7 +2607,7 @@ type seriesAroonoscillatorOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -2646,7 +2625,7 @@ type seriesAroonoscillatorOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -2692,7 +2671,7 @@ type seriesBarOptions = {
   cropThreshold?: float,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotBarDataLabelsOptions | PlotBarDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotBarDataSortingOptions`
   depth?: float,
@@ -2739,7 +2718,7 @@ type seriesBarOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -2785,7 +2764,7 @@ type seriesBbOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotBbDataLabelsOptions | PlotBbDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotBbDataSortingOptions`
@@ -2807,7 +2786,7 @@ type seriesBbOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -2825,7 +2804,7 @@ type seriesBbOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -2866,7 +2845,7 @@ type seriesBellcurveOptions = {
   cropThreshold?: float,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotBellcurveDataLabelsOptions | PlotBellcurveDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotBellcurveDataSortingOptions`
   description?: string,
@@ -2889,7 +2868,7 @@ type seriesBellcurveOptions = {
   lineColor?: string,  // ⚪ loose — was `ColorType`
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   negativeFillColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -2909,7 +2888,7 @@ type seriesBellcurveOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -2939,7 +2918,7 @@ type seriesBoxplotOptions = {
   allowPointSelect?: bool,
   animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
   animationLimit?: float,
-  boxDashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  boxDashStyle?: dashStyleValue,
   centerInCategory?: bool,
   className?: string,
   clip?: bool,
@@ -2953,7 +2932,7 @@ type seriesBoxplotOptions = {
   cropThreshold?: float,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotBoxplotDataLabelsOptions | PlotBoxplotDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotBoxplotDataSortingOptions`
   depth?: float,
@@ -2978,7 +2957,7 @@ type seriesBoxplotOptions = {
   linkedTo?: string,
   maxPointWidth?: float,
   medianColor?: string,  // ⚪ loose — was `ColorType`
-  medianDashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  medianDashStyle?: dashStyleValue,
   medianWidth?: float,
   minPointLength?: float,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
@@ -3005,7 +2984,7 @@ type seriesBoxplotOptions = {
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
   stemColor?: string,  // ⚪ loose — was `ColorType`
-  stemDashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  stemDashStyle?: dashStyleValue,
   stemWidth?: float,
   stickyTracking?: bool,
   threshold?: float,
@@ -3013,7 +2992,7 @@ type seriesBoxplotOptions = {
   turboThreshold?: float,
   visible?: bool,
   whiskerColor?: string,  // ⚪ loose — was `ColorType`
-  whiskerDashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  whiskerDashStyle?: dashStyleValue,
   whiskerLength?: string,  // ⚪ loose — was `string | number`
   whiskerWidth?: float,
   zoneAxis?: string,
@@ -3056,7 +3035,7 @@ type seriesBubbleOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotBubbleDataLabelsOptions | PlotBubbleDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotBubbleDataSortingOptions`
@@ -3080,7 +3059,7 @@ type seriesBubbleOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   maxSize?: string,  // ⚪ loose — was `string | number`
   minSize?: string,  // ⚪ loose — was `string | number`
   navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
@@ -3106,7 +3085,7 @@ type seriesBubbleOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -3152,7 +3131,7 @@ type seriesBulletOptions = {
   cropThreshold?: float,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotBulletDataLabelsOptions | PlotBulletDataLabelsOptions[]`
   depth?: float,
   description?: string,
@@ -3198,7 +3177,7 @@ type seriesBulletOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   targetOptions?: string,  // ⚪ loose — was `PlotBulletTargetOptions`
   threshold?: float,
@@ -3246,7 +3225,7 @@ type seriesCandlestickOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotCandlestickDataLabelsOptions | PlotCandlestickDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotCandlestickDataSortingOptions`
@@ -3296,7 +3275,7 @@ type seriesCandlestickOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -3343,7 +3322,7 @@ type seriesCciOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotCciDataLabelsOptions | PlotCciDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotCciDataSortingOptions`
@@ -3364,7 +3343,7 @@ type seriesCciOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -3382,7 +3361,7 @@ type seriesCciOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -3426,7 +3405,7 @@ type seriesCmfOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotCmfDataLabelsOptions | PlotCmfDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotCmfDataSortingOptions`
@@ -3447,7 +3426,7 @@ type seriesCmfOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -3465,7 +3444,7 @@ type seriesCmfOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -3516,7 +3495,7 @@ type seriesColumnOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotColumnDataLabelsOptions | PlotColumnDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotColumnDataSortingOptions`
@@ -3568,7 +3547,7 @@ type seriesColumnOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -3615,7 +3594,7 @@ type seriesColumnpyramidOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotColumnpyramidDataLabelsOptions | PlotColumnpyramidDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotColumnpyramidDataSortingOptions`
@@ -3661,7 +3640,7 @@ type seriesColumnpyramidOptions = {
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -3710,7 +3689,7 @@ type seriesColumnrangeOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotColumnrangeDataSortingOptions`
@@ -3759,7 +3738,7 @@ type seriesColumnrangeOptions = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -3820,7 +3799,7 @@ type seriesContourOptions = {
   legendSymbol?: string,  // ⚪ loose — was `OptionsLegendSymbolValue`
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotContourOnPointOptions`
@@ -3835,7 +3814,7 @@ type seriesContourOptions = {
   skipKeyboardNavigation?: bool,
   smoothColoring?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -3875,7 +3854,7 @@ type seriesCylinderOptions = {
   cropThreshold?: float,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotCylinderDataLabelsOptions | PlotCylinderDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotCylinderDataSortingOptions`
   depth?: float,
@@ -3921,7 +3900,7 @@ type seriesCylinderOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -3965,7 +3944,7 @@ type seriesDemaOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotDemaDataLabelsOptions | PlotDemaDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotDemaDataSortingOptions`
@@ -3986,7 +3965,7 @@ type seriesDemaOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -4004,7 +3983,7 @@ type seriesDemaOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -4044,7 +4023,7 @@ type seriesDependencywheelOptions = {
   cursor?: string,
   curveFactor?: float,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `SeriesSankeyDataLabelsOptionsObject | SeriesSankeyDataLabelsOptionsObject[]`
   description?: string,
   enableMouseTracking?: bool,
@@ -4076,7 +4055,7 @@ type seriesDependencywheelOptions = {
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   startAngle?: float,
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -4119,7 +4098,7 @@ type seriesDisparityindexOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotDisparityindexDataLabelsOptions | PlotDisparityindexDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotDisparityindexDataSortingOptions`
@@ -4140,7 +4119,7 @@ type seriesDisparityindexOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -4158,7 +4137,7 @@ type seriesDisparityindexOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -4204,7 +4183,7 @@ type seriesDmiOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotDmiDataLabelsOptions | PlotDmiDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotDmiDataSortingOptions`
@@ -4225,7 +4204,7 @@ type seriesDmiOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   minusDILine?: string,  // ⚪ loose — was `PlotDmiMinusDILineOptions`
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
@@ -4245,7 +4224,7 @@ type seriesDmiOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -4289,7 +4268,7 @@ type seriesDpoOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotDpoDataLabelsOptions | PlotDpoDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotDpoDataSortingOptions`
@@ -4310,7 +4289,7 @@ type seriesDpoOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -4328,7 +4307,7 @@ type seriesDpoOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -4374,7 +4353,7 @@ type seriesDumbbellOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotDumbbellDataSortingOptions`
@@ -4399,8 +4378,8 @@ type seriesDumbbellOptions = {
   lineColor?: string,  // ⚪ loose — was `ColorType`
   linkedTo?: string,
   lowColor?: string,  // ⚪ loose — was `ColorType`
-  lowMarker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  lowMarker?: pointMarkerOptionsObject,
+  marker?: pointMarkerOptionsObject,
   navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   negativeFillColor?: string,  // ⚪ loose — was `ColorType`
@@ -4425,7 +4404,7 @@ type seriesDumbbellOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -4476,7 +4455,7 @@ type seriesFlagsOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotFlagsDataLabelsOptions | PlotFlagsDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotFlagsDataSortingOptions`
   description?: string,
@@ -4529,9 +4508,9 @@ type seriesFlagsOptions = {
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stackDistance?: float,
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
-  style?: string,  // ⚪ loose — was `CSSObject`
+  style?: cssObject,
   textAlign?: string,  // ⚪ loose — was `OptionsTextAlignValue`
   title?: string,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -4596,7 +4575,7 @@ type seriesFlowmapOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   visible?: bool,
@@ -4635,7 +4614,7 @@ type seriesFunnel3dOptions = {
   cropThreshold?: float,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotFunnel3dDataLabelsOptions | PlotFunnel3dDataLabelsOptions[]`
   depth?: float,
   description?: string,
@@ -4686,7 +4665,7 @@ type seriesFunnel3dOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -4767,7 +4746,7 @@ type seriesFunnelOptions = {
   slicedOffset?: float,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   startAngle?: float,
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   thickness?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -4801,7 +4780,7 @@ type seriesGanttOptions = {
   connectors?: string,  // ⚪ loose — was `SeriesConnectorsOptionsObject`
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotGanttDataLabelsOptions | PlotGanttDataLabelsOptions[]`
   description?: string,
   dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
@@ -4832,7 +4811,7 @@ type seriesGanttOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -4936,7 +4915,7 @@ type seriesGeoheatmapOptions = {
   colsize?: float,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotGeoheatmapDataLabelsOptions | PlotGeoheatmapDataLabelsOptions[]`
   description?: string,
   enableMouseTracking?: bool,
@@ -4958,7 +4937,7 @@ type seriesGeoheatmapOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   visible?: bool,
@@ -5011,7 +4990,7 @@ type seriesHeatmapOptions = {
   label?: string,  // ⚪ loose — was `SeriesLabelOptionsObject`
   legendSymbol?: string,  // ⚪ loose — was `OptionsLegendSymbolValue`
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -5028,7 +5007,7 @@ type seriesHeatmapOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -5073,7 +5052,7 @@ type seriesHistogramOptions = {
   cropThreshold?: float,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotHistogramDataLabelsOptions | PlotHistogramDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotHistogramDataSortingOptions`
   depth?: float,
@@ -5116,7 +5095,7 @@ type seriesHistogramOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -5163,7 +5142,7 @@ type seriesHlcOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotHlcDataLabelsOptions | PlotHlcDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotHlcDataSortingOptions`
@@ -5212,7 +5191,7 @@ type seriesHlcOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -5258,7 +5237,7 @@ type seriesHollowcandlestickOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotHollowcandlestickDataLabelsOptions | PlotHollowcandlestickDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotHollowcandlestickDataSortingOptions`
@@ -5308,7 +5287,7 @@ type seriesHollowcandlestickOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -5354,7 +5333,7 @@ type seriesIkhOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotIkhDataLabelsOptions | PlotIkhDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotIkhDataSortingOptions`
@@ -5376,7 +5355,7 @@ type seriesIkhOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -5397,7 +5376,7 @@ type seriesIkhOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   tenkanLine?: string,  // ⚪ loose — was `PlotIkhTenkanLineOptions`
@@ -5457,7 +5436,7 @@ type seriesItemOptions = {
   layout?: string,
   legendSymbol?: string,  // ⚪ loose — was `OptionsLegendSymbolValue`
   legendSymbolColor?: string,  // ⚪ loose — was `ColorType`
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   minSize?: string,  // ⚪ loose — was `string | number`
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotItemOnPointOptions`
@@ -5474,7 +5453,7 @@ type seriesItemOptions = {
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   startAngle?: float,
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   thickness?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -5513,7 +5492,7 @@ type seriesKeltnerchannelsOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotKeltnerchannelsDataLabelsOptions | PlotKeltnerchannelsDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotKeltnerchannelsDataSortingOptions`
@@ -5535,7 +5514,7 @@ type seriesKeltnerchannelsOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -5553,7 +5532,7 @@ type seriesKeltnerchannelsOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -5599,7 +5578,7 @@ type seriesKlingerOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotKlingerDataLabelsOptions | PlotKlingerDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotKlingerDataSortingOptions`
@@ -5620,7 +5599,7 @@ type seriesKlingerOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -5639,7 +5618,7 @@ type seriesKlingerOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -5686,7 +5665,7 @@ type seriesLineOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotLineDataLabelsOptions | PlotLineDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotLineDataSortingOptions`
@@ -5709,7 +5688,7 @@ type seriesLineOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -5733,7 +5712,7 @@ type seriesLineOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -5781,7 +5760,7 @@ type seriesLollipopOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotLollipopDataSortingOptions`
@@ -5805,8 +5784,8 @@ type seriesLollipopOptions = {
   linecap?: string,
   lineColor?: string,  // ⚪ loose — was `ColorType`
   linkedTo?: string,
-  lowMarker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  lowMarker?: pointMarkerOptionsObject,
+  marker?: pointMarkerOptionsObject,
   navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   negativeFillColor?: string,  // ⚪ loose — was `ColorType`
@@ -5831,7 +5810,7 @@ type seriesLollipopOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -5876,7 +5855,7 @@ type seriesMacdOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotMacdDataLabelsOptions | PlotMacdDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotMacdDataSortingOptions`
@@ -5899,7 +5878,7 @@ type seriesMacdOptions = {
   lineWidth?: float,
   linkedTo?: string,
   macdLine?: string,  // ⚪ loose — was `PlotMacdMacdLineOptions`
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   minPointLength?: float,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
@@ -5920,7 +5899,7 @@ type seriesMacdOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -5960,7 +5939,7 @@ type seriesMapbubbleOptions = {
   colorKey?: string,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotMapbubbleDataLabelsOptions | PlotMapbubbleDataLabelsOptions[]`
   description?: string,
   displayNegative?: bool,
@@ -5976,7 +5955,7 @@ type seriesMapbubbleOptions = {
   linecap?: string,
   lineColor?: string,  // ⚪ loose — was `ColorType`
   lineWidth?: float,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   maxSize?: string,  // ⚪ loose — was `string | number`
   minSize?: string,  // ⚪ loose — was `string | number`
   onPoint?: string,  // ⚪ loose — was `object | PlotMapbubbleOnPointOptions`
@@ -5990,7 +5969,7 @@ type seriesMapbubbleOptions = {
   sizeBy?: string,  // ⚪ loose — was `BubbleSizeByValue`
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   visible?: bool,
@@ -6028,7 +6007,7 @@ type seriesMaplineOptions = {
   colors?: string,  // ⚪ loose — was `ColorType[]`
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotMaplineDataLabelsOptions | PlotMaplineDataLabelsOptions[]`
   description?: string,
   enableMouseTracking?: bool,
@@ -6054,7 +6033,7 @@ type seriesMaplineOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   visible?: bool,
@@ -6092,7 +6071,7 @@ type seriesMapOptions = {
   colors?: string,  // ⚪ loose — was `ColorType[]`
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotMapDataLabelsOptions | PlotMapDataLabelsOptions[]`
   description?: string,
   enableMouseTracking?: bool,
@@ -6116,7 +6095,7 @@ type seriesMapOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   visible?: bool,
@@ -6151,7 +6130,7 @@ type seriesMappointOptions = {
   colorKey?: string,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotMappointDataLabelsOptions | PlotMappointDataLabelsOptions[]`
   description?: string,
   dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
@@ -6164,7 +6143,7 @@ type seriesMappointOptions = {
   keys?: string,  // ⚪ loose — was `string[]`
   legendSymbol?: string,  // ⚪ loose — was `OptionsLegendSymbolValue`
   linecap?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   onPoint?: string,  // ⚪ loose — was `object | PlotMappointOnPointOptions`
   opacity?: float,
@@ -6176,7 +6155,7 @@ type seriesMappointOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   visible?: bool,
@@ -6207,7 +6186,7 @@ type seriesNetworkgraphOptions = {
   crisp?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `SeriesNetworkgraphDataLabelsOptionsObject | SeriesNetworkgraphDataLabelsOptionsObject[]`
   description?: string,
   draggable?: bool,
@@ -6225,7 +6204,7 @@ type seriesNetworkgraphOptions = {
   lineWidth?: float,
   link?: string,  // ⚪ loose — was `PlotNetworkgraphLinkOptions`
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotNetworkgraphOnPointOptions`
   opacity?: float,
@@ -6239,7 +6218,7 @@ type seriesNetworkgraphOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -6281,7 +6260,7 @@ type seriesOhlcOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotOhlcDataLabelsOptions | PlotOhlcDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotOhlcDataSortingOptions`
@@ -6330,7 +6309,7 @@ type seriesOhlcOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -6367,7 +6346,7 @@ type seriesOrganizationOptions = {
   colors?: string,  // ⚪ loose — was `ColorType[]`
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `SeriesOrganizationDataLabelsOptionsObject | SeriesOrganizationDataLabelsOptionsObject[]`
   description?: string,
   enableMouseTracking?: bool,
@@ -6375,7 +6354,7 @@ type seriesOrganizationOptions = {
   getExtremesFromAll?: bool,
   hangingIndent?: float,
   hangingIndentTranslation?: string,  // ⚪ loose — was `OrganizationHangingIndentTranslationValue`
-  hangingSide?: string,  // ⚪ loose — was `"left" | "right"`
+  hangingSide?: TagsTypes.tagsSplitTagPosition,
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
   keys?: string,  // ⚪ loose — was `string[]`
@@ -6404,7 +6383,7 @@ type seriesOrganizationOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -6439,7 +6418,7 @@ type seriesPackedbubbleOptions = {
   crisp?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `SeriesPackedBubbleDataLabelsOptionsObject | SeriesPackedBubbleDataLabelsOptionsObject[]`
   description?: string,
   displayNegative?: bool,
@@ -6458,7 +6437,7 @@ type seriesPackedbubbleOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   maxSize?: string,  // ⚪ loose — was `string | number`
   minSize?: string,  // ⚪ loose — was `string | number`
   negativeColor?: string,  // ⚪ loose — was `ColorType`
@@ -6481,7 +6460,7 @@ type seriesPackedbubbleOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -6523,7 +6502,7 @@ type seriesParetoOptions = {
   cropThreshold?: float,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotParetoDataLabelsOptions | PlotParetoDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotParetoDataSortingOptions`
   description?: string,
@@ -6538,7 +6517,7 @@ type seriesParetoOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotParetoOnPointOptions`
   opacity?: float,
@@ -6551,7 +6530,7 @@ type seriesParetoOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -6636,7 +6615,7 @@ type seriesPictorialOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -6715,7 +6694,7 @@ type seriesPieOptions = {
   slicedOffset?: float,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   startAngle?: float,
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   thickness?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -6746,7 +6725,7 @@ type seriesPointandfigureOptions = {
   crisp?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `PlotPointandfigureDataGroupingOptions`
   dataLabels?: string,  // ⚪ loose — was `PlotPointandfigureDataLabelsOptions | PlotPointandfigureDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotPointandfigureDataSortingOptions`
@@ -6769,8 +6748,8 @@ type seriesPointandfigureOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
-  markerUp?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
+  markerUp?: pointMarkerOptionsObject,
   navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -6794,7 +6773,7 @@ type seriesPointandfigureOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -6840,7 +6819,7 @@ type seriesPolygonOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotPolygonDataLabelsOptions | PlotPolygonDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotPolygonDataSortingOptions`
@@ -6862,7 +6841,7 @@ type seriesPolygonOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -6883,7 +6862,7 @@ type seriesPolygonOptions = {
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -6929,7 +6908,7 @@ type seriesPriceenvelopesOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotPriceenvelopesDataLabelsOptions | PlotPriceenvelopesDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotPriceenvelopesDataSortingOptions`
@@ -6950,7 +6929,7 @@ type seriesPriceenvelopesOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -6968,7 +6947,7 @@ type seriesPriceenvelopesOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -7011,7 +6990,7 @@ type seriesPyramid3dOptions = {
   cropThreshold?: float,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotPyramid3dDataLabelsOptions | PlotPyramid3dDataLabelsOptions[]`
   depth?: float,
   description?: string,
@@ -7061,7 +7040,7 @@ type seriesPyramid3dOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -7142,7 +7121,7 @@ type seriesPyramidOptions = {
   slicedOffset?: float,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   startAngle?: float,
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   thickness?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -7220,7 +7199,7 @@ type seriesRenkoOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -7269,7 +7248,7 @@ type seriesSankeyOptions = {
   cursor?: string,
   curveFactor?: float,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `SeriesSankeyDataLabelsOptionsObject | SeriesSankeyDataLabelsOptionsObject[]`
   description?: string,
   enableMouseTracking?: bool,
@@ -7301,7 +7280,7 @@ type seriesSankeyOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -7335,7 +7314,7 @@ type seriesScatter3dOptions = {
   crisp?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotScatter3dDataLabelsOptions | PlotScatter3dDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotScatter3dDataSortingOptions`
   description?: string,
@@ -7354,7 +7333,7 @@ type seriesScatter3dOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotScatter3dOnPointOptions`
@@ -7373,7 +7352,7 @@ type seriesScatter3dOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -7422,7 +7401,7 @@ type seriesScatterOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotScatterDataLabelsOptions | PlotScatterDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotScatterDataSortingOptions`
@@ -7445,7 +7424,7 @@ type seriesScatterOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -7467,7 +7446,7 @@ type seriesScatterOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -7512,7 +7491,7 @@ type seriesSlowstochasticOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotSlowstochasticDataLabelsOptions | PlotSlowstochasticDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotSlowstochasticDataSortingOptions`
@@ -7533,7 +7512,7 @@ type seriesSlowstochasticOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -7552,7 +7531,7 @@ type seriesSlowstochasticOptions = {
   smoothedLine?: string,  // ⚪ loose — was `PlotSlowstochasticSmoothedLineOptions`
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -7598,7 +7577,7 @@ type seriesSmaOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotSmaDataLabelsOptions | PlotSmaDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotSmaDataSortingOptions`
@@ -7619,7 +7598,7 @@ type seriesSmaOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -7637,7 +7616,7 @@ type seriesSmaOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -7751,7 +7730,7 @@ type seriesSplineOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotSplineDataLabelsOptions | PlotSplineDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotSplineDataSortingOptions`
@@ -7774,7 +7753,7 @@ type seriesSplineOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -7798,7 +7777,7 @@ type seriesSplineOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -7844,7 +7823,7 @@ type seriesStochasticOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotStochasticDataLabelsOptions | PlotStochasticDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotStochasticDataSortingOptions`
@@ -7865,7 +7844,7 @@ type seriesStochasticOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -7884,7 +7863,7 @@ type seriesStochasticOptions = {
   smoothedLine?: string,  // ⚪ loose — was `PlotStochasticSmoothedLineOptions`
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -7929,7 +7908,7 @@ type seriesStreamgraphOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotStreamgraphDataLabelsOptions | PlotStreamgraphDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotStreamgraphDataSortingOptions`
@@ -7955,7 +7934,7 @@ type seriesStreamgraphOptions = {
   lineColor?: string,  // ⚪ loose — was `ColorType`
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   negativeFillColor?: string,  // ⚪ loose — was `ColorType`
@@ -7980,7 +7959,7 @@ type seriesStreamgraphOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -8054,7 +8033,7 @@ type seriesSunburstOptions = {
   slicedOffset?: float,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   startAngle?: float,
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   thickness?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -8097,7 +8076,7 @@ type seriesSupertrendOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotSupertrendDataLabelsOptions | PlotSupertrendDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotSupertrendDataSortingOptions`
@@ -8119,7 +8098,7 @@ type seriesSupertrendOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotSupertrendOnPointOptions`
@@ -8137,7 +8116,7 @@ type seriesSupertrendOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -8178,7 +8157,7 @@ type seriesTiledwebmapOptions = {
   provider?: string,  // ⚪ loose — was `PlotTiledwebmapProviderOptions`
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   visible?: bool,
   zIndex?: int,
   zoomEnabled?: bool,
@@ -8245,7 +8224,7 @@ type seriesTilemapOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tileShape?: string,  // ⚪ loose — was `TilemapShapeValue`
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -8298,7 +8277,7 @@ type seriesTimelineOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotTimelineOnPointOptions`
   opacity?: float,
@@ -8312,7 +8291,7 @@ type seriesTimelineOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   visible?: bool,
@@ -8372,7 +8351,7 @@ type seriesTreegraphOptions = {
   levels?: string,  // ⚪ loose — was `PlotTreegraphLevelsOptions[]`
   link?: string,  // ⚪ loose — was `PlotTreegraphLinkOptions`
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   nodeDistance?: string,  // ⚪ loose — was `string | number`
   nodeSizeBy?: string,  // ⚪ loose — was `OptionsNodeSizeByValue`
   nodeWidth?: string,  // ⚪ loose — was `string | number`
@@ -8394,7 +8373,7 @@ type seriesTreegraphOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -8438,7 +8417,7 @@ type seriesTreemapOptions = {
   cropThreshold?: float,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotTreemapDataLabelsOptions | PlotTreemapDataLabelsOptions[]`
   description?: string,
   enableMouseTracking?: bool,
@@ -8482,7 +8461,7 @@ type seriesTreemapOptions = {
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   sortIndex?: float,
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -8564,7 +8543,7 @@ type seriesVariablepieOptions = {
   slicedOffset?: float,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   startAngle?: float,
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   thickness?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -8601,7 +8580,7 @@ type seriesVariwideOptions = {
   cropThreshold?: float,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotVariwideDataLabelsOptions | PlotVariwideDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotVariwideDataSortingOptions`
   description?: string,
@@ -8644,7 +8623,7 @@ type seriesVariwideOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -8689,7 +8668,7 @@ type seriesVbpOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotVbpDataLabelsOptions | PlotVbpDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotVbpDataSortingOptions`
@@ -8710,7 +8689,7 @@ type seriesVbpOptions = {
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
-  marker?: string,  // ⚪ loose — was `PointMarkerOptionsObject`
+  marker?: pointMarkerOptionsObject,
   name?: string,
   negativeColor?: string,  // ⚪ loose — was `ColorType`
   nullInteraction?: bool,
@@ -8729,7 +8708,7 @@ type seriesVbpOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   threshold?: float,
@@ -8812,7 +8791,7 @@ type seriesVectorOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -8858,7 +8837,7 @@ type seriesVennOptions = {
   crisp?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotVennDataLabelsOptions | PlotVennDataLabelsOptions[]`
   description?: string,
   enableMouseTracking?: bool,
@@ -8881,7 +8860,7 @@ type seriesVennOptions = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   step?: string,  // ⚪ loose — was `OptionsStepValue`
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -8920,7 +8899,7 @@ type seriesWaterfallOptions = {
   cropThreshold?: float,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataLabels?: string,  // ⚪ loose — was `PlotWaterfallDataLabelsOptions | PlotWaterfallDataLabelsOptions[]`
   dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotWaterfallDataSortingOptions`
   depth?: float,
@@ -8969,7 +8948,7 @@ type seriesWaterfallOptions = {
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -9068,7 +9047,7 @@ type seriesWindbarbOptions = {
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -9109,7 +9088,7 @@ type seriesWordcloudOptions = {
   colors?: string,  // ⚪ loose — was `ColorType[]`
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   description?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
@@ -9137,9 +9116,9 @@ type seriesWordcloudOptions = {
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
   spiral?: string,  // ⚪ loose — was `OptionsSpiralValue`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
-  style?: string,  // ⚪ loose — was `CSSObject`
+  style?: cssObject,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
   visible?: bool,
@@ -9184,7 +9163,7 @@ type seriesXrangeOptions = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: string,  // ⚪ loose — was `Dictionary<any>`
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
   dataLabels?: string,  // ⚪ loose — was `PlotXrangeDataLabelsOptions | PlotXrangeDataLabelsOptions[]`
   description?: string,
@@ -9224,7 +9203,7 @@ type seriesXrangeOptions = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: string,  // ⚪ loose — was `SeriesStatesOptionsObject`
+  states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
@@ -9395,7 +9374,7 @@ type exportDataEventObject = {
   dataRows: array<array<string>>,
 }
 type selectDataObject = {
-  axis: string,  // ⚪ loose — was `Axis`
+  axis: axis,
   max: float,
   min: float,
 }
@@ -9407,20 +9386,20 @@ type selectEventObject = {
   yAxis: array<selectDataObject>,
 }
 type chartEventsOptions = {
-  addSeries?: chartAddSeriesEventObject => unit,
-  afterPrint?: Dom.event => unit,
-  beforePrint?: Dom.event => unit,
-  click?: pointerEventObject => unit,
-  drilldown?: drilldownEventObject => unit,
-  drillup?: drillupEventObject => unit,
-  drillupall?: drillupAllEventObject => unit,
-  exportData?: exportDataEventObject => unit,
+  addSeries?: @this ((chart, chartAddSeriesEventObject) => unit),
+  afterPrint?: @this ((chart, Dom.event) => unit),
+  beforePrint?: @this ((chart, Dom.event) => unit),
+  click?: @this ((chart, pointerEventObject) => unit),
+  drilldown?: @this ((chart, drilldownEventObject) => unit),
+  drillup?: @this ((chart, drillupEventObject) => unit),
+  drillupall?: @this ((chart, drillupAllEventObject) => unit),
+  exportData?: @this ((chart, exportDataEventObject) => unit),
   fullscreenClose?: (chart, Dom.event) => unit,
   fullscreenOpen?: (chart, Dom.event) => unit,
-  load?: Dom.event => unit,
-  redraw?: Dom.event => unit,
-  render?: Dom.event => unit,
-  selection?: selectEventObject => bool,
+  load?: @this ((chart, Dom.event) => unit),
+  redraw?: @this ((chart, Dom.event) => unit),
+  render?: @this ((chart, Dom.event) => unit),
+  selection?: @this ((chart, selectEventObject) => bool),
 }
 type chart3dFrameBackOptions = {
   color?: ColorType.t,
@@ -9480,21 +9459,21 @@ type axisSetExtremesEventObject = {
 }
 type axisPointBreakEventObject = {
   brk: string,  // ⚪ loose — was `Dictionary<number>`
-  point: string,  // ⚪ loose — was `Point`
+  point: point,
   preventDefault: string,  // ⚪ loose — was `Function`
   target: string,  // ⚪ loose — was `SVGElement`
   @as("type") type_: string,  // ⚪ loose — was `"pointBreak" | "pointInBreak"`
 }
 type chartParallelAxesEventsOptions = {
-  afterBreaks?: unit => unit,
-  afterSetExtremes?: axisSetExtremesEventObject => unit,
-  pointBreak?: axisPointBreakEventObject => unit,
-  pointInBreak?: axisPointBreakEventObject => unit,
-  setExtremes?: axisSetExtremesEventObject => unit,
+  afterBreaks?: @this ((axis) => unit),
+  afterSetExtremes?: @this ((axis, axisSetExtremesEventObject) => unit),
+  pointBreak?: @this ((axis, axisPointBreakEventObject) => unit),
+  pointInBreak?: @this ((axis, axisPointBreakEventObject) => unit),
+  setExtremes?: @this ((axis, axisSetExtremesEventObject) => unit),
 }
 type axisLabelsFormatterContextObject = {
-  axis: string,  // ⚪ loose — was `Axis`
-  chart: string,  // ⚪ loose — was `Chart`
+  axis: axis,
+  chart: chart,
   dateTimeLabelFormat?: string,
   isFirst: bool,
   isLast: bool,
@@ -9519,7 +9498,7 @@ type chartParallelAxesLabelsOptions = {
   distance?: CommonTypes.stringOrNumber,
   enabled?: bool,
   format?: string,
-  formatter?: axisLabelsFormatterContextObject => string,
+  formatter?: @this ((axisLabelsFormatterContextObject, axisLabelsFormatterContextObject) => string),
   overflow?: optionsOverflowValue,
   padding?: float,
   position3d?: optionsPosition3dValue,
@@ -9539,13 +9518,6 @@ type yAxisBreaksOptions = {
   from?: string,  // ⚪ loose — was `string | number`
   repeat?: float,
   @as("to") to_?: string,  // ⚪ loose — was `string | number`
-}
-type yAxisEventsOptions = {
-  afterBreaks?: unit => unit,
-  afterSetExtremes?: axisSetExtremesEventObject => unit,
-  pointBreak?: axisPointBreakEventObject => unit,
-  pointInBreak?: axisPointBreakEventObject => unit,
-  setExtremes?: axisSetExtremesEventObject => unit,
 }
 type yAxisGridOptions = {
   borderColor?: string,
@@ -9568,7 +9540,7 @@ type yAxisLabelsOptions = {
   distance?: CommonTypes.stringOrNumber,
   enabled?: bool,
   format?: string,
-  formatter?: string => string,  // ⚪ loose — was `AxisLabelsFormatterContextObject`
+  formatter?: @this ((axisLabelsFormatterContextObject, axisLabelsFormatterContextObject) => string),
   indentation?: float,
   levels?: array<string>,  // ⚪ loose — was `YAxisLabelsLevelsOptions`
   overflow?: optionsOverflowValue,
@@ -9607,7 +9579,7 @@ type yAxisPlotLinesOptions = {
   acrossPanes?: bool,
   className?: string,
   color?: string,
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dashStyle?: dashStyleValue,
   events?: string,  // ⚪ loose — was `YAxisPlotLinesEventsOptions`
   id?: string,
   label?: string,  // ⚪ loose — was `YAxisPlotLinesLabelOptions`
@@ -9666,7 +9638,7 @@ type yAxisStackLabelsOptions = {
   crop?: bool,
   enabled?: bool,
   format?: string,
-  formatter?: option<string> => string,  // ⚪ loose — was `StackItemObject`
+  formatter?: @this ((string, option<string>) => string),  // ⚪ loose — was `StackItemObject`
   overflow?: dataLabelsOverflowValue,
   rotation?: float,
   style?: string,  // ⚠️ REVIEW — was `CSSObject | YAxisStackLabelsStyleOptions` — match the real type by hand
@@ -9713,7 +9685,7 @@ type rec yAxisOptions = {
   dateTimeLabelFormats?: axisDateTimeLabelFormatsOptions,
   enabled?: bool,
   endOnTick?: bool,
-  events?: yAxisEventsOptions,
+  events?: chartParallelAxesEventsOptions,
   floor?: float,
   grid?: yAxisGridOptions,
   gridLineColor?: ColorType.t,
@@ -9779,7 +9751,7 @@ type rec yAxisOptions = {
   tickmarkPlacement?: optionsTickmarkPlacementValue,
   tickPixelInterval?: float,
   tickPosition?: optionsTickPositionValue,
-  tickPositioner?: (float, float, option<axis>) => axisTickPositionsArray,
+  tickPositioner?: @this ((axis, float, float, option<axis>) => axisTickPositionsArray),
   tickPositions?: array<float>,
   tickWidth?: float,
   title?: yAxisTitleOptions,
@@ -9869,7 +9841,7 @@ type chartParallelAxesOptions = {
   tickmarkPlacement?: optionsTickmarkPlacementValue,
   tickPixelInterval?: float,
   tickPosition?: optionsTickPositionValue,
-  tickPositioner?: (float, float, option<axis>) => axisTickPositionsArray,
+  tickPositioner?: @this ((axis, float, float, option<axis>) => axisTickPositionsArray),
   tickPositions?: array<float>,
   tickWidth?: float,
   title?: chartParallelAxesTitleOptions,
@@ -10010,9 +9982,9 @@ type colorAxisDataClassesOptions = {
   @as("to") to_?: float,
 }
 type colorAxisEventsOptions = {
-  afterSetExtremes?: axisSetExtremesEventObject => unit,
+  afterSetExtremes?: @this ((axis, axisSetExtremesEventObject) => unit),
   legendItemClick?: string,  // ⚪ loose — was `Function`
-  setExtremes?: axisSetExtremesEventObject => unit,
+  setExtremes?: @this ((axis, axisSetExtremesEventObject) => unit),
 }
 type colorAxisLabelsStyleOptions = {
   fontSize?: CommonTypes.stringOrNumber,
@@ -10030,7 +10002,7 @@ type colorAxisLabelsOptions = {
   distance?: float,
   enabled?: bool,
   format?: string,
-  formatter?: axisLabelsFormatterContextObject => string,
+  formatter?: @this ((axisLabelsFormatterContextObject, axisLabelsFormatterContextObject) => string),
   overflow?: optionsOverflowValue,
   padding?: float,
   position3d?: optionsPosition3dValue,
@@ -10174,7 +10146,7 @@ type colorAxisOptions = {
   tickmarkPlacement?: optionsTickmarkPlacementValue,
   tickPixelInterval?: float,
   tickPosition?: optionsTickPositionValue,
-  tickPositioner?: (float, float, option<axis>) => axisTickPositionsArray,
+  tickPositioner?: @this ((axis, float, float, option<axis>) => axisTickPositionsArray),
   tickPositions?: array<float>,
   tickWidth?: float,
   title?: ChartsColorAxisOptionsTitle.t,
@@ -10845,7 +10817,7 @@ type legendBubbleLegendLabelsOptions = {
   allowOverlap?: bool,
   className?: string,
   format?: string,
-  formatter?: option<bubbleLegendFormatterContextObject> => string,
+  formatter?: @this ((bubbleLegendFormatterContextObject, option<bubbleLegendFormatterContextObject>) => string),
   style?: cssObject,
   x?: float,
   y?: float,
@@ -10876,16 +10848,16 @@ type legendBubbleLegendOptions = {
   zIndex?: int,
   zThreshold?: float,
 }
+module ChartsLegendAllItems = {
+  type t
+  external fromSeries: series => t = "%identity"
+  external fromPoint: point => t = "%identity"
+}
 module ChartsLegendItemClickEventObjectLegendItem = {
   type t
   external fromSeries: series => t = "%identity"
   external fromPoint: point => t = "%identity"
   external fromLegendItemObject: legendItemObject => t = "%identity"
-}
-module ChartsLegendOptionsLabelFormatter = {
-  type t
-  external fromSeries: series => t = "%identity"
-  external fromPoint: point => t = "%identity"
 }
 type legendNavigationOptions = {
   activeColor?: ColorType.t,
@@ -10899,25 +10871,25 @@ type legendTitleOptions = {
   style?: cssObject,
   text?: string,
 }
-type rec legend = {
-  allItems: array<string>,  // ⚪ loose — was `Series | Point`
-  box: Dom.element,
-  chart: chart,
-  group: Dom.element,
-  options: legendOptions,
-  title: Dom.element,
-  setText: string => unit,  // ⚪ loose — was `Series | Point`
-  update: (string, option<bool>) => unit,  // ⚪ loose — was `LegendOptions`
-}
-and legendItemClickEventObject = {
+type rec legendItemClickEventObject = {
   browserEvent: Dom.event,
   legendItem: ChartsLegendItemClickEventObjectLegendItem.t,
   preventDefault: string,  // ⚪ loose — was `Function`
   target: legend,
   @as("type") type_: string,  // ⚪ loose — was `"itemClick"`
 }
+and legend = {
+  allItems: array<ChartsLegendAllItems.t>,
+  box: Dom.element,
+  chart: chart,
+  group: Dom.element,
+  options: legendOptions,
+  title: Dom.element,
+  setText: ChartsLegendAllItems.t => unit,
+  update: (legendOptions, option<bool>) => unit,
+}
 and legendEventsOptions = {
-  itemClick?: legendItemClickEventObject => unit,
+  itemClick?: @this ((legend, legendItemClickEventObject) => unit),
 }
 and legendOptions = {
   accessibility?: legendAccessibilityOptions,
@@ -10941,7 +10913,7 @@ and legendOptions = {
   itemStyle?: cssObject,
   itemWidth?: float,
   labelFormat?: string,
-  labelFormatter?: option<ChartsLegendOptionsLabelFormatter.t> => string,
+  labelFormatter?: @this ((ChartsLegendAllItems.t, option<ChartsLegendAllItems.t>) => string),
   layout?: optionsLayoutValue,
   margin?: float,
   maxHeight?: float,
@@ -11034,36 +11006,9 @@ module ChartsNavigationAnnotationsOptionsAnimation = {
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
   external fromNavigationAnnotationsAnimationOptions: annotationsAnimationOptions => t = "%identity"
 }
-type navigationAnnotationsLabelsOptions = {
+type navigationAnnotationsTypesCrookedLineLabelOptions = {
   accessibility?: annotationLabelAccessibilityOptionsObject,
   align?: alignValue,
-  allowOverlap?: bool,
-  backgroundColor?: ColorType.t,
-  borderColor?: ColorType.t,
-  borderRadius?: float,
-  borderWidth?: float,
-  className?: string,
-  controlPoints?: string,  // ⚠️ REVIEW — was `AnnotationControlPointOptionsObject | AnnotationControlPointOptionsObject[]` — match the real type by hand
-  crop?: bool,
-  distance?: float,
-  format?: string,
-  formatter?: option<string> => string,  // ⚪ loose — was `Point`
-  includeInDataExport?: bool,
-  overflow?: optionsOverflowValue,
-  padding?: float,
-  point?: string,  // ⚠️ REVIEW — was `AnnotationMockPointOptions` — match the real type by hand
-  shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
-  shape?: string,
-  style?: cssObject,
-  text?: string,
-  useHTML?: bool,
-  verticalAlign?: verticalAlignValue,
-  x?: float,
-  y?: float,
-}
-type navigationAnnotationsTypesCrookedLineLabelOptions = {
-  accessibility?: string,  // ⚪ loose — was `AnnotationLabelAccessibilityOptionsObject`
-  align?: string,  // ⚪ loose — was `AlignValue`
   allowOverlap?: bool,
   backgroundColor?: string,  // ⚪ loose — was `ColorType`
   borderColor?: string,  // ⚪ loose — was `ColorType`
@@ -11073,16 +11018,16 @@ type navigationAnnotationsTypesCrookedLineLabelOptions = {
   crop?: bool,
   distance?: float,
   format?: string,
-  formatter?: string,  // ⚪ loose — was `FormatterCallbackFunction<Point>`
+  formatter?: @this ((point, option<point>) => string),
   includeInDataExport?: bool,
-  overflow?: string,  // ⚪ loose — was `OptionsOverflowValue`
+  overflow?: optionsOverflowValue,
   padding?: float,
   shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
   shape?: string,
-  style?: string,  // ⚪ loose — was `CSSObject`
+  style?: cssObject,
   text?: string,
   useHTML?: bool,
-  verticalAlign?: string,  // ⚪ loose — was `VerticalAlignValue`
+  verticalAlign?: verticalAlignValue,
   x?: float,
   y?: float,
 }
@@ -11098,7 +11043,7 @@ type navigationAnnotationsTypesCrookedLineOptions<'b> = {
   typeOptions?: navigationAnnotationsTypesCrookedLineTypeOptions,
 }
 type navigationAnnotationsTypesElliottWaveLabelOptions = {
-  accessibility?: string,  // ⚪ loose — was `AnnotationLabelAccessibilityOptionsObject`
+  accessibility?: annotationLabelAccessibilityOptionsObject,
   align?: string,
   allowOverlap?: bool,
   backgroundColor?: string,
@@ -11109,9 +11054,9 @@ type navigationAnnotationsTypesElliottWaveLabelOptions = {
   crop?: bool,
   distance?: float,
   format?: string,
-  formatter?: string,  // ⚪ loose — was `FormatterCallbackFunction<Point>`
+  formatter?: @this ((point, option<point>) => string),
   includeInDataExport?: bool,
-  overflow?: string,  // ⚪ loose — was `OptionsOverflowValue`
+  overflow?: optionsOverflowValue,
   padding?: float,
   shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
   shape?: string,
@@ -11119,7 +11064,7 @@ type navigationAnnotationsTypesElliottWaveLabelOptions = {
   text?: string,
   @as("type") type_?: string,
   useHTML?: bool,
-  verticalAlign?: string,  // ⚪ loose — was `VerticalAlignValue`
+  verticalAlign?: verticalAlignValue,
   x?: float,
   y?: float,
 }
@@ -11129,7 +11074,7 @@ type navigationAnnotationsTypesElliottWaveOptions<'b> = {
   typeOptions?: navigationAnnotationsTypesCrookedLineTypeOptions,
 }
 type navigationAnnotationsTypesFibonacciLabelOptions = {
-  accessibility?: string,  // ⚪ loose — was `AnnotationLabelAccessibilityOptionsObject`
+  accessibility?: annotationLabelAccessibilityOptionsObject,
   align?: string,
   allowOverlap?: bool,
   backgroundColor?: string,
@@ -11140,9 +11085,9 @@ type navigationAnnotationsTypesFibonacciLabelOptions = {
   crop?: bool,
   distance?: float,
   format?: string,
-  formatter?: string,  // ⚪ loose — was `FormatterCallbackFunction<Point>`
+  formatter?: @this ((point, option<point>) => string),
   includeInDataExport?: bool,
-  overflow?: string,  // ⚪ loose — was `OptionsOverflowValue`
+  overflow?: optionsOverflowValue,
   padding?: float,
   shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
   shape?: string,
@@ -11227,6 +11172,31 @@ type navigationAnnotationsTypesTunnelOptions<'b> = {
   labelOptions?: navigationAnnotationsTypesCrookedLineLabelOptions,
   typeOptions?: navigationAnnotationsTypesTunnelTypeOptions,
 }
+type navigationAnnotationsTypesVerticalLineLabelOptions = {
+  accessibility?: annotationLabelAccessibilityOptionsObject,
+  align?: alignValue,
+  allowOverlap?: bool,
+  backgroundColor?: string,  // ⚪ loose — was `ColorType`
+  borderColor?: string,  // ⚪ loose — was `ColorType`
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  crop?: bool,
+  distance?: float,
+  format?: string,
+  formatter?: @this ((point, option<point>) => string),
+  includeInDataExport?: bool,
+  overflow?: optionsOverflowValue,
+  padding?: float,
+  shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
+  shape?: string,
+  style?: string,  // ⚪ loose — was `CSSObject | NavigationAnnotationsTypesVerticalLineLabelStyleOptions`
+  text?: string,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  x?: float,
+  y?: float,
+}
 type navigationAnnotationsTypesVerticalLineTypeOptions = {
   connector?: string,  // ⚪ loose — was `NavigationAnnotationsTypesVerticalLineTypeConnectorOptions`
   label?: string,  // ⚪ loose — was `NavigationAnnotationsTypesVerticalLineTypeLabelOptions`
@@ -11236,7 +11206,7 @@ type navigationAnnotationsTypesVerticalLineTypeOptions = {
   yAxis?: float,
 }
 type navigationAnnotationsTypesVerticalLineOptions = {
-  labelOptions?: navigationAnnotationsTypesCrookedLineLabelOptions,
+  labelOptions?: navigationAnnotationsTypesVerticalLineLabelOptions,
   typeOptions?: navigationAnnotationsTypesVerticalLineTypeOptions,
 }
 type navigationAnnotationsTypesOptions<'b> = {
@@ -11260,7 +11230,7 @@ type navigationAnnotationsOptions<'b> = {
   events?: annotationsEventsOptions<'b>,
   id?: CommonTypes.stringOrNumber,
   labelOptions?: annotationsLabelOptions,
-  labels?: array<navigationAnnotationsLabelsOptions>,
+  labels?: array<annotationsLabelsOptions>,
   shapeOptions?: annotationsShapeOptions,
   shapes?: array<annotationsShapesOptions>,
   @as("type") type_?: string,
@@ -11398,11 +11368,11 @@ type navigatorSeriesDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: string => string,  // ⚪ loose — was `string | number`
+  formatter?: @this ((point, string) => string),  // ⚪ loose — was `string | number`
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: string => string,  // ⚪ loose — was `string | number`
+  nullFormatter?: @this ((point, string) => string),  // ⚪ loose — was `string | number`
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -11568,7 +11538,7 @@ type navigatorXAxisBreaksOptions = {
   @as("to") to_?: CommonTypes.stringOrNumber,
 }
 type xAxisOptions = {
-  accessibility?: string,  // ⚪ loose — was `AxisAccessibilityOptionsObject`
+  accessibility?: axisAccessibilityOptionsObject,
   alignTicks?: bool,
   allowDecimals?: bool,
   alternateGridColor?: string,  // ⚪ loose — was `ColorType`
@@ -11580,14 +11550,14 @@ type xAxisOptions = {
   crosshair?: string,  // ⚪ loose — was `boolean | AxisCrosshairOptions`
   crossing?: float,
   currentDateIndicator?: string,  // ⚪ loose — was `boolean | CurrentDateIndicatorOptions`
-  dateTimeLabelFormats?: string,  // ⚪ loose — was `AxisDateTimeLabelFormatsOptions`
+  dateTimeLabelFormats?: axisDateTimeLabelFormatsOptions,
   endOnTick?: bool,
   events?: string,  // ⚪ loose — was `XAxisEventsOptions`
   floor?: float,
   grid?: string,  // ⚪ loose — was `XAxisGridOptions`
   gridLineColor?: string,  // ⚪ loose — was `ColorType`
-  gridLineDashStyle?: string,  // ⚪ loose — was `DashStyleValue`
-  gridLineInterpolation?: string,  // ⚪ loose — was `OptionsGridLineInterpolationValue`
+  gridLineDashStyle?: dashStyleValue,
+  gridLineInterpolation?: optionsGridLineInterpolationValue,
   gridLineWidth?: float,
   gridZIndex?: float,
   height?: string,  // ⚪ loose — was `string | number`
@@ -11603,12 +11573,12 @@ type xAxisOptions = {
   maxRange?: float,
   min?: string,  // ⚪ loose — was `string | number`
   minorGridLineColor?: string,  // ⚪ loose — was `ColorType`
-  minorGridLineDashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  minorGridLineDashStyle?: dashStyleValue,
   minorGridLineWidth?: float,
   minorTickColor?: string,  // ⚪ loose — was `ColorType`
   minorTickInterval?: string,  // ⚪ loose — was `number | "auto"`
   minorTickLength?: float,
-  minorTickPosition?: string,  // ⚪ loose — was `OptionsMinorTickPositionValue`
+  minorTickPosition?: optionsMinorTickPositionValue,
   minorTicks?: bool,
   minorTicksPerMajor?: float,
   minorTickWidth?: float,
@@ -11639,15 +11609,15 @@ type xAxisOptions = {
   tickColor?: string,  // ⚪ loose — was `ColorType`
   tickInterval?: float,
   tickLength?: float,
-  tickmarkPlacement?: string,  // ⚪ loose — was `OptionsTickmarkPlacementValue`
+  tickmarkPlacement?: optionsTickmarkPlacementValue,
   tickPixelInterval?: float,
-  tickPosition?: string,  // ⚪ loose — was `OptionsTickPositionValue`
-  tickPositioner?: string,  // ⚪ loose — was `AxisTickPositionerCallbackFunction`
+  tickPosition?: optionsTickPositionValue,
+  tickPositioner?: @this ((axis, float, float, option<axis>) => axisTickPositionsArray),
   tickPositions?: string,  // ⚪ loose — was `number[]`
   tickWidth?: float,
-  title?: string,  // ⚪ loose — was `XAxisTitleOptions`
+  title?: xAxisTitleOptions,
   top?: string,  // ⚪ loose — was `string | number`
-  @as("type") type_?: string,  // ⚪ loose — was `AxisTypeValue`
+  @as("type") type_?: axisTypeValue,
   uniqueNames?: bool,
   units?: string,  // ⚪ loose — was `[string, number[]][]`
   visible?: bool,
@@ -11675,7 +11645,7 @@ type navigatorXAxisLabelsOptions = {
   distance?: float,
   enabled?: bool,
   format?: string,
-  formatter?: axisLabelsFormatterContextObject => string,
+  formatter?: @this ((axisLabelsFormatterContextObject, axisLabelsFormatterContextObject) => string),
   indentation?: float,
   overflow?: optionsOverflowValue,
   padding?: float,
@@ -11690,21 +11660,21 @@ type navigatorXAxisLabelsOptions = {
   zIndex?: int,
 }
 type navigatorXAxisPlotBandsEventsOptions = {
-  click?: string,  // ⚪ loose — was `EventCallbackFunction<PlotLineOrBand>`
-  mousemove?: string,  // ⚪ loose — was `EventCallbackFunction<PlotLineOrBand>`
-  mouseout?: string,  // ⚪ loose — was `EventCallbackFunction<PlotLineOrBand>`
-  mouseover?: string,  // ⚪ loose — was `EventCallbackFunction<PlotLineOrBand>`
+  click?: @this ((string, option<string>, option<string>) => string),  // ⚪ loose — was `boolean | void`
+  mousemove?: @this ((string, option<string>, option<string>) => string),  // ⚪ loose — was `boolean | void`
+  mouseout?: @this ((string, option<string>, option<string>) => string),  // ⚪ loose — was `boolean | void`
+  mouseover?: @this ((string, option<string>, option<string>) => string),  // ⚪ loose — was `boolean | void`
 }
 type navigatorXAxisPlotBandsLabelOptions = {
-  align?: string,  // ⚪ loose — was `AlignValue`
+  align?: alignValue,
   allowOverlap?: bool,
   inside?: bool,
   rotation?: float,
-  style?: string,  // ⚪ loose — was `CSSObject`
+  style?: cssObject,
   text?: string,
-  textAlign?: string,  // ⚪ loose — was `AlignValue`
+  textAlign?: alignValue,
   useHTML?: bool,
-  verticalAlign?: string,  // ⚪ loose — was `VerticalAlignValue`
+  verticalAlign?: verticalAlignValue,
   x?: float,
   y?: float,
 }
@@ -11723,14 +11693,14 @@ type navigatorXAxisPlotBandsOptions = {
   zIndex?: int,
 }
 type navigatorXAxisPlotLinesLabelOptions = {
-  align?: string,  // ⚪ loose — was `AlignValue`
-  formatter?: string,  // ⚪ loose — was `FormatterCallbackFunction<PlotLineOrBand>`
+  align?: alignValue,
+  formatter?: @this ((string, option<string>) => string),  // ⚪ loose — was `PlotLineOrBand`
   rotation?: float,
-  style?: string,  // ⚪ loose — was `CSSObject`
+  style?: cssObject,
   text?: string,
-  textAlign?: string,  // ⚪ loose — was `AlignValue`
+  textAlign?: alignValue,
   useHTML?: bool,
-  verticalAlign?: string,  // ⚪ loose — was `VerticalAlignValue`
+  verticalAlign?: verticalAlignValue,
   x?: float,
   y?: float,
 }
@@ -11833,7 +11803,7 @@ type navigatorXAxisOptions = {
   tickmarkPlacement?: optionsTickmarkPlacementValue,
   tickPixelInterval?: float,
   tickPosition?: optionsTickPositionValue,
-  tickPositioner?: (float, float, option<axis>) => axisTickPositionsArray,
+  tickPositioner?: @this ((axis, float, float, option<axis>) => axisTickPositionsArray),
   tickPositions?: array<float>,
   tickWidth?: float,
   title?: navigatorXAxisTitleOptions,
@@ -11853,7 +11823,7 @@ module ChartsNavigatorOptionsXAxis = {
 }
 type navigatorYAxisLabelsLevelsOptions = {
   level?: int,
-  style?: string,  // ⚪ loose — was `CSSObject`
+  style?: cssObject,
 }
 module ChartsNavigatorYAxisLabelsOptionsStyle = {
   type t
@@ -11867,7 +11837,7 @@ type navigatorYAxisLabelsOptions = {
   autoRotationLimit?: float,
   enabled?: bool,
   format?: string,
-  formatter?: axisLabelsFormatterContextObject => string,
+  formatter?: @this ((axisLabelsFormatterContextObject, axisLabelsFormatterContextObject) => string),
   indentation?: float,
   levels?: array<navigatorYAxisLabelsLevelsOptions>,
   overflow?: optionsOverflowValue,
@@ -11980,7 +11950,7 @@ type navigatorYAxisOptions = {
   tickmarkPlacement?: optionsTickmarkPlacementValue,
   tickPixelInterval?: float,
   tickPosition?: optionsTickPositionValue,
-  tickPositioner?: (float, float, option<axis>) => axisTickPositionsArray,
+  tickPositioner?: @this ((axis, float, float, option<axis>) => axisTickPositionsArray),
   tickPositions?: array<float>,
   tickWidth?: float,
   title?: navigatorYAxisTitleOptions,
@@ -12054,21 +12024,10 @@ module ChartsOptionsPane = {
 }
 type plotAbandsAccessibilityPointOptions = {
   dateFormat?: string,
-  dateFormatter?: (string, option<string>) => string,  // ⚪ loose — was `Point`
+  dateFormatter?: (point, option<string>) => string,  // ⚪ loose — was `any`
   describeNull?: bool,
   descriptionFormat?: string,
-  descriptionFormatter?: (string, option<string>) => string,  // ⚪ loose — was `Point`
-  valueDecimals?: float,
-  valueDescriptionFormat?: string,
-  valuePrefix?: string,
-  valueSuffix?: string,
-}
-type plotAdAccessibilityPointOptions = {
-  dateFormat?: string,
-  dateFormatter?: (string, option<string>) => string,  // ⚪ loose — was `Point`
-  describeNull?: bool,
-  descriptionFormat?: string,
-  descriptionFormatter?: (string, option<string>) => string,  // ⚪ loose — was `Point`
+  descriptionFormatter?: (point, option<string>) => string,  // ⚪ loose — was `any`
   valueDecimals?: float,
   valueDescriptionFormat?: string,
   valuePrefix?: string,
@@ -12077,124 +12036,124 @@ type plotAdAccessibilityPointOptions = {
 module ChartsSeriesAccessibilityOptionsObjectPoint = {
   type t
   external fromPlotAbandsAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotAdAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotAdAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotAoAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotApoAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotApoAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotArcdiagramAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotAreaAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotArearangeAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotAreasplineAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotAreasplinerangeAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotAroonAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotAroonoscillatorAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotAtrAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotAreaAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotArearangeAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotAreasplineAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotAreasplinerangeAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotAroonAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotAroonoscillatorAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotAtrAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotBarAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotBbAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotBbAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotBellcurveAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotBoxplotAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotBubbleAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotBulletAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotBulletAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotCandlestickAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotCciAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotCciAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotChaikinAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotCmfAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotCmfAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotCmoAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotColumnAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotColumnAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotColumnpyramidAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotColumnrangeAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotColumnrangeAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotContourAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotCylinderAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotDemaAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotDemaAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotDependencywheelAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotDisparityindexAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotDisparityindexAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotDmiAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotDpoAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotDpoAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotDumbbellAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotEmaAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotErrorbarAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotFlagsAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotErrorbarAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotFlagsAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotFlowmapAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotFunnel3dAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotFunnelAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotGanttAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotGaugeAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotGeoheatmapAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotGeoheatmapAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotHeatmapAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotHeikinashiAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotHistogramAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotHistogramAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotHlcAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotHollowcandlestickAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotHollowcandlestickAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotIkhAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotItemAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotKeltnerchannelsAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotKeltnerchannelsAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotKlingerAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotLineAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotLineAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotLinearregressionAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotLinearregressionangleAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotLinearregressioninterceptAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotLinearregressionslopeAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotLollipopAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotMacdAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotLinearregressionangleAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotLinearregressioninterceptAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotLinearregressionslopeAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotLollipopAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotMacdAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotMapAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotMapbubbleAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotMaplineAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotMapbubbleAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotMaplineAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotMappointAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotMfiAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotMfiAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotMomentumAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotNatrAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotNatrAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotNetworkgraphAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotObvAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotOhlcAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotOhlcAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotOrganizationAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotPackedbubbleAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotParetoAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotPcAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotPackedbubbleAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotParetoAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotPcAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotPictorialAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotPieAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotPivotpointsAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotPieAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotPivotpointsAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotPointandfigureAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotPolygonAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotPpoAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotPolygonAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotPpoAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotPriceenvelopesAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotPsarAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotPsarAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotPyramid3dAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotPyramidAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotRenkoAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotRocAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotRsiAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotRsiAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotSankeyAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotScatter3dAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotScatterAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotSeriesAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotScatterAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotSeriesAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotSlowstochasticAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotSmaAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotSmaAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotSolidgaugeAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotSplineAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotStochasticAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotSplineAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotStochasticAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotStreamgraphAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotSunburstAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotSupertrendAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotSupertrendAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotTemaAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotTiledwebmapAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotTilemapAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotTiledwebmapAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotTilemapAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotTimelineAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotTreegraphAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotTreemapAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotTrendlineAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotTrixAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotTrixAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotVariablepieAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
   external fromPlotVariwideAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotVbpAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotVectorAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotVennAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotVwapAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotVbpAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotVectorAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotVennAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotVwapAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotWaterfallAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotWilliamsrAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotWilliamsrAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotWindbarbAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotWmaAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotWmaAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
   external fromPlotWordcloudAccessibilityPointOptions: plotAbandsAccessibilityPointOptions => t = "%identity"
-  external fromPlotXrangeAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
-  external fromPlotZigzagAccessibilityPointOptions: plotAdAccessibilityPointOptions => t = "%identity"
+  external fromPlotXrangeAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
+  external fromPlotZigzagAccessibilityPointOptions: accessibilityPointOptions => t = "%identity"
 }
 type seriesAccessibilityOptionsObject = {
   description?: string,
@@ -12216,8 +12175,8 @@ module ChartsPlotAbandsDataLabelsOptionsAnimation = {
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
   external fromPlotAbandsDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
 }
-type dataLabelsOptions = {
-  align?: string,  // ⚪ loose — was `AlignValue`
+type rec dataLabelsOptions = {
+  align?: alignValue,
   alignTo?: string,
   allowOverlap?: bool,
   animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject> | SeriesArcdiagramDataDataLabelsAnimationOptions | ... 55 more ... |`
@@ -12230,23 +12189,23 @@ type dataLabelsOptions = {
   crop?: bool,
   defer?: bool,
   enabled?: bool,
-  filter?: string,  // ⚪ loose — was `DataLabelsFilterOptionsObject`
+  filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: string,  // ⚪ loose — was `DataLabelsFormatterCallbackFunction`
+  formatter?: @this ((point, dataLabelsOptions) => string),  // ⚪ loose — was `string | number`
   inside?: bool,
   labelrank?: float,
   nullFormat?: string,  // ⚪ loose — was `string | boolean`
-  nullFormatter?: string,  // ⚪ loose — was `DataLabelsFormatterCallbackFunction`
-  overflow?: string,  // ⚪ loose — was `DataLabelsOverflowValue`
+  nullFormatter?: @this ((point, dataLabelsOptions) => string),  // ⚪ loose — was `string | number`
+  overflow?: dataLabelsOverflowValue,
   padding?: float,
-  position?: string,  // ⚪ loose — was `AlignValue`
+  position?: alignValue,
   rotation?: float,
   shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
   shape?: string,
-  style?: string,  // ⚪ loose — was `CSSObject`
-  textPath?: string,  // ⚪ loose — was `DataLabelsTextPathOptionsObject`
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
-  verticalAlign?: string,  // ⚪ loose — was `VerticalAlignValue`
+  verticalAlign?: verticalAlignValue,
   x?: float,
   xHigh?: float,
   xLow?: float,
@@ -12270,11 +12229,11 @@ type plotAbandsDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -12325,15 +12284,15 @@ type seriesLegendItemClickEventObject = {
   @as("type") type_: string,  // ⚪ loose — was `"legendItemClick"`
 }
 type seriesEventsOptionsObject = {
-  afterAnimate?: seriesAfterAnimateEventObject => unit,
-  checkboxClick?: seriesCheckboxClickEventObject => string,  // 🛑 BROKEN — contains `any`
-  click?: seriesClickEventObject => unit,
-  hide?: Dom.event => unit,
-  legendItemClick?: seriesLegendItemClickEventObject => unit,
-  mouseOut?: Dom.event => unit,
-  mouseOver?: Dom.event => unit,
+  afterAnimate?: @this ((series, seriesAfterAnimateEventObject) => unit),
+  checkboxClick?: @this ((series, seriesCheckboxClickEventObject) => string),  // 🛑 BROKEN — contains `any`
+  click?: @this ((series, seriesClickEventObject) => unit),
+  hide?: @this ((series, Dom.event) => unit),
+  legendItemClick?: @this ((series, seriesLegendItemClickEventObject) => unit),
+  mouseOut?: @this ((series, Dom.event) => unit),
+  mouseOver?: @this ((series, Dom.event) => unit),
   setRootNode?: string,  // ⚪ loose — was `Function`
-  show?: Dom.event => unit,
+  show?: @this ((series, Dom.event) => unit),
 }
 type rGBA = {
   ...JsxDOM.domProps,
@@ -12469,7 +12428,7 @@ type seriesLabelOptionsObject = {
   connectorNeighbourDistance?: float,
   enabled?: bool,
   format?: string,
-  formatter?: option<series> => string,
+  formatter?: @this ((series, option<series>) => string),
   maxFontSize?: float,
   minFontSize?: float,
   onArea?: bool,
@@ -12484,7 +12443,7 @@ type seriesLastPriceLabelOptionsObject = {
   borderWidth?: float,
   enabled?: bool,
   format?: string,
-  formatter?: (float, option<axis>) => string,
+  formatter?: @this ((axis, float, option<axis>) => string),
   padding?: float,
   shape?: string,
   style?: cssObject,
@@ -12597,7 +12556,7 @@ type sankeyNodeObject = {
   percentage?: float,
   plotX?: float,
   plotY?: float,
-  points?: array<string>,  // ⚪ loose — was `Point`
+  points?: array<point>,
   selected: bool,
   series: series,
   shapeArgs?: highchartsPointShapeArgsConfig,
@@ -12608,16 +12567,16 @@ type sankeyNodeObject = {
   x: float,
   y?: float,
   getClassName: unit => string,
-  getZone: unit => string,  // ⚪ loose — was `SeriesZonesOptionsObject`
+  getZone: unit => seriesZonesOptionsObject,
   haloPath: float => string,  // ⚪ loose — was `SVGPathArray`
   onMouseOut: unit => unit,
-  onMouseOver: option<string> => unit,  // ⚪ loose — was `PointerEventObject`
+  onMouseOver: option<pointerEventObject> => unit,
   optionsToObject: string => string,  // ⚪ loose — was `Dictionary<any>`
   pos: (bool, float) => string,  // ⚪ loose — was `number[]`
   remove: (option<bool>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
   select: (option<bool>, option<bool>) => unit,
   setNestedProperty: (string, string, string) => string,  // ⚪ loose — was `T`
-  setState: (option<string>, option<bool>) => unit,  // ⚪ loose — was `"" | PointStateValue`
+  setState: (option<ChartsTypes.chartsPointSetState>, option<bool>) => unit,
   setVisible: (option<bool>, option<bool>) => unit,
   tooltipFormatter: string => string,
   update: (string, option<bool>, option<string>) => unit,  // ⚪ loose — was `PointOptionsType`
@@ -12639,18 +12598,18 @@ type tooltipOptions = {
   followTouchMove?: bool,
   footerFormat?: string,
   format?: string,
-  formatter?: string,  // ⚪ loose — was `TooltipFormatterCallbackFunction`
+  formatter?: @this ((point, string, option<point>) => string),  // ⚪ loose — was `string | false | string[]`
   headerFormat?: string,
   headerShape?: string,  // ⚪ loose — was `OptionsHeaderShapeValue`
   hideDelay?: float,
   nullFormat?: string,
-  nullFormatter?: string,  // ⚪ loose — was `TooltipFormatterCallbackFunction`
+  nullFormatter?: @this ((point, string, option<point>) => string),  // ⚪ loose — was `string | false | string[]`
   outside?: bool,
   padding?: float,
   pointFormat?: string,
-  pointFormatter?: string,  // ⚪ loose — was `FormatterCallbackFunction<Point>`
+  pointFormatter?: @this ((point, option<point>) => string),
   position?: string,  // ⚪ loose — was `TooltipPositionOptions`
-  positioner?: string,  // ⚪ loose — was `TooltipPositionerCallbackFunction`
+  positioner?: @this ((string, float, float, string, option<string>) => positionObject),  // ⚪ loose — was `Tooltip`
   shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
   shape?: string,  // ⚪ loose — was `TooltipShapeValue`
   shared?: bool,
@@ -12674,28 +12633,28 @@ type svgRenderer = {
   forExport?: bool,
   symbols: string,  // ⚪ loose — was `SymbolDictionary`
   arc: string,  // ⚪ loose — was `{ (attribs: SVGAttributes): SVGElement; (x?: number, y?: number, r?: number, innerR?: number, start?: number, `
-  button: string,  // ⚪ loose — was `(text: string, x: number, y: number, callback: EventCallbackFunction<SVGElement>, theme?: SVGAttributes, hover`
+  button: (string, float, float, @this ((string, option<string>, option<string>) => string), option<highchartsPointShapeArgsConfig>, option<highchartsPointShapeArgsConfig>, option<highchartsPointShapeArgsConfig>, option<highchartsPointShapeArgsConfig>, option<string>, option<bool>) => string,  // ⚪ loose — was `SVGElement`
   circle: string,  // ⚪ loose — was `{ (attribs?: SVGAttributes): SVGElement; (x?: number, y?: number, r?: number): SVGElement; }`
-  clipRect: string,  // ⚪ loose — was `(x?: number, y?: number, width?: number, height?: number) => SVGElement`
-  createElement: string,  // ⚪ loose — was `(nodeName: string) => SVGElement`
-  crispLine: string,  // ⚪ loose — was `(points: SVGPathArray, width: number) => SVGPathArray`
-  definition: string,  // ⚪ loose — was `(def: ASTNode) => SVGElement`
-  destroy: string,  // ⚪ loose — was `() => null`
-  draw: string,  // ⚪ loose — was `() => void`
-  fontMetrics: string,  // ⚪ loose — was `(ref: number | SVGElement | Highcharts.SVGElement) => FontMetricsObject`
-  g: string,  // ⚪ loose — was `(name?: string) => SVGElement`
-  getContrast: string,  // ⚪ loose — was `(color: string) => string`
-  image: string,  // ⚪ loose — was `(href: string, x?: number, y?: number, width?: number, height?: number, onload?: Function) => SVGElement`
-  init: string,  // ⚪ loose — was `(container: HTMLElement, width: number, height: number, style?: CSSObject, forExport?: boolean, allowHTML?: bo`
-  isHidden: string,  // ⚪ loose — was `() => boolean`
-  label: string,  // ⚪ loose — was `(str: string, x: number, y?: number, shape?: string, anchorX?: number, anchorY?: number, useHTML?: boolean, ba`
+  clipRect: (option<float>, option<float>, option<float>, option<float>) => string,  // ⚪ loose — was `SVGElement`
+  createElement: string => string,  // ⚪ loose — was `SVGElement`
+  crispLine: (string, float) => string,  // ⚪ loose — was `SVGPathArray`
+  definition: string => string,  // ⚪ loose — was `SVGElement`
+  destroy: unit => string,  // ⚪ loose — was `null`
+  draw: unit => unit,
+  fontMetrics: string => string,  // ⚪ loose — was `FontMetricsObject`
+  g: option<string> => string,  // ⚪ loose — was `SVGElement`
+  getContrast: string => string,
+  image: (string, option<float>, option<float>, option<float>, option<float>, option<string>) => string,  // ⚪ loose — was `SVGElement`
+  init: (string, float, float, option<cssObject>, option<bool>, option<bool>, option<bool>) => unit,  // ⚪ loose — was `HTMLElement`
+  isHidden: unit => bool,
+  label: (string, float, option<float>, option<string>, option<float>, option<float>, option<bool>, option<bool>, option<string>) => string,  // ⚪ loose — was `SVGElement`
   path: string,  // ⚪ loose — was `{ (path?: SVGPathArray): SVGElement; (path?: SVGPathArray | SVGAttributes): SVGElement; }`
   rect: string,  // ⚪ loose — was `{ (attributes?: SVGAttributes): SVGElement; (x?: number, y?: number, width?: number, height?: number, r?: numb`
-  roundedRect: string,  // ⚪ loose — was `(attribs: SVGAttributes) => SVGElement`
-  setSize: string,  // ⚪ loose — was `(width: number, height: number, animate?: boolean | Partial<AnimationOptionsObject>) => void`
-  setStyle: string,  // ⚪ loose — was `(style: CSSObject) => void`
-  symbol: string,  // ⚪ loose — was `(symbol: string, x?: number, y?: number, width?: number, height?: number, options?: SymbolOptionsObject) => SV`
-  text: string,  // ⚪ loose — was `(str?: string, x?: number, y?: number, useHTML?: boolean) => SVGElement`
+  roundedRect: highchartsPointShapeArgsConfig => string,  // ⚪ loose — was `SVGElement`
+  setSize: (float, float, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  setStyle: cssObject => unit,
+  symbol: (string, option<float>, option<float>, option<float>, option<float>, option<string>) => string,  // ⚪ loose — was `SVGElement`
+  text: (option<string>, option<float>, option<float>, option<bool>) => string,  // ⚪ loose — was `SVGElement`
 }
 type rec tooltip = {
   chart: chart,
@@ -12709,10 +12668,10 @@ type rec tooltip = {
   destroy: unit => unit,
   getClassName: unit => string,
   getLabel: unit => string,  // ⚪ loose — was `SVGElement`
-  getPosition: (float, float, string) => string,  // ⚪ loose — was `PositionObject`
+  getPosition: (float, float, point) => positionObject,
   hide: option<float> => unit,
-  refresh: (string, option<string>) => unit,  // ⚪ loose — was `Point | Point[]`
-  update: string => unit,  // ⚪ loose — was `TooltipOptions`
+  refresh: (string, option<pointerEventObject>) => unit,  // ⚪ loose — was `Point | Point[]`
+  update: tooltipOptions => unit,
 }
 type plotAbandsTooltipPositionOptions = {
   align?: alignValue,
@@ -12861,11 +12820,11 @@ type seriesTooltipOptionsObject = {
   headerFormat?: string,
   linkFormat?: string,
   nodeFormat?: string,
-  nodeFormatter?: option<sankeyNodeObject> => string,
+  nodeFormatter?: @this ((sankeyNodeObject, option<sankeyNodeObject>) => string),
   nullFormat?: string,
-  nullFormatter?: (tooltip, option<point>) => CommonTypes.boolOrStringOrStringArray,
+  nullFormatter?: @this ((point, tooltip, option<point>) => CommonTypes.boolOrStringOrStringArray),
   pointFormat?: string,
-  pointFormatter?: option<point> => string,
+  pointFormatter?: @this ((point, option<point>) => string),
   position?: ChartsSeriesTooltipOptionsObjectPosition.t,
   showDelay?: float,
   valueDecimals?: float,
@@ -12972,11 +12931,11 @@ type plotAdDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -13105,11 +13064,11 @@ type plotAoDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -13236,11 +13195,11 @@ type plotApoDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -13364,14 +13323,14 @@ type seriesArcDiagramDataLabelsOptionsObject = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: unit => string,
+  formatter?: @this ((point) => string),
   inside?: bool,
   labelrank?: float,
   linkTextPath?: dataLabelsTextPathOptionsObject,
   nodeFormat?: string,
-  nodeFormatter?: unit => string,
+  nodeFormatter?: @this ((point) => string),
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -13390,12 +13349,54 @@ module ChartsPlotArcdiagramOptionsDataLabels = {
   external fromSeriesArcDiagramDataLabelsOptionsObject: seriesArcDiagramDataLabelsOptionsObject => t = "%identity"
   external fromSeriesArcDiagramDataLabelsOptionsObjects: array<seriesArcDiagramDataLabelsOptionsObject> => t = "%identity"
 }
+type seriesSankeyDataLabelsOptionsObject = {
+  align?: string,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject> | PlotArcdiagramLevelsDataLabelsAnimationOptions | ... 8 more ... | `
+  backgroundColor?: string,
+  borderColor?: string,  // ⚪ loose — was `ColorType`
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: string,  // ⚪ loose — was `ColorType`
+  crop?: bool,
+  defer?: bool,
+  distance?: float,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point) => string),
+  inside?: bool,
+  labelrank?: float,
+  nodeFormat?: string,
+  nodeFormatter?: @this ((point) => string),
+  nullFormat?: string,  // ⚪ loose — was `string | boolean`
+  nullFormatter?: @this ((point, dataLabelsOptions) => string),  // ⚪ loose — was `string | number`
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
+module ChartsPlotArcdiagramLevelsOptionsDataLabels = {
+  type t
+  external fromSeriesSankeyDataLabelsOptionsObject: seriesSankeyDataLabelsOptionsObject => t = "%identity"
+  external fromSeriesSankeyDataLabelsOptionsObjects: array<seriesSankeyDataLabelsOptionsObject> => t = "%identity"
+}
 type plotArcdiagramLevelsOptions = {
   borderColor?: string,
   borderWidth?: float,
   color?: ColorType.t,
   colorByPoint?: bool,
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesSankeyDataLabelsOptionsObject | SeriesSankeyDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: ChartsPlotArcdiagramLevelsOptionsDataLabels.t,
   level?: int,
   linkOpacity?: float,
   states?: seriesStatesOptionsObject,
@@ -13475,11 +13476,11 @@ type plotAreaDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -13568,11 +13569,11 @@ type plotSeriesDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: string => string,  // ⚪ loose — was `string | number`
+  formatter?: @this ((point, dataLabelsOptions) => string),  // ⚪ loose — was `string | number`
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: string => string,  // ⚪ loose — was `string | number`
+  nullFormatter?: @this ((point, dataLabelsOptions) => string),  // ⚪ loose — was `string | number`
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -13796,11 +13797,11 @@ type seriesAreaRangeDataLabelsOptionsObject = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -13937,11 +13938,11 @@ type plotAreasplineDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -14167,11 +14168,11 @@ type plotAroonDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -14293,11 +14294,11 @@ type plotAroonoscillatorDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -14418,11 +14419,11 @@ type plotAtrDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -14541,11 +14542,11 @@ type plotBarDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -14671,11 +14672,11 @@ type plotBbDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -14802,11 +14803,11 @@ type plotBellcurveDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -14922,11 +14923,11 @@ type plotBoxplotDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -15058,11 +15059,11 @@ type plotBubbleDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -15199,11 +15200,11 @@ type plotBulletDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -15329,11 +15330,11 @@ type plotCandlestickDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -15465,11 +15466,11 @@ type plotCciDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -15588,11 +15589,11 @@ type plotChaikinDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -15717,11 +15718,11 @@ type plotCmfDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -15839,11 +15840,11 @@ type plotCmoDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -15962,11 +15963,11 @@ type plotColumnDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -16102,11 +16103,11 @@ type plotColumnpyramidDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -16335,11 +16336,11 @@ type plotContourDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -16445,11 +16446,11 @@ type plotCylinderDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -16571,11 +16572,11 @@ type plotDemaDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -16674,54 +16675,12 @@ type plotDemaOptions = {
   zones?: array<seriesZonesOptionsObject>,
   zoomEnabled?: bool,
 }
-type seriesSankeyDataLabelsOptionsObject = {
-  align?: string,
-  alignTo?: string,
-  allowOverlap?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject> | PlotArcdiagramLevelsDataLabelsAnimationOptions | ... 8 more ... | `
-  backgroundColor?: string,
-  borderColor?: string,  // ⚪ loose — was `ColorType`
-  borderRadius?: float,
-  borderWidth?: float,
-  className?: string,
-  color?: string,  // ⚪ loose — was `ColorType`
-  crop?: bool,
-  defer?: bool,
-  distance?: float,
-  enabled?: bool,
-  filter?: string,  // ⚪ loose — was `DataLabelsFilterOptionsObject`
-  format?: string,
-  formatter?: string,  // ⚪ loose — was `SeriesSankeyDataLabelsFormatterCallbackFunction`
-  inside?: bool,
-  labelrank?: float,
-  nodeFormat?: string,
-  nodeFormatter?: string,  // ⚪ loose — was `SeriesSankeyDataLabelsFormatterCallbackFunction`
-  nullFormat?: string,  // ⚪ loose — was `string | boolean`
-  nullFormatter?: string,  // ⚪ loose — was `DataLabelsFormatterCallbackFunction`
-  overflow?: string,  // ⚪ loose — was `DataLabelsOverflowValue`
-  padding?: float,
-  position?: string,  // ⚪ loose — was `AlignValue`
-  rotation?: float,
-  shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
-  shape?: string,
-  style?: string,  // ⚪ loose — was `CSSObject`
-  textPath?: string,  // ⚪ loose — was `DataLabelsTextPathOptionsObject`
-  useHTML?: bool,
-  verticalAlign?: string,
-  x?: float,
-  y?: float,
-}
-module ChartsPlotDependencywheelOptionsDataLabels = {
-  type t
-  external fromSeriesSankeyDataLabelsOptionsObject: seriesSankeyDataLabelsOptionsObject => t = "%identity"
-  external fromSeriesSankeyDataLabelsOptionsObjects: array<seriesSankeyDataLabelsOptionsObject> => t = "%identity"
-}
 type plotDependencywheelLevelsOptions = {
   borderColor?: string,
   borderWidth?: float,
   color?: ColorType.t,
   colorByPoint?: bool,
-  dataLabels?: ChartsPlotDependencywheelOptionsDataLabels.t,
+  dataLabels?: ChartsPlotArcdiagramLevelsOptionsDataLabels.t,
   level?: int,
   linkOpacity?: float,
   states?: seriesStatesOptionsObject,
@@ -16745,7 +16704,7 @@ type plotDependencywheelOptions = {
   curveFactor?: float,
   custom?: Dict.t<string>,  // 🛑 BROKEN — contains `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: ChartsPlotDependencywheelOptionsDataLabels.t,
+  dataLabels?: ChartsPlotArcdiagramLevelsOptionsDataLabels.t,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject,
@@ -16805,11 +16764,11 @@ type plotDisparityindexDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -16933,11 +16892,11 @@ type plotDmiDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -17065,11 +17024,11 @@ type plotDpoDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -17277,11 +17236,11 @@ type plotEmaDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -17400,11 +17359,11 @@ type plotErrorbarDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -17536,11 +17495,11 @@ type plotFlagsDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -17739,10 +17698,10 @@ type seriesPieDataLabelsOptionsObject = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -17846,11 +17805,11 @@ type plotFunnel3dDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: string,
   padding?: float,
   position?: alignValue,
@@ -17981,11 +17940,11 @@ type plotGanttDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -18085,11 +18044,11 @@ type plotGaugeDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -18198,11 +18157,11 @@ type plotGeoheatmapDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: bool,
   padding?: float,
   position?: alignValue,
@@ -18305,11 +18264,11 @@ type plotHeatmapDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -18416,11 +18375,11 @@ type plotHeikinashiDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -18552,11 +18511,11 @@ type plotHistogramDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -18678,11 +18637,11 @@ type plotHlcDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -18810,11 +18769,11 @@ type plotHollowcandlestickDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -18946,11 +18905,11 @@ type plotIkhDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -19140,11 +19099,11 @@ type plotKeltnerchannelsDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -19264,11 +19223,11 @@ type plotKlingerDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -19394,11 +19353,11 @@ type plotLineDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -19527,11 +19486,11 @@ type plotLinearregressionDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -19655,11 +19614,11 @@ type plotLinearregressionangleDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -19783,11 +19742,11 @@ type plotLinearregressioninterceptDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -19906,11 +19865,11 @@ type plotLinearregressionslopeDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -20119,11 +20078,11 @@ type plotMacdDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -20258,11 +20217,11 @@ type plotMapDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: bool,
   padding?: float,
   position?: alignValue,
@@ -20353,11 +20312,11 @@ type plotMapbubbleDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -20452,11 +20411,11 @@ type plotMaplineDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: bool,
   padding?: float,
   position?: alignValue,
@@ -20549,11 +20508,11 @@ type plotMfiDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -20678,11 +20637,11 @@ type plotMomentumDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -20801,11 +20760,11 @@ type plotNatrDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -20932,14 +20891,14 @@ type seriesNetworkgraphDataLabelsOptionsObject = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   linkFormat?: string,
   linkFormatter?: string,  // ⚪ loose — was `object`
   linkTextPath?: dataLabelsTextPathOptionsObject,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -21052,11 +21011,11 @@ type plotObvDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -21180,11 +21139,11 @@ type plotOhlcDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -21320,14 +21279,14 @@ type seriesOrganizationDataLabelsOptionsObject = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: unit => string,
+  formatter?: @this ((point) => string),
   inside?: bool,
   labelrank?: float,
   linkTextPath?: plotOrganizationDataLabelsLinkTextPathOptions,
   nodeFormat?: string,
-  nodeFormatter?: unit => string,
+  nodeFormatter?: @this ((point) => string),
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -21345,16 +21304,6 @@ module ChartsPlotOrganizationOptionsDataLabels = {
   type t
   external fromSeriesOrganizationDataLabelsOptionsObject: seriesOrganizationDataLabelsOptionsObject => t = "%identity"
   external fromSeriesOrganizationDataLabelsOptionsObjects: array<seriesOrganizationDataLabelsOptionsObject> => t = "%identity"
-}
-type plotOrganizationLevelsOptions = {
-  borderColor?: string,
-  borderWidth?: float,
-  color?: ColorType.t,
-  colorByPoint?: bool,
-  dataLabels?: ChartsPlotDependencywheelOptionsDataLabels.t,
-  level?: int,
-  linkOpacity?: float,
-  states?: seriesStatesOptionsObject,
 }
 type plotOrganizationLinkOptions = {
   color?: string,
@@ -21391,7 +21340,7 @@ type plotOrganizationOptions = {
   keys?: array<string>,
   label?: seriesLabelOptionsObject,
   legendSymbol?: optionsLegendSymbolValue,
-  levels?: array<plotOrganizationLevelsOptions>,
+  levels?: array<plotArcdiagramLevelsOptions>,
   link?: plotOrganizationLinkOptions,
   linkColorMode?: ChartsTypes.chartsPlotArcdiagramOptionsLinkColorMode,
   linkedTo?: string,
@@ -21452,11 +21401,11 @@ type seriesPackedBubbleDataLabelsOptionsObject = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   parentNodeFormat?: string,
@@ -21604,11 +21553,11 @@ type plotParetoDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -21704,11 +21653,11 @@ type plotPcDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -21828,11 +21777,11 @@ type plotPictorialDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -22005,11 +21954,11 @@ type plotPivotpointsDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -22133,11 +22082,11 @@ type plotPointandfigureDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -22262,11 +22211,11 @@ type plotPolygonDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -22387,11 +22336,11 @@ type plotPpoDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -22510,11 +22459,11 @@ type plotPriceenvelopesDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -22641,11 +22590,11 @@ type plotPsarDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -22772,11 +22721,11 @@ type plotPyramid3dDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: string,
   padding?: float,
   position?: alignValue,
@@ -22908,11 +22857,11 @@ type plotRenkoDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -23029,11 +22978,11 @@ type plotRocDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -23152,11 +23101,11 @@ type plotRsiDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -23275,7 +23224,7 @@ type plotSankeyOptions = {
   curveFactor?: float,
   custom?: Dict.t<string>,  // 🛑 BROKEN — contains `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: ChartsPlotDependencywheelOptionsDataLabels.t,
+  dataLabels?: ChartsPlotArcdiagramLevelsOptionsDataLabels.t,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject,
@@ -23285,7 +23234,7 @@ type plotSankeyOptions = {
   keys?: array<string>,
   label?: seriesLabelOptionsObject,
   legendSymbol?: optionsLegendSymbolValue,
-  levels?: array<plotOrganizationLevelsOptions>,
+  levels?: array<plotArcdiagramLevelsOptions>,
   linkColorMode?: ChartsTypes.chartsPlotArcdiagramOptionsLinkColorMode,
   linkedTo?: string,
   linkOpacity?: float,
@@ -23323,12 +23272,12 @@ module ChartsPlotScatterClusterOptionsDataLabels = {
 }
 type pointClickEventObject = {
   ...JsxDOM.domProps,
-  point: string,  // ⚪ loose — was `Point`
+  point: point,
   chartX: float,
   chartY: float,
 }
 type plotScatterClusterEventsOptions = {
-  drillToCluster?: pointClickEventObject => unit,
+  drillToCluster?: @this ((point, pointClickEventObject) => unit),
 }
 type plotScatterClusterLayoutAlgorithmOptions = {
   distance?: CommonTypes.stringOrNumber,
@@ -23384,11 +23333,11 @@ type plotScatterDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -23514,11 +23463,11 @@ type plotScatter3dDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -23629,11 +23578,11 @@ type plotSlowstochasticDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -23758,11 +23707,11 @@ type plotSmaDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -23881,11 +23830,11 @@ type plotSolidgaugeDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -23980,11 +23929,11 @@ type plotSplineDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -24109,11 +24058,11 @@ type plotStochasticDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -24238,11 +24187,11 @@ type plotStreamgraphDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -24419,10 +24368,10 @@ type seriesSunburstDataLabelsOptionsObject = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -24548,11 +24497,11 @@ type plotSupertrendDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -24676,11 +24625,11 @@ type plotTemaDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -24824,11 +24773,11 @@ type plotTilemapDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -24931,11 +24880,11 @@ type timelineDataLabelsOptionsObject = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -25057,13 +25006,13 @@ type seriesTreegraphDataLabelsOptionsObject = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   headers?: bool,
   inside?: bool,
   labelrank?: float,
   linkTextPath?: dataLabelsTextPathOptionsObject,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   pointFormat?: string,
@@ -25255,12 +25204,12 @@ type plotTreemapDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   headers?: bool,
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -25279,13 +25228,53 @@ module ChartsPlotTreemapOptionsDataLabels = {
   external fromPlotTreemapDataLabelsOptions: plotTreemapDataLabelsOptions => t = "%identity"
   external fromPlotTreemapDataLabelsOptionss: array<plotTreemapDataLabelsOptions> => t = "%identity"
 }
+type plotTreemapLevelsDataLabelsOptions = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject> | PlotTreemapLevelsDataLabelsAnimationOptions`
+  backgroundColor?: string,  // ⚪ loose — was `ColorType`
+  borderColor?: string,  // ⚪ loose — was `ColorType`
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: string,  // ⚪ loose — was `ColorType`
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point, dataLabelsOptions) => string),  // ⚪ loose — was `string | number`
+  headers?: bool,
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: string,  // ⚪ loose — was `string | boolean`
+  nullFormatter?: @this ((point, dataLabelsOptions) => string),  // ⚪ loose — was `string | number`
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
+  shape?: string,
+  style?: string,  // ⚪ loose — was `CSSObject | PlotTreemapLevelsDataLabelsStyleOptions`
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
+module ChartsPlotTreemapLevelsOptionsDataLabels = {
+  type t
+  external fromPlotTreemapLevelsDataLabelsOptions: plotTreemapLevelsDataLabelsOptions => t = "%identity"
+  external fromPlotTreemapLevelsDataLabelsOptionss: array<plotTreemapLevelsDataLabelsOptions> => t = "%identity"
+}
 type plotTreemapLevelsOptions = {
   borderColor?: string,
   borderDashStyle?: dashStyleValue,
   borderWidth?: float,
   color?: ColorType.t,
   colorVariation?: plotTreegraphLevelsColorVariationOptions,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotTreemapLevelsDataLabelsOptions | PlotTreemapLevelsDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: ChartsPlotTreemapLevelsOptionsDataLabels.t,
   layoutAlgorithm?: optionsLayoutAlgorithmValue,
   layoutStartingDirection?: optionsLayoutStartingDirectionValue,
   level?: int,
@@ -25392,11 +25381,11 @@ type plotTrendlineDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -25519,11 +25508,11 @@ type plotTrixDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -25704,11 +25693,11 @@ type plotVariwideDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -25827,11 +25816,11 @@ type plotVbpDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -25989,11 +25978,11 @@ type plotVectorDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -26126,11 +26115,11 @@ type plotVennDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -26220,11 +26209,11 @@ type plotVwapDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -26343,11 +26332,11 @@ type plotWaterfallDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -26474,11 +26463,11 @@ type plotWilliamsrDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -26597,11 +26586,11 @@ type plotWindbarbDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -26735,11 +26724,11 @@ type plotWmaDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -26924,11 +26913,11 @@ type plotXrangeDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -27046,11 +27035,11 @@ type plotZigzagDataLabelsOptions = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  formatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: dataLabelsOptions => CommonTypes.stringOrNumber,
+  nullFormatter?: @this ((point, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -27320,7 +27309,7 @@ type rangeSelectorOptions = {
   y?: float,
 }
 type responsiveRulesConditionOptions = {
-  callback?: option<chart> => bool,
+  callback?: @this ((chart, option<chart>) => bool),
   maxHeight?: float,
   maxWidth?: float,
   minHeight?: float,
@@ -27687,7 +27676,7 @@ type zAxisLabelsOptions = {
   distance?: float,
   enabled?: bool,
   format?: string,
-  formatter?: axisLabelsFormatterContextObject => string,
+  formatter?: @this ((axisLabelsFormatterContextObject, axisLabelsFormatterContextObject) => string),
   overflow?: optionsOverflowValue,
   padding?: float,
   position3d?: optionsPosition3dValue,
@@ -27700,64 +27689,6 @@ type zAxisLabelsOptions = {
   useHTML?: bool,
   x?: float,
   y?: float,
-  zIndex?: int,
-}
-type zAxisPlotBandsEventsOptions = {
-  click?: (option<string>, option<string>) => string,  // ⚪ loose — was `boolean | void`
-  mousemove?: (option<string>, option<string>) => string,  // ⚪ loose — was `boolean | void`
-  mouseout?: (option<string>, option<string>) => string,  // ⚪ loose — was `boolean | void`
-  mouseover?: (option<string>, option<string>) => string,  // ⚪ loose — was `boolean | void`
-}
-type zAxisPlotBandsLabelOptions = {
-  align?: alignValue,
-  allowOverlap?: bool,
-  inside?: bool,
-  rotation?: float,
-  style?: cssObject,
-  text?: string,
-  textAlign?: alignValue,
-  useHTML?: bool,
-  verticalAlign?: verticalAlignValue,
-  x?: float,
-  y?: float,
-}
-type zAxisPlotBandsOptions = {
-  acrossPanes?: bool,
-  borderColor?: string,
-  borderRadius?: CommonTypes.stringOrNumber,
-  borderWidth?: float,
-  className?: string,
-  color?: ColorType.t,
-  events?: zAxisPlotBandsEventsOptions,
-  from?: CommonTypes.stringOrNumber,
-  id?: string,
-  label?: zAxisPlotBandsLabelOptions,
-  @as("to") to_?: CommonTypes.stringOrNumber,
-  zIndex?: int,
-}
-type zAxisPlotLinesLabelOptions = {
-  align?: alignValue,
-  formatter?: option<string> => string,  // ⚪ loose — was `PlotLineOrBand`
-  rotation?: float,
-  style?: cssObject,
-  text?: string,
-  textAlign?: alignValue,
-  useHTML?: bool,
-  verticalAlign?: verticalAlignValue,
-  x?: float,
-  y?: float,
-}
-type zAxisPlotLinesOptions = {
-  acrossPanes?: bool,
-  className?: string,
-  color?: string,
-  dashStyle?: dashStyleValue,
-  events?: zAxisPlotBandsEventsOptions,
-  id?: string,
-  label?: zAxisPlotLinesLabelOptions,
-  labels?: navigatorXAxisPlotLinesLabelsOptions,
-  value?: CommonTypes.stringOrNumber,
-  width?: float,
   zIndex?: int,
 }
 type zAxisOptions = {
@@ -27803,8 +27734,8 @@ type zAxisOptions = {
   opposite?: bool,
   pane?: float,
   panningEnabled?: bool,
-  plotBands?: array<zAxisPlotBandsOptions>,
-  plotLines?: array<zAxisPlotLinesOptions>,
+  plotBands?: array<navigatorXAxisPlotBandsOptions>,
+  plotLines?: array<navigatorXAxisPlotLinesOptions>,
   reversed?: bool,
   reversedStacks?: bool,
   showFirstLabel?: bool,
@@ -27821,7 +27752,7 @@ type zAxisOptions = {
   tickmarkPlacement?: optionsTickmarkPlacementValue,
   tickPixelInterval?: float,
   tickPosition?: optionsTickPositionValue,
-  tickPositioner?: (float, float, option<axis>) => axisTickPositionsArray,
+  tickPositioner?: @this ((axis, float, float, option<axis>) => axisTickPositionsArray),
   tickPositions?: array<float>,
   tickWidth?: float,
   title?: zAxisTitleOptions,
@@ -27954,41 +27885,6 @@ type mapViewInsetsOptions = {
   projection?: string,  // ⚠️ REVIEW — was `object | MapViewInsetsProjectionOptions` — match the real type by hand
   relativeTo?: mapViewInsetOptionsRelativeToValue,
   units?: optionsUnitsValue,
-}
-type plotTreemapLevelsDataLabelsOptions = {
-  align?: string,  // ⚪ loose — was `AlignValue`
-  alignTo?: string,
-  allowOverlap?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject> | PlotTreemapLevelsDataLabelsAnimationOptions`
-  backgroundColor?: string,  // ⚪ loose — was `ColorType`
-  borderColor?: string,  // ⚪ loose — was `ColorType`
-  borderRadius?: float,
-  borderWidth?: float,
-  className?: string,
-  color?: string,  // ⚪ loose — was `ColorType`
-  crop?: bool,
-  defer?: bool,
-  enabled?: bool,
-  filter?: string,  // ⚪ loose — was `DataLabelsFilterOptionsObject`
-  format?: string,
-  formatter?: string,  // ⚪ loose — was `DataLabelsFormatterCallbackFunction`
-  headers?: bool,
-  inside?: bool,
-  labelrank?: float,
-  nullFormat?: string,  // ⚪ loose — was `string | boolean`
-  nullFormatter?: string,  // ⚪ loose — was `DataLabelsFormatterCallbackFunction`
-  overflow?: string,  // ⚪ loose — was `DataLabelsOverflowValue`
-  padding?: float,
-  position?: string,  // ⚪ loose — was `AlignValue`
-  rotation?: float,
-  shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
-  shape?: string,
-  style?: string,  // ⚪ loose — was `CSSObject | PlotTreemapLevelsDataLabelsStyleOptions`
-  textPath?: string,  // ⚪ loose — was `DataLabelsTextPathOptionsObject`
-  useHTML?: bool,
-  verticalAlign?: string,
-  x?: float,
-  y?: float,
 }
 module ChartV2LegendItem = {
   type t

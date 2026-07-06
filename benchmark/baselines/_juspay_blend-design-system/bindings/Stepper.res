@@ -5,4 +5,5 @@ external make: (
   ~onSubstepClick: (float, float) => unit=?,
   ~clickable: bool=?,
   ~stepperType: StepperTypes.stepperType=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Stepper"

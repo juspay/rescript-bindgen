@@ -12,7 +12,7 @@ external make: (
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~modal: bool=?,
   ~onOpenChange: (bool, RootSharedTypes.changeEventDetails) => unit=?,
-  ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
+  ~actionsRef: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>=?,
   ~defaultOpen: bool=?,
   ~onOpenChangeComplete: bool => unit=?,
   ~required: bool=?,

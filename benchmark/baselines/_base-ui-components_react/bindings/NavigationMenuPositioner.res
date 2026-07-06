@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, PositionerSharedTypes.navi
 
 @module("@base-ui-components/react") @scope("NavigationMenu") @react.component
 external make: (
-  ~anchor: DistTypes.PositionerAnchor.t=?,  // ⓘ was `Element | VirtualElement | RefObject<Element> | (() => Element | VirtualElement)` — opaque; build with PositionerAnchor.fromElement / PositionerAnchor.fromVirtualElement / PositionerAnchor.fromRefObject / PositionerAnchor.fromFn
+  ~anchor: DistTypes.PositionerAnchor.t=?,  // ⓘ was `Element | RefObject<Element> | VirtualElement | (() => Element | VirtualElement)` — opaque; build with PositionerAnchor.fromElement / PositionerAnchor.fromRefObject / PositionerAnchor.fromVirtualElement / PositionerAnchor.fromFn
   ~positionMethod: PositionerSharedTypes.positionerPositionMethod=?,
   ~side: PositionerSharedTypes.side=?,
   ~sideOffset: PositionerSharedTypes.utilsSideOffsetConfigSideOffset=?,
@@ -66,4 +66,5 @@ external make: (
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: PositionerSharedTypes.navigationMenuPositionerClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Positioner"

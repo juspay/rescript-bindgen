@@ -13,6 +13,7 @@ type props = {
   avatarProps?: AvatarV2Types.avatarV2AvatarPropsConfig,
   time?: string,
   status?: TimelineTypes.timelineNodeStatus,
+  ref?: React.ref<Nullable.t<Dom.element>>,
 }
 
 @module("@juspay/blend-design-system")

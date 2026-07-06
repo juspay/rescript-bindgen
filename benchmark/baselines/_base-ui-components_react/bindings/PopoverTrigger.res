@@ -70,4 +70,5 @@ external make: (
   ~openOnHover: bool=?,
   ~delay: float=?,
   ~closeDelay: float=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Trigger"

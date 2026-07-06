@@ -11,4 +11,5 @@ external make: (
   ~showCopyButton: bool=?,
   ~autoFormat: bool=?,
   ~language: CodeBlockTypes.supportedLanguage=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "CodeBlock"

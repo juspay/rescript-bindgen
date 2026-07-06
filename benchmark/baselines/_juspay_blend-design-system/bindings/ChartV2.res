@@ -10,4 +10,5 @@ external make: (
   ~callback: HighchartsSharedTypes.chart => unit=?,
   ~skeleton: ChartsV2Types.chartV2SkeletonProps=?,
   ~noData: ChartsV2Types.chartV2NoDataProps=?,
+  ~ref: React.ref<Nullable.t<DistTypes.highchartsReactRefObject>>=?,
 ) => React.element = "ChartV2"

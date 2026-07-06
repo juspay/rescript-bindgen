@@ -7,6 +7,7 @@ type props = {
   selectedAvatarIds?: array<CommonTypes.stringOrNumber>,
   onSelectionChange?: array<CommonTypes.stringOrNumber> => unit,
   skeleton?: AvatarGroupTypes.avatarGroupSkeletonConfig,
+  ref?: React.ref<Nullable.t<Dom.element>>,
 }
 
 @module("@juspay/blend-design-system")

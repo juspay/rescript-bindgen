@@ -5,4 +5,5 @@ external make: (
   ~disabled: bool=?,
   ~onClick: unit => unit=?,
   @as("aria-label") ~ariaLabel: string=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "DrawerTrigger"

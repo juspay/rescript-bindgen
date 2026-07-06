@@ -40,4 +40,5 @@ external make: (
   ~afterHide: unit => unit=?,
   ~disableTooltip: Nullable.t<Dom.element> => bool=?,
   ~role: string=?,
+  ~ref: React.ref<Nullable.t<DistTypes.tooltipRefProps>>=?,
 ) => React.element = "Tooltip"
