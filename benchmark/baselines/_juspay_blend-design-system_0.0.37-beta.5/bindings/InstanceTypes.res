@@ -1,0 +1,2 @@
+type highchartsModule
+type editorApiModule

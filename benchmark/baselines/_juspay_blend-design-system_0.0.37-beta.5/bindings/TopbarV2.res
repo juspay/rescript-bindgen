@@ -1,0 +1,21 @@
+@module("@juspay/blend-design-system") @react.component
+external make: (
+  ~children: React.element=?,
+  ~isExpanded: bool=?,
+  ~onToggleExpansion: unit => unit=?,
+  ~showToggleButton: bool=?,
+  ~panelOnlyMode: bool=?,
+  ~isVisible: bool=?,
+  ~onVisibilityChange: bool => unit=?,
+  ~defaultIsVisible: bool=?,
+  ~sidebarTopSlot: React.element=?,
+  ~topbar: React.element=?,
+  ~leftAction: React.element=?,
+  ~rightActions: React.element=?,
+  ~showBackButton: bool=?,
+  ~onBackClick: unit => unit=?,
+  ~secondarySidebar: SidebarV2Types.secondarySidebarInfo=?,
+  ~merchantInfo: TopbarV2Types.merchantInfoV2=?,
+  ~ariaControls: string=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
+) => React.element = "TopbarV2"

@@ -1883,6 +1883,29 @@ function classify(type, ctx, propName = '', depth = 0) {
         if (flags & (ts.TypeFlags.BigInt | ts.TypeFlags.BigIntLiteral)) return { kind: 'bigint' }
         if (flags & ts.TypeFlags.Index) return { kind: 'string' }
         if (isCssType(type)) return { kind: 'string' }
+        // CONTAINERS keep their certain shape past the bound — the wrapper is a runtime fact
+        // (an array / a plain object), only the ELEMENT may be unmodellable. An element that
+        // links/resolves keeps its real type; an imperfect one becomes the honest opaque payload
+        // `JSON.t` (the same mapping `unknown` gets), NOT a fake `string`. Unblocks Highcharts'
+        // `series*Options.data: (number | PointOptionsObject | […])[]` (→ `array<JSON.t>`) and
+        // `custom?: Dictionary<any>` (→ `Dict.t<JSON.t>`) — both previously collapsed to a `string`
+        // that can never carry the value, forcing an %identity in every consumer. (#111 downstream)
+        if (checker.isArrayType?.(type) || checker.isTupleType?.(type)) {
+            const els = checker.getTypeArguments(type) || []
+            const nodes = els.map((el) => classify(el, ctx, propName, depth + 1))
+            // a tuple keeps a typed element only when every element agrees (`[x, y]` → array<float>)
+            const uniq = new Set(nodes.map((n) => JSON.stringify(n)))
+            const of = nodes.length && uniq.size === 1 && !irHasImperfection(nodes[0])
+                ? nodes[0] : { kind: 'raw', res: 'JSON.t' }
+            return { kind: 'array', of }
+        }
+        {
+            const si = checker.getIndexInfoOfType?.(type, ts.IndexKind.String)
+            if (si && si.type && !(type.getProperties && type.getProperties().length)) {
+                const of = classify(si.type, ctx, propName, depth + 1)
+                return { kind: 'dict', of: irHasImperfection(of) ? { kind: 'raw', res: 'JSON.t' } : of }
+            }
+        }
         return { kind: 'opaque', text: checker.typeToString(type) }
     }
     if (type.id != null) {

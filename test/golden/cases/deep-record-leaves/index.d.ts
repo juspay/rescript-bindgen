@@ -30,6 +30,13 @@ interface DeepTip {
   payload?: unknown
   formatter?: (value: number) => string
   extra?: Extra1
+  // containers keep their certain shape past the bound (#111 downstream): the wrapper is a
+  // runtime fact; an unmodellable ELEMENT becomes the honest JSON.t payload, not a fake string.
+  data?: (number | Extra1 | [string, number])[]  // mixed-union element -> array<JSON.t>
+  points?: number[]                              // clean element -> array<float>
+  pair?: [number, number]                        // agreeing tuple -> array<float>
+  custom?: { [key: string]: any }                // Dictionary<any> -> Dict.t<JSON.t>
+  ratios?: { [key: string]: number }             // clean dict -> Dict.t<float>
 }
 
 interface L6 { tip?: DeepTip; s6?: string }

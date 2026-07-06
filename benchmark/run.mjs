@@ -138,8 +138,14 @@ function verdictFor(metrics, baseline, diffProblems) {
 }
 
 // ── main ────────────────────────────────────────────────────────────────────
-const packages = JSON.parse(readFileSync(join(HERE, 'packages.json'), 'utf-8'))
-    .filter((p) => !ONLY || slugOf(p.name) === ONLY || p.name === ONLY)
+const allPackages = JSON.parse(readFileSync(join(HERE, 'packages.json'), 'utf-8'))
+// Two pinned versions of the SAME package (blend 0.0.36 stable + the 0.0.37 beta line that
+// blend-rescript actually regenerates from) need separate baselines — a duplicated name gets a
+// version-qualified slug; single-version packages keep their existing baseline dirs.
+const nameCount = new Map()
+for (const p of allPackages) nameCount.set(p.name, (nameCount.get(p.name) || 0) + 1)
+const slugFor = (p) => slugOf(nameCount.get(p.name) > 1 ? `${p.name}@${p.version}` : p.name)
+const packages = allPackages.filter((p) => !ONLY || slugFor(p) === ONLY || slugOf(p.name) === ONLY || p.name === ONLY)
 if (!packages.length) {
     console.error(RED(`no package matches --only ${ONLY}`))
     process.exit(1)
@@ -147,7 +153,7 @@ if (!packages.length) {
 
 const results = []
 for (const pkg of packages) {
-    const slug = slugOf(pkg.name)
+    const slug = slugFor(pkg)
     const label = `${pkg.name}@${pkg.version}`
     const workDir = join(WORK, slug)
     const sandbox = join(workDir, 'sandbox')
