@@ -35,3 +35,4 @@ _(none)_
 These props resolved to `unknown`/`any` (usually a generic `T`). They're emitted as a placeholder so the file still compiles, but **the props will not work as typed** — they need a concrete type upstream, or generic-binding support.
 
 _(none)_ 🎉
+
