@@ -1,0 +1,3 @@
+type customEvent = {
+  ...JsxDOM.domProps,
+}

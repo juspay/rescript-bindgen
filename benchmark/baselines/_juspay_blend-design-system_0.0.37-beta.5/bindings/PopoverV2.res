@@ -1,0 +1,32 @@
+type props = {
+  ...HtmlAttrs.htmlAttributesOmitChildrenClassNameSlotStyle,
+  heading?: string,
+  description?: string,
+  trigger: React.element,
+  children: React.element,
+  showCloseButton?: bool,
+  onOpenChange?: bool => unit,
+  @as("open") open_?: bool,
+  asModal?: bool,
+  primaryAction?: PopoverV2Types.popoverV2ActionType,
+  secondaryAction?: PopoverV2Types.popoverV2ActionType,
+  sideOffset?: float,
+  side?: PopoverV2Types.popoverV2Side,
+  align?: PopoverV2Types.popoverV2Align,
+  alignOffset?: float,
+  size?: PopoverV2Types.popoverV2Size,
+  onClose?: unit => unit,
+  useDrawerOnMobile?: bool,
+  avoidCollisions?: bool,
+  skeleton?: PopoverV2Types.popoverV2SkeletonProps,
+  width?: float,
+  maxWidth?: float,
+  minWidth?: float,
+  height?: float,
+  minHeight?: float,
+  maxHeight?: float,
+  ref?: React.ref<Nullable.t<Dom.element>>,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "PopoverV2"

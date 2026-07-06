@@ -31,8 +31,8 @@ type components = {
 type vFile = {
   cwd: string,
   data: string,  // ⚪ loose — was `Data`
-  history: string,  // ⚪ loose — was `string[]`
-  messages: string,  // ⚪ loose — was `VFileMessage[]`
+  history: array<string>,
+  messages: array<JSON.t>,
   value: string,  // ⚪ loose — was `Value`
   map: string,  // ⚪ loose — was `Map`
   result: JSON.t,

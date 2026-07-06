@@ -7,6 +7,11 @@ type deepTip = {
   payload?: JSON.t,
   formatter?: float => string,
   extra?: string,  // ⚪ loose — was `Extra1`
+  data?: array<JSON.t>,
+  points?: array<float>,
+  pair?: array<float>,
+  custom?: Dict.t<JSON.t>,
+  ratios?: Dict.t<float>,
 }
 type l6 = {
   tip?: deepTip,

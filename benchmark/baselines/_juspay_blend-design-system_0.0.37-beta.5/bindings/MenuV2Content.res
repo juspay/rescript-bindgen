@@ -1,0 +1,25 @@
+@module("@juspay/blend-design-system") @react.component
+external make: (
+  ~filteredItems: array<MenuV2Types.menuV2GroupType>,
+  ~menuTokens: MenuV2Types.menuV2TokensType,
+  ~enableSearch: bool,
+  ~searchPlaceholder: string,
+  ~searchText: string,
+  ~onSearchTextChange: string => unit,
+  ~maxHeight: string=?,
+  ~minHeight: string=?,
+  ~minWidth: string=?,
+  ~maxWidth: string=?,
+  ~enableVirtualScrolling: bool=?,
+  ~virtualScrolling: MenuV2Types.menuV2VirtualScrollingConfig=?,
+  ~alignment: DateRangePickerTypes.dateRangePickerDateRangePickerPopoverConfigAlign=?,
+  ~side: DateRangePickerTypes.dateRangePickerDateRangePickerPopoverConfigSide=?,
+  ~sideOffset: float=?,
+  ~alignOffset: float=?,
+  ~collisionBoundaryRef: MenuV2Types.MenuV2CollisionBoundaryRef.t=?,  // ⓘ was `HTMLElement | HTMLElement[]` — opaque; build with MenuV2CollisionBoundaryRef.fromHTMLElement / MenuV2CollisionBoundaryRef.fromHTMLElements
+  ~onInteractOutside: JSON.t => unit=?,
+  ~onPointerDownOutside: JSON.t => unit=?,
+  ~onFocusCapture: ReactEvent.Focus.t => unit=?,
+  ~onKeyDown: ReactEvent.Keyboard.t => unit=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
+) => React.element = "MenuV2Content"

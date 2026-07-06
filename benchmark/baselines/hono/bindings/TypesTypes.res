@@ -57,10 +57,15 @@ type routerRoute = {
   method: string,
   handler: (InstanceTypes.context, unit => promise<unit>) => string,  // 🛑 BROKEN — contains `any`
 }
+module MatchTarget = {
+  type t
+  external fromTuple2: ((array<array<JSON.t>>, array<string>)) => t = "%identity"
+  external fromArray: array<array<array<JSON.t>>> => t = "%identity"
+}
 type router = {
   name: string,
   add: (string, string, ((InstanceTypes.context, unit => string) => string, routerRoute)) => unit,  // 🛑 BROKEN — contains `any` — was `Promise<void>`
-  match: (string, string) => string,  // ⚪ loose — was `Result<[H, RouterRoute]>`
+  match: (string, string) => MatchTarget.t,
 }
 type typesHonoOptionsGetPathConfig = {
   env?: string,  // ⚪ loose — was `E["Bindings"]`

@@ -1,0 +1,64 @@
+type accordionType =
+  | @as("border") Border
+  | @as("noBorder") NoBorder
+type accordionChevronPosition =
+  | @as("left") Left
+  | @as("right") Right
+type accordionAccordionTokenTypeGapConfig = {
+  border: string,
+  noBorder: string,
+}
+type accordionAccordionTokenTypeTriggerBackgroundColorBorderConfig = {
+  active: string,
+  default: string,
+  hover: string,
+  disabled: string,
+  @as("open") open_: string,
+}
+type accordionAccordionTokenTypeTriggerBackgroundColorConfig = {
+  border: accordionAccordionTokenTypeTriggerBackgroundColorBorderConfig,
+  noBorder: accordionAccordionTokenTypeTriggerBackgroundColorBorderConfig,
+}
+type accordionAccordionTokenTypeTriggerTextTitleConfig = {
+  fontSize: string,
+  fontWeight: string,
+  color: accordionAccordionTokenTypeTriggerBackgroundColorBorderConfig,
+}
+type accordionAccordionTokenTypeTriggerTextSubtextConfig = {
+  fontSize: string,
+  gap: string,
+  color: accordionAccordionTokenTypeTriggerBackgroundColorBorderConfig,
+}
+type accordionAccordionTokenTypeTriggerTextConfig = {
+  title: accordionAccordionTokenTypeTriggerTextTitleConfig,
+  subtext: accordionAccordionTokenTypeTriggerTextSubtextConfig,
+}
+type accordionAccordionTokenTypeTriggerSlotConfig = {
+  maxWidth: string,
+}
+type accordionAccordionTokenTypeTriggerConfig = {
+  backgroundColor: accordionAccordionTokenTypeTriggerBackgroundColorConfig,
+  border: accordionAccordionTokenTypeTriggerBackgroundColorConfig,
+  padding: accordionAccordionTokenTypeGapConfig,
+  text: accordionAccordionTokenTypeTriggerTextConfig,
+  slot?: accordionAccordionTokenTypeTriggerSlotConfig,
+}
+type accordionAccordionTokenTypeSeparatorConfig = {
+  color: accordionAccordionTokenTypeGapConfig,
+}
+type accordionTokenType = {
+  gap: accordionAccordionTokenTypeGapConfig,
+  borderRadius: accordionAccordionTokenTypeGapConfig,
+  trigger: accordionAccordionTokenTypeTriggerConfig,
+  separator: accordionAccordionTokenTypeSeparatorConfig,
+}
+type responsiveAccordionTokens = {
+  sm: accordionTokenType,
+  lg: accordionTokenType,
+}
+type slotRenderProps = {
+  isExpanded: bool,
+  toggle: unit => unit,
+  value: string,
+  isDisabled: bool,
+}
