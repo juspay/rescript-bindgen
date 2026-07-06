@@ -47,11 +47,11 @@ type avatarV2AvatarV2TokensTypeContainerStatusBackgroundColorConfig = {
   busy: string,
 }
 type avatarV2AvatarV2TokensTypeContainerStatusPositionCircularConfig = {
-  sm: string,
-  regular: string,
-  md: string,
-  lg: string,
-  xl: string,
+  sm: string,  // ⚪ loose — was `{ top?: Top<number | (string & {})>; right?: Right<number | (string & {})>; bottom?: Bottom<number | (string &`
+  regular: string,  // ⚪ loose — was `{ top?: Top<number | (string & {})>; right?: Right<number | (string & {})>; bottom?: Bottom<number | (string &`
+  md: string,  // ⚪ loose — was `{ top?: Top<number | (string & {})>; right?: Right<number | (string & {})>; bottom?: Bottom<number | (string &`
+  lg: string,  // ⚪ loose — was `{ top?: Top<number | (string & {})>; right?: Right<number | (string & {})>; bottom?: Bottom<number | (string &`
+  xl: string,  // ⚪ loose — was `{ top?: Top<number | (string & {})>; right?: Right<number | (string & {})>; bottom?: Bottom<number | (string &`
 }
 type avatarV2AvatarV2TokensTypeContainerStatusPositionConfig = {
   circular: avatarV2AvatarV2TokensTypeContainerStatusPositionCircularConfig,

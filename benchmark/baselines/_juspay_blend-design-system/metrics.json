@@ -7,9 +7,9 @@
     "usable": 96,
     "review": 0,
     "broken": 0,
-    "loose": 2
+    "loose": 0
   },
-  "functions": 53,
+  "functions": 55,
   "classes": 0,
-  "files": 161
+  "files": 162
 }

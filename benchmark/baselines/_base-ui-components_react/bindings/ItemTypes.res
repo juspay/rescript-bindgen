@@ -10,7 +10,7 @@ type accordionItemChangeEventDetails = {
 type accordionItemState = {
   index: int,
   @as("open") open_: bool,
-  value: array<string>,
+  value: array<string>,  // 🛑 BROKEN — contains `any`
   disabled: bool,
   orientation: PositionerSharedTypes.orientation,
 }

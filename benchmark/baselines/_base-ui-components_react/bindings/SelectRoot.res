@@ -14,7 +14,7 @@ external make: (
   ~onOpenChangeComplete: bool => unit=?,
   @as("open") ~open_: bool=?,
   ~modal: bool=?,
-  ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
+  ~actionsRef: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>=?,
   ~items: RootSharedTypes.valueOrRootItemsConfigArray<'c>=?,
   ~itemToStringLabel: 'a => string=?,
   ~itemToStringValue: 'a => string=?,

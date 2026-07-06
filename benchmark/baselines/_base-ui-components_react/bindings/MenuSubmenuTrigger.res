@@ -60,4 +60,5 @@ external make: (
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: SubmenuTriggerTypes.menuSubmenuTriggerClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "SubmenuTrigger"

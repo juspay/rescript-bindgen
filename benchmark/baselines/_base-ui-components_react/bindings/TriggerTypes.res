@@ -120,7 +120,7 @@ type dialogTriggerState = {
 type selectTriggerState = {
   @as("open") open_: bool,
   readOnly: bool,
-  value: string,
+  value: string,  // 🛑 BROKEN — contains `any`
   disabled: bool,
   touched: bool,
   dirty: bool,

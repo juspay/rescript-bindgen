@@ -8,6 +8,7 @@ type props = {
   rightSlot?: React.element,
   datetimeLeftSlot?: React.element,
   datetimeRightSlot?: React.element,
+  ref?: React.ref<Nullable.t<Dom.element>>,
 }
 
 @module("@juspay/blend-design-system")

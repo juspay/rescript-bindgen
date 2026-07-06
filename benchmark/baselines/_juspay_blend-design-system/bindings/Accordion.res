@@ -6,4 +6,5 @@ external make: (
   ~value: CommonTypes.stringOrStringArray=?,
   ~isMultiple: bool=?,
   ~onValueChange: CommonTypes.stringOrStringArray => unit=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Accordion"

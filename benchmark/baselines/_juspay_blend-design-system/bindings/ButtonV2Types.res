@@ -49,44 +49,11 @@ type buttonV2ResponsiveButtonV2TokensSmBorderRadiusConfig = {
   md: buttonV2ResponsiveButtonV2TokensSmBorderRadiusSmConfig,
   lg: buttonV2ResponsiveButtonV2TokensSmBorderRadiusSmConfig,
 }
-type buttonV2ResponsiveButtonV2TokensSmPaddingTopSmPrimaryConfig = {
-  default: string,
-  iconOnly: string,
-  inline: string,
-}
-type buttonV2ResponsiveButtonV2TokensSmPaddingTopSmConfig = {
-  primary: buttonV2ResponsiveButtonV2TokensSmPaddingTopSmPrimaryConfig,
-  secondary: buttonV2ResponsiveButtonV2TokensSmPaddingTopSmPrimaryConfig,
-  danger: buttonV2ResponsiveButtonV2TokensSmPaddingTopSmPrimaryConfig,
-  success: buttonV2ResponsiveButtonV2TokensSmPaddingTopSmPrimaryConfig,
-}
-type buttonV2ResponsiveButtonV2TokensSmPaddingTopConfig = {
-  sm: buttonV2ResponsiveButtonV2TokensSmPaddingTopSmConfig,
-  md: buttonV2ResponsiveButtonV2TokensSmPaddingTopSmConfig,
-  lg: buttonV2ResponsiveButtonV2TokensSmPaddingTopSmConfig,
-}
 type buttonV2ResponsiveButtonV2TokensSmPaddingConfig = {
-  top: buttonV2ResponsiveButtonV2TokensSmPaddingTopConfig,
-  right: buttonV2ResponsiveButtonV2TokensSmPaddingTopConfig,
-  bottom: buttonV2ResponsiveButtonV2TokensSmPaddingTopConfig,
-  left: buttonV2ResponsiveButtonV2TokensSmPaddingTopConfig,
-}
-type buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryDefaultConfig = {
-  default: string,
-  hover: string,
-  active: string,
-  disabled: string,
-}
-type buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryConfig = {
-  default: buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryDefaultConfig,
-  iconOnly: buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryDefaultConfig,
-  inline: buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryDefaultConfig,
-}
-type buttonV2ResponsiveButtonV2TokensSmTextColorConfig = {
-  primary: buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryConfig,
-  secondary: buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryConfig,
-  danger: buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryConfig,
-  success: buttonV2ResponsiveButtonV2TokensSmTextColorPrimaryConfig,
+  top: buttonV2ResponsiveButtonV2TokensSmBorderRadiusConfig,
+  right: buttonV2ResponsiveButtonV2TokensSmBorderRadiusConfig,
+  bottom: buttonV2ResponsiveButtonV2TokensSmBorderRadiusConfig,
+  left: buttonV2ResponsiveButtonV2TokensSmBorderRadiusConfig,
 }
 type buttonV2ResponsiveButtonV2TokensSmTextFontSizeConfig = {
   sm: string,
@@ -94,7 +61,7 @@ type buttonV2ResponsiveButtonV2TokensSmTextFontSizeConfig = {
   lg: string,
 }
 type buttonV2ResponsiveButtonV2TokensSmTextConfig = {
-  color: buttonV2ResponsiveButtonV2TokensSmTextColorConfig,
+  color: buttonV2ResponsiveButtonV2TokensSmBackgroundColorConfig,
   fontSize: buttonV2ResponsiveButtonV2TokensSmTextFontSizeConfig,
   fontWeight: buttonV2ResponsiveButtonV2TokensSmTextFontSizeConfig,
   lineHeight: buttonV2ResponsiveButtonV2TokensSmTextFontSizeConfig,

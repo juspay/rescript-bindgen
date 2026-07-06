@@ -148,4 +148,5 @@ external make: (
   ~transitionTimingFunction: string=?,
   ~transitionDelay: string=?,
   ~shape: SkeletonTypes.skeletonShape2=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "SkeletonAvatar"

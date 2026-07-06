@@ -16,6 +16,7 @@ type props = {
   width?: CommonTypes.stringOrNumber,
   justifyContent?: string,
   state?: ButtonTypes.buttonState,
+  ref?: React.ref<Nullable.t<Dom.element>>,
 }
 
 @module("@juspay/blend-design-system")

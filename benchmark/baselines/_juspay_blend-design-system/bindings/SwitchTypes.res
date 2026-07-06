@@ -28,7 +28,7 @@ type switch_SwitchTokensTypeSwitchContainerThumbSizeSmConfig = {
   height: string,
   top: string,
   left: string,
-  offset: string,
+  offset: string,  // ⚪ loose — was `{ active: Left<number | (string & {})>; inactive: Left<number | (string & {})>; }`
 }
 type switch_SwitchTokensTypeSwitchContainerThumbSizeConfig = {
   sm: switch_SwitchTokensTypeSwitchContainerThumbSizeSmConfig,

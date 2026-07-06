@@ -2,9 +2,9 @@
 
 **96** components · ✅ **96** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**53** function binding(s) → `BlendDesignSystemBindings.res`.
+**55** function binding(s) → `BlendDesignSystemBindings.res`.
 
-**2328** shared types deduplicated into **62** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**2298** shared types deduplicated into **63** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -31,6 +31,7 @@ Standalone function exports, emitted as positional `@module external` bindings i
 - `getSnackbarTokens`
 - `getPopoverTokens`
 - `getChartTokens`
+- `BlendChartBaseInstance`
 - `getCalendarToken`
 - `getStatCardToken`
 - `getCardTokens`
@@ -68,6 +69,7 @@ Standalone function exports, emitted as positional `@module external` bindings i
 - `useTheme`
 - `FOUNDATION_THEME`
 - `getChartV2Tokens`
+- `ChartV2BaseInstance`
 - `getTimelineTokens`
 - `getAlertV2Tokens`
 
@@ -82,7 +84,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - AlertV2
 - Avatar
 - AvatarGroup
-- BlendChart  _(2 loose)_
+- BlendChart
 - BlendChartContainer
 - BlendChartHeader
 - Breadcrumb
@@ -95,7 +97,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - ChartHeaderV2
 - ChartLegends
 - Charts
-- ChartV2  _(1 loose)_
+- ChartV2
 - ChartV2Fullscreen
 - ChartV2Legend
 - ChartV2NoData
@@ -177,10 +179,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 
 These resolved to a real but complex type and were widened to `string` (they compile and work). Grouped by type so you can review each pattern once — confirm `string` is acceptable, or it may deserve a tighter mapping.
 
-| Resolved TypeScript type | → emitted | count | example props |
-|--------------------------|-----------|-------|---------------|
-| `typeof import("/Users/roshan.chourasiya/work/FE/opensource/rescript-bindgen/benchmark/.work/_juspay_blend-design-system/sandbox/node_modules/highcharts/highcharts")` | `string` | 2 | highcharts |
-| `[boolean] \| [boolean, boolean] \| [boolean, boolean, boolean]` | `string` | 1 | updateArgs |
+_(none)_
 
 ## 🔍 Needs review
 

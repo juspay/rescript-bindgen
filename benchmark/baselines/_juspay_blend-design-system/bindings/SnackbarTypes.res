@@ -32,16 +32,10 @@ type snackbarResponsiveSnackbarTokensSmInfoIconColorConfig = {
 }
 type snackbarResponsiveSnackbarTokensSmInfoIconConfig = {
   color: snackbarResponsiveSnackbarTokensSmInfoIconColorConfig,
-  height: string,
-}
-type snackbarResponsiveSnackbarTokensSmContentTextContainerHeaderColorConfig = {
-  info: string,
-  success: string,
-  warning: string,
-  error: string,
+  height: string,  // ⚪ loose — was `number | (string & {}) | "-moz-initial" | "inherit" | "initial" | "revert" | "revert-layer" | "unset" | "-moz-`
 }
 type snackbarResponsiveSnackbarTokensSmContentTextContainerHeaderConfig = {
-  color: snackbarResponsiveSnackbarTokensSmContentTextContainerHeaderColorConfig,
+  color: snackbarResponsiveSnackbarTokensSmInfoIconColorConfig,
   fontSize: string,
   fontWeight: string,
 }
@@ -54,17 +48,12 @@ type snackbarResponsiveSnackbarTokensSmContentConfig = {
   gap: string,
   textContainer: snackbarResponsiveSnackbarTokensSmContentTextContainerConfig,
 }
-type snackbarResponsiveSnackbarTokensSmActionsPrimaryActionConfig = {
-  color: snackbarResponsiveSnackbarTokensSmInfoIconColorConfig,
-  fontSize: string,
-  fontWeight: string,
-}
 type snackbarResponsiveSnackbarTokensSmActionsCloseButtonConfig = {
-  height: string,
+  height: string,  // ⚪ loose — was `number | (string & {}) | "-moz-initial" | "inherit" | "initial" | "revert" | "revert-layer" | "unset" | "-moz-`
   color: snackbarResponsiveSnackbarTokensSmInfoIconColorConfig,
 }
 type snackbarResponsiveSnackbarTokensSmActionsConfig = {
-  primaryAction: snackbarResponsiveSnackbarTokensSmActionsPrimaryActionConfig,
+  primaryAction: snackbarResponsiveSnackbarTokensSmContentTextContainerHeaderConfig,
   closeButton: snackbarResponsiveSnackbarTokensSmActionsCloseButtonConfig,
 }
 type snackbarResponsiveSnackbarTokensSmConfig = {

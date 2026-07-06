@@ -13,7 +13,7 @@ external make: (
   ~orientation: RootSharedTypes.menuRootOrientation=?,
   ~disabled: bool=?,
   ~closeParentOnEsc: bool=?,
-  ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
+  ~actionsRef: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>=?,
   ~triggerId: Nullable.t<string>=?,
   ~defaultTriggerId: Nullable.t<string>=?,
   ~handle: RootSharedTypes.menuHandle2<'a>=?,

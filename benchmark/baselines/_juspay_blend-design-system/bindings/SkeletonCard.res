@@ -148,4 +148,5 @@ external make: (
   ~transitionTimingFunction: string=?,
   ~transitionDelay: string=?,
   ~children: React.element=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "SkeletonCard"

@@ -5,4 +5,5 @@ external make: (
   ~disabled: bool=?,
   ~asChild: bool=?,
   @as("aria-label") ~ariaLabel: string=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "DrawerClose"

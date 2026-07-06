@@ -150,4 +150,5 @@ external make: (
   ~children: React.element=?,
   ~animate: bool=?,
   ~shape: SkeletonTypes.skeletonShape=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Skeleton"

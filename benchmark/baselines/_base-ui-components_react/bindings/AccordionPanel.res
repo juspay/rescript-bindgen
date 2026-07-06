@@ -56,4 +56,5 @@ external make: (
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
   ~hiddenUntilFound: bool=?,
   ~keepMounted: bool=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Panel"

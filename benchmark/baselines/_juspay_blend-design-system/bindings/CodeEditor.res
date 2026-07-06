@@ -21,4 +21,5 @@ external make: (
   ~onBlur: unit => unit=?,
   ~onFocus: unit => unit=?,
   ~autoFocus: bool=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "CodeEditor"

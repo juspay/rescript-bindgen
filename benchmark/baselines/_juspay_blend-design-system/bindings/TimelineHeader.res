@@ -6,6 +6,7 @@ type props = {
   timestamp?: string,
   leftSlot?: React.element,
   rightSlot?: React.element,
+  ref?: React.ref<Nullable.t<Dom.element>>,
 }
 
 @module("@juspay/blend-design-system")

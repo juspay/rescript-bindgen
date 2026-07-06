@@ -28,4 +28,5 @@ external make: (
   ~onActiveItemChange: Nullable.t<string> => unit=?,
   ~defaultActiveItem: Nullable.t<string>=?,
   ~onHoveringChange: bool => unit=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Sidebar"

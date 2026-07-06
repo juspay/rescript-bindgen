@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.navigation
 
 @module("@base-ui-components/react") @scope("NavigationMenu") @react.component
 external make: (
-  ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
+  ~actionsRef: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>=?,
   ~onOpenChangeComplete: bool => unit=?,
   ~value: 'a=?,
   ~defaultValue: 'b=?,
@@ -62,4 +62,5 @@ external make: (
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: RootSharedTypes.navigationMenuRootClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Root"

@@ -60,6 +60,8 @@ Fixture: [`primitives`](../test/golden/cases/primitives)
 | `Date` | `Date.t` | |
 | `T[]` / `Array<T>` | `array<…>` | element classified recursively |
 | `[number, number]` / `[string, number]` (fixed-arity tuple) | `(float, float)` / `(string, float)` — a ReScript tuple; elements classified recursively (no prop name, so `number`→`float`). A variadic/rest tuple (`[number, ...string[]]`) or an optional-element tuple (`[number, number?]`) stays the flagged `string` fallback (ReScript tuples are fixed-arity with no optional slots). A **1-tuple** (`[T]` / `[T?]`) has no ReScript tuple form either, but IS faithfully an `array<T>` (a 0-or-1 sequence) — `[ReactNode?]` → `array<React.element>`, not `string`. Fixture: [`tuples`](../test/golden/cases/tuples) (`single`). (#65 B5, #83) |
+| `[boolean] \| [boolean, boolean] \| [boolean, boolean, boolean]` (union of fixed tuples over ONE primitive — highcharts-react's `updateArgs`) | `array<bool>` — every arm is a runtime array of the same element, differing only in **length**, which ReScript can't express anyway. Was: fell through `unionNode` to a loose `string`, which can never carry the array. Same-primitive only — a mixed tuple union (`[string] \| [string, number]`) stays the flagged fallback. Fixture: [`module-object-and-tuple-union`](../test/golden/cases/module-object-and-tuple-union). (#98) |
+| `typeof Highcharts` / `typeof import("…")` (a module/namespace OBJECT in value position — highcharts-react's `highcharts` prop) | an abstract **nominal type** in the `InstanceTypes` sink (`InstanceTypes.highchartsModule`), deduped per module symbol. The module object's hundreds of members are useless to model structurally, but the value must be **passable** — the consumer holds it via their own import binding and threads it through untouched. Was: opaque → loose `string`, forcing an `%identity` cast downstream. Fixture: [`module-object-and-tuple-union`](../test/golden/cases/module-object-and-tuple-union). (#98) |
 | `Item[] & Array<Item & { nestedItems?: … }>` (intersection of array types) | `array<…>` of the **intersected element** — `isArrayType` is false for an intersection, so this is detected via the number-index type; otherwise it fell to a record built from the array's prototype methods (`{ ...JsxDOM.domProps }`, array wrapper lost — NestedSelectDrawer's `items`). Fixture: [`intersection-of-arrays`](../test/golden/cases/intersection-of-arrays). (#63 review) |
 | `Preset[] \| RangeConfig[] \| RangeDefinition[] \| (Preset \| RangeConfig \| RangeDefinition)[]` (union of array types — DateRangePicker's `PresetsConfig`) | `array<«element union»>`. The distinct element types are collected (an enum arm re-grouped to its enum, **not** expanded to its literals), then bound by the usual union machinery — here multiple object shapes → an [opaque module](#opaque-module-unions) with one `from*` view each (`array<…PresetsConfig.t>`). Every arm shares the global `Array` symbol, so the same-generic-record union collapse (added for `BaseUIChangeEventDetails<R>`) wrongly matched and built a record from `Array`'s prototype methods (`{ ...JsxDOM.domProps }`, array shape lost). Closed by an `isBuiltinContainer` guard that excludes the WHOLE class of lib.es containers whose instantiations share one global symbol — `Array`, `Map`, `Set`, `Promise`, `WeakMap`, `WeakSet`, `Readonly*` (`Map<A> \| Map<B>` fell into the identical trap). It's narrower than `!isLibraryType` on purpose: that would also block `@types`/csstype records that legitimately collapse (regressed hono's `headerRecord`, react-markdown's `HastTypes.readonly`). A first-party record (`BaseUIChangeEventDetails<R>`) is no container, so its real collapse survives. Fixtures: [`union-of-arrays`](../test/golden/cases/union-of-arrays), [`union-of-maps`](../test/golden/cases/union-of-maps). (#65, #67, #68) |
 | `Map<string, OnClick> \| Map<string, OnHover>` (union of non-array lib.es containers — `Map`/`Set`/`Promise`/…) | an [opaque module](#opaque-module-unions) with one construct-only `from*` view per arm — `Handlers.t` with `external fromMapOnClick: Map.t<string, string => unit> => t` / `fromMapOnHover: Map.t<string, string => bool> => t`. Each arm types cleanly alone (a single `Map<K,V>` → `Map.t<K,V>`), but the arms are runtime-indistinguishable (all `object`), so an `@unboxed` variant can't tell them apart and the union would drop to `string`. The opaque module is construct-only (build a typed `Map.t` and cast) — the SAME faithful treatment the union-of-arrays case gets. Arms are named by value/element type (`fromMap<Value>`) since the bare container name repeats. Fixture: [`union-of-maps`](../test/golden/cases/union-of-maps). (#68) |
@@ -139,7 +141,7 @@ Fixture: [`react-dom`](../test/golden/cases/react-dom)
 | `Node` | `Dom.node` | broader than Element (covers DocumentFragment/Text/…) |
 | `HTMLDivElement`, `HTMLInputElement`, … | `Dom.htmlDivElement`, … | specific DOM elements, no dependency |
 | `RefObject<T>` / `Ref<T>` / `MutableRefObject<T>` | `React.ref<Nullable.t<Dom.element>>` | configurable via `refType` |
-| `Ref<HTMLInputElement>` (concrete element arg) | `React.ref<Nullable.t<Dom.htmlInputElement>>` — the element arg is read for specificity (a `HTMLElement \| null` arg strips null); falls back to `Dom.element`. (#34) |
+| `Ref<HTMLInputElement>` (concrete element arg) | position-dependent (#34, #98): in **component-prop position** → the generic `React.ref<Nullable.t<Dom.element>>` — the consumer must CREATE the ref, and ReScript JSX can only produce the generic one (`ReactDOM.Ref.domRef`), so an element-specific ref prop forced an `%identity` widening in every consumer; reads of the node don't need the specific element type. In **nested positions** (record fields, callback params — the read side) → `React.ref<Nullable.t<Dom.htmlInputElement>>` for specificity (a `HTMLElement \| null` arg strips null); falls back to `Dom.element`. |
 | `Element \| DocumentFragment` (all DOM nodes) | `Dom.element` **+ note** | collapses to one node type; an `// ⓘ` note records that DocumentFragment isn't covered |
 | `ShadowRoot` | `Dom.shadowRoot` | base-ui portal `container` targets |
 | `HTMLElement \| ShadowRoot \| RefObject<…>` (multi-object union) | opaque module with **`from*` views** — `Container.fromHTMLElement / fromShadowRoot / fromRefObject` | objects can't be `@unboxed`-discriminated; views are zero-cost. Fixture: [`ref-union-views`](../test/golden/cases/ref-union-views) |
@@ -315,6 +317,49 @@ register hundreds of new entries, gets rolled back, and stays safely truncated. 
 `setOpenConfig2` in the benchmark baseline (the depth boundary is too fragile to pin in a synthetic
 golden).
 
+**`~ref` synthesis for forwardRef surfaces (#98).** A component typed
+`ForwardRefExoticComponent<P & RefAttributes<R>>` gets a synthesized `~ref` prop — the `ref` symbol
+is React-reserved and filtered from the props, but the JSX v4 ppx accepts and forwards a `~ref`
+labeled arg on an external (verified: `ref` lands in the JS props object, which is exactly what a JS
+forwardRef component needs). The payload decides the type: a DOM element → the generic constructable
+`React.ref<Nullable.t<Dom.element>>`; a cleanly-modelled imperative handle →
+`React.ref<Nullable.t<handle>>` (highcharts-react's `HighchartsReactRefObject`; the consumer creates
+it with `React.useRef(Nullable.null)` and reads the typed handle back). Gated syntactically on the
+React ref family (`Ref`/`RefObject`/…) and skipped when the payload can't be modelled cleanly
+(flag-don't-fake). Fixture: [`forwardref-ref-prop`](../test/golden/cases/forwardref-ref-prop). (#98)
+
+**`this`-typed callbacks → `@this` (#98).** `(this: Point, tooltip: Tooltip) => string` (Highcharts'
+formatter family) binds as `@this ((point, tooltip) => string)` — the first param binds the JS `this`
+the library invokes the function with. The `this` parameter was previously dropped silently, so the
+emitted callback type-checked but couldn't reach the value it's about. The `this` type is classified
+like a param (library-produced); if it can't be modelled the whole prop stays flagged. Fixture:
+[`this-typed-callback`](../test/golden/cases/this-typed-callback). (#98)
+
+**Leaf types resolve past `MAX_DEPTH`; degraded record fields are flagged (#98).** The depth bound
+exists to truncate *unbounded new expansion* — but a primitive cannot expand anything, so a leaf
+first reached past the bound resolves exactly: `string`/`number`/`boolean`/`bigint`/`unknown → JSON.t`/
+`keyof → string`/csstype values, with literals folding to their base primitive (past the bound the
+alternative was an opaque `string` anyway). Before this, a record first reached past `MAX_DEPTH`
+(Highcharts' `TooltipOptions`) froze **every** field as `string` — `enabled?: boolean` included. The
+fields that DO still degrade (deep objects, callbacks like `formatter?: TooltipFormatterCallbackFunction`)
+now carry the same flag comments props get (`⚪ loose — was …` / `⚠️ REVIEW` / `🛑 BROKEN — contains any`)
+instead of being silent — record fields render structurally (a field's shape is often partly right), so
+only the trailing comment is added. Two zero-expansion escapes extend this: a reference to an
+already-**registered** non-generic record entry links (`refTo`) even past the bound — the self-ref
+exception generalized; the entry exists (names register before fields build), so no new registry
+growth is possible — and a **function** type classifies through its signature (its params/return
+each link, resolve as leaves, or truncate flagged; self-recursive function types are
+visiting-guarded). An **in-progress ancestor** links only from inside a past-depth function
+signature (#110 — `formatter`'s `tooltip: Tooltip` param cycling back to the class being built,
+landing as `type rec`); from ordinary record fields it still truncates, which keeps the huge
+Highcharts slabs from merging into one group. Net effect: `TooltipOptions.formatter` emits a real
+`@this ((point<'b>, tooltip<'b>, option<point<'b>>) => string)` instead of an opaque `string`.
+When such linking creates a genuine record ↔ views-module cycle, the emitter breaks it with a
+**forward-declared abstract type**: `type moduleName_t` hoisted above the `type rec` group, fields
+reference it, and the module aliases it (`type t = moduleName_t`) — zero-cost, consumers still use
+`Module.t`/`Module.from*`. Fixtures: [`deep-record-leaves`](../test/golden/cases/deep-record-leaves),
+[`this-typed-callback`](../test/golden/cases/this-typed-callback) (`Widget` cycle). (#98, #110)
+
 **Twin healing (depth ghost ↔ shallow full sibling).** When the re-resolve above can't run because the
 shape's sub-types are a *distinct* generic instantiation (csstype gives `CSSObject['color']` vs
 `['backgroundColor']` different type ids, so `MenuV2VariantToken<StateToken<…>>` isn't deduped across
@@ -405,6 +450,25 @@ when the props type has a string index signature, recover the named props from t
 (`options` / `immutable` / `callback` / …, some `⚪ loose` where the vendor type is unmodellable)
 instead of vanishing. Scoped to index-signature props, so ordinary components are untouched. Fixture:
 [`forwardref-indexed-props`](../test/golden/cases/forwardref-indexed-props). (#92)
+
+**Multi-signature components prefer the concrete signature (#84).** A styled-components export
+(`IStyledComponentBase<…> & string`) exposes TWO call signatures: first the polymorphic
+`as`-rebinding form (`<AsTarget, ForwardedAsTarget>(props)`), whose visible props are only the
+styling plumbing — `theme`/`as`/`forwardedAs`/`style` — as giant unresolved conditional types; then
+the concrete zero-typeparam forwardRef form carrying the component's real props. Reading `sigs[0]`
+bound the plumbing and dropped every functional prop (`children` included) — blend's 8 `Styled*`
+exports emitted 4 loose strings each and nothing else. When several signatures exist, the one with
+parameters and **no type parameters** is preferred; a single-signature generic component
+(`VirtualList<T>`) is untouched. Fixture:
+[`styled-concrete-signature`](../test/golden/cases/styled-concrete-signature). (#84, #98)
+
+The recovery is **recursive** (#98): the collapse compounds through every `Omit` layer, so
+`Omit<Omit<Poisoned, 'className' | 'style'> & Extra, 'ref'>` (blend's `ChartV2` — an inner `Omit`
+inside an intersection, wrapped by the standard forwardRef `Omit<…, "ref">`) is descended layer by
+layer — each `Omit` unwrapped with its keys accumulated, still-poisoned intersections split into
+arms — and the named props are read only off leaf types, where no mapped type has been applied. All
+accumulated omit keys are subtracted, so `className`/`style` stay excluded while the seven real
+members survive. Fixture: [`forwardref-nested-omit`](../test/golden/cases/forwardref-nested-omit). (#98)
 
 ---
 

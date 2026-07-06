@@ -5,5 +5,5 @@ external make: (
   @as("open") ~open_: bool=?,
   ~onOpenChange: (bool, RootSharedTypes.previewCardRootChangeEventDetails) => unit=?,
   ~onOpenChangeComplete: bool => unit=?,
-  ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
+  ~actionsRef: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>=?,
 ) => React.element = "Root"

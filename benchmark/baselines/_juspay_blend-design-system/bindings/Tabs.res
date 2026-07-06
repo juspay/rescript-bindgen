@@ -74,4 +74,5 @@ external make: (
   ~skeletonVariant: SkeletonTypes.skeletonVariant=?,
   ~stickyHeader: bool=?,
   ~offsetTop: float=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Tabs"

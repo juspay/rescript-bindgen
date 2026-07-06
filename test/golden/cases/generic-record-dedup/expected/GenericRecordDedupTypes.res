@@ -1,7 +1,7 @@
 type rec router3 = {
   use: unit => router3,
   add: unit => router3,
-  build: unit => string,
+  build: unit => string,  // ⚪ loose — was `{ a: true; } & { b: true; }`
 }
 type genericRecordDedupRouterBuildConfig = {
   a: bool,
@@ -14,7 +14,7 @@ type rec router2 = {
 type rec router5 = {
   use: unit => router5,
   add: unit => router5,
-  build: unit => string,
+  build: unit => string,  // ⚪ loose — was `{ b: true; } & { a: true; }`
 }
 type genericRecordDedupRouterBuildConfig2 = {
   b: bool,

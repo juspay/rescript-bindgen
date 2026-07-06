@@ -19,4 +19,5 @@ external make: (
   ~centerAlign: bool=?,
   ~cardSlot: React.element=?,
   ~children: React.element=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Card"

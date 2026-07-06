@@ -54,4 +54,5 @@ external make: (
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
   ~className: CommonTypes.itemTextClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "ItemText"

@@ -39,11 +39,11 @@ type dateColumn = {
   cell: stableStructuralNamesDateColumnCellConfig,
 }
 type stableStructuralNamesItemsTextConfig = {
-  kind: string,
+  kind: string,  // ⚪ loose — was `"text"`
   label: string,
 }
 type stableStructuralNamesItemsIconConfig = {
-  kind: string,
+  kind: string,  // ⚪ loose — was `"icon"`
   glyph: string,
 }
 module StableStructuralNamesItems = {

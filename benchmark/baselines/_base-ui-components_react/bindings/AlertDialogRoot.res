@@ -4,7 +4,7 @@ external childrenFn: (PopupsTypes.popupsChildrenConfig<'a> => React.element) => 
 @module("@base-ui-components/react") @scope("AlertDialog") @react.component
 external make: (
   ~onOpenChange: (bool, RootSharedTypes.alertDialogRootChangeEventDetails) => unit=?,
-  ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
+  ~actionsRef: React.ref<Nullable.t<RootSharedTypes.dialogRootActions>>=?,
   ~handle: RootSharedTypes.dialogHandle<'a>=?,
   ~children: React.element=?,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
   @as("open") ~open_: bool=?,

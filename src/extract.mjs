@@ -243,6 +243,7 @@ function collectRefKeys(t, out) {
     if (t.kind === 'typeRef' && t.key) out.add(t.key)
     if (t.of) collectRefKeys(t.of, out)
     if (t.ret) collectRefKeys(t.ret, out)
+    if (t.thisArg) collectRefKeys(t.thisArg, out)
     if (t.arg) collectRefKeys(t.arg, out)
     if (t.mapKey) collectRefKeys(t.mapKey, out)
     if (t.mapVal) collectRefKeys(t.mapVal, out)
@@ -257,6 +258,7 @@ function collectTypeVars(t, out) {
     if (t.kind === 'typeRef' && Array.isArray(t.tparams)) t.tparams.forEach((x) => out.add(x))
     if (t.of) collectTypeVars(t.of, out)
     if (t.ret) collectTypeVars(t.ret, out)
+    if (t.thisArg) collectTypeVars(t.thisArg, out)
     if (t.arg) collectTypeVars(t.arg, out)
     if (t.mapKey) collectTypeVars(t.mapKey, out)
     if (t.mapVal) collectTypeVars(t.mapVal, out)
@@ -587,9 +589,17 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     const compType = checker.getTypeOfSymbolAtLocation(sym, decl)
 
     const sigs = compType.getCallSignatures()
+    // A styled-components export (`IStyledComponentBase<…> & string`) exposes TWO call signatures:
+    // first the polymorphic `as`-rebinding form (`<AsTarget, ForwardedAsTarget>(…)`), whose visible
+    // props are only the styling plumbing — theme/as/forwardedAs/style — as giant unresolved
+    // conditionals; then the CONCRETE zero-typeparam forwardRef form carrying the component's real
+    // props (the tab/checkbox props a hand-writer binds). Reading sigs[0] bound the plumbing and
+    // dropped every functional prop (`children` included). Prefer the concrete signature when
+    // several exist; a single-signature generic component (VirtualList<T>) is untouched. (#84)
+    const sig = (sigs.length > 1 && sigs.find((s) => s.parameters.length && !(s.typeParameters || []).length)) || sigs[0]
     let propsType
-    if (sigs.length && sigs[0].parameters.length) {
-        propsType = checker.getTypeOfSymbolAtLocation(sigs[0].parameters[0], decl)
+    if (sigs.length && sig.parameters.length) {
+        propsType = checker.getTypeOfSymbolAtLocation(sig.parameters[0], decl)
     } else {
         const args = checker.getTypeArguments?.(compType) || []
         propsType = args[0] || compType
@@ -602,7 +612,7 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     // hand-written DataTable binding).
     const typeVars = new Map()
     const TV = ['a', 'b', 'c', 'd', 'e', 'f']
-    const tparams = (sigs.length && sigs[0].typeParameters) || []
+    const tparams = (sigs.length && sig.typeParameters) || []
     tparams.forEach((tp, i) => { if (tp.symbol) typeVars.set(tp.symbol, "'" + (TV[i] || `t${i}`)) })
 
     // Erased generic: a `forwardRef`/`memo` export pins a generic props alias to a
@@ -687,15 +697,28 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     // minus the omitted keys), so the component binds with its real surface instead of vanishing.
     // Only fires when an index signature is actually present, so normal components are untouched. (#92)
     if (checker.getIndexInfoOfType?.(propsType, ts.IndexKind.String)) {
-        const arms = (propsType.flags & ts.TypeFlags.Intersection) ? propsType.types : [propsType]
         const byName = new Map(commonSyms.map((s) => [s.getName(), s]))
-        for (const arm of arms) {
-            const u = unwrapOmit(arm, checker)
-            if (!u) continue
-            for (const p of checker.getPropertiesOfType(u.base))
-                if (!u.omit.has(p.getName()) && !byName.has(p.getName())) byName.set(p.getName(), p)
+        const before = byName.size
+        // The collapse compounds through EVERY `Omit` layer: `Omit<Omit<Poisoned, K2> & Extra, K1>`
+        // loses the whole `Poisoned` side, because the unwrapped base is itself still
+        // index-signature-poisoned (blend's `ChartV2` lost all 8 `HighchartsReactProps` members
+        // this way, #98). Descend recursively: unwrap each `Omit` (accumulating its keys), split
+        // intersections that still carry the index signature, and read properties only off leaves —
+        // where no mapped type has been applied, so the named members are intact.
+        const visit = (t, omitAcc, depth) => {
+            if (depth > 8) return
+            const u = unwrapOmit(t, checker)
+            if (u) return visit(u.base, new Set([...omitAcc, ...u.omit]), depth + 1)
+            if ((t.flags & ts.TypeFlags.Intersection) && checker.getIndexInfoOfType?.(t, ts.IndexKind.String)) {
+                for (const arm of t.types) visit(arm, omitAcc, depth + 1)
+                return
+            }
+            for (const p of checker.getPropertiesOfType(t))
+                if (!omitAcc.has(p.getName()) && !byName.has(p.getName())) byName.set(p.getName(), p)
         }
-        if (byName.size > commonSyms.length) commonSyms = [...byName.values()]
+        const arms = (propsType.flags & ts.TypeFlags.Intersection) ? propsType.types : [propsType]
+        for (const arm of arms) if (unwrapOmit(arm, checker)) visit(arm, new Set(), 0)
+        if (byName.size > before) commonSyms = [...byName.values()]
     }
     const unionOptional = new Set()
     let propSyms = commonSyms
@@ -766,6 +789,34 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
                 declText: (d ? d.getText() : '').replace(/\s+/g, ' ').trim().slice(0, 200),
             }
         })
+
+    // Synthesize `~ref` for a forwardRef surface (#98 follow-up): the `ref` symbol is filtered
+    // from the props (React-reserved), but the JSX v4 ppx DOES accept and forward a `~ref`
+    // labeled arg on an external — without it, a `RefAttributes<R>` handle (highcharts-react's
+    // `HighchartsReactRefObject`) is unreachable from ReScript. The ref's payload type decides:
+    // a DOM element → the generic constructable domRef; a cleanly-modelled handle →
+    // `React.ref<Nullable.t<handle>>` (created with `React.useRef(Nullable.null)`). An
+    // unmodellable payload is SKIPPED (flag-don't-fake) — same as today, just no longer silent.
+    const refSym = propSyms.find((p) => p.getName() === 'ref')
+    if (refSym && !props.some((p) => p.name === 'ref')) {
+        const rt = checker.getTypeOfSymbolAtLocation(refSym, decl)
+        // Syntactic gate BEFORE classifying: only a React ref family type (`Ref<R>` /
+        // `RefObject<R>` — possibly behind a union with the callback form) qualifies. Classifying
+        // an arbitrary `ref`-named prop here would register junk record types into the shared
+        // registry even when the synthesis then declines.
+        const rParts = rt.isUnion && rt.isUnion() ? rt.types : [rt]
+        const refArm = rParts.find((t) => { const n = typeName(t); return n && REF_NAMES.test(n) })
+        if (refArm) {
+            ctx.lastAnyAlias = null
+            const rNode = classify(refArm, ctx, 'ref', 0)
+            if (rNode.kind === 'domRef' || (rNode.kind === 'reactRef' && !irHasImperfection(rNode))) {
+                props.push({
+                    name: 'ref', optional: true, inherited: false, type: rNode,
+                    tsType: checker.typeToString(rt).replace(/\s+/g, ' ').slice(0, 200), declText: '',
+                })
+            }
+        }
+    }
 
     // `removed` = Omit keys + own props that collide with a chain field at the ReScript
     // id level (raw `children` = chain `children`, but also own `ariaLabel` vs chain
@@ -988,7 +1039,7 @@ function substTypeVars(node, subst) {
     if (!node || typeof node !== 'object') return node
     if (node.kind === 'typeVar' && subst[node.name]) return subst[node.name]
     const out = { ...node }
-    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) if (out[k]) out[k] = substTypeVars(out[k], subst)
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal', 'thisArg']) if (out[k]) out[k] = substTypeVars(out[k], subst)
     if (Array.isArray(out.params)) out.params = out.params.map((p) => substTypeVars(p, subst))
     return out
 }
@@ -1393,6 +1444,26 @@ export function extractModule(entryFile, opts = {}) {
     healGhostRecords(shared)
     healGhostsFromTwin(shared)
     propagateTypeParams(shared)
+    // Component/function IR trees reference shared entries too — re-sync their refs to the
+    // CONVERGED tparams. A refTo taken before propagation copies the entry's tparams of that
+    // moment; a record that turns generic post-hoc otherwise renders under-applied in prop
+    // position (`React.ref<Nullable.t<DistTypes.highchartsReactRefObject>>` while the record
+    // converged to `highchartsReactRefObject<'b>` — compile break). (#110 fallout)
+    for (const c of components) for (const p of c.ir.props || []) syncRefTparams(p.type, shared.byKey, new Set())
+    for (const f of functions) {
+        // FunctionIR nests under `sig`; a const-value IR (also in this list) under `value`.
+        for (const p of (f.ir.sig && f.ir.sig.params) || []) syncRefTparams(p.type, shared.byKey, new Set())
+        if (f.ir.sig && f.ir.sig.ret) syncRefTparams(f.ir.sig.ret, shared.byKey, new Set())
+        if (f.ir.value && f.ir.value.type) syncRefTparams(f.ir.value.type, shared.byKey, new Set())
+    }
+    for (const c of classes) {
+        for (const p of (c.ir.ctor && c.ir.ctor.params) || []) syncRefTparams(p.type, shared.byKey, new Set())
+        for (const m of c.ir.methods || []) {
+            for (const p of m.params || []) syncRefTparams(p.type, shared.byKey, new Set())
+            if (m.ret) syncRefTparams(m.ret, shared.byKey, new Set())
+        }
+        for (const g of c.ir.getters || []) if (g.type) syncRefTparams(g.type, shared.byKey, new Set())
+    }
 
     return { components, functions, classes, skipped, shared, namespaces }
 }
@@ -1492,6 +1563,11 @@ function healGhostsFromTwin(shared) {
 function entryChildTypes(e) {
     if (e.kind === 'record') return e.fields.map((f) => f.type)
     if (e.kind === 'unboxed') return e.members.map((m) => m.type)
+    // opaque-views modules reference records through their `from*` externals (and overload
+    // modules through their signature views) — those refs must re-sync tparams too, or a
+    // record that turns generic post-hoc renders bare (`fromZAxisOptions: zAxisOptions => t`
+    // while the record is `zAxisOptions<'b>` — compile break). (#110 fallout)
+    if (e.kind === 'opaque') return [...(e.members || []).map((m) => m.type), ...(e.sigs || []).map((s) => s.fn)].filter(Boolean)
     return []
 }
 
@@ -1512,7 +1588,7 @@ function syncRefTparams(t, byKey, seen) {
         if (tp && tp.length) t.tparams = [...tp]
         else delete t.tparams
     }
-    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) if (t[k]) syncRefTparams(t[k], byKey, seen)
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal', 'thisArg']) if (t[k]) syncRefTparams(t[k], byKey, seen)
     if (Array.isArray(t.params)) for (const p of t.params) syncRefTparams(p, byKey, seen)
     if (Array.isArray(t.fields)) for (const f of t.fields) syncRefTparams(f.type, byKey, seen)
     if (Array.isArray(t.members)) for (const m of t.members) syncRefTparams(m.type, byKey, seen)
@@ -1667,7 +1743,7 @@ function salvageCallbackParams(node, ctx) {
 function irHasImperfection(t) {
     if (!t || typeof t !== 'object') return false
     if (t.kind === 'opaque' || t.kind === 'review' || t.kind === 'unknown' || t.kind === 'any') return true
-    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) if (t[k] && irHasImperfection(t[k])) return true
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal', 'thisArg']) if (t[k] && irHasImperfection(t[k])) return true
     if (Array.isArray(t.params)) for (const p of t.params) if (irHasImperfection(p)) return true
     return false
 }
@@ -1750,6 +1826,63 @@ function classify(type, ctx, propName = '', depth = 0) {
             const e = ctx.shared.byKey.get('id:' + type.id)
             if (e && e.kind === 'record') return refTo(e)
         }
+        // The self-ref exception, GENERALIZED (#98, #110): a reference to an already-REGISTERED
+        // shared entry is a zero-expansion link — the entry exists (recordNode registers the name
+        // BEFORE building fields, the same guarantee the below-bound visiting branch relies on),
+        // so no new registry growth is possible. Covers both a COMPLETED shallow-site type
+        // (Highcharts' `Point`, reached deep inside `TooltipOptions`) and an IN-PROGRESS ancestor
+        // (`tooltip → options → tooltipOptions → formatter → tooltip: Tooltip`, #110 — the cycle
+        // lands as `type rec`, exactly like below-bound back-refs). A type FIRST reached past the
+        // bound was never registered, so the unbounded-graph bound still holds. RECORD entries
+        // only (the selfId precedent): an opaque-module/views entry emits as a submodule whose
+        // materialization is driven by below-bound references — linking one from past-depth
+        // produced a `Module.t` reference to a file that never emitted (blend's
+        // `ChartsPlotZigzagOptionsDataLabels.t`, benchmark compile break). And non-generic only:
+        // a typeRef with type vars can't thread its <'a> through a shared record.
+        // In-progress ancestors link ONLY from inside a past-depth FUNCTION signature
+        // (ctx.pastDepthFn — the #110 shape: `formatter`'s `tooltip: Tooltip` param cycling back
+        // to the class being built). Letting ordinary record FIELDS link in-progress ancestors
+        // merged huge slabs of the Highcharts graph into one `type rec` group and created a
+        // record ↔ views-module cycle the emitter cannot order (benchmark compile break).
+        if (type.id != null && ctx.shared) {
+            const e = ctx.shared.byKey.get('id:' + type.id)
+            const inProgress = ctx.visiting && ctx.visiting.has(type.id)
+            if (e && e.kind === 'record' && !(e.tparams && e.tparams.length) &&
+                (!inProgress || ctx.pastDepthFn)) return refTo(e)
+        }
+        // A FUNCTION reached past the bound classifies through its signature: the function node
+        // itself cannot expand the registry — only its params/return can, and each of those either
+        // links to an already-materialized record (above), resolves as a leaf (below), or truncates
+        // flagged. Recovers deep `formatter?: TooltipFormatterCallbackFunction` as a real `@this`
+        // callback instead of an opaque string. Guarded against SELF-recursive function types
+        // (react-rating's `HF`, whose param references `HF`): past the bound the normal
+        // ctx.visiting check never runs, so without this guard the re-entry loops forever — a
+        // function id already on the visiting path (or anything past the hard cap) truncates to
+        // the flagged opaque instead. (#98)
+        if (type.getCallSignatures && depth <= MAX_DEPTH * 3 &&
+            !(type.id != null && ctx.visiting && ctx.visiting.has(type.id))) {
+            const dSigs = type.getCallSignatures()
+            if (dSigs.length === 1 && !(type.getProperties && type.getProperties().length)) {
+                if (type.id != null) (ctx.visiting || (ctx.visiting = new Set())).add(type.id)
+                const prevPDF = ctx.pastDepthFn
+                ctx.pastDepthFn = true // in-progress ancestors may link from this signature (#110)
+                try { return functionNode(dSigs[0], ctx, propName, depth) }
+                finally { ctx.pastDepthFn = prevPDF; if (type.id != null) ctx.visiting.delete(type.id) }
+            }
+        }
+        // Zero-cost leaves resolve even past the bound — a primitive CANNOT expand the graph, so
+        // truncating `enabled?: boolean` to an opaque `string` was pure loss. Without this, every
+        // record first reached past MAX_DEPTH (Highcharts' `TooltipOptions`) emitted ALL its fields
+        // as `string`, primitives included. A literal folds to its base primitive here: past the
+        // bound the alternative was an opaque `string` anyway, so `number` for `1000` is strictly
+        // more faithful. (#98)
+        if (flags & ts.TypeFlags.Unknown) return { kind: 'raw', res: 'JSON.t' }
+        if (flags & (ts.TypeFlags.String | ts.TypeFlags.StringLiteral)) return { kind: 'string' }
+        if (flags & (ts.TypeFlags.Number | ts.TypeFlags.NumberLiteral)) return { kind: 'number' }
+        if (flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) return { kind: 'boolean' }
+        if (flags & (ts.TypeFlags.BigInt | ts.TypeFlags.BigIntLiteral)) return { kind: 'bigint' }
+        if (flags & ts.TypeFlags.Index) return { kind: 'string' }
+        if (isCssType(type)) return { kind: 'string' }
         return { kind: 'opaque', text: checker.typeToString(type) }
     }
     if (type.id != null) {
@@ -1850,6 +1983,25 @@ function classify(type, ctx, propName = '', depth = 0) {
         return { kind: 'classRef', to: sink, home: INSTANCE_MODULE, self: cn === ctx.currentClass }
     }
 
+    // `typeof import("highcharts")` / `typeof SomeNamespace` — a MODULE OBJECT in value position
+    // (highcharts-react's `highcharts?: typeof Highcharts` prop). Its hundreds of members are
+    // useless to model structurally, but the value must be PASSABLE: an abstract nominal type in
+    // the InstanceTypes sink lets the consumer thread the module object through untouched (they
+    // hold it via their own import binding). Was: opaque → loose `string`, which can never carry
+    // the module object, forcing an %identity cast downstream. (#98)
+    if (ctx.shared && type.symbol && (type.symbol.flags & ts.SymbolFlags.ValueModule)) {
+        const raw = type.symbol.getName().replace(/^"|"$/g, '')
+        const last = raw.split(/[\\/]/).pop().replace(/\.d\.(m|c)?ts$|\.(m|c)?ts$/, '') || 'module'
+        const key = 'module:' + raw
+        let entry = ctx.shared.byKey.get(key)
+        if (!entry) {
+            entry = { key, kind: 'nominal', name: uniqueName(lower(pascal(last)) + 'Module', ctx.shared), home: INSTANCE_MODULE, deps: new Set() }
+            ctx.shared.byKey.set(key, entry)
+            ctx.shared.entries.push(entry)
+        }
+        return { kind: 'classRef', to: entry.name, home: INSTANCE_MODULE }
+    }
+
     // JS built-in containers -> precise ReScript stdlib types (`Map.t` / `Set.t`). Detected by
     // the RESOLVED symbol name, so a first-party alias (`type EventHandlerMap = Map<…>`) is
     // caught too. MUST precede the object/record branch: a Map/Set's methods are all
@@ -1878,7 +2030,27 @@ function classify(type, ctx, propName = '', depth = 0) {
         const argParts = arg && arg.isUnion?.() ? arg.types : [arg]
         const elemPart = (argParts || []).find((t) => { const n = t && typeName(t); return n && /Element$/.test(n) && /^(HTML|SVG)/.test(n) })
         const en = elemPart && typeName(elemPart)
-        if (en && DOM_ELEMENT_BY_LOWER.has(en.toLowerCase())) return { kind: 'raw', res: `React.ref<Nullable.t<${domElementType(en)}>>` }
+        if (en && DOM_ELEMENT_BY_LOWER.has(en.toLowerCase())) {
+            // In component-PROP position (depth 0) the consumer must CREATE the ref, and ReScript
+            // JSX can only produce the generic `React.ref<Nullable.t<Dom.element>>`
+            // (`ReactDOM.Ref.domRef`) — an element-specific ref prop is unconstructable without an
+            // %identity widening, in every single consumer (#98). Reads of the node don't need the
+            // specific element type, so the generic domRef is the USABLE faithful form there.
+            // Nested positions (record fields, callback params — the read side) keep specificity.
+            if (depth === 0 && !ctx.inRecordField) return { kind: 'domRef' }
+            return { kind: 'raw', res: `React.ref<Nullable.t<${domElementType(en)}>>` }
+        }
+        // An IMPERATIVE-HANDLE ref — `Ref<HighchartsReactRefObject>`, a forwardRef +
+        // useImperativeHandle surface. The generic domRef would type the ref's payload as a DOM
+        // element, which the handle is not: classify the handle type and keep it —
+        // `React.ref<Nullable.t<highchartsReactRefObject>>` (the consumer creates it with
+        // `React.useRef(Nullable.null)` and reads the typed handle back). Falls back to the
+        // generic domRef when the handle can't be modelled cleanly. (#98 ~ref follow-up)
+        const handle = (argParts || []).find((t) => t && (t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)))
+        if (handle && !typeName(handle)?.match(/Element$/)) {
+            const node = classify(handle, ctx, propName, depth + 1)
+            if (!irHasImperfection(node)) return { kind: 'reactRef', of: node }
+        }
         return { kind: 'domRef' }
     }
     // Specific DOM elements -> Dom.htmlDivElement etc. (built-in, no dep);
@@ -2507,6 +2679,7 @@ function nodeImperfect(t) {
     if (['unknown', 'any', 'review', 'opaque'].includes(t.kind)) return true
     if (t.of && nodeImperfect(t.of)) return true
     if (t.ret && nodeImperfect(t.ret)) return true
+    if (t.thisArg && nodeImperfect(t.thisArg)) return true
     if (t.arg && nodeImperfect(t.arg)) return true
     if (Array.isArray(t.params)) return t.params.some(nodeImperfect)
     return false
@@ -2625,6 +2798,23 @@ function unionNode(type, ctx, propName, depth = 0) {
     const prims = parts.map(primOf)
     if (prims.every(Boolean) && new Set(prims).size === 1) {
         return { kind: prims[0] } // 'string' | 'number' | 'boolean' | 'bigint' — all valid IR kinds
+    }
+
+    // Union of FIXED tuples over ONE primitive — `[boolean] | [boolean, boolean] | [boolean,
+    // boolean, boolean]` (highcharts-react's `updateArgs`). Every arm is a runtime array of the
+    // same element, differing only in LENGTH — which ReScript can't express anyway — so
+    // `array<bool>` is the faithful shape. Was: fell through to a loose `string`, which can never
+    // carry the array. Same-primitive only: a mixed tuple union stays the flagged fallback. (#98)
+    const tupleElem = (t) => {
+        if (!checker.isTupleType?.(t)) return null
+        const es = checker.getTypeArguments(t) || []
+        if (!es.length) return null
+        const ps = es.map(primOf)
+        return ps.every(Boolean) && new Set(ps).size === 1 ? ps[0] : null
+    }
+    const tElems = parts.map(tupleElem)
+    if (tElems.every(Boolean) && new Set(tElems).size === 1) {
+        return { kind: 'array', of: { kind: tElems[0] } }
     }
 
     // Sync-or-async VALUE: `T | Promise<T>` (hono's `fetch` returns
@@ -3231,6 +3421,14 @@ function functionNode(sig, ctx, propName, depth = 0) {
     const prevRet = ctx.inFnReturn, prevProduced = ctx.produced
     ctx.inFnReturn = false
     ctx.produced = !P
+    // A `this`-typed callback — `(this: Point, tooltip: Tooltip) => …` (Highcharts formatters):
+    // JS invokes the consumer's function with `this` bound to the DATA CARRIER. Dropping it
+    // produced a callback that type-checks but can't reach the value it's about (the tooltip
+    // formatter's Point). ReScript expresses this exactly — `@this ((point, tooltip) => …)`,
+    // where the first param binds `this` — so classify it like a param (library-produced). (#98)
+    const thisArg = sig.thisParameter
+        ? classify(checker.getTypeOfSymbolAtLocation(sig.thisParameter, ctx.decl), ctx, propName, depth + 1)
+        : null
     const params = sig.getParameters().map((pp) => {
         // An optional param `reason?: T` (or one with a default) -> `option<T>` (emit wraps it).
         // Parameter symbols don't carry SymbolFlags.Optional reliably, so read the declaration's
@@ -3297,7 +3495,7 @@ function functionNode(sig, ctx, propName, depth = 0) {
             ctx.produced = prevProd
         }
     }
-    return { kind: 'callback', params, ret }
+    return thisArg ? { kind: 'callback', params, ret, thisArg } : { kind: 'callback', params, ret }
 }
 
 /**

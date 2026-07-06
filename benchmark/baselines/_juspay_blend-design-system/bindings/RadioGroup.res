@@ -10,4 +10,5 @@ external make: (
   ~disabled: bool=?,
   ~required: bool=?,
   ~error: bool=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "RadioGroup"

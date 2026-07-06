@@ -81,4 +81,5 @@ external make: (
   ~placeholder: string=?,
   ~className: InputTypes.numberFieldInputClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Input"

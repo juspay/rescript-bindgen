@@ -14,4 +14,5 @@ external make: (
   ~name: string=?,
   ~value: string=?,
   ~maxLength: SwitchTypes.switch_MaxLengthConfig=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Switch"

@@ -4,4 +4,5 @@ external make: (
   ~label: string=?,
   ~onShowMore: unit => unit=?,
   ~buttonProps: ButtonV2Types.buttonV2ButtonPropsConfig=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "TimelineShowMore"

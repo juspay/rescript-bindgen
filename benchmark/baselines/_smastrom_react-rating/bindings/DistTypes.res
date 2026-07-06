@@ -33,7 +33,7 @@ type itemStyles = {
   inactiveStrokeColor?: string,
   inactiveBoxColor?: string,
   inactiveBoxBorderColor?: string,
-  itemShapes: string,
+  itemShapes: string,  // 🛑 BROKEN — contains `any`
   itemStrokeWidth?: float,
   boxBorderWidth?: float,
 }

@@ -165,20 +165,6 @@ type singleSelectSingleSelectTokensTypeTriggerConfig = {
   placeholder: singleSelectSingleSelectTokensTypeTriggerPlaceholderConfig,
   selectedValue: singleSelectSingleSelectTokensTypeTriggerPlaceholderConfig,
 }
-type singleSelectSingleSelectTokensTypeMenuItemOptionsLabelColorConfig = {
-  disabled: string,
-  default: string,
-  hover: string,
-  active: string,
-  selected: string,
-  focus: string,
-  focusVisible: string,
-}
-type singleSelectSingleSelectTokensTypeMenuItemOptionsLabelConfig = {
-  fontSize: string,
-  fontWeight: string,
-  color: singleSelectSingleSelectTokensTypeMenuItemOptionsLabelColorConfig,
-}
 type singleSelectSingleSelectTokensTypeMenuItemSeperatorConfig = {
   color: string,
   height: string,
@@ -190,9 +176,9 @@ type singleSelectSingleSelectTokensTypeMenuItemConfig = {
   borderRadius: string,
   gap: string,
   backgroundColor: singleSelectSingleSelectTokensTypeLabelColorConfig,
-  optionsLabel: singleSelectSingleSelectTokensTypeMenuItemOptionsLabelConfig,
-  option: singleSelectSingleSelectTokensTypeMenuItemOptionsLabelConfig,
-  description: singleSelectSingleSelectTokensTypeMenuItemOptionsLabelConfig,
+  optionsLabel: singleSelectSingleSelectTokensTypeLabelConfig,
+  option: singleSelectSingleSelectTokensTypeLabelConfig,
+  description: singleSelectSingleSelectTokensTypeLabelConfig,
   seperator: singleSelectSingleSelectTokensTypeMenuItemSeperatorConfig,
 }
 type singleSelectSingleSelectTokensTypeMenuConfig = {

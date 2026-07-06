@@ -149,6 +149,9 @@ function renderType(t, propName, cfg) {
         case 'date': return 'Date.t'
         case 'domElement': return 'Dom.element'
         case 'domRef': return cfg.refType
+        // an imperative-handle ref (forwardRef + useImperativeHandle): the payload is the typed
+        // handle record, not a DOM element — `React.ref<Nullable.t<handle>>` (#98 ~ref follow-up)
+        case 'reactRef': return `React.ref<Nullable.t<${renderType(t.of, propName, cfg)}>>`
         // a ReScript type variable from a generic component (`T` -> `'a`)
         case 'typeVar': return t.name
         // a reference to an exported class instance -> the abstract type in the `InstanceTypes`
@@ -185,6 +188,13 @@ function renderType(t, propName, cfg) {
             }
             const ps = !t.params || t.params.length === 0 ? 'unit' : t.params.map(render1).join(', ')
             const ret = renderType(t.ret || { kind: 'unit' }, propName, cfg)
+            // `this`-typed callback: `@this ((point, tooltip) => ret)` — the first param binds the
+            // JS `this` the library invokes the function with (Highcharts formatters). (#98)
+            if (t.thisArg) {
+                const th = render1(t.thisArg)
+                const inner = !t.params || t.params.length === 0 ? th : `${th}, ${ps}`
+                return `@this ((${inner}) => ${ret})`
+            }
             return (t.params && t.params.length > 1) ? `(${ps}) => ${ret}` : `${ps} => ${ret}`
         }
         case 'unit': return 'unit'
@@ -313,7 +323,7 @@ export function emitNamespace(ns, from) {
 function collectVarNames(t, out) {
     if (!t || typeof t !== 'object') return
     if (t.kind === 'typeVar' && t.name) out.add(t.name)
-    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) if (t[k]) collectVarNames(t[k], out)
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal', 'thisArg']) if (t[k]) collectVarNames(t[k], out)
     if (Array.isArray(t.params)) for (const p of t.params) collectVarNames(p, out)
     if (Array.isArray(t.tparams)) for (const v of t.tparams) if (typeof v === 'string') out.add(v)
 }
@@ -606,6 +616,7 @@ function collectRefNames(t, out) {
     if (t.kind === 'typeRef' && t.to) out.add(t.to)
     if (t.of) collectRefNames(t.of, out)
     if (t.ret) collectRefNames(t.ret, out)
+    if (t.thisArg) collectRefNames(t.thisArg, out)
     if (t.arg) collectRefNames(t.arg, out)
     if (t.mapKey) collectRefNames(t.mapKey, out)
     if (t.mapVal) collectRefNames(t.mapVal, out)
@@ -644,16 +655,35 @@ function emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg)
         const ops = members.filter((m) => m.kind === 'opaque').map((m) => m.node)
         // `rec` only when actually recursive: a mutual group (>1) or a self-referencing record.
         const selfRec = recItems.some((it) => { for (const d of depsOf(it.node)) if (d === it.id) return true; return false })
+        // A genuine cycle running through an opaque-views MODULE (a record field references
+        // `Module.t` while the module's `from*` views reference records in the same SCC —
+        // Highcharts' plot-options graph). A module can't join a `type rec` group, so neither
+        // order compiles. Break it with a FORWARD abstract type per module: hoist
+        // `type moduleName_t` above the group, point the group's references at it, and alias it
+        // inside the module (`type t = moduleName_t`) — zero-cost, consumers still use
+        // `Module.t` / `Module.from*`. (#110 fallout)
+        let cfgGroup = cfg
+        const tAlias = new Map() // module name -> hoisted local type name
+        if (ops.length && (recs.length || ubs.length)) {
+            const hoisted = new Map() // 'Module.t' -> 'moduleName_t'
+            for (const o of ops) {
+                const local = o.name.charAt(0).toLowerCase() + o.name.slice(1) + '_t'
+                hoisted.set(o.name + '.t', local)
+                tAlias.set(o.name, local)
+                lines.push(`type ${local}`)
+            }
+            cfgGroup = { ...cfg, resolveRef: (t) => { const b = cfg.resolveRef ? cfg.resolveRef(t) : t.to; return hoisted.get(b) || b } }
+        }
         if (recs.length && ubs.length) {
             // A genuine cycle running through an object-bearing `@unboxed` (records + unboxed in one
             // SCC) — the unboxed can't be a separate later declaration (forward reference) nor a plain
             // earlier one (it depends back on the records). Emit them as ONE `type rec … and …` group.
-            renderRecGroupWithUnboxed(recs, ubs, lines, cfg)
+            renderRecGroupWithUnboxed(recs, ubs, lines, cfgGroup)
         } else {
-            if (recs.length) renderRecordGroup(recs, lines, cfg, recs.length > 1 || selfRec)
-            if (ubs.length) renderUnboxed(ubs, lines, cfg)
+            if (recs.length) renderRecordGroup(recs, lines, cfgGroup, recs.length > 1 || selfRec)
+            if (ubs.length) renderUnboxed(ubs, lines, cfgGroup)
         }
-        if (ops.length) ops.forEach((o) => renderOpaque(o, lines, cfg))
+        if (ops.length) ops.forEach((o) => renderOpaque(o, lines, cfgGroup, tAlias.get(o.name)))
     }
 }
 
@@ -661,12 +691,12 @@ function emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg)
  *  like `React.element` + `React.string`): an abstract `t` plus a zero-cost `%identity`
  *  `from*` constructor per member. The prop is typed `Module.t`; the consumer builds a typed
  *  value and `->fromX`-casts it (compiles to the raw value). */
-function renderOpaque(t, lines, cfg) {
+function renderOpaque(t, lines, cfg, tAlias) {
     // Overloaded function: a module of zero-cost `%identity` ACCESSOR views (opaque -> concrete),
     // one per call signature — `external asReason: t => (option<…> => unit) = "%identity"`.
     if (t.variant === 'overload') {
         lines.push(`module ${t.name} = {`)
-        lines.push(`  type t`)
+        lines.push(tAlias ? `  type t = ${tAlias}` : `  type t`)
         const seen = new Set()
         for (const s of t.sigs) {
             if (seen.has(s.accessor)) continue
@@ -693,7 +723,7 @@ function renderOpaque(t, lines, cfg) {
         ? 'from' + pascalName(m.name) // explicit hint: Element -> fromElement, Files -> fromFiles
         : 'from' + titleCase(m.type.kind === 'typeRef' ? m.type.to.replace(/\.t$/, '') : (m.type.res || m.type.kind || 'value'))
     lines.push(`module ${t.name} = {`)
-    lines.push(`  type t`)
+    lines.push(tAlias ? `  type t = ${tAlias}` : `  type t`)
     const seen = new Set()
     for (const m of t.members) {
         // A collapsed LITERAL RUN (#53) -> ONE polyvar constructor admitting exactly that
@@ -756,10 +786,35 @@ function renderRecordGroup(records, lines, cfg, isRec) {
             seenIds.add(id)
             const asPrefix = as ? `@as(${JSON.stringify(as)}) ` : ''
             const ty = renderType(f.type, f.name, cfg)
-            lines.push(`  ${asPrefix}${id}${f.optional ? '?' : ''}: ${ty},`)
+            // Degraded fields carry the SAME flags props do. A record first reached past MAX_DEPTH
+            // used to freeze ~40 `string` fields with zero markers — wrong types with no signal in
+            // the file or the report (#98). The types still render structurally (unlike propLine's
+            // whole-prop placeholder — a record field's shape is often partly right); only the
+            // comment is added, so consumers can see exactly which fields to hand-match.
+            lines.push(`  ${asPrefix}${id}${f.optional ? '?' : ''}: ${ty},${looseMark(f, cfg)}`)
         }
         lines.push('}')
     })
+}
+
+/** The trailing flag comment for a degraded record FIELD (mirrors propLine's buckets), or ''. */
+function looseMark(f, cfg) {
+    const imp = imperfection(f.type)
+    if (!imp) return ''
+    const realTs = (f.tsType || findLooseText(f.type) || '').replace(/\s+/g, ' ').slice(0, 110)
+    const was = realTs ? ` — was \`${realTs}\`` : ''
+    if (imp === 'unknown' || imp === 'any') return `  // 🛑 BROKEN — contains \`${imp}\`${was}`
+    if (imp === 'review') return `  // ⚠️ REVIEW${was} — match the real type by hand`
+    return `  // ⚪ loose${was}`
+}
+
+/** The first original-TS `text` on an imperfect node anywhere in an IR type tree, or null. */
+function findLooseText(t) {
+    if (!t || typeof t !== 'object') return null
+    if ((t.kind === 'opaque' || t.kind === 'review') && t.text) return t.text
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal', 'thisArg']) { if (t[k]) { const n = findLooseText(t[k]); if (n) return n } }
+    if (Array.isArray(t.params)) for (const p of t.params) { const n = findLooseText(p); if (n) return n }
+    return null
 }
 
 /** Return the first `note` (an "approximate mapping, here's the caveat" message) anywhere
@@ -767,7 +822,7 @@ function renderRecordGroup(records, lines, cfg, isRec) {
 function findNote(t) {
     if (!t || typeof t !== 'object') return null
     if (t.note) return t.note
-    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal']) { if (t[k]) { const n = findNote(t[k]); if (n) return n } }
+    for (const k of ['of', 'ret', 'arg', 'mapKey', 'mapVal', 'thisArg']) { if (t[k]) { const n = findNote(t[k]); if (n) return n } }
     if (Array.isArray(t.params)) for (const p of t.params) { const n = findNote(p); if (n) return n }
     return null
 }
@@ -791,6 +846,7 @@ function imperfection(t) {
     }
     if (t.of) consider(t.of)
     if (t.ret) consider(t.ret)
+    if (t.thisArg) consider(t.thisArg)
     if (t.arg) consider(t.arg)
     if (t.mapKey) consider(t.mapKey)
     if (t.mapVal) consider(t.mapVal)

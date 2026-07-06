@@ -55,4 +55,5 @@ external make: (
   ~onWheel: ReactEvent.Wheel.t => unit=?,
   ~asChild: bool=?,
   ~forceMount: bool=?,
+  ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "TabsContent"

@@ -171,10 +171,6 @@ type dateRangePickerCalendarTokenTypeTriggerConfig = {
   quickSelector: dateRangePickerCalendarTokenTypeTriggerQuickSelectorConfig,
   dateInput: dateRangePickerCalendarTokenTypeTriggerDateInputConfig,
 }
-type dateRangePickerCalendarTokenTypeCalendarHeaderPaddingConfig = {
-  x: string,
-  y: string,
-}
 type dateRangePickerCalendarTokenTypeCalendarHeaderDateInputLabelConfig = {
   color: string,
   fontSize: string,
@@ -185,14 +181,14 @@ type dateRangePickerCalendarTokenTypeCalendarHeaderDateInputConfig = {
   label: dateRangePickerCalendarTokenTypeCalendarHeaderDateInputLabelConfig,
 }
 type dateRangePickerCalendarTokenTypeCalendarHeaderConfig = {
-  padding: dateRangePickerCalendarTokenTypeCalendarHeaderPaddingConfig,
+  padding: dateRangePickerCalendarTokenTypeTriggerQuickSelectorPaddingSmConfig,
   dateInput: dateRangePickerCalendarTokenTypeCalendarHeaderDateInputConfig,
 }
 type dateRangePickerCalendarTokenTypeCalendarCalendarGridMonthHeaderConfig = {
   fontSize: string,
   fontWeight: string,
   color: string,
-  padding: dateRangePickerCalendarTokenTypeCalendarHeaderPaddingConfig,
+  padding: string,  // ⚪ loose — was `{ x: Padding<number | (string & {})>; y: Padding<number | (string & {})>; }`
   gap: string,
 }
 type dateRangePickerCalendarTokenTypeCalendarCalendarGridMonthConfig = {
@@ -211,27 +207,27 @@ type dateRangePickerCalendarTokenTypeCalendarCalendarGridWeekConfig = {
   row: dateRangePickerCalendarTokenTypeCalendarCalendarGridWeekRowConfig,
 }
 type dateRangePickerCalendarTokenTypeCalendarCalendarGridDayCellConfig = {
-  padding: dateRangePickerCalendarTokenTypeCalendarHeaderPaddingConfig,
+  padding: string,  // ⚪ loose — was `{ x: Padding<number | (string & {})>; y: Padding<number | (string & {})>; }`
   fontWeight: string,
   fontSize: string,
   lineHeight: string,
-  border: dateRangePickerCalendarTokenTypeTriggerDateInputBorderConfig,
+  border: string,  // ⚪ loose — was `{ disabled: Border<number | (string & {})>; default: Border<number | (string & {})>; hover: Border<number | (s`
   borderRadius: string,
 }
 type dateRangePickerCalendarTokenTypeCalendarCalendarGridDayStatesConfig = {
-  startDate: string,
-  endDate: string,
-  singleDate: string,
-  rangeDay: string,
-  todayDay: string,
-  disabledDay: string,
+  startDate: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; borderRadius: { topLeft: BorderTopLeftRadius<number | (string & {})>; bott`
+  endDate: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; borderRadius: { topRight: BorderTopRightRadius<number | (string & {})>; bo`
+  singleDate: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; borderRadius: BorderRadius<number | (string & {})>; }`
+  rangeDay: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; }`
+  todayDay: string,  // ⚪ loose — was `{ fontWeight: FontWeight; }`
+  disabledDay: string,  // ⚪ loose — was `{ color: Color; }`
 }
 type dateRangePickerCalendarTokenTypeCalendarCalendarGridDayTextConfig = {
-  dayNumber: string,
-  selectedDay: string,
-  rangeDay: string,
-  todayDay: string,
-  disabledDate: string,
+  dayNumber: string,  // ⚪ loose — was `{ color: Color; }`
+  selectedDay: string,  // ⚪ loose — was `{ color: Color; }`
+  rangeDay: string,  // ⚪ loose — was `{ color: Color; }`
+  todayDay: string,  // ⚪ loose — was `{ color: Color; }`
+  disabledDate: string,  // ⚪ loose — was `{ color: Color; }`
 }
 type dateRangePickerCalendarTokenTypeCalendarCalendarGridDayTodayIndicatorConfig = {
   width: string,
@@ -249,7 +245,7 @@ type dateRangePickerCalendarTokenTypeCalendarCalendarGridConfig = {
   day: dateRangePickerCalendarTokenTypeCalendarCalendarGridDayConfig,
 }
 type dateRangePickerCalendarTokenTypeCalendarFooterConfig = {
-  padding: dateRangePickerCalendarTokenTypeCalendarHeaderPaddingConfig,
+  padding: dateRangePickerCalendarTokenTypeTriggerQuickSelectorPaddingSmConfig,
   borderTop: string,
   gap: string,
 }

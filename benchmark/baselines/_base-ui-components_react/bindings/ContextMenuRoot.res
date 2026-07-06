@@ -7,7 +7,7 @@ external make: (
   ~children: React.element=?,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
   ~disabled: bool=?,
   @as("open") ~open_: bool=?,
-  ~actionsRef: React.ref<Nullable.t<Dom.element>>=?,
+  ~actionsRef: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>=?,
   ~handle: RootSharedTypes.menuHandle=?,
   ~defaultOpen: bool=?,
   ~onOpenChangeComplete: bool => unit=?,

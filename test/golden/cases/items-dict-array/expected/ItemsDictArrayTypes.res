@@ -4,6 +4,6 @@ type itemsDictArrayItemsConfig<'a> = {
 }
 type itemsDictArrayEntriesConfig = {
   label: React.element,
-  value: string,
+  value: string,  // 🛑 BROKEN — contains `any`
 }
 @unboxed type valueOrItemsDictArrayItemsConfigArray<'a> = Dict(Dict.t<React.element>) | ItemsDictArrayItemsConfigArr(array<itemsDictArrayItemsConfig<'a>>)
