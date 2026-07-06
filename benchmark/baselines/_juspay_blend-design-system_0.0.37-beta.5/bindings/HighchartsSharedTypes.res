@@ -1428,10 +1428,10 @@ type seriesApoOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesArcdiagramOptions = {
+type seriesArcdiagramOptions<'b> = {
   centerInCategory?: string,  // ⚪ loose — was `undefined`
   curveFactor?: string,  // ⚪ loose — was `undefined`
-  data?: array<JSON.t>,
+  data?: array<'b>,
   linkRadius?: float,
   linkWeight?: float,
   nodePadding?: string,  // ⚪ loose — was `undefined`
@@ -1499,8 +1499,8 @@ type seriesArcdiagramOptions = {
   name?: string,
   zIndex?: int,
 }
-type seriesAreaOptions = {
-  data?: array<JSON.t>,
+type seriesAreaOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -1600,8 +1600,8 @@ type seriesAreaOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesArearangeOptions = {
-  data?: array<JSON.t>,
+type seriesArearangeOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -1700,8 +1700,8 @@ type seriesArearangeOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesAreasplineOptions = {
-  data?: array<JSON.t>,
+type seriesAreasplineOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -1797,8 +1797,8 @@ type seriesAreasplineOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesAreasplinerangeOptions = {
-  data?: array<JSON.t>,
+type seriesAreasplinerangeOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -2062,8 +2062,8 @@ type seriesAroonoscillatorOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesBarOptions = {
-  data?: array<JSON.t>,
+type seriesBarOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -2326,8 +2326,8 @@ type seriesBellcurveOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesBoxplotOptions = {
-  data?: array<JSON.t>,
+type seriesBoxplotOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -2425,8 +2425,8 @@ type seriesBoxplotOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesBubbleOptions = {
-  data?: array<JSON.t>,
+type seriesBubbleOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -2525,8 +2525,8 @@ type seriesBubbleOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesBulletOptions = {
-  data?: array<JSON.t>,
+type seriesBulletOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -2615,8 +2615,8 @@ type seriesBulletOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesCandlestickOptions = {
-  data?: array<JSON.t>,
+type seriesCandlestickOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -2881,8 +2881,8 @@ type seriesCmfOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesColumnOptions = {
-  data?: array<JSON.t>,
+type seriesColumnOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -2984,8 +2984,8 @@ type seriesColumnOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesColumnpyramidOptions = {
-  data?: array<JSON.t>,
+type seriesColumnpyramidOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -3074,8 +3074,8 @@ type seriesColumnpyramidOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesColumnrangeOptions = {
-  data?: array<JSON.t>,
+type seriesColumnrangeOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -3173,8 +3173,8 @@ type seriesColumnrangeOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesContourOptions = {
-  data?: array<JSON.t>,
+type seriesContourOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   grouping?: string,  // ⚪ loose — was `undefined`
@@ -3249,9 +3249,9 @@ type seriesContourOptions = {
   xAxis?: string,  // ⚪ loose — was `string | number`
   yAxis?: string,  // ⚪ loose — was `string | number`
 }
-type seriesCylinderOptions = {
+type seriesCylinderOptions<'b> = {
   allAreas?: string,  // ⚪ loose — was `undefined`
-  data?: array<JSON.t>,
+  data?: array<'b>,
   @as("type") type_: string,
   accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
   allowPointSelect?: bool,
@@ -3420,8 +3420,8 @@ type seriesDemaOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesDependencywheelOptions = {
-  data?: array<JSON.t>,
+type seriesDependencywheelOptions<'b> = {
+  data?: array<'b>,
   nodes?: array<JSON.t>,
   @as("type") type_: string,
   accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
@@ -3744,8 +3744,8 @@ type seriesDpoOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesDumbbellOptions = {
-  data?: array<JSON.t>,
+type seriesDumbbellOptions<'b> = {
+  data?: array<'b>,
   @as("type") type_: string,
   accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
   allowPointSelect?: bool,
@@ -3841,10 +3841,118 @@ type seriesDumbbellOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesFlowmapOptions = {
+type seriesFlagsOptions<'b> = {
+  colorByPoint?: string,  // ⚪ loose — was `undefined`
+  data?: array<'b>,
+  dataParser?: string,  // ⚪ loose — was `undefined`
+  dataURL?: string,  // ⚪ loose — was `undefined`
+  pointPadding?: string,  // ⚪ loose — was `undefined`
+  pointWidth?: string,  // ⚪ loose — was `undefined`
+  @as("type") type_: string,
+  useOhlcData?: string,  // ⚪ loose — was `undefined`
+  accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
+  allowOverlapX?: bool,
+  allowPointSelect?: bool,
+  animationLimit?: float,
+  boostBlending?: string,  // ⚪ loose — was `OptionsBoostBlendingValue`
+  boostThreshold?: float,
+  borderRadius?: float,
+  centerInCategory?: bool,
+  className?: string,
+  clip?: bool,
+  color?: string,  // ⚪ loose — was `ColorType`
+  colorAxis?: string,  // ⚪ loose — was `string | number | boolean`
+  colorIndex?: float,
+  colorKey?: string,
+  colors?: array<JSON.t>,
+  compare?: string,  // ⚪ loose — was `OptionsCompareValue`
+  compareBase?: string,  // ⚪ loose — was `0 | 100`
+  compareStart?: bool,
+  crisp?: bool,
+  cumulative?: bool,
+  cumulativeStart?: bool,
+  cursor?: string,
+  custom?: Dict.t<JSON.t>,
+  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dataLabels?: string,  // ⚪ loose — was `PlotFlagsDataLabelsOptions | PlotFlagsDataLabelsOptions[]`
+  dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotFlagsDataSortingOptions`
+  description?: string,
+  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  enableMouseTracking?: bool,
+  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  fillColor?: string,  // ⚪ loose — was `ColorType`
+  findNearestPointBy?: string,  // ⚪ loose — was `OptionsFindNearestPointByValue`
+  getExtremesFromAll?: bool,
+  grouping?: bool,
+  groupPadding?: float,
+  height?: float,
+  inactiveOtherPoints?: bool,
+  includeInDataExport?: bool,
+  keys?: array<string>,
+  label?: string,  // ⚪ loose — was `SeriesLabelOptionsObject`
+  lastPrice?: string,  // ⚪ loose — was `SeriesLastPriceOptionsObject`
+  lastVisiblePrice?: string,  // ⚪ loose — was `SeriesLastVisiblePriceOptionsObject`
+  legendSymbol?: string,  // ⚪ loose — was `OptionsLegendSymbolValue`
+  legendSymbolColor?: string,  // ⚪ loose — was `ColorType`
+  lineColor?: string,  // ⚪ loose — was `ColorType`
+  lineWidth?: float,
+  linkedTo?: string,
+  maxPointWidth?: float,
+  minPointLength?: float,
+  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  negativeColor?: string,  // ⚪ loose — was `ColorType`
+  nullInteraction?: bool,
+  onKey?: string,  // ⚪ loose — was `OptionsOnKeyValue`
+  onPoint?: string,  // ⚪ loose — was `object | PlotFlagsOnPointOptions`
+  onSeries?: string,
+  opacity?: float,
+  point?: string,  // ⚪ loose — was `PlotSeriesPointOptions`
+  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointInterval?: float,
+  pointIntervalUnit?: string,  // ⚪ loose — was `OptionsPointIntervalUnitValue`
+  pointPlacement?: string,  // ⚪ loose — was `string | number`
+  pointRange?: float,
+  pointStart?: string,  // ⚪ loose — was `string | number`
+  relativeXValue?: bool,
+  selected?: bool,
+  shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
+  shape?: string,  // ⚪ loose — was `FlagsShapeValue`
+  showCheckbox?: bool,
+  showInLegend?: bool,
+  showInNavigator?: bool,
+  skipKeyboardNavigation?: bool,
+  softThreshold?: bool,
+  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  stackDistance?: float,
+  stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
+  states?: seriesStatesOptionsObject,
+  stickyTracking?: bool,
+  style?: cssObject,
+  textAlign?: string,  // ⚪ loose — was `OptionsTextAlignValue`
+  title?: string,
+  tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
+  useHTML?: bool,
+  visible?: bool,
+  width?: float,
+  y?: float,
+  zoneAxis?: string,
+  zones?: array<seriesZonesOptionsObject>,
+  zoomEnabled?: bool,
+  id?: string,
+  index?: int,
+  legendIndex?: float,
+  mapData?: string,  // ⚪ loose — was `object | GeoJSON | SeriesMapDataOptions[]`
+  name?: string,
+  stack?: string,  // ⚪ loose — was `string | number`
+  xAxis?: string,  // ⚪ loose — was `string | number`
+  yAxis?: string,  // ⚪ loose — was `string | number`
+  zIndex?: int,
+}
+type seriesFlowmapOptions<'b> = {
   affectsMapView?: string,  // ⚪ loose — was `undefined`
   allAreas?: string,  // ⚪ loose — was `undefined`
-  data?: array<JSON.t>,
+  data?: array<'b>,
   mapData?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
   accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
@@ -3901,9 +4009,9 @@ type seriesFlowmapOptions = {
   xAxis?: string,  // ⚪ loose — was `string | number`
   yAxis?: string,  // ⚪ loose — was `string | number`
 }
-type seriesFunnel3dOptions = {
+type seriesFunnel3dOptions<'b> = {
   allAreas?: string,  // ⚪ loose — was `undefined`
-  data?: array<JSON.t>,
+  data?: array<'b>,
   @as("type") type_: string,
   accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
   allowPointSelect?: bool,
@@ -3995,8 +4103,8 @@ type seriesFunnel3dOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesFunnelOptions = {
-  data?: array<JSON.t>,
+type seriesFunnelOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -4070,8 +4178,8 @@ type seriesFunnelOptions = {
   name?: string,
   zIndex?: int,
 }
-type seriesGanttOptions = {
-  data?: array<JSON.t>,
+type seriesGanttOptions<'b> = {
+  data?: array<'b>,
   @as("type") type_: string,
   accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
   allowPointSelect?: bool,
@@ -4137,8 +4245,8 @@ type seriesGanttOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesGaugeOptions = {
-  data?: array<JSON.t>,
+type seriesGaugeOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -4200,9 +4308,9 @@ type seriesGaugeOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesGeoheatmapOptions = {
+type seriesGeoheatmapOptions<'b> = {
   allAreas?: string,  // ⚪ loose — was `undefined`
-  data?: array<JSON.t>,
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   mapData?: string,  // ⚪ loose — was `undefined`
@@ -4261,8 +4369,8 @@ type seriesGeoheatmapOptions = {
   xAxis?: string,  // ⚪ loose — was `string | number`
   yAxis?: string,  // ⚪ loose — was `string | number`
 }
-type seriesHeatmapOptions = {
-  data?: array<JSON.t>,
+type seriesHeatmapOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -4424,8 +4532,8 @@ type seriesHistogramOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesHlcOptions = {
-  data?: array<JSON.t>,
+type seriesHlcOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -4519,8 +4627,8 @@ type seriesHlcOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesHollowcandlestickOptions = {
-  data?: array<JSON.t>,
+type seriesHollowcandlestickOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -4706,8 +4814,8 @@ type seriesIkhOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesItemOptions = {
-  data?: array<JSON.t>,
+type seriesItemOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -4947,8 +5055,8 @@ type seriesKlingerOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesLineOptions = {
-  data?: array<JSON.t>,
+type seriesLineOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -5043,8 +5151,8 @@ type seriesLineOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesLollipopOptions = {
-  data?: array<JSON.t>,
+type seriesLollipopOptions<'b> = {
+  data?: array<'b>,
   @as("type") type_: string,
   accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
   allowPointSelect?: bool,
@@ -5228,8 +5336,8 @@ type seriesMacdOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesMapbubbleOptions = {
-  data?: array<JSON.t>,
+type seriesMapbubbleOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -5294,8 +5402,8 @@ type seriesMapbubbleOptions = {
   xAxis?: string,  // ⚪ loose — was `string | number`
   yAxis?: string,  // ⚪ loose — was `string | number`
 }
-type seriesMaplineOptions = {
-  data?: array<JSON.t>,
+type seriesMaplineOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -5358,8 +5466,8 @@ type seriesMaplineOptions = {
   xAxis?: string,  // ⚪ loose — was `string | number`
   yAxis?: string,  // ⚪ loose — was `string | number`
 }
-type seriesMapOptions = {
-  data?: array<JSON.t>,
+type seriesMapOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -5420,8 +5528,8 @@ type seriesMapOptions = {
   xAxis?: string,  // ⚪ loose — was `string | number`
   yAxis?: string,  // ⚪ loose — was `string | number`
 }
-type seriesMappointOptions = {
-  data?: array<JSON.t>,
+type seriesMappointOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -5480,8 +5588,8 @@ type seriesMappointOptions = {
   xAxis?: string,  // ⚪ loose — was `string | number`
   yAxis?: string,  // ⚪ loose — was `string | number`
 }
-type seriesNetworkgraphOptions = {
-  data?: string,  // ⚪ loose — was `PointOptionsObject | (number | object | any[])[]`
+type seriesNetworkgraphOptions<'b> = {
+  data?: array<'b>,
   nodes?: array<JSON.t>,
   stack?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -5542,8 +5650,8 @@ type seriesNetworkgraphOptions = {
   name?: string,
   zIndex?: int,
 }
-type seriesOhlcOptions = {
-  data?: array<JSON.t>,
+type seriesOhlcOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -5638,8 +5746,8 @@ type seriesOhlcOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesOrganizationOptions = {
-  data?: array<JSON.t>,
+type seriesOrganizationOptions<'b> = {
+  data?: array<'b>,
   nodes?: array<JSON.t>,
   @as("type") type_: string,
   accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
@@ -5709,8 +5817,8 @@ type seriesOrganizationOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesPackedbubbleOptions = {
-  data?: string,  // ⚪ loose — was `PointOptionsObject | (object | any[])[]`
+type seriesPackedbubbleOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -5792,9 +5900,9 @@ type seriesPackedbubbleOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesParetoOptions = {
+type seriesParetoOptions<'b> = {
   baseSeries?: string,  // ⚪ loose — was `string | number`
-  data?: array<JSON.t>,
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -5856,10 +5964,10 @@ type seriesParetoOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesPictorialOptions = {
+type seriesPictorialOptions<'b> = {
   borderRadius?: string,  // ⚪ loose — was `undefined`
   centerInCategory?: string,  // ⚪ loose — was `undefined`
-  data?: array<JSON.t>,
+  data?: array<'b>,
   dataAsColumns?: string,  // ⚪ loose — was `undefined`
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
@@ -5944,8 +6052,8 @@ type seriesPictorialOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesPieOptions = {
-  data?: array<JSON.t>,
+type seriesPieOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -6017,8 +6125,8 @@ type seriesPieOptions = {
   mapData?: string,  // ⚪ loose — was `object | GeoJSON | SeriesMapDataOptions[]`
   name?: string,
 }
-type seriesPointandfigureOptions = {
-  data?: array<JSON.t>,
+type seriesPointandfigureOptions<'b> = {
+  data?: array<'b>,
   @as("type") type_: string,
   accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
   allowPointSelect?: bool,
@@ -6103,8 +6211,8 @@ type seriesPointandfigureOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesPolygonOptions = {
-  data?: array<JSON.t>,
+type seriesPolygonOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -6277,9 +6385,9 @@ type seriesPriceenvelopesOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesPyramid3dOptions = {
+type seriesPyramid3dOptions<'b> = {
   allAreas?: string,  // ⚪ loose — was `undefined`
-  data?: array<JSON.t>,
+  data?: array<'b>,
   @as("type") type_: string,
   accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
   allowPointSelect?: bool,
@@ -6370,8 +6478,8 @@ type seriesPyramid3dOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesPyramidOptions = {
-  data?: array<JSON.t>,
+type seriesPyramidOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -6445,9 +6553,9 @@ type seriesPyramidOptions = {
   name?: string,
   zIndex?: int,
 }
-type seriesRenkoOptions = {
+type seriesRenkoOptions<'b> = {
   boost?: string,  // ⚪ loose — was `undefined`
-  data?: array<JSON.t>,
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -6527,9 +6635,9 @@ type seriesRenkoOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesSankeyOptions = {
+type seriesSankeyOptions<'b> = {
   borderRadius?: string,  // ⚪ loose — was `undefined`
-  data?: string,  // ⚪ loose — was `SeriesSankeyPointOptionsObject[] | (string | number)[][]`
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   depth?: string,  // ⚪ loose — was `undefined`
@@ -6606,8 +6714,8 @@ type seriesSankeyOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesScatter3dOptions = {
-  data?: array<JSON.t>,
+type seriesScatter3dOptions<'b> = {
+  data?: array<'b>,
   @as("type") type_: string,
   accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
   allowPointSelect?: bool,
@@ -6682,8 +6790,8 @@ type seriesScatter3dOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesScatterOptions = {
-  data?: array<JSON.t>,
+type seriesScatterOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -6945,8 +7053,8 @@ type seriesSmaOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesSolidgaugeOptions = {
-  data?: array<JSON.t>,
+type seriesSolidgaugeOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   dial?: string,  // ⚪ loose — was `undefined`
@@ -7014,8 +7122,8 @@ type seriesSolidgaugeOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesSplineOptions = {
-  data?: array<JSON.t>,
+type seriesSplineOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -7192,8 +7300,8 @@ type seriesStochasticOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesStreamgraphOptions = {
-  data?: array<JSON.t>,
+type seriesStreamgraphOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -7289,8 +7397,8 @@ type seriesStreamgraphOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesSunburstOptions = {
-  data?: array<JSON.t>,
+type seriesSunburstOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -7480,9 +7588,9 @@ type seriesTiledwebmapOptions = {
   xAxis?: string,  // ⚪ loose — was `string | number`
   yAxis?: string,  // ⚪ loose — was `string | number`
 }
-type seriesTilemapOptions = {
+type seriesTilemapOptions<'b> = {
   allAreas?: string,  // ⚪ loose — was `undefined`
-  data?: array<JSON.t>,
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   mapData?: string,  // ⚪ loose — was `undefined`
@@ -7551,8 +7659,155 @@ type seriesTilemapOptions = {
   xAxis?: string,  // ⚪ loose — was `string | number`
   yAxis?: string,  // ⚪ loose — was `string | number`
 }
-type seriesTreemapOptions = {
-  data?: array<JSON.t>,
+type seriesTimelineOptions<'b> = {
+  data?: array<'b>,
+  dataParser?: string,  // ⚪ loose — was `undefined`
+  dataURL?: string,  // ⚪ loose — was `undefined`
+  stack?: string,  // ⚪ loose — was `undefined`
+  @as("type") type_: string,
+  accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
+  allowPointSelect?: bool,
+  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  className?: string,
+  clip?: bool,
+  color?: string,  // ⚪ loose — was `ColorType`
+  colorAxis?: string,  // ⚪ loose — was `string | number | boolean`
+  colorByPoint?: bool,
+  colorIndex?: float,
+  colorKey?: string,
+  crisp?: bool,
+  cursor?: string,
+  custom?: Dict.t<JSON.t>,
+  dataLabels?: string,  // ⚪ loose — was `TimelineDataLabelsOptionsObject | TimelineDataLabelsOptionsObject[]`
+  description?: string,
+  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  enableMouseTracking?: bool,
+  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  gapSize?: float,
+  gapUnit?: string,  // ⚪ loose — was `OptionsGapUnitValue`
+  ignoreHiddenPoint?: bool,
+  inactiveOtherPoints?: bool,
+  includeInDataExport?: bool,
+  keys?: array<string>,
+  label?: string,  // ⚪ loose — was `SeriesLabelOptionsObject`
+  legendSymbol?: string,  // ⚪ loose — was `OptionsLegendSymbolValue`
+  legendSymbolColor?: string,  // ⚪ loose — was `ColorType`
+  linecap?: string,
+  lineWidth?: float,
+  linkedTo?: string,
+  marker?: pointMarkerOptionsObject,
+  nullInteraction?: bool,
+  onPoint?: string,  // ⚪ loose — was `object | PlotTimelineOnPointOptions`
+  opacity?: float,
+  point?: string,  // ⚪ loose — was `PlotSeriesPointOptions`
+  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  relativeXValue?: bool,
+  selected?: bool,
+  shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
+  showCheckbox?: bool,
+  showInLegend?: bool,
+  skipKeyboardNavigation?: bool,
+  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  states?: seriesStatesOptionsObject,
+  stickyTracking?: bool,
+  tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
+  visible?: bool,
+  zoomEnabled?: bool,
+  id?: string,
+  index?: int,
+  legendIndex?: float,
+  mapData?: string,  // ⚪ loose — was `object | GeoJSON | SeriesMapDataOptions[]`
+  name?: string,
+  xAxis?: string,  // ⚪ loose — was `string | number`
+  yAxis?: string,  // ⚪ loose — was `string | number`
+  zIndex?: int,
+}
+type seriesTreegraphOptions<'b> = {
+  allowDrillToNode?: string,  // ⚪ loose — was `undefined`
+  centerInCategory?: string,  // ⚪ loose — was `undefined`
+  curveFactor?: string,  // ⚪ loose — was `undefined`
+  data?: array<'b>,
+  headers?: string,  // ⚪ loose — was `undefined`
+  layout?: string,  // ⚪ loose — was `undefined`
+  nodePadding?: string,  // ⚪ loose — was `undefined`
+  stack?: string,  // ⚪ loose — was `undefined`
+  traverseUpButton?: string,  // ⚪ loose — was `undefined`
+  @as("type") type_: string,
+  xAxis?: string,  // ⚪ loose — was `undefined`
+  yAxis?: string,  // ⚪ loose — was `undefined`
+  accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
+  allowPointSelect?: bool,
+  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animationLimit?: float,
+  boostBlending?: string,  // ⚪ loose — was `OptionsBoostBlendingValue`
+  boostThreshold?: float,
+  className?: string,
+  clip?: bool,
+  collapseButton?: string,  // ⚪ loose — was `PlotTreegraphCollapseButtonOptions`
+  color?: string,  // ⚪ loose — was `ColorType`
+  colorByPoint?: bool,
+  colorIndex?: float,
+  colors?: array<JSON.t>,
+  crisp?: bool,
+  cropThreshold?: float,
+  cursor?: string,
+  custom?: Dict.t<JSON.t>,
+  dataLabels?: string,  // ⚪ loose — was `SeriesTreegraphDataLabelsOptionsObject | SeriesTreegraphDataLabelsOptionsObject[]`
+  description?: string,
+  enableMouseTracking?: bool,
+  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  fillSpace?: bool,
+  findNearestPointBy?: string,  // ⚪ loose — was `OptionsFindNearestPointByValue`
+  getExtremesFromAll?: bool,
+  groupPadding?: float,
+  inactiveOtherPoints?: bool,
+  includeInDataExport?: bool,
+  keys?: array<string>,
+  label?: string,  // ⚪ loose — was `SeriesLabelOptionsObject`
+  legendSymbol?: string,  // ⚪ loose — was `OptionsLegendSymbolValue`
+  levels?: array<JSON.t>,
+  link?: string,  // ⚪ loose — was `PlotTreegraphLinkOptions`
+  linkedTo?: string,
+  marker?: pointMarkerOptionsObject,
+  nodeDistance?: string,  // ⚪ loose — was `string | number`
+  nodeSizeBy?: string,  // ⚪ loose — was `OptionsNodeSizeByValue`
+  nodeWidth?: string,  // ⚪ loose — was `string | number`
+  nullInteraction?: bool,
+  onPoint?: string,  // ⚪ loose — was `object | PlotTreegraphOnPointOptions`
+  opacity?: float,
+  point?: string,  // ⚪ loose — was `PlotSeriesPointOptions`
+  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointInterval?: float,
+  pointIntervalUnit?: string,  // ⚪ loose — was `OptionsPointIntervalUnitValue`
+  pointStart?: string,  // ⚪ loose — was `string | number`
+  relativeXValue?: bool,
+  reversed?: bool,
+  selected?: bool,
+  showCheckbox?: bool,
+  showInLegend?: bool,
+  skipKeyboardNavigation?: bool,
+  softThreshold?: bool,
+  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
+  states?: seriesStatesOptionsObject,
+  step?: string,  // ⚪ loose — was `OptionsStepValue`
+  stickyTracking?: bool,
+  tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
+  traverseToLeaf?: bool,
+  turboThreshold?: float,
+  visible?: bool,
+  zoomEnabled?: bool,
+  id?: string,
+  index?: int,
+  legendIndex?: float,
+  mapData?: string,  // ⚪ loose — was `object | GeoJSON | SeriesMapDataOptions[]`
+  name?: string,
+  zIndex?: int,
+}
+type seriesTreemapOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -7644,8 +7899,8 @@ type seriesTreemapOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesVariablepieOptions = {
-  data?: array<JSON.t>,
+type seriesVariablepieOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   stack?: string,  // ⚪ loose — was `undefined`
@@ -7721,8 +7976,8 @@ type seriesVariablepieOptions = {
   name?: string,
   zIndex?: int,
 }
-type seriesVariwideOptions = {
-  data?: array<JSON.t>,
+type seriesVariwideOptions<'b> = {
+  data?: array<'b>,
   @as("type") type_: string,
   accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
   allowPointSelect?: bool,
@@ -7892,8 +8147,8 @@ type seriesVbpOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesVectorOptions = {
-  data?: array<JSON.t>,
+type seriesVectorOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -7974,8 +8229,71 @@ type seriesVectorOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesWaterfallOptions = {
-  data?: array<JSON.t>,
+type seriesVennOptions<'b> = {
+  data?: array<'b>,
+  dataParser?: string,  // ⚪ loose — was `undefined`
+  dataURL?: string,  // ⚪ loose — was `undefined`
+  stack?: string,  // ⚪ loose — was `undefined`
+  steps?: string,  // ⚪ loose — was `undefined`
+  @as("type") type_: string,
+  xAxis?: string,  // ⚪ loose — was `undefined`
+  yAxis?: string,  // ⚪ loose — was `undefined`
+  accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
+  allowPointSelect?: bool,
+  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animationLimit?: float,
+  borderDashStyle?: string,
+  brighten?: float,
+  className?: string,
+  clip?: bool,
+  cluster?: string,  // ⚪ loose — was `PlotVennClusterOptions`
+  color?: string,  // ⚪ loose — was `ColorType`
+  colorAxis?: string,  // ⚪ loose — was `string | number | boolean`
+  colorByPoint?: bool,
+  colorIndex?: float,
+  colorKey?: string,
+  crisp?: bool,
+  cursor?: string,
+  custom?: Dict.t<JSON.t>,
+  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
+  dataLabels?: string,  // ⚪ loose — was `PlotVennDataLabelsOptions | PlotVennDataLabelsOptions[]`
+  description?: string,
+  enableMouseTracking?: bool,
+  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  gapSize?: float,
+  gapUnit?: string,  // ⚪ loose — was `OptionsGapUnitValue`
+  inactiveOtherPoints?: bool,
+  includeInDataExport?: bool,
+  keys?: array<string>,
+  legendSymbol?: string,  // ⚪ loose — was `OptionsLegendSymbolValue`
+  nullInteraction?: bool,
+  onPoint?: string,  // ⚪ loose — was `object | PlotVennOnPointOptions`
+  opacity?: float,
+  point?: string,  // ⚪ loose — was `PlotSeriesPointOptions`
+  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  relativeXValue?: bool,
+  selected?: bool,
+  showCheckbox?: bool,
+  showInLegend?: bool,
+  skipKeyboardNavigation?: bool,
+  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  states?: seriesStatesOptionsObject,
+  step?: string,  // ⚪ loose — was `OptionsStepValue`
+  stickyTracking?: bool,
+  tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
+  turboThreshold?: float,
+  visible?: bool,
+  zoomEnabled?: bool,
+  id?: string,
+  index?: int,
+  legendIndex?: float,
+  mapData?: string,  // ⚪ loose — was `object | GeoJSON | SeriesMapDataOptions[]`
+  name?: string,
+  zIndex?: int,
+}
+type seriesWaterfallOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -8068,8 +8386,8 @@ type seriesWaterfallOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesWindbarbOptions = {
-  data?: array<JSON.t>,
+type seriesWindbarbOptions<'b> = {
+  data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
@@ -8169,8 +8487,8 @@ type seriesWindbarbOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesWordcloudOptions = {
-  data?: array<JSON.t>,
+type seriesWordcloudOptions<'b> = {
+  data?: array<'b>,
   @as("type") type_: string,
   accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
   allowPointSelect?: bool,
@@ -8233,8 +8551,8 @@ type seriesWordcloudOptions = {
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
 }
-type seriesXrangeOptions = {
-  data?: array<JSON.t>,
+type seriesXrangeOptions<'b> = {
+  data?: array<'b>,
   depth?: string,  // ⚪ loose — was `undefined`
   edgeColor?: string,  // ⚪ loose — was `undefined`
   edgeWidth?: string,  // ⚪ loose — was `undefined`
@@ -8320,6 +8638,127 @@ type seriesXrangeOptions = {
   xAxis?: string,  // ⚪ loose — was `string | number`
   yAxis?: string,  // ⚪ loose — was `string | number`
   zIndex?: int,
+}
+module SeriesOptionsType = {
+  type t<'b>
+  external fromSeriesAbandsOptions: seriesAbandsOptions => t<'b> = "%identity"
+  external fromSeriesAdOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesAoOptions: seriesAoOptions => t<'b> = "%identity"
+  external fromSeriesApoOptions: seriesApoOptions => t<'b> = "%identity"
+  external fromSeriesArcdiagramOptions: seriesArcdiagramOptions<'b> => t<'b> = "%identity"
+  external fromSeriesAreaOptions: seriesAreaOptions<'b> => t<'b> = "%identity"
+  external fromSeriesArearangeOptions: seriesArearangeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesAreasplineOptions: seriesAreasplineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesAreasplinerangeOptions: seriesAreasplinerangeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesAroonOptions: seriesAroonOptions => t<'b> = "%identity"
+  external fromSeriesAroonoscillatorOptions: seriesAroonoscillatorOptions => t<'b> = "%identity"
+  external fromSeriesAtrOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesBarOptions: seriesBarOptions<'b> => t<'b> = "%identity"
+  external fromSeriesBbOptions: seriesBbOptions => t<'b> = "%identity"
+  external fromSeriesBellcurveOptions: seriesBellcurveOptions => t<'b> = "%identity"
+  external fromSeriesBoxplotOptions: seriesBoxplotOptions<'b> => t<'b> = "%identity"
+  external fromSeriesBubbleOptions: seriesBubbleOptions<'b> => t<'b> = "%identity"
+  external fromSeriesBulletOptions: seriesBulletOptions<'b> => t<'b> = "%identity"
+  external fromSeriesCandlestickOptions: seriesCandlestickOptions<'b> => t<'b> = "%identity"
+  external fromSeriesCciOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesChaikinOptions: seriesApoOptions => t<'b> = "%identity"
+  external fromSeriesCmfOptions: seriesCmfOptions => t<'b> = "%identity"
+  external fromSeriesCmoOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesColumnOptions: seriesColumnOptions<'b> => t<'b> = "%identity"
+  external fromSeriesColumnpyramidOptions: seriesColumnpyramidOptions<'b> => t<'b> = "%identity"
+  external fromSeriesColumnrangeOptions: seriesColumnrangeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesContourOptions: seriesContourOptions<'b> => t<'b> = "%identity"
+  external fromSeriesCylinderOptions: seriesCylinderOptions<'b> => t<'b> = "%identity"
+  external fromSeriesDemaOptions: seriesDemaOptions => t<'b> = "%identity"
+  external fromSeriesDependencywheelOptions: seriesDependencywheelOptions<'b> => t<'b> = "%identity"
+  external fromSeriesDisparityindexOptions: seriesDisparityindexOptions => t<'b> = "%identity"
+  external fromSeriesDmiOptions: seriesDmiOptions => t<'b> = "%identity"
+  external fromSeriesDpoOptions: seriesDpoOptions => t<'b> = "%identity"
+  external fromSeriesDumbbellOptions: seriesDumbbellOptions<'b> => t<'b> = "%identity"
+  external fromSeriesEmaOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesErrorbarOptions: seriesBoxplotOptions<'b> => t<'b> = "%identity"
+  external fromSeriesFlagsOptions: seriesFlagsOptions<'b> => t<'b> = "%identity"
+  external fromSeriesFlowmapOptions: seriesFlowmapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesFunnel3dOptions: seriesFunnel3dOptions<'b> => t<'b> = "%identity"
+  external fromSeriesFunnelOptions: seriesFunnelOptions<'b> => t<'b> = "%identity"
+  external fromSeriesGanttOptions: seriesGanttOptions<'b> => t<'b> = "%identity"
+  external fromSeriesGaugeOptions: seriesGaugeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesGeoheatmapOptions: seriesGeoheatmapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesHeatmapOptions: seriesHeatmapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesHeikinashiOptions: seriesCandlestickOptions<'b> => t<'b> = "%identity"
+  external fromSeriesHistogramOptions: seriesHistogramOptions => t<'b> = "%identity"
+  external fromSeriesHlcOptions: seriesHlcOptions<'b> => t<'b> = "%identity"
+  external fromSeriesHollowcandlestickOptions: seriesHollowcandlestickOptions<'b> => t<'b> = "%identity"
+  external fromSeriesIkhOptions: seriesIkhOptions => t<'b> = "%identity"
+  external fromSeriesItemOptions: seriesItemOptions<'b> => t<'b> = "%identity"
+  external fromSeriesKeltnerchannelsOptions: seriesKeltnerchannelsOptions => t<'b> = "%identity"
+  external fromSeriesKlingerOptions: seriesKlingerOptions => t<'b> = "%identity"
+  external fromSeriesLinearregressionangleOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesLinearregressioninterceptOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesLinearregressionOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesLinearregressionslopeOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesLineOptions: seriesLineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesLollipopOptions: seriesLollipopOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMacdOptions: seriesMacdOptions => t<'b> = "%identity"
+  external fromSeriesMapbubbleOptions: seriesMapbubbleOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMaplineOptions: seriesMaplineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMapOptions: seriesMapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMappointOptions: seriesMappointOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMfiOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesMomentumOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesNatrOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesNetworkgraphOptions: seriesNetworkgraphOptions<'b> => t<'b> = "%identity"
+  external fromSeriesObvOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesOhlcOptions: seriesOhlcOptions<'b> => t<'b> = "%identity"
+  external fromSeriesOrganizationOptions: seriesOrganizationOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPackedbubbleOptions: seriesPackedbubbleOptions<'b> => t<'b> = "%identity"
+  external fromSeriesParetoOptions: seriesParetoOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPcOptions: seriesAbandsOptions => t<'b> = "%identity"
+  external fromSeriesPictorialOptions: seriesPictorialOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPieOptions: seriesPieOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPivotpointsOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesPointandfigureOptions: seriesPointandfigureOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPolygonOptions: seriesPolygonOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPpoOptions: seriesApoOptions => t<'b> = "%identity"
+  external fromSeriesPriceenvelopesOptions: seriesPriceenvelopesOptions => t<'b> = "%identity"
+  external fromSeriesPsarOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesPyramid3dOptions: seriesPyramid3dOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPyramidOptions: seriesPyramidOptions<'b> => t<'b> = "%identity"
+  external fromSeriesRenkoOptions: seriesRenkoOptions<'b> => t<'b> = "%identity"
+  external fromSeriesRocOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesRsiOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesSankeyOptions: seriesSankeyOptions<'b> => t<'b> = "%identity"
+  external fromSeriesScatter3dOptions: seriesScatter3dOptions<'b> => t<'b> = "%identity"
+  external fromSeriesScatterOptions: seriesScatterOptions<'b> => t<'b> = "%identity"
+  external fromSeriesSlowstochasticOptions: seriesSlowstochasticOptions => t<'b> = "%identity"
+  external fromSeriesSmaOptions: seriesSmaOptions => t<'b> = "%identity"
+  external fromSeriesSolidgaugeOptions: seriesSolidgaugeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesSplineOptions: seriesSplineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesStochasticOptions: seriesStochasticOptions => t<'b> = "%identity"
+  external fromSeriesStreamgraphOptions: seriesStreamgraphOptions<'b> => t<'b> = "%identity"
+  external fromSeriesSunburstOptions: seriesSunburstOptions<'b> => t<'b> = "%identity"
+  external fromSeriesSupertrendOptions: seriesSupertrendOptions => t<'b> = "%identity"
+  external fromSeriesTemaOptions: seriesDpoOptions => t<'b> = "%identity"
+  external fromSeriesTiledwebmapOptions: seriesTiledwebmapOptions => t<'b> = "%identity"
+  external fromSeriesTilemapOptions: seriesTilemapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesTimelineOptions: seriesTimelineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesTreegraphOptions: seriesTreegraphOptions<'b> => t<'b> = "%identity"
+  external fromSeriesTreemapOptions: seriesTreemapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesTrendlineOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesTrixOptions: seriesDemaOptions => t<'b> = "%identity"
+  external fromSeriesVariablepieOptions: seriesVariablepieOptions<'b> => t<'b> = "%identity"
+  external fromSeriesVariwideOptions: seriesVariwideOptions<'b> => t<'b> = "%identity"
+  external fromSeriesVbpOptions: seriesVbpOptions => t<'b> = "%identity"
+  external fromSeriesVectorOptions: seriesVectorOptions<'b> => t<'b> = "%identity"
+  external fromSeriesVennOptions: seriesVennOptions<'b> => t<'b> = "%identity"
+  external fromSeriesVwapOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesWaterfallOptions: seriesWaterfallOptions<'b> => t<'b> = "%identity"
+  external fromSeriesWilliamsrOptions: seriesApoOptions => t<'b> = "%identity"
+  external fromSeriesWindbarbOptions: seriesWindbarbOptions<'b> => t<'b> = "%identity"
+  external fromSeriesWmaOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesWordcloudOptions: seriesWordcloudOptions<'b> => t<'b> = "%identity"
+  external fromSeriesXrangeOptions: seriesXrangeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesZigzagOptions: seriesAdOptions => t<'b> = "%identity"
 }
 type exportDataEventObject = {
   dataRows: array<array<string>>,
@@ -8811,6 +9250,16 @@ type drilldownDrillUpButtonOptions = {
   position?: ChartsDrilldownDrillUpButtonOptionsPosition.t,
   relativeTo?: buttonRelativeToValue,
   theme?: string,  // ⚪ loose — was `object`
+}
+type drilldownOptions<'b> = {
+  activeAxisLabelStyle?: cssObject,
+  activeDataLabelStyle?: ChartsDrilldownOptionsActiveDataLabelStyle.t,
+  allowPointDrilldown?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  breadcrumbs?: drilldownBreadcrumbsOptions,
+  drillUpButton?: drilldownDrillUpButtonOptions,
+  mapZooming?: bool,
+  series?: array<SeriesOptionsType.t<'b>>,
 }
 type exportingAccessibilityOptions = {
   enabled?: bool,
@@ -12111,7 +12560,7 @@ type zAxisPlotLinesOptions = {
 type chartsOptionsZAxis_t
 type chartsOptionsYAxis_t
 type chartsOptionsXAxis_t
-type chartsOptionsSeries_t
+type chartsOptionsSeries_t<'b>
 type chartsPlotZigzagOptionsDataLabels_t
 type chartsPlotXrangeOptionsDataLabels_t
 type chartsPlotWmaOptionsDataLabels_t
@@ -12227,13 +12676,12 @@ type chartsSeriesAccessibilityOptionsObjectPoint_t
 type chartsNavigatorOptionsYAxis_t
 type chartsNavigatorOptionsXAxis_t
 type chartsNavigatorSeriesOptionsDataLabels_t
-type chartsNavigatorOptionsSeries_t
+type chartsNavigatorOptionsSeries_t<'b>
 type chartsNavigationOptionsAnnotationsOptions_t
 type chartsLegendItemClickEventObjectLegendItem_t
 type chartsLegendAllItems_t
 type chartsOptionsColorAxis_t
 type chartsChartOptionsParallelAxes_t
-type seriesOptionsType_t
 type pointOptionsType_t
 type rec zAxisLabelsOptions<'b> = {
   align?: alignValue,
@@ -25221,7 +25669,7 @@ and navigatorSeriesOptions = {
   threshold?: float,
   @as("type") type_?: string,
 }
-and navigatorOptions = {
+and navigatorOptions<'b> = {
   accessibility?: exportingAccessibilityOptions,
   adaptToUpdatedData?: bool,
   enabled?: bool,
@@ -25233,7 +25681,7 @@ and navigatorOptions = {
   opposite?: bool,
   outlineColor?: ColorType.t,
   outlineWidth?: float,
-  series?: chartsNavigatorOptionsSeries_t,
+  series?: chartsNavigatorOptionsSeries_t<'b>,
   stickToMax?: bool,
   xAxis?: chartsNavigatorOptionsXAxis_t,
   yAxis?: chartsNavigatorOptionsYAxis_t,
@@ -25518,16 +25966,6 @@ and exportingOptions<'b> = {
   useMultiLevelHeaders?: bool,
   useRowspanHeaders?: bool,
   width?: float,
-}
-and drilldownOptions = {
-  activeAxisLabelStyle?: cssObject,
-  activeDataLabelStyle?: ChartsDrilldownOptionsActiveDataLabelStyle.t,
-  allowPointDrilldown?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
-  breadcrumbs?: drilldownBreadcrumbsOptions,
-  drillUpButton?: drilldownDrillUpButtonOptions,
-  mapZooming?: bool,
-  series?: array<seriesOptionsType_t>,
 }
 and dataOptions<'b> = {
   beforeParse?: string => string,
@@ -25921,7 +26359,7 @@ and drillupAllEventObject<'b> = {
 }
 and drillupEventObject<'b> = {
   preventDefault: string,  // ⚪ loose — was `Function`
-  seriesOptions?: seriesOptionsType_t,
+  seriesOptions?: SeriesOptionsType.t<'b>,
   target: chart<'b>,
   @as("type") type_: string,  // ⚪ loose — was `"drillup"`
 }
@@ -25931,330 +26369,12 @@ and drilldownEventObject<'b> = {
   point: point<'b>,
   points?: boolOrPointArray<'b>,
   preventDefault: string,  // ⚪ loose — was `Function`
-  seriesOptions?: seriesOptionsType_t,
+  seriesOptions?: SeriesOptionsType.t<'b>,
   target: chart<'b>,
   @as("type") type_: string,  // ⚪ loose — was `"drilldown"`
 }
-and seriesVennOptions<'b> = {
-  data?: array<pointOptionsObject<'b>>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
-  steps?: string,  // ⚪ loose — was `undefined`
-  @as("type") type_: string,
-  xAxis?: string,  // ⚪ loose — was `undefined`
-  yAxis?: string,  // ⚪ loose — was `undefined`
-  accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
-  allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
-  animationLimit?: float,
-  borderDashStyle?: string,
-  brighten?: float,
-  className?: string,
-  clip?: bool,
-  cluster?: string,  // ⚪ loose — was `PlotVennClusterOptions`
-  color?: string,  // ⚪ loose — was `ColorType`
-  colorAxis?: string,  // ⚪ loose — was `string | number | boolean`
-  colorByPoint?: bool,
-  colorIndex?: float,
-  colorKey?: string,
-  crisp?: bool,
-  cursor?: string,
-  custom?: Dict.t<JSON.t>,
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
-  dataLabels?: string,  // ⚪ loose — was `PlotVennDataLabelsOptions | PlotVennDataLabelsOptions[]`
-  description?: string,
-  enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
-  gapSize?: float,
-  gapUnit?: string,  // ⚪ loose — was `OptionsGapUnitValue`
-  inactiveOtherPoints?: bool,
-  includeInDataExport?: bool,
-  keys?: array<string>,
-  legendSymbol?: string,  // ⚪ loose — was `OptionsLegendSymbolValue`
-  nullInteraction?: bool,
-  onPoint?: string,  // ⚪ loose — was `object | PlotVennOnPointOptions`
-  opacity?: float,
-  point?: string,  // ⚪ loose — was `PlotSeriesPointOptions`
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
-  relativeXValue?: bool,
-  selected?: bool,
-  showCheckbox?: bool,
-  showInLegend?: bool,
-  skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: seriesStatesOptionsObject,
-  step?: string,  // ⚪ loose — was `OptionsStepValue`
-  stickyTracking?: bool,
-  tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
-  turboThreshold?: float,
-  visible?: bool,
-  zoomEnabled?: bool,
-  id?: string,
-  index?: int,
-  legendIndex?: float,
-  mapData?: string,  // ⚪ loose — was `object | GeoJSON | SeriesMapDataOptions[]`
-  name?: string,
-  zIndex?: int,
-}
-and seriesTreegraphOptions<'b> = {
-  allowDrillToNode?: string,  // ⚪ loose — was `undefined`
-  centerInCategory?: string,  // ⚪ loose — was `undefined`
-  curveFactor?: string,  // ⚪ loose — was `undefined`
-  data?: array<pointOptionsObject<'b>>,
-  headers?: string,  // ⚪ loose — was `undefined`
-  layout?: string,  // ⚪ loose — was `undefined`
-  nodePadding?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
-  traverseUpButton?: string,  // ⚪ loose — was `undefined`
-  @as("type") type_: string,
-  xAxis?: string,  // ⚪ loose — was `undefined`
-  yAxis?: string,  // ⚪ loose — was `undefined`
-  accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
-  allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
-  animationLimit?: float,
-  boostBlending?: string,  // ⚪ loose — was `OptionsBoostBlendingValue`
-  boostThreshold?: float,
-  className?: string,
-  clip?: bool,
-  collapseButton?: string,  // ⚪ loose — was `PlotTreegraphCollapseButtonOptions`
-  color?: string,  // ⚪ loose — was `ColorType`
-  colorByPoint?: bool,
-  colorIndex?: float,
-  colors?: array<JSON.t>,
-  crisp?: bool,
-  cropThreshold?: float,
-  cursor?: string,
-  custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `SeriesTreegraphDataLabelsOptionsObject | SeriesTreegraphDataLabelsOptionsObject[]`
-  description?: string,
-  enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
-  fillSpace?: bool,
-  findNearestPointBy?: string,  // ⚪ loose — was `OptionsFindNearestPointByValue`
-  getExtremesFromAll?: bool,
-  groupPadding?: float,
-  inactiveOtherPoints?: bool,
-  includeInDataExport?: bool,
-  keys?: array<string>,
-  label?: string,  // ⚪ loose — was `SeriesLabelOptionsObject`
-  legendSymbol?: string,  // ⚪ loose — was `OptionsLegendSymbolValue`
-  levels?: array<JSON.t>,
-  link?: string,  // ⚪ loose — was `PlotTreegraphLinkOptions`
-  linkedTo?: string,
-  marker?: pointMarkerOptionsObject,
-  nodeDistance?: string,  // ⚪ loose — was `string | number`
-  nodeSizeBy?: string,  // ⚪ loose — was `OptionsNodeSizeByValue`
-  nodeWidth?: string,  // ⚪ loose — was `string | number`
-  nullInteraction?: bool,
-  onPoint?: string,  // ⚪ loose — was `object | PlotTreegraphOnPointOptions`
-  opacity?: float,
-  point?: string,  // ⚪ loose — was `PlotSeriesPointOptions`
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
-  pointInterval?: float,
-  pointIntervalUnit?: string,  // ⚪ loose — was `OptionsPointIntervalUnitValue`
-  pointStart?: string,  // ⚪ loose — was `string | number`
-  relativeXValue?: bool,
-  reversed?: bool,
-  selected?: bool,
-  showCheckbox?: bool,
-  showInLegend?: bool,
-  skipKeyboardNavigation?: bool,
-  softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: seriesStatesOptionsObject,
-  step?: string,  // ⚪ loose — was `OptionsStepValue`
-  stickyTracking?: bool,
-  tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
-  traverseToLeaf?: bool,
-  turboThreshold?: float,
-  visible?: bool,
-  zoomEnabled?: bool,
-  id?: string,
-  index?: int,
-  legendIndex?: float,
-  mapData?: string,  // ⚪ loose — was `object | GeoJSON | SeriesMapDataOptions[]`
-  name?: string,
-  zIndex?: int,
-}
-and seriesTimelineOptions<'b> = {
-  data?: array<pointOptionsObject<'b>>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
-  @as("type") type_: string,
-  accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
-  allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
-  className?: string,
-  clip?: bool,
-  color?: string,  // ⚪ loose — was `ColorType`
-  colorAxis?: string,  // ⚪ loose — was `string | number | boolean`
-  colorByPoint?: bool,
-  colorIndex?: float,
-  colorKey?: string,
-  crisp?: bool,
-  cursor?: string,
-  custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `TimelineDataLabelsOptionsObject | TimelineDataLabelsOptionsObject[]`
-  description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
-  enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
-  gapSize?: float,
-  gapUnit?: string,  // ⚪ loose — was `OptionsGapUnitValue`
-  ignoreHiddenPoint?: bool,
-  inactiveOtherPoints?: bool,
-  includeInDataExport?: bool,
-  keys?: array<string>,
-  label?: string,  // ⚪ loose — was `SeriesLabelOptionsObject`
-  legendSymbol?: string,  // ⚪ loose — was `OptionsLegendSymbolValue`
-  legendSymbolColor?: string,  // ⚪ loose — was `ColorType`
-  linecap?: string,
-  lineWidth?: float,
-  linkedTo?: string,
-  marker?: pointMarkerOptionsObject,
-  nullInteraction?: bool,
-  onPoint?: string,  // ⚪ loose — was `object | PlotTimelineOnPointOptions`
-  opacity?: float,
-  point?: string,  // ⚪ loose — was `PlotSeriesPointOptions`
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
-  relativeXValue?: bool,
-  selected?: bool,
-  shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
-  showCheckbox?: bool,
-  showInLegend?: bool,
-  skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  states?: seriesStatesOptionsObject,
-  stickyTracking?: bool,
-  tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
-  visible?: bool,
-  zoomEnabled?: bool,
-  id?: string,
-  index?: int,
-  legendIndex?: float,
-  mapData?: string,  // ⚪ loose — was `object | GeoJSON | SeriesMapDataOptions[]`
-  name?: string,
-  xAxis?: string,  // ⚪ loose — was `string | number`
-  yAxis?: string,  // ⚪ loose — was `string | number`
-  zIndex?: int,
-}
-and seriesFlagsOptions<'b> = {
-  colorByPoint?: string,  // ⚪ loose — was `undefined`
-  data?: array<pointOptionsObject<'b>>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  pointPadding?: string,  // ⚪ loose — was `undefined`
-  pointWidth?: string,  // ⚪ loose — was `undefined`
-  @as("type") type_: string,
-  useOhlcData?: string,  // ⚪ loose — was `undefined`
-  accessibility?: string,  // ⚪ loose — was `SeriesAccessibilityOptionsObject`
-  allowOverlapX?: bool,
-  allowPointSelect?: bool,
-  animationLimit?: float,
-  boostBlending?: string,  // ⚪ loose — was `OptionsBoostBlendingValue`
-  boostThreshold?: float,
-  borderRadius?: float,
-  centerInCategory?: bool,
-  className?: string,
-  clip?: bool,
-  color?: string,  // ⚪ loose — was `ColorType`
-  colorAxis?: string,  // ⚪ loose — was `string | number | boolean`
-  colorIndex?: float,
-  colorKey?: string,
-  colors?: array<JSON.t>,
-  compare?: string,  // ⚪ loose — was `OptionsCompareValue`
-  compareBase?: string,  // ⚪ loose — was `0 | 100`
-  compareStart?: bool,
-  crisp?: bool,
-  cumulative?: bool,
-  cumulativeStart?: bool,
-  cursor?: string,
-  custom?: Dict.t<JSON.t>,
-  dashStyle?: string,  // ⚪ loose — was `DashStyleValue`
-  dataLabels?: string,  // ⚪ loose — was `PlotFlagsDataLabelsOptions | PlotFlagsDataLabelsOptions[]`
-  dataSorting?: string,  // ⚪ loose — was `DataSortingOptionsObject | PlotFlagsDataSortingOptions`
-  description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
-  enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
-  fillColor?: string,  // ⚪ loose — was `ColorType`
-  findNearestPointBy?: string,  // ⚪ loose — was `OptionsFindNearestPointByValue`
-  getExtremesFromAll?: bool,
-  grouping?: bool,
-  groupPadding?: float,
-  height?: float,
-  inactiveOtherPoints?: bool,
-  includeInDataExport?: bool,
-  keys?: array<string>,
-  label?: string,  // ⚪ loose — was `SeriesLabelOptionsObject`
-  lastPrice?: string,  // ⚪ loose — was `SeriesLastPriceOptionsObject`
-  lastVisiblePrice?: string,  // ⚪ loose — was `SeriesLastVisiblePriceOptionsObject`
-  legendSymbol?: string,  // ⚪ loose — was `OptionsLegendSymbolValue`
-  legendSymbolColor?: string,  // ⚪ loose — was `ColorType`
-  lineColor?: string,  // ⚪ loose — was `ColorType`
-  lineWidth?: float,
-  linkedTo?: string,
-  maxPointWidth?: float,
-  minPointLength?: float,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
-  negativeColor?: string,  // ⚪ loose — was `ColorType`
-  nullInteraction?: bool,
-  onKey?: string,  // ⚪ loose — was `OptionsOnKeyValue`
-  onPoint?: string,  // ⚪ loose — was `object | PlotFlagsOnPointOptions`
-  onSeries?: string,
-  opacity?: float,
-  point?: string,  // ⚪ loose — was `PlotSeriesPointOptions`
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
-  pointInterval?: float,
-  pointIntervalUnit?: string,  // ⚪ loose — was `OptionsPointIntervalUnitValue`
-  pointPlacement?: string,  // ⚪ loose — was `string | number`
-  pointRange?: float,
-  pointStart?: string,  // ⚪ loose — was `string | number`
-  relativeXValue?: bool,
-  selected?: bool,
-  shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
-  shape?: string,  // ⚪ loose — was `FlagsShapeValue`
-  showCheckbox?: bool,
-  showInLegend?: bool,
-  showInNavigator?: bool,
-  skipKeyboardNavigation?: bool,
-  softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
-  stackDistance?: float,
-  stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
-  states?: seriesStatesOptionsObject,
-  stickyTracking?: bool,
-  style?: cssObject,
-  textAlign?: string,  // ⚪ loose — was `OptionsTextAlignValue`
-  title?: string,
-  tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
-  useHTML?: bool,
-  visible?: bool,
-  width?: float,
-  y?: float,
-  zoneAxis?: string,
-  zones?: array<seriesZonesOptionsObject>,
-  zoomEnabled?: bool,
-  id?: string,
-  index?: int,
-  legendIndex?: float,
-  mapData?: string,  // ⚪ loose — was `object | GeoJSON | SeriesMapDataOptions[]`
-  name?: string,
-  stack?: string,  // ⚪ loose — was `string | number`
-  xAxis?: string,  // ⚪ loose — was `string | number`
-  yAxis?: string,  // ⚪ loose — was `string | number`
-  zIndex?: int,
-}
 and chartAddSeriesEventObject<'b> = {
-  options: seriesOptionsType_t,
+  options: SeriesOptionsType.t<'b>,
   preventDefault: string,  // ⚪ loose — was `Function`
   target: chart<'b>,
   @as("type") type_: string,  // ⚪ loose — was `"addSeries"`
@@ -26925,7 +27045,7 @@ and options<'b> = {
   credits?: creditsOptions,
   data?: dataOptions<'b>,
   defs?: string,  // ⚠️ REVIEW — was `DefsOptions | Dictionary<ASTNode>` — match the real type by hand
-  drilldown?: drilldownOptions,
+  drilldown?: drilldownOptions<'b>,
   exporting?: exportingOptions<'b>,
   global?: globalOptions,
   lang?: langOptions,
@@ -26934,14 +27054,14 @@ and options<'b> = {
   mapNavigation?: mapNavigationOptions,
   mapView?: mapViewOptions,
   navigation?: navigationOptions,
-  navigator?: navigatorOptions,
+  navigator?: navigatorOptions<'b>,
   noData?: noDataOptions,
   pane?: ChartsOptionsPane.t,
   plotOptions?: plotOptions<'b>,
   rangeSelector?: rangeSelectorOptions,
   responsive?: responsiveOptions<'b>,
   scrollbar?: scrollbarOptions,
-  series?: array<chartsOptionsSeries_t>,
+  series?: array<chartsOptionsSeries_t<'b>>,
   sonification?: sonificationOptions,
   stockTools?: stockToolsOptions,
   subtitle?: subtitleOptions,
@@ -26969,126 +27089,126 @@ module ChartsOptionsXAxis = {
   external fromXAxisOptionss: array<xAxisOptions<'b>> => t = "%identity"
 }
 module ChartsOptionsSeries = {
-  type t = chartsOptionsSeries_t
-  external fromSeriesAbandsOptions: seriesAbandsOptions => t = "%identity"
-  external fromSeriesAdOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesAoOptions: seriesAoOptions => t = "%identity"
-  external fromSeriesApoOptions: seriesApoOptions => t = "%identity"
-  external fromSeriesArcdiagramOptions: seriesArcdiagramOptions => t = "%identity"
-  external fromSeriesAreaOptions: seriesAreaOptions => t = "%identity"
-  external fromSeriesArearangeOptions: seriesArearangeOptions => t = "%identity"
-  external fromSeriesAreasplineOptions: seriesAreasplineOptions => t = "%identity"
-  external fromSeriesAreasplinerangeOptions: seriesAreasplinerangeOptions => t = "%identity"
-  external fromSeriesAroonOptions: seriesAroonOptions => t = "%identity"
-  external fromSeriesAroonoscillatorOptions: seriesAroonoscillatorOptions => t = "%identity"
-  external fromSeriesAtrOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesBarOptions: seriesBarOptions => t = "%identity"
-  external fromSeriesBbOptions: seriesBbOptions => t = "%identity"
-  external fromSeriesBellcurveOptions: seriesBellcurveOptions => t = "%identity"
-  external fromSeriesBoxplotOptions: seriesBoxplotOptions => t = "%identity"
-  external fromSeriesBubbleOptions: seriesBubbleOptions => t = "%identity"
-  external fromSeriesBulletOptions: seriesBulletOptions => t = "%identity"
-  external fromSeriesCandlestickOptions: seriesCandlestickOptions => t = "%identity"
-  external fromSeriesCciOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesChaikinOptions: seriesApoOptions => t = "%identity"
-  external fromSeriesCmfOptions: seriesCmfOptions => t = "%identity"
-  external fromSeriesCmoOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesColumnOptions: seriesColumnOptions => t = "%identity"
-  external fromSeriesColumnpyramidOptions: seriesColumnpyramidOptions => t = "%identity"
-  external fromSeriesColumnrangeOptions: seriesColumnrangeOptions => t = "%identity"
-  external fromSeriesContourOptions: seriesContourOptions => t = "%identity"
-  external fromSeriesCylinderOptions: seriesCylinderOptions => t = "%identity"
-  external fromSeriesDemaOptions: seriesDemaOptions => t = "%identity"
-  external fromSeriesDependencywheelOptions: seriesDependencywheelOptions => t = "%identity"
-  external fromSeriesDisparityindexOptions: seriesDisparityindexOptions => t = "%identity"
-  external fromSeriesDmiOptions: seriesDmiOptions => t = "%identity"
-  external fromSeriesDpoOptions: seriesDpoOptions => t = "%identity"
-  external fromSeriesDumbbellOptions: seriesDumbbellOptions => t = "%identity"
-  external fromSeriesEmaOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesErrorbarOptions: seriesBoxplotOptions => t = "%identity"
-  external fromSeriesFlagsOptions: seriesFlagsOptions<'b> => t = "%identity"
-  external fromSeriesFlowmapOptions: seriesFlowmapOptions => t = "%identity"
-  external fromSeriesFunnel3dOptions: seriesFunnel3dOptions => t = "%identity"
-  external fromSeriesFunnelOptions: seriesFunnelOptions => t = "%identity"
-  external fromSeriesGanttOptions: seriesGanttOptions => t = "%identity"
-  external fromSeriesGaugeOptions: seriesGaugeOptions => t = "%identity"
-  external fromSeriesGeoheatmapOptions: seriesGeoheatmapOptions => t = "%identity"
-  external fromSeriesHeatmapOptions: seriesHeatmapOptions => t = "%identity"
-  external fromSeriesHeikinashiOptions: seriesCandlestickOptions => t = "%identity"
-  external fromSeriesHistogramOptions: seriesHistogramOptions => t = "%identity"
-  external fromSeriesHlcOptions: seriesHlcOptions => t = "%identity"
-  external fromSeriesHollowcandlestickOptions: seriesHollowcandlestickOptions => t = "%identity"
-  external fromSeriesIkhOptions: seriesIkhOptions => t = "%identity"
-  external fromSeriesItemOptions: seriesItemOptions => t = "%identity"
-  external fromSeriesKeltnerchannelsOptions: seriesKeltnerchannelsOptions => t = "%identity"
-  external fromSeriesKlingerOptions: seriesKlingerOptions => t = "%identity"
-  external fromSeriesLinearregressionangleOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesLinearregressioninterceptOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesLinearregressionOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesLinearregressionslopeOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesLineOptions: seriesLineOptions => t = "%identity"
-  external fromSeriesLollipopOptions: seriesLollipopOptions => t = "%identity"
-  external fromSeriesMacdOptions: seriesMacdOptions => t = "%identity"
-  external fromSeriesMapbubbleOptions: seriesMapbubbleOptions => t = "%identity"
-  external fromSeriesMaplineOptions: seriesMaplineOptions => t = "%identity"
-  external fromSeriesMapOptions: seriesMapOptions => t = "%identity"
-  external fromSeriesMappointOptions: seriesMappointOptions => t = "%identity"
-  external fromSeriesMfiOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesMomentumOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesNatrOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesNetworkgraphOptions: seriesNetworkgraphOptions => t = "%identity"
-  external fromSeriesObvOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesOhlcOptions: seriesOhlcOptions => t = "%identity"
-  external fromSeriesOrganizationOptions: seriesOrganizationOptions => t = "%identity"
-  external fromSeriesPackedbubbleOptions: seriesPackedbubbleOptions => t = "%identity"
-  external fromSeriesParetoOptions: seriesParetoOptions => t = "%identity"
-  external fromSeriesPcOptions: seriesAbandsOptions => t = "%identity"
-  external fromSeriesPictorialOptions: seriesPictorialOptions => t = "%identity"
-  external fromSeriesPieOptions: seriesPieOptions => t = "%identity"
-  external fromSeriesPivotpointsOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesPointandfigureOptions: seriesPointandfigureOptions => t = "%identity"
-  external fromSeriesPolygonOptions: seriesPolygonOptions => t = "%identity"
-  external fromSeriesPpoOptions: seriesApoOptions => t = "%identity"
-  external fromSeriesPriceenvelopesOptions: seriesPriceenvelopesOptions => t = "%identity"
-  external fromSeriesPsarOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesPyramid3dOptions: seriesPyramid3dOptions => t = "%identity"
-  external fromSeriesPyramidOptions: seriesPyramidOptions => t = "%identity"
-  external fromSeriesRenkoOptions: seriesRenkoOptions => t = "%identity"
-  external fromSeriesRocOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesRsiOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesSankeyOptions: seriesSankeyOptions => t = "%identity"
-  external fromSeriesScatter3dOptions: seriesScatter3dOptions => t = "%identity"
-  external fromSeriesScatterOptions: seriesScatterOptions => t = "%identity"
-  external fromSeriesSlowstochasticOptions: seriesSlowstochasticOptions => t = "%identity"
-  external fromSeriesSmaOptions: seriesSmaOptions => t = "%identity"
-  external fromSeriesSolidgaugeOptions: seriesSolidgaugeOptions => t = "%identity"
-  external fromSeriesSplineOptions: seriesSplineOptions => t = "%identity"
-  external fromSeriesStochasticOptions: seriesStochasticOptions => t = "%identity"
-  external fromSeriesStreamgraphOptions: seriesStreamgraphOptions => t = "%identity"
-  external fromSeriesSunburstOptions: seriesSunburstOptions => t = "%identity"
-  external fromSeriesSupertrendOptions: seriesSupertrendOptions => t = "%identity"
-  external fromSeriesTemaOptions: seriesDpoOptions => t = "%identity"
-  external fromSeriesTiledwebmapOptions: seriesTiledwebmapOptions => t = "%identity"
-  external fromSeriesTilemapOptions: seriesTilemapOptions => t = "%identity"
-  external fromSeriesTimelineOptions: seriesTimelineOptions<'b> => t = "%identity"
-  external fromSeriesTreegraphOptions: seriesTreegraphOptions<'b> => t = "%identity"
-  external fromSeriesTreemapOptions: seriesTreemapOptions => t = "%identity"
-  external fromSeriesTrendlineOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesTrixOptions: seriesDemaOptions => t = "%identity"
-  external fromSeriesVariablepieOptions: seriesVariablepieOptions => t = "%identity"
-  external fromSeriesVariwideOptions: seriesVariwideOptions => t = "%identity"
-  external fromSeriesVbpOptions: seriesVbpOptions => t = "%identity"
-  external fromSeriesVectorOptions: seriesVectorOptions => t = "%identity"
-  external fromSeriesVennOptions: seriesVennOptions<'b> => t = "%identity"
-  external fromSeriesVwapOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesWaterfallOptions: seriesWaterfallOptions => t = "%identity"
-  external fromSeriesWilliamsrOptions: seriesApoOptions => t = "%identity"
-  external fromSeriesWindbarbOptions: seriesWindbarbOptions => t = "%identity"
-  external fromSeriesWmaOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesWordcloudOptions: seriesWordcloudOptions => t = "%identity"
-  external fromSeriesXrangeOptions: seriesXrangeOptions => t = "%identity"
-  external fromSeriesZigzagOptions: seriesAdOptions => t = "%identity"
-  external fromUnknownSeriesOptions: unknownSeriesOptions<'b> => t = "%identity"
+  type t<'b> = chartsOptionsSeries_t<'b>
+  external fromSeriesAbandsOptions: seriesAbandsOptions => t<'b> = "%identity"
+  external fromSeriesAdOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesAoOptions: seriesAoOptions => t<'b> = "%identity"
+  external fromSeriesApoOptions: seriesApoOptions => t<'b> = "%identity"
+  external fromSeriesArcdiagramOptions: seriesArcdiagramOptions<'b> => t<'b> = "%identity"
+  external fromSeriesAreaOptions: seriesAreaOptions<'b> => t<'b> = "%identity"
+  external fromSeriesArearangeOptions: seriesArearangeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesAreasplineOptions: seriesAreasplineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesAreasplinerangeOptions: seriesAreasplinerangeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesAroonOptions: seriesAroonOptions => t<'b> = "%identity"
+  external fromSeriesAroonoscillatorOptions: seriesAroonoscillatorOptions => t<'b> = "%identity"
+  external fromSeriesAtrOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesBarOptions: seriesBarOptions<'b> => t<'b> = "%identity"
+  external fromSeriesBbOptions: seriesBbOptions => t<'b> = "%identity"
+  external fromSeriesBellcurveOptions: seriesBellcurveOptions => t<'b> = "%identity"
+  external fromSeriesBoxplotOptions: seriesBoxplotOptions<'b> => t<'b> = "%identity"
+  external fromSeriesBubbleOptions: seriesBubbleOptions<'b> => t<'b> = "%identity"
+  external fromSeriesBulletOptions: seriesBulletOptions<'b> => t<'b> = "%identity"
+  external fromSeriesCandlestickOptions: seriesCandlestickOptions<'b> => t<'b> = "%identity"
+  external fromSeriesCciOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesChaikinOptions: seriesApoOptions => t<'b> = "%identity"
+  external fromSeriesCmfOptions: seriesCmfOptions => t<'b> = "%identity"
+  external fromSeriesCmoOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesColumnOptions: seriesColumnOptions<'b> => t<'b> = "%identity"
+  external fromSeriesColumnpyramidOptions: seriesColumnpyramidOptions<'b> => t<'b> = "%identity"
+  external fromSeriesColumnrangeOptions: seriesColumnrangeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesContourOptions: seriesContourOptions<'b> => t<'b> = "%identity"
+  external fromSeriesCylinderOptions: seriesCylinderOptions<'b> => t<'b> = "%identity"
+  external fromSeriesDemaOptions: seriesDemaOptions => t<'b> = "%identity"
+  external fromSeriesDependencywheelOptions: seriesDependencywheelOptions<'b> => t<'b> = "%identity"
+  external fromSeriesDisparityindexOptions: seriesDisparityindexOptions => t<'b> = "%identity"
+  external fromSeriesDmiOptions: seriesDmiOptions => t<'b> = "%identity"
+  external fromSeriesDpoOptions: seriesDpoOptions => t<'b> = "%identity"
+  external fromSeriesDumbbellOptions: seriesDumbbellOptions<'b> => t<'b> = "%identity"
+  external fromSeriesEmaOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesErrorbarOptions: seriesBoxplotOptions<'b> => t<'b> = "%identity"
+  external fromSeriesFlagsOptions: seriesFlagsOptions<'b> => t<'b> = "%identity"
+  external fromSeriesFlowmapOptions: seriesFlowmapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesFunnel3dOptions: seriesFunnel3dOptions<'b> => t<'b> = "%identity"
+  external fromSeriesFunnelOptions: seriesFunnelOptions<'b> => t<'b> = "%identity"
+  external fromSeriesGanttOptions: seriesGanttOptions<'b> => t<'b> = "%identity"
+  external fromSeriesGaugeOptions: seriesGaugeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesGeoheatmapOptions: seriesGeoheatmapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesHeatmapOptions: seriesHeatmapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesHeikinashiOptions: seriesCandlestickOptions<'b> => t<'b> = "%identity"
+  external fromSeriesHistogramOptions: seriesHistogramOptions => t<'b> = "%identity"
+  external fromSeriesHlcOptions: seriesHlcOptions<'b> => t<'b> = "%identity"
+  external fromSeriesHollowcandlestickOptions: seriesHollowcandlestickOptions<'b> => t<'b> = "%identity"
+  external fromSeriesIkhOptions: seriesIkhOptions => t<'b> = "%identity"
+  external fromSeriesItemOptions: seriesItemOptions<'b> => t<'b> = "%identity"
+  external fromSeriesKeltnerchannelsOptions: seriesKeltnerchannelsOptions => t<'b> = "%identity"
+  external fromSeriesKlingerOptions: seriesKlingerOptions => t<'b> = "%identity"
+  external fromSeriesLinearregressionangleOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesLinearregressioninterceptOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesLinearregressionOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesLinearregressionslopeOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesLineOptions: seriesLineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesLollipopOptions: seriesLollipopOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMacdOptions: seriesMacdOptions => t<'b> = "%identity"
+  external fromSeriesMapbubbleOptions: seriesMapbubbleOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMaplineOptions: seriesMaplineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMapOptions: seriesMapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMappointOptions: seriesMappointOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMfiOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesMomentumOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesNatrOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesNetworkgraphOptions: seriesNetworkgraphOptions<'b> => t<'b> = "%identity"
+  external fromSeriesObvOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesOhlcOptions: seriesOhlcOptions<'b> => t<'b> = "%identity"
+  external fromSeriesOrganizationOptions: seriesOrganizationOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPackedbubbleOptions: seriesPackedbubbleOptions<'b> => t<'b> = "%identity"
+  external fromSeriesParetoOptions: seriesParetoOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPcOptions: seriesAbandsOptions => t<'b> = "%identity"
+  external fromSeriesPictorialOptions: seriesPictorialOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPieOptions: seriesPieOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPivotpointsOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesPointandfigureOptions: seriesPointandfigureOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPolygonOptions: seriesPolygonOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPpoOptions: seriesApoOptions => t<'b> = "%identity"
+  external fromSeriesPriceenvelopesOptions: seriesPriceenvelopesOptions => t<'b> = "%identity"
+  external fromSeriesPsarOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesPyramid3dOptions: seriesPyramid3dOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPyramidOptions: seriesPyramidOptions<'b> => t<'b> = "%identity"
+  external fromSeriesRenkoOptions: seriesRenkoOptions<'b> => t<'b> = "%identity"
+  external fromSeriesRocOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesRsiOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesSankeyOptions: seriesSankeyOptions<'b> => t<'b> = "%identity"
+  external fromSeriesScatter3dOptions: seriesScatter3dOptions<'b> => t<'b> = "%identity"
+  external fromSeriesScatterOptions: seriesScatterOptions<'b> => t<'b> = "%identity"
+  external fromSeriesSlowstochasticOptions: seriesSlowstochasticOptions => t<'b> = "%identity"
+  external fromSeriesSmaOptions: seriesSmaOptions => t<'b> = "%identity"
+  external fromSeriesSolidgaugeOptions: seriesSolidgaugeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesSplineOptions: seriesSplineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesStochasticOptions: seriesStochasticOptions => t<'b> = "%identity"
+  external fromSeriesStreamgraphOptions: seriesStreamgraphOptions<'b> => t<'b> = "%identity"
+  external fromSeriesSunburstOptions: seriesSunburstOptions<'b> => t<'b> = "%identity"
+  external fromSeriesSupertrendOptions: seriesSupertrendOptions => t<'b> = "%identity"
+  external fromSeriesTemaOptions: seriesDpoOptions => t<'b> = "%identity"
+  external fromSeriesTiledwebmapOptions: seriesTiledwebmapOptions => t<'b> = "%identity"
+  external fromSeriesTilemapOptions: seriesTilemapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesTimelineOptions: seriesTimelineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesTreegraphOptions: seriesTreegraphOptions<'b> => t<'b> = "%identity"
+  external fromSeriesTreemapOptions: seriesTreemapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesTrendlineOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesTrixOptions: seriesDemaOptions => t<'b> = "%identity"
+  external fromSeriesVariablepieOptions: seriesVariablepieOptions<'b> => t<'b> = "%identity"
+  external fromSeriesVariwideOptions: seriesVariwideOptions<'b> => t<'b> = "%identity"
+  external fromSeriesVbpOptions: seriesVbpOptions => t<'b> = "%identity"
+  external fromSeriesVectorOptions: seriesVectorOptions<'b> => t<'b> = "%identity"
+  external fromSeriesVennOptions: seriesVennOptions<'b> => t<'b> = "%identity"
+  external fromSeriesVwapOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesWaterfallOptions: seriesWaterfallOptions<'b> => t<'b> = "%identity"
+  external fromSeriesWilliamsrOptions: seriesApoOptions => t<'b> = "%identity"
+  external fromSeriesWindbarbOptions: seriesWindbarbOptions<'b> => t<'b> = "%identity"
+  external fromSeriesWmaOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesWordcloudOptions: seriesWordcloudOptions<'b> => t<'b> = "%identity"
+  external fromSeriesXrangeOptions: seriesXrangeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesZigzagOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromUnknownSeriesOptions: unknownSeriesOptions<'b> => t<'b> = "%identity"
 }
 module ChartsPlotZigzagOptionsDataLabels = {
   type t = chartsPlotZigzagOptionsDataLabels_t
@@ -27783,128 +27903,128 @@ module ChartsNavigatorSeriesOptionsDataLabels = {
   external fromNavigatorSeriesDataLabelsOptionss: array<navigatorSeriesDataLabelsOptions<'b>> => t = "%identity"
 }
 module ChartsNavigatorOptionsSeries = {
-  type t = chartsNavigatorOptionsSeries_t
-  external fromSeriesAbandsOptions: seriesAbandsOptions => t = "%identity"
-  external fromSeriesAdOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesAoOptions: seriesAoOptions => t = "%identity"
-  external fromSeriesApoOptions: seriesApoOptions => t = "%identity"
-  external fromSeriesArcdiagramOptions: seriesArcdiagramOptions => t = "%identity"
-  external fromSeriesAreaOptions: seriesAreaOptions => t = "%identity"
-  external fromSeriesArearangeOptions: seriesArearangeOptions => t = "%identity"
-  external fromSeriesAreasplineOptions: seriesAreasplineOptions => t = "%identity"
-  external fromSeriesAreasplinerangeOptions: seriesAreasplinerangeOptions => t = "%identity"
-  external fromSeriesAroonOptions: seriesAroonOptions => t = "%identity"
-  external fromSeriesAroonoscillatorOptions: seriesAroonoscillatorOptions => t = "%identity"
-  external fromSeriesAtrOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesBarOptions: seriesBarOptions => t = "%identity"
-  external fromSeriesBbOptions: seriesBbOptions => t = "%identity"
-  external fromSeriesBellcurveOptions: seriesBellcurveOptions => t = "%identity"
-  external fromSeriesBoxplotOptions: seriesBoxplotOptions => t = "%identity"
-  external fromSeriesBubbleOptions: seriesBubbleOptions => t = "%identity"
-  external fromSeriesBulletOptions: seriesBulletOptions => t = "%identity"
-  external fromSeriesCandlestickOptions: seriesCandlestickOptions => t = "%identity"
-  external fromSeriesCciOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesChaikinOptions: seriesApoOptions => t = "%identity"
-  external fromSeriesCmfOptions: seriesCmfOptions => t = "%identity"
-  external fromSeriesCmoOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesColumnOptions: seriesColumnOptions => t = "%identity"
-  external fromSeriesColumnpyramidOptions: seriesColumnpyramidOptions => t = "%identity"
-  external fromSeriesColumnrangeOptions: seriesColumnrangeOptions => t = "%identity"
-  external fromSeriesContourOptions: seriesContourOptions => t = "%identity"
-  external fromSeriesCylinderOptions: seriesCylinderOptions => t = "%identity"
-  external fromSeriesDemaOptions: seriesDemaOptions => t = "%identity"
-  external fromSeriesDependencywheelOptions: seriesDependencywheelOptions => t = "%identity"
-  external fromSeriesDisparityindexOptions: seriesDisparityindexOptions => t = "%identity"
-  external fromSeriesDmiOptions: seriesDmiOptions => t = "%identity"
-  external fromSeriesDpoOptions: seriesDpoOptions => t = "%identity"
-  external fromSeriesDumbbellOptions: seriesDumbbellOptions => t = "%identity"
-  external fromSeriesEmaOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesErrorbarOptions: seriesBoxplotOptions => t = "%identity"
-  external fromSeriesFlagsOptions: seriesFlagsOptions<'b> => t = "%identity"
-  external fromSeriesFlowmapOptions: seriesFlowmapOptions => t = "%identity"
-  external fromSeriesFunnel3dOptions: seriesFunnel3dOptions => t = "%identity"
-  external fromSeriesFunnelOptions: seriesFunnelOptions => t = "%identity"
-  external fromSeriesGanttOptions: seriesGanttOptions => t = "%identity"
-  external fromSeriesGaugeOptions: seriesGaugeOptions => t = "%identity"
-  external fromSeriesGeoheatmapOptions: seriesGeoheatmapOptions => t = "%identity"
-  external fromSeriesHeatmapOptions: seriesHeatmapOptions => t = "%identity"
-  external fromSeriesHeikinashiOptions: seriesCandlestickOptions => t = "%identity"
-  external fromSeriesHistogramOptions: seriesHistogramOptions => t = "%identity"
-  external fromSeriesHlcOptions: seriesHlcOptions => t = "%identity"
-  external fromSeriesHollowcandlestickOptions: seriesHollowcandlestickOptions => t = "%identity"
-  external fromSeriesIkhOptions: seriesIkhOptions => t = "%identity"
-  external fromSeriesItemOptions: seriesItemOptions => t = "%identity"
-  external fromSeriesKeltnerchannelsOptions: seriesKeltnerchannelsOptions => t = "%identity"
-  external fromSeriesKlingerOptions: seriesKlingerOptions => t = "%identity"
-  external fromSeriesLinearregressionangleOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesLinearregressioninterceptOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesLinearregressionOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesLinearregressionslopeOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesLineOptions: seriesLineOptions => t = "%identity"
-  external fromSeriesLollipopOptions: seriesLollipopOptions => t = "%identity"
-  external fromSeriesMacdOptions: seriesMacdOptions => t = "%identity"
-  external fromSeriesMapbubbleOptions: seriesMapbubbleOptions => t = "%identity"
-  external fromSeriesMaplineOptions: seriesMaplineOptions => t = "%identity"
-  external fromSeriesMapOptions: seriesMapOptions => t = "%identity"
-  external fromSeriesMappointOptions: seriesMappointOptions => t = "%identity"
-  external fromSeriesMfiOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesMomentumOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesNatrOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesNetworkgraphOptions: seriesNetworkgraphOptions => t = "%identity"
-  external fromSeriesObvOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesOhlcOptions: seriesOhlcOptions => t = "%identity"
-  external fromSeriesOrganizationOptions: seriesOrganizationOptions => t = "%identity"
-  external fromSeriesPackedbubbleOptions: seriesPackedbubbleOptions => t = "%identity"
-  external fromSeriesParetoOptions: seriesParetoOptions => t = "%identity"
-  external fromSeriesPcOptions: seriesAbandsOptions => t = "%identity"
-  external fromSeriesPictorialOptions: seriesPictorialOptions => t = "%identity"
-  external fromSeriesPieOptions: seriesPieOptions => t = "%identity"
-  external fromSeriesPivotpointsOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesPointandfigureOptions: seriesPointandfigureOptions => t = "%identity"
-  external fromSeriesPolygonOptions: seriesPolygonOptions => t = "%identity"
-  external fromSeriesPpoOptions: seriesApoOptions => t = "%identity"
-  external fromSeriesPriceenvelopesOptions: seriesPriceenvelopesOptions => t = "%identity"
-  external fromSeriesPsarOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesPyramid3dOptions: seriesPyramid3dOptions => t = "%identity"
-  external fromSeriesPyramidOptions: seriesPyramidOptions => t = "%identity"
-  external fromSeriesRenkoOptions: seriesRenkoOptions => t = "%identity"
-  external fromSeriesRocOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesRsiOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesSankeyOptions: seriesSankeyOptions => t = "%identity"
-  external fromSeriesScatter3dOptions: seriesScatter3dOptions => t = "%identity"
-  external fromSeriesScatterOptions: seriesScatterOptions => t = "%identity"
-  external fromSeriesSlowstochasticOptions: seriesSlowstochasticOptions => t = "%identity"
-  external fromSeriesSmaOptions: seriesSmaOptions => t = "%identity"
-  external fromSeriesSolidgaugeOptions: seriesSolidgaugeOptions => t = "%identity"
-  external fromSeriesSplineOptions: seriesSplineOptions => t = "%identity"
-  external fromSeriesStochasticOptions: seriesStochasticOptions => t = "%identity"
-  external fromSeriesStreamgraphOptions: seriesStreamgraphOptions => t = "%identity"
-  external fromSeriesSunburstOptions: seriesSunburstOptions => t = "%identity"
-  external fromSeriesSupertrendOptions: seriesSupertrendOptions => t = "%identity"
-  external fromSeriesTemaOptions: seriesDpoOptions => t = "%identity"
-  external fromSeriesTiledwebmapOptions: seriesTiledwebmapOptions => t = "%identity"
-  external fromSeriesTilemapOptions: seriesTilemapOptions => t = "%identity"
-  external fromSeriesTimelineOptions: seriesTimelineOptions<'b> => t = "%identity"
-  external fromSeriesTreegraphOptions: seriesTreegraphOptions<'b> => t = "%identity"
-  external fromSeriesTreemapOptions: seriesTreemapOptions => t = "%identity"
-  external fromSeriesTrendlineOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesTrixOptions: seriesDemaOptions => t = "%identity"
-  external fromSeriesVariablepieOptions: seriesVariablepieOptions => t = "%identity"
-  external fromSeriesVariwideOptions: seriesVariwideOptions => t = "%identity"
-  external fromSeriesVbpOptions: seriesVbpOptions => t = "%identity"
-  external fromSeriesVectorOptions: seriesVectorOptions => t = "%identity"
-  external fromSeriesVennOptions: seriesVennOptions<'b> => t = "%identity"
-  external fromSeriesVwapOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesWaterfallOptions: seriesWaterfallOptions => t = "%identity"
-  external fromSeriesWilliamsrOptions: seriesApoOptions => t = "%identity"
-  external fromSeriesWindbarbOptions: seriesWindbarbOptions => t = "%identity"
-  external fromSeriesWmaOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesWordcloudOptions: seriesWordcloudOptions => t = "%identity"
-  external fromSeriesXrangeOptions: seriesXrangeOptions => t = "%identity"
-  external fromSeriesZigzagOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesOptionsTypes: array<seriesOptionsType_t> => t = "%identity"
-  external fromNavigatorSeriesOptions: navigatorSeriesOptions => t = "%identity"
-  external fromNavigatorSeriesOptionss: array<navigatorSeriesOptions> => t = "%identity"
+  type t<'b> = chartsNavigatorOptionsSeries_t<'b>
+  external fromSeriesAbandsOptions: seriesAbandsOptions => t<'b> = "%identity"
+  external fromSeriesAdOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesAoOptions: seriesAoOptions => t<'b> = "%identity"
+  external fromSeriesApoOptions: seriesApoOptions => t<'b> = "%identity"
+  external fromSeriesArcdiagramOptions: seriesArcdiagramOptions<'b> => t<'b> = "%identity"
+  external fromSeriesAreaOptions: seriesAreaOptions<'b> => t<'b> = "%identity"
+  external fromSeriesArearangeOptions: seriesArearangeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesAreasplineOptions: seriesAreasplineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesAreasplinerangeOptions: seriesAreasplinerangeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesAroonOptions: seriesAroonOptions => t<'b> = "%identity"
+  external fromSeriesAroonoscillatorOptions: seriesAroonoscillatorOptions => t<'b> = "%identity"
+  external fromSeriesAtrOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesBarOptions: seriesBarOptions<'b> => t<'b> = "%identity"
+  external fromSeriesBbOptions: seriesBbOptions => t<'b> = "%identity"
+  external fromSeriesBellcurveOptions: seriesBellcurveOptions => t<'b> = "%identity"
+  external fromSeriesBoxplotOptions: seriesBoxplotOptions<'b> => t<'b> = "%identity"
+  external fromSeriesBubbleOptions: seriesBubbleOptions<'b> => t<'b> = "%identity"
+  external fromSeriesBulletOptions: seriesBulletOptions<'b> => t<'b> = "%identity"
+  external fromSeriesCandlestickOptions: seriesCandlestickOptions<'b> => t<'b> = "%identity"
+  external fromSeriesCciOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesChaikinOptions: seriesApoOptions => t<'b> = "%identity"
+  external fromSeriesCmfOptions: seriesCmfOptions => t<'b> = "%identity"
+  external fromSeriesCmoOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesColumnOptions: seriesColumnOptions<'b> => t<'b> = "%identity"
+  external fromSeriesColumnpyramidOptions: seriesColumnpyramidOptions<'b> => t<'b> = "%identity"
+  external fromSeriesColumnrangeOptions: seriesColumnrangeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesContourOptions: seriesContourOptions<'b> => t<'b> = "%identity"
+  external fromSeriesCylinderOptions: seriesCylinderOptions<'b> => t<'b> = "%identity"
+  external fromSeriesDemaOptions: seriesDemaOptions => t<'b> = "%identity"
+  external fromSeriesDependencywheelOptions: seriesDependencywheelOptions<'b> => t<'b> = "%identity"
+  external fromSeriesDisparityindexOptions: seriesDisparityindexOptions => t<'b> = "%identity"
+  external fromSeriesDmiOptions: seriesDmiOptions => t<'b> = "%identity"
+  external fromSeriesDpoOptions: seriesDpoOptions => t<'b> = "%identity"
+  external fromSeriesDumbbellOptions: seriesDumbbellOptions<'b> => t<'b> = "%identity"
+  external fromSeriesEmaOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesErrorbarOptions: seriesBoxplotOptions<'b> => t<'b> = "%identity"
+  external fromSeriesFlagsOptions: seriesFlagsOptions<'b> => t<'b> = "%identity"
+  external fromSeriesFlowmapOptions: seriesFlowmapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesFunnel3dOptions: seriesFunnel3dOptions<'b> => t<'b> = "%identity"
+  external fromSeriesFunnelOptions: seriesFunnelOptions<'b> => t<'b> = "%identity"
+  external fromSeriesGanttOptions: seriesGanttOptions<'b> => t<'b> = "%identity"
+  external fromSeriesGaugeOptions: seriesGaugeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesGeoheatmapOptions: seriesGeoheatmapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesHeatmapOptions: seriesHeatmapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesHeikinashiOptions: seriesCandlestickOptions<'b> => t<'b> = "%identity"
+  external fromSeriesHistogramOptions: seriesHistogramOptions => t<'b> = "%identity"
+  external fromSeriesHlcOptions: seriesHlcOptions<'b> => t<'b> = "%identity"
+  external fromSeriesHollowcandlestickOptions: seriesHollowcandlestickOptions<'b> => t<'b> = "%identity"
+  external fromSeriesIkhOptions: seriesIkhOptions => t<'b> = "%identity"
+  external fromSeriesItemOptions: seriesItemOptions<'b> => t<'b> = "%identity"
+  external fromSeriesKeltnerchannelsOptions: seriesKeltnerchannelsOptions => t<'b> = "%identity"
+  external fromSeriesKlingerOptions: seriesKlingerOptions => t<'b> = "%identity"
+  external fromSeriesLinearregressionangleOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesLinearregressioninterceptOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesLinearregressionOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesLinearregressionslopeOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesLineOptions: seriesLineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesLollipopOptions: seriesLollipopOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMacdOptions: seriesMacdOptions => t<'b> = "%identity"
+  external fromSeriesMapbubbleOptions: seriesMapbubbleOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMaplineOptions: seriesMaplineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMapOptions: seriesMapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMappointOptions: seriesMappointOptions<'b> => t<'b> = "%identity"
+  external fromSeriesMfiOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesMomentumOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesNatrOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesNetworkgraphOptions: seriesNetworkgraphOptions<'b> => t<'b> = "%identity"
+  external fromSeriesObvOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesOhlcOptions: seriesOhlcOptions<'b> => t<'b> = "%identity"
+  external fromSeriesOrganizationOptions: seriesOrganizationOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPackedbubbleOptions: seriesPackedbubbleOptions<'b> => t<'b> = "%identity"
+  external fromSeriesParetoOptions: seriesParetoOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPcOptions: seriesAbandsOptions => t<'b> = "%identity"
+  external fromSeriesPictorialOptions: seriesPictorialOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPieOptions: seriesPieOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPivotpointsOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesPointandfigureOptions: seriesPointandfigureOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPolygonOptions: seriesPolygonOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPpoOptions: seriesApoOptions => t<'b> = "%identity"
+  external fromSeriesPriceenvelopesOptions: seriesPriceenvelopesOptions => t<'b> = "%identity"
+  external fromSeriesPsarOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesPyramid3dOptions: seriesPyramid3dOptions<'b> => t<'b> = "%identity"
+  external fromSeriesPyramidOptions: seriesPyramidOptions<'b> => t<'b> = "%identity"
+  external fromSeriesRenkoOptions: seriesRenkoOptions<'b> => t<'b> = "%identity"
+  external fromSeriesRocOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesRsiOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesSankeyOptions: seriesSankeyOptions<'b> => t<'b> = "%identity"
+  external fromSeriesScatter3dOptions: seriesScatter3dOptions<'b> => t<'b> = "%identity"
+  external fromSeriesScatterOptions: seriesScatterOptions<'b> => t<'b> = "%identity"
+  external fromSeriesSlowstochasticOptions: seriesSlowstochasticOptions => t<'b> = "%identity"
+  external fromSeriesSmaOptions: seriesSmaOptions => t<'b> = "%identity"
+  external fromSeriesSolidgaugeOptions: seriesSolidgaugeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesSplineOptions: seriesSplineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesStochasticOptions: seriesStochasticOptions => t<'b> = "%identity"
+  external fromSeriesStreamgraphOptions: seriesStreamgraphOptions<'b> => t<'b> = "%identity"
+  external fromSeriesSunburstOptions: seriesSunburstOptions<'b> => t<'b> = "%identity"
+  external fromSeriesSupertrendOptions: seriesSupertrendOptions => t<'b> = "%identity"
+  external fromSeriesTemaOptions: seriesDpoOptions => t<'b> = "%identity"
+  external fromSeriesTiledwebmapOptions: seriesTiledwebmapOptions => t<'b> = "%identity"
+  external fromSeriesTilemapOptions: seriesTilemapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesTimelineOptions: seriesTimelineOptions<'b> => t<'b> = "%identity"
+  external fromSeriesTreegraphOptions: seriesTreegraphOptions<'b> => t<'b> = "%identity"
+  external fromSeriesTreemapOptions: seriesTreemapOptions<'b> => t<'b> = "%identity"
+  external fromSeriesTrendlineOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesTrixOptions: seriesDemaOptions => t<'b> = "%identity"
+  external fromSeriesVariablepieOptions: seriesVariablepieOptions<'b> => t<'b> = "%identity"
+  external fromSeriesVariwideOptions: seriesVariwideOptions<'b> => t<'b> = "%identity"
+  external fromSeriesVbpOptions: seriesVbpOptions => t<'b> = "%identity"
+  external fromSeriesVectorOptions: seriesVectorOptions<'b> => t<'b> = "%identity"
+  external fromSeriesVennOptions: seriesVennOptions<'b> => t<'b> = "%identity"
+  external fromSeriesVwapOptions: seriesCciOptions => t<'b> = "%identity"
+  external fromSeriesWaterfallOptions: seriesWaterfallOptions<'b> => t<'b> = "%identity"
+  external fromSeriesWilliamsrOptions: seriesApoOptions => t<'b> = "%identity"
+  external fromSeriesWindbarbOptions: seriesWindbarbOptions<'b> => t<'b> = "%identity"
+  external fromSeriesWmaOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesWordcloudOptions: seriesWordcloudOptions<'b> => t<'b> = "%identity"
+  external fromSeriesXrangeOptions: seriesXrangeOptions<'b> => t<'b> = "%identity"
+  external fromSeriesZigzagOptions: seriesAdOptions => t<'b> = "%identity"
+  external fromSeriesOptionsTypes: array<SeriesOptionsType.t<'b>> => t<'b> = "%identity"
+  external fromNavigatorSeriesOptions: navigatorSeriesOptions => t<'b> = "%identity"
+  external fromNavigatorSeriesOptionss: array<navigatorSeriesOptions> => t<'b> = "%identity"
 }
 module ChartsNavigationOptionsAnnotationsOptions = {
   type t = chartsNavigationOptionsAnnotationsOptions_t
@@ -27931,127 +28051,6 @@ module ChartsChartOptionsParallelAxes = {
   type t = chartsChartOptionsParallelAxes_t
   external fromChartParallelAxesOptions: chartParallelAxesOptions<'b> => t = "%identity"
   external fromChartParallelAxesOptionss: array<chartParallelAxesOptions<'b>> => t = "%identity"
-}
-module SeriesOptionsType = {
-  type t = seriesOptionsType_t
-  external fromSeriesAbandsOptions: seriesAbandsOptions => t = "%identity"
-  external fromSeriesAdOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesAoOptions: seriesAoOptions => t = "%identity"
-  external fromSeriesApoOptions: seriesApoOptions => t = "%identity"
-  external fromSeriesArcdiagramOptions: seriesArcdiagramOptions => t = "%identity"
-  external fromSeriesAreaOptions: seriesAreaOptions => t = "%identity"
-  external fromSeriesArearangeOptions: seriesArearangeOptions => t = "%identity"
-  external fromSeriesAreasplineOptions: seriesAreasplineOptions => t = "%identity"
-  external fromSeriesAreasplinerangeOptions: seriesAreasplinerangeOptions => t = "%identity"
-  external fromSeriesAroonOptions: seriesAroonOptions => t = "%identity"
-  external fromSeriesAroonoscillatorOptions: seriesAroonoscillatorOptions => t = "%identity"
-  external fromSeriesAtrOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesBarOptions: seriesBarOptions => t = "%identity"
-  external fromSeriesBbOptions: seriesBbOptions => t = "%identity"
-  external fromSeriesBellcurveOptions: seriesBellcurveOptions => t = "%identity"
-  external fromSeriesBoxplotOptions: seriesBoxplotOptions => t = "%identity"
-  external fromSeriesBubbleOptions: seriesBubbleOptions => t = "%identity"
-  external fromSeriesBulletOptions: seriesBulletOptions => t = "%identity"
-  external fromSeriesCandlestickOptions: seriesCandlestickOptions => t = "%identity"
-  external fromSeriesCciOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesChaikinOptions: seriesApoOptions => t = "%identity"
-  external fromSeriesCmfOptions: seriesCmfOptions => t = "%identity"
-  external fromSeriesCmoOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesColumnOptions: seriesColumnOptions => t = "%identity"
-  external fromSeriesColumnpyramidOptions: seriesColumnpyramidOptions => t = "%identity"
-  external fromSeriesColumnrangeOptions: seriesColumnrangeOptions => t = "%identity"
-  external fromSeriesContourOptions: seriesContourOptions => t = "%identity"
-  external fromSeriesCylinderOptions: seriesCylinderOptions => t = "%identity"
-  external fromSeriesDemaOptions: seriesDemaOptions => t = "%identity"
-  external fromSeriesDependencywheelOptions: seriesDependencywheelOptions => t = "%identity"
-  external fromSeriesDisparityindexOptions: seriesDisparityindexOptions => t = "%identity"
-  external fromSeriesDmiOptions: seriesDmiOptions => t = "%identity"
-  external fromSeriesDpoOptions: seriesDpoOptions => t = "%identity"
-  external fromSeriesDumbbellOptions: seriesDumbbellOptions => t = "%identity"
-  external fromSeriesEmaOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesErrorbarOptions: seriesBoxplotOptions => t = "%identity"
-  external fromSeriesFlagsOptions: seriesFlagsOptions<'b> => t = "%identity"
-  external fromSeriesFlowmapOptions: seriesFlowmapOptions => t = "%identity"
-  external fromSeriesFunnel3dOptions: seriesFunnel3dOptions => t = "%identity"
-  external fromSeriesFunnelOptions: seriesFunnelOptions => t = "%identity"
-  external fromSeriesGanttOptions: seriesGanttOptions => t = "%identity"
-  external fromSeriesGaugeOptions: seriesGaugeOptions => t = "%identity"
-  external fromSeriesGeoheatmapOptions: seriesGeoheatmapOptions => t = "%identity"
-  external fromSeriesHeatmapOptions: seriesHeatmapOptions => t = "%identity"
-  external fromSeriesHeikinashiOptions: seriesCandlestickOptions => t = "%identity"
-  external fromSeriesHistogramOptions: seriesHistogramOptions => t = "%identity"
-  external fromSeriesHlcOptions: seriesHlcOptions => t = "%identity"
-  external fromSeriesHollowcandlestickOptions: seriesHollowcandlestickOptions => t = "%identity"
-  external fromSeriesIkhOptions: seriesIkhOptions => t = "%identity"
-  external fromSeriesItemOptions: seriesItemOptions => t = "%identity"
-  external fromSeriesKeltnerchannelsOptions: seriesKeltnerchannelsOptions => t = "%identity"
-  external fromSeriesKlingerOptions: seriesKlingerOptions => t = "%identity"
-  external fromSeriesLinearregressionangleOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesLinearregressioninterceptOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesLinearregressionOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesLinearregressionslopeOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesLineOptions: seriesLineOptions => t = "%identity"
-  external fromSeriesLollipopOptions: seriesLollipopOptions => t = "%identity"
-  external fromSeriesMacdOptions: seriesMacdOptions => t = "%identity"
-  external fromSeriesMapbubbleOptions: seriesMapbubbleOptions => t = "%identity"
-  external fromSeriesMaplineOptions: seriesMaplineOptions => t = "%identity"
-  external fromSeriesMapOptions: seriesMapOptions => t = "%identity"
-  external fromSeriesMappointOptions: seriesMappointOptions => t = "%identity"
-  external fromSeriesMfiOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesMomentumOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesNatrOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesNetworkgraphOptions: seriesNetworkgraphOptions => t = "%identity"
-  external fromSeriesObvOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesOhlcOptions: seriesOhlcOptions => t = "%identity"
-  external fromSeriesOrganizationOptions: seriesOrganizationOptions => t = "%identity"
-  external fromSeriesPackedbubbleOptions: seriesPackedbubbleOptions => t = "%identity"
-  external fromSeriesParetoOptions: seriesParetoOptions => t = "%identity"
-  external fromSeriesPcOptions: seriesAbandsOptions => t = "%identity"
-  external fromSeriesPictorialOptions: seriesPictorialOptions => t = "%identity"
-  external fromSeriesPieOptions: seriesPieOptions => t = "%identity"
-  external fromSeriesPivotpointsOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesPointandfigureOptions: seriesPointandfigureOptions => t = "%identity"
-  external fromSeriesPolygonOptions: seriesPolygonOptions => t = "%identity"
-  external fromSeriesPpoOptions: seriesApoOptions => t = "%identity"
-  external fromSeriesPriceenvelopesOptions: seriesPriceenvelopesOptions => t = "%identity"
-  external fromSeriesPsarOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesPyramid3dOptions: seriesPyramid3dOptions => t = "%identity"
-  external fromSeriesPyramidOptions: seriesPyramidOptions => t = "%identity"
-  external fromSeriesRenkoOptions: seriesRenkoOptions => t = "%identity"
-  external fromSeriesRocOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesRsiOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesSankeyOptions: seriesSankeyOptions => t = "%identity"
-  external fromSeriesScatter3dOptions: seriesScatter3dOptions => t = "%identity"
-  external fromSeriesScatterOptions: seriesScatterOptions => t = "%identity"
-  external fromSeriesSlowstochasticOptions: seriesSlowstochasticOptions => t = "%identity"
-  external fromSeriesSmaOptions: seriesSmaOptions => t = "%identity"
-  external fromSeriesSolidgaugeOptions: seriesSolidgaugeOptions => t = "%identity"
-  external fromSeriesSplineOptions: seriesSplineOptions => t = "%identity"
-  external fromSeriesStochasticOptions: seriesStochasticOptions => t = "%identity"
-  external fromSeriesStreamgraphOptions: seriesStreamgraphOptions => t = "%identity"
-  external fromSeriesSunburstOptions: seriesSunburstOptions => t = "%identity"
-  external fromSeriesSupertrendOptions: seriesSupertrendOptions => t = "%identity"
-  external fromSeriesTemaOptions: seriesDpoOptions => t = "%identity"
-  external fromSeriesTiledwebmapOptions: seriesTiledwebmapOptions => t = "%identity"
-  external fromSeriesTilemapOptions: seriesTilemapOptions => t = "%identity"
-  external fromSeriesTimelineOptions: seriesTimelineOptions<'b> => t = "%identity"
-  external fromSeriesTreegraphOptions: seriesTreegraphOptions<'b> => t = "%identity"
-  external fromSeriesTreemapOptions: seriesTreemapOptions => t = "%identity"
-  external fromSeriesTrendlineOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesTrixOptions: seriesDemaOptions => t = "%identity"
-  external fromSeriesVariablepieOptions: seriesVariablepieOptions => t = "%identity"
-  external fromSeriesVariwideOptions: seriesVariwideOptions => t = "%identity"
-  external fromSeriesVbpOptions: seriesVbpOptions => t = "%identity"
-  external fromSeriesVectorOptions: seriesVectorOptions => t = "%identity"
-  external fromSeriesVennOptions: seriesVennOptions<'b> => t = "%identity"
-  external fromSeriesVwapOptions: seriesCciOptions => t = "%identity"
-  external fromSeriesWaterfallOptions: seriesWaterfallOptions => t = "%identity"
-  external fromSeriesWilliamsrOptions: seriesApoOptions => t = "%identity"
-  external fromSeriesWindbarbOptions: seriesWindbarbOptions => t = "%identity"
-  external fromSeriesWmaOptions: seriesAdOptions => t = "%identity"
-  external fromSeriesWordcloudOptions: seriesWordcloudOptions => t = "%identity"
-  external fromSeriesXrangeOptions: seriesXrangeOptions => t = "%identity"
-  external fromSeriesZigzagOptions: seriesAdOptions => t = "%identity"
 }
 module PointOptionsType = {
   type t = pointOptionsType_t
