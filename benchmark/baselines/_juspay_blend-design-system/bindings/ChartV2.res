@@ -7,8 +7,8 @@ external make: (
   ~immutable: bool=?,
   ~options: HighchartsSharedTypes.options<'b>=?,
   ~updateArgs: array<bool>=?,
-  ~callback: HighchartsSharedTypes.chart => unit=?,
+  ~callback: HighchartsSharedTypes.chart<'b> => unit=?,
   ~skeleton: ChartsV2Types.chartV2SkeletonProps=?,
   ~noData: ChartsV2Types.chartV2NoDataProps=?,
-  ~ref: React.ref<Nullable.t<DistTypes.highchartsReactRefObject>>=?,
+  ~ref: React.ref<Nullable.t<DistTypes.highchartsReactRefObject<'b>>>=?,
 ) => React.element = "ChartV2"

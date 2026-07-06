@@ -1444,6 +1444,16 @@ export function extractModule(entryFile, opts = {}) {
     healGhostRecords(shared)
     healGhostsFromTwin(shared)
     propagateTypeParams(shared)
+    // Component/function IR trees reference shared entries too — re-sync their refs to the
+    // CONVERGED tparams. A refTo taken before propagation copies the entry's tparams of that
+    // moment; a record that turns generic post-hoc otherwise renders under-applied in prop
+    // position (`React.ref<Nullable.t<DistTypes.highchartsReactRefObject>>` while the record
+    // converged to `highchartsReactRefObject<'b>` — compile break). (#110 fallout)
+    for (const c of components) for (const p of c.ir.props || []) syncRefTparams(p.type, shared.byKey, new Set())
+    for (const f of functions) {
+        for (const p of f.ir.params || []) syncRefTparams(p.type, shared.byKey, new Set())
+        if (f.ir.ret) syncRefTparams(f.ir.ret, shared.byKey, new Set())
+    }
 
     return { components, functions, classes, skipped, shared, namespaces }
 }
@@ -1543,6 +1553,11 @@ function healGhostsFromTwin(shared) {
 function entryChildTypes(e) {
     if (e.kind === 'record') return e.fields.map((f) => f.type)
     if (e.kind === 'unboxed') return e.members.map((m) => m.type)
+    // opaque-views modules reference records through their `from*` externals (and overload
+    // modules through their signature views) — those refs must re-sync tparams too, or a
+    // record that turns generic post-hoc renders bare (`fromZAxisOptions: zAxisOptions => t`
+    // while the record is `zAxisOptions<'b>` — compile break). (#110 fallout)
+    if (e.kind === 'opaque') return [...(e.members || []).map((m) => m.type), ...(e.sigs || []).map((s) => s.fn)].filter(Boolean)
     return []
 }
 
@@ -1801,17 +1816,29 @@ function classify(type, ctx, propName = '', depth = 0) {
             const e = ctx.shared.byKey.get('id:' + type.id)
             if (e && e.kind === 'record') return refTo(e)
         }
-        // The self-ref exception, GENERALIZED (#98): a reference to an already-COMPLETED shared
-        // entry (registered, not currently being built) is a zero-expansion link — the entry
-        // exists, so no new registry growth is possible. Lets a past-depth field keep its real
-        // type when the same type already resolved at a shallow site (Highcharts' `Point`, reached
-        // deep inside `TooltipOptions`, links to the materialized `point` record instead of
-        // truncating). In-progress ancestors (ctx.visiting) still truncate exactly as before, so
-        // the unbounded-graph bound holds. Non-generic entries only: a typeRef with type vars
-        // can't thread its <'a> through a shared record.
-        if (type.id != null && ctx.shared && !(ctx.visiting && ctx.visiting.has(type.id))) {
+        // The self-ref exception, GENERALIZED (#98, #110): a reference to an already-REGISTERED
+        // shared entry is a zero-expansion link — the entry exists (recordNode registers the name
+        // BEFORE building fields, the same guarantee the below-bound visiting branch relies on),
+        // so no new registry growth is possible. Covers both a COMPLETED shallow-site type
+        // (Highcharts' `Point`, reached deep inside `TooltipOptions`) and an IN-PROGRESS ancestor
+        // (`tooltip → options → tooltipOptions → formatter → tooltip: Tooltip`, #110 — the cycle
+        // lands as `type rec`, exactly like below-bound back-refs). A type FIRST reached past the
+        // bound was never registered, so the unbounded-graph bound still holds. RECORD entries
+        // only (the selfId precedent): an opaque-module/views entry emits as a submodule whose
+        // materialization is driven by below-bound references — linking one from past-depth
+        // produced a `Module.t` reference to a file that never emitted (blend's
+        // `ChartsPlotZigzagOptionsDataLabels.t`, benchmark compile break). And non-generic only:
+        // a typeRef with type vars can't thread its <'a> through a shared record.
+        // In-progress ancestors link ONLY from inside a past-depth FUNCTION signature
+        // (ctx.pastDepthFn — the #110 shape: `formatter`'s `tooltip: Tooltip` param cycling back
+        // to the class being built). Letting ordinary record FIELDS link in-progress ancestors
+        // merged huge slabs of the Highcharts graph into one `type rec` group and created a
+        // record ↔ views-module cycle the emitter cannot order (benchmark compile break).
+        if (type.id != null && ctx.shared) {
             const e = ctx.shared.byKey.get('id:' + type.id)
-            if (e && !(e.tparams && e.tparams.length)) return refTo(e)
+            const inProgress = ctx.visiting && ctx.visiting.has(type.id)
+            if (e && e.kind === 'record' && !(e.tparams && e.tparams.length) &&
+                (!inProgress || ctx.pastDepthFn)) return refTo(e)
         }
         // A FUNCTION reached past the bound classifies through its signature: the function node
         // itself cannot expand the registry — only its params/return can, and each of those either
@@ -1827,8 +1854,10 @@ function classify(type, ctx, propName = '', depth = 0) {
             const dSigs = type.getCallSignatures()
             if (dSigs.length === 1 && !(type.getProperties && type.getProperties().length)) {
                 if (type.id != null) (ctx.visiting || (ctx.visiting = new Set())).add(type.id)
+                const prevPDF = ctx.pastDepthFn
+                ctx.pastDepthFn = true // in-progress ancestors may link from this signature (#110)
                 try { return functionNode(dSigs[0], ctx, propName, depth) }
-                finally { if (type.id != null) ctx.visiting.delete(type.id) }
+                finally { ctx.pastDepthFn = prevPDF; if (type.id != null) ctx.visiting.delete(type.id) }
             }
         }
         // Zero-cost leaves resolve even past the bound — a primitive CANNOT expand the graph, so

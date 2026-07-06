@@ -4,7 +4,7 @@ type direction =
 type direction2 =
   | @as("ltr") Ltr
   | @as("rtl") Rtl
-type highchartsReactRefObject = {
-  chart: HighchartsSharedTypes.chart,
+type highchartsReactRefObject<'b> = {
+  chart: HighchartsSharedTypes.chart<'b>,
   container: React.ref<Nullable.t<Dom.htmlDivElement>>,
 }

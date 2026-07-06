@@ -106,7 +106,7 @@ type localeOptions = {
 }
 type localeFormatRelativeFnOptionsLocaleConfig = {
   options?: localeOptions,
-  formatRelative: (formatRelativeToken, string, string, option<string>) => string,  // ⚪ loose — was `DateType`
+  formatRelative: (string, string, string, option<string>) => string,  // ⚪ loose — was `FormatRelativeToken`
 }
 type formatRelativeFnOptions = {
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
@@ -171,17 +171,13 @@ type matchFnResult6 = {
   value: localeDayPeriod,
   rest: string,
 }
-type classesMatchDayPeriodConfig = {
-  width?: localeWidth,
-  valueCallback?: string => localeDayPeriod,
-}
 type match = {
   ordinalNumber: (string, option<classesMatchOrdinalNumberConfig>) => Nullable.t<matchFnResult>,
   era: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResult2>,
   quarter: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResult3>,
   month: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResult4>,
   day: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResult5>,
-  dayPeriod: (string, option<classesMatchDayPeriodConfig>) => Nullable.t<matchFnResult6>,
+  dayPeriod: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResult6>,
 }
 type rec dayPickerLocaleLabels = {
   labelNav?: CommonTypes.classesDayPickerLocaleLabelsLabelNav,

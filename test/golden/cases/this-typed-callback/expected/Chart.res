@@ -4,4 +4,5 @@ external make: (
   ~onLabel: @this ((ThisTypedCallbackTypes.point) => string)=?,
   ~onSimple: float => unit=?,
   ~opts: ThisTypedCallbackTypes.chartOpts=?,
+  ~widget: ThisTypedCallbackTypes.widget=?,
 ) => React.element = "Chart"

@@ -345,13 +345,20 @@ fields that DO still degrade (deep objects, callbacks like `formatter?: TooltipF
 now carry the same flag comments props get (`⚪ loose — was …` / `⚠️ REVIEW` / `🛑 BROKEN — contains any`)
 instead of being silent — record fields render structurally (a field's shape is often partly right), so
 only the trailing comment is added. Two zero-expansion escapes extend this: a reference to an
-already-**completed** shared entry links (`refTo`) even past the bound — the self-ref exception
-generalized; the entry exists, so no new registry growth is possible (in-progress ancestors still
-truncate, keeping the unbounded-graph bound) — and a **function** type classifies through its
-signature (its params/return each link, resolve as leaves, or truncate flagged). Net effect on
-Highcharts: `TooltipOptions.formatter` emits a real `@this ((point, …) => string)` with `point`
-linked to the record materialized at a shallow site, instead of an opaque `string`. Fixture:
-[`deep-record-leaves`](../test/golden/cases/deep-record-leaves). (#98)
+already-**registered** non-generic record entry links (`refTo`) even past the bound — the self-ref
+exception generalized; the entry exists (names register before fields build), so no new registry
+growth is possible — and a **function** type classifies through its signature (its params/return
+each link, resolve as leaves, or truncate flagged; self-recursive function types are
+visiting-guarded). An **in-progress ancestor** links only from inside a past-depth function
+signature (#110 — `formatter`'s `tooltip: Tooltip` param cycling back to the class being built,
+landing as `type rec`); from ordinary record fields it still truncates, which keeps the huge
+Highcharts slabs from merging into one group. Net effect: `TooltipOptions.formatter` emits a real
+`@this ((point<'b>, tooltip<'b>, option<point<'b>>) => string)` instead of an opaque `string`.
+When such linking creates a genuine record ↔ views-module cycle, the emitter breaks it with a
+**forward-declared abstract type**: `type moduleName_t` hoisted above the `type rec` group, fields
+reference it, and the module aliases it (`type t = moduleName_t`) — zero-cost, consumers still use
+`Module.t`/`Module.from*`. Fixtures: [`deep-record-leaves`](../test/golden/cases/deep-record-leaves),
+[`this-typed-callback`](../test/golden/cases/this-typed-callback) (`Widget` cycle). (#98, #110)
 
 **Twin healing (depth ghost ↔ shallow full sibling).** When the re-resolve above can't run because the
 shape's sub-types are a *distinct* generic instantiation (csstype gives `CSSObject['color']` vs

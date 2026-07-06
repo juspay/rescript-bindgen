@@ -655,16 +655,35 @@ function emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg)
         const ops = members.filter((m) => m.kind === 'opaque').map((m) => m.node)
         // `rec` only when actually recursive: a mutual group (>1) or a self-referencing record.
         const selfRec = recItems.some((it) => { for (const d of depsOf(it.node)) if (d === it.id) return true; return false })
+        // A genuine cycle running through an opaque-views MODULE (a record field references
+        // `Module.t` while the module's `from*` views reference records in the same SCC —
+        // Highcharts' plot-options graph). A module can't join a `type rec` group, so neither
+        // order compiles. Break it with a FORWARD abstract type per module: hoist
+        // `type moduleName_t` above the group, point the group's references at it, and alias it
+        // inside the module (`type t = moduleName_t`) — zero-cost, consumers still use
+        // `Module.t` / `Module.from*`. (#110 fallout)
+        let cfgGroup = cfg
+        const tAlias = new Map() // module name -> hoisted local type name
+        if (ops.length && (recs.length || ubs.length)) {
+            const hoisted = new Map() // 'Module.t' -> 'moduleName_t'
+            for (const o of ops) {
+                const local = o.name.charAt(0).toLowerCase() + o.name.slice(1) + '_t'
+                hoisted.set(o.name + '.t', local)
+                tAlias.set(o.name, local)
+                lines.push(`type ${local}`)
+            }
+            cfgGroup = { ...cfg, resolveRef: (t) => { const b = cfg.resolveRef ? cfg.resolveRef(t) : t.to; return hoisted.get(b) || b } }
+        }
         if (recs.length && ubs.length) {
             // A genuine cycle running through an object-bearing `@unboxed` (records + unboxed in one
             // SCC) — the unboxed can't be a separate later declaration (forward reference) nor a plain
             // earlier one (it depends back on the records). Emit them as ONE `type rec … and …` group.
-            renderRecGroupWithUnboxed(recs, ubs, lines, cfg)
+            renderRecGroupWithUnboxed(recs, ubs, lines, cfgGroup)
         } else {
-            if (recs.length) renderRecordGroup(recs, lines, cfg, recs.length > 1 || selfRec)
-            if (ubs.length) renderUnboxed(ubs, lines, cfg)
+            if (recs.length) renderRecordGroup(recs, lines, cfgGroup, recs.length > 1 || selfRec)
+            if (ubs.length) renderUnboxed(ubs, lines, cfgGroup)
         }
-        if (ops.length) ops.forEach((o) => renderOpaque(o, lines, cfg))
+        if (ops.length) ops.forEach((o) => renderOpaque(o, lines, cfgGroup, tAlias.get(o.name)))
     }
 }
 
@@ -672,12 +691,12 @@ function emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg)
  *  like `React.element` + `React.string`): an abstract `t` plus a zero-cost `%identity`
  *  `from*` constructor per member. The prop is typed `Module.t`; the consumer builds a typed
  *  value and `->fromX`-casts it (compiles to the raw value). */
-function renderOpaque(t, lines, cfg) {
+function renderOpaque(t, lines, cfg, tAlias) {
     // Overloaded function: a module of zero-cost `%identity` ACCESSOR views (opaque -> concrete),
     // one per call signature — `external asReason: t => (option<…> => unit) = "%identity"`.
     if (t.variant === 'overload') {
         lines.push(`module ${t.name} = {`)
-        lines.push(`  type t`)
+        lines.push(tAlias ? `  type t = ${tAlias}` : `  type t`)
         const seen = new Set()
         for (const s of t.sigs) {
             if (seen.has(s.accessor)) continue
@@ -704,7 +723,7 @@ function renderOpaque(t, lines, cfg) {
         ? 'from' + pascalName(m.name) // explicit hint: Element -> fromElement, Files -> fromFiles
         : 'from' + titleCase(m.type.kind === 'typeRef' ? m.type.to.replace(/\.t$/, '') : (m.type.res || m.type.kind || 'value'))
     lines.push(`module ${t.name} = {`)
-    lines.push(`  type t`)
+    lines.push(tAlias ? `  type t = ${tAlias}` : `  type t`)
     const seen = new Set()
     for (const m of t.members) {
         // A collapsed LITERAL RUN (#53) -> ONE polyvar constructor admitting exactly that

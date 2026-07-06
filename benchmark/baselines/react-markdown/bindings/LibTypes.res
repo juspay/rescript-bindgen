@@ -57,7 +57,7 @@ type options = {
   footnoteLabelProperties?: Nullable.t<Dict.t<string>>,  // ⚪ loose — was `string | number | boolean | (string | number)[]`
   footnoteLabelTagName?: Nullable.t<string>,
   handlers?: string,  // ⚪ loose — was `Partial<Record<"text" | "root" | "blockquote" | "code" | "html" | "link" | "strong" | "table" | "image" | "bre`
-  passThrough?: Nullable.t<array<libMarkdownAsyncOptionsRemarkRehypeOptionsPassThrough>>,
+  passThrough?: Nullable.t<array<string>>,  // ⚪ loose — was `"text" | "root" | "blockquote" | "code" | "html" | "link" | "strong" | "table" | "image" | "break" | "definiti`
   unknownHandler?: Nullable.t<(string, string, string) => string>,  // ⚪ loose — was `ElementContent | ElementContent[]`
 }
 type state = {

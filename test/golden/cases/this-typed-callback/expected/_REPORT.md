@@ -2,7 +2,7 @@
 
 **1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**3** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**10** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 

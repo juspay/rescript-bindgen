@@ -7,6 +7,6 @@ external make: (
   ~immutable: bool=?,
   ~options: HighchartsSharedTypes.options<'b>=?,
   ~updateArgs: array<bool>=?,
-  ~callback: HighchartsSharedTypes.chart => unit=?,
-  ~ref: React.ref<Nullable.t<DistTypes.highchartsReactRefObject>>=?,
+  ~callback: HighchartsSharedTypes.chart<'b> => unit=?,
+  ~ref: React.ref<Nullable.t<DistTypes.highchartsReactRefObject<'b>>>=?,
 ) => React.element = "BlendChart"
