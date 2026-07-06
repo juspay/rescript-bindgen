@@ -790,6 +790,34 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
             }
         })
 
+    // Synthesize `~ref` for a forwardRef surface (#98 follow-up): the `ref` symbol is filtered
+    // from the props (React-reserved), but the JSX v4 ppx DOES accept and forward a `~ref`
+    // labeled arg on an external — without it, a `RefAttributes<R>` handle (highcharts-react's
+    // `HighchartsReactRefObject`) is unreachable from ReScript. The ref's payload type decides:
+    // a DOM element → the generic constructable domRef; a cleanly-modelled handle →
+    // `React.ref<Nullable.t<handle>>` (created with `React.useRef(Nullable.null)`). An
+    // unmodellable payload is SKIPPED (flag-don't-fake) — same as today, just no longer silent.
+    const refSym = propSyms.find((p) => p.getName() === 'ref')
+    if (refSym && !props.some((p) => p.name === 'ref')) {
+        const rt = checker.getTypeOfSymbolAtLocation(refSym, decl)
+        // Syntactic gate BEFORE classifying: only a React ref family type (`Ref<R>` /
+        // `RefObject<R>` — possibly behind a union with the callback form) qualifies. Classifying
+        // an arbitrary `ref`-named prop here would register junk record types into the shared
+        // registry even when the synthesis then declines.
+        const rParts = rt.isUnion && rt.isUnion() ? rt.types : [rt]
+        const refArm = rParts.find((t) => { const n = typeName(t); return n && REF_NAMES.test(n) })
+        if (refArm) {
+            ctx.lastAnyAlias = null
+            const rNode = classify(refArm, ctx, 'ref', 0)
+            if (rNode.kind === 'domRef' || (rNode.kind === 'reactRef' && !irHasImperfection(rNode))) {
+                props.push({
+                    name: 'ref', optional: true, inherited: false, type: rNode,
+                    tsType: checker.typeToString(rt).replace(/\s+/g, ' ').slice(0, 200), declText: '',
+                })
+            }
+        }
+    }
+
     // `removed` = Omit keys + own props that collide with a chain field at the ReScript
     // id level (raw `children` = chain `children`, but also own `ariaLabel` vs chain
     // `aria-label` — both render to the id `ariaLabel`). The own prop always wins; the
@@ -1965,6 +1993,17 @@ function classify(type, ctx, propName = '', depth = 0) {
             // Nested positions (record fields, callback params — the read side) keep specificity.
             if (depth === 0 && !ctx.inRecordField) return { kind: 'domRef' }
             return { kind: 'raw', res: `React.ref<Nullable.t<${domElementType(en)}>>` }
+        }
+        // An IMPERATIVE-HANDLE ref — `Ref<HighchartsReactRefObject>`, a forwardRef +
+        // useImperativeHandle surface. The generic domRef would type the ref's payload as a DOM
+        // element, which the handle is not: classify the handle type and keep it —
+        // `React.ref<Nullable.t<highchartsReactRefObject>>` (the consumer creates it with
+        // `React.useRef(Nullable.null)` and reads the typed handle back). Falls back to the
+        // generic domRef when the handle can't be modelled cleanly. (#98 ~ref follow-up)
+        const handle = (argParts || []).find((t) => t && (t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)))
+        if (handle && !typeName(handle)?.match(/Element$/)) {
+            const node = classify(handle, ctx, propName, depth + 1)
+            if (!irHasImperfection(node)) return { kind: 'reactRef', of: node }
         }
         return { kind: 'domRef' }
     }

@@ -149,6 +149,9 @@ function renderType(t, propName, cfg) {
         case 'date': return 'Date.t'
         case 'domElement': return 'Dom.element'
         case 'domRef': return cfg.refType
+        // an imperative-handle ref (forwardRef + useImperativeHandle): the payload is the typed
+        // handle record, not a DOM element — `React.ref<Nullable.t<handle>>` (#98 ~ref follow-up)
+        case 'reactRef': return `React.ref<Nullable.t<${renderType(t.of, propName, cfg)}>>`
         // a ReScript type variable from a generic component (`T` -> `'a`)
         case 'typeVar': return t.name
         // a reference to an exported class instance -> the abstract type in the `InstanceTypes`

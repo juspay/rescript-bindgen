@@ -317,6 +317,17 @@ register hundreds of new entries, gets rolled back, and stays safely truncated. 
 `setOpenConfig2` in the benchmark baseline (the depth boundary is too fragile to pin in a synthetic
 golden).
 
+**`~ref` synthesis for forwardRef surfaces (#98).** A component typed
+`ForwardRefExoticComponent<P & RefAttributes<R>>` gets a synthesized `~ref` prop — the `ref` symbol
+is React-reserved and filtered from the props, but the JSX v4 ppx accepts and forwards a `~ref`
+labeled arg on an external (verified: `ref` lands in the JS props object, which is exactly what a JS
+forwardRef component needs). The payload decides the type: a DOM element → the generic constructable
+`React.ref<Nullable.t<Dom.element>>`; a cleanly-modelled imperative handle →
+`React.ref<Nullable.t<handle>>` (highcharts-react's `HighchartsReactRefObject`; the consumer creates
+it with `React.useRef(Nullable.null)` and reads the typed handle back). Gated syntactically on the
+React ref family (`Ref`/`RefObject`/…) and skipped when the payload can't be modelled cleanly
+(flag-don't-fake). Fixture: [`forwardref-ref-prop`](../test/golden/cases/forwardref-ref-prop). (#98)
+
 **`this`-typed callbacks → `@this` (#98).** `(this: Point, tooltip: Tooltip) => string` (Highcharts'
 formatter family) binds as `@this ((point, tooltip) => string)` — the first param binds the JS `this`
 the library invokes the function with. The `this` parameter was previously dropped silently, so the
