@@ -1451,8 +1451,18 @@ export function extractModule(entryFile, opts = {}) {
     // converged to `highchartsReactRefObject<'b>` — compile break). (#110 fallout)
     for (const c of components) for (const p of c.ir.props || []) syncRefTparams(p.type, shared.byKey, new Set())
     for (const f of functions) {
-        for (const p of f.ir.params || []) syncRefTparams(p.type, shared.byKey, new Set())
-        if (f.ir.ret) syncRefTparams(f.ir.ret, shared.byKey, new Set())
+        // FunctionIR nests under `sig`; a const-value IR (also in this list) under `value`.
+        for (const p of (f.ir.sig && f.ir.sig.params) || []) syncRefTparams(p.type, shared.byKey, new Set())
+        if (f.ir.sig && f.ir.sig.ret) syncRefTparams(f.ir.sig.ret, shared.byKey, new Set())
+        if (f.ir.value && f.ir.value.type) syncRefTparams(f.ir.value.type, shared.byKey, new Set())
+    }
+    for (const c of classes) {
+        for (const p of (c.ir.ctor && c.ir.ctor.params) || []) syncRefTparams(p.type, shared.byKey, new Set())
+        for (const m of c.ir.methods || []) {
+            for (const p of m.params || []) syncRefTparams(p.type, shared.byKey, new Set())
+            if (m.ret) syncRefTparams(m.ret, shared.byKey, new Set())
+        }
+        for (const g of c.ir.getters || []) if (g.type) syncRefTparams(g.type, shared.byKey, new Set())
     }
 
     return { components, functions, classes, skipped, shared, namespaces }
