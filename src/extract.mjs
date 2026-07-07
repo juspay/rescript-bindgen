@@ -453,7 +453,7 @@ const DEFAULT_HTML_ALLOWLIST = [
  * @param {string} entryFile  absolute path to the `.d.ts`
  * @returns {ts.Program}
  */
-function makeProgram(entryFile) {
+function makeProgram(entryFile, augment = []) {
     const options = {
         target: ts.ScriptTarget.ES2020,
         module: ts.ModuleKind.ESNext,
@@ -465,7 +465,22 @@ function makeProgram(entryFile) {
         noEmit: true,
         allowJs: true,
     }
-    return ts.createProgram([entryFile], options)
+    // `--augment <module>`: add each augmenting module's `.d.ts` as a program root so TypeScript's
+    // declaration MERGING surfaces its `declare module "…" { interface X {…} }` additions on the base
+    // interface. These files (e.g. `highcharts/modules/xrange` adding `Point.x2`) are opt-in
+    // side-effect imports the entry `.d.ts` deliberately omits, so they're never in the import graph;
+    // rooting them explicitly is the faithful equivalent of the app's `import "highcharts/modules/xrange"`.
+    const roots = [entryFile]
+    if (augment.length) {
+        const host = ts.createCompilerHost(options)
+        for (const spec of augment) {
+            const r = ts.resolveModuleName(spec, entryFile, options, host)
+            const f = r.resolvedModule && r.resolvedModule.resolvedFileName
+            if (f) roots.push(f)
+            else console.error(`[bindgen] --augment: could not resolve "${spec}" from ${entryFile}`)
+        }
+    }
+    return ts.createProgram(roots, options)
 }
 
 /**
@@ -1251,7 +1266,7 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
  * @throws if no exported component is found
  */
 export function extractComponent(entryFile, opts = {}) {
-    const program = makeProgram(entryFile)
+    const program = makeProgram(entryFile, opts.augment || [])
     const checker = program.getTypeChecker()
     const source = program.getSourceFile(entryFile)
     if (!source) throw new Error(`Could not load source file: ${entryFile}`)
@@ -1284,7 +1299,7 @@ export function extractComponent(entryFile, opts = {}) {
  *            skipped: Array<{name:string, reason:string}> }}
  */
 export function extractModule(entryFile, opts = {}) {
-    const program = makeProgram(entryFile)
+    const program = makeProgram(entryFile, opts.augment || [])
     const checker = program.getTypeChecker()
     const source = program.getSourceFile(entryFile)
     if (!source) throw new Error(`Could not load source file: ${entryFile}`)
