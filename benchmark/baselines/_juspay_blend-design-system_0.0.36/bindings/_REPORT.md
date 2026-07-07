@@ -4,7 +4,7 @@
 
 **55** function binding(s) → `BlendDesignSystemBindings.res`.
 
-**2298** shared types deduplicated into **63** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**2299** shared types deduplicated into **63** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 

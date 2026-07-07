@@ -104,11 +104,11 @@ type localeOptions = {
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
   firstWeekContainsDate?: CommonTypes.v1OrV4,
 }
-type localeFormatRelativeFnOptionsLocaleConfig = {
+type rec localeFormatRelativeFnOptionsLocaleConfig = {
   options?: localeOptions,
-  formatRelative: (string, string, string, option<string>) => string,  // ⚪ loose — was `FormatRelativeToken`
+  formatRelative: (string, string, string, option<formatRelativeFnOptions>) => string,  // ⚪ loose — was `FormatRelativeToken`
 }
-type formatRelativeFnOptions = {
+and formatRelativeFnOptions = {
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
   locale?: localeFormatRelativeFnOptionsLocaleConfig,
 }

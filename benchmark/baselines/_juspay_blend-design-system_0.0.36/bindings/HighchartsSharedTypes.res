@@ -912,26 +912,6 @@ type annotationsShapeOptions = {
   xAxis?: float,
   yAxis?: float,
 }
-type annotationsShapesOptions = {
-  controlPoints?: string,  // ⚠️ REVIEW — was `AnnotationControlPointOptionsObject | AnnotationControlPointOptionsObject[]` — match the real type by hand
-  dashStyle?: dashStyleValue,
-  fill?: ColorType.t,
-  height?: float,
-  markerEnd?: string,
-  markerStart?: string,
-  point?: string,  // ⚠️ REVIEW — was `AnnotationMockPointOptions` — match the real type by hand
-  points?: array<string>,  // ⚠️ REVIEW — was `AnnotationMockPointOptions` — match the real type by hand
-  r?: float,
-  ry?: float,
-  snap?: float,
-  src?: string,
-  stroke?: ColorType.t,
-  strokeWidth?: float,
-  @as("type") type_?: string,
-  width?: float,
-  xAxis?: float,
-  yAxis?: float,
-}
 type annotationsTypeOptions = {
   background?: annotationsShapeOptions,
   height?: float,
@@ -9925,15 +9905,6 @@ type navigationAnnotationsTypesPitchforkTypeOptions = {
   xAxis?: float,
   yAxis?: float,
 }
-type navigationAnnotationsTypesTunnelTypeOptions = {
-  background?: string,  // ⚪ loose — was `object | NavigationAnnotationsTypesTunnelTypeBackgroundOptions`
-  height?: float,
-  heightControlPoint?: string,  // ⚪ loose — was `AnnotationControlPointOptionsObject`
-  line?: string,  // ⚪ loose — was `NavigationAnnotationsTypesTunnelTypeLineOptions`
-  points?: array<JSON.t>,
-  xAxis?: float,
-  yAxis?: float,
-}
 type navigationAnnotationsTypesVerticalLineTypeOptions = {
   connector?: string,  // ⚪ loose — was `NavigationAnnotationsTypesVerticalLineTypeConnectorOptions`
   label?: string,  // ⚪ loose — was `NavigationAnnotationsTypesVerticalLineTypeLabelOptions`
@@ -12682,6 +12653,7 @@ type chartsLegendItemClickEventObjectLegendItem_t
 type chartsLegendAllItems_t
 type chartsOptionsColorAxis_t
 type chartsChartOptionsParallelAxes_t
+type chartsAnnotationsLabelsOptionsControlPoints_t
 type pointOptionsType_t
 type rec zAxisLabelsOptions<'b> = {
   align?: alignValue,
@@ -25715,10 +25687,19 @@ and navigationAnnotationsTypesVerticalLineOptions<'b> = {
   labelOptions?: navigationAnnotationsTypesVerticalLineLabelOptions<'b>,
   typeOptions?: navigationAnnotationsTypesVerticalLineTypeOptions,
 }
+and navigationAnnotationsTypesTunnelTypeOptions<'b> = {
+  background?: string,  // ⚪ loose — was `object | NavigationAnnotationsTypesTunnelTypeBackgroundOptions`
+  height?: float,
+  heightControlPoint?: annotationControlPointOptionsObject<'b>,
+  line?: string,  // ⚪ loose — was `NavigationAnnotationsTypesTunnelTypeLineOptions`
+  points?: array<JSON.t>,
+  xAxis?: float,
+  yAxis?: float,
+}
 and navigationAnnotationsTypesTunnelOptions<'b> = {
   controlPointOptions?: annotationControlPointOptionsObject<'b>,
   labelOptions?: navigationAnnotationsTypesCrookedLineLabelOptions<'b>,
-  typeOptions?: navigationAnnotationsTypesTunnelTypeOptions,
+  typeOptions?: navigationAnnotationsTypesTunnelTypeOptions<'b>,
 }
 and navigationAnnotationsTypesTimeCyclesOptions<'b> = {
   controlPointOptions?: annotationControlPointOptionsObject<'b>,
@@ -26624,6 +26605,26 @@ and annotationsTypesOptions<'b> = {
   tunnel?: annotationsTypesTunnelOptions<'b>,
   verticalLine?: annotationsTypesVerticalLineOptions<'b>,
 }
+and annotationsShapesOptions = {
+  controlPoints?: chartsAnnotationsLabelsOptionsControlPoints_t,
+  dashStyle?: dashStyleValue,
+  fill?: ColorType.t,
+  height?: float,
+  markerEnd?: string,
+  markerStart?: string,
+  point?: string,  // ⚠️ REVIEW — was `AnnotationMockPointOptions` — match the real type by hand
+  points?: array<string>,  // ⚠️ REVIEW — was `AnnotationMockPointOptions` — match the real type by hand
+  r?: float,
+  ry?: float,
+  snap?: float,
+  src?: string,
+  stroke?: ColorType.t,
+  strokeWidth?: float,
+  @as("type") type_?: string,
+  width?: float,
+  xAxis?: float,
+  yAxis?: float,
+}
 and annotationsLabelsOptions<'b> = {
   accessibility?: annotationLabelAccessibilityOptionsObject,
   align?: alignValue,
@@ -26633,7 +26634,7 @@ and annotationsLabelsOptions<'b> = {
   borderRadius?: float,
   borderWidth?: float,
   className?: string,
-  controlPoints?: string,  // ⚠️ REVIEW — was `AnnotationControlPointOptionsObject | AnnotationControlPointOptionsObject[]` — match the real type by hand
+  controlPoints?: chartsAnnotationsLabelsOptionsControlPoints_t,
   crop?: bool,
   distance?: float,
   format?: string,
@@ -26687,10 +26688,10 @@ and annotation<'b> = {
   chart: chart<'b>,
   group: string,  // ⚪ loose — was `SVGElement`
   labelsGroup: string,  // ⚪ loose — was `SVGElement`
-  options: string,  // ⚪ loose — was `AnnotationsOptions`
+  options: annotationsOptions<'b>,
   points: array<point<'b>>,
   shapesGroup: string,  // ⚪ loose — was `SVGElement`
-  userOptions: string,  // ⚪ loose — was `AnnotationsOptions`
+  userOptions: annotationsOptions<'b>,
   update: (annotationsOptions<'b>, option<bool>) => unit,
 }
 and annotationControllable<'b> = {
@@ -26881,7 +26882,7 @@ and axis<'b> = {
   options: string,  // ⚪ loose — was `AxisOptions`
   pos: float,
   reversed: bool,
-  series: array<JSON.t>,
+  series: array<series<'b>>,
   side: float,
   tickPositions?: string,  // ⚪ loose — was `AxisTickPositionsArray`
   ticks: Dict.t<JSON.t>,
@@ -26923,25 +26924,25 @@ and chart<'b> = {
   credits: string,  // ⚪ loose — was `SVGElement`
   hoverPoint: string,  // ⚪ loose — was `Point`
   hoverPoints: array<JSON.t>,
-  hoverSeries: string,  // ⚪ loose — was `Series`
+  hoverSeries: series<'b>,
   index: int,
   inverted?: bool,
   legend: string,  // ⚪ loose — was `Legend`
   numberFormatter: (float, float, option<string>, option<string>, option<chart<'b>>) => string,
-  options: string,  // ⚪ loose — was `Options`
+  options: options<'b>,
   plotHeight: float,
   plotLeft: float,
   plotTop: float,
   plotWidth: float,
   pointer: string,  // ⚪ loose — was `Pointer`
   renderer: string,  // ⚪ loose — was `SVGRenderer`
-  series: array<JSON.t>,
+  series: array<series<'b>>,
   styledMode: bool,
   subtitle: string,  // ⚪ loose — was `SubtitleObject`
   time: string,  // ⚪ loose — was `Time`
   title: string,  // ⚪ loose — was `TitleObject`
   tooltip: string,  // ⚪ loose — was `Tooltip`
-  userOptions: string,  // ⚪ loose — was `Options`
+  userOptions: options<'b>,
   xAxis: array<JSON.t>,
   yAxis: array<JSON.t>,
   addAxis: (string, option<bool>, option<bool>, option<string>) => string,  // ⚪ loose — was `Axis`
@@ -28051,6 +28052,11 @@ module ChartsChartOptionsParallelAxes = {
   type t = chartsChartOptionsParallelAxes_t
   external fromChartParallelAxesOptions: chartParallelAxesOptions<'b> => t = "%identity"
   external fromChartParallelAxesOptionss: array<chartParallelAxesOptions<'b>> => t = "%identity"
+}
+module ChartsAnnotationsLabelsOptionsControlPoints = {
+  type t = chartsAnnotationsLabelsOptionsControlPoints_t
+  external fromAnnotationControlPointOptionsObject: annotationControlPointOptionsObject<'b> => t = "%identity"
+  external fromAnnotationControlPointOptionsObjects: array<annotationControlPointOptionsObject<'b>> => t = "%identity"
 }
 module PointOptionsType = {
   type t = pointOptionsType_t

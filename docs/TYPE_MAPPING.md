@@ -345,20 +345,26 @@ fields that DO still degrade (deep objects, callbacks like `formatter?: TooltipF
 now carry the same flag comments props get (`⚪ loose — was …` / `⚠️ REVIEW` / `🛑 BROKEN — contains any`)
 instead of being silent — record fields render structurally (a field's shape is often partly right), so
 only the trailing comment is added. Two zero-expansion escapes extend this: a reference to an
-already-**registered** non-generic record entry links (`refTo`) even past the bound — the self-ref
-exception generalized; the entry exists (names register before fields build), so no new registry
-growth is possible — and a **function** type classifies through its signature (its params/return
-each link, resolve as leaves, or truncate flagged; self-recursive function types are
-visiting-guarded). An **in-progress ancestor** links only from inside a past-depth function
-signature (#110 — `formatter`'s `tooltip: Tooltip` param cycling back to the class being built,
-landing as `type rec`); from ordinary record fields it still truncates, which keeps the huge
-Highcharts slabs from merging into one group. Net effect: `TooltipOptions.formatter` emits a real
+already-**registered** record entry links (`refTo`) even past the bound — the self-ref exception
+generalized; the entry exists (names register before fields build), so no new registry growth is
+possible — and a **function** type classifies through its signature (its params/return each link,
+resolve as leaves, or truncate flagged; self-recursive function types are visiting-guarded). The
+linked entry may be **generic** and may be an **in-progress ancestor** reached from a record FIELD
+(#115): Highcharts' `chart<'b>.options` is `options<'b>` (an already-registered generic record still
+being built via the `options → series → chart → options` cycle) — it now links and the cycle lands
+in one `type rec chart<'b> = {…, options?: options<'b>} and options<'b>` group (the emitter already
+emits generic `type rec` groups like `zAxisOptions<'b>`; `syncRefTparams` threads the `<'b>`). This
+recovers `chart.options` / `chart.addSeries` from a loose `string` — the earlier non-generic /
+function-signature-only restrictions predated `syncRefTparams` and the record↔module cycle break.
+Still record-only: an opaque-module/views entry can't be linked past-depth (its `Module.t` would
+reference a file that never emits). Net effect: `TooltipOptions.formatter` emits a real
 `@this ((point<'b>, tooltip<'b>, option<point<'b>>) => string)` instead of an opaque `string`.
 When such linking creates a genuine record ↔ views-module cycle, the emitter breaks it with a
 **forward-declared abstract type**: `type moduleName_t` hoisted above the `type rec` group, fields
 reference it, and the module aliases it (`type t = moduleName_t`) — zero-cost, consumers still use
 `Module.t`/`Module.from*`. Fixtures: [`deep-record-leaves`](../test/golden/cases/deep-record-leaves),
-[`this-typed-callback`](../test/golden/cases/this-typed-callback) (`Widget` cycle). (#98, #110)
+[`this-typed-callback`](../test/golden/cases/this-typed-callback) (`Widget` cycle),
+[`deep-generic-selfref`](../test/golden/cases/deep-generic-selfref) (`chart.options` in-progress link). (#98, #110, #115)
 
 **Twin healing (depth ghost ↔ shallow full sibling).** When the re-resolve above can't run because the
 shape's sub-types are a *distinct* generic instantiation (csstype gives `CSSObject['color']` vs

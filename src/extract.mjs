@@ -1971,18 +1971,21 @@ function classify(type, ctx, propName = '', depth = 0) {
         // only (the selfId precedent): an opaque-module/views entry emits as a submodule whose
         // materialization is driven by below-bound references — linking one from past-depth
         // produced a `Module.t` reference to a file that never emitted (blend's
-        // `ChartsPlotZigzagOptionsDataLabels.t`, benchmark compile break). And non-generic only:
-        // a typeRef with type vars can't thread its <'a> through a shared record.
-        // In-progress ancestors link ONLY from inside a past-depth FUNCTION signature
-        // (ctx.pastDepthFn — the #110 shape: `formatter`'s `tooltip: Tooltip` param cycling back
-        // to the class being built). Letting ordinary record FIELDS link in-progress ancestors
-        // merged huge slabs of the Highcharts graph into one `type rec` group and created a
-        // record ↔ views-module cycle the emitter cannot order (benchmark compile break).
+        // `ChartsPlotZigzagOptionsDataLabels.t`, benchmark compile break).
+        // GENERIC records link too (#115): `chart<'b>.options` is `options<'b>`, an already-
+        // registered generic record — the link lands in a `type rec chart<'b> = {… options?:
+        // options<'b>} and options<'b>` group (the emitter already emits generic `type rec` groups,
+        // e.g. `zAxisOptions<'b>`). The `syncRefTparams` post-pass (#110) re-syncs the ref's tparams
+        // to the entry's converged set, so the `<'b>` threads correctly — the earlier non-generic
+        // restriction predated that pass. Recovers `chart.options` / `chart.addSeries` return from a
+        // loose `string`. In-progress ancestors still link ONLY from a past-depth FUNCTION signature
+        // (ctx.pastDepthFn — the #110 shape); letting ordinary record FIELDS link in-progress
+        // ancestors merged huge slabs into one `type rec` group with an unorderable record↔module
+        // cycle. RECORD entries only (the selfId precedent): an opaque-module/views entry emits as a
+        // submodule, and a past-depth `Module.t` link references a file that never emitted.
         if (type.id != null && ctx.shared) {
             const e = ctx.shared.byKey.get('id:' + type.id)
-            const inProgress = ctx.visiting && ctx.visiting.has(type.id)
-            if (e && e.kind === 'record' && !(e.tparams && e.tparams.length) &&
-                (!inProgress || ctx.pastDepthFn)) return refTo(e)
+            if (e && e.kind === 'record') return refTo(e)
         }
         // A FUNCTION reached past the bound classifies through its signature: the function node
         // itself cannot expand the registry — only its params/return can, and each of those either

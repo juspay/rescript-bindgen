@@ -1,3 +1,5 @@
+@@warning("-30")
+
 type libMarkdownAsyncOptionsRemarkRehypeOptionsPassThrough =
   | @as("text") Text
   | @as("root") Root
@@ -47,7 +49,7 @@ type vFile = {
   message: string,  // ⚪ loose — was `{ (reason: string, options?: Options): VFileMessage; (reason: string, parent: Node | NodeLike, origin?: string`
   toString: option<string> => string,
 }
-type options = {
+type rec options = {
   allowDangerousHtml?: Nullable.t<bool>,
   clobberPrefix?: Nullable.t<string>,
   file?: Nullable.t<vFile>,
@@ -58,9 +60,9 @@ type options = {
   footnoteLabelTagName?: Nullable.t<string>,
   handlers?: string,  // ⚪ loose — was `Partial<Record<"text" | "root" | "blockquote" | "code" | "html" | "link" | "strong" | "table" | "image" | "bre`
   passThrough?: Nullable.t<array<string>>,  // ⚪ loose — was `"text" | "root" | "blockquote" | "code" | "html" | "link" | "strong" | "table" | "image" | "break" | "definiti`
-  unknownHandler?: Nullable.t<(string, string, string) => string>,  // ⚪ loose — was `ElementContent | ElementContent[]`
+  unknownHandler?: Nullable.t<(state, string, string) => string>,  // ⚪ loose — was `ElementContent | ElementContent[]`
 }
-type state = {
+and state = {
   all: string => array<string>,  // ⚠️ REVIEW — was `ElementContent` — match the real type by hand
   applyData: (string, string) => string,  // 🛑 BROKEN — contains `unknown` — was `Element | Type`
   definitionById: Map.t<string, string>,  // ⚪ loose — was `Definition`
