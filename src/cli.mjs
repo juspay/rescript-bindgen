@@ -110,6 +110,7 @@ function parseArgs(argv) {
         else if (a === '--node-modules') o.nm = argv[++i]
         else if (a === '--project') o.project = argv[++i]
         else if (a === '--types-dir') o.typesDir = argv[++i]
+        else if (a === '--augment') (o.augment || (o.augment = [])).push(...argv[++i].split(',').map((s) => s.trim()).filter(Boolean))
         else if (a === '--webapi') o.webapi = true
         else if (a === '--no-webapi') o.webapi = false
         else if (a === '--no-html-attrs') o.htmlAttrs = false
@@ -142,6 +143,11 @@ Options:
   --node-modules <dir>  extra node_modules root to resolve --pkg from
   --project <dir>  target ReScript project whose package.json gates optional
                    deps (default: inferred from --out, then cwd)
+  --augment <mod>  load a module-AUGMENTATION .d.ts as a program root so its
+                 "declare module ... { interface X {...} }" additions merge onto
+                 the base interface (e.g. --augment highcharts/modules/xrange
+                 adds Point.x2). Repeatable, or comma-separated. Mirrors the app's
+                 opt-in "import highcharts/modules/xrange" side-effect.
   --webapi       force-emit rescript-webapi types (File -> Webapi.File.t)
   --no-webapi    never emit rescript-webapi types (File props stay flagged)
   --no-html-attrs  disable the shared HtmlAttrs.res spread for components extending
@@ -211,10 +217,10 @@ async function main() {
     let skipped = []
     let shared = null // module-level shared-type registry (multi-component runs only)
     if (single) {
-        const ir = extractComponent(entry, { from, webapi })
+        const ir = extractComponent(entry, { from, webapi, augment: opts.augment })
         units = [{ name: ir.import.name, ir }]
     } else {
-        const res = extractModule(entry, { from, webapi, htmlAttrs: opts.htmlAttrs })
+        const res = extractModule(entry, { from, webapi, htmlAttrs: opts.htmlAttrs, augment: opts.augment })
         units = res.components
         functions = res.functions || []
         classes = res.classes || []
