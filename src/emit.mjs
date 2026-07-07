@@ -670,7 +670,8 @@ function emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg)
                 const local = o.name.charAt(0).toLowerCase() + o.name.slice(1) + '_t'
                 hoisted.set(o.name + '.t', local)
                 tAlias.set(o.name, local)
-                lines.push(`type ${local}`)
+                const tp = o.tparams && o.tparams.length ? `<${o.tparams.join(', ')}>` : ''
+                lines.push(`type ${local}${tp}`)
             }
             cfgGroup = { ...cfg, resolveRef: (t) => { const b = cfg.resolveRef ? cfg.resolveRef(t) : t.to; return hoisted.get(b) || b } }
         }
@@ -692,16 +693,19 @@ function emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg)
  *  `from*` constructor per member. The prop is typed `Module.t`; the consumer builds a typed
  *  value and `->fromX`-casts it (compiles to the raw value). */
 function renderOpaque(t, lines, cfg, tAlias) {
+    const tp = t.tparams && t.tparams.length ? `<${t.tparams.join(', ')}>` : ''
+    const rt = tp ? `t${tp}` : 't'
+    const alias = tAlias ? (tp ? `${tAlias}${tp}` : tAlias) : null
     // Overloaded function: a module of zero-cost `%identity` ACCESSOR views (opaque -> concrete),
     // one per call signature — `external asReason: t => (option<…> => unit) = "%identity"`.
     if (t.variant === 'overload') {
         lines.push(`module ${t.name} = {`)
-        lines.push(tAlias ? `  type t = ${tAlias}` : `  type t`)
+        lines.push(alias ? `  type t${tp} = ${alias}` : `  type t${tp}`)
         const seen = new Set()
         for (const s of t.sigs) {
             if (seen.has(s.accessor)) continue
             seen.add(s.accessor)
-            lines.push(`  external ${s.accessor}: t => (${renderType(s.fn, '', cfg)}) = "%identity"`)
+            lines.push(`  external ${s.accessor}: ${rt} => (${renderType(s.fn, '', cfg)}) = "%identity"`)
         }
         lines.push(`}`)
         return
@@ -723,7 +727,7 @@ function renderOpaque(t, lines, cfg, tAlias) {
         ? 'from' + pascalName(m.name) // explicit hint: Element -> fromElement, Files -> fromFiles
         : 'from' + titleCase(m.type.kind === 'typeRef' ? m.type.to.replace(/\.t$/, '') : (m.type.res || m.type.kind || 'value'))
     lines.push(`module ${t.name} = {`)
-    lines.push(tAlias ? `  type t = ${tAlias}` : `  type t`)
+    lines.push(alias ? `  type t${tp} = ${alias}` : `  type t${tp}`)
     const seen = new Set()
     for (const m of t.members) {
         // A collapsed LITERAL RUN (#53) -> ONE polyvar constructor admitting exactly that
@@ -734,7 +738,7 @@ function renderOpaque(t, lines, cfg, tAlias) {
             if (seen.has('fromTag')) continue
             seen.add('fromTag')
             const poly = m.tagSet.map((v) => `#"${v}"`).join(' | ')
-            lines.push(`  external fromTag: [${poly}] => t = "%identity"`)
+            lines.push(`  external fromTag: [${poly}] => ${rt} = "%identity"`)
             continue
         }
         // A string-LITERAL arm -> a ready-made constant: the polyvar `#"x"` admits exactly
@@ -743,8 +747,8 @@ function renderOpaque(t, lines, cfg, tAlias) {
             const constName = lowerIdent(m.literal)
             if (seen.has(constName)) continue
             seen.add(constName)
-            lines.push(`  external from${pascalName(m.literal)}: [#"${m.literal}"] => t = "%identity"`)
-            lines.push(`  let ${constName}: t = from${pascalName(m.literal)}(#"${m.literal}")`)
+            lines.push(`  external from${pascalName(m.literal)}: [#"${m.literal}"] => ${rt} = "%identity"`)
+            lines.push(`  let ${constName}: ${rt} = from${pascalName(m.literal)}(#"${m.literal}")`)
             continue
         }
         // The null/void arm of a consumer-produced return: unit's runtime value IS
@@ -752,8 +756,8 @@ function renderOpaque(t, lines, cfg, tAlias) {
         if (m.none) {
             if (seen.has('none')) continue
             seen.add('none')
-            lines.push(`  external fromUnit: unit => t = "%identity"`)
-            lines.push(`  let none: t = fromUnit()`)
+            lines.push(`  external fromUnit: unit => ${rt} = "%identity"`)
+            lines.push(`  let none: ${rt} = fromUnit()`)
             continue
         }
         const fn = fromName(m)
@@ -766,7 +770,7 @@ function renderOpaque(t, lines, cfg, tAlias) {
         // (`(cmd, float, float)`, #72) must be wrapped too, else it reads as a multi-ARG function
         // instead of one tuple arg — `((cmd, float, float)) => t`.
         const arg = (m.type.kind === 'callback' || m.type.kind === 'tuple') ? `(${rendered})` : rendered
-        lines.push(`  external ${fn}: ${arg} => t = "%identity"`)
+        lines.push(`  external ${fn}: ${arg} => ${rt} = "%identity"`)
     }
     lines.push(`}`)
 }

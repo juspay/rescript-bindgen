@@ -1619,7 +1619,7 @@ function propagateTypeParams(shared) {
     while (changed && guard++ < 1000) {
         changed = false
         for (const e of shared.entries) {
-            if (e.kind !== 'record' && e.kind !== 'unboxed') continue
+            if (e.kind !== 'record' && e.kind !== 'unboxed' && !(e.kind === 'opaque' && e._highchartsSeriesUnion)) continue
             const kids = entryChildTypes(e)
             for (const t of kids) syncRefTparams(t, byKey, new Set())
             const tvars = new Set()
@@ -1717,6 +1717,50 @@ function freshTypeVar(ctx) {
     const i = ctx.typeVars.size
     ctx.typeVars.set(key, "'" + (TV[i] || `t${i}`))
     return { kind: 'typeVar', name: ctx.typeVars.get(key) }
+}
+
+function isHighchartsSeriesOptionsName(name) {
+    return /^Series[A-Z].*Options$/.test(name || '') || /^series[A-Z].*Options$/.test(name || '')
+}
+
+function isHighchartsSeriesOptionsNode(node) {
+    return node && node.kind === 'typeRef' && isHighchartsSeriesOptionsName(String(node.to || '').replace(/\.t$/, ''))
+}
+
+/** Highcharts `Series*Options.data` is intentionally user payload: point objects may
+ *  carry arbitrary application fields, and the series/tooltip/point graph already has a
+ *  payload type variable for that data. Keep the array shape but make its element generic
+ *  instead of forcing `JSON.t`, so typed point records can pass through unchanged. */
+function highchartsSeriesDataNode(ctx) {
+    if (ctx.highchartsSeriesDataVar) return { kind: 'typeVar', name: ctx.highchartsSeriesDataVar }
+    const TV = ['a', 'b', 'c', 'd', 'e', 'f']
+    if (ctx.typeVars) {
+        const existing = new Set(ctx.typeVars.values())
+        if (existing.has("'b")) {
+            ctx.highchartsSeriesDataVar = "'b"
+            return { kind: 'typeVar', name: ctx.highchartsSeriesDataVar }
+        }
+        const key = Symbol('highcharts-series-data')
+        const i = ctx.typeVars.size
+        ctx.typeVars.set(key, "'" + (TV[i] || `t${i}`))
+        ctx.highchartsSeriesDataVar = ctx.typeVars.get(key)
+        return { kind: 'typeVar', name: ctx.highchartsSeriesDataVar }
+    }
+    ctx.highchartsSeriesDataVar = "'a"
+    return { kind: 'typeVar', name: ctx.highchartsSeriesDataVar }
+}
+
+function isHighchartsSeriesDataField(recordType, fieldName, fieldType, checker) {
+    if (fieldName !== 'data') return false
+    const recordName = typeName(recordType) || ''
+    if (!isHighchartsSeriesOptionsName(recordName)) return false
+    if (asArray(fieldType, checker) || checker.isTupleType?.(fieldType)) return true
+    if (fieldType.isUnion && fieldType.isUnion()) {
+        return fieldType.types
+            .filter((t) => !(t.flags & (ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void)))
+            .some((t) => asArray(t, checker) || checker.isTupleType?.(t))
+    }
+    return false
 }
 
 /** Salvage a callback whose RETURN is clean but whose PARAM(s) couldn't be modelled:
@@ -2691,6 +2735,7 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
         ? `was \`${checker.typeToString(type).replace(/ \| (null|undefined)\b/g, '')}\` — opaque; build with ${members.map(ctorName).join(' / ')}`
         : undefined
     const entry = { key, kind: 'opaque', name, home, members, deps, note, _construct: hasLiteralArm || !!opts.addNone }
+    if (members.some((m) => isHighchartsSeriesOptionsNode(m.type))) entry._highchartsSeriesUnion = true
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
     return ref(entry)
@@ -3730,11 +3775,14 @@ function buildRecordFields(type, ctx, depth) {
             const ownSigs = propSigs.filter((dd) => !isVendorDecl(dd))
             const ownDecl = ownSigs.length === 1 ? ownSigs[0] : (propSigs.length === 1 ? propSigs[0] : null)
             const nb = ownDecl && ownDecl.type && syntacticNullability(ownDecl.type)
+            const fieldType = isHighchartsSeriesDataField(type, p.getName(), t, checker)
+                ? { kind: 'array', of: highchartsSeriesDataNode(ctx) }
+                : withPath(ctx, p.getName(), () => classify(t, ctx, p.getName(), depth + 1))
             return {
                 name: p.getName(),
                 optional: optional || !!(nb && nb.hasUndef) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
                 // push the field name so a nested anonymous `{…}` is path-anchored (#90)
-                type: applyNullable(withPath(ctx, p.getName(), () => classify(t, ctx, p.getName(), depth + 1)), nb),
+                type: applyNullable(fieldType, nb),
             }
         })
     ctx.inRecordField = prevInRecord
