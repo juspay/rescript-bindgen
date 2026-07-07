@@ -14,11 +14,11 @@ type skeletonAs =
   | @as("header") Header
   | @as("hr") Hr
   | @as("section") Section
-type skeletonShape =
+type skeletonShapeV61p6w =
   | @as("circle") Circle
   | @as("rectangle") Rectangle
   | @as("rounded") Rounded
-type skeletonShape2 =
+type skeletonShapeV1su2h =
   | @as("square") Square
   | @as("circle") Circle
 type skeletonSkeletonTokensTypeAnimationConfig = {

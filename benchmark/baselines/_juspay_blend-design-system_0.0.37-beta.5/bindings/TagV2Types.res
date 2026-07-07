@@ -17,13 +17,6 @@ type tagV2Color =
   | @as("error") Error
   | @as("warning") Warning
   | @as("purple") Purple
-type tagV2Color2 =
-  | @as("neutral") Neutral
-  | @as("primary") Primary
-  | @as("success") Success
-  | @as("error") Error
-  | @as("warning") Warning
-  | @as("purple") Purple
 type tagV2ResponsiveTagV2TokensSmBorderNoFillConfig = {
   neutral: string,
   primary: string,

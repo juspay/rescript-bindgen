@@ -896,10 +896,14 @@ export function report(ir) {
  * @param {string|null} currentModule
  * @returns {(t:object)=>string}
  */
-export function makeResolveRef(finalOf, currentModule) {
+export function makeResolveRef(finalOf, currentModule, renames) {
     return (t) => {
         const fm = finalOf.get(t.home) || t.home || 'CommonTypes'
-        return currentModule && fm === currentModule ? t.to : `${fm}.${t.to}`
+        // #90 residual: a stabilized type was renamed post-extraction; translate the ref's cached
+        // (old) name to the entry's final name here — the single chokepoint every ref flows through,
+        // so keyless refs and every IR shape are covered without mutating the IR.
+        const nm = (renames && renames.get(t.home + '|' + t.to)) || t.to
+        return currentModule && fm === currentModule ? nm : `${fm}.${nm}`
     }
 }
 
@@ -984,7 +988,7 @@ export function emitSharedModule(mod, entries, finalOf, options = {}) {
     const cfg = {
         refType: options.refType || 'React.ref<Nullable.t<Dom.element>>',
         opaqueFallback: options.opaqueFallback || 'string',
-        resolveRef: makeResolveRef(finalOf, mod),
+        resolveRef: makeResolveRef(finalOf, mod, options.renames),
     }
     const lines = []
     const unboxed = entries.filter((e) => e.kind === 'unboxed')

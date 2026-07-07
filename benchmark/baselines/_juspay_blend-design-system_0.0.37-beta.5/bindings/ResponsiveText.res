@@ -5,7 +5,7 @@ external make: (
   ~color: string,
   ~className: string=?,
   ~fontWeight: string=?,
-  ~textOverflow: KeyValuePairV2Types.keyValuePairV2TextOverflowMode2=?,
+  ~textOverflow: KeyValuePairV2Types.keyValuePairV2TextOverflowMode=?,
   ~maxLines: float=?,
   ~showTooltipOnTruncate: bool=?,
   @as("as") ~as_: ReactTypes.ElementType.t=?,  // ⓘ was `ElementType<any, keyof IntrinsicElements>` — opaque; build with ElementType.fromTag / ElementType.fromComponentClass / ElementType.fromFunctionComponent

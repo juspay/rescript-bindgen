@@ -166,6 +166,92 @@ function uniqueName(base, shared) {
     return n
 }
 
+/** A short, deterministic, version-stable content token (base36) — the LAST-resort disambiguator
+ *  for two distinct shapes sharing a base AND a home. Unlike an encounter-order counter it is a
+ *  pure function of the shape, so adding/removing a sibling never renumbers it. (#90 residual) */
+function shapeHash(sig) {
+    let h = 2166136261 >>> 0 // FNV-1a
+    for (let i = 0; i < sig.length; i++) { h ^= sig.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0 }
+    return h.toString(36).slice(0, 5)
+}
+
+/** Kinds whose names are stabilized (a shared base = a shape/name that must not renumber). */
+const STABILIZE_KINDS = new Set(['record', 'enum', 'unboxed', 'opaque'])
+
+/** Canonical per-shape signature used both to detect a genuine collision and to seed the hash
+ *  fallback — reuses `recordSig` for records (identical to the dedup key, so post-dedup distinct
+ *  entries always differ) and the member set for enum/unboxed/opaque. */
+function entrySig(e) {
+    if (e.kind === 'record') return recordSig(e)
+    // tparams MUST be part of the signature: a generic `portalStyle<'a>` and a non-generic
+    // `portalStyle` @unboxed are NOT the same shape — merging them applies `<'a>` to a
+    // non-generic type (compile break).
+    const tp = 'tp:' + ((e.tparams || []).join(',')) + '|'
+    if (e.members) return e.kind + ':' + tp + e.members.map((m) => (m.ctor || '') + (m.as !== undefined ? '=' + m.as : '') + (m.type ? ':' + typeSig(m.type) : '')).join(',')
+    return e.kind + ':' + tp + (e.name || '')
+}
+
+/** FINALIZATION pass (#90 residual): reassign names so a base shared by ≥2 DISTINCT shapes gets a
+ *  per-shape INTRINSIC suffix instead of an encounter-order counter. A base used by ONE shape keeps
+ *  its bare name — so non-colliding names (base-ui's `baseUIEvent`, already deduped to one entry)
+ *  are untouched. Suffix priority: the HOME stem when it uniquely distinguishes every collider and
+ *  the base isn't already home-prefixed (readable + stable: `variantTokenSingleSelectV2` /
+ *  `…MenuV2`); otherwise a content hash of the shape (stable, order-independent). Runs after all
+ *  entries + dedup, so the colliding set is known and the assignment is order-independent. Returns
+ *  the count renamed (drives the ref-name resync). */
+function stabilizeNames(shared) {
+    const groups = new Map()
+    for (const e of shared.entries) {
+        if (!e.base || !STABILIZE_KINDS.has(e.kind)) continue
+        if (!groups.has(e.base)) groups.set(e.base, [])
+        groups.get(e.base).push(e)
+    }
+    // record (home|oldName -> surviving entry) so the FINAL name is read after all renaming, then
+    // resolved to a `home|oldName -> newName` map applied at emit's single resolveRef chokepoint —
+    // robust against keyless refs and every ref-bearing IR shape, no IR mutation. (#90 residual)
+    const rec = []
+    for (const [base, group] of groups) {
+        // Merge entries that became structurally IDENTICAL after post-extraction healing/tparam
+        // propagation (so escaped the early per-home dedup) — else two same-home identical shapes
+        // hash alike and reintroduce a counter. Redirect the merged key to the survivor; refs to the
+        // merged name resolve to the survivor's final name. Keyed by home+sig (per-home, like dedup).
+        const bySig = new Map(), entries = []
+        for (const e of group) {
+            const s = e.home + '|' + entrySig(e)
+            const canon = bySig.get(s)
+            if (canon) {
+                shared.byKey.set(e.key, canon)
+                const i = shared.entries.indexOf(e); if (i >= 0) shared.entries.splice(i, 1)
+                shared.names.delete(e.name)
+                rec.push({ home: e.home, oldName: e.name, entry: canon })
+            } else { bySig.set(s, e); entries.push(e) }
+        }
+        if (entries.length < 2) continue // single distinct shape → bare base stays (zero churn)
+        const homeStem = (e) => lower((e.home || '').replace(/Types$/, ''))
+        const stems = entries.map(homeStem)
+        // home distinguishes every collider AND base doesn't already carry a home stem (avoids
+        // `menuV2MenuV2…` doubling on already-home-prefixed anonymous bases)
+        const homeUnique = new Set(stems.filter(Boolean)).size === entries.length &&
+            !entries.some((e) => homeStem(e) && base.startsWith(homeStem(e)))
+        for (const e of entries) {
+            const suffix = homeUnique ? pascal(homeStem(e)) : pascal(shapeHash(entrySig(e)))
+            let cand = base + suffix, i = 2
+            while (shared.names.has(cand) && cand !== e.name) cand = base + suffix + (i++)
+            if (cand !== e.name) {
+                const old = e.name
+                shared.names.delete(old)
+                shared.names.add(cand)
+                e.name = cand
+                rec.push({ home: e.home, oldName: old, entry: e })
+            }
+        }
+    }
+    const renames = new Map()
+    for (const { home, oldName, entry } of rec) renames.set(home + '|' + oldName, entry.name)
+    shared.renames = renames
+    return renames.size
+}
+
 /** Run `fn` with `seg` pushed onto the property-path stack, so an anonymous record
  *  reached underneath is named after WHERE it lives (home + field chain) rather than a
  *  bare field name disambiguated by a global encounter-order counter. That counter made a
@@ -1465,6 +1551,10 @@ export function extractModule(entryFile, opts = {}) {
         for (const g of c.ir.getters || []) if (g.type) syncRefTparams(g.type, shared.byKey, new Set())
     }
 
+    // #90 residual: give same-base distinct shapes an order-INDEPENDENT intrinsic name, then resync
+    // every reference to the final name. Runs last, so the whole colliding set (post-dedup) is known.
+    stabilizeNames(shared) // populates shared.renames; applied at emit's resolveRef chokepoint
+
     return { components, functions, classes, skipped, shared, namespaces }
 }
 
@@ -2550,7 +2640,7 @@ function literalUnionOpenNode(literals, baseName, ctx, propName) {
         // prop shares) so distinct literal sets get distinct types and identical ones dedupe.
         const key = 'lu:' + sname + ':' + literals.join('|')
         if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
-        const entry = { key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), home: 'CommonTypes', members, deps: new Set() }
+        const entry = { key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), base: sname, home: 'CommonTypes', members, deps: new Set() }
         ctx.shared.byKey.set(key, entry)
         ctx.shared.entries.push(entry)
         return refTo(entry)
@@ -2571,7 +2661,7 @@ function literalUnionOpenNode(literals, baseName, ctx, propName) {
 function registerNamed(ctx, type, kind, base, data) {
     const key = 'id:' + type.id
     if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
-    const entry = { key, kind, name: uniqueName(base, ctx.shared), home: homeOf(type, ctx), deps: new Set(), ...data }
+    const entry = { key, kind, name: uniqueName(base, ctx.shared), base, home: homeOf(type, ctx), deps: new Set(), ...data }
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
     return refTo(entry)
@@ -3202,7 +3292,7 @@ function unionNode(type, ctx, propName, depth = 0) {
                 if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
                 let home = 'CommonTypes'
                 if (deps.size) { const d = ctx.shared.byKey.get([...deps][0]); if (d && d.home) home = d.home }
-                const entry = { key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), home, members, deps, tparams }
+                const entry = { key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), base: sname, home, members, deps, tparams }
                 ctx.shared.byKey.set(key, entry)
                 ctx.shared.entries.push(entry)
                 return refTo(entry)
@@ -3650,7 +3740,7 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         // The path segments (`pathPascal`, #90) make the per-home base distinct by location, so the
         // disambiguation counter is now a last-resort tiebreak for genuine same-home/same-path clashes.
         const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pathPascal + 'Config'
-        const entry = { key, kind: 'record', name: uniqueName(sharedBase, ctx.shared), home, deps: new Set(), spread: undefined, fields: [] }
+        const entry = { key, kind: 'record', name: uniqueName(sharedBase, ctx.shared), base: sharedBase, home, deps: new Set(), spread: undefined, fields: [] }
         // Heal handle (#33): keep the ts.Type + a ctx snapshot so a post-extraction pass
         // can RE-resolve fields with a fresh `visiting` set if this record was first built
         // in a degraded (mid-cycle) context and cached as an all-`string` ghost.

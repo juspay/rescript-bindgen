@@ -7,8 +7,8 @@
 @unboxed type inputFormAction<'a> = Str(string) | Fn(Webapi.FormData.t => 'a)
 @unboxed type iconStyle = Style(JsxDOM.style) | Fn(JSON.t => JsxDOM.style)
 @unboxed type iconClassName = Str(string) | Fn(JSON.t => string)
-@unboxed type portalStyle = Style(JsxDOM.style) | Fn(JSON.t => JsxDOM.style)
-@unboxed type portalClassName = Str(string) | Fn(JSON.t => string)
+@unboxed type portalStyleQn0e4 = Style(JsxDOM.style) | Fn(JSON.t => JsxDOM.style)
+@unboxed type portalClassNameV1fhpr = Str(string) | Fn(JSON.t => string)
 @unboxed type emptyStyle = Style(JsxDOM.style) | Fn(JSON.t => JsxDOM.style)
 @unboxed type emptyClassName = Str(string) | Fn(JSON.t => string)
 @unboxed type groupStyle = Style(JsxDOM.style) | Fn(JSON.t => JsxDOM.style)
@@ -64,8 +64,8 @@
 @unboxed type scrollUpArrowClassName = Str(string) | Fn(JSON.t => string)
 @unboxed type tabFormAction<'a> = Str(string) | Fn(Webapi.FormData.t => 'a)
 @unboxed type actionFormAction<'a> = Str(string) | Fn(Webapi.FormData.t => 'a)
-@unboxed type portalStyle2<'a> = Style(JsxDOM.style) | Fn('a => JsxDOM.style)
-@unboxed type portalClassName2<'a> = Str(string) | Fn('a => string)
+@unboxed type portalStyleV3czzr<'a> = Style(JsxDOM.style) | Fn('a => JsxDOM.style)
+@unboxed type portalClassNameGxnaz<'a> = Str(string) | Fn('a => string)
 @unboxed type toggleFormAction<'a> = Str(string) | Fn(Webapi.FormData.t => 'a)
 module ValidateTarget = {
   type t

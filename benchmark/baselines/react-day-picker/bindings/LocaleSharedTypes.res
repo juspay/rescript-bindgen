@@ -138,7 +138,7 @@ type formatLong = {
   time: formatLongFnOptions => string,
   dateTime: formatLongFnOptions => string,
 }
-type matchFnResult = {
+type matchFnResultV7tcjg = {
   value: float,
   rest: string,
 }
@@ -147,7 +147,7 @@ type classesMatchOrdinalNumberConfig = {
   valueCallback?: string => float,
   unit: localeUnit,
 }
-type matchFnResult2 = {
+type matchFnResultM61mw = {
   value: CommonTypes.v0OrV1,
   rest: string,
 }
@@ -155,29 +155,29 @@ type classesMatchEraConfig = {
   width?: localeWidth,
   valueCallback?: string => string,  // ⚪ loose — was `Era`
 }
-type matchFnResult3 = {
+type matchFnResultNbwx0 = {
   value: CommonTypes.v1OrV2OrV3OrV4,
   rest: string,
 }
-type matchFnResult4 = {
+type matchFnResultV1h0do = {
   value: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6OrV7OrV8OrV9OrV10OrV11,
   rest: string,
 }
-type matchFnResult5 = {
+type matchFnResultV8j2j7 = {
   value: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
   rest: string,
 }
-type matchFnResult6 = {
+type matchFnResultV1r63c = {
   value: localeDayPeriod,
   rest: string,
 }
 type match = {
-  ordinalNumber: (string, option<classesMatchOrdinalNumberConfig>) => Nullable.t<matchFnResult>,
-  era: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResult2>,
-  quarter: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResult3>,
-  month: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResult4>,
-  day: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResult5>,
-  dayPeriod: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResult6>,
+  ordinalNumber: (string, option<classesMatchOrdinalNumberConfig>) => Nullable.t<matchFnResultV7tcjg>,
+  era: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResultM61mw>,
+  quarter: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResultNbwx0>,
+  month: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResultV1h0do>,
+  day: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResultV8j2j7>,
+  dayPeriod: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResultV1r63c>,
 }
 type rec dayPickerLocaleLabels = {
   labelNav?: CommonTypes.classesDayPickerLocaleLabelsLabelNav,
@@ -742,7 +742,7 @@ type dayPickerProps = {
   onDayMouseLeave?: (Date.t, Dict.t<bool>, ReactEvent.Mouse.t) => unit,
   dateLib?: classesOverridesConfig,
 }
-type dayPickerContext = {
+type dayPickerContextT0u4a = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,
@@ -758,7 +758,7 @@ type dayPickerContext = {
   formatters: formatters,
   dayPickerProps: dayPickerProps,
 }
-type dayPickerContext2 = {
+type dayPickerContextV1sind = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,

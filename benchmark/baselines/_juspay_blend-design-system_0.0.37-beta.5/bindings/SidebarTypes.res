@@ -127,7 +127,7 @@ type responsiveMobileNavigationTokens = {
 type tenantBadge = {
   text: string,
   size?: BadgeTypes.badgeSize,
-  color?: BadgeTypes.badgeColor2,
+  color?: BadgeTypes.badgeColor,
   position?: BadgeTypes.badgePosition,
 }
 type leftPanelItem = {
