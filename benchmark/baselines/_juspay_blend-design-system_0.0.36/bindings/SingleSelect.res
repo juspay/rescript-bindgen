@@ -7,7 +7,7 @@ external make: (
   ~helpIconText: string=?,
   ~placeholder: string,
   ~size: SingleSelectTypes.selectMenuSize=?,
-  ~items: array<SingleSelectTypes.selectMenuGroupTypeV1544j>,
+  ~items: array<SingleSelectTypes.selectMenuGroupTypeP851c>,
   ~variant: SingleSelectTypes.selectMenuVariant=?,
   ~selected: string,
   ~onSelect: string => unit,
@@ -43,6 +43,6 @@ external make: (
   ~minTriggerWidth: float=?,
   ~allowCustomValue: bool=?,
   ~customValueLabel: string=?,
-  ~singleSelectGroupPosition: ButtonTypes.buttonButtonGroupPosition=?,
+  ~singleSelectGroupPosition: HighchartsSharedTypes.buttonButtonGroupPosition=?,
   ~allowDeselect: bool=?,
 ) => React.element = "SingleSelect"

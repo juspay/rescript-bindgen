@@ -1,7 +1,7 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
   ~defaultChecked: bool=?,
-  ~defaultValue: CommonTypes.stringOrNumberOrStringArray=?,
+  ~defaultValue: HighchartsSharedTypes.stringOrNumberOrStringArray=?,
   ~autoFocus: bool=?,
   ~className: string=?,
   ~hidden: bool=?,

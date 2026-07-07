@@ -1,0 +1,50 @@
+type root = {
+  ...JsxDOM.domProps,
+}
+module Nodes = {
+  type t
+  external fromRoot: root => t = "%identity"
+  external fromText: root => t = "%identity"
+  external fromBlockquote: root => t = "%identity"
+  external fromCode: root => t = "%identity"
+  external fromHtml: root => t = "%identity"
+  external fromLink: root => t = "%identity"
+  external fromStrong: root => t = "%identity"
+  external fromTable: root => t = "%identity"
+  external fromImage: root => t = "%identity"
+  external fromBreak: root => t = "%identity"
+  external fromDefinition: root => t = "%identity"
+  external fromDelete: root => t = "%identity"
+  external fromEmphasis: root => t = "%identity"
+  external fromFootnoteDefinition: root => t = "%identity"
+  external fromFootnoteReference: root => t = "%identity"
+  external fromHeading: root => t = "%identity"
+  external fromImageReference: root => t = "%identity"
+  external fromInlineCode: root => t = "%identity"
+  external fromLinkReference: root => t = "%identity"
+  external fromList: root => t = "%identity"
+  external fromListItem: root => t = "%identity"
+  external fromParagraph: root => t = "%identity"
+  external fromTableCell: root => t = "%identity"
+  external fromTableRow: root => t = "%identity"
+  external fromThematicBreak: root => t = "%identity"
+  external fromYaml: root => t = "%identity"
+}
+module Parents = {
+  type t
+  external fromRoot: root => t = "%identity"
+  external fromBlockquote: root => t = "%identity"
+  external fromLink: root => t = "%identity"
+  external fromStrong: root => t = "%identity"
+  external fromTable: root => t = "%identity"
+  external fromDelete: root => t = "%identity"
+  external fromEmphasis: root => t = "%identity"
+  external fromFootnoteDefinition: root => t = "%identity"
+  external fromHeading: root => t = "%identity"
+  external fromLinkReference: root => t = "%identity"
+  external fromList: root => t = "%identity"
+  external fromListItem: root => t = "%identity"
+  external fromParagraph: root => t = "%identity"
+  external fromTableCell: root => t = "%identity"
+  external fromTableRow: root => t = "%identity"
+}

@@ -11,7 +11,7 @@ external make: (
   ~trackCursorAxis: RootSharedTypes.rootTrackCursorAxis=?,
   ~actionsRef: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>=?,
   ~disabled: bool=?,
-  ~handle: RootSharedTypes.tooltipHandleT7r3r<'a>=?,
+  ~handle: RootSharedTypes.tooltipHandleV1bmbk<'a>=?,
   ~children: React.element=?,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
   ~triggerId: Nullable.t<string>=?,
   ~defaultTriggerId: Nullable.t<string>=?,

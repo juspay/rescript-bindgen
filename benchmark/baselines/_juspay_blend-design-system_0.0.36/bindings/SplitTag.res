@@ -1,7 +1,7 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
-  ~primaryTag: TagsTypes.tagsPrimaryTagConfig,
-  ~secondaryTag: TagsTypes.tagsPrimaryTagConfig=?,
-  ~size: TagsTypes.tagSize=?,
-  ~shape: TagsTypes.tagShape=?,
+  ~primaryTag: HighchartsSharedTypes.tagsPrimaryTagConfig,
+  ~secondaryTag: HighchartsSharedTypes.tagsPrimaryTagConfig=?,
+  ~size: HighchartsSharedTypes.tagSize=?,
+  ~shape: HighchartsSharedTypes.tagShape=?,
 ) => React.element = "SplitTag"

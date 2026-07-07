@@ -11,9 +11,9 @@ external make: (
   ~handle: React.element=?,
   ~hasSnapPoints: bool=?,
   ~contentDriven: bool=?,
-  ~width: CommonTypes.stringOrNumber=?,
-  ~maxWidth: CommonTypes.stringOrNumber=?,
-  ~offSet: CommonTypes.stringOrNumber=?,
+  ~width: HighchartsSharedTypes.stringOrNumber=?,
+  ~maxWidth: HighchartsSharedTypes.stringOrNumber=?,
+  ~offSet: HighchartsSharedTypes.stringOrNumber=?,
   ~mobileOffset: DrawerTypes.drawerMobileOffsetConfig=?,
   ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "DrawerContent"

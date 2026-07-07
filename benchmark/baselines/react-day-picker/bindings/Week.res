@@ -1,6 +1,6 @@
 type props = {
   ...HtmlAttrs.htmlAttributes,
-  week: LocaleSharedTypes.calendarWeek2,
+  week: ClassesSharedTypes.calendarWeek2,
 }
 
 @module("react-day-picker")

@@ -1,8 +1,8 @@
 type props = {
   ...HtmlAttrs.buttonHTMLAttributesOmitClassNameDisabledOnClickStyle,
-  buttonType?: ButtonTypes.buttonType,
-  size?: ButtonTypes.buttonSize,
-  subType?: ButtonTypes.buttonSubType,
+  buttonType?: HighchartsSharedTypes.buttonType,
+  size?: HighchartsSharedTypes.buttonSize,
+  subType?: HighchartsSharedTypes.buttonSubType,
   text?: string,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
@@ -11,11 +11,11 @@ type props = {
   loading?: bool,
   showSkeleton?: bool,
   skeletonVariant?: SkeletonTypes.skeletonVariant,
-  buttonGroupPosition?: ButtonTypes.buttonButtonGroupPosition,
+  buttonGroupPosition?: HighchartsSharedTypes.buttonButtonGroupPosition,
   fullWidth?: bool,
-  width?: CommonTypes.stringOrNumber,
+  width?: HighchartsSharedTypes.stringOrNumber,
   justifyContent?: string,
-  state?: ButtonTypes.buttonState,
+  state?: HighchartsSharedTypes.buttonState,
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 

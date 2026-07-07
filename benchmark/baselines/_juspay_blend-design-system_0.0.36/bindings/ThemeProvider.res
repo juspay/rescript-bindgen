@@ -3,6 +3,6 @@ external make: (
   ~foundationTokens: TokensTypes.foundationTokenType=?,
   ~componentTokens: MultiSelectV2SharedTypes.componentTokenType=?,
   ~breakpoints: BreakpointsTypes.breakpointType=?,
-  ~theme: CommonTypes.themeOrString=?,
+  ~theme: HighchartsSharedTypes.themeOrString=?,
   ~children: React.element,
 ) => React.element = "ThemeProvider"

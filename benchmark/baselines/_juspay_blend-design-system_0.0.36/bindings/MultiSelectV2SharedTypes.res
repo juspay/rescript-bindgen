@@ -24,7 +24,7 @@ type variantTokenV1snf12 = {
   container: string,
   @as("no-container") noContainer: string,
 }
-type sizeTokenBma3d = {
+type sizeTokenV10us3 = {
   sm: variantTokenV1snf12,
   md: variantTokenV1snf12,
   lg: variantTokenV1snf12,
@@ -35,14 +35,14 @@ type multiSelectV2VariantTokenContainerConfig = {
   bottom: string,
   left: string,
 }
-type variantTokenV1m560 = {
+type variantTokenV1g74p = {
   container: multiSelectV2VariantTokenContainerConfig,
   @as("no-container") noContainer: multiSelectV2VariantTokenContainerConfig,
 }
-type sizeTokenV4f682 = {
-  sm: variantTokenV1m560,
-  md: variantTokenV1m560,
-  lg: variantTokenV1m560,
+type sizeTokenV1sgfn = {
+  sm: variantTokenV1g74p,
+  md: variantTokenV1g74p,
+  lg: variantTokenV1g74p,
 }
 type triggerStateTokenMultiSelectV2 = {
   hover: string,
@@ -51,7 +51,7 @@ type triggerStateTokenMultiSelectV2 = {
   focus: string,
   closed: string,
 }
-type variantTokenV1pv9z = {
+type variantTokenV1m5o3 = {
   container: triggerStateTokenMultiSelectV2,
   @as("no-container") noContainer: triggerStateTokenMultiSelectV2,
 }
@@ -102,12 +102,12 @@ type multiSelectV2MultiSelectV2TokensTypeTriggerPlaceholderConfig = {
   fontWeight: string,
 }
 type multiSelectV2MultiSelectV2TokensTypeTriggerConfig = {
-  height: sizeTokenBma3d,
-  padding: sizeTokenV4f682,
-  borderRadius: sizeTokenBma3d,
+  height: sizeTokenV10us3,
+  padding: sizeTokenV1sgfn,
+  borderRadius: sizeTokenV10us3,
   boxShadow: variantTokenV1snf12,
-  backgroundColor: variantTokenV1pv9z,
-  outline: variantTokenV1pv9z,
+  backgroundColor: variantTokenV1m5o3,
+  outline: variantTokenV1m5o3,
   slot: multiSelectV2MultiSelectV2TokensTypeTriggerSlotConfig,
   selectionTag: contextMultiSelectV2TokensTypeTriggerSelectionTagConfig,
   chevron: multiSelectV2MultiSelectV2TokensTypeTriggerChevronConfig,
@@ -174,7 +174,7 @@ type multiSelectV2MultiSelectV2TokensTypeMenuConfig = {
   backgroundColor: string,
   border: string,
   borderRadius: string,
-  padding: sizeTokenV4f682,
+  padding: sizeTokenV1sgfn,
   minWidth: string,
   scroll: multiSelectV2MultiSelectV2TokensTypeMenuScrollConfig,
   header: multiSelectV2MultiSelectV2TokensTypeMenuHeaderConfig,
@@ -242,7 +242,7 @@ type responsiveMultiSelectV2Tokens = {
   lg: multiSelectV2TokensType,
 }
 type componentTokenType = {
-  @as("TAGS") tags?: TagsTypes.responsiveTagTokens,
+  @as("TAGS") tags?: HighchartsSharedTypes.responsiveTagTokens,
   @as("SEARCH_INPUT") searchInput?: InputsTypes.responsiveSearchInputTokens,
   @as("TEXT_AREA") textArea?: InputsTypes.responsiveTextAreaTokens,
   @as("RADIO") radio?: RadioTypes.responsiveRadioTokens,
@@ -257,7 +257,7 @@ type componentTokenType = {
   @as("DROPDOWN_INPUT") dropdownInput?: InputsTypes.responsiveDropdownInputTokens,
   @as("CHECKBOX") checkbox?: CheckboxTypes.responsiveCheckboxTokens,
   @as("TABS") tabs?: TabsTypes.responsiveTabsTokens,
-  @as("BUTTON") button?: ButtonTypes.responsiveButtonTokens,
+  @as("BUTTON") button?: HighchartsSharedTypes.responsiveButtonTokens,
   @as("MODAL") modal?: ModalTypes.responsiveModalTokens,
   @as("BREADCRUMB") breadcrumb?: BreadcrumbTypes.responsiveBreadcrumbTokens,
   @as("POPOVER") popover?: PopoverTypes.responsivePopoverTokens,
@@ -270,7 +270,7 @@ type componentTokenType = {
   @as("STAT_CARD") statCard?: StatCardTypes.responsiveStatCardTokens,
   @as("PROGRESS_BAR") progressBar?: ProgressBarTypes.responsiveProgressBarTokens,
   @as("DRAWER") drawer?: DrawerTypes.responsiveDrawerTokens,
-  @as("CHARTS") charts?: ChartsTypes.responsiveChartTokens,
+  @as("CHARTS") charts?: HighchartsSharedTypes.responsiveChartTokens,
   @as("SNACKBAR") snackbar?: SnackbarTypes.responsiveSnackbarTokens,
   @as("STEPPER") stepper?: StepperTypes.responsiveStepperTokens,
   @as("KEYVALUEPAIR") keyvaluepair?: KeyValuePairTypes.responsiveKeyValuePairTokens,
@@ -304,7 +304,7 @@ type componentTokenType = {
   @as("POPOVERV2") popoverv2?: PopoverV2Types.responsivePopoverV2Tokens,
 }
 type contextThemeContextTypeComponentTokensConfig = {
-  @as("TAGS") tags: TagsTypes.responsiveTagTokens,
+  @as("TAGS") tags: HighchartsSharedTypes.responsiveTagTokens,
   @as("SEARCH_INPUT") searchInput: InputsTypes.responsiveSearchInputTokens,
   @as("TEXT_AREA") textArea: InputsTypes.responsiveTextAreaTokens,
   @as("RADIO") radio: RadioTypes.responsiveRadioTokens,
@@ -319,7 +319,7 @@ type contextThemeContextTypeComponentTokensConfig = {
   @as("DROPDOWN_INPUT") dropdownInput: InputsTypes.responsiveDropdownInputTokens,
   @as("CHECKBOX") checkbox: CheckboxTypes.responsiveCheckboxTokens,
   @as("TABS") tabs: TabsTypes.responsiveTabsTokens,
-  @as("BUTTON") button: ButtonTypes.responsiveButtonTokens,
+  @as("BUTTON") button: HighchartsSharedTypes.responsiveButtonTokens,
   @as("MODAL") modal: ModalTypes.responsiveModalTokens,
   @as("BREADCRUMB") breadcrumb: BreadcrumbTypes.responsiveBreadcrumbTokens,
   @as("POPOVER") popover: PopoverTypes.responsivePopoverTokens,
@@ -332,7 +332,7 @@ type contextThemeContextTypeComponentTokensConfig = {
   @as("STAT_CARD") statCard: StatCardTypes.responsiveStatCardTokens,
   @as("PROGRESS_BAR") progressBar: ProgressBarTypes.responsiveProgressBarTokens,
   @as("DRAWER") drawer: DrawerTypes.responsiveDrawerTokens,
-  @as("CHARTS") charts: ChartsTypes.responsiveChartTokens,
+  @as("CHARTS") charts: HighchartsSharedTypes.responsiveChartTokens,
   @as("SNACKBAR") snackbar: SnackbarTypes.responsiveSnackbarTokens,
   @as("STEPPER") stepper: StepperTypes.responsiveStepperTokens,
   @as("KEYVALUEPAIR") keyvaluepair: KeyValuePairTypes.responsiveKeyValuePairTokens,

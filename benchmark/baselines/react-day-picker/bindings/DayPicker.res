@@ -1,12 +1,12 @@
 @module("react-day-picker") @react.component
 external make: (
-  ~mode: LocaleSharedTypes.cjsMode=?,
+  ~mode: ClassesSharedTypes.cjsMode=?,
   ~required: bool=?,
   ~className: string=?,
-  ~classNames: LocaleSharedTypes.typesClassNamesConfig=?,
+  ~classNames: ClassesSharedTypes.typesClassNamesConfig=?,
   ~modifiersClassNames: Dict.t<string>=?,
   ~style: JsxDOM.style=?,
-  ~styles: LocaleSharedTypes.typesStylesConfig=?,
+  ~styles: ClassesSharedTypes.typesStylesConfig=?,
   ~modifiersStyles: Dict.t<JsxDOM.style>=?,
   ~id: string=?,
   ~defaultMonth: Date.t=?,
@@ -18,9 +18,9 @@ external make: (
   ~reverseMonths: bool=?,
   ~hideNavigation: bool=?,
   ~disableNavigation: bool=?,
-  ~captionLayout: LocaleSharedTypes.cjsCaptionLayout=?,
+  ~captionLayout: ClassesSharedTypes.cjsCaptionLayout=?,
   ~reverseYears: bool=?,
-  ~navLayout: LocaleSharedTypes.cjsNavLayout=?,
+  ~navLayout: ClassesSharedTypes.cjsNavLayout=?,
   ~fixedWeeks: bool=?,
   ~hideWeekdays: bool=?,
   ~showOutsideDays: bool=?,
@@ -30,15 +30,15 @@ external make: (
   @as("ISOWeek") ~iSOWeek: bool=?,
   ~timeZone: string=?,
   ~noonSafe: bool=?,
-  ~components: LocaleSharedTypes.typesComponentsConfig=?,
+  ~components: ClassesSharedTypes.typesComponentsConfig=?,
   ~footer: React.element=?,
   ~autoFocus: bool=?,
-  ~disabled: LocaleSharedTypes.CjsDisabled.t=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with CjsDisabled.fromBool / CjsDisabled.fromDate / CjsDisabled.fromDates / CjsDisabled.fromFn / CjsDisabled.fromDateRange / CjsDisabled.fromDateBefore / CjsDisabled.fromDateAfter / CjsDisabled.fromDateInterval / CjsDisabled.fromDayOfWeek / CjsDisabled.fromMatchers
-  ~hidden: LocaleSharedTypes.CjsDisabled.t=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with CjsDisabled.fromBool / CjsDisabled.fromDate / CjsDisabled.fromDates / CjsDisabled.fromFn / CjsDisabled.fromDateRange / CjsDisabled.fromDateBefore / CjsDisabled.fromDateAfter / CjsDisabled.fromDateInterval / CjsDisabled.fromDayOfWeek / CjsDisabled.fromMatchers
+  ~disabled: ClassesSharedTypes.CjsDisabled.t=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with CjsDisabled.fromBool / CjsDisabled.fromDate / CjsDisabled.fromDates / CjsDisabled.fromFn / CjsDisabled.fromDateRange / CjsDisabled.fromDateBefore / CjsDisabled.fromDateAfter / CjsDisabled.fromDateInterval / CjsDisabled.fromDayOfWeek / CjsDisabled.fromMatchers
+  ~hidden: ClassesSharedTypes.CjsDisabled.t=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with CjsDisabled.fromBool / CjsDisabled.fromDate / CjsDisabled.fromDates / CjsDisabled.fromFn / CjsDisabled.fromDateRange / CjsDisabled.fromDateBefore / CjsDisabled.fromDateAfter / CjsDisabled.fromDateInterval / CjsDisabled.fromDayOfWeek / CjsDisabled.fromMatchers
   ~today: Date.t=?,
-  ~modifiers: Dict.t<LocaleSharedTypes.CjsDisabled.t>=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with CjsDisabled.fromBool / CjsDisabled.fromDate / CjsDisabled.fromDates / CjsDisabled.fromFn / CjsDisabled.fromDateRange / CjsDisabled.fromDateBefore / CjsDisabled.fromDateAfter / CjsDisabled.fromDateInterval / CjsDisabled.fromDayOfWeek / CjsDisabled.fromMatchers
-  ~labels: LocaleSharedTypes.typesLabelsConfig=?,
-  ~formatters: LocaleSharedTypes.typesFormattersConfig=?,
+  ~modifiers: Dict.t<ClassesSharedTypes.CjsDisabled.t>=?,  // ⓘ was `Matcher | Matcher[]` — opaque; build with CjsDisabled.fromBool / CjsDisabled.fromDate / CjsDisabled.fromDates / CjsDisabled.fromFn / CjsDisabled.fromDateRange / CjsDisabled.fromDateBefore / CjsDisabled.fromDateAfter / CjsDisabled.fromDateInterval / CjsDisabled.fromDayOfWeek / CjsDisabled.fromMatchers
+  ~labels: ClassesSharedTypes.typesLabelsConfig=?,
+  ~formatters: ClassesSharedTypes.typesFormattersConfig=?,
   ~dir: string=?,
   @as("aria-label") ~ariaLabel: string=?,
   @as("aria-labelledby") ~ariaLabelledby: string=?,
@@ -46,8 +46,8 @@ external make: (
   ~nonce: string=?,
   ~title: string=?,
   ~lang: string=?,
-  ~locale: LocaleSharedTypes.classesLocaleConfig=?,
-  ~numerals: LocaleSharedTypes.numerals=?,
+  ~locale: ClassesSharedTypes.classesLocaleConfig=?,
+  ~numerals: ClassesSharedTypes.numerals=?,
   ~weekStartsOn: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6=?,
   ~firstWeekContainsDate: CommonTypes.v1OrV4=?,
   ~useAdditionalWeekYearTokens: bool=?,
@@ -61,9 +61,9 @@ external make: (
   ~onDayKeyDown: (Date.t, Dict.t<bool>, ReactEvent.Keyboard.t) => unit=?,
   ~onDayMouseEnter: (Date.t, Dict.t<bool>, ReactEvent.Mouse.t) => unit=?,
   ~onDayMouseLeave: (Date.t, Dict.t<bool>, ReactEvent.Mouse.t) => unit=?,
-  ~dateLib: LocaleSharedTypes.classesOverridesConfig=?,
+  ~dateLib: ClassesSharedTypes.classesOverridesConfig=?,
   ~selected: Date.t=?,
-  ~onSelect: (Date.t, Date.t, Dict.t<bool>, LocaleSharedTypes.CjsOnSelect.t) => unit=?,  // ⓘ was `MouseEvent<Element, MouseEvent> | KeyboardEvent<Element>` — opaque; build with CjsOnSelect.fromMouseEvent / CjsOnSelect.fromKeyboardEvent
+  ~onSelect: (Date.t, Date.t, Dict.t<bool>, ClassesSharedTypes.CjsOnSelect.t) => unit=?,  // ⓘ was `MouseEvent<Element, MouseEvent> | KeyboardEvent<Element>` — opaque; build with CjsOnSelect.fromMouseEvent / CjsOnSelect.fromKeyboardEvent
   ~min: float=?,
   ~max: float=?,
   ~excludeDisabled: bool=?,

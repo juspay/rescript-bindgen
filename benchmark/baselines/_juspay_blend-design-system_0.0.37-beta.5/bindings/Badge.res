@@ -9,7 +9,7 @@ external make: (
   ~showZero: bool=?,
   ~hidden: bool=?,
   ~defaultChecked: bool=?,
-  ~defaultValue: CommonTypes.stringOrNumberOrStringArray=?,
+  ~defaultValue: HighchartsSharedTypes.stringOrNumberOrStringArray=?,
   ~autoFocus: bool=?,
   ~id: string=?,
   ~tabIndex: int=?,

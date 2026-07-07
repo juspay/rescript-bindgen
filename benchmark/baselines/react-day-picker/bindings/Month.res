@@ -1,6 +1,6 @@
 type props = {
   ...HtmlAttrs.htmlAttributes,
-  calendarMonth: LocaleSharedTypes.calendarMonth2,
+  calendarMonth: ClassesSharedTypes.calendarMonth2,
   displayIndex: float,
 }
 

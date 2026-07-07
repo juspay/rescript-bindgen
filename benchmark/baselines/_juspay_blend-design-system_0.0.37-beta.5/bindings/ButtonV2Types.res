@@ -89,7 +89,7 @@ type responsiveButtonV2Tokens = {
 }
 type buttonSlot = {
   slot: React.element,
-  maxHeight?: CommonTypes.stringOrNumber,
+  maxHeight?: HighchartsSharedTypes.stringOrNumber,
 }
 type buttonSkeleton = {
   showSkeleton?: bool,
@@ -111,10 +111,10 @@ type buttonStylesReturn = {
   borderLeft?: string,
   borderRight?: string,
   cursor?: string,
-  _active?: Dict.t<CommonTypes.stringOrNumber>,
-  _hover?: Dict.t<CommonTypes.stringOrNumber>,
-  _focusVisible?: Dict.t<CommonTypes.stringOrNumber>,
-  _disabled?: Dict.t<CommonTypes.stringOrNumber>,
+  _active?: Dict.t<HighchartsSharedTypes.stringOrNumber>,
+  _hover?: Dict.t<HighchartsSharedTypes.stringOrNumber>,
+  _focusVisible?: Dict.t<HighchartsSharedTypes.stringOrNumber>,
+  _disabled?: Dict.t<HighchartsSharedTypes.stringOrNumber>,
 }
 type buttonV2GetButtonPaddingConfig = {
   top: string,
@@ -123,14 +123,14 @@ type buttonV2GetButtonPaddingConfig = {
   left: string,
 }
 type buttonV2ButtonPropsConfig = {
-  minWidth?: CommonTypes.stringOrNumber,
-  maxWidth?: CommonTypes.stringOrNumber,
-  width?: CommonTypes.stringOrNumber,
+  minWidth?: HighchartsSharedTypes.stringOrNumber,
+  maxWidth?: HighchartsSharedTypes.stringOrNumber,
+  width?: HighchartsSharedTypes.stringOrNumber,
   size?: buttonV2Size,
   leftSlot?: buttonSlot,
   rightSlot?: buttonSlot,
   skeleton?: buttonSkeleton,
-  buttonGroupPosition?: ButtonTypes.buttonButtonGroupPosition,
+  buttonGroupPosition?: HighchartsSharedTypes.buttonButtonGroupPosition,
   buttonType?: buttonV2Type,
   subType?: buttonV2SubType,
   loading?: bool,

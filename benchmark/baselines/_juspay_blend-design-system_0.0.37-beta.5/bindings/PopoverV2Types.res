@@ -64,25 +64,25 @@ type responsivePopoverV2Tokens = {
   lg: popoverV2TokenType,
 }
 type popoverV2ActionType = {
-  width?: CommonTypes.stringOrNumber,
+  width?: HighchartsSharedTypes.stringOrNumber,
   text?: string,
   disabled?: bool,
   justifyContent?: string,
-  size?: ButtonTypes.buttonSize,
+  size?: HighchartsSharedTypes.buttonSize,
   onClick?: option<ReactEvent.Mouse.t> => unit,
-  buttonType?: ButtonTypes.buttonType,
+  buttonType?: HighchartsSharedTypes.buttonType,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
   loading?: bool,
   showSkeleton?: bool,
   skeletonVariant?: SkeletonTypes.skeletonVariant,
   fullWidth?: bool,
-  state?: ButtonTypes.buttonState,
+  state?: HighchartsSharedTypes.buttonState,
 }
 type bodySkeletonV2Props = {
   show?: bool,
   width?: string,
-  height?: CommonTypes.stringOrNumber,
+  height?: HighchartsSharedTypes.stringOrNumber,
 }
 type popoverV2SkeletonProps = {
   show?: bool,

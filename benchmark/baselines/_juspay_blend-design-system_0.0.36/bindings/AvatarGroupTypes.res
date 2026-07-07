@@ -1,5 +1,5 @@
 type avatarData = {
-  id: CommonTypes.stringOrNumber,
+  id: HighchartsSharedTypes.stringOrNumber,
   alt?: string,
   fallback?: React.element,
   size?: AvatarTypes.avatarSize,

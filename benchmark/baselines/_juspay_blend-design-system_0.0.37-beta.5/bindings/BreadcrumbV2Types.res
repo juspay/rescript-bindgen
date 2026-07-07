@@ -32,7 +32,7 @@ type responsiveBreadcrumbV2Tokens = {
   lg: breadcrumbV2TokensType,
 }
 type breadcrumbV2ItemType = {
-  id?: CommonTypes.stringOrNumber,
+  id?: HighchartsSharedTypes.stringOrNumber,
   leftSlot?: React.element,
   rightSlot?: React.element,
   label: string,

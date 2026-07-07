@@ -2,9 +2,9 @@
 external make: (
   ~children: React.element,
   ~accordionType: AccordionTypes.accordionType=?,
-  ~defaultValue: CommonTypes.stringOrStringArray=?,
-  ~value: CommonTypes.stringOrStringArray=?,
+  ~defaultValue: HighchartsSharedTypes.stringOrStringArray=?,
+  ~value: HighchartsSharedTypes.stringOrStringArray=?,
   ~isMultiple: bool=?,
-  ~onValueChange: CommonTypes.stringOrStringArray => unit=?,
+  ~onValueChange: HighchartsSharedTypes.stringOrStringArray => unit=?,
   ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Accordion"

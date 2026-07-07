@@ -1,6 +1,6 @@
 type props = {
   ...HtmlAttrs.htmlAttributes,
-  day: LocaleSharedTypes.calendarDay2,
+  day: ClassesSharedTypes.calendarDay2,
   modifiers: Dict.t<bool>,
 }
 

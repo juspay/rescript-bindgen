@@ -1941,6 +1941,43 @@ function webSink(ctx, tsName) {
  * @param {number} [depth]
  * @returns {object}  an IR type node, e.g. `{kind:'string'}` or `{kind:'typeRef', to:'size'}`
  */
+/** Can `t` materialize past MAX_DEPTH within `budget` object-nesting levels WITHOUT unbounded
+ *  registry growth? Leaves / already-registered links / containers / functions are bounded at any
+ *  budget; a union is bounded iff every arm is; an object costs one budget level and is bounded iff
+ *  every field is bounded at budget-1 (cycle-guarded via `seen`). Anything else → conservatively
+ *  unbounded, so the caller truncates, keeping the unbounded Highcharts graph bounded. Gate for the
+ *  named-bounded-record escape (recovers `XAxisLabelsOptions` and co.). (#115 item 1) */
+function boundedPastDepth(t, ctx, checker, budget, seen) {
+    if (!t) return false
+    const f = t.flags
+    if (f & (ts.TypeFlags.String | ts.TypeFlags.Number | ts.TypeFlags.Boolean | ts.TypeFlags.BigInt |
+        ts.TypeFlags.StringLiteral | ts.TypeFlags.NumberLiteral | ts.TypeFlags.BooleanLiteral |
+        ts.TypeFlags.BigIntLiteral | ts.TypeFlags.Unknown | ts.TypeFlags.Any | ts.TypeFlags.Index |
+        ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void | ts.TypeFlags.EnumLike)) return true
+    if (isCssType(t)) return true
+    if (t.id != null && ctx.shared && ctx.shared.byKey.has('id:' + t.id)) return true // registered → link
+    if (checker.isArrayType?.(t) || checker.isTupleType?.(t)) return true
+    if (t.getCallSignatures?.().length === 1 && !(t.getProperties?.().length)) return true
+    if (t.isUnion && t.isUnion()) return t.types.every((a) => boundedPastDepth(a, ctx, checker, budget, seen))
+    if (f & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) {
+        if (checker.getIndexInfoOfType?.(t, ts.IndexKind.String) && !(t.getProperties?.().length)) return true
+        if (budget <= 0 || t.id == null || seen.has(t.id)) return false
+        const props = t.getProperties?.() || []
+        if (!props.length || t.getCallSignatures?.().length) return false
+        seen.add(t.id)
+        const ok = props.every((p) => {
+            const d = p.valueDeclaration || (p.declarations && p.declarations[0])
+            if (!d) return false
+            let ft; try { ft = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(p, d)) } catch { return false }
+            return boundedPastDepth(ft, ctx, checker, budget - 1, seen)
+        })
+        seen.delete(t.id)
+        return ok
+    }
+    return false
+}
+const PAST_BOUND_CAP = 3 // deepest object nesting materialized past MAX_DEPTH
+
 function classify(type, ctx, propName = '', depth = 0) {
     const { checker } = ctx
     const flags = type.flags
@@ -2041,6 +2078,33 @@ function classify(type, ctx, propName = '', depth = 0) {
             if (si && si.type && !(type.getProperties && type.getProperties().length)) {
                 const of = classify(si.type, ctx, propName, depth + 1)
                 return { kind: 'dict', of: irHasImperfection(of) ? { kind: 'raw', res: 'JSON.t' } : of }
+            }
+        }
+        // A past-bound UNION whose every arm is bounded is SPLIT, not truncated wholesale: a union
+        // type's `getProperties()` is empty, so without this the guard returned opaque before
+        // `unionNode` saw the arms — `PlotXrangeDataLabelsOptions | […][]` (dataLabels) collapsed to
+        // `string` instead of `@unboxed One(a) | Many(array<a>)`. Routing to `unionNode` lets the
+        // object arm materialize via the bounded-record / memberOf escapes. (#115 item 1)
+        if ((flags & ts.TypeFlags.Union) && ctx.shared && (ctx.pastBoundBudget ?? PAST_BOUND_CAP) > 0 &&
+            type.types.every((a) => boundedPastDepth(checker.getNonNullableType(a), ctx, checker, PAST_BOUND_CAP, new Set()))) {
+            return unionNode(type, ctx, propName, depth)
+        }
+        // A NAMED, provably-BOUNDED record materializes past the bound instead of truncating to
+        // `string` — recovers deep option records first reached past MAX_DEPTH (Highcharts'
+        // `XAxisLabelsOptions`; `yAxisLabelsOptions` already resolved shallowly). NAMED only: an
+        // anonymous `{…}`/intersection would proliferate order-churny `…Config2/3` names (#90 lesson).
+        // The budget-capped, cycle-guarded `boundedPastDepth` gate keeps the unbounded graph bounded;
+        // `pastBoundBudget` blocks chaining so each escape adds a bounded subtree, not the whole graph.
+        if (ctx.shared && type.id != null && type.getProperties?.().length &&
+            !type.getCallSignatures().length && !checker.getIndexInfoOfType?.(type, ts.IndexKind.String)) {
+            const sym = type.getSymbol?.() || type.aliasSymbol
+            const named = sym && sym.getName && sym.getName() && sym.getName() !== '__type'
+            const budget = ctx.pastBoundBudget ?? PAST_BOUND_CAP
+            if (named && budget > 0 && boundedPastDepth(type, ctx, checker, budget, new Set())) {
+                const prev = ctx.pastBoundBudget ?? PAST_BOUND_CAP
+                ctx.pastBoundBudget = prev - 1
+                try { return recordNode(type, ctx, propName, MAX_DEPTH, typeName(type)) }
+                finally { ctx.pastBoundBudget = prev }
             }
         }
         return { kind: 'opaque', text: checker.typeToString(type) }
@@ -3525,6 +3589,20 @@ function memberOf(t, ctx, propName, depth) {
     // here would pull large interconnected graphs (e.g. Highcharts) into one SCC.
     const sym = t.getSymbol && t.getSymbol()
     if (isObjectish && (sym && sym.getName()) === '__type' && t.getProperties().length > 0 && !isLibraryType(t)) {
+        const node = classify(t, ctx, propName, depth + 1)
+        if (node && node.kind === 'typeRef' && !node._enum && !node._unboxed) {
+            return { ctor: pascal(node.to), rt: 'object', type: node }
+        }
+    }
+    // A single NAMED object arm is normally NOT expanded (a cross-domain named object pulls large
+    // interconnected graphs into one SCC). BUT a PROVABLY-BOUNDED record (all-leaf / shallow,
+    // cycle-guarded) is safe: it materializes as a bounded subtree, so `boolean | ShadowOptionsObject`
+    // becomes `@unboxed Bool | Shadow` and `CSSObject | TooltipStyleOptions` an object views union,
+    // instead of the whole field collapsing to a `string` REVIEW. The bounded gate is exactly what
+    // the exclusion above was protecting against. (#115 item 1)
+    if (isObjectish && sym && sym.getName() && sym.getName() !== '__type' &&
+        t.getProperties().length > 0 && t.getCallSignatures().length === 0 &&
+        boundedPastDepth(t, ctx, c, PAST_BOUND_CAP, new Set())) {
         const node = classify(t, ctx, propName, depth + 1)
         if (node && node.kind === 'typeRef' && !node._enum && !node._unboxed) {
             return { ctor: pascal(node.to), rt: 'object', type: node }

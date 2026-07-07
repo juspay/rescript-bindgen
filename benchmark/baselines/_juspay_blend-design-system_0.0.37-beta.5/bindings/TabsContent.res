@@ -4,7 +4,7 @@ external make: (
   ~style: JsxDOM.style=?,
   ~children: React.element=?,
   ~defaultChecked: bool=?,
-  ~defaultValue: CommonTypes.stringOrNumberOrStringArray=?,
+  ~defaultValue: HighchartsSharedTypes.stringOrNumberOrStringArray=?,
   ~autoFocus: bool=?,
   ~className: string=?,
   ~id: string=?,

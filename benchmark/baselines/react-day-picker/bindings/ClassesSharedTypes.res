@@ -106,7 +106,7 @@ type localeOptions = {
 }
 type rec localeFormatRelativeFnOptionsLocaleConfig = {
   options?: localeOptions,
-  formatRelative: (string, string, string, option<formatRelativeFnOptions>) => string,  // ⚪ loose — was `FormatRelativeToken`
+  formatRelative: (formatRelativeToken, string, string, option<formatRelativeFnOptions>) => string,  // ⚪ loose — was `DateType`
 }
 and formatRelativeFnOptions = {
   weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
@@ -153,31 +153,47 @@ type matchFnResultM61mw = {
 }
 type classesMatchEraConfig = {
   width?: localeWidth,
-  valueCallback?: string => string,  // ⚪ loose — was `Era`
+  valueCallback?: string => CommonTypes.v0OrV1,
 }
 type matchFnResultNbwx0 = {
   value: CommonTypes.v1OrV2OrV3OrV4,
   rest: string,
 }
+type classesMatchQuarterConfig = {
+  width?: localeWidth,
+  valueCallback?: string => CommonTypes.v1OrV2OrV3OrV4,
+}
 type matchFnResultV1h0do = {
   value: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6OrV7OrV8OrV9OrV10OrV11,
   rest: string,
+}
+type classesMatchMonthConfig = {
+  width?: localeWidth,
+  valueCallback?: string => CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6OrV7OrV8OrV9OrV10OrV11,
 }
 type matchFnResultV8j2j7 = {
   value: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
   rest: string,
 }
+type classesMatchDayConfig = {
+  width?: localeWidth,
+  valueCallback?: string => CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
+}
 type matchFnResultV1r63c = {
   value: localeDayPeriod,
   rest: string,
 }
+type classesMatchDayPeriodConfig = {
+  width?: localeWidth,
+  valueCallback?: string => localeDayPeriod,
+}
 type match = {
   ordinalNumber: (string, option<classesMatchOrdinalNumberConfig>) => Nullable.t<matchFnResultV7tcjg>,
   era: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResultM61mw>,
-  quarter: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResultNbwx0>,
-  month: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResultV1h0do>,
-  day: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResultV8j2j7>,
-  dayPeriod: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResultV1r63c>,
+  quarter: (string, option<classesMatchQuarterConfig>) => Nullable.t<matchFnResultNbwx0>,
+  month: (string, option<classesMatchMonthConfig>) => Nullable.t<matchFnResultV1h0do>,
+  day: (string, option<classesMatchDayConfig>) => Nullable.t<matchFnResultV8j2j7>,
+  dayPeriod: (string, option<classesMatchDayPeriodConfig>) => Nullable.t<matchFnResultV1r63c>,
 }
 type rec dayPickerLocaleLabels = {
   labelNav?: CommonTypes.classesDayPickerLocaleLabelsLabelNav,
@@ -742,7 +758,7 @@ type dayPickerProps = {
   onDayMouseLeave?: (Date.t, Dict.t<bool>, ReactEvent.Mouse.t) => unit,
   dateLib?: classesOverridesConfig,
 }
-type dayPickerContextT0u4a = {
+type dayPickerContextZmanz = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,
@@ -758,7 +774,7 @@ type dayPickerContextT0u4a = {
   formatters: formatters,
   dayPickerProps: dayPickerProps,
 }
-type dayPickerContextV1sind = {
+type dayPickerContextV1lbzj = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,

@@ -67,8 +67,8 @@ type sortDirection =
 type dataTableColumnFilterOperator =
   | @as("endsWith") EndsWith
   | @as("startsWith") StartsWith
-  | @as("contains") Contains
   | @as("range") Range
+  | @as("contains") Contains
   | @as("equals") Equals
   | @as("gt") Gt
   | @as("lt") Lt
@@ -458,13 +458,13 @@ type bulkActionsConfig = {
 type rowActionConfig<'a> = {
   id: string,
   text?: string,
-  buttonType?: ButtonTypes.buttonType,
-  size?: ButtonTypes.buttonSize,
-  subType?: ButtonTypes.buttonSubType,
+  buttonType?: HighchartsSharedTypes.buttonType,
+  size?: HighchartsSharedTypes.buttonSize,
+  subType?: HighchartsSharedTypes.buttonSubType,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
-  disabled?: CommonTypes.dataTableRowActionConfigDisabled<'a>,
-  hidden?: CommonTypes.dataTableRowActionConfigHidden<'a>,
+  disabled?: HighchartsSharedTypes.dataTableRowActionConfigDisabled<'a>,
+  hidden?: HighchartsSharedTypes.dataTableRowActionConfigHidden<'a>,
   onClick: ('a, float) => unit,
 }
 type rowActionsConfig<'a> = {

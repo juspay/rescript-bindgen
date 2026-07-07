@@ -1,7 +1,7 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
-  ~activeSnapPoint: Nullable.t<CommonTypes.stringOrNumber>=?,
-  ~setActiveSnapPoint: Nullable.t<CommonTypes.stringOrNumber> => unit=?,
+  ~activeSnapPoint: Nullable.t<HighchartsSharedTypes.stringOrNumber>=?,
+  ~setActiveSnapPoint: Nullable.t<HighchartsSharedTypes.stringOrNumber> => unit=?,
   ~children: React.element=?,
   @as("open") ~open_: bool=?,
   ~closeThreshold: float=?,
@@ -27,7 +27,7 @@ external make: (
   ~onAnimationEnd: bool => unit=?,
   ~preventScrollRestoration: bool=?,
   ~autoFocus: bool=?,
-  ~snapPoints: array<CommonTypes.stringOrNumber>=?,
+  ~snapPoints: array<HighchartsSharedTypes.stringOrNumber>=?,
   ~fadeFromIndex: float=?,
   ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "DrawerV2"

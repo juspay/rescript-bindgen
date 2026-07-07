@@ -22,22 +22,22 @@ type popoverActionType = {
   disabled?: bool,
   onClick?: option<ReactEvent.Mouse.t> => unit,
   justifyContent?: string,
-  width?: CommonTypes.stringOrNumber,
-  size?: ButtonTypes.buttonSize,
+  width?: HighchartsSharedTypes.stringOrNumber,
+  size?: HighchartsSharedTypes.buttonSize,
   text?: string,
-  buttonType?: ButtonTypes.buttonType,
+  buttonType?: HighchartsSharedTypes.buttonType,
   leadingIcon?: React.element,
   trailingIcon?: React.element,
   loading?: bool,
   showSkeleton?: bool,
   skeletonVariant?: SkeletonTypes.skeletonVariant,
   fullWidth?: bool,
-  state?: ButtonTypes.buttonState,
+  state?: HighchartsSharedTypes.buttonState,
 }
 type bodySkeletonPropsPopover = {
   show?: bool,
   width?: string,
-  height?: CommonTypes.stringOrNumber,
+  height?: HighchartsSharedTypes.stringOrNumber,
 }
 type popoverSkeletonProps = {
   show?: bool,

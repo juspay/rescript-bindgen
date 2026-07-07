@@ -366,6 +366,22 @@ reference it, and the module aliases it (`type t = moduleName_t`) — zero-cost,
 [`this-typed-callback`](../test/golden/cases/this-typed-callback) (`Widget` cycle),
 [`deep-generic-selfref`](../test/golden/cases/deep-generic-selfref) (`chart.options` in-progress link). (#98, #110, #115)
 
+**Bounded records/unions materialize past the bound (#115 item 1).** A type FIRST reached past
+`MAX_DEPTH` (never registered) used to truncate to `string`. Now, when it is **provably bounded** —
+`boundedPastDepth`: every field a leaf / already-registered link / container / function / bounded
+sub-record within a small nesting budget, cycle-guarded — it materializes instead of truncating:
+(a) a **NAMED bounded record** becomes a real record (Highcharts' `xAxisOptions.labels` →
+`xAxisLabelsOptions<'b>`; `yAxis` already resolved shallowly) — NAMED only, so an anonymous `{…}`
+can't proliferate order-churny `…Config2/3` names; (b) a **past-bound UNION** whose arms are all
+bounded is split through `unionNode` instead of truncated wholesale — `tooltipOptions.shadow`
+(`boolean | ShadowOptionsObject`) → `@unboxed Bool | ShadowOptionsObject`, `seriesXrangeOptions.dataLabels`
+(`A | A[]`) → `@unboxed One(a) | Many(array<a>)`, `tooltipOptions.style` (`CSSObject | TooltipStyleOptions`)
+→ an opaque-module views union; (c) `memberOf` expands a **bounded NAMED object union arm** (the
+anti-graph-pull exclusion is lifted only when bounded). A budget cap + cycle guard keep the unbounded
+Highcharts graph bounded. This depended on stable naming (#90) — before it, materializing deep records
+renumbered 100+ unrelated names; now every benchmark package compiles with equal-or-better metrics.
+Fixture: [`deep-union-arms`](../test/golden/cases/deep-union-arms). (#115 item 1)
+
 **Twin healing (depth ghost ↔ shallow full sibling).** When the re-resolve above can't run because the
 shape's sub-types are a *distinct* generic instantiation (csstype gives `CSSObject['color']` vs
 `['backgroundColor']` different type ids, so `MenuV2VariantToken<StateToken<…>>` isn't deduped across

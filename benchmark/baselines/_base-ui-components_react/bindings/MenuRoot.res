@@ -16,6 +16,6 @@ external make: (
   ~actionsRef: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>=?,
   ~triggerId: Nullable.t<string>=?,
   ~defaultTriggerId: Nullable.t<string>=?,
-  ~handle: RootSharedTypes.menuHandleV18lc1<'a>=?,
+  ~handle: RootSharedTypes.menuHandleV1v3rq<'a>=?,
   ~children: React.element=?,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
 ) => React.element = "Root"

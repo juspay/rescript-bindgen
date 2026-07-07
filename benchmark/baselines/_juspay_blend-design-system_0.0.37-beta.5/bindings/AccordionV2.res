@@ -2,10 +2,10 @@
 external make: (
   ~children: React.element,
   ~accordionType: AccordionV2Types.accordionV2Type=?,
-  ~defaultValue: CommonTypes.stringOrStringArray=?,
-  ~value: CommonTypes.stringOrStringArray=?,
+  ~defaultValue: HighchartsSharedTypes.stringOrStringArray=?,
+  ~value: HighchartsSharedTypes.stringOrStringArray=?,
   ~isMultiple: bool=?,
-  ~onValueChange: CommonTypes.stringOrStringArray => unit=?,
+  ~onValueChange: HighchartsSharedTypes.stringOrStringArray => unit=?,
   ~width: string=?,
   ~maxWidth: string=?,
   ~minWidth: string=?,
