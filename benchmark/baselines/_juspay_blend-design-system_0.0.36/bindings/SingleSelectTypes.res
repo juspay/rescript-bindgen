@@ -22,7 +22,7 @@ type singleSelectSelectMenuItemTypeTooltipPropsConfig = {
   delayDuration?: float,
   offset?: float,
 }
-type rec selectMenuItemTypeV7g9or = {
+type rec selectMenuItemTypeSingleSelect = {
   label: string,
   value: string,
   checked?: bool,
@@ -33,14 +33,14 @@ type rec selectMenuItemTypeV7g9or = {
   slot4?: React.element,
   disabled?: bool,
   onClick?: unit => unit,
-  subMenu?: array<selectMenuItemTypeV7g9or>,
+  subMenu?: array<selectMenuItemTypeSingleSelect>,
   tooltip?: React.element,
   tooltipProps?: singleSelectSelectMenuItemTypeTooltipPropsConfig,
   disableTruncation?: bool,
 }
-type selectMenuGroupTypeP851c = {
+type selectMenuGroupTypeSingleSelect = {
   groupLabel?: string,
-  items: array<selectMenuItemTypeV7g9or>,
+  items: array<selectMenuItemTypeSingleSelect>,
   showSeparator?: bool,
 }
 type singleSelectSkeletonProps = {
@@ -56,7 +56,7 @@ type singleSelectProps = {
   helpIconText?: string,
   placeholder: string,
   size?: selectMenuSize,
-  items: array<selectMenuGroupTypeP851c>,
+  items: array<selectMenuGroupTypeSingleSelect>,
   variant?: selectMenuVariant,
   selected: string,
   onSelect: string => unit,
@@ -92,7 +92,7 @@ type singleSelectProps = {
   minTriggerWidth?: float,
   allowCustomValue?: bool,
   customValueLabel?: string,
-  singleSelectGroupPosition?: HighchartsSharedTypes.buttonButtonGroupPosition,
+  singleSelectGroupPosition?: ButtonTypes.buttonButtonGroupPosition,
   allowDeselect?: bool,
 }
 type singleSelectSingleSelectTokensTypeLabelColorConfig = {

@@ -229,14 +229,19 @@ function stabilizeNames(shared) {
         if (entries.length < 2) continue // single distinct shape → bare base stays (zero churn)
         const homeStem = (e) => lower((e.home || '').replace(/Types$/, ''))
         const stems = entries.map(homeStem)
-        // home distinguishes every collider AND base doesn't already carry a home stem (avoids
-        // `menuV2MenuV2…` doubling on already-home-prefixed anonymous bases)
-        const homeUnique = new Set(stems.filter(Boolean)).size === entries.length &&
-            !entries.some((e) => homeStem(e) && base.startsWith(homeStem(e)))
+        // home stem disambiguates when every collider has a DISTINCT home. The doubling check is
+        // PER-ENTRY (#115 pkg): an entry whose base already carries ITS OWN stem stays bare (avoids
+        // `menuV2MenuV2…`), but a COLLIDER's coincidental stem prefix must NOT suppress the others'
+        // suffixes — the old global guard hashed `selectMenuGroupType` (Select vs SingleSelect) just
+        // because the base starts with `select`. Now Select→`selectMenuGroupType`,
+        // SingleSelect→`selectMenuGroupTypeSingleSelect` (semantic, hash-free, stable).
+        const homeUnique = new Set(stems.filter(Boolean)).size === entries.length
         for (const e of entries) {
-            const suffix = homeUnique ? pascal(homeStem(e)) : pascal(shapeHash(entrySig(e)))
-            let cand = base + suffix, i = 2
-            while (shared.names.has(cand) && cand !== e.name) cand = base + suffix + (i++)
+            const stem = homeStem(e)
+            const ownPrefixed = homeUnique && stem && base.startsWith(stem)
+            const target = ownPrefixed ? base : base + (homeUnique ? pascal(stem) : pascal(shapeHash(entrySig(e))))
+            let cand = target, i = 2
+            while (shared.names.has(cand) && cand !== e.name) cand = target + (i++)
             if (cand !== e.name) {
                 const old = e.name
                 shared.names.delete(old)
@@ -1761,6 +1766,13 @@ const INSTANCE_MODULE = 'InstanceTypes'
  *  and stay chainable, instead of a flagged `string` placeholder. (#24) */
 const WEB_MODULE = 'WebTypes'
 
+/** The dependency-free SINK modules. A synthetic type (opaque union / overload / @unboxed) with no
+ *  TS source is homed by its first dependency — but it must NEVER land in a sink while it also has a
+ *  NON-sink dep, or it manufactures a sink OUT-edge (`CommonTypes → HighchartsTypes`) that closes a
+ *  spurious cross-module cycle and collapses the sink (and everything Tarjan then fuses) into one
+ *  giant `…SharedTypes` module. Sinks must stay edge-free so each is always its own module. (#115 pkg) */
+const SINK_HOMES = new Set(['CommonTypes', INSTANCE_MODULE, WEB_MODULE])
+
 /** lib.dom classes worth an abstract sink type. Conservative allowlist: names common in
  *  server/client APIs that do NOT collide with frequent first-party type names (no
  *  `Event`, `Body`, `Text`, …). The lib.dom-declaration guard protects the rest. */
@@ -2899,7 +2911,7 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     // Sit with the records it references (first dep's home); else the prop's own
     // domain module (so anonymous prop-unions land in <Component>Types, not Common).
     let home = homeOf(type, ctx)
-    if (deps.size) { const d = ctx.shared.byKey.get([...deps][0]); if (d && d.home) home = d.home }
+    if (deps.size) { const ds = [...deps].map((k) => ctx.shared.byKey.get(k)).filter((d) => d && d.home); const pick = ds.find((d) => !SINK_HOMES.has(d.home)) || ds[0]; if (pick) home = pick.home } // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
     // Note telling the caller how to build this opaque value (the `from*` ctors),
     // since the prop only shows `<Module>.t`. Mirrors the Dom-node note convention.
     const ctorName = (m) => m.tagSet ? `${name}.fromTag` : m.literal ? `${name}.${lower(pascal(m.literal))}` : m.none ? `${name}.none` : `${name}.from${pascal(m.name)}`
@@ -2964,7 +2976,7 @@ function overloadModule(ctx, type, callSigs, propName, depth) {
     const deps = new Set()
     for (const s of sigs) collectRefKeys(s.fn, deps)
     let home = homeOf(type, ctx)
-    if (deps.size) { const d = ctx.shared.byKey.get([...deps][0]); if (d && d.home) home = d.home }
+    if (deps.size) { const ds = [...deps].map((k) => ctx.shared.byKey.get(k)).filter((d) => d && d.home); const pick = ds.find((d) => !SINK_HOMES.has(d.home)) || ds[0]; if (pick) home = pick.home } // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
     const note = `was overloaded \`${typeName(type) || 'function'}\` (${callSigs.length} call signatures) — opaque; view with ${sigs.map((s) => `${name}.${s.accessor}`).join(' / ')}`
     const entry = { key, kind: 'opaque', variant: 'overload', name, home, sigs, deps, note }
     ctx.shared.byKey.set(key, entry)
@@ -3373,7 +3385,7 @@ function unionNode(type, ctx, propName, depth = 0) {
                 const key = 'u:' + sname + ':' + members.map((m) => (m.as !== undefined ? '@' + m.as : typeSig(m.type))).join('|')
                 if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
                 let home = 'CommonTypes'
-                if (deps.size) { const d = ctx.shared.byKey.get([...deps][0]); if (d && d.home) home = d.home }
+                if (deps.size) { const ds = [...deps].map((k) => ctx.shared.byKey.get(k)).filter((d) => d && d.home); const pick = ds.find((d) => !SINK_HOMES.has(d.home)) || ds[0]; if (pick) home = pick.home } // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
                 const entry = { key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), base: sname, home, members, deps, tparams }
                 ctx.shared.byKey.set(key, entry)
                 ctx.shared.entries.push(entry)

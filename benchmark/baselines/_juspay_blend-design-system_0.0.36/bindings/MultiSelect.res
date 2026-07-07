@@ -57,5 +57,5 @@ external make: (
   ~customValueLabel: string=?,
   ~showClearButton: bool=?,
   ~onClearAllClick: unit => unit=?,
-  ~multiSelectGroupPosition: HighchartsSharedTypes.buttonButtonGroupPosition=?,
+  ~multiSelectGroupPosition: ButtonTypes.buttonButtonGroupPosition=?,
 ) => React.element = "MultiSelect"

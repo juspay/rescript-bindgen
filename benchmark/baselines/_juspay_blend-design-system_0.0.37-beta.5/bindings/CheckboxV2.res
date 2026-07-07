@@ -1,7 +1,7 @@
 type props = {
   ...HtmlAttrs.buttonHTMLAttributesOmitClassNameOnChangeSlotStyle,
-  checked?: HighchartsSharedTypes.boolOrIndeterminate,
-  onCheckedChange?: HighchartsSharedTypes.boolOrIndeterminate => unit,
+  checked?: CommonTypes.boolOrIndeterminate,
+  onCheckedChange?: CommonTypes.boolOrIndeterminate => unit,
   required?: bool,
   error?: bool,
   label?: string,

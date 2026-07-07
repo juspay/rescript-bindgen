@@ -83,20 +83,20 @@ type chartV2NoDataProps = {
   title?: string,
   subtitle?: string,
   slot?: React.element,
-  button?: HighchartsSharedTypes.buttonProps,
+  button?: ButtonTypes.buttonProps,
 }
 type chartV2CustomLegendItem = {
   key: string,
   name: string,
   color?: string,
-  value?: HighchartsSharedTypes.stringOrNumber,
+  value?: CommonTypes.stringOrNumber,
 }
 type chartsV2RenderItemConfig = {
   item: HighchartsSharedTypes.ChartV2LegendItem.t,
   name: string,
   visible: bool,
   color: string,
-  value?: HighchartsSharedTypes.stringOrNumber,
+  value?: CommonTypes.stringOrNumber,
   onClick: unit => unit,
 }
 type chartV2FullscreenControls = {

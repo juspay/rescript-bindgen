@@ -937,11 +937,18 @@ function tarjanSCC(nodes, edges) {
  * @param {{byKey:Map, entries:Array}} shared  the registry from extractModule
  * @returns {{ finalOf: Map<string,string>, byModule: Map<string, Array> }}
  */
+const SINK_HOMES = new Set(['CommonTypes', 'InstanceTypes', 'WebTypes'])
+
 export function planSharedModules(shared) {
     const { byKey, entries } = shared
     const nodes = [...new Set(entries.map((e) => e.home))]
     const edges = new Map(nodes.map((n) => [n, new Set()]))
     for (const e of entries) {
+        // A SINK module (CommonTypes/InstanceTypes/WebTypes) must stay dependency-free so it is
+        // always its own SCC singleton — never absorbed into a `…SharedTypes` merge. The extractor
+        // keeps sinks edge-free at the source (#115 pkg); skipping their out-edges here makes it a
+        // structural guarantee, and the assert below flags (not fakes) any future regression.
+        if (SINK_HOMES.has(e.home)) continue
         for (const depKey of e.deps || []) {
             const dep = byKey.get(depKey)
             if (dep && dep.home !== e.home) edges.get(e.home).add(dep.home)
@@ -961,6 +968,11 @@ export function planSharedModules(shared) {
         if (comp.length === 1) {
             fm = comp[0]
         } else {
+            // A sink in a multi-node SCC means a sink out-edge slipped through the source guard —
+            // that would produce a circular module dependency (uncompilable). Flag it (the source
+            // fix must relocate the offending synthetic), don't silently merge the sink away.
+            const sink = comp.find((h) => SINK_HOMES.has(h))
+            if (sink) (shared.sinkMergeWarnings || (shared.sinkMergeWarnings = [])).push(`${sink} pulled into SCC {${comp.join(', ')}}`)
             const largest = [...comp].sort((a, b) => (sizeOf.get(b) || 0) - (sizeOf.get(a) || 0) || a.localeCompare(b))[0]
             fm = largest.replace(/Types$/, '') + 'SharedTypes'
         }

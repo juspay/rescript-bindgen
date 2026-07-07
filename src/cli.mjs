@@ -412,6 +412,11 @@ async function main() {
         const live = [...new Set(shared.entries.filter((e) => hitSet.has(e.name)).map((e) => e.name))]
         if (live.length) console.error(`\n[bindgen] ⚠ ${live.length} counter-suffixed type name(s) — same base at the same anchor; these can renumber across versions: ${live.slice(0, 12).join(', ')}${live.length > 12 ? '…' : ''}`)
     }
+    // A sink module (CommonTypes/InstanceTypes/WebTypes) pulled into an SCC merge = a synthetic
+    // mis-homed into a sink with a non-sink dep (a circular-module-dep risk). Flagged, not faked. (#115 pkg)
+    if (shared && shared.sinkMergeWarnings && shared.sinkMergeWarnings.length) {
+        console.error(`\n[bindgen] ⚠ ${shared.sinkMergeWarnings.length} sink module(s) merged into a shared cycle (a mis-homed synthetic — should relocate to its non-sink dep's home): ${shared.sinkMergeWarnings.join('; ')}`)
+    }
     if (totalDefects) console.error(`\n[bindgen] ⚠ ${totalDefects} unknown/any prop(s) flagged as defects — review.`)
 
     // Dependencies

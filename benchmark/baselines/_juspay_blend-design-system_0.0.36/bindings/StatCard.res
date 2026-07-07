@@ -1,7 +1,7 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
   ~title: string,
-  ~value: HighchartsSharedTypes.stringOrNumber,
+  ~value: CommonTypes.stringOrNumber,
   ~valueTooltip: React.element=?,
   ~change: Nullable.t<StatCardTypes.statCardChange>=?,
   ~subtitle: string=?,
@@ -16,7 +16,7 @@ external make: (
   ~minWidth: string=?,
   ~xAxis: StatCardTypes.statCardAxisConfig=?,
   ~yAxis: StatCardTypes.statCardAxisConfig=?,
-  ~valueFormatter: HighchartsSharedTypes.axisType=?,
+  ~valueFormatter: ChartsTypes.axisType=?,
   ~height: string=?,
   ~direction: StatCardTypes.statCardDirection=?,
   ~skeleton: StatCardTypes.statCardSkeletonProps=?,

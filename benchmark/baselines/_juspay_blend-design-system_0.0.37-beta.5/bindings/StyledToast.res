@@ -6,7 +6,7 @@ type props = {
   slot?: React.element,
   onClose?: unit => unit,
   actionButton?: SnackbarV2Types.snackbarV2Action,
-  toastId?: HighchartsSharedTypes.stringOrNumber,
+  toastId?: CommonTypes.stringOrNumber,
   width?: string,
   maxWidth?: string,
   minWidth?: string,

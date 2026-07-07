@@ -1,4 +1,4 @@
-type imageLoadingStatusV4jby72 =
+type imageLoadingStatus =
   | @as("idle") Idle
   | @as("loading") Loading
   | @as("loaded") Loaded

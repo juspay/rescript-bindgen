@@ -17,7 +17,7 @@ external make: (
   ~error: bool=?,
   ~disabled: bool=?,
   ~triggerDimensions: EditorSharedTypes.selectV2TriggerDimensions=?,
-  ~singleSelectGroupPosition: HighchartsSharedTypes.buttonButtonGroupPosition=?,
+  ~singleSelectGroupPosition: ButtonTypes.buttonButtonGroupPosition=?,
   ~borderRadius: string=?,
   ~borderRight: string=?,
 ) => React.element = "SingleSelectV2Trigger"

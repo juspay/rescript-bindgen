@@ -8,7 +8,7 @@ type props = {
   leftSlot?: TagV2Types.tagV2LeftSlotConfig,
   rightSlot?: TagV2Types.tagV2LeftSlotConfig,
   skeleton?: TagV2Types.tagV2SkeletonConfig,
-  tagGroupPosition?: HighchartsSharedTypes.buttonButtonGroupPosition,
+  tagGroupPosition?: ButtonTypes.buttonButtonGroupPosition,
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 

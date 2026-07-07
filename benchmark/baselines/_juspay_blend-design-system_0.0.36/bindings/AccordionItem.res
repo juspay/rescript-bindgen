@@ -10,7 +10,7 @@ external make: (
   ~rightSlot: React.element=?,
   ~subtextSlot: React.element=?,
   ~triggerSlot: React.element=?,  // ⓘ function form: wrap with `triggerSlotFn` (zero-cost)
-  ~triggerSlotWidth: HighchartsSharedTypes.stringOrNumber=?,
+  ~triggerSlotWidth: CommonTypes.stringOrNumber=?,
   ~children: React.element,
   ~isDisabled: bool=?,
   ~chevronPosition: AccordionTypes.accordionChevronPosition=?,
@@ -18,6 +18,6 @@ external make: (
   ~isFirst: bool=?,
   ~isLast: bool=?,
   ~isIntermediate: bool=?,
-  ~currentValue: HighchartsSharedTypes.stringOrStringArray=?,
+  ~currentValue: CommonTypes.stringOrStringArray=?,
   ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "AccordionItem"

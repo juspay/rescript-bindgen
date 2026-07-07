@@ -3,7 +3,7 @@ external make: (
   ~style: JsxDOM.style=?,
   ~className: string=?,
   ~defaultChecked: bool=?,
-  ~defaultValue: HighchartsSharedTypes.stringOrNumberOrStringArray=?,
+  ~defaultValue: CommonTypes.stringOrNumberOrStringArray=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
   ~id: string=?,

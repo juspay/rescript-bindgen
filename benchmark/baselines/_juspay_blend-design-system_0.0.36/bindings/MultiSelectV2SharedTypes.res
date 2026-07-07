@@ -242,7 +242,7 @@ type responsiveMultiSelectV2Tokens = {
   lg: multiSelectV2TokensType,
 }
 type componentTokenType = {
-  @as("TAGS") tags?: HighchartsSharedTypes.responsiveTagTokens,
+  @as("TAGS") tags?: TagsTypes.responsiveTagTokens,
   @as("SEARCH_INPUT") searchInput?: InputsTypes.responsiveSearchInputTokens,
   @as("TEXT_AREA") textArea?: InputsTypes.responsiveTextAreaTokens,
   @as("RADIO") radio?: RadioTypes.responsiveRadioTokens,
@@ -257,7 +257,7 @@ type componentTokenType = {
   @as("DROPDOWN_INPUT") dropdownInput?: InputsTypes.responsiveDropdownInputTokens,
   @as("CHECKBOX") checkbox?: CheckboxTypes.responsiveCheckboxTokens,
   @as("TABS") tabs?: TabsTypes.responsiveTabsTokens,
-  @as("BUTTON") button?: HighchartsSharedTypes.responsiveButtonTokens,
+  @as("BUTTON") button?: ButtonTypes.responsiveButtonTokens,
   @as("MODAL") modal?: ModalTypes.responsiveModalTokens,
   @as("BREADCRUMB") breadcrumb?: BreadcrumbTypes.responsiveBreadcrumbTokens,
   @as("POPOVER") popover?: PopoverTypes.responsivePopoverTokens,
@@ -270,7 +270,7 @@ type componentTokenType = {
   @as("STAT_CARD") statCard?: StatCardTypes.responsiveStatCardTokens,
   @as("PROGRESS_BAR") progressBar?: ProgressBarTypes.responsiveProgressBarTokens,
   @as("DRAWER") drawer?: DrawerTypes.responsiveDrawerTokens,
-  @as("CHARTS") charts?: HighchartsSharedTypes.responsiveChartTokens,
+  @as("CHARTS") charts?: ChartsTypes.responsiveChartTokens,
   @as("SNACKBAR") snackbar?: SnackbarTypes.responsiveSnackbarTokens,
   @as("STEPPER") stepper?: StepperTypes.responsiveStepperTokens,
   @as("KEYVALUEPAIR") keyvaluepair?: KeyValuePairTypes.responsiveKeyValuePairTokens,
@@ -304,7 +304,7 @@ type componentTokenType = {
   @as("POPOVERV2") popoverv2?: PopoverV2Types.responsivePopoverV2Tokens,
 }
 type contextThemeContextTypeComponentTokensConfig = {
-  @as("TAGS") tags: HighchartsSharedTypes.responsiveTagTokens,
+  @as("TAGS") tags: TagsTypes.responsiveTagTokens,
   @as("SEARCH_INPUT") searchInput: InputsTypes.responsiveSearchInputTokens,
   @as("TEXT_AREA") textArea: InputsTypes.responsiveTextAreaTokens,
   @as("RADIO") radio: RadioTypes.responsiveRadioTokens,
@@ -319,7 +319,7 @@ type contextThemeContextTypeComponentTokensConfig = {
   @as("DROPDOWN_INPUT") dropdownInput: InputsTypes.responsiveDropdownInputTokens,
   @as("CHECKBOX") checkbox: CheckboxTypes.responsiveCheckboxTokens,
   @as("TABS") tabs: TabsTypes.responsiveTabsTokens,
-  @as("BUTTON") button: HighchartsSharedTypes.responsiveButtonTokens,
+  @as("BUTTON") button: ButtonTypes.responsiveButtonTokens,
   @as("MODAL") modal: ModalTypes.responsiveModalTokens,
   @as("BREADCRUMB") breadcrumb: BreadcrumbTypes.responsiveBreadcrumbTokens,
   @as("POPOVER") popover: PopoverTypes.responsivePopoverTokens,
@@ -332,7 +332,7 @@ type contextThemeContextTypeComponentTokensConfig = {
   @as("STAT_CARD") statCard: StatCardTypes.responsiveStatCardTokens,
   @as("PROGRESS_BAR") progressBar: ProgressBarTypes.responsiveProgressBarTokens,
   @as("DRAWER") drawer: DrawerTypes.responsiveDrawerTokens,
-  @as("CHARTS") charts: HighchartsSharedTypes.responsiveChartTokens,
+  @as("CHARTS") charts: ChartsTypes.responsiveChartTokens,
   @as("SNACKBAR") snackbar: SnackbarTypes.responsiveSnackbarTokens,
   @as("STEPPER") stepper: StepperTypes.responsiveStepperTokens,
   @as("KEYVALUEPAIR") keyvaluepair: KeyValuePairTypes.responsiveKeyValuePairTokens,

@@ -13,6 +13,6 @@ external make: (
   ~isFirst: bool=?,
   ~isLast: bool=?,
   ~isIntermediate: bool=?,
-  ~currentValue: HighchartsSharedTypes.stringOrStringArray=?,
+  ~currentValue: CommonTypes.stringOrStringArray=?,
   ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "AccordionV2Item"

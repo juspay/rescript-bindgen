@@ -14,7 +14,7 @@ external make: (
   ~bodyTitle: string=?,
   ~content: React.element=?,
   ~bodySlot2: React.element=?,
-  ~actionButton: HighchartsSharedTypes.buttonProps=?,
+  ~actionButton: ButtonTypes.buttonProps=?,
   ~alignment: CardTypes.cardAlignment=?,
   ~centerAlign: bool=?,
   ~cardSlot: React.element=?,

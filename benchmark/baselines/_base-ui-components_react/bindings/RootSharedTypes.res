@@ -63,7 +63,7 @@ type rootMode =
   | @as("both") Both
   | @as("inline") Inline
   | @as("list") List
-type imageLoadingStatusV4jby7 =
+type imageLoadingStatusRoot =
   | @as("idle") Idle
   | @as("loading") Loading
   | @as("loaded") Loaded
@@ -494,7 +494,7 @@ type highlightEventDetails = {
   index: int,
 }
 type avatarRootState = {
-  imageLoadingStatus: imageLoadingStatusV4jby7,
+  imageLoadingStatus: imageLoadingStatusRoot,
 }
 type checkboxRootState = {
   checked: bool,

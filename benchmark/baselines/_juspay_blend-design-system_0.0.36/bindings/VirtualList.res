@@ -2,7 +2,7 @@
 external make: (
   ~items: array<'a>,
   ~renderItem: VirtualListTypes.virtualListRenderParams<'a> => React.element,
-  ~height: HighchartsSharedTypes.stringOrNumber=?,
+  ~height: CommonTypes.stringOrNumber=?,
   ~itemHeight: float=?,
   ~overscan: float=?,
   ~onScroll: float => unit=?,

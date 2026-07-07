@@ -1,7 +1,7 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
   ~allowChartUpdate: bool=?,
-  ~constructorType: HighchartsSharedTypes.chartsConstructorType=?,
+  ~constructorType: ChartsTypes.chartsConstructorType=?,
   ~containerProps: Dict.t<'a>=?,
   ~highcharts: InstanceTypes.highchartsModule=?,
   ~immutable: bool=?,

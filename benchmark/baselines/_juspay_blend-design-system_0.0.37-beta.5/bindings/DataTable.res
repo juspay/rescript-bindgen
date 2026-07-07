@@ -67,7 +67,7 @@ external make: (
   ~onInsertRight: string => unit=?,
   ~onDeleteColumn: string => unit=?,
   ~getRowStyle: ('a, float) => JsxDOM.style=?,
-  ~tableBodyHeight: HighchartsSharedTypes.stringOrNumber=?,
+  ~tableBodyHeight: CommonTypes.stringOrNumber=?,
   ~mobileColumnsToShow: float=?,
   ~enablePivotTable: bool=?,
   ~pivotTableConfig: DataTableTypes.dataTablePivotTableConfigConfig=?,

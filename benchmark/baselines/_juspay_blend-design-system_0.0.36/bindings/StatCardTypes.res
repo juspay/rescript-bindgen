@@ -23,8 +23,8 @@ type chartDataPoint = {
   name: string,
 }
 type statCardAxisConfig = {
-  @as("type") type_?: HighchartsSharedTypes.axisType,
-  tickFormatter?: HighchartsSharedTypes.stringOrNumber => string,
+  @as("type") type_?: ChartsTypes.axisType,
+  tickFormatter?: CommonTypes.stringOrNumber => string,
   dateOnly?: bool,
   useUTC?: bool,
   formatString?: string,
@@ -35,9 +35,9 @@ type statCardAxisConfig = {
 type statCardSkeletonProps = {
   variant: SkeletonTypes.skeletonVariant,
   show: bool,
-  height?: HighchartsSharedTypes.stringOrNumber,
-  maxWidth?: HighchartsSharedTypes.stringOrNumber,
-  minWidth?: HighchartsSharedTypes.stringOrNumber,
+  height?: CommonTypes.stringOrNumber,
+  maxWidth?: CommonTypes.stringOrNumber,
+  minWidth?: CommonTypes.stringOrNumber,
 }
 type statCardStatCardTokenTypePaddingConfig = {
   x: string,

@@ -37,7 +37,7 @@ type sliderSliderCSSPropertiesActiveConfig = {
 }
 type sliderSliderCSSPropertiesDisabledConfig = {
   cursor?: string,
-  opacity?: HighchartsSharedTypes.stringOrNumber,
+  opacity?: CommonTypes.stringOrNumber,
 }
 type sliderCSSProperties = {
   accentColor?: string,

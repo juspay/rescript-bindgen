@@ -1,7 +1,7 @@
 type props = {
   ...HtmlAttrs.buttonHTMLAttributesOmitClassNameOnChangeSlotStyle,
   selectedValues: array<string>,
-  onChange: HighchartsSharedTypes.stringOrStringArray => unit,
+  onChange: CommonTypes.stringOrStringArray => unit,
   items?: array<EditorSharedTypes.multiSelectV2GroupType>,
   label: string,
   subLabel?: string,
@@ -43,7 +43,7 @@ type props = {
   customValueLabel?: string,
   showClearButton?: bool,
   onClearAllClick?: unit => unit,
-  multiSelectGroupPosition?: HighchartsSharedTypes.buttonButtonGroupPosition,
+  multiSelectGroupPosition?: ButtonTypes.buttonButtonGroupPosition,
 }
 
 @module("@juspay/blend-design-system")

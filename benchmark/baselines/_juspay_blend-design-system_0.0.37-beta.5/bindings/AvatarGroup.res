@@ -4,8 +4,8 @@ type props = {
   maxCount?: float,
   size?: AvatarTypes.avatarSize,
   shape?: AvatarTypes.avatarShape,
-  selectedAvatarIds?: array<HighchartsSharedTypes.stringOrNumber>,
-  onSelectionChange?: array<HighchartsSharedTypes.stringOrNumber> => unit,
+  selectedAvatarIds?: array<CommonTypes.stringOrNumber>,
+  onSelectionChange?: array<CommonTypes.stringOrNumber> => unit,
   skeleton?: AvatarGroupTypes.avatarGroupSkeletonConfig,
   ref?: React.ref<Nullable.t<Dom.element>>,
 }

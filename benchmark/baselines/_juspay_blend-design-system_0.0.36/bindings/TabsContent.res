@@ -4,7 +4,7 @@ external make: (
   ~className: string=?,
   ~value: string,
   ~defaultChecked: bool=?,
-  ~defaultValue: HighchartsSharedTypes.stringOrNumberOrStringArray=?,
+  ~defaultValue: CommonTypes.stringOrNumberOrStringArray=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
   ~id: string=?,

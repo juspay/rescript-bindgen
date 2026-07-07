@@ -59,6 +59,6 @@ external make: (
   ~bulkActions: DataTableTypes.bulkActionsConfig=?,
   ~rowActions: DataTableTypes.rowActionsConfig<'a>=?,
   ~getRowStyle: ('a, float) => JsxDOM.style=?,
-  ~tableBodyHeight: HighchartsSharedTypes.stringOrNumber=?,
+  ~tableBodyHeight: CommonTypes.stringOrNumber=?,
   ~mobileColumnsToShow: float=?,
 ) => React.element = "DataTable"

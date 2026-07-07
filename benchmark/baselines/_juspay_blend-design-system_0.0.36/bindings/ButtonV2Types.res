@@ -81,21 +81,21 @@ type responsiveButtonV2Tokens = {
 }
 type buttonSlot = {
   slot: React.element,
-  maxHeight?: HighchartsSharedTypes.stringOrNumber,
+  maxHeight?: CommonTypes.stringOrNumber,
 }
 type buttonSkeleton = {
   showSkeleton?: bool,
   skeletonVariant?: SkeletonTypes.skeletonVariant,
 }
 type buttonV2ButtonPropsConfig = {
-  width?: HighchartsSharedTypes.stringOrNumber,
+  width?: CommonTypes.stringOrNumber,
   size?: buttonV2Size,
-  minWidth?: HighchartsSharedTypes.stringOrNumber,
-  maxWidth?: HighchartsSharedTypes.stringOrNumber,
+  minWidth?: CommonTypes.stringOrNumber,
+  maxWidth?: CommonTypes.stringOrNumber,
   leftSlot?: buttonSlot,
   rightSlot?: buttonSlot,
   skeleton?: buttonSkeleton,
-  buttonGroupPosition?: HighchartsSharedTypes.buttonButtonGroupPosition,
+  buttonGroupPosition?: ButtonTypes.buttonButtonGroupPosition,
   buttonType?: buttonV2Type,
   subType?: buttonV2SubType,
   loading?: bool,

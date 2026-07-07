@@ -79,7 +79,7 @@ type snackbarV2ToastOptions = {
   actionButton?: snackbarV2Action,
   duration?: float,
   position?: snackbarV2Position,
-  maxWidth?: HighchartsSharedTypes.stringOrNumber,
-  width?: HighchartsSharedTypes.stringOrNumber,
-  minWidth?: HighchartsSharedTypes.stringOrNumber,
+  maxWidth?: CommonTypes.stringOrNumber,
+  width?: CommonTypes.stringOrNumber,
+  minWidth?: CommonTypes.stringOrNumber,
 }
