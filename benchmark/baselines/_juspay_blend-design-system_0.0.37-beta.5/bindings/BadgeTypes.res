@@ -13,12 +13,6 @@ type badgePosition =
   | @as("top-left") TopLeft
   | @as("bottom-right") BottomRight
   | @as("bottom-left") BottomLeft
-type badgeColor2 =
-  | @as("alert") Alert
-  | @as("neutral") Neutral
-  | @as("warning") Warning
-  | @as("primary") Primary
-  | @as("success") Success
 type badgeResponsiveBadgeTokensSmDotWidthConfig = {
   sm: string,
   md: string,

@@ -63,7 +63,7 @@ type modalButtonAction = {
   fullWidth?: bool,
   state?: ButtonTypes.buttonState,
 }
-type bodySkeletonProps = {
+type bodySkeletonPropsModal = {
   show?: bool,
   width?: string,
   height?: string,
@@ -71,5 +71,5 @@ type bodySkeletonProps = {
 type modalSkeletonProps = {
   show?: bool,
   variant?: SkeletonTypes.skeletonVariant,
-  bodySkeletonProps?: bodySkeletonProps,
+  bodySkeletonProps?: bodySkeletonPropsModal,
 }

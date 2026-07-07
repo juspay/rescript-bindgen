@@ -438,7 +438,7 @@ type pointerEventObject = {
   chartX: float,
   chartY: float,
 }
-type cssObject = {
+type cssObjectHighcharts = {
   background?: string,
   backgroundColor?: string,
   border?: string,
@@ -468,7 +468,7 @@ type keyboardNavigationFocusBorderOptionsObject = {
   enabled?: bool,
   hideBrowserFocusOutline?: bool,
   margin?: float,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
 }
 type keyboardNavigationSeriesNavigationOptionsObject = {
   mode?: optionsModeValue,
@@ -1070,7 +1070,7 @@ type captionStyleOptions = {
 }
 module ChartsCaptionOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromCaptionStyleOptions: captionStyleOptions => t = "%identity"
 }
 type captionOptions = {
@@ -3928,7 +3928,7 @@ type seriesFlagsOptions<'b> = {
   stacking?: string,  // ⚪ loose — was `OptionsStackingValue`
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textAlign?: string,  // ⚪ loose — was `OptionsTextAlignValue`
   title?: string,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
@@ -8536,7 +8536,7 @@ type seriesWordcloudOptions<'b> = {
   spiral?: string,  // ⚪ loose — was `OptionsSpiralValue`
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   tooltip?: string,  // ⚪ loose — was `SeriesTooltipOptionsObject`
   turboThreshold?: float,
   visible?: bool,
@@ -8824,7 +8824,7 @@ type chartParallelAxesLabelsStyleOptions = {
 }
 module ChartsChartParallelAxesLabelsOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromChartParallelAxesLabelsStyleOptions: chartParallelAxesLabelsStyleOptions => t = "%identity"
 }
 type yAxisBreaksOptions = {
@@ -8957,7 +8957,7 @@ type yAxisTitleOptions = {
 }
 module ChartsChartParallelAxesTitleOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromChartParallelAxesTitleStyleOptions: chartParallelAxesLabelsStyleOptions => t = "%identity"
 }
 type chartParallelAxesTitleOptions = {
@@ -9045,12 +9045,12 @@ type colorAxisLabelsStyleOptions = {
 }
 module ChartsColorAxisLabelsOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromColorAxisLabelsStyleOptions: colorAxisLabelsStyleOptions => t = "%identity"
 }
 module ChartsXAxisTitleOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromXAxisTitleStyleOptions: chartParallelAxesLabelsStyleOptions => t = "%identity"
 }
 type xAxisTitleOptions = {
@@ -9070,7 +9070,7 @@ type xAxisTitleOptions = {
 }
 module ChartsZAxisTitleOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromZAxisTitleStyleOptions: chartParallelAxesLabelsStyleOptions => t = "%identity"
 }
 type zAxisTitleOptions = {
@@ -9090,7 +9090,7 @@ type zAxisTitleOptions = {
 }
 module ChartsColorAxisTitleOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromColorAxisTitleStyleOptions: chartParallelAxesLabelsStyleOptions => t = "%identity"
 }
 type colorAxisTitleOptions = {
@@ -9154,7 +9154,7 @@ type connectorsOptions = {
 }
 module ChartsCreditsOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromCreditsStyleOptions: colorAxisLabelsStyleOptions => t = "%identity"
 }
 type creditsOptions = {
@@ -9174,7 +9174,7 @@ type drilldownActiveDataLabelStyleOptions = {
 }
 module ChartsDrilldownOptionsActiveDataLabelStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromDrilldownActiveDataLabelStyleOptions: drilldownActiveDataLabelStyleOptions => t = "%identity"
 }
 type drilldownBreadcrumbsButtonThemeStyleOptions = {
@@ -9218,7 +9218,7 @@ type drilldownBreadcrumbsSeparatorStyleOptions = {
 }
 module ChartsDrilldownBreadcrumbsSeparatorOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromDrilldownBreadcrumbsSeparatorStyleOptions: drilldownBreadcrumbsSeparatorStyleOptions => t = "%identity"
 }
 type drilldownBreadcrumbsSeparatorOptions = {
@@ -9252,7 +9252,7 @@ type drilldownDrillUpButtonOptions = {
   theme?: string,  // ⚪ loose — was `object`
 }
 type drilldownOptions<'b> = {
-  activeAxisLabelStyle?: cssObject,
+  activeAxisLabelStyle?: cssObjectHighcharts,
   activeDataLabelStyle?: ChartsDrilldownOptionsActiveDataLabelStyle.t,
   allowPointDrilldown?: bool,
   animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
@@ -9771,7 +9771,7 @@ type legendBubbleLegendLabelsOptions = {
   className?: string,
   format?: string,
   formatter?: @this ((bubbleLegendFormatterContextObject, option<bubbleLegendFormatterContextObject>) => string),
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   x?: float,
   y?: float,
 }
@@ -9807,24 +9807,24 @@ type legendNavigationOptions = {
   arrowSize?: float,
   enabled?: bool,
   inactiveColor?: ColorType.t,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
 }
 type legendTitleOptions = {
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   text?: string,
 }
 type loadingOptions = {
   hideDuration?: float,
-  labelStyle?: cssObject,
+  labelStyle?: cssObjectHighcharts,
   showDuration?: float,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
 }
 type mapNavigationButtonOptions = {
   align?: alignValue,
   alignTo?: buttonRelativeToValue,
   height?: float,
   padding?: float,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   theme?: highchartsPointShapeArgsConfig,
   verticalAlign?: verticalAlignValue,
   width?: float,
@@ -9836,7 +9836,7 @@ type mapNavigationButtonsZoomInOptions = {
   height?: float,
   onclick?: string,  // ⚪ loose — was `Function`
   padding?: float,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   text?: string,
   theme?: highchartsPointShapeArgsConfig,
   verticalAlign?: verticalAlignValue,
@@ -9954,7 +9954,7 @@ module ChartsNavigationBreadcrumbsOptionsPosition = {
 }
 module ChartsNavigationBreadcrumbsSeparatorOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromNavigationBreadcrumbsSeparatorStyleOptions: drilldownBreadcrumbsSeparatorStyleOptions => t = "%identity"
 }
 type navigationBreadcrumbsSeparatorOptions = {
@@ -10046,7 +10046,7 @@ type navigatorXAxisBreaksOptions = {
 }
 module ChartsNavigatorXAxisLabelsOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromNavigatorXAxisLabelsStyleOptions: chartParallelAxesLabelsStyleOptions => t = "%identity"
 }
 type navigatorXAxisPlotBandsEventsOptions = {
@@ -10060,7 +10060,7 @@ type navigatorXAxisPlotBandsLabelOptions = {
   allowOverlap?: bool,
   inside?: bool,
   rotation?: float,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   text?: string,
   textAlign?: string,  // ⚪ loose — was `AlignValue`
   useHTML?: bool,
@@ -10086,7 +10086,7 @@ type navigatorXAxisPlotLinesLabelOptions = {
   align?: string,  // ⚪ loose — was `AlignValue`
   formatter?: @this ((string, option<string>) => string),  // ⚪ loose — was `PlotLineOrBand`
   rotation?: float,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   text?: string,
   textAlign?: string,  // ⚪ loose — was `AlignValue`
   useHTML?: bool,
@@ -10112,7 +10112,7 @@ type navigatorXAxisPlotLinesOptions = {
 }
 module ChartsNavigatorXAxisTitleOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromNavigatorXAxisTitleStyleOptions: chartParallelAxesLabelsStyleOptions => t = "%identity"
 }
 type navigatorXAxisTitleOptions = {
@@ -10130,11 +10130,11 @@ type navigatorXAxisTitleOptions = {
 }
 type navigatorYAxisLabelsLevelsOptions = {
   level?: int,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
 }
 module ChartsNavigatorYAxisLabelsOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromNavigatorYAxisLabelsStyleOptions: chartParallelAxesLabelsStyleOptions => t = "%identity"
 }
 type navigatorYAxisPlotBandsOptions = {
@@ -10156,7 +10156,7 @@ type navigatorYAxisPlotBandsOptions = {
 }
 module ChartsNavigatorYAxisTitleOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromNavigatorYAxisTitleStyleOptions: chartParallelAxesLabelsStyleOptions => t = "%identity"
 }
 type navigatorYAxisTitleOptions = {
@@ -10180,7 +10180,7 @@ module ChartsNoDataOptionsPosition = {
 type noDataOptions = {
   attr?: highchartsPointShapeArgsConfig,
   position?: ChartsNoDataOptionsPosition.t,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   useHTML?: string,  // ⚪ loose — was `object`
 }
 type paneBackgroundOptions = {
@@ -10255,7 +10255,7 @@ type plotAbandsLabelStyleOptions = {
 }
 module ChartsSeriesLabelOptionsObjectStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromPlotAbandsLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
   external fromPlotAdLabelStyleOptions: colorAxisLabelsStyleOptions => t = "%identity"
   external fromPlotAoLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
@@ -10462,14 +10462,14 @@ type svgRenderer = {
   g: option<string> => string,  // ⚪ loose — was `SVGElement`
   getContrast: string => string,
   image: (string, option<float>, option<float>, option<float>, option<float>, option<string>) => string,  // ⚪ loose — was `SVGElement`
-  init: (string, float, float, option<cssObject>, option<bool>, option<bool>, option<bool>) => unit,  // ⚪ loose — was `HTMLElement`
+  init: (string, float, float, option<cssObjectHighcharts>, option<bool>, option<bool>, option<bool>) => unit,  // ⚪ loose — was `HTMLElement`
   isHidden: unit => bool,
   label: (string, float, option<float>, option<string>, option<float>, option<float>, option<bool>, option<bool>, option<string>) => string,  // ⚪ loose — was `SVGElement`
   path: string,  // ⚪ loose — was `{ (path?: SVGPathArray): SVGElement; (path?: SVGPathArray | SVGAttributes): SVGElement; }`
   rect: string,  // ⚪ loose — was `{ (attributes?: SVGAttributes): SVGElement; (x?: number, y?: number, width?: number, height?: number, r?: numb`
   roundedRect: highchartsPointShapeArgsConfig => string,  // ⚪ loose — was `SVGElement`
   setSize: (float, float, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  setStyle: cssObject => unit,
+  setStyle: cssObjectHighcharts => unit,
   symbol: (string, option<float>, option<float>, option<float>, option<float>, option<string>) => string,  // ⚪ loose — was `SVGElement`
   text: (option<string>, option<float>, option<float>, option<bool>) => string,  // ⚪ loose — was `SVGElement`
 }
@@ -11147,7 +11147,7 @@ type plotGanttDataLabelsStyleOptions = {
 }
 module ChartsPlotGanttDataLabelsOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromPlotGanttDataLabelsStyleOptions: plotGanttDataLabelsStyleOptions => t = "%identity"
 }
 type plotGanttPartialFillOptions = {
@@ -11460,7 +11460,7 @@ type plotNetworkgraphDataLabelsStyleOptions = {
 }
 module ChartsSeriesNetworkgraphDataLabelsOptionsObjectStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromPlotNetworkgraphDataLabelsStyleOptions: plotNetworkgraphDataLabelsStyleOptions => t = "%identity"
 }
 type plotNetworkgraphLayoutAlgorithmOptions = {
@@ -11542,7 +11542,7 @@ type plotPackedbubbleDataLabelsStyleOptions = {
 }
 module ChartsSeriesPackedBubbleDataLabelsOptionsObjectStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromPlotPackedbubbleDataLabelsStyleOptions: plotPackedbubbleDataLabelsStyleOptions => t = "%identity"
 }
 type plotPackedbubbleLayoutAlgorithmParentNodeOptions = {
@@ -11881,7 +11881,7 @@ module ChartsPlotSunburstBreadcrumbsOptionsPosition = {
 }
 module ChartsPlotSunburstBreadcrumbsSeparatorOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromPlotSunburstBreadcrumbsSeparatorStyleOptions: drilldownBreadcrumbsSeparatorStyleOptions => t = "%identity"
 }
 type plotSunburstBreadcrumbsSeparatorOptions = {
@@ -12004,7 +12004,7 @@ type plotTreegraphLevelsDataLabelsStyleOptions = {
 }
 module ChartsSeriesTreegraphDataLabelsOptionsObjectStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromPlotTreegraphDataLabelsStyleOptions: plotTreegraphDataLabelsStyleOptions => t = "%identity"
   external fromPlotTreegraphLevelsDataLabelsStyleOptions: plotTreegraphLevelsDataLabelsStyleOptions => t = "%identity"
 }
@@ -12033,7 +12033,7 @@ module ChartsPlotTreemapBreadcrumbsOptionsPosition = {
 }
 module ChartsPlotTreemapBreadcrumbsSeparatorOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromPlotTreemapBreadcrumbsSeparatorStyleOptions: drilldownBreadcrumbsSeparatorStyleOptions => t = "%identity"
 }
 type plotTreemapBreadcrumbsSeparatorOptions = {
@@ -12085,7 +12085,7 @@ module ChartsPlotTreemapDataLabelsOptionsAnimation = {
 }
 module ChartsPlotTreemapDataLabelsOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromPlotTreemapDataLabelsStyleOptions: plotTreegraphDataLabelsStyleOptions => t = "%identity"
 }
 module ChartsPlotTrendlineDataLabelsOptionsAnimation = {
@@ -12152,7 +12152,7 @@ type plotVbpVolumeDivisionOptions = {
 }
 type plotVbpZoneLinesOptions = {
   enabled?: bool,
-  styles?: cssObject,
+  styles?: cssObjectHighcharts,
 }
 module ChartsPlotVectorDataLabelsOptionsAnimation = {
   type t
@@ -12242,7 +12242,7 @@ type plotXrangeDataLabelsStyleOptions = {
 }
 module ChartsPlotXrangeDataLabelsOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromPlotXrangeDataLabelsStyleOptions: plotXrangeDataLabelsStyleOptions => t = "%identity"
 }
 type plotXrangePartialFillOptions = {
@@ -12303,8 +12303,8 @@ type rangeSelectorOptions = {
   inputEnabled?: bool,
   inputPosition?: rangeSelectorButtonPositionOptions,
   inputSpacing?: float,
-  inputStyle?: cssObject,
-  labelStyle?: cssObject,
+  inputStyle?: cssObjectHighcharts,
+  labelStyle?: cssObjectHighcharts,
   selected?: float,
   verticalAlign?: verticalAlignValue,
   x?: float,
@@ -12465,7 +12465,7 @@ type stockToolsOptions = {
 }
 module ChartsSubtitleOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromSubtitleStyleOptions: captionStyleOptions => t = "%identity"
 }
 type subtitleOptions = {
@@ -12485,7 +12485,7 @@ type timeOptions = {
 }
 module ChartsTitleOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromTitleStyleOptions: globalButtonThemeStatesSelectStyleOptions => t = "%identity"
 }
 type titleOptions = {
@@ -12502,7 +12502,7 @@ type titleOptions = {
 }
 module ChartsZAxisLabelsOptionsStyle = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
+  external fromCSSObject: cssObjectHighcharts => t = "%identity"
   external fromZAxisLabelsStyleOptions: colorAxisLabelsStyleOptions => t = "%identity"
 }
 type zAxisPlotBandsLabelOptions = {
@@ -12510,7 +12510,7 @@ type zAxisPlotBandsLabelOptions = {
   allowOverlap?: bool,
   inside?: bool,
   rotation?: float,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   text?: string,
   textAlign?: alignValue,
   useHTML?: bool,
@@ -12536,7 +12536,7 @@ type zAxisPlotLinesLabelOptions = {
   align?: alignValue,
   formatter?: @this ((string, option<string>) => string),  // ⚪ loose — was `PlotLineOrBand`
   rotation?: float,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   text?: string,
   textAlign?: alignValue,
   useHTML?: bool,
@@ -12845,7 +12845,7 @@ and plotZigzagDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -13080,7 +13080,7 @@ and plotWordcloudOptions<'b> = {
   spiral?: optionsSpiralValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   tooltip?: seriesTooltipOptionsObject<'b>,
   turboThreshold?: float,
   visible?: bool,
@@ -13113,7 +13113,7 @@ and plotWmaDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -13220,7 +13220,7 @@ and plotWindbarbDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -13342,7 +13342,7 @@ and plotWilliamsrDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -13449,7 +13449,7 @@ and plotWaterfallDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -13564,7 +13564,7 @@ and plotVwapDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -13671,7 +13671,7 @@ and plotVennDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -13767,7 +13767,7 @@ and plotVectorDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -13883,7 +13883,7 @@ and plotVbpDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -13993,7 +13993,7 @@ and plotVariwideDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -14164,7 +14164,7 @@ and plotTrixDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -14269,7 +14269,7 @@ and plotTrendlineDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -14654,7 +14654,7 @@ and timelineDataLabelsOptionsObject<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | CSSObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -14740,7 +14740,7 @@ and plotTilemapDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -14852,7 +14852,7 @@ and plotTemaDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -14957,7 +14957,7 @@ and plotSupertrendDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -15081,7 +15081,7 @@ and seriesSunburstDataLabelsOptionsObject<'b> = {
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
   softConnector?: bool,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -15171,7 +15171,7 @@ and plotStreamgraphDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -15289,7 +15289,7 @@ and plotStochasticDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -15397,7 +15397,7 @@ and plotSplineDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -15510,7 +15510,7 @@ and plotSolidgaugeDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -15598,7 +15598,7 @@ and plotSmaDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -15705,7 +15705,7 @@ and plotSlowstochasticDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -15813,7 +15813,7 @@ and plotScatter3dDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -15912,7 +15912,7 @@ and plotScatterDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -16103,7 +16103,7 @@ and plotRsiDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -16210,7 +16210,7 @@ and plotRocDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -16317,7 +16317,7 @@ and plotRenkoDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -16419,7 +16419,7 @@ and plotPyramid3dDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -16534,7 +16534,7 @@ and plotPsarDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -16641,7 +16641,7 @@ and plotPriceenvelopesDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -16750,7 +16750,7 @@ and plotPpoDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -16857,7 +16857,7 @@ and plotPolygonDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -16966,7 +16966,7 @@ and plotPointandfigureDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -17075,7 +17075,7 @@ and plotPivotpointsDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -17243,7 +17243,7 @@ and plotPictorialDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -17348,7 +17348,7 @@ and plotPcDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -17456,7 +17456,7 @@ and plotParetoDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -17651,7 +17651,7 @@ and seriesOrganizationDataLabelsOptionsObject<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -17744,7 +17744,7 @@ and plotOhlcDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -17861,7 +17861,7 @@ and plotObvDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -18055,7 +18055,7 @@ and plotNatrDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -18162,7 +18162,7 @@ and plotMomentumDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -18269,7 +18269,7 @@ and plotMfiDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -18376,7 +18376,7 @@ and plotMaplineDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -18462,7 +18462,7 @@ and plotMapbubbleDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -18550,7 +18550,7 @@ and plotMapDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -18634,7 +18634,7 @@ and plotMacdDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -18831,7 +18831,7 @@ and plotLinearregressionslopeDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -18938,7 +18938,7 @@ and plotLinearregressioninterceptDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -19045,7 +19045,7 @@ and plotLinearregressionangleDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -19152,7 +19152,7 @@ and plotLinearregressionDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -19259,7 +19259,7 @@ and plotLineDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -19376,7 +19376,7 @@ and plotKlingerDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -19484,7 +19484,7 @@ and plotKeltnerchannelsDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -19649,7 +19649,7 @@ and plotIkhDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -19760,7 +19760,7 @@ and plotHollowcandlestickDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -19880,7 +19880,7 @@ and plotHlcDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -19996,7 +19996,7 @@ and plotHistogramDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -20106,7 +20106,7 @@ and plotHeikinashiDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -20226,7 +20226,7 @@ and plotHeatmapDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -20321,7 +20321,7 @@ and plotGeoheatmapDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -20403,7 +20403,7 @@ and plotGaugeDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -20578,7 +20578,7 @@ and plotFunnel3dDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -20698,7 +20698,7 @@ and seriesPieDataLabelsOptionsObject<'b> = {
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
   softConnector?: bool,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -20842,7 +20842,7 @@ and plotFlagsDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -20928,7 +20928,7 @@ and plotFlagsOptions<'b> = {
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textAlign?: optionsTextAlignValue,
   title?: string,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -20967,7 +20967,7 @@ and plotErrorbarDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -21087,7 +21087,7 @@ and plotEmaDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -21280,7 +21280,7 @@ and plotDpoDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -21385,7 +21385,7 @@ and plotDmiDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -21494,7 +21494,7 @@ and plotDisparityindexDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -21668,7 +21668,7 @@ and plotDemaDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -21773,7 +21773,7 @@ and plotCylinderDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -21883,7 +21883,7 @@ and plotContourDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -22063,7 +22063,7 @@ and plotColumnpyramidDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -22174,7 +22174,7 @@ and plotColumnDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -22298,7 +22298,7 @@ and plotCmoDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -22405,7 +22405,7 @@ and plotCmfDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -22511,7 +22511,7 @@ and plotChaikinDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -22618,7 +22618,7 @@ and plotCciDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -22725,7 +22725,7 @@ and plotCandlestickDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -22845,7 +22845,7 @@ and plotBulletDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -22956,7 +22956,7 @@ and plotBubbleDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -23077,7 +23077,7 @@ and plotBoxplotDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -23197,7 +23197,7 @@ and plotBellcurveDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -23301,7 +23301,7 @@ and plotBbDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -23411,7 +23411,7 @@ and plotBarDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -23525,7 +23525,7 @@ and plotAtrDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -23632,7 +23632,7 @@ and plotAroonoscillatorDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -23737,7 +23737,7 @@ and plotAroonDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -23927,7 +23927,7 @@ and plotAreasplineDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -24045,7 +24045,7 @@ and seriesAreaRangeDataLabelsOptionsObject<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -24170,7 +24170,7 @@ and plotSeriesDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -24291,7 +24291,7 @@ and plotAreaDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -24415,7 +24415,7 @@ and seriesSankeyDataLabelsOptionsObject<'b> = {
   rotation?: float,
   shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -24462,7 +24462,7 @@ and seriesArcDiagramDataLabelsOptionsObject<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,
@@ -24549,7 +24549,7 @@ and plotApoDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -24656,7 +24656,7 @@ and plotAoDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -24767,7 +24767,7 @@ and plotAdDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -24988,7 +24988,7 @@ and seriesLastPriceLabelOptionsObject<'b> = {
   formatter?: @this ((axis<'b>, float, option<axis<'b>>) => string),
   padding?: float,
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
 }
 and seriesLastPriceOptionsObject<'b> = {
   color?: string,
@@ -25069,7 +25069,7 @@ and dataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: string,  // ⚪ loose — was `VerticalAlignValue`
@@ -25107,7 +25107,7 @@ and plotAbandsDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -25646,7 +25646,7 @@ and navigatorSeriesDataLabelsOptions<'b> = {
   rotation?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   textPath?: dataLabelsTextPathOptionsObject,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -25817,7 +25817,7 @@ and navigationAnnotationsTypesCrookedLineLabelOptions<'b> = {
   padding?: float,
   shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   text?: string,
   useHTML?: bool,
   verticalAlign?: string,  // ⚪ loose — was `VerticalAlignValue`
@@ -25867,9 +25867,9 @@ and navigationOptions = {
   buttonOptions?: navigationButtonOptions,
   events?: navigationEventsOptions,
   iconsURL?: string,
-  menuItemHoverStyle?: cssObject,
-  menuItemStyle?: cssObject,
-  menuStyle?: cssObject,
+  menuItemHoverStyle?: cssObjectHighcharts,
+  menuItemStyle?: cssObjectHighcharts,
+  menuStyle?: cssObjectHighcharts,
 }
 and legendItemClickEventObject<'b> = {
   browserEvent: Dom.event,
@@ -25904,13 +25904,13 @@ and legendOptions<'b> = {
   enabled?: bool,
   events?: legendEventsOptions<'b>,
   floating?: bool,
-  itemCheckboxStyle?: cssObject,
+  itemCheckboxStyle?: cssObjectHighcharts,
   itemDistance?: float,
-  itemHiddenStyle?: cssObject,
-  itemHoverStyle?: cssObject,
+  itemHiddenStyle?: cssObjectHighcharts,
+  itemHoverStyle?: cssObjectHighcharts,
   itemMarginBottom?: float,
   itemMarginTop?: float,
-  itemStyle?: cssObject,
+  itemStyle?: cssObjectHighcharts,
   itemWidth?: float,
   labelFormat?: string,
   labelFormatter?: @this ((chartsLegendAllItems_t, option<chartsLegendAllItems_t>) => string),
@@ -26445,7 +26445,7 @@ and chartOptions<'b> = {
   spacingLeft?: float,
   spacingRight?: float,
   spacingTop?: float,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   styledMode?: bool,
   @as("type") type_?: string,
   width?: CommonTypes.stringOrNumber,
@@ -26470,7 +26470,7 @@ and annotationsTypesVerticalLineTypeLabelOptions<'b> = {
   padding?: float,
   shadow?: string,  // ⚪ loose — was `boolean | ShadowOptionsObject`
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   text?: string,
   useHTML?: bool,
   verticalAlign?: string,  // ⚪ loose — was `VerticalAlignValue`
@@ -26644,7 +26644,7 @@ and annotationsLabelsOptions<'b> = {
   point?: string,  // ⚠️ REVIEW — was `AnnotationMockPointOptions` — match the real type by hand
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   text?: string,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
@@ -26669,7 +26669,7 @@ and annotationsLabelOptions<'b> = {
   padding?: float,
   shadow?: string,  // ⚠️ REVIEW — was `boolean | ShadowOptionsObject` — match the real type by hand
   shape?: string,
-  style?: cssObject,
+  style?: cssObjectHighcharts,
   text?: string,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,

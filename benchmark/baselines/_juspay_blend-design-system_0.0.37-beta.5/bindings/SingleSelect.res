@@ -7,7 +7,7 @@ type props = {
   helpIconText?: string,
   placeholder: string,
   size?: SingleSelectTypes.selectMenuSize,
-  items: array<SingleSelectTypes.selectMenuGroupType2>,
+  items: array<SingleSelectTypes.selectMenuGroupTypeV1o40f>,
   variant?: SingleSelectTypes.selectMenuVariant,
   selected: string,
   onSelect: string => unit,

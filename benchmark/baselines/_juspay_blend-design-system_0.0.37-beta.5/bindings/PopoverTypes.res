@@ -63,7 +63,7 @@ type popoverActionType = {
   fullWidth?: bool,
   state?: ButtonTypes.buttonState,
 }
-type bodySkeletonProps2 = {
+type bodySkeletonPropsPopover = {
   show?: bool,
   width?: string,
   height?: CommonTypes.stringOrNumber,
@@ -71,5 +71,5 @@ type bodySkeletonProps2 = {
 type popoverSkeletonProps = {
   show?: bool,
   variant?: SkeletonTypes.skeletonVariant,
-  bodySkeletonProps?: bodySkeletonProps2,
+  bodySkeletonProps?: bodySkeletonPropsPopover,
 }

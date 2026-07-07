@@ -4,7 +4,7 @@ external make: (
   ~defaultValue: string=?,
   ~onValueChange: string => unit=?,
   ~orientation: SliderTypes.sliderOrientation=?,
-  ~dir: DistTypes.direction2=?,
+  ~dir: DistTypes.direction=?,
   ~activationMode: TabsTypes.tabsActivationMode=?,
   ~hidden: bool=?,
   ~style: JsxDOM.style=?,

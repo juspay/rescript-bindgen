@@ -149,6 +149,6 @@ external make: (
   ~transitionDelay: string=?,
   ~children: React.element=?,
   ~animate: bool=?,
-  ~shape: SkeletonTypes.skeletonShape=?,
+  ~shape: SkeletonTypes.skeletonShapeV61p6w=?,
   ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "SkeletonBase"

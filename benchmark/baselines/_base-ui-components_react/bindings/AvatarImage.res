@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.avatarRoot
 
 @module("@base-ui-components/react") @scope("Avatar") @react.component
 external make: (
-  ~onLoadingStatusChange: ImageTypes.imageLoadingStatus2 => unit=?,
+  ~onLoadingStatusChange: ImageTypes.imageLoadingStatusV4jby72 => unit=?,
   ~style: RootSharedTypes.avatarRootStyle=?,
   ~title: string=?,
   ~autoFocus: bool=?,

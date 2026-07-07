@@ -30,7 +30,7 @@ type menuV2MenuV2TokensTypeGroupLabelConfig = {
   marginBottom: string,
   marginLeft: string,
 }
-type stateToken = {
+type stateTokenMenuV2 = {
   active: string,
   default: string,
   hover: string,
@@ -40,22 +40,18 @@ type stateToken = {
   selected: string,
 }
 type menuV2MenuV2VariantTokenActionConfig = {
-  primary: stateToken,
-  danger: stateToken,
+  primary: stateTokenMenuV2,
+  danger: stateTokenMenuV2,
 }
 type menuV2VariantToken = {
-  default: stateToken,
-  action: menuV2MenuV2VariantTokenActionConfig,
-}
-type menuV2VariantToken2 = {
-  default: stateToken,
+  default: stateTokenMenuV2,
   action: menuV2MenuV2VariantTokenActionConfig,
 }
 type menuV2MenuV2TokensTypeGroupItemTextSubTextConfig = {
   fontSize: string,
   fontWeight: string,
   lineHeight: string,
-  color: menuV2VariantToken2,
+  color: menuV2VariantToken,
 }
 type menuV2MenuV2TokensTypeGroupItemTextLeftSlotConfig = {
   maxWidth: string,
@@ -69,7 +65,7 @@ type menuV2MenuV2TokensTypeGroupItemTextConfig = {
   fontSize: string,
   fontWeight: string,
   lineHeight: string,
-  color: menuV2VariantToken2,
+  color: menuV2VariantToken,
   subText: menuV2MenuV2TokensTypeGroupItemTextSubTextConfig,
   leftSlot: menuV2MenuV2TokensTypeGroupItemTextLeftSlotConfig,
   rightChevron: menuV2MenuV2TokensTypeGroupItemTextRightChevronConfig,

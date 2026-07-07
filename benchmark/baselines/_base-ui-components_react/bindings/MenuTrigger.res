@@ -5,7 +5,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, TriggerTypes.contextMenuTr
 external make: (
   ~children: React.element=?,
   ~disabled: bool=?,
-  ~handle: RootSharedTypes.menuHandle3<'a>=?,
+  ~handle: RootSharedTypes.menuHandleV7ww9l<'a>=?,
   ~payload: 'a=?,
   ~delay: float=?,
   ~closeDelay: float=?,

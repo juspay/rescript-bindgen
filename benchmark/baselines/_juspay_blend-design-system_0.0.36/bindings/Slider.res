@@ -9,7 +9,7 @@ external make: (
   ~defaultChecked: bool=?,
   ~defaultValue: array<float>=?,
   ~autoFocus: bool=?,
-  ~dir: DistTypes.direction2=?,
+  ~dir: DistTypes.direction=?,
   ~hidden: bool=?,
   ~id: string=?,
   ~tabIndex: int=?,

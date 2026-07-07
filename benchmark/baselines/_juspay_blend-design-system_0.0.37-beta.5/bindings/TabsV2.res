@@ -7,7 +7,7 @@ external make: (
   ~defaultValue: string=?,
   ~autoFocus: bool=?,
   ~className: string=?,
-  ~dir: DistTypes.direction2=?,
+  ~dir: DistTypes.direction=?,
   ~id: string=?,
   ~tabIndex: int=?,
   ~title: string=?,

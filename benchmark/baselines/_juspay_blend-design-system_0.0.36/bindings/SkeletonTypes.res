@@ -2,11 +2,11 @@ type skeletonVariant =
   | @as("pulse") Pulse
   | @as("wave") Wave
   | @as("shimmer") Shimmer
-type skeletonShape =
+type skeletonShapeV61p6w =
   | @as("circle") Circle
   | @as("rectangle") Rectangle
   | @as("rounded") Rounded
-type skeletonShape2 =
+type skeletonShapeV126nt =
   | @as("circle") Circle
   | @as("square") Square
 type skeletonSkeletonTokensTypeAnimationConfig = {

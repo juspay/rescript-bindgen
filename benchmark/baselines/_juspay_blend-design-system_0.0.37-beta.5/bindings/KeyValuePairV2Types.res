@@ -9,10 +9,6 @@ type keyValuePairV2TextOverflowMode =
   | @as("wrap") Wrap
   | @as("truncate") Truncate
   | @as("wrap-clamp") WrapClamp
-type keyValuePairV2TextOverflowMode2 =
-  | @as("wrap") Wrap
-  | @as("truncate") Truncate
-  | @as("wrap-clamp") WrapClamp
 type keyValuePairV2KeyValuePairV2TokensTypeGapConfig = {
   horizontal: string,
   vertical: string,

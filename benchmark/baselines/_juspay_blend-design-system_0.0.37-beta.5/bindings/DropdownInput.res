@@ -12,7 +12,7 @@ type props = {
   size?: InputsTypes.textInputSize,
   dropDownValue?: string,
   onDropDownChange?: string => unit,
-  dropDownItems: array<SelectTypes.selectMenuGroupType>,
+  dropDownItems: array<SelectTypes.selectMenuGroupTypeK8olm>,
   dropdownName?: string,
   onDropdownOpen?: unit => unit,
   onDropdownClose?: unit => unit,
