@@ -1549,6 +1549,27 @@ export function extractModule(entryFile, opts = {}) {
 
     healGhostRecords(shared)
     healGhostsFromTwin(shared)
+    // #120: re-link fields that truncated to `string` past the bound because their (named, bounded)
+    // record type wasn't registered YET — it since materialized at a shallower site. Runs BEFORE
+    // propagateTypeParams so the new typeRefs get their `<'b>` threaded. Walks every IR tree.
+    {
+        const bk = shared.byKey
+        // entry fields: relink AND record the new dep on the entry (feeds planSharedModules). Fresh
+        // `seen` per entry so each entry's deps are fully recomputed.
+        for (const e of shared.entries) { const d = e.deps || (e.deps = new Set()); for (const t of entryChildTypes(e)) relinkRegistered(t, bk, new Set(), d) }
+        // component/function/class trees only REFERENCE shared types (one-directional) → no owner deps
+        for (const c of components) for (const p of c.ir.props || []) relinkRegistered(p.type, bk, new Set(), null)
+        for (const f of functions) {
+            for (const p of (f.ir.sig && f.ir.sig.params) || []) relinkRegistered(p.type, bk, new Set(), null)
+            if (f.ir.sig && f.ir.sig.ret) relinkRegistered(f.ir.sig.ret, bk, new Set(), null)
+            if (f.ir.value && f.ir.value.type) relinkRegistered(f.ir.value.type, bk, new Set(), null)
+        }
+        for (const c of classes) {
+            for (const p of (c.ir.ctor && c.ir.ctor.params) || []) relinkRegistered(p.type, bk, new Set(), null)
+            for (const m of c.ir.methods || []) { for (const p of m.params || []) relinkRegistered(p.type, bk, new Set(), null); if (m.ret) relinkRegistered(m.ret, bk, new Set(), null) }
+            for (const g of c.ir.getters || []) if (g.type) relinkRegistered(g.type, bk, new Set(), null)
+        }
+    }
     propagateTypeParams(shared)
     // Component/function IR trees reference shared entries too — re-sync their refs to the
     // CONVERGED tparams. A refTo taken before propagation copies the entry's tparams of that
@@ -1576,6 +1597,37 @@ export function extractModule(entryFile, opts = {}) {
     stabilizeNames(shared) // populates shared.renames; applied at emit's resolveRef chokepoint
 
     return { components, functions, classes, skipped, shared, namespaces }
+}
+
+/** Re-link a past-bound `{kind:'opaque', relinkId}` node to the record entry that has since been
+ *  registered under that type.id — mutated IN PLACE into a `typeRef` (zero-expansion; the entry
+ *  exists). Generic deep walk so every ref-bearing IR shape is covered. Fixes the registration-order
+ *  truncation where a series reached `SeriesEventsOptionsObject` past-depth before it materialized
+ *  elsewhere. (#120) */
+function relinkRegistered(t, byKey, seen, ownerDeps) {
+    if (!t || typeof t !== 'object' || seen.has(t)) return
+    seen.add(t)
+    if (t.kind === 'opaque' && t.relinkId != null) {
+        const e = byKey.get('id:' + t.relinkId)
+        if (e && e.kind === 'record') {
+            const r = refTo(e)
+            delete t.text; delete t.relinkId
+            Object.assign(t, r)
+            // Register the NEW cross-reference on the owning entry, so planSharedModules sees the
+            // edge and homes/orders the target correctly (else a `Module.t`/type-rec ordering miss).
+            if (ownerDeps && e.key) ownerDeps.add(e.key)
+            return
+        }
+        delete t.relinkId // never registered → stays the honest opaque/string fallback
+        return
+    }
+    for (const k in t) {
+        const v = t[k]
+        if (v && typeof v === 'object') {
+            if (Array.isArray(v)) { for (const x of v) relinkRegistered(x, byKey, seen, ownerDeps) }
+            else relinkRegistered(v, byKey, seen, ownerDeps)
+        }
+    }
 }
 
 /**
@@ -2133,6 +2185,14 @@ function classify(type, ctx, propName = '', depth = 0) {
                 try { return recordNode(type, ctx, propName, MAX_DEPTH, typeName(type)) }
                 finally { ctx.pastBoundBudget = prev }
             }
+        }
+        // A named object truncated here past the bound MIGHT get registered later by a shallower
+        // site (Highcharts' `seriesEventsOptionsObject`: 119 series link it, but ~118 reached it
+        // past-depth BEFORE it first materialized → `string`). Stamp its type.id so the
+        // `relinkRegistered` post-pass can re-resolve it to the now-registered record — a
+        // zero-expansion link, order-independent. (#120)
+        if (type.id != null && type.getProperties?.().length && !type.getCallSignatures().length) {
+            return { kind: 'opaque', text: checker.typeToString(type), relinkId: type.id }
         }
         return { kind: 'opaque', text: checker.typeToString(type) }
     }

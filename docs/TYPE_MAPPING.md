@@ -395,6 +395,19 @@ Highcharts graph bounded. This depended on stable naming (#90) — before it, ma
 renumbered 100+ unrelated names; now every benchmark package compiles with equal-or-better metrics.
 Fixture: [`deep-union-arms`](../test/golden/cases/deep-union-arms). (#115 item 1)
 
+**Registration-order re-link past the bound (#120).** A NAMED record reached past `MAX_DEPTH` and *not
+bounded* (or past the materialize budget) still truncates to `string` — but the SAME type is often
+registered by a **shallower** site elsewhere (Highcharts' `SeriesEventsOptionsObject`: ~119 series
+reach `events` shallowly and materialize `seriesEventsOptionsObject`, but ~118 reach it past-depth
+*before* that and got `string`). The truncation now stamps the TS `type.id` (`relinkId`) on the
+opaque node; a post-extraction `relinkRegistered` pass (runs before `propagateTypeParams`, walks every
+IR tree) re-resolves each such field to the now-registered record — a **zero-expansion** link (the
+entry already exists), so it's order-independent and never enlarges the graph. The new edge is added
+to the owning entry's `deps` so `planSharedModules` homes/orders the target correctly. A `relinkId`
+that never registers is dropped → the honest `string` fallback stays. Effect on blend: `events`,
+`dataGrouping`, `dragDrop`, … go from `string` to their real records; all other packages
+byte-identical. Fixture: [`relink-registered`](../test/golden/cases/relink-registered). (#120)
+
 **Twin healing (depth ghost ↔ shallow full sibling).** When the re-resolve above can't run because the
 shape's sub-types are a *distinct* generic instantiation (csstype gives `CSSObject['color']` vs
 `['backgroundColor']` different type ids, so `MenuV2VariantToken<StateToken<…>>` isn't deduped across
