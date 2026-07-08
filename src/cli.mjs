@@ -110,6 +110,7 @@ function parseArgs(argv) {
         else if (a === '--node-modules') o.nm = argv[++i]
         else if (a === '--project') o.project = argv[++i]
         else if (a === '--types-dir') o.typesDir = argv[++i]
+        else if (a === '--augment') (o.augment || (o.augment = [])).push(...argv[++i].split(',').map((s) => s.trim()).filter(Boolean))
         else if (a === '--webapi') o.webapi = true
         else if (a === '--no-webapi') o.webapi = false
         else if (a === '--no-html-attrs') o.htmlAttrs = false
@@ -142,6 +143,11 @@ Options:
   --node-modules <dir>  extra node_modules root to resolve --pkg from
   --project <dir>  target ReScript project whose package.json gates optional
                    deps (default: inferred from --out, then cwd)
+  --augment <mod>  load a module-AUGMENTATION .d.ts as a program root so its
+                 "declare module ... { interface X {...} }" additions merge onto
+                 the base interface (e.g. --augment highcharts/modules/xrange
+                 adds Point.x2). Repeatable, or comma-separated. Mirrors the app's
+                 opt-in "import highcharts/modules/xrange" side-effect.
   --webapi       force-emit rescript-webapi types (File -> Webapi.File.t)
   --no-webapi    never emit rescript-webapi types (File props stay flagged)
   --no-html-attrs  disable the shared HtmlAttrs.res spread for components extending
@@ -211,10 +217,10 @@ async function main() {
     let skipped = []
     let shared = null // module-level shared-type registry (multi-component runs only)
     if (single) {
-        const ir = extractComponent(entry, { from, webapi })
+        const ir = extractComponent(entry, { from, webapi, augment: opts.augment })
         units = [{ name: ir.import.name, ir }]
     } else {
-        const res = extractModule(entry, { from, webapi, htmlAttrs: opts.htmlAttrs })
+        const res = extractModule(entry, { from, webapi, htmlAttrs: opts.htmlAttrs, augment: opts.augment })
         units = res.components
         functions = res.functions || []
         classes = res.classes || []
@@ -405,6 +411,11 @@ async function main() {
         const hitSet = new Set(shared.counterHits)
         const live = [...new Set(shared.entries.filter((e) => hitSet.has(e.name)).map((e) => e.name))]
         if (live.length) console.error(`\n[bindgen] ⚠ ${live.length} counter-suffixed type name(s) — same base at the same anchor; these can renumber across versions: ${live.slice(0, 12).join(', ')}${live.length > 12 ? '…' : ''}`)
+    }
+    // A sink module (CommonTypes/InstanceTypes/WebTypes) pulled into an SCC merge = a synthetic
+    // mis-homed into a sink with a non-sink dep (a circular-module-dep risk). Flagged, not faked. (#115 pkg)
+    if (shared && shared.sinkMergeWarnings && shared.sinkMergeWarnings.length) {
+        console.error(`\n[bindgen] ⚠ ${shared.sinkMergeWarnings.length} sink module(s) merged into a shared cycle (a mis-homed synthetic — should relocate to its non-sink dep's home): ${shared.sinkMergeWarnings.join('; ')}`)
     }
     if (totalDefects) console.error(`\n[bindgen] ⚠ ${totalDefects} unknown/any prop(s) flagged as defects — review.`)
 

@@ -32,9 +32,9 @@ type selectV2ItemStates =
   | @as("focusVisible") FocusVisible
   | @as("selected") Selected
 type selectV2TooltipProps = {
-  side?: string,  // ⚪ loose — was `TooltipSide`
-  align?: string,  // ⚪ loose — was `TooltipAlign`
-  size?: string,  // ⚪ loose — was `TooltipSize`
+  side?: TooltipTypes.tooltipSide,
+  align?: TooltipTypes.tooltipAlign,
+  size?: TooltipTypes.tooltipSize,
   showArrow?: bool,
   delayDuration?: float,
   offset?: float,
@@ -43,14 +43,6 @@ type selectV2SkeletonProps = {
   count?: int,
   show?: bool,
   variant?: SkeletonTypes.skeletonVariant,
-}
-type selectV2SelectV2ItemTypeTooltipPropsConfig = {
-  side?: TooltipTypes.tooltipSide,
-  align?: TooltipTypes.tooltipAlign,
-  size?: TooltipTypes.tooltipSize,
-  showArrow?: bool,
-  delayDuration?: float,
-  offset?: float,
 }
 type rec selectV2ItemType = {
   label: string,
@@ -65,7 +57,7 @@ type rec selectV2ItemType = {
   onClick?: unit => unit,
   subMenu?: array<selectV2ItemType>,
   tooltip?: React.element,
-  tooltipProps?: selectV2SelectV2ItemTypeTooltipPropsConfig,
+  tooltipProps?: selectV2TooltipProps,
   disableTruncation?: bool,
 }
 type selectV2ItemStateToken = {

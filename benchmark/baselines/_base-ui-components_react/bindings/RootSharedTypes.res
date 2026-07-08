@@ -63,7 +63,7 @@ type rootMode =
   | @as("both") Both
   | @as("inline") Inline
   | @as("list") List
-type imageLoadingStatusV4jby7 =
+type imageLoadingStatusRoot =
   | @as("idle") Idle
   | @as("loading") Loading
   | @as("loaded") Loaded
@@ -112,6 +112,9 @@ type rootMenuStoreUseSyncedValue =
   | @as("floatingParentNodeId") FloatingParentNodeId
   | @as("itemProps") ItemProps
   | @as("keyboardEventRelay") KeyboardEventRelay
+type menuRootOrientation =
+  | @as("horizontal") Horizontal
+  | @as("vertical") Vertical
 type rootMenuStoreUseSyncedValuesInstantType =
   | @as("group") Group
   | @as("click") Click
@@ -130,9 +133,6 @@ type menuRootChangeEventReason =
   | @as("cancel-open") CancelOpen
   | @as("sibling-open") SiblingOpen
   | @as("imperative-action") ImperativeAction
-type menuRootOrientation =
-  | @as("horizontal") Horizontal
-  | @as("vertical") Vertical
 type rootNavigationMenuRootChangeEventDetailsReason =
   | @as("trigger-press") TriggerPress
   | @as("none") None
@@ -494,7 +494,7 @@ type highlightEventDetails = {
   index: int,
 }
 type avatarRootState = {
-  imageLoadingStatus: imageLoadingStatusV4jby7,
+  imageLoadingStatus: imageLoadingStatusRoot,
 }
 type checkboxRootState = {
   checked: bool,
@@ -531,7 +531,7 @@ type menuRootChangeEventDetails = {
   trigger?: Dom.element,
   preventUnmountOnClose: unit => unit,
 }
-type contextPnsh0 = {
+type contextYzo3a = {
   triggerElements: PopupsTypes.popupTriggerMap,
   popupRef: React.ref<Nullable.t<Dom.element>>,
   onOpenChange?: (bool, menuRootChangeEventDetails) => unit,
@@ -550,7 +550,7 @@ type floatingTreeStore = {
   addNode: FloatingUiReactTypes.floatingNodeType => unit,
   removeNode: FloatingUiReactTypes.floatingNodeType => unit,
 }
-type storeMenuStoreUseSyncedValuesConfigEhwpi = {
+type storeMenuStoreUseSyncedValuesConfigV1fl8t = {
   @as("open") open_?: bool,
   mounted?: bool,
   transitionStatus?: PositionerSharedTypes.transitionStatus,
@@ -581,7 +581,7 @@ type storeMenuStoreUseSyncedValuesConfigEhwpi = {
   closeDelay?: float,
   keyboardEventRelay?: ReactEvent.Keyboard.t => unit,
 }
-type storeMenuStoreSetStateConfigKh9wb = {
+type storeMenuStoreSetStateConfigV4gmvt = {
   @as("open") open_: bool,
   mounted: bool,
   transitionStatus: PositionerSharedTypes.transitionStatus,
@@ -612,40 +612,40 @@ type storeMenuStoreSetStateConfigKh9wb = {
   closeDelay: float,
   keyboardEventRelay?: ReactEvent.Keyboard.t => unit,
 }
-type menuStoreA5a7f = {
+type menuStoreV1p49k = {
   setOpen: (bool, contextMenuRootChangeEventDetails) => unit,
   unsubscribeParentListener: string,  // 🛑 BROKEN — contains `any`
-  context: contextPnsh0,
+  context: contextYzo3a,
   controlledValues: string,  // 🛑 BROKEN — contains `any`
   selectors: string,  // 🛑 BROKEN — contains `any`
   useSyncedValue: (rootMenuStoreUseSyncedValue, string) => unit,  // 🛑 BROKEN — contains `unknown`
   useSyncedValueWithCleanup: (string, string) => unit,  // 🛑 BROKEN — contains `unknown` — was `Readonly<State<unknown>>[Key]`
-  useSyncedValues: storeMenuStoreUseSyncedValuesConfigEhwpi => unit,
+  useSyncedValues: storeMenuStoreUseSyncedValuesConfigV1fl8t => unit,
   useControlledProp: (rootMenuStoreUseSyncedValue, string, string) => unit,  // 🛑 BROKEN — contains `unknown`
   set: (rootMenuStoreUseSyncedValue, string) => unit,  // 🛑 BROKEN — contains `unknown`
-  update: storeMenuStoreUseSyncedValuesConfigEhwpi => unit,
-  setState: storeMenuStoreSetStateConfigKh9wb => unit,
+  update: storeMenuStoreUseSyncedValuesConfigV1fl8t => unit,
+  setState: storeMenuStoreSetStateConfigV4gmvt => unit,
   select: (string, string) => string,  // 🛑 BROKEN — contains `unknown` — was `ReturnType<{ disabled: (state: State<unknown>) => boolean; modal: (state: State<unknown>) => boolean; allowMou`
   useState: (string, string) => string,  // 🛑 BROKEN — contains `unknown` — was `ReturnType<{ disabled: (state: State<unknown>) => boolean; modal: (state: State<unknown>) => boolean; allowMou`
   useContextCallback: (string, (bool, menuRootChangeEventDetails) => unit) => unit,  // 🛑 BROKEN — contains `unknown`
   useStateSetter: rootMenuStoreUseSyncedValue => string => unit,  // 🛑 BROKEN — contains `unknown`
   observe: string,  // ⚠️ REVIEW — match the real type by hand
-  state: storeMenuStoreSetStateConfigKh9wb,
+  state: storeMenuStoreSetStateConfigV4gmvt,
   listeners: string,  // 🛑 BROKEN — contains `any`
   updateTick: string,  // 🛑 BROKEN — contains `any`
-  subscribe: storeMenuStoreSetStateConfigKh9wb => unit => unit => unit,
-  getSnapshot: unit => storeMenuStoreSetStateConfigKh9wb,
+  subscribe: storeMenuStoreSetStateConfigV4gmvt => unit => unit => unit,
+  getSnapshot: unit => storeMenuStoreSetStateConfigV4gmvt,
   notifyAll: unit => unit,
 }
-type menuHandleV1tmcz = {
-  store: menuStoreA5a7f,
+type menuHandleJuxo8 = {
+  store: menuStoreV1p49k,
   @as("open") open_: string => unit,
   close: unit => unit,
   isOpen: bool,
 }
-type rootMenuStoreUseSyncedValuesParentConfigIsjar = {
+type rootMenuStoreUseSyncedValuesParentConfigQ3lvm = {
   @as("type") type_: string,  // ⚪ loose — was `"menu"`
-  store: menuStoreA5a7f,
+  store: menuStoreV1p49k,
 }
 type menubarContext = {
   modal: bool,
@@ -654,34 +654,34 @@ type menubarContext = {
   setContentElement: string => unit,  // ⚪ loose — was `HTMLElement`
   hasSubmenuOpen: bool,
   setHasSubmenuOpen: bool => unit,
-  orientation: string,  // ⚪ loose — was `MenuRootOrientation`
-  allowMouseUpTriggerRef: string,  // ⚪ loose — was `RefObject<boolean>`
+  orientation: menuRootOrientation,
+  allowMouseUpTriggerRef: ReactTypes.refObject,
   rootId?: string,
 }
-type rootMenuStoreUseSyncedValuesParentConfigV1xgs3 = {
+type rootMenuStoreUseSyncedValuesParentConfigV1mnyh = {
   @as("type") type_: string,  // ⚪ loose — was `"menubar"`
   context: menubarContext,
 }
 type contextMenuRootContext = {
   anchor: string,  // ⚪ loose — was `{ getBoundingClientRect: () => DOMRect; }`
-  setAnchor: string => unit,  // ⚪ loose — was `SetStateAction<{ getBoundingClientRect: () => DOMRect; }>`
+  setAnchor: string => unit,  // ⚠️ REVIEW — was `SetStateAction<{ getBoundingClientRect: () => DOMRect; }>` — match the real type by hand
   backdropRef: string,  // ⚪ loose — was `RefObject<HTMLDivElement>`
   internalBackdropRef: string,  // ⚪ loose — was `RefObject<HTMLDivElement>`
-  actionsRef: string,  // ⚪ loose — was `RefObject<{ setOpen: (nextOpen: boolean, eventDetails: ContextMenuRootChangeEventDetails) => void; }>`
+  actionsRef: ReactTypes.refObject,
   positionerRef: string,  // ⚪ loose — was `RefObject<HTMLElement>`
-  allowMouseUpTriggerRef: string,  // ⚪ loose — was `RefObject<boolean>`
-  initialCursorPointRef: string,  // ⚪ loose — was `RefObject<{ x: number; y: number; }>`
+  allowMouseUpTriggerRef: ReactTypes.refObject,
+  initialCursorPointRef: ReactTypes.refObject,
   rootId?: string,
 }
-type rootMenuStoreUseSyncedValuesParentConfigRgt4b = {
+type rootMenuStoreUseSyncedValuesParentConfigV6nsol = {
   @as("type") type_: string,  // ⚪ loose — was `"context-menu"`
   context: contextMenuRootContext,
 }
 type menuRootContext = {
-  store: menuStoreA5a7f,
+  store: menuStoreV1p49k,
   parent: string,  // ⚪ loose — was `MenuParent`
 }
-type rootMenuStoreUseSyncedValuesParentConfigV1m6br = {
+type rootMenuStoreUseSyncedValuesParentConfigV1v6oy = {
   @as("type") type_: string,  // ⚪ loose — was `"nested-context-menu"`
   context: contextMenuRootContext,
   menuContext: menuRootContext,
@@ -689,7 +689,7 @@ type rootMenuStoreUseSyncedValuesParentConfigV1m6br = {
 type rootMenuStoreUseSyncedValuesParentConfigV1ie0u = {
   @as("type") type_: string,  // ⚪ loose — was `undefined`
 }
-type dialogStoreV1flhg<'a> = {
+type dialogStoreV1esv5<'a> = {
   setOpen: (bool, rootDialogStoreSetOpenConfig) => unit,
   context: contextKzmu9,
   controlledValues: string,  // 🛑 BROKEN — contains `any`
@@ -713,14 +713,14 @@ type dialogStoreV1flhg<'a> = {
   getSnapshot: unit => storeDialogStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
-type dialogHandleV1opt9<'a> = {
-  store: dialogStoreV1flhg<'a>,
+type dialogHandleV28v13<'a> = {
+  store: dialogStoreV1esv5<'a>,
   @as("open") open_: Nullable.t<string> => unit,
   openWithPayload: 'a => unit,
   close: unit => unit,
   isOpen: bool,
 }
-type dialogStoreV11a9x<'a> = {
+type dialogStoreV17530<'a> = {
   setOpen: (bool, rootDialogStoreSetOpenConfig) => unit,
   context: contextKzmu9,
   controlledValues: string,  // 🛑 BROKEN — contains `any`
@@ -744,8 +744,8 @@ type dialogStoreV11a9x<'a> = {
   getSnapshot: unit => storeDialogStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
-type dialogHandleV3jv8p<'a> = {
-  store: dialogStoreV11a9x<'a>,
+type dialogHandleV1ff89<'a> = {
+  store: dialogStoreV17530<'a>,
   @as("open") open_: Nullable.t<string> => unit,
   openWithPayload: 'a => unit,
   close: unit => unit,
@@ -775,7 +775,7 @@ type rootFieldValidityStateValidityConfig = {
 type fieldsetRootState = {
   disabled: bool,
 }
-type storeMenuStoreUseSyncedValuesConfigV10edq<'a> = {
+type storeMenuStoreUseSyncedValuesConfigV1kx9i<'a> = {
   @as("open") open_?: bool,
   mounted?: bool,
   transitionStatus?: PositionerSharedTypes.transitionStatus,
@@ -806,7 +806,7 @@ type storeMenuStoreUseSyncedValuesConfigV10edq<'a> = {
   closeDelay?: float,
   keyboardEventRelay?: ReactEvent.Keyboard.t => unit,
 }
-type storeMenuStoreSetStateConfigV14f2z<'a> = {
+type storeMenuStoreSetStateConfigBl3d6<'a> = {
   @as("open") open_: bool,
   mounted: bool,
   transitionStatus: PositionerSharedTypes.transitionStatus,
@@ -837,64 +837,64 @@ type storeMenuStoreSetStateConfigV14f2z<'a> = {
   closeDelay: float,
   keyboardEventRelay?: ReactEvent.Keyboard.t => unit,
 }
-type menuStoreV1dmqg<'a> = {
+type menuStoreO5vcw<'a> = {
   setOpen: (bool, contextMenuRootChangeEventDetails) => unit,
   unsubscribeParentListener: string,  // 🛑 BROKEN — contains `any`
-  context: contextPnsh0,
+  context: contextYzo3a,
   controlledValues: string,  // 🛑 BROKEN — contains `any`
   selectors: string,  // 🛑 BROKEN — contains `any`
   useSyncedValue: (rootMenuStoreUseSyncedValue, string) => unit,  // 🛑 BROKEN — contains `unknown`
   useSyncedValueWithCleanup: (string, string) => unit,  // 🛑 BROKEN — contains `unknown` — was `Readonly<State<Payload>>[Key]`
-  useSyncedValues: storeMenuStoreUseSyncedValuesConfigV10edq<'a> => unit,
+  useSyncedValues: storeMenuStoreUseSyncedValuesConfigV1kx9i<'a> => unit,
   useControlledProp: (rootMenuStoreUseSyncedValue, string, string) => unit,  // 🛑 BROKEN — contains `unknown`
   set: (rootMenuStoreUseSyncedValue, string) => unit,  // 🛑 BROKEN — contains `unknown`
-  update: storeMenuStoreUseSyncedValuesConfigV10edq<'a> => unit,
-  setState: storeMenuStoreSetStateConfigV14f2z<'a> => unit,
+  update: storeMenuStoreUseSyncedValuesConfigV1kx9i<'a> => unit,
+  setState: storeMenuStoreSetStateConfigBl3d6<'a> => unit,
   select: (string, string) => string,  // 🛑 BROKEN — contains `unknown` — was `ReturnType<{ disabled: (state: State<unknown>) => boolean; modal: (state: State<unknown>) => boolean; allowMou`
   useState: (string, string) => string,  // 🛑 BROKEN — contains `unknown` — was `ReturnType<{ disabled: (state: State<unknown>) => boolean; modal: (state: State<unknown>) => boolean; allowMou`
   useContextCallback: (string, (bool, menuRootChangeEventDetails) => unit) => unit,  // 🛑 BROKEN — contains `unknown`
   useStateSetter: rootMenuStoreUseSyncedValue => string => unit,  // 🛑 BROKEN — contains `unknown`
   observe: string,  // ⚠️ REVIEW — match the real type by hand
-  state: storeMenuStoreSetStateConfigV14f2z<'a>,
+  state: storeMenuStoreSetStateConfigBl3d6<'a>,
   listeners: string,  // 🛑 BROKEN — contains `any`
   updateTick: string,  // 🛑 BROKEN — contains `any`
-  subscribe: storeMenuStoreSetStateConfigV14f2z<'a> => unit => unit => unit,
-  getSnapshot: unit => storeMenuStoreSetStateConfigV14f2z<'a>,
+  subscribe: storeMenuStoreSetStateConfigBl3d6<'a> => unit => unit => unit,
+  getSnapshot: unit => storeMenuStoreSetStateConfigBl3d6<'a>,
   notifyAll: unit => unit,
 }
-type menuHandleV18lc1<'a> = {
-  store: menuStoreV1dmqg<'a>,
+type menuHandleV1v3rq<'a> = {
+  store: menuStoreO5vcw<'a>,
   @as("open") open_: string => unit,
   close: unit => unit,
   isOpen: bool,
 }
-type menuStoreUmff2<'a> = {
+type menuStoreJhwnn<'a> = {
   setOpen: (bool, contextMenuRootChangeEventDetails) => unit,
   unsubscribeParentListener: string,  // 🛑 BROKEN — contains `any`
-  context: contextPnsh0,
+  context: contextYzo3a,
   controlledValues: string,  // 🛑 BROKEN — contains `any`
   selectors: string,  // 🛑 BROKEN — contains `any`
   useSyncedValue: (TriggerTypes.triggerMenuStoreUseSyncedValue, string) => unit,  // 🛑 BROKEN — contains `unknown`
   useSyncedValueWithCleanup: (string, string) => unit,  // 🛑 BROKEN — contains `unknown` — was `Readonly<State<Payload>>[Key]`
-  useSyncedValues: storeMenuStoreUseSyncedValuesConfigV10edq<'a> => unit,
+  useSyncedValues: storeMenuStoreUseSyncedValuesConfigV1kx9i<'a> => unit,
   useControlledProp: (TriggerTypes.triggerMenuStoreUseSyncedValue, string, string) => unit,  // 🛑 BROKEN — contains `unknown`
   set: (TriggerTypes.triggerMenuStoreUseSyncedValue, string) => unit,  // 🛑 BROKEN — contains `unknown`
-  update: storeMenuStoreUseSyncedValuesConfigV10edq<'a> => unit,
-  setState: storeMenuStoreSetStateConfigV14f2z<'a> => unit,
+  update: storeMenuStoreUseSyncedValuesConfigV1kx9i<'a> => unit,
+  setState: storeMenuStoreSetStateConfigBl3d6<'a> => unit,
   select: (string, string) => string,  // 🛑 BROKEN — contains `unknown` — was `ReturnType<{ disabled: (state: State<unknown>) => boolean; modal: (state: State<unknown>) => boolean; allowMou`
   useState: (string, string) => string,  // 🛑 BROKEN — contains `unknown` — was `ReturnType<{ disabled: (state: State<unknown>) => boolean; modal: (state: State<unknown>) => boolean; allowMou`
   useContextCallback: (string, (bool, menuRootChangeEventDetails) => unit) => unit,  // 🛑 BROKEN — contains `unknown`
   useStateSetter: TriggerTypes.triggerMenuStoreUseSyncedValue => string => unit,  // 🛑 BROKEN — contains `unknown`
   observe: string,  // ⚠️ REVIEW — match the real type by hand
-  state: storeMenuStoreSetStateConfigV14f2z<'a>,
+  state: storeMenuStoreSetStateConfigBl3d6<'a>,
   listeners: string,  // 🛑 BROKEN — contains `any`
   updateTick: string,  // 🛑 BROKEN — contains `any`
-  subscribe: storeMenuStoreSetStateConfigV14f2z<'a> => unit => unit => unit,
-  getSnapshot: unit => storeMenuStoreSetStateConfigV14f2z<'a>,
+  subscribe: storeMenuStoreSetStateConfigBl3d6<'a> => unit => unit => unit,
+  getSnapshot: unit => storeMenuStoreSetStateConfigBl3d6<'a>,
   notifyAll: unit => unit,
 }
-type menuHandleV7ww9l<'a> = {
-  store: menuStoreUmff2<'a>,
+type menuHandleM6ahi<'a> = {
+  store: menuStoreJhwnn<'a>,
   @as("open") open_: string => unit,
   close: unit => unit,
   isOpen: bool,
@@ -963,7 +963,7 @@ type rootPopoverStoreSetOpenConfig = {
   isPropagationAllowed: bool,
   trigger?: Dom.element,
 }
-type contextV1j4w5 = {
+type contextV17kk7 = {
   triggerElements: PopupsTypes.popupTriggerMap,
   popupRef: React.ref<Nullable.t<Dom.element>>,
   onOpenChange?: (bool, popoverRootChangeEventDetails) => unit,
@@ -1026,10 +1026,10 @@ type storePopoverStoreSetStateConfig<'a> = {
   openOnHover: bool,
   closeDelay: float,
 }
-type popoverStoreV11l3j<'a> = {
+type popoverStoreV19e7t<'a> = {
   setOpen: (bool, rootPopoverStoreSetOpenConfig) => unit,
   disposeEffect: string,  // 🛑 BROKEN — contains `any`
-  context: contextV1j4w5,
+  context: contextV17kk7,
   controlledValues: string,  // 🛑 BROKEN — contains `any`
   selectors: string,  // 🛑 BROKEN — contains `any`
   useSyncedValue: (rootPopoverStoreUseSyncedValue, string) => unit,  // 🛑 BROKEN — contains `unknown`
@@ -1051,16 +1051,16 @@ type popoverStoreV11l3j<'a> = {
   getSnapshot: unit => storePopoverStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
-type popoverHandleV11q3b<'a> = {
-  store: popoverStoreV11l3j<'a>,
+type popoverHandleRlv41<'a> = {
+  store: popoverStoreV19e7t<'a>,
   @as("open") open_: string => unit,
   close: unit => unit,
   isOpen: bool,
 }
-type popoverStoreJlecc<'a> = {
+type popoverStoreV7ir51<'a> = {
   setOpen: (bool, rootPopoverStoreSetOpenConfig) => unit,
   disposeEffect: string,  // 🛑 BROKEN — contains `any`
-  context: contextV1j4w5,
+  context: contextV17kk7,
   controlledValues: string,  // 🛑 BROKEN — contains `any`
   selectors: string,  // 🛑 BROKEN — contains `any`
   useSyncedValue: (TriggerTypes.triggerPopoverStoreUseSyncedValue, string) => unit,  // 🛑 BROKEN — contains `unknown`
@@ -1082,8 +1082,8 @@ type popoverStoreJlecc<'a> = {
   getSnapshot: unit => storePopoverStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
-type popoverHandleTm26m<'a> = {
-  store: popoverStoreJlecc<'a>,
+type popoverHandleC2eo0<'a> = {
+  store: popoverStoreV7ir51<'a>,
   @as("open") open_: string => unit,
   close: unit => unit,
   isOpen: bool,
@@ -1285,7 +1285,7 @@ type rootTooltipStoreSetOpenConfig = {
   isPropagationAllowed: bool,
   trigger?: Dom.element,
 }
-type contextV1rw69 = {
+type contextV1ht4f = {
   triggerElements: PopupsTypes.popupTriggerMap,
   popupRef: React.ref<Nullable.t<Dom.element>>,
   onOpenChange?: (bool, tooltipRootChangeEventDetails) => unit,
@@ -1335,9 +1335,9 @@ type storeTooltipStoreSetStateConfig<'a> = {
   openChangeReason: Nullable.t<tooltipRootChangeEventReason>,
   closeDelay: float,
 }
-type tooltipStoreV12qsv<'a> = {
+type tooltipStoreV1sf5p<'a> = {
   setOpen: (bool, rootTooltipStoreSetOpenConfig) => unit,
-  context: contextV1rw69,
+  context: contextV1ht4f,
   controlledValues: string,  // 🛑 BROKEN — contains `any`
   selectors: string,  // 🛑 BROKEN — contains `any`
   useSyncedValue: (rootTooltipStoreUseSyncedValue, string) => unit,  // 🛑 BROKEN — contains `unknown`
@@ -1359,15 +1359,15 @@ type tooltipStoreV12qsv<'a> = {
   getSnapshot: unit => storeTooltipStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
-type tooltipHandleT7r3r<'a> = {
-  store: tooltipStoreV12qsv<'a>,
+type tooltipHandleV1bmbk<'a> = {
+  store: tooltipStoreV1sf5p<'a>,
   @as("open") open_: string => unit,
   close: unit => unit,
   isOpen: bool,
 }
-type tooltipStoreDjbew<'a> = {
+type tooltipStoreV1mj2t<'a> = {
   setOpen: (bool, rootTooltipStoreSetOpenConfig) => unit,
-  context: contextV1rw69,
+  context: contextV1ht4f,
   controlledValues: string,  // 🛑 BROKEN — contains `any`
   selectors: string,  // 🛑 BROKEN — contains `any`
   useSyncedValue: (TriggerTypes.triggerTooltipStoreUseSyncedValue, string) => unit,  // 🛑 BROKEN — contains `unknown`
@@ -1389,8 +1389,8 @@ type tooltipStoreDjbew<'a> = {
   getSnapshot: unit => storeTooltipStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
-type tooltipHandleV1ow47<'a> = {
-  store: tooltipStoreDjbew<'a>,
+type tooltipHandleV1l1r5<'a> = {
+  store: tooltipStoreV1mj2t<'a>,
   @as("open") open_: string => unit,
   close: unit => unit,
   isOpen: bool,

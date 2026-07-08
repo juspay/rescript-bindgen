@@ -216,6 +216,11 @@ type cursorChangeReason =
   | @as(4) Paste
   | @as(5) Undo
   | @as(6) Redo
+type codeEditorV2IMouseTargetOutsideEditorOutsidePosition =
+  | @as("left") Left
+  | @as("right") Right
+  | @as("above") Above
+  | @as("below") Below
 type keyCode =
   | @as(-1) DependsOnKbLayout
   | @as(0) Unknown
@@ -365,14 +370,6 @@ type endOfLinePreference =
 type endOfLineSequence =
   | @as(0) LF
   | @as(1) CRLF
-type trackedRangeStickiness =
-  | @as(0) AlwaysGrowsWhenTypingAtEdges
-  | @as(1) NeverGrowsWhenTypingAtEdges
-  | @as(2) GrowsOnlyWhenTypingBefore
-  | @as(3) GrowsOnlyWhenTypingAfter
-type textDirection =
-  | @as(0) LTR
-  | @as(1) RTL
 type codeEditorV2IEditorOptionsCursorSurroundingLinesStyle =
   | @as("all") All
   | @as("default") Default
@@ -436,10 +433,6 @@ type codeEditorV2IEditorOptionsCursorStyle =
   | @as("line-thin") LineThin
   | @as("block-outline") BlockOutline
   | @as("underline-thin") UnderlineThin
-type codeEditorV2IEditorOptionsDefaultColorDecorators =
-  | @as("auto") Auto
-  | @as("always") Always
-  | @as("never") Never
 type codeEditorV2IEditorOptionsWordWrap =
   | @as("off") Off
   | @as("on") On
@@ -838,7 +831,7 @@ type variantTokenV1snf1 = {
   container: string,
   @as("no-container") noContainer: string,
 }
-type sizeTokenV10cld = {
+type sizeTokenV7wrml = {
   sm: variantTokenV1snf1,
   md: variantTokenV1snf1,
   lg: variantTokenV1snf1,
@@ -849,14 +842,14 @@ type singleSelectV2VariantTokenContainerConfig = {
   bottom: string,
   left: string,
 }
-type variantTokenV3iu27 = {
+type variantTokenV11o5e = {
   container: singleSelectV2VariantTokenContainerConfig,
   @as("no-container") noContainer: singleSelectV2VariantTokenContainerConfig,
 }
-type sizeTokenV5a2hx = {
-  sm: variantTokenV3iu27,
-  md: variantTokenV3iu27,
-  lg: variantTokenV3iu27,
+type sizeTokenV1kole = {
+  sm: variantTokenV11o5e,
+  md: variantTokenV11o5e,
+  lg: variantTokenV11o5e,
 }
 type triggerStateTokenSingleSelectV2 = {
   hover: string,
@@ -865,7 +858,7 @@ type triggerStateTokenSingleSelectV2 = {
   @as("open") open_: string,
   closed: string,
 }
-type variantTokenV185i4 = {
+type variantTokenX9v7k = {
   container: triggerStateTokenSingleSelectV2,
   @as("no-container") noContainer: triggerStateTokenSingleSelectV2,
 }
@@ -879,12 +872,12 @@ type singleSelectV2SingleSelectV2TokensTypeTriggerPlaceholderConfig = {
   fontWeight: string,
 }
 type singleSelectV2SingleSelectV2TokensTypeTriggerConfig = {
-  height: sizeTokenV10cld,
-  padding: sizeTokenV5a2hx,
-  borderRadius: sizeTokenV10cld,
+  height: sizeTokenV7wrml,
+  padding: sizeTokenV1kole,
+  borderRadius: sizeTokenV7wrml,
   boxShadow: variantTokenV1snf1,
-  backgroundColor: variantTokenV185i4,
-  outline: variantTokenV185i4,
+  backgroundColor: variantTokenX9v7k,
+  outline: variantTokenX9v7k,
   slot: singleSelectV2SingleSelectV2TokensTypeTriggerSlotConfig,
   placeholder: singleSelectV2SingleSelectV2TokensTypeTriggerPlaceholderConfig,
   selectedValue: singleSelectV2SingleSelectV2TokensTypeTriggerPlaceholderConfig,
@@ -956,7 +949,7 @@ type singleSelectV2SingleSelectV2TokensTypeMenuSubmenuConfig = {
 }
 type singleSelectV2SingleSelectV2TokensTypeMenuConfig = {
   content: singleSelectV2SingleSelectV2TokensTypeMenuContentConfig,
-  padding: sizeTokenV5a2hx,
+  padding: sizeTokenV1kole,
   groupLabel: singleSelectV2SingleSelectV2TokensTypeMenuGroupLabelConfig,
   item: singleSelectV2SingleSelectV2TokensTypeMenuItemConfig,
   submenu: singleSelectV2SingleSelectV2TokensTypeMenuSubmenuConfig,
@@ -1012,7 +1005,7 @@ type variantTokenV1snf12 = {
   container: string,
   @as("no-container") noContainer: string,
 }
-type sizeTokenV5c1ol = {
+type sizeTokenGdnwa = {
   sm: variantTokenV1snf12,
   md: variantTokenV1snf12,
   lg: variantTokenV1snf12,
@@ -1023,14 +1016,14 @@ type multiSelectV2VariantTokenContainerConfig = {
   bottom: string,
   left: string,
 }
-type variantTokenV12kh5 = {
+type variantTokenNutef = {
   container: multiSelectV2VariantTokenContainerConfig,
   @as("no-container") noContainer: multiSelectV2VariantTokenContainerConfig,
 }
-type sizeTokenV7m0wt = {
-  sm: variantTokenV12kh5,
-  md: variantTokenV12kh5,
-  lg: variantTokenV12kh5,
+type sizeTokenV1ui9a = {
+  sm: variantTokenNutef,
+  md: variantTokenNutef,
+  lg: variantTokenNutef,
 }
 type triggerStateTokenMultiSelectV2 = {
   hover: string,
@@ -1039,7 +1032,7 @@ type triggerStateTokenMultiSelectV2 = {
   @as("open") open_: string,
   closed: string,
 }
-type variantTokenYjc5g = {
+type variantTokenAsc47 = {
   container: triggerStateTokenMultiSelectV2,
   @as("no-container") noContainer: triggerStateTokenMultiSelectV2,
 }
@@ -1090,12 +1083,12 @@ type multiSelectV2MultiSelectV2TokensTypeTriggerPlaceholderConfig = {
   fontWeight: string,
 }
 type multiSelectV2MultiSelectV2TokensTypeTriggerConfig = {
-  height: sizeTokenV5c1ol,
-  padding: sizeTokenV7m0wt,
-  borderRadius: sizeTokenV5c1ol,
+  height: sizeTokenGdnwa,
+  padding: sizeTokenV1ui9a,
+  borderRadius: sizeTokenGdnwa,
   boxShadow: variantTokenV1snf12,
-  backgroundColor: variantTokenYjc5g,
-  outline: variantTokenYjc5g,
+  backgroundColor: variantTokenAsc47,
+  outline: variantTokenAsc47,
   slot: multiSelectV2MultiSelectV2TokensTypeTriggerSlotConfig,
   selectionTag: contextMultiSelectV2TokensTypeTriggerSelectionTagConfig,
   chevron: multiSelectV2MultiSelectV2TokensTypeTriggerChevronConfig,
@@ -1162,7 +1155,7 @@ type multiSelectV2MultiSelectV2TokensTypeMenuConfig = {
   backgroundColor: string,
   border: string,
   borderRadius: string,
-  padding: sizeTokenV7m0wt,
+  padding: sizeTokenV1ui9a,
   minWidth: string,
   scroll: multiSelectV2MultiSelectV2TokensTypeMenuScrollConfig,
   header: multiSelectV2MultiSelectV2TokensTypeMenuHeaderConfig,
@@ -1875,7 +1868,7 @@ type embeddedSingleSelectOptions = {
   menuAlignment: SelectV2Types.selectV2Alignment,
   menuSideOffset: float,
   menuAlignOffset: float,
-  defaultSingleSelectGroupPosition: ChartsTypes.chartsPlotOrganizationOptionsHangingSide,
+  defaultSingleSelectGroupPosition: ChartsTypes.chartsSeriesOrganizationOptionsHangingSide,
 }
 type inputsV2FOCUSRINGSTYLESConfig = {
   boxShadow: string,  // ⚪ loose — was `"0 0 0 3px #EFF6FF"`
@@ -1937,8 +1930,14 @@ type codeEditorV2GetPlaceholderPositionConfig = {
 type iDisposable = {
   dispose: unit => unit,
 }
+type iRange = {
+  startLineNumber: float,
+  startColumn: float,
+  endLineNumber: float,
+  endColumn: float,
+}
 type iModelContentChange = {
-  range: string,  // ⚪ loose — was `IRange`
+  range: iRange,
   rangeOffset: float,
   rangeLength: float,
   text: string,
@@ -1967,17 +1966,21 @@ type iModelOptionsChangedEvent = {
 type configurationChangedEvent = {
   hasChanged: editorOption => bool,
 }
+type iPosition = {
+  lineNumber: float,
+  column: float,
+}
 type rec position = {
   lineNumber: float,
   column: float,
   @as("with") with_: (option<float>, option<float>) => position,
   delta: (option<float>, option<float>) => position,
-  equals: string => bool,  // ⚪ loose — was `IPosition`
-  isBefore: string => bool,  // ⚪ loose — was `IPosition`
-  isBeforeOrEqual: string => bool,  // ⚪ loose — was `IPosition`
+  equals: iPosition => bool,
+  isBefore: iPosition => bool,
+  isBeforeOrEqual: iPosition => bool,
   clone: unit => position,
   toString: unit => string,
-  toJSON: unit => string,  // ⚪ loose — was `IPosition`
+  toJSON: unit => iPosition,
 }
 type iCursorPositionChangedEvent = {
   position: position,
@@ -1985,14 +1988,43 @@ type iCursorPositionChangedEvent = {
   reason: cursorChangeReason,
   source: string,
 }
+type iSelection = {
+  selectionStartLineNumber: float,
+  selectionStartColumn: float,
+  positionLineNumber: float,
+  positionColumn: float,
+}
+type rec range = {
+  startLineNumber: float,
+  startColumn: float,
+  endLineNumber: float,
+  endColumn: float,
+  isEmpty: unit => bool,
+  containsPosition: iPosition => bool,
+  containsRange: iRange => bool,
+  strictContainsRange: iRange => bool,
+  plusRange: iRange => range,
+  intersectRanges: iRange => Nullable.t<range>,
+  equalsRange: Nullable.t<iRange> => bool,
+  getEndPosition: unit => position,
+  getStartPosition: unit => position,
+  toString: unit => string,
+  setEndPosition: (float, float) => range,
+  setStartPosition: (float, float) => range,
+  collapseToStart: unit => range,
+  collapseToEnd: unit => range,
+  delta: float => range,
+  isSingleLine: unit => bool,
+  toJSON: unit => iRange,
+}
 type rec selection = {
   selectionStartLineNumber: float,
   selectionStartColumn: float,
   positionLineNumber: float,
   positionColumn: float,
   toString: unit => string,
-  equalsSelection: string => bool,  // ⚪ loose — was `ISelection`
-  getDirection: unit => string,  // ⚪ loose — was `SelectionDirection`
+  equalsSelection: iSelection => bool,
+  getDirection: unit => CommonTypes.v0OrV1,
   setEndPosition: (float, float) => selection,
   getPosition: unit => position,
   getSelectionStart: unit => position,
@@ -2002,19 +2034,19 @@ type rec selection = {
   endLineNumber: float,
   endColumn: float,
   isEmpty: unit => bool,
-  containsPosition: string => bool,  // ⚪ loose — was `IPosition`
-  containsRange: string => bool,  // ⚪ loose — was `IRange`
-  strictContainsRange: string => bool,  // ⚪ loose — was `IRange`
-  plusRange: string => string,  // ⚪ loose — was `Range`
-  intersectRanges: string => string,  // ⚪ loose — was `Range`
-  equalsRange: string => bool,  // ⚪ loose — was `IRange`
+  containsPosition: iPosition => bool,
+  containsRange: iRange => bool,
+  strictContainsRange: iRange => bool,
+  plusRange: iRange => range,
+  intersectRanges: iRange => Nullable.t<range>,
+  equalsRange: Nullable.t<iRange> => bool,
   getEndPosition: unit => position,
   getStartPosition: unit => position,
-  collapseToStart: unit => string,  // ⚪ loose — was `Range`
-  collapseToEnd: unit => string,  // ⚪ loose — was `Range`
-  delta: float => string,  // ⚪ loose — was `Range`
+  collapseToStart: unit => range,
+  collapseToEnd: unit => range,
+  delta: float => range,
   isSingleLine: unit => bool,
-  toJSON: unit => string,  // ⚪ loose — was `IRange`
+  toJSON: unit => iRange,
 }
 type iCursorSelectionChangedEvent = {
   selection: selection,
@@ -2025,6 +2057,13 @@ type iCursorSelectionChangedEvent = {
   source: string,
   reason: cursorChangeReason,
 }
+type uriComponents = {
+  scheme: string,
+  authority?: string,
+  path?: string,
+  query?: string,
+  fragment?: string,
+}
 type rec uri = {
   scheme: string,
   authority: string,
@@ -2034,7 +2073,7 @@ type rec uri = {
   fsPath: string,
   @as("with") with_: string => uri,  // ⚪ loose — was `{ scheme?: string; authority?: string; path?: string; query?: string; fragment?: string; }`
   toString: option<bool> => string,
-  toJSON: unit => string,  // ⚪ loose — was `UriComponents`
+  toJSON: unit => uriComponents,
 }
 type iModelChangedEvent = {
   oldModelUrl: Nullable.t<uri>,
@@ -2045,29 +2084,6 @@ type iModelDecorationsChangedEvent = {
   affectsOverviewRuler: bool,
   affectsGlyphMargin: bool,
   affectsLineNumber: bool,
-}
-type rec range = {
-  startLineNumber: float,
-  startColumn: float,
-  endLineNumber: float,
-  endColumn: float,
-  isEmpty: unit => bool,
-  containsPosition: string => bool,  // ⚪ loose — was `IPosition`
-  containsRange: string => bool,  // ⚪ loose — was `IRange`
-  strictContainsRange: string => bool,  // ⚪ loose — was `IRange`
-  plusRange: string => range,  // ⚪ loose — was `IRange`
-  intersectRanges: string => Nullable.t<range>,  // ⚪ loose — was `IRange`
-  equalsRange: string => bool,  // ⚪ loose — was `IRange`
-  getEndPosition: unit => position,
-  getStartPosition: unit => position,
-  toString: unit => string,
-  setEndPosition: (float, float) => range,
-  setStartPosition: (float, float) => range,
-  collapseToStart: unit => range,
-  collapseToEnd: unit => range,
-  delta: float => range,
-  isSingleLine: unit => bool,
-  toJSON: unit => string,  // ⚪ loose — was `IRange`
 }
 type iPasteEvent = {
   range: range,
@@ -2107,19 +2123,57 @@ type iMouseTargetTextarea = {
   element: string,  // ⚪ loose — was `HTMLElement`
   mouseColumn: float,
 }
+type iMouseTargetMarginData = {
+  isAfterLines: bool,
+  glyphMarginLeft: float,
+  glyphMarginWidth: float,
+  glyphMarginLane?: CommonTypes.v1OrV2OrV3,
+  lineNumbersWidth: float,
+  offsetX: float,
+}
 type iMouseTargetMargin = {
-  @as("type") type_: string,  // ⚪ loose — was `MouseTargetType.GUTTER_GLYPH_MARGIN | MouseTargetType.GUTTER_LINE_NUMBERS | MouseTargetType.GUTTER_LINE_DECORA`
+  @as("type") type_: CommonTypes.v2OrV3OrV4,
   position: position,
   range: range,
-  detail: string,  // ⚪ loose — was `IMouseTargetMarginData`
+  detail: iMouseTargetMarginData,
   element: string,  // ⚪ loose — was `HTMLElement`
   mouseColumn: float,
+}
+type iMouseTargetViewZoneData = {
+  viewZoneId: string,
+  positionBefore: Nullable.t<position>,
+  positionAfter: Nullable.t<position>,
+  position: position,
+  afterLineNumber: float,
+}
+type iMouseTargetViewZone = {
+  @as("type") type_: CommonTypes.v5OrV8,
+  position: position,
+  range: range,
+  detail: iMouseTargetViewZoneData,
+  element: string,  // ⚪ loose — was `HTMLElement`
+  mouseColumn: float,
+}
+type iMouseTargetContentTextData = {
+  mightBeForeignElement: bool,
 }
 type iMouseTargetContentText = {
   @as("type") type_: float,
   position: position,
   range: range,
-  detail: string,  // ⚪ loose — was `IMouseTargetContentTextData`
+  detail: iMouseTargetContentTextData,
+  element: string,  // ⚪ loose — was `HTMLElement`
+  mouseColumn: float,
+}
+type iMouseTargetContentEmptyData = {
+  isAfterLines: bool,
+  horizontalDistanceToText?: float,
+}
+type iMouseTargetContentEmpty = {
+  @as("type") type_: float,
+  position: position,
+  range: range,
+  detail: iMouseTargetContentEmptyData,
   element: string,  // ⚪ loose — was `HTMLElement`
   mouseColumn: float,
 }
@@ -2140,7 +2194,7 @@ type iMouseTargetScrollbar = {
 }
 type iMouseTargetOutsideEditor = {
   @as("type") type_: float,
-  outsidePosition: string,  // ⚪ loose — was `"left" | "right" | "above" | "below"`
+  outsidePosition: codeEditorV2IMouseTargetOutsideEditorOutsidePosition,
   outsideDistance: float,
   element: string,  // ⚪ loose — was `HTMLElement`
   position: Nullable.t<position>,
@@ -2152,9 +2206,9 @@ module IMouseTarget = {
   external fromIMouseTargetUnknown: iMouseTargetUnknown => t = "%identity"
   external fromIMouseTargetTextarea: iMouseTargetTextarea => t = "%identity"
   external fromIMouseTargetMargin: iMouseTargetMargin => t = "%identity"
-  external fromIMouseTargetViewZone: iMouseTargetMargin => t = "%identity"
+  external fromIMouseTargetViewZone: iMouseTargetViewZone => t = "%identity"
   external fromIMouseTargetContentText: iMouseTargetContentText => t = "%identity"
-  external fromIMouseTargetContentEmpty: iMouseTargetContentText => t = "%identity"
+  external fromIMouseTargetContentEmpty: iMouseTargetContentEmpty => t = "%identity"
   external fromIMouseTargetContentWidget: iMouseTargetContentWidget => t = "%identity"
   external fromIMouseTargetOverlayWidget: iMouseTargetContentWidget => t = "%identity"
   external fromIMouseTargetScrollbar: iMouseTargetScrollbar => t = "%identity"
@@ -2236,10 +2290,6 @@ type iScrollEvent = {
   scrollWidthChanged: bool,
   scrollHeightChanged: bool,
 }
-type iPosition = {
-  lineNumber: float,
-  column: float,
-}
 type iCursorState = {
   inSelectionMode: bool,
   selectionStart: iPosition,
@@ -2274,40 +2324,54 @@ type textModelResolvedOptions = {
 type iTextSnapshot = {
   read: unit => Nullable.t<string>,
 }
-type iRange = {
-  startLineNumber: float,
-  startColumn: float,
-  endLineNumber: float,
-  endColumn: float,
-}
+@unboxed type stringOrITextSnapshot = Str(string) | ITextSnapshot(iTextSnapshot)
 type findMatch = {
   _findMatchBrand: string,  // ⚪ loose — was `void`
   range: range,
   matches: array<string>,
+}
+@unboxed type iRangeOrIRangeArray = IRange(iRange) | IRangeArr(array<iRange>)
+module FindMatches = {
+  type t
+  external asSearchString: t => ((string, bool, bool, bool, Nullable.t<string>, bool, option<float>) => array<findMatch>) = "%identity"
+  external asSearchString2: t => ((string, iRangeOrIRangeArray, bool, bool, Nullable.t<string>, bool, option<float>) => array<findMatch>) = "%identity"
 }
 type iWordAtPosition = {
   word: string,
   startColumn: float,
   endColumn: float,
 }
-type iModelDeltaDecoration = {
-  range: iRange,
-  options: string,  // ⚪ loose — was `IModelDecorationOptions`
+type markdownStringTrustedOptions = {
+  enabledCommands: array<string>,
 }
+@unboxed type boolOrMarkdownStringTrustedOptions = Bool(bool) | MarkdownStringTrustedOptions(markdownStringTrustedOptions)
+type iMarkdownString = {
+  value: string,
+  isTrusted?: boolOrMarkdownStringTrustedOptions,
+  supportThemeIcons?: bool,
+  supportHtml?: bool,
+  baseUri?: uriComponents,
+  uris?: Dict.t<uriComponents>,
+}
+@unboxed type iMarkdownStringOrIMarkdownStringArray = IMarkdownString(iMarkdownString) | IMarkdownStringArr(array<iMarkdownString>)
+type themeColor = {
+  id: string,
+}
+@unboxed type stringOrThemeColor = Str(string) | ThemeColor(themeColor)
 type iModelDecorationOverviewRulerOptions = {
-  position: string,  // ⚪ loose — was `OverviewRulerLane`
-  color?: string,  // ⚪ loose — was `string | ThemeColor`
-  darkColor?: string,  // ⚪ loose — was `string | ThemeColor`
+  position: CommonTypes.v1OrV2OrV4OrV7,
+  color?: stringOrThemeColor,
+  darkColor?: stringOrThemeColor,
 }
 type iModelDecorationMinimapOptions = {
-  position: string,  // ⚪ loose — was `MinimapPosition`
-  sectionHeaderStyle?: string,  // ⚪ loose — was `MinimapSectionHeaderStyle`
+  position: CommonTypes.v1OrV2,
+  sectionHeaderStyle?: Nullable.t<CommonTypes.v1OrV2>,
   sectionHeaderText?: Nullable.t<string>,
-  color?: string,  // ⚪ loose — was `string | ThemeColor`
-  darkColor?: string,  // ⚪ loose — was `string | ThemeColor`
+  color?: stringOrThemeColor,
+  darkColor?: stringOrThemeColor,
 }
 type iModelDecorationGlyphMarginOptions = {
-  position: string,  // ⚪ loose — was `GlyphMarginLane`
+  position: CommonTypes.v1OrV2OrV3,
   persistLane?: bool,
 }
 type injectedTextOptions = {
@@ -2315,19 +2379,19 @@ type injectedTextOptions = {
   inlineClassName?: Nullable.t<string>,
   inlineClassNameAffectsLetterSpacing?: bool,
   attachedData?: JSON.t,
-  cursorStops?: string,  // ⚪ loose — was `InjectedTextCursorStops`
+  cursorStops?: Nullable.t<CommonTypes.v0OrV1OrV2OrV3>,
 }
 type iModelDecorationOptions = {
-  stickiness?: trackedRangeStickiness,
+  stickiness?: CommonTypes.v0OrV1OrV2OrV3,
   className?: Nullable.t<string>,
   shouldFillLineOnLineBreak?: Nullable.t<bool>,
   blockClassName?: Nullable.t<string>,
   blockIsAfterEnd?: Nullable.t<bool>,
   blockDoesNotCollapse?: Nullable.t<bool>,
-  blockPadding?: Nullable.t<(float, float, float, float)>,
-  glyphMarginHoverMessage?: string,  // ⚠️ REVIEW — was `IMarkdownString | IMarkdownString[]` — match the real type by hand
-  hoverMessage?: string,  // ⚠️ REVIEW — was `IMarkdownString | IMarkdownString[]` — match the real type by hand
-  lineNumberHoverMessage?: string,  // ⚠️ REVIEW — was `IMarkdownString | IMarkdownString[]` — match the real type by hand
+  blockPadding?: Nullable.t<array<float>>,
+  glyphMarginHoverMessage?: Nullable.t<iMarkdownStringOrIMarkdownStringArray>,
+  hoverMessage?: Nullable.t<iMarkdownStringOrIMarkdownStringArray>,
+  lineNumberHoverMessage?: Nullable.t<iMarkdownStringOrIMarkdownStringArray>,
   isWholeLine?: bool,
   showIfCollapsed?: bool,
   zIndex?: int,
@@ -2351,7 +2415,11 @@ type iModelDecorationOptions = {
   afterContentClassName?: Nullable.t<string>,
   after?: Nullable.t<injectedTextOptions>,
   before?: Nullable.t<injectedTextOptions>,
-  textDirection?: Nullable.t<textDirection>,
+  textDirection?: Nullable.t<CommonTypes.v0OrV1>,
+}
+type iModelDeltaDecoration = {
+  range: iRange,
+  options: iModelDecorationOptions,
 }
 type iModelDecoration = {
   id: string,
@@ -2371,13 +2439,23 @@ type iIdentifiedSingleEditOperation = {
   text: Nullable.t<string>,
   forceMoveMarkers?: bool,
 }
+type iValidEditOperation = {
+  range: range,
+  text: string,
+}
+module ApplyEdits = {
+  type t
+  external asOperations: t => (array<iIdentifiedSingleEditOperation> => unit) = "%identity"
+  external asOperations2: t => ((array<iIdentifiedSingleEditOperation>, bool) => unit) = "%identity"
+  external asOperations3: t => ((array<iIdentifiedSingleEditOperation>, bool) => array<iValidEditOperation>) = "%identity"
+}
 type iTextModel<'a> = {
   uri: uri,
   id: string,
   getOptions: unit => textModelResolvedOptions,
   getVersionId: unit => float,
   getAlternativeVersionId: unit => float,
-  setValue: string => unit,  // ⚠️ REVIEW — was `string | ITextSnapshot` — match the real type by hand
+  setValue: stringOrITextSnapshot => unit,
   getValue: (option<endOfLinePreference>, option<bool>) => string,
   createSnapshot: option<bool> => iTextSnapshot,
   getValueLength: (option<endOfLinePreference>, option<bool>) => float,
@@ -2402,7 +2480,7 @@ type iTextModel<'a> = {
   getPositionAt: float => position,
   getFullModelRange: unit => range,
   isDisposed: unit => bool,
-  findMatches: string,  // ⚠️ REVIEW — match the real type by hand
+  findMatches: FindMatches.t,
   findNextMatch: (string, iPosition, bool, bool, Nullable.t<string>, bool) => Nullable.t<findMatch>,
   findPreviousMatch: (string, iPosition, bool, bool, Nullable.t<string>, bool) => Nullable.t<findMatch>,
   getLanguageId: unit => string,
@@ -2424,9 +2502,9 @@ type iTextModel<'a> = {
   detectIndentation: (bool, float) => unit,
   pushStackElement: unit => unit,
   popStackElement: unit => unit,
-  pushEditOperations: (Nullable.t<array<selection>>, array<iIdentifiedSingleEditOperation>, array<string> => Nullable.t<array<selection>>) => Nullable.t<array<selection>>,  // ⚪ loose — was `IValidEditOperation`
+  pushEditOperations: (Nullable.t<array<selection>>, array<iIdentifiedSingleEditOperation>, array<iValidEditOperation> => Nullable.t<array<selection>>) => Nullable.t<array<selection>>,
   pushEOL: endOfLineSequence => unit,
-  applyEdits: string,  // ⚠️ REVIEW — match the real type by hand
+  applyEdits: ApplyEdits.t,
   setEOL: endOfLineSequence => unit,
   undo: unit => 'a,
   canUndo: unit => bool,
@@ -2449,34 +2527,7 @@ type iRulerOption = {
   column: float,
   color: Nullable.t<string>,
 }
-module RulersTarget = {
-  type t
-  external fromNumber: float => t = "%identity"
-  external fromIRulerOption: iRulerOption => t = "%identity"
-}
-type markdownStringTrustedOptions = {
-  enabledCommands: array<string>,
-}
-module IsTrustedTarget = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromMarkdownStringTrustedOptions: markdownStringTrustedOptions => t = "%identity"
-}
-type uriComponents = {
-  scheme: string,
-  authority?: string,
-  path?: string,
-  query?: string,
-  fragment?: string,
-}
-type iMarkdownString = {
-  value: string,
-  isTrusted?: IsTrustedTarget.t,
-  supportThemeIcons?: bool,
-  supportHtml?: bool,
-  baseUri?: uriComponents,
-  uris?: Dict.t<uriComponents>,
-}
+@unboxed type numberOrIRulerOption = Num(float) | IRulerOption(iRulerOption)
 type iEditorScrollbarOptions = {
   arrowSize?: float,
   vertical?: codeEditorV2IEditorScrollbarOptionsVertical,
@@ -2502,7 +2553,7 @@ type iEditorStickyScrollOptions = {
 type iEditorMinimapOptions = {
   enabled?: bool,
   autohide?: codeEditorV2IEditorMinimapOptionsAutohide,
-  side?: ChartsTypes.chartsPlotOrganizationOptionsHangingSide,
+  side?: ChartsTypes.chartsSeriesOrganizationOptionsHangingSide,
   size?: codeEditorV2IEditorMinimapOptionsSize,
   showSlider?: codeEditorV2IEditorMinimapOptionsShowSlider,
   renderCharacters?: bool,
@@ -2610,11 +2661,7 @@ type iQuickSuggestionsOptions = {
   comments?: CommonTypes.boolOrInlineOrOffOrOn,
   strings?: CommonTypes.boolOrInlineOrOffOrOn,
 }
-module QuickSuggestionsTarget = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromIQuickSuggestionsOptions: iQuickSuggestionsOptions => t = "%identity"
-}
+@unboxed type boolOrIQuickSuggestionsOptions = Bool(bool) | IQuickSuggestionsOptions(iQuickSuggestionsOptions)
 type iEditorPaddingOptions = {
   top?: float,
   bottom?: float,
@@ -2670,7 +2717,7 @@ type iEditorOptions = {
   ariaRequired?: bool,
   screenReaderAnnounceInlineSuggestion?: bool,
   tabIndex?: int,
-  rulers?: array<RulersTarget.t>,
+  rulers?: array<numberOrIRulerOption>,
   wordSegmenterLocales?: CommonTypes.stringOrStringArray,
   wordSeparators?: string,
   selectionClipboard?: bool,
@@ -2711,7 +2758,7 @@ type iEditorOptions = {
   cursorHeight?: float,
   fontLigatures?: CommonTypes.boolOrString,
   fontVariations?: CommonTypes.boolOrString,
-  defaultColorDecorators?: codeEditorV2IEditorOptionsDefaultColorDecorators,
+  defaultColorDecorators?: ChartsTypes.chartsDateTimeFormatOptionsHour12,
   disableLayerHinting?: bool,
   disableMonospaceOptimizations?: bool,
   hideCursorInOverviewRuler?: bool,
@@ -2754,7 +2801,7 @@ type iEditorOptions = {
   inlineSuggest?: iInlineSuggestOptions,
   smartSelect?: iSmartSelectOptions,
   gotoLocation?: iGotoLocationOptions,
-  quickSuggestions?: QuickSuggestionsTarget.t,
+  quickSuggestions?: boolOrIQuickSuggestionsOptions,
   quickSuggestionsDelay?: float,
   padding?: iEditorPaddingOptions,
   parameterHints?: iEditorParameterHintOptions,
@@ -2842,15 +2889,9 @@ type iLocalizedString = {
   original: string,
   value: string,
 }
-module DescriptionTarget = {
-  type t
-  external fromString: string => t = "%identity"
-  external fromILocalizedString: iLocalizedString => t = "%identity"
-  external fromUnit: unit => t = "%identity"
-  let none: t = fromUnit()
-}
+@unboxed type stringOrILocalizedString = Str(string) | ILocalizedString(iLocalizedString)
 type iCommandMetadata = {
-  description: DescriptionTarget.t,
+  description: stringOrILocalizedString,
 }
 type iEditorAction = {
   id: string,
@@ -2866,22 +2907,18 @@ type iEditOperationBuilder = {
   trackSelection: (selection, option<bool>) => string,
 }
 type iCursorStateComputerData = {
-  getInverseEditOperations: unit => array<JSON.t>,
+  getInverseEditOperations: unit => array<iValidEditOperation>,
   getTrackedSelection: string => selection,
 }
 type iCommand<'a> = {
   getEditOperations: (iTextModel<'a>, iEditOperationBuilder) => unit,
   computeCursorState: (iTextModel<'a>, iCursorStateComputerData) => selection,
 }
-type iValidEditOperation = {
-  range: range,
-  text: string,
-}
-@unboxed type codeEditorV2ICodeEditorExecuteEdits = Arr(array<selection>) | Fn(array<iValidEditOperation> => Nullable.t<array<selection>>)
+@unboxed type codeEditorV2ICodeEditorExecuteEdits = SelectionArr(array<selection>) | Fn(array<iValidEditOperation> => Nullable.t<array<selection>>)
 type iContentWidgetPosition = {
   position: Nullable.t<iPosition>,
   secondaryPosition?: Nullable.t<iPosition>,
-  preference: array<string>,  // ⚪ loose — was `ContentWidgetPositionPreference`
+  preference: array<CommonTypes.v0OrV1OrV2>,
   positionAffinity?: positionAffinity,
 }
 type iDimension = {
@@ -2901,8 +2938,9 @@ type iContentWidget = {
   beforeRender?: unit => Nullable.t<iDimension>,
   afterRender?: (Nullable.t<contentWidgetPositionPreference>, Nullable.t<iContentWidgetRenderedCoordinate>) => unit,
 }
+@unboxed type v0OrV1OrV2OrIContentWidgetRenderedCoordinate = @as(0) N0 | @as(1) N1 | @as(2) N2 | IContentWidgetRenderedCoordinate(iContentWidgetRenderedCoordinate)
 type iOverlayWidgetPosition = {
-  preference: string,  // ⚠️ REVIEW — was `OverlayWidgetPositionPreference | IOverlayWidgetPositionCoordinates` — match the real type by hand
+  preference: Nullable.t<v0OrV1OrV2OrIContentWidgetRenderedCoordinate>,
   stackOridinal?: float,
 }
 type iOverlayWidget = {
@@ -2926,7 +2964,7 @@ type iGlyphMarginWidget = {
 type iViewZone = {
   afterLineNumber: float,
   afterColumn?: float,
-  afterColumnAffinity?: string,  // ⚪ loose — was `PositionAffinity`
+  afterColumnAffinity?: CommonTypes.v0OrV1OrV2OrV3OrV4,
   showInHiddenAreas?: bool,
   ordinal?: float,
   suppressMouseDown?: bool,
@@ -2947,12 +2985,6 @@ type editorICodeEditorGetScrolledVisiblePositionConfig = {
   top: float,
   left: float,
   height: float,
-}
-type iSelection = {
-  selectionStartLineNumber: float,
-  selectionStartColumn: float,
-  positionLineNumber: float,
-  positionColumn: float,
 }
 module SetSelection = {
   type t
@@ -3108,7 +3140,7 @@ type editorGetMonacoViewModeOptionsConfig = {
   ariaRequired?: bool,
   screenReaderAnnounceInlineSuggestion?: bool,
   tabIndex?: int,
-  rulers?: array<string>,  // ⚠️ REVIEW — was `number | IRulerOption` — match the real type by hand
+  rulers?: array<numberOrIRulerOption>,
   wordSegmenterLocales?: CommonTypes.stringOrStringArray,
   wordSeparators?: string,
   selectionClipboard?: bool,
@@ -3149,7 +3181,7 @@ type editorGetMonacoViewModeOptionsConfig = {
   cursorHeight?: float,
   fontLigatures?: CommonTypes.boolOrString,
   fontVariations?: CommonTypes.boolOrString,
-  defaultColorDecorators?: codeEditorV2IEditorOptionsDefaultColorDecorators,
+  defaultColorDecorators?: ChartsTypes.chartsDateTimeFormatOptionsHour12,
   disableLayerHinting?: bool,
   disableMonospaceOptimizations?: bool,
   hideCursorInOverviewRuler?: bool,
@@ -3192,7 +3224,7 @@ type editorGetMonacoViewModeOptionsConfig = {
   inlineSuggest?: iInlineSuggestOptions,
   smartSelect?: iSmartSelectOptions,
   gotoLocation?: iGotoLocationOptions,
-  quickSuggestions?: string,  // ⚠️ REVIEW — was `boolean | IQuickSuggestionsOptions` — match the real type by hand
+  quickSuggestions?: boolOrIQuickSuggestionsOptions,
   quickSuggestionsDelay?: float,
   padding?: iEditorPaddingOptions,
   parameterHints?: iEditorParameterHintOptions,
@@ -3292,7 +3324,7 @@ type codeEditorV2IStandaloneCodeEditorUpdateOptionsConfig = {
   ariaRequired?: bool,
   screenReaderAnnounceInlineSuggestion?: bool,
   tabIndex?: int,
-  rulers?: array<string>,  // ⚪ loose — was `number | IRulerOption`
+  rulers?: array<numberOrIRulerOption>,
   wordSegmenterLocales?: CommonTypes.stringOrStringArray,
   wordSeparators?: string,
   selectionClipboard?: bool,
@@ -3333,7 +3365,7 @@ type codeEditorV2IStandaloneCodeEditorUpdateOptionsConfig = {
   cursorHeight?: float,
   fontLigatures?: CommonTypes.boolOrString,
   fontVariations?: CommonTypes.boolOrString,
-  defaultColorDecorators?: codeEditorV2IEditorOptionsDefaultColorDecorators,
+  defaultColorDecorators?: ChartsTypes.chartsDateTimeFormatOptionsHour12,
   disableLayerHinting?: bool,
   disableMonospaceOptimizations?: bool,
   hideCursorInOverviewRuler?: bool,
@@ -3376,7 +3408,7 @@ type codeEditorV2IStandaloneCodeEditorUpdateOptionsConfig = {
   inlineSuggest?: iInlineSuggestOptions,
   smartSelect?: iSmartSelectOptions,
   gotoLocation?: iGotoLocationOptions,
-  quickSuggestions?: string,  // ⚠️ REVIEW — was `boolean | IQuickSuggestionsOptions` — match the real type by hand
+  quickSuggestions?: boolOrIQuickSuggestionsOptions,
   quickSuggestionsDelay?: float,
   padding?: iEditorPaddingOptions,
   parameterHints?: iEditorParameterHintOptions,
@@ -3464,7 +3496,7 @@ type codeEditorV2IStandaloneCodeEditorUpdateOptionsConfig = {
   theme?: string,
   autoDetectHighContrast?: bool,
 }
-@unboxed type codeEditorV2IStandaloneCodeEditorExecuteEdits = Arr(array<selection>) | Fn(array<iValidEditOperation> => Nullable.t<array<selection>>)
+@unboxed type codeEditorV2IStandaloneCodeEditorExecuteEdits = SelectionArr(array<selection>) | Fn(array<iValidEditOperation> => Nullable.t<array<selection>>)
 type iStandaloneCodeEditor<'a, 'b> = {
   updateOptions: codeEditorV2IStandaloneCodeEditorUpdateOptionsConfig => unit,
   addCommand: (float, array<string> => unit, option<string>) => Nullable.t<string>,  // ⚪ loose — was `any`
@@ -3652,7 +3684,7 @@ type iDiffEditorOptions = {
   ariaRequired?: bool,
   screenReaderAnnounceInlineSuggestion?: bool,
   tabIndex?: int,
-  rulers?: array<string>,  // ⚠️ REVIEW — was `number | IRulerOption` — match the real type by hand
+  rulers?: array<numberOrIRulerOption>,
   wordSegmenterLocales?: CommonTypes.stringOrStringArray,
   wordSeparators?: string,
   selectionClipboard?: bool,
@@ -3693,7 +3725,7 @@ type iDiffEditorOptions = {
   cursorHeight?: float,
   fontLigatures?: CommonTypes.boolOrString,
   fontVariations?: CommonTypes.boolOrString,
-  defaultColorDecorators?: codeEditorV2IEditorOptionsDefaultColorDecorators,
+  defaultColorDecorators?: ChartsTypes.chartsDateTimeFormatOptionsHour12,
   disableLayerHinting?: bool,
   disableMonospaceOptimizations?: bool,
   hideCursorInOverviewRuler?: bool,
@@ -3736,7 +3768,7 @@ type iDiffEditorOptions = {
   inlineSuggest?: iInlineSuggestOptions,
   smartSelect?: iSmartSelectOptions,
   gotoLocation?: iGotoLocationOptions,
-  quickSuggestions?: string,  // ⚠️ REVIEW — was `boolean | IQuickSuggestionsOptions` — match the real type by hand
+  quickSuggestions?: boolOrIQuickSuggestionsOptions,
   quickSuggestionsDelay?: float,
   padding?: iEditorPaddingOptions,
   parameterHints?: iEditorParameterHintOptions,
@@ -3909,7 +3941,7 @@ type iStandaloneEditorConstructionOptions<'a> = {
   ariaRequired?: bool,
   screenReaderAnnounceInlineSuggestion?: bool,
   tabIndex?: int,
-  rulers?: array<string>,  // ⚠️ REVIEW — was `number | IRulerOption` — match the real type by hand
+  rulers?: array<numberOrIRulerOption>,
   wordSegmenterLocales?: CommonTypes.stringOrStringArray,
   wordSeparators?: string,
   selectionClipboard?: bool,
@@ -3950,7 +3982,7 @@ type iStandaloneEditorConstructionOptions<'a> = {
   cursorHeight?: float,
   fontLigatures?: CommonTypes.boolOrString,
   fontVariations?: CommonTypes.boolOrString,
-  defaultColorDecorators?: codeEditorV2IEditorOptionsDefaultColorDecorators,
+  defaultColorDecorators?: ChartsTypes.chartsDateTimeFormatOptionsHour12,
   disableLayerHinting?: bool,
   disableMonospaceOptimizations?: bool,
   hideCursorInOverviewRuler?: bool,
@@ -3993,7 +4025,7 @@ type iStandaloneEditorConstructionOptions<'a> = {
   inlineSuggest?: iInlineSuggestOptions,
   smartSelect?: iSmartSelectOptions,
   gotoLocation?: iGotoLocationOptions,
-  quickSuggestions?: string,  // ⚠️ REVIEW — was `boolean | IQuickSuggestionsOptions` — match the real type by hand
+  quickSuggestions?: boolOrIQuickSuggestionsOptions,
   quickSuggestionsDelay?: float,
   padding?: iEditorPaddingOptions,
   parameterHints?: iEditorParameterHintOptions,
@@ -4091,7 +4123,7 @@ type iDiffEditorConstructionOptions = {
   ariaRequired?: bool,
   screenReaderAnnounceInlineSuggestion?: bool,
   tabIndex?: int,
-  rulers?: array<string>,  // ⚠️ REVIEW — was `number | IRulerOption` — match the real type by hand
+  rulers?: array<numberOrIRulerOption>,
   wordSegmenterLocales?: CommonTypes.stringOrStringArray,
   wordSeparators?: string,
   selectionClipboard?: bool,
@@ -4132,7 +4164,7 @@ type iDiffEditorConstructionOptions = {
   cursorHeight?: float,
   fontLigatures?: CommonTypes.boolOrString,
   fontVariations?: CommonTypes.boolOrString,
-  defaultColorDecorators?: codeEditorV2IEditorOptionsDefaultColorDecorators,
+  defaultColorDecorators?: ChartsTypes.chartsDateTimeFormatOptionsHour12,
   disableLayerHinting?: bool,
   disableMonospaceOptimizations?: bool,
   hideCursorInOverviewRuler?: bool,
@@ -4175,7 +4207,7 @@ type iDiffEditorConstructionOptions = {
   inlineSuggest?: iInlineSuggestOptions,
   smartSelect?: iSmartSelectOptions,
   gotoLocation?: iGotoLocationOptions,
-  quickSuggestions?: string,  // ⚠️ REVIEW — was `boolean | IQuickSuggestionsOptions` — match the real type by hand
+  quickSuggestions?: boolOrIQuickSuggestionsOptions,
   quickSuggestionsDelay?: float,
   padding?: iEditorPaddingOptions,
   parameterHints?: iEditorParameterHintOptions,

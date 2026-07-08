@@ -63,7 +63,7 @@ type htmlProps = {
 }
 type utilsFloatingRootStoreSetOpenConfig = {
   reason: string,
-  event: string,  // ⚪ loose — was `Event`
+  event: LibTypes.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
   isCanceled: bool,

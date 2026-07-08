@@ -149,7 +149,7 @@ external make: (
   ~shape: TagsTypes.tagShape=?,
   ~leftSlot: React.element=?,
   ~rightSlot: React.element=?,
-  ~splitTagPosition: ChartsTypes.chartsPlotOrganizationOptionsHangingSide=?,
+  ~splitTagPosition: ChartsTypes.chartsSeriesOrganizationOptionsHangingSide=?,
   ~showSkeleton: bool=?,
   ~skeletonVariant: SkeletonTypes.skeletonVariant=?,
   ~ref: React.ref<Nullable.t<Dom.element>>=?,

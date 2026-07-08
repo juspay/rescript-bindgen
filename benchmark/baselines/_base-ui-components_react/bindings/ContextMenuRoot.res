@@ -8,7 +8,7 @@ external make: (
   ~disabled: bool=?,
   @as("open") ~open_: bool=?,
   ~actionsRef: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>=?,
-  ~handle: RootSharedTypes.menuHandleV1tmcz=?,
+  ~handle: RootSharedTypes.menuHandleJuxo8=?,
   ~defaultOpen: bool=?,
   ~onOpenChangeComplete: bool => unit=?,
   ~triggerId: Nullable.t<string>=?,

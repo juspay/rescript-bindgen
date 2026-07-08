@@ -134,21 +134,47 @@ type chartsConstructorType =
   | @as("r") R
   | @as("x") X
   | @as("y") Y
+type chartsDateTimeFormatOptionsDay =
+  | @as("numeric") Numeric
+  | @as("2-digit") V2Digit
+type chartsDateTimeFormatOptionsEra =
+  | @as("long") Long
+  | @as("narrow") Narrow
+  | @as("short") Short
+type chartsDateTimeFormatOptionsHour12 =
+  | @as("auto") Auto
+  | @as("always") Always
+  | @as("never") Never
+type chartsDateTimeFormatOptionsMonth =
+  | @as("numeric") Numeric
+  | @as("2-digit") V2Digit
+  | @as("long") Long
+  | @as("narrow") Narrow
+  | @as("short") Short
+type chartsDateTimeFormatOptionsTimeZoneName =
+  | @as("long") Long
+  | @as("short") Short
+type chartsXAxisTitleOptionsPosition3d =
+  | @as("chart") Chart
+  | @as("offset") Offset
+  | @as("flap") Flap
+  | @as("ortho") Ortho
+type chartsSeriesSetState =
+  | @as("") Value
+  | @as("normal") Normal
+  | @as("select") Select
+  | @as("hover") Hover
+  | @as("inactive") Inactive
 type chartsPointSetState =
   | @as("") Value
   | @as("normal") Normal
   | @as("select") Select
   | @as("hover") Hover
   | @as("inactive") Inactive
-type chartsYAxisTitleOptionsPosition3d =
-  | @as("chart") Chart
-  | @as("offset") Offset
-  | @as("flap") Flap
-  | @as("ortho") Ortho
-type chartsPlotArcdiagramOptionsLinkColorMode =
+type chartsSeriesArcdiagramOptionsLinkColorMode =
   | @as("from") From
-  | @as("gradient") Gradient
   | @as("to") To
+  | @as("gradient") Gradient
 type chartsBorderRadiusOptionsObjectScope =
   | @as("point") Point
   | @as("stack") Stack
@@ -159,10 +185,13 @@ type chartsPlotOrganizationLinkOptionsType =
   | @as("straight") Straight
   | @as("curved") Curved
   | @as("orthogonal") Orthogonal
-type chartsPlotOrganizationOptionsNodeAlignment =
+type chartsSeriesOrganizationOptionsNodeAlignment =
   | @as("center") Center
   | @as("bottom") Bottom
   | @as("top") Top
+type chartsAxisPointBreakEventObjectType =
+  | @as("pointBreak") PointBreak
+  | @as("pointInBreak") PointInBreak
 type chartsDataPointPrimaryConfig = {
   label: string,
   val: float,

@@ -24,7 +24,7 @@ type variantTokenV1snf1 = {
   container: string,
   @as("no-container") noContainer: string,
 }
-type sizeTokenV61xn3 = {
+type sizeTokenV1xkie = {
   sm: variantTokenV1snf1,
   md: variantTokenV1snf1,
   lg: variantTokenV1snf1,
@@ -35,14 +35,14 @@ type singleSelectV2VariantTokenContainerConfig = {
   bottom: string,
   left: string,
 }
-type variantTokenV18n7o = {
+type variantTokenV1d84t = {
   container: singleSelectV2VariantTokenContainerConfig,
   @as("no-container") noContainer: singleSelectV2VariantTokenContainerConfig,
 }
-type sizeTokenV1lob7 = {
-  sm: variantTokenV18n7o,
-  md: variantTokenV18n7o,
-  lg: variantTokenV18n7o,
+type sizeTokenN42us = {
+  sm: variantTokenV1d84t,
+  md: variantTokenV1d84t,
+  lg: variantTokenV1d84t,
 }
 type triggerStateTokenSingleSelectV2 = {
   hover: string,
@@ -51,7 +51,7 @@ type triggerStateTokenSingleSelectV2 = {
   focus: string,
   closed: string,
 }
-type variantTokenV1a2xg = {
+type variantTokenV1uuup = {
   container: triggerStateTokenSingleSelectV2,
   @as("no-container") noContainer: triggerStateTokenSingleSelectV2,
 }
@@ -65,12 +65,12 @@ type singleSelectV2SingleSelectV2TokensTypeTriggerPlaceholderConfig = {
   fontWeight: string,
 }
 type singleSelectV2SingleSelectV2TokensTypeTriggerConfig = {
-  height: sizeTokenV61xn3,
-  padding: sizeTokenV1lob7,
-  borderRadius: sizeTokenV61xn3,
+  height: sizeTokenV1xkie,
+  padding: sizeTokenN42us,
+  borderRadius: sizeTokenV1xkie,
   boxShadow: variantTokenV1snf1,
-  backgroundColor: variantTokenV1a2xg,
-  outline: variantTokenV1a2xg,
+  backgroundColor: variantTokenV1uuup,
+  outline: variantTokenV1uuup,
   slot: singleSelectV2SingleSelectV2TokensTypeTriggerSlotConfig,
   placeholder: singleSelectV2SingleSelectV2TokensTypeTriggerPlaceholderConfig,
   selectedValue: singleSelectV2SingleSelectV2TokensTypeTriggerPlaceholderConfig,
@@ -142,7 +142,7 @@ type singleSelectV2SingleSelectV2TokensTypeMenuSubmenuConfig = {
 }
 type singleSelectV2SingleSelectV2TokensTypeMenuConfig = {
   content: singleSelectV2SingleSelectV2TokensTypeMenuContentConfig,
-  padding: sizeTokenV1lob7,
+  padding: sizeTokenN42us,
   groupLabel: singleSelectV2SingleSelectV2TokensTypeMenuGroupLabelConfig,
   item: singleSelectV2SingleSelectV2TokensTypeMenuItemConfig,
   submenu: singleSelectV2SingleSelectV2TokensTypeMenuSubmenuConfig,

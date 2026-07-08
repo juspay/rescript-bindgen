@@ -67,8 +67,8 @@ type sortDirection =
 type dataTableColumnFilterOperator =
   | @as("endsWith") EndsWith
   | @as("startsWith") StartsWith
-  | @as("contains") Contains
   | @as("range") Range
+  | @as("contains") Contains
   | @as("equals") Equals
   | @as("gt") Gt
   | @as("lt") Lt

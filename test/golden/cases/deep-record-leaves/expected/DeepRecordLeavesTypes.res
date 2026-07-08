@@ -1,3 +1,14 @@
+type extra3 = {
+  e3: string,
+}
+type extra2 = {
+  e2: string,
+  deeper?: extra3,
+}
+type extra1 = {
+  e1: string,
+  deeper?: extra2,
+}
 type deepTip = {
   enabled?: bool,
   padding?: float,
@@ -6,7 +17,7 @@ type deepTip = {
   label?: string,
   payload?: JSON.t,
   formatter?: float => string,
-  extra?: string,  // ⚪ loose — was `Extra1`
+  extra?: extra1,
   data?: array<JSON.t>,
   points?: array<float>,
   pair?: array<float>,

@@ -30,13 +30,29 @@ type libMarkdownAsyncOptionsRemarkRehypeOptionsPassThrough =
 type components = {
   ...JsxDOM.domProps,
 }
+type vFileMessage = {
+  ...JsxDOM.domProps,
+  ancestors: array<JSON.t>,
+  column: float,
+  fatal: bool,
+  file: string,
+  line: float,
+  place: UnistTypes.LibVFileMessagePlace.t,
+  reason: string,
+  ruleId: string,
+  source: string,
+  actual: string,
+  expected: array<string>,
+  note: string,
+  url: string,
+}
 type vFile = {
   cwd: string,
   data: string,  // ⚪ loose — was `Data`
   history: array<string>,
-  messages: array<JSON.t>,
+  messages: array<vFileMessage>,
   value: string,  // ⚪ loose — was `Value`
-  map: string,  // ⚪ loose — was `Map`
+  map: VfileTypes.map,
   result: JSON.t,
   stored: bool,
   basename: string,
@@ -56,23 +72,23 @@ type rec options = {
   footnoteBackContent?: string,  // ⚠️ REVIEW — was `string | FootnoteBackContentTemplate` — match the real type by hand
   footnoteBackLabel?: Nullable.t<CommonTypes.libOptionsFootnoteBackLabel>,
   footnoteLabel?: Nullable.t<string>,
-  footnoteLabelProperties?: Nullable.t<Dict.t<string>>,  // ⚪ loose — was `string | number | boolean | (string | number)[]`
+  footnoteLabelProperties?: Nullable.t<Dict.t<CommonTypes.boolOrStringOrNumberOrStringOrNumberArray>>,
   footnoteLabelTagName?: Nullable.t<string>,
   handlers?: string,  // ⚪ loose — was `Partial<Record<"text" | "root" | "blockquote" | "code" | "html" | "link" | "strong" | "table" | "image" | "bre`
-  passThrough?: Nullable.t<array<string>>,  // ⚪ loose — was `"text" | "root" | "blockquote" | "code" | "html" | "link" | "strong" | "table" | "image" | "break" | "definiti`
-  unknownHandler?: Nullable.t<(state, string, string) => string>,  // ⚪ loose — was `ElementContent | ElementContent[]`
+  passThrough?: Nullable.t<array<libMarkdownAsyncOptionsRemarkRehypeOptionsPassThrough>>,
+  unknownHandler?: Nullable.t<(state, string, MdastTypes.Parents.t) => string>,  // ⚪ loose — was `ElementContent | ElementContent[]`
 }
 and state = {
-  all: string => array<string>,  // ⚠️ REVIEW — was `ElementContent` — match the real type by hand
-  applyData: (string, string) => string,  // 🛑 BROKEN — contains `unknown` — was `Element | Type`
+  all: MdastTypes.Nodes.t => array<string>,  // ⚪ loose — was `ElementContent`
+  applyData: (MdastTypes.Nodes.t, string) => string,  // 🛑 BROKEN — contains `unknown` — was `Element | Type`
   definitionById: Map.t<string, string>,  // ⚪ loose — was `Definition`
   footnoteById: Map.t<string, string>,  // ⚪ loose — was `FootnoteDefinition`
   footnoteCounts: Map.t<string, float>,
   footnoteOrder: array<string>,
   handlers: string,  // ⚪ loose — was `Partial<Record<"text" | "root" | "blockquote" | "code" | "html" | "link" | "strong" | "table" | "image" | "bre`
-  one: (string, string) => string,  // ⚠️ REVIEW — was `ElementContent | ElementContent[]` — match the real type by hand
+  one: (MdastTypes.Nodes.t, MdastTypes.Parents.t) => string,  // ⚠️ REVIEW — was `ElementContent | ElementContent[]` — match the real type by hand
   options: options,
-  patch: (string, string) => unit,  // ⚠️ REVIEW — was `Nodes` — match the real type by hand
+  patch: (MdastTypes.Nodes.t, string) => unit,  // ⚠️ REVIEW — was `Nodes` — match the real type by hand
   wrap: (array<string>, option<bool>) => array<string>,  // ⚪ loose — was `Text | Type`
 }
 type libMarkdownAsyncOptionsRemarkRehypeOptionsConfig = {
@@ -85,7 +101,7 @@ type libMarkdownAsyncOptionsRemarkRehypeOptionsConfig = {
   footnoteLabelTagName?: Nullable.t<string>,
   handlers?: string,  // ⚪ loose — was `Partial<Record<"text" | "root" | "blockquote" | "code" | "html" | "link" | "strong" | "table" | "image" | "bre`
   passThrough?: Nullable.t<array<libMarkdownAsyncOptionsRemarkRehypeOptionsPassThrough>>,
-  unknownHandler?: Nullable.t<(state, string, string) => string>,  // 🛑 BROKEN — contains `any` — was `ElementContent | ElementContent[]`
+  unknownHandler?: Nullable.t<(state, string, MdastTypes.Parents.t) => string>,  // 🛑 BROKEN — contains `any` — was `ElementContent | ElementContent[]`
 }
 type libMarkdownAsyncOptionsConfig = {
   allowElement?: Nullable.t<(string, float, HastTypes.readonly) => bool>,  // ⚪ loose — was `Readonly<Element>`

@@ -64,7 +64,7 @@ module MatchTarget = {
 }
 type router = {
   name: string,
-  add: (string, string, ((InstanceTypes.context, unit => string) => string, routerRoute)) => unit,  // 🛑 BROKEN — contains `any` — was `Promise<void>`
+  add: (string, string, ((InstanceTypes.context, unit => LibTypes.promise2) => string, routerRoute)) => unit,  // 🛑 BROKEN — contains `any`
   match: (string, string) => MatchTarget.t,
 }
 type typesHonoOptionsGetPathConfig = {

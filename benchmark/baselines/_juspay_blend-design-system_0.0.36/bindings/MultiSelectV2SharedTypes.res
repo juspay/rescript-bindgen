@@ -24,7 +24,7 @@ type variantTokenV1snf12 = {
   container: string,
   @as("no-container") noContainer: string,
 }
-type sizeTokenBma3d = {
+type sizeTokenV10us3 = {
   sm: variantTokenV1snf12,
   md: variantTokenV1snf12,
   lg: variantTokenV1snf12,
@@ -35,14 +35,14 @@ type multiSelectV2VariantTokenContainerConfig = {
   bottom: string,
   left: string,
 }
-type variantTokenV1m560 = {
+type variantTokenV1g74p = {
   container: multiSelectV2VariantTokenContainerConfig,
   @as("no-container") noContainer: multiSelectV2VariantTokenContainerConfig,
 }
-type sizeTokenV4f682 = {
-  sm: variantTokenV1m560,
-  md: variantTokenV1m560,
-  lg: variantTokenV1m560,
+type sizeTokenV1sgfn = {
+  sm: variantTokenV1g74p,
+  md: variantTokenV1g74p,
+  lg: variantTokenV1g74p,
 }
 type triggerStateTokenMultiSelectV2 = {
   hover: string,
@@ -51,7 +51,7 @@ type triggerStateTokenMultiSelectV2 = {
   focus: string,
   closed: string,
 }
-type variantTokenV1pv9z = {
+type variantTokenV1m5o3 = {
   container: triggerStateTokenMultiSelectV2,
   @as("no-container") noContainer: triggerStateTokenMultiSelectV2,
 }
@@ -102,12 +102,12 @@ type multiSelectV2MultiSelectV2TokensTypeTriggerPlaceholderConfig = {
   fontWeight: string,
 }
 type multiSelectV2MultiSelectV2TokensTypeTriggerConfig = {
-  height: sizeTokenBma3d,
-  padding: sizeTokenV4f682,
-  borderRadius: sizeTokenBma3d,
+  height: sizeTokenV10us3,
+  padding: sizeTokenV1sgfn,
+  borderRadius: sizeTokenV10us3,
   boxShadow: variantTokenV1snf12,
-  backgroundColor: variantTokenV1pv9z,
-  outline: variantTokenV1pv9z,
+  backgroundColor: variantTokenV1m5o3,
+  outline: variantTokenV1m5o3,
   slot: multiSelectV2MultiSelectV2TokensTypeTriggerSlotConfig,
   selectionTag: contextMultiSelectV2TokensTypeTriggerSelectionTagConfig,
   chevron: multiSelectV2MultiSelectV2TokensTypeTriggerChevronConfig,
@@ -174,7 +174,7 @@ type multiSelectV2MultiSelectV2TokensTypeMenuConfig = {
   backgroundColor: string,
   border: string,
   borderRadius: string,
-  padding: sizeTokenV4f682,
+  padding: sizeTokenV1sgfn,
   minWidth: string,
   scroll: multiSelectV2MultiSelectV2TokensTypeMenuScrollConfig,
   header: multiSelectV2MultiSelectV2TokensTypeMenuHeaderConfig,

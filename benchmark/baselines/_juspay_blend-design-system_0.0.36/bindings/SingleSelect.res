@@ -7,7 +7,7 @@ external make: (
   ~helpIconText: string=?,
   ~placeholder: string,
   ~size: SingleSelectTypes.selectMenuSize=?,
-  ~items: array<SingleSelectTypes.selectMenuGroupTypeV1544j>,
+  ~items: array<SingleSelectTypes.selectMenuGroupTypeSingleSelect>,
   ~variant: SingleSelectTypes.selectMenuVariant=?,
   ~selected: string,
   ~onSelect: string => unit,

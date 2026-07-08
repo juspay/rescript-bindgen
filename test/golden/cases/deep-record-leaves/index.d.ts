@@ -10,9 +10,9 @@
 //   2. a FUNCTION field classifies through its signature past the bound (`formatter: float =>
 //      string` — the function node can't expand the registry; its params/ret link, resolve as
 //      leaves, or truncate flagged);
-//   3. fields that DO degrade (the `extra` object — dangling NEW records, so deep-record healing
-//      rolls back rather than materializing the graph) carry the same `⚪ loose — was …` flag
-//      props get, instead of silently reading as real strings.
+//   3. a BOUNDED named object field (the `extra` chain — all-leaf records ≤3 deep) materializes
+//      past the bound as real records (`extra1`/`extra2`/`extra3`), not a `string` (#115 item 1).
+//      A field that would degrade (unbounded/deep) still carries the `⚪ loose — was …` flag.
 type JsxElement = { __brand: 'element' }
 
 // each level dangles a `sibling` record so the chain is "unbounded-ish": the healing pass would
