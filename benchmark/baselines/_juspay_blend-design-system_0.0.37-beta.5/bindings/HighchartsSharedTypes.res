@@ -514,6 +514,7 @@ type highchartsPointShapeArgsConfig = {
   translateY?: float,
   zIndex?: int,
 }
+@set_index external highchartsPointShapeArgsConfigSet: (highchartsPointShapeArgsConfig, string, JSON.t) => unit = ""
 type seriesZonesOptionsObject = {
   className?: string,
   color?: ColorType.t,
@@ -649,6 +650,7 @@ type cssObjectHighcharts = {
   whiteSpace?: string,
   width?: float,
 }
+@set_index external cssObjectHighchartsSet: (cssObjectHighcharts, string, CommonTypes.boolOrStringOrNumber) => unit = ""
 type legendBubbleLegendLabelsOptions = {
   align?: alignValue,
   allowOverlap?: bool,
@@ -712,6 +714,7 @@ type symbolDictionary = {
   square?: string,  // ⚪ loose — was `Function`
   triangle?: string,  // ⚪ loose — was `Function`
 }
+@set_index external symbolDictionarySet: (symbolDictionary, string, JSON.t) => unit = ""
 @unboxed type stringOrCssObject = Str(string) | CssObject(cssObjectHighcharts)
 type svgAttributes = {
   d?: stringOrChartsPointShapeArgsDTArray,
@@ -731,6 +734,7 @@ type svgAttributes = {
   translateY?: float,
   zIndex?: int,
 }
+@set_index external svgAttributesSet: (svgAttributes, string, 'c) => unit = ""
 type rec astNode = {
   attributes?: svgAttributes,
   children?: array<astNode>,

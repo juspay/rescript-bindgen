@@ -7,10 +7,10 @@
 @unboxed type v1OrV2OrV3 = @as(1) N1 | @as(2) N2 | @as(3) N3
 @unboxed type autoOrNumber = @as("auto") Auto | Num(float)
 @unboxed type boolOrString = Bool(bool) | Str(string)
+@unboxed type boolOrStringOrNumber = Bool(bool) | Str(string) | Num(float)
 @unboxed type boolOrNumber = Bool(bool) | Num(float)
 @unboxed type boolOrStringOrStringArray = Bool(bool) | Str(string) | StrArr(array<string>)
 @unboxed type v0OrV100 = @as(0) N0 | @as(100) N100
-@unboxed type boolOrStringOrNumber = Bool(bool) | Str(string) | Num(float)
 @unboxed type numberOrNumberArray = Num(float) | NumArr(array<float>)
 @unboxed type boolOrAutoOrDefault = Bool(bool) | @as("auto") Auto | @as("default") Default
 @unboxed type dataTableRowActionConfigDisabled<'a> = Bool(bool) | Fn(('a, float) => bool)

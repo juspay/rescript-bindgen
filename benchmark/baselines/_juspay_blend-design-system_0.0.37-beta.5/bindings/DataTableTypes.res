@@ -724,6 +724,7 @@ type dataTablePivotTableConfigPreviewColumnsConfig = {
 type dataTablePivotTableConfigPreviewRowsConfig = {
   __pivotId: string,
 }
+@set_index external dataTablePivotTableConfigPreviewRowsConfigSet: (dataTablePivotTableConfigPreviewRowsConfig, string, JSON.t) => unit = ""
 type dataTablePivotTableConfigOnConfigChangeConfig = {
   rows: array<string>,
   columns: array<string>,
@@ -770,6 +771,7 @@ type pivotPreviewRow = {
   __pivotId: string,
   __pivotRowType?: dataTablePivotPreviewRowPivotRowType,
 }
+@set_index external pivotPreviewRowSet: (pivotPreviewRow, string, JSON.t) => unit = ""
 module ColumnDefinition = {
   type t
   external fromDataTableColumnsTextConfig: dataTableColumnsTextConfig<'a> => t = "%identity"

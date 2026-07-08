@@ -799,6 +799,16 @@ function renderRecordGroup(records, lines, cfg, isRec) {
         }
         lines.push('}')
     })
+    // #119: a record that carried a TS string index signature keeps its named fields typed AND
+    // preserves the index sig via a `@set_index` setter — `obj->fooSet("zIndex", v)` writes a FLAT
+    // key (`obj["zIndex"] = v`), so un-named keys are reachable without an unsafe cast. Emitted after
+    // the group (an `external` can't live between `and` clauses of a `type rec`).
+    for (const r of records || []) {
+        if (!r.indexValue) continue
+        const tp = r.tparams && r.tparams.length ? `<${r.tparams.join(', ')}>` : ''
+        const vt = renderType(r.indexValue, 'value', cfg)
+        lines.push(`@set_index external ${r.name}Set: (${r.name}${tp}, string, ${vt}) => unit = ""`)
+    }
 }
 
 /** The trailing flag comment for a degraded record FIELD (mirrors propLine's buckets), or ''. */

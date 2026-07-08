@@ -3932,7 +3932,9 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         if (type.id != null) ctx.visiting?.delete(type.id)
         entry.spread = built.spread
         entry.fields = built.fields
+        entry.indexValue = built.indexValue // #119: `@set_index` setter value type (index-sig records)
         for (const f of built.fields) collectRefKeys(f.type, entry.deps)
+        if (built.indexValue) collectRefKeys(built.indexValue, entry.deps)
         // generic record (uses a type variable) -> parameterize: `type foo<'a> = {…}`
         const tvars = new Set()
         for (const f of built.fields) collectTypeVars(f.type, tvars)
@@ -3980,7 +3982,7 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
     const tvars = new Set()
     for (const f of built.fields) collectTypeVars(f.type, tvars)
     const tparams = tvars.size ? [...tvars] : undefined
-    ctx.records.push({ name: rname, spread: built.spread, fields: built.fields, tparams })
+    ctx.records.push({ name: rname, spread: built.spread, fields: built.fields, tparams, indexValue: built.indexValue })
     return tparams ? { kind: 'typeRef', to: rname, tparams } : { kind: 'typeRef', to: rname }
 }
 
@@ -4043,6 +4045,18 @@ function buildRecordFields(type, ctx, depth) {
                 type: applyNullable(fieldType, nb),
             }
         })
+    // A record carrying a string INDEX SIGNATURE alongside named props (`CSSObject`:
+    // `[key: string]: bool|number|string` + `backgroundColor?`/…) — the named fields stay a typed
+    // record, and the index sig is preserved as a `@set_index` setter (`cssObjectHighchartsSet`)
+    // so an un-named key (`zIndex`) is reachable at a FLAT runtime position. Pure index objects
+    // (no named props) already map to `Dict.t` upstream, so only add this when named fields exist.
+    // (#119)
+    let indexValue
+    const strIdx = fields.length ? checker.getIndexInfoOfType?.(type, ts.IndexKind.String) : null
+    if (strIdx && strIdx.type) {
+        const v = classify(strIdx.type, ctx, 'value', depth + 1)
+        indexValue = irHasImperfection(v) ? { kind: 'raw', res: 'JSON.t' } : v
+    }
     ctx.inRecordField = prevInRecord
-    return { spread, fields }
+    return { spread, fields, indexValue }
 }

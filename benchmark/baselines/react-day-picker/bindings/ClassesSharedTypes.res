@@ -155,6 +155,7 @@ type classesMatchEraConfig = {
   width?: localeWidth,
   valueCallback?: string => CommonTypes.v0OrV1,
 }
+@set_index external classesMatchEraConfigSet: (classesMatchEraConfig, string, JSON.t) => unit = ""
 type matchFnResultNbwx0 = {
   value: CommonTypes.v1OrV2OrV3OrV4,
   rest: string,
@@ -163,6 +164,7 @@ type classesMatchQuarterConfig = {
   width?: localeWidth,
   valueCallback?: string => CommonTypes.v1OrV2OrV3OrV4,
 }
+@set_index external classesMatchQuarterConfigSet: (classesMatchQuarterConfig, string, JSON.t) => unit = ""
 type matchFnResultV1h0do = {
   value: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6OrV7OrV8OrV9OrV10OrV11,
   rest: string,
@@ -171,6 +173,7 @@ type classesMatchMonthConfig = {
   width?: localeWidth,
   valueCallback?: string => CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6OrV7OrV8OrV9OrV10OrV11,
 }
+@set_index external classesMatchMonthConfigSet: (classesMatchMonthConfig, string, JSON.t) => unit = ""
 type matchFnResultV8j2j7 = {
   value: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
   rest: string,
@@ -179,6 +182,7 @@ type classesMatchDayConfig = {
   width?: localeWidth,
   valueCallback?: string => CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
 }
+@set_index external classesMatchDayConfigSet: (classesMatchDayConfig, string, JSON.t) => unit = ""
 type matchFnResultV1r63c = {
   value: localeDayPeriod,
   rest: string,
@@ -187,6 +191,7 @@ type classesMatchDayPeriodConfig = {
   width?: localeWidth,
   valueCallback?: string => localeDayPeriod,
 }
+@set_index external classesMatchDayPeriodConfigSet: (classesMatchDayPeriodConfig, string, JSON.t) => unit = ""
 type match = {
   ordinalNumber: (string, option<classesMatchOrdinalNumberConfig>) => Nullable.t<matchFnResultV7tcjg>,
   era: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResultM61mw>,
