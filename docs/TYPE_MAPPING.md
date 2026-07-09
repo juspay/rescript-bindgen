@@ -68,6 +68,7 @@ Fixture: [`primitives`](../test/golden/cases/primitives)
 | `(Preset \| RangeConfig \| RangeDefinition)[]` — the **single-array** form (what the union above reduces to when a library simplifies the type) | the SAME `array<…opaque module>` as the union-of-arrays form. The array branch detects an element union with ≥2 object/array arms and calls `opaqueUnion` on its distinct members directly — needed because the element's record arms are `type X = {…}` aliases (`__type` symbol) that `unionNode`'s `isStructured` gate rejects (else `string`). Named after the array's alias, so the single form and the union-of-arrays form yield an identical binding. Fixture: [`union-of-arrays`](../test/golden/cases/union-of-arrays) (`presetsSingle`). (#65 ↩) |
 | `Rec \| Rec[]` — an object (incl. an **intersection** `A & {…}`) OR an array of it (TextInputV2's `dropdown`) | an [opaque module](#opaque-module-unions) with a `from<Rec>` (object) + `from<Rec>s` (array) view. An intersection arm has no own `getSymbol()`, so it was dropped from the union's structured arms → `string`; now counted by its properties. Fixture: [`shape-collapse`](../test/golden/cases/shape-collapse). (#79) |
 | `Record<string, V>` | `Dict.t<…>` | `Record<string, unknown>` → `Dict.t<JSON.t>`; `Record<string, string>` → `Dict.t<string>` |
+| **Record with a string index signature AND named props** — `CSSObject`: `{ [key: string]: bool\|number\|string; backgroundColor?: … }` | the named fields stay a **typed record** `type cssObjectHighcharts = {…}`, PLUS a `@set_index` setter `@set_index external cssObjectHighchartsSet: (cssObjectHighcharts, string, boolOrStringOrNumber) => unit = ""`. Consumers set an **un-named** key at a FLAT runtime position: `style->cssObjectHighchartsSet("zIndex", Num(100000.))` → `style["zIndex"] = 100000`. Keeps named typing (a plain `Dict.t` would drop the 25 named CSS fields) with **no unsafe cast** (`@set_index` is a first-class ReScript primitive, as used by `rescript-webapi` itself). Value type is the index sig's, `JSON.t` when imperfect. A PURE index object (no named props) still maps to `Dict.t` (row above). Fixture: [`index-signature-setter`](../test/golden/cases/index-signature-setter). (#119) |
 | `Map<K, V>` / `ReadonlyMap` / `WeakMap` | `Map.t<k, v>` | detected on the resolved symbol, so a first-party alias (`type EventHandlerMap = Map<…>`) is caught too — never a `{...JsxDOM.domProps}` record ([`builtin-map-set`](../test/golden/cases/builtin-map-set)) |
 | `Set<T>` / `ReadonlySet` / `WeakSet` | `Set.t<t>` | as above |
 
@@ -395,6 +396,19 @@ Highcharts graph bounded. This depended on stable naming (#90) — before it, ma
 renumbered 100+ unrelated names; now every benchmark package compiles with equal-or-better metrics.
 Fixture: [`deep-union-arms`](../test/golden/cases/deep-union-arms). (#115 item 1)
 
+**Registration-order re-link past the bound (#120).** A NAMED record reached past `MAX_DEPTH` and *not
+bounded* (or past the materialize budget) still truncates to `string` — but the SAME type is often
+registered by a **shallower** site elsewhere (Highcharts' `SeriesEventsOptionsObject`: ~119 series
+reach `events` shallowly and materialize `seriesEventsOptionsObject`, but ~118 reach it past-depth
+*before* that and got `string`). The truncation now stamps the TS `type.id` (`relinkId`) on the
+opaque node; a post-extraction `relinkRegistered` pass (runs before `propagateTypeParams`, walks every
+IR tree) re-resolves each such field to the now-registered record — a **zero-expansion** link (the
+entry already exists), so it's order-independent and never enlarges the graph. The new edge is added
+to the owning entry's `deps` so `planSharedModules` homes/orders the target correctly. A `relinkId`
+that never registers is dropped → the honest `string` fallback stays. Effect on blend: `events`,
+`dataGrouping`, `dragDrop`, … go from `string` to their real records; all other packages
+byte-identical. Fixture: [`relink-registered`](../test/golden/cases/relink-registered). (#120)
+
 **Twin healing (depth ghost ↔ shallow full sibling).** When the re-resolve above can't run because the
 shape's sub-types are a *distinct* generic instantiation (csstype gives `CSSObject['color']` vs
 `['backgroundColor']` different type ids, so `MenuV2VariantToken<StateToken<…>>` isn't deduped across
@@ -513,6 +527,16 @@ Fixtures: [`opaque-modules`](../test/golden/cases/opaque-modules), [`webapi`](..
 When a union can't be an `@unboxed` variant — **multiple object shapes**, or **object | array<object>**
 (abstract members that `typeof`/`Array.isArray` can't split into a recognized variant shape) — it
 becomes an opaque-type module: an abstract `t` plus zero-cost `%identity` `from*` constructors.
+
+**Every structured arm also gets its inverse `as*` READER (#122).** A module that only had `from*`
+writers was write-only — you could put a `seriesLineOptions` into `options.series` but never read one
+back (`chartsOptionsSeries_t` is abstract), blocking consumers that inspect/transform existing options
+(the portal's `mapOutages` reads `.name`/`.data` off each series). So each record/callback/tuple/named
+arm now emits a symmetric `external as<X>: t => armType = "%identity"` alongside its `from<X>`. It's the
+zero-cost reverse view (value passes through unchanged), an **allowed `as*` form**; the caller
+discriminates on the union's runtime tag for arm-SPECIFIC fields, while fields common to every arm are
+always safe. Literal/tag/`unit` arms get no reader (the value IS its own runtime tag). Symmetric with
+the overloaded-function module, which was already reader-based.
 
 Three member forms beyond plain `from*` constructors (#39):
 

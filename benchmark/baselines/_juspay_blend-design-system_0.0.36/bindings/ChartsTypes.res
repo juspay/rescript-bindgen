@@ -241,6 +241,7 @@ type tickProps = {
   y?: float,
   payload?: chartsTickPropsPayloadConfig,
 }
+@set_index external tickPropsSet: (tickProps, string, JSON.t) => unit = ""
 type axisConfig = {
   label?: string,
   showLabel?: bool,

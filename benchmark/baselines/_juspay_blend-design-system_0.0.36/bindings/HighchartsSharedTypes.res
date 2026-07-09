@@ -379,6 +379,157 @@ type offsetObject = {
   left: float,
   top: float,
 }
+type pointerEventObject = {
+  ...JsxDOM.domProps,
+  chartX: float,
+  chartY: float,
+}
+type linearGradientColorObject = {
+  x1: float,
+  x2: float,
+  y1: float,
+  y2: float,
+}
+type radialGradientColorObject = {
+  cx: float,
+  cy: float,
+  r: float,
+}
+type gradientColorObject = {
+  linearGradient?: linearGradientColorObject,
+  radialGradient?: radialGradientColorObject,
+  stops: array<JSON.t>,
+}
+type patternOptionsObject = {
+  anchorToPoint?: bool,
+  aspectRatio?: float,
+  backgroundColor?: string,
+  color?: string,
+  height?: float,
+  id?: string,
+  image?: string,
+  opacity?: float,
+  path?: string,  // ⚠️ REVIEW — was `string | SVGAttributes` — match the real type by hand
+  patternTransform?: string,
+  width?: float,
+  x?: float,
+  y?: float,
+}
+type patternObject = {
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  pattern: patternOptionsObject,
+  patternIndex?: float,
+}
+module ColorType = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromGradientColorObject: gradientColorObject => t = "%identity"
+  external asGradientColorObject: t => (gradientColorObject) = "%identity"
+  external fromPatternObject: patternObject => t = "%identity"
+  external asPatternObject: t => (patternObject) = "%identity"
+}
+type pointAccessibilityOptionsObject = {
+  description?: string,
+  enabled?: bool,
+}
+type dragDropHandleOptionsObject = {
+  className?: string,
+  color?: ColorType.t,
+  cursor?: string,
+  lineColor?: string,
+  lineWidth?: float,
+  pathFormatter?: string,  // ⚪ loose — was `Function`
+  zIndex?: int,
+}
+type seriesLineDataDragDropOptions = {
+  draggableX?: bool,
+  draggableY?: bool,
+  dragHandle?: dragDropHandleOptionsObject,
+  dragMaxX?: CommonTypes.stringOrNumber,
+  dragMaxY?: float,
+  dragMinX?: CommonTypes.stringOrNumber,
+  dragMinY?: float,
+  dragPrecisionX?: float,
+  dragPrecisionY?: float,
+  dragSensitivity?: float,
+  groupBy?: string,
+  guideBox?: string,  // ⚠️ REVIEW — was `PlotOptionsSeriesDragDropGuideBoxOptions | Dictionary<DragDropGuideBoxOptionsObject>` — match the real type by hand
+  liveRedraw?: bool,
+}
+type pointInteractionEventObject = {
+  accumulate: bool,
+}
+type pointMarkerOptionsObject = {
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  color?: ColorType.t,
+  enabled?: bool,
+  enabledThreshold?: float,
+  fillColor?: ColorType.t,
+  fillOpacity?: float,
+  height?: float,
+  lineColor?: ColorType.t,
+  lineWidth?: float,
+  radius?: float,
+  states?: string,  // ⚪ loose — was `PointStatesOptionsObject`
+  symbol?: string,
+  width?: float,
+}
+type seriesStatesOptionsObject = {
+  hover?: string,  // ⚪ loose — was `number | SeriesStatesHoverOptionsObject`
+  inactive?: string,  // ⚪ loose — was `SeriesStatesInactiveOptionsObject`
+  normal?: string,  // ⚪ loose — was `SeriesStatesNormalOptionsObject`
+  select?: string,  // ⚪ loose — was `SeriesStatesSelectOptionsObject`
+}
+type seriesBulletDataTargetOptions = {
+  borderColor?: string,
+  borderRadius?: float,
+  borderWidth?: float,
+  color?: ColorType.t,
+  height?: float,
+  width?: CommonTypes.stringOrNumber,
+}
+module ChartsPointShapeArgsD = {
+  type t
+  external fromSVGPathCommands: array<svgPathCommand> => t = "%identity"
+  external asSVGPathCommands: t => (array<svgPathCommand>) = "%identity"
+  external fromTuple2: ((svgPathCommand, float)) => t = "%identity"
+  external asTuple2: t => ((svgPathCommand, float)) = "%identity"
+  external fromTuple3: ((svgPathCommand, float, float)) => t = "%identity"
+  external asTuple3: t => ((svgPathCommand, float, float)) = "%identity"
+  external fromTuple5: ((svgPathCommand, float, float, float, float)) => t = "%identity"
+  external asTuple5: t => ((svgPathCommand, float, float, float, float)) = "%identity"
+  external fromTuple7: ((svgPathCommand, float, float, float, float, float, float)) => t = "%identity"
+  external asTuple7: t => ((svgPathCommand, float, float, float, float, float, float)) = "%identity"
+  external fromTuple8: ((svgPathCommand, float, float, float, float, float, float, float)) => t = "%identity"
+  external asTuple8: t => ((svgPathCommand, float, float, float, float, float, float, float)) = "%identity"
+}
+@unboxed type stringOrChartsPointShapeArgsDTArray = Str(string) | Arr(array<ChartsPointShapeArgsD.t>)
+type highchartsPointShapeArgsConfig = {
+  d?: stringOrChartsPointShapeArgsDTArray,
+  dx?: float,
+  dy?: float,
+  fill?: ColorType.t,
+  inverted?: bool,
+  matrix?: array<float>,
+  rotation?: float,
+  rotationOriginX?: float,
+  rotationOriginY?: float,
+  scaleX?: float,
+  scaleY?: float,
+  stroke?: ColorType.t,
+  style?: string,  // ⚠️ REVIEW — was `string | CSSObject` — match the real type by hand
+  translateX?: float,
+  translateY?: float,
+  zIndex?: int,
+}
+@set_index external highchartsPointShapeArgsConfigSet: (highchartsPointShapeArgsConfig, string, JSON.t) => unit = ""
+type seriesZonesOptionsObject = {
+  className?: string,
+  color?: ColorType.t,
+  dashStyle?: dashStyleValue,
+  fillColor?: ColorType.t,
+  value?: float,
+}
 type dateTimeFormatOptions = {
   day?: ChartsTypes.chartsDateTimeFormatOptionsDay,
   era?: ChartsTypes.chartsDateTimeFormatOptionsEra,
@@ -402,9 +553,19 @@ type timeNormalizedObject = {
   count?: int,
   unitRange: float,
 }
+type timeTicksInfoObject = {
+  higherRanks: array<string>,
+  totalRange: float,
+  count?: int,
+  unitRange: float,
+}
+type axisTickPositionsArray = {
+  ...JsxDOM.domProps,
+  info?: timeTicksInfoObject,
+}
 type time = {
   dateFormat: (stringOrDateTimeFormatOptions, option<float>, option<bool>) => string,
-  getTimeTicks: (timeNormalizedObject, option<float>, option<float>, option<float>) => string,  // ⚪ loose — was `AxisTickPositionsArray`
+  getTimeTicks: (timeNormalizedObject, option<float>, option<float>, option<float>) => axisTickPositionsArray,
   getTimezoneOffset: float => float,
   makeTime: (float, float, option<float>, option<float>, option<float>, option<float>) => float,
   parse: CommonTypes.stringOrNumber => float,
@@ -459,11 +620,227 @@ type titleOptions = {
   x?: float,
   y?: float,
 }
+type seriesAccessibilityKeyboardNavigationOptionsObject = {
+  enabled?: bool,
+}
+type legendAccessibilityOptions = {
+  enabled?: bool,
+  keyboardNavigation?: seriesAccessibilityKeyboardNavigationOptionsObject,
+}
+type bubbleLegendFormatterContextObject = {
+  center: float,
+  radius: float,
+  value: float,
+}
+type cssObject = {
+  background?: string,
+  backgroundColor?: string,
+  border?: string,
+  borderRadius?: string,
+  color?: string,
+  cursor?: cursorValue,
+  fontFamily?: string,
+  fontSize?: CommonTypes.stringOrNumber,
+  fontWeight?: string,
+  height?: float,
+  lineClamp?: float,
+  lineWidth?: float,
+  opacity?: float,
+  padding?: string,
+  pointerEvents?: string,
+  position?: string,
+  textAlign?: string,
+  textDecoration?: string,
+  textOutline?: string,
+  textOverflow?: string,
+  top?: string,
+  transition?: string,
+  whiteSpace?: string,
+  width?: float,
+}
+@set_index external cssObjectSet: (cssObject, string, CommonTypes.boolOrStringOrNumber) => unit = ""
+type legendBubbleLegendLabelsOptions = {
+  align?: alignValue,
+  allowOverlap?: bool,
+  className?: string,
+  format?: string,
+  formatter?: @this ((bubbleLegendFormatterContextObject, option<bubbleLegendFormatterContextObject>) => string),
+  style?: cssObject,
+  x?: float,
+  y?: float,
+}
+type legendBubbleLegendRangesOptions = {
+  borderColor?: ColorType.t,
+  color?: ColorType.t,
+  connectorColor?: ColorType.t,
+  value?: float,
+}
+type legendBubbleLegendOptions = {
+  borderColor?: ColorType.t,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  connectorClassName?: string,
+  connectorColor?: ColorType.t,
+  connectorDistance?: float,
+  connectorWidth?: float,
+  enabled?: bool,
+  labels?: legendBubbleLegendLabelsOptions,
+  legendIndex?: float,
+  maxSize?: float,
+  minSize?: float,
+  ranges?: array<legendBubbleLegendRangesOptions>,
+  sizeBy?: bubbleSizeByValue,
+  sizeByAbsoluteValue?: bool,
+  zIndex?: int,
+  zThreshold?: float,
+}
 type legendItemObject = {
   item?: Dom.element,
   label?: Dom.element,
   line?: Dom.element,
   symbol?: Dom.element,
+}
+type legendNavigationOptions = {
+  activeColor?: ColorType.t,
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  arrowSize?: float,
+  enabled?: bool,
+  inactiveColor?: ColorType.t,
+  style?: cssObject,
+}
+@unboxed type boolOrCssObject = Bool(bool) | CssObject(cssObject)
+type legendTitleOptions = {
+  style?: cssObject,
+  text?: string,
+}
+type symbolDictionary = {
+  arc?: string,  // ⚪ loose — was `Function`
+  callout?: string,  // ⚪ loose — was `Function`
+  circle?: string,  // ⚪ loose — was `Function`
+  diamond?: string,  // ⚪ loose — was `Function`
+  square?: string,  // ⚪ loose — was `Function`
+  triangle?: string,  // ⚪ loose — was `Function`
+}
+@set_index external symbolDictionarySet: (symbolDictionary, string, JSON.t) => unit = ""
+@unboxed type stringOrCssObject = Str(string) | CssObject(cssObject)
+type svgAttributes = {
+  d?: stringOrChartsPointShapeArgsDTArray,
+  dx?: float,
+  dy?: float,
+  fill?: ColorType.t,
+  inverted?: bool,
+  matrix?: array<float>,
+  rotation?: float,
+  rotationOriginX?: float,
+  rotationOriginY?: float,
+  scaleX?: float,
+  scaleY?: float,
+  stroke?: ColorType.t,
+  style?: stringOrCssObject,
+  translateX?: float,
+  translateY?: float,
+  zIndex?: int,
+}
+@set_index external svgAttributesSet: (svgAttributes, string, 'c) => unit = ""
+type rec astNode = {
+  attributes?: svgAttributes,
+  children?: array<astNode>,
+  tagName?: string,
+  textContent?: string,
+}
+type fontMetricsObject = {
+  b: float,
+  f: float,
+  h: float,
+}
+type symbolOptionsObject = {
+  anchorX?: float,
+  anchorY?: float,
+  end?: float,
+  @as("open") open_?: bool,
+  r?: float,
+  start?: float,
+}
+type svgRenderer = {
+  box: Dom.element,
+  boxWrapper: Dom.element,
+  defs: Dom.element,
+  @as("Element") element: Dom.element,
+  escapes: Dict.t<string>,
+  forExport?: bool,
+  symbols: symbolDictionary,
+  arc: string,  // ⚠️ REVIEW — match the real type by hand
+  button: (string, float, float, @this ((string, option<string>, option<string>) => bool), option<svgAttributes>, option<svgAttributes>, option<svgAttributes>, option<svgAttributes>, option<symbolKeyValue>, option<bool>) => Dom.element,  // ⚠️ REVIEW — was `SVGElement` — match the real type by hand
+  circle: string,  // ⚠️ REVIEW — match the real type by hand
+  clipRect: (option<float>, option<float>, option<float>, option<float>) => Dom.element,
+  createElement: string => Dom.element,
+  crispLine: (array<ChartsPointShapeArgsD.t>, float) => array<ChartsPointShapeArgsD.t>,
+  definition: astNode => Dom.element,
+  destroy: unit => string,  // ⚪ loose — was `null`
+  draw: unit => unit,
+  fontMetrics: string => fontMetricsObject,  // ⚠️ REVIEW — was `number | SVGElement | Highcharts.SVGElement` — match the real type by hand
+  g: option<string> => Dom.element,
+  getContrast: string => string,
+  image: (string, option<float>, option<float>, option<float>, option<float>, option<string>) => Dom.element,  // ⚪ loose — was `Function`
+  init: (Dom.element, float, float, option<cssObject>, option<bool>, option<bool>, option<bool>) => unit,
+  isHidden: unit => bool,
+  label: (string, float, option<float>, option<string>, option<float>, option<float>, option<bool>, option<bool>, option<string>) => Dom.element,
+  path: string,  // ⚠️ REVIEW — match the real type by hand
+  rect: string,  // ⚠️ REVIEW — match the real type by hand
+  roundedRect: svgAttributes => Dom.element,
+  setSize: (float, float, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  setStyle: cssObject => unit,
+  symbol: (string, option<float>, option<float>, option<float>, option<float>, option<symbolOptionsObject>) => Dom.element,
+  text: (option<string>, option<float>, option<float>, option<bool>) => Dom.element,
+}
+type highchartsAnnotationsOptionsAnimationConfig = {
+  complete?: string,  // ⚪ loose — was `Function`
+  defer?: float,
+  duration?: float,
+  easing?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
+  step?: string,  // ⚪ loose — was `Function`
+}
+type tooltipAnimationOptions = {
+  duration?: float,
+}
+module ChartsTooltipOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromTooltipAnimationOptions: tooltipAnimationOptions => t = "%identity"
+  external asTooltipAnimationOptions: t => (tooltipAnimationOptions) = "%identity"
+}
+type plotAdTooltipPositionOptions = {
+  align?: alignValue,
+  relativeTo?: optionsRelativeToValue,
+  verticalAlign?: verticalAlignValue,
+  x?: float,
+  y?: float,
+}
+type positionObject = {
+  x: float,
+  y: float,
+}
+type shadowOptionsObject = {
+  color?: string,
+  offsetX?: float,
+  offsetY?: float,
+  opacity?: float,
+  width?: float,
+}
+@unboxed type boolOrShadowOptionsObject = Bool(bool) | ShadowOptionsObject(shadowOptionsObject)
+type creditsStyleOptions = {
+  fontSize?: CommonTypes.stringOrNumber,
+}
+module ChartsTooltipOptionsStyle = {
+  type t
+  external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
+  external fromTooltipStyleOptions: creditsStyleOptions => t = "%identity"
+  external asTooltipStyleOptions: t => (creditsStyleOptions) = "%identity"
 }
 type xAxisPlotLinesEventsOptions = {
   click?: @this ((string, option<string>, option<string>) => bool),  // ⚠️ REVIEW — was `PlotLineOrBand` — match the real type by hand
@@ -475,7 +852,7 @@ type xAxisPlotLinesLabelOptions = {
   align?: alignValue,
   formatter?: @this ((string, option<string>) => string),  // ⚪ loose — was `PlotLineOrBand`
   rotation?: float,
-  style?: string,  // ⚪ loose — was `CSSObject`
+  style?: cssObject,
   text?: string,
   textAlign?: alignValue,
   useHTML?: bool,
@@ -502,8 +879,11 @@ type xAxisPlotLinesOptions = {
 module AxisPlotLinesOptions = {
   type t
   external fromXAxisPlotLinesOptions: xAxisPlotLinesOptions => t = "%identity"
+  external asXAxisPlotLinesOptions: t => (xAxisPlotLinesOptions) = "%identity"
   external fromYAxisPlotLinesOptions: xAxisPlotLinesOptions => t = "%identity"
+  external asYAxisPlotLinesOptions: t => (xAxisPlotLinesOptions) = "%identity"
   external fromZAxisPlotLinesOptions: xAxisPlotLinesOptions => t = "%identity"
+  external asZAxisPlotLinesOptions: t => (xAxisPlotLinesOptions) = "%identity"
 }
 type extremesObject = {
   dataMax: float,
@@ -540,167 +920,74 @@ type xAxisTitleOptions = {
 module AxisTitleOptions = {
   type t
   external fromXAxisTitleOptions: xAxisTitleOptions => t = "%identity"
+  external asXAxisTitleOptions: t => (xAxisTitleOptions) = "%identity"
   external fromYAxisTitleOptions: xAxisTitleOptions => t = "%identity"
+  external asYAxisTitleOptions: t => (xAxisTitleOptions) = "%identity"
   external fromZAxisTitleOptions: xAxisTitleOptions => t = "%identity"
+  external asZAxisTitleOptions: t => (xAxisTitleOptions) = "%identity"
 }
-type linearGradientColorObject = {
-  x1: float,
-  x2: float,
-  y1: float,
-  y2: float,
+type axisAccessibilityOptionsObject = {
+  description?: string,
+  enabled?: bool,
+  rangeDescription?: string,
 }
-type radialGradientColorObject = {
-  cx: float,
-  cy: float,
-  r: float,
+type colorAxisDataClassesOptions = {
+  color?: ColorType.t,
+  from?: float,
+  name?: string,
+  @as("to") to_?: float,
 }
-type gradientColorObject = {
-  linearGradient?: linearGradientColorObject,
-  radialGradient?: radialGradientColorObject,
-  stops: array<JSON.t>,
+type axisSetExtremesEventObject = {
+  preventDefault: string,  // ⚪ loose — was `Function`
+  target: string,  // ⚪ loose — was `SVGElement`
+  trigger: string,
+  @as("type") type_: string,
+  dataMax: float,
+  dataMin: float,
+  max: float,
+  min: float,
+  userMax?: float,
+  userMin?: float,
 }
-type patternOptionsObject = {
-  anchorToPoint?: bool,
-  aspectRatio?: float,
-  backgroundColor?: string,
-  color?: string,
-  height?: float,
-  id?: string,
-  image?: string,
-  opacity?: float,
-  path?: string,  // ⚠️ REVIEW — was `string | SVGAttributes` — match the real type by hand
-  patternTransform?: string,
-  width?: float,
+module ChartsColorAxisLabelsOptionsStyle = {
+  type t
+  external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
+  external fromColorAxisLabelsStyleOptions: creditsStyleOptions => t = "%identity"
+  external asColorAxisLabelsStyleOptions: t => (creditsStyleOptions) = "%identity"
+}
+module ChartsColorAxisTitleOptionsStyle = {
+  type t
+  external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
+  external fromColorAxisTitleStyleOptions: creditsStyleOptions => t = "%identity"
+  external asColorAxisTitleStyleOptions: t => (creditsStyleOptions) = "%identity"
+}
+type colorAxisTitleOptions = {
+  align?: axisTitleAlignValue,
+  margin?: float,
+  offset?: float,
+  position3d?: ChartsTypes.chartsXAxisTitleOptionsPosition3d,
+  reserveSpace?: bool,
+  rotation?: float,
+  skew3d?: bool,
+  style?: ChartsColorAxisTitleOptionsStyle.t,
+  text?: string,
+  textAlign?: alignValue,
+  useHTML?: bool,
   x?: float,
   y?: float,
 }
-type patternObject = {
-  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  pattern: patternOptionsObject,
-  patternIndex?: float,
-}
-module ColorType = {
+module ChartsColorAxisOptionsTitle = {
   type t
-  external fromString: string => t = "%identity"
-  external fromGradientColorObject: gradientColorObject => t = "%identity"
-  external fromPatternObject: patternObject => t = "%identity"
-}
-type pointAccessibilityOptionsObject = {
-  description?: string,
-  enabled?: bool,
-}
-type seriesLineDataDragDropOptions = {
-  draggableX?: bool,
-  draggableY?: bool,
-  dragHandle?: string,  // ⚪ loose — was `DragDropHandleOptionsObject`
-  dragMaxX?: CommonTypes.stringOrNumber,
-  dragMaxY?: float,
-  dragMinX?: CommonTypes.stringOrNumber,
-  dragMinY?: float,
-  dragPrecisionX?: float,
-  dragPrecisionY?: float,
-  dragSensitivity?: float,
-  groupBy?: string,
-  guideBox?: string,  // ⚠️ REVIEW — was `PlotOptionsSeriesDragDropGuideBoxOptions | Dictionary<DragDropGuideBoxOptionsObject>` — match the real type by hand
-  liveRedraw?: bool,
-}
-type pointInteractionEventObject = {
-  accumulate: bool,
-}
-type pointMarkerOptionsObject = {
-  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  color?: ColorType.t,
-  enabled?: bool,
-  enabledThreshold?: float,
-  fillColor?: ColorType.t,
-  fillOpacity?: float,
-  height?: float,
-  lineColor?: ColorType.t,
-  lineWidth?: float,
-  radius?: float,
-  states?: string,  // ⚪ loose — was `PointStatesOptionsObject`
-  symbol?: string,
-  width?: float,
-}
-type seriesStatesOptionsObject = {
-  hover?: string,  // ⚪ loose — was `number | SeriesStatesHoverOptionsObject`
-  inactive?: string,  // ⚪ loose — was `SeriesStatesInactiveOptionsObject`
-  normal?: string,  // ⚪ loose — was `SeriesStatesNormalOptionsObject`
-  select?: string,  // ⚪ loose — was `SeriesStatesSelectOptionsObject`
-}
-type seriesBulletDataTargetOptions = {
-  borderColor?: string,
-  borderRadius?: float,
-  borderWidth?: float,
-  color?: ColorType.t,
-  height?: float,
-  width?: CommonTypes.stringOrNumber,
-}
-module ChartsPointShapeArgsD = {
-  type t
-  external fromSVGPathCommands: array<svgPathCommand> => t = "%identity"
-  external fromTuple2: ((svgPathCommand, float)) => t = "%identity"
-  external fromTuple3: ((svgPathCommand, float, float)) => t = "%identity"
-  external fromTuple5: ((svgPathCommand, float, float, float, float)) => t = "%identity"
-  external fromTuple7: ((svgPathCommand, float, float, float, float, float, float)) => t = "%identity"
-  external fromTuple8: ((svgPathCommand, float, float, float, float, float, float, float)) => t = "%identity"
-}
-@unboxed type stringOrChartsPointShapeArgsDTArray = Str(string) | Arr(array<ChartsPointShapeArgsD.t>)
-type highchartsPointShapeArgsConfig = {
-  d?: stringOrChartsPointShapeArgsDTArray,
-  dx?: float,
-  dy?: float,
-  fill?: ColorType.t,
-  inverted?: bool,
-  matrix?: array<float>,
-  rotation?: float,
-  rotationOriginX?: float,
-  rotationOriginY?: float,
-  scaleX?: float,
-  scaleY?: float,
-  stroke?: ColorType.t,
-  style?: string,  // ⚠️ REVIEW — was `string | CSSObject` — match the real type by hand
-  translateX?: float,
-  translateY?: float,
-  zIndex?: int,
-}
-type seriesZonesOptionsObject = {
-  className?: string,
-  color?: ColorType.t,
-  dashStyle?: dashStyleValue,
-  fillColor?: ColorType.t,
-  value?: float,
-}
-type pointerEventObject = {
-  ...JsxDOM.domProps,
-  chartX: float,
-  chartY: float,
-}
-type cssObject = {
-  background?: string,
-  backgroundColor?: string,
-  border?: string,
-  borderRadius?: string,
-  color?: string,
-  cursor?: cursorValue,
-  fontFamily?: string,
-  fontSize?: CommonTypes.stringOrNumber,
-  fontWeight?: string,
-  height?: float,
-  lineClamp?: float,
-  lineWidth?: float,
-  opacity?: float,
-  padding?: string,
-  pointerEvents?: string,
-  position?: string,
-  textAlign?: string,
-  textDecoration?: string,
-  textOutline?: string,
-  textOverflow?: string,
-  top?: string,
-  transition?: string,
-  whiteSpace?: string,
-  width?: float,
+  external fromXAxisTitleOptions: xAxisTitleOptions => t = "%identity"
+  external asXAxisTitleOptions: t => (xAxisTitleOptions) = "%identity"
+  external fromYAxisTitleOptions: xAxisTitleOptions => t = "%identity"
+  external asYAxisTitleOptions: t => (xAxisTitleOptions) = "%identity"
+  external fromZAxisTitleOptions: xAxisTitleOptions => t = "%identity"
+  external asZAxisTitleOptions: t => (xAxisTitleOptions) = "%identity"
+  external fromColorAxisTitleOptions: colorAxisTitleOptions => t = "%identity"
+  external asColorAxisTitleOptions: t => (colorAxisTitleOptions) = "%identity"
 }
 type keyboardNavigationFocusBorderOptionsObject = {
   enabled?: bool,
@@ -721,48 +1008,21 @@ type keyboardNavigationOptionsObject = {
   seriesNavigation?: keyboardNavigationSeriesNavigationOptionsObject,
   wrapAround?: bool,
 }
-type highchartsAnnotationsOptionsAnimationConfig = {
-  complete?: string,  // ⚪ loose — was `Function`
-  defer?: float,
-  duration?: float,
-  easing?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
-  step?: string,  // ⚪ loose — was `Function`
-}
 type annotationsAnimationOptions = {
   defer?: float,
 }
 module ChartsAnnotationsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromAnnotationsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-}
-type positionObject = {
-  x: float,
-  y: float,
+  external asAnnotationsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 type annotationControlPoint = {
   setVisibility: bool => unit,
   update: string => unit,  // ⚪ loose — was `Partial<AnnotationControlPointOptionsObject>`
-}
-@unboxed type stringOrCssObject = Str(string) | CssObject(cssObject)
-type svgAttributes = {
-  d?: stringOrChartsPointShapeArgsDTArray,
-  dx?: float,
-  dy?: float,
-  fill?: ColorType.t,
-  inverted?: bool,
-  matrix?: array<float>,
-  rotation?: float,
-  rotationOriginX?: float,
-  rotationOriginY?: float,
-  scaleX?: float,
-  scaleY?: float,
-  stroke?: ColorType.t,
-  style?: stringOrCssObject,
-  translateX?: float,
-  translateY?: float,
-  zIndex?: int,
 }
 type annotationsControlPointStyleOptions = {
   cursor?: string,
@@ -773,395 +1033,765 @@ type annotationsControlPointStyleOptions = {
 module ChartsAnnotationControlPointOptionsObjectStyle = {
   type t
   external fromSVGAttributes: svgAttributes => t = "%identity"
+  external asSVGAttributes: t => (svgAttributes) = "%identity"
   external fromAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowInfinityLineAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowInfinityLineAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowInfinityLineAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowInfinityLineAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowInfinityLineAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowInfinityLineAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowInfinityLineAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowInfinityLineAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowInfinityLineAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowInfinityLineAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowInfinityLineAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowInfinityLineAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowInfinityLineAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowInfinityLineAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowInfinityLineAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowInfinityLineAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowInfinityLineAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowInfinityLineAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowInfinityLineAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowInfinityLineAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowInfinityLineAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowInfinityLineAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowInfinityLineAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowInfinityLineAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowInfinityLineAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowInfinityLineAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowRayAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowRayAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowRayAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowRayAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowRayAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowRayAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowRayAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowRayAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowRayAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowRayAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowRayAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowRayAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowRayAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowRayAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowRayAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowRayAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowRayAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowRayAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowRayAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowRayAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowRayAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowRayAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowRayAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowRayAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowRayAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowRayAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowSegmentAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowSegmentAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowSegmentAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowSegmentAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowSegmentAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowSegmentAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowSegmentAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowSegmentAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowSegmentAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowSegmentAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowSegmentAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowSegmentAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowSegmentAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowSegmentAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowSegmentAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowSegmentAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowSegmentAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowSegmentAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowSegmentAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowSegmentAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowSegmentAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowSegmentAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowSegmentAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowSegmentAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsArrowSegmentAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsArrowSegmentAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCircleAnnotationAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCircleAnnotationAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCircleAnnotationAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCircleAnnotationAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCircleAnnotationAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCircleAnnotationAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCircleAnnotationAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCircleAnnotationAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCircleAnnotationAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCircleAnnotationAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCircleAnnotationAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCircleAnnotationAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCircleAnnotationAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCircleAnnotationAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCircleAnnotationAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCircleAnnotationAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCircleAnnotationAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCircleAnnotationAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCircleAnnotationAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCircleAnnotationAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCircleAnnotationAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCircleAnnotationAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCircleAnnotationAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCircleAnnotationAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCircleAnnotationAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCircleAnnotationAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked3AnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked3AnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked3AnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked3AnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked3AnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked3AnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked3AnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked3AnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked3AnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked3AnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked3AnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked3AnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked3AnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked3AnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked3AnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked3AnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked3AnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked3AnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked3AnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked3AnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked3AnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked3AnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked3AnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked3AnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked3AnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked3AnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked5AnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked5AnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked5AnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked5AnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked5AnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked5AnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked5AnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked5AnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked5AnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked5AnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked5AnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked5AnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked5AnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked5AnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked5AnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked5AnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked5AnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked5AnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked5AnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked5AnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked5AnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked5AnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked5AnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked5AnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsCrooked5AnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsCrooked5AnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott3AnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott3AnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott3AnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott3AnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott3AnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott3AnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott3AnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott3AnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott3AnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott3AnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott3AnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott3AnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott3AnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott3AnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott3AnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott3AnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott3AnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott3AnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott3AnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott3AnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott3AnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott3AnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott3AnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott3AnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott3AnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott3AnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott5AnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott5AnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott5AnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott5AnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott5AnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott5AnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott5AnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott5AnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott5AnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott5AnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott5AnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott5AnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott5AnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott5AnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott5AnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott5AnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott5AnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott5AnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott5AnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott5AnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott5AnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott5AnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott5AnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott5AnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsElliott5AnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsElliott5AnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsEllipseAnnotationAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsEllipseAnnotationAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsEllipseAnnotationAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsEllipseAnnotationAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsEllipseAnnotationAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsEllipseAnnotationAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsEllipseAnnotationAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsEllipseAnnotationAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsEllipseAnnotationAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsEllipseAnnotationAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsEllipseAnnotationAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsEllipseAnnotationAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsEllipseAnnotationAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsEllipseAnnotationAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsEllipseAnnotationAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsEllipseAnnotationAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsEllipseAnnotationAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsEllipseAnnotationAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsEllipseAnnotationAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsEllipseAnnotationAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsEllipseAnnotationAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsEllipseAnnotationAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsEllipseAnnotationAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsEllipseAnnotationAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsEllipseAnnotationAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsEllipseAnnotationAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciTimeZonesAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciTimeZonesAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciTimeZonesAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciTimeZonesAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciTimeZonesAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciTimeZonesAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciTimeZonesAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciTimeZonesAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciTimeZonesAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciTimeZonesAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciTimeZonesAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciTimeZonesAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciTimeZonesAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciTimeZonesAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciTimeZonesAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciTimeZonesAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciTimeZonesAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciTimeZonesAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciTimeZonesAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciTimeZonesAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciTimeZonesAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciTimeZonesAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciTimeZonesAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciTimeZonesAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsFibonacciTimeZonesAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsFibonacciTimeZonesAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsHorizontalLineAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsHorizontalLineAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsHorizontalLineAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsHorizontalLineAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsHorizontalLineAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsHorizontalLineAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsHorizontalLineAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsHorizontalLineAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsHorizontalLineAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsHorizontalLineAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsHorizontalLineAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsHorizontalLineAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsHorizontalLineAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsHorizontalLineAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsHorizontalLineAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsHorizontalLineAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsHorizontalLineAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsHorizontalLineAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsHorizontalLineAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsHorizontalLineAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsHorizontalLineAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsHorizontalLineAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsHorizontalLineAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsHorizontalLineAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsHorizontalLineAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsHorizontalLineAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsInfinityLineAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsInfinityLineAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsInfinityLineAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsInfinityLineAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsInfinityLineAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsInfinityLineAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsInfinityLineAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsInfinityLineAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsInfinityLineAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsInfinityLineAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsInfinityLineAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsInfinityLineAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsInfinityLineAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsInfinityLineAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsInfinityLineAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsInfinityLineAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsInfinityLineAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsInfinityLineAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsInfinityLineAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsInfinityLineAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsInfinityLineAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsInfinityLineAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsInfinityLineAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsInfinityLineAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsInfinityLineAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsInfinityLineAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsLabelAnnotationAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsLabelAnnotationAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsLabelAnnotationAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsLabelAnnotationAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsLabelAnnotationAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsLabelAnnotationAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsLabelAnnotationAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsLabelAnnotationAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsLabelAnnotationAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsLabelAnnotationAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsLabelAnnotationAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsLabelAnnotationAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsLabelAnnotationAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsLabelAnnotationAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsLabelAnnotationAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsLabelAnnotationAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsLabelAnnotationAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsLabelAnnotationAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsLabelAnnotationAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsLabelAnnotationAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsLabelAnnotationAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsLabelAnnotationAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsLabelAnnotationAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsLabelAnnotationAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsLabelAnnotationAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsLabelAnnotationAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXYAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXYAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXYAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXYAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXYAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXYAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXYAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXYAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXYAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXYAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXYAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXYAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXYAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXYAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXYAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXYAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXYAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXYAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXYAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXYAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXYAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXYAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXYAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXYAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureXYAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureXYAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureYAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureYAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureYAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureYAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureYAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureYAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureYAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureYAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureYAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureYAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureYAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureYAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureYAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureYAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureYAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureYAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureYAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureYAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureYAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureYAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureYAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureYAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureYAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureYAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsMeasureYAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsMeasureYAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsParallelChannelAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsParallelChannelAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsParallelChannelAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsParallelChannelAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsParallelChannelAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsParallelChannelAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsParallelChannelAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsParallelChannelAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsParallelChannelAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsParallelChannelAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsParallelChannelAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsParallelChannelAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsParallelChannelAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsParallelChannelAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsParallelChannelAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsParallelChannelAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsParallelChannelAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsParallelChannelAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsParallelChannelAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsParallelChannelAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsParallelChannelAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsParallelChannelAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsParallelChannelAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsParallelChannelAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsParallelChannelAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsParallelChannelAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsPitchforkAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsPitchforkAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsPitchforkAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsPitchforkAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsPitchforkAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsPitchforkAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsPitchforkAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsPitchforkAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsPitchforkAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsPitchforkAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsPitchforkAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsPitchforkAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsPitchforkAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsPitchforkAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsPitchforkAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsPitchforkAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsPitchforkAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsPitchforkAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsPitchforkAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsPitchforkAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsPitchforkAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsPitchforkAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsPitchforkAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsPitchforkAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsPitchforkAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsPitchforkAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRayAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRayAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRayAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRayAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRayAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRayAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRayAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRayAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRayAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRayAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRayAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRayAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRayAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRayAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRayAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRayAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRayAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRayAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRayAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRayAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRayAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRayAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRayAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRayAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRayAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRayAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRectangleAnnotationAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRectangleAnnotationAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRectangleAnnotationAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRectangleAnnotationAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRectangleAnnotationAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRectangleAnnotationAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRectangleAnnotationAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRectangleAnnotationAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRectangleAnnotationAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRectangleAnnotationAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRectangleAnnotationAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRectangleAnnotationAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRectangleAnnotationAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRectangleAnnotationAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRectangleAnnotationAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRectangleAnnotationAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRectangleAnnotationAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRectangleAnnotationAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRectangleAnnotationAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRectangleAnnotationAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRectangleAnnotationAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRectangleAnnotationAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRectangleAnnotationAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRectangleAnnotationAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsRectangleAnnotationAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsRectangleAnnotationAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsSegmentAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsSegmentAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsSegmentAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsSegmentAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsSegmentAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsSegmentAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsSegmentAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsSegmentAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsSegmentAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsSegmentAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsSegmentAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsSegmentAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsSegmentAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsSegmentAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsSegmentAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsSegmentAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsSegmentAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsSegmentAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsSegmentAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsSegmentAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsSegmentAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsSegmentAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsSegmentAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsSegmentAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsSegmentAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsSegmentAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsTimeCyclesAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsTimeCyclesAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsTimeCyclesAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsTimeCyclesAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsTimeCyclesAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsTimeCyclesAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsTimeCyclesAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsTimeCyclesAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsTimeCyclesAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsTimeCyclesAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsTimeCyclesAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsTimeCyclesAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsTimeCyclesAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsTimeCyclesAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsTimeCyclesAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsTimeCyclesAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsTimeCyclesAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsTimeCyclesAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsTimeCyclesAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsTimeCyclesAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsTimeCyclesAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsTimeCyclesAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsTimeCyclesAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsTimeCyclesAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsTimeCyclesAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsTimeCyclesAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalArrowAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalArrowAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalArrowAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalArrowAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalArrowAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalArrowAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalArrowAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalArrowAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalArrowAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalArrowAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalArrowAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalArrowAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalArrowAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalArrowAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalArrowAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalArrowAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalArrowAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalArrowAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalArrowAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalArrowAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalArrowAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalArrowAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalArrowAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalArrowAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalArrowAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalArrowAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalCounterAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalCounterAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalCounterAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalCounterAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalCounterAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalCounterAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalCounterAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalCounterAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalCounterAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalCounterAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalCounterAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalCounterAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalCounterAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalCounterAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalCounterAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalCounterAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalCounterAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalCounterAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalCounterAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalCounterAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalCounterAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalCounterAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalCounterAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalCounterAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalCounterAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalCounterAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLabelAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLabelAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLabelAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLabelAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLabelAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLabelAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLabelAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLabelAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLabelAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLabelAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLabelAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLabelAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLabelAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLabelAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLabelAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLabelAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLabelAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLabelAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLabelAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLabelAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLabelAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLabelAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLabelAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLabelAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLabelAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLabelAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLineAnnotationsControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLineAnnotationsControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLineAnnotationsLabelsControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLineAnnotationsLabelsControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLineAnnotationsShapesControlPointsStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLineAnnotationsShapesControlPointsStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLineAnnotationsTypesCrookedLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLineAnnotationsTypesCrookedLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLineAnnotationsTypesElliottWaveControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLineAnnotationsTypesElliottWaveControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLineAnnotationsTypesFibonacciControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLineAnnotationsTypesFibonacciControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLineAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLineAnnotationsTypesFibonacciTimeZonesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLineAnnotationsTypesInfinityLineControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLineAnnotationsTypesInfinityLineControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLineAnnotationsTypesMeasureControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLineAnnotationsTypesMeasureControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLineAnnotationsTypesPitchforkControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLineAnnotationsTypesPitchforkControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLineAnnotationsTypesTimeCyclesControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLineAnnotationsTypesTimeCyclesControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLineAnnotationsTypesTunnelControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLineAnnotationsTypesTunnelControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
   external fromNavigationBindingsVerticalLineAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: annotationsControlPointStyleOptions => t = "%identity"
+  external asNavigationBindingsVerticalLineAnnotationsTypesTunnelTypeHeightControlPointStyleOptions: t => (annotationsControlPointStyleOptions) = "%identity"
 }
 type annotationLabelAccessibilityOptionsObject = {
   description?: string,
 }
-type shadowOptionsObject = {
-  color?: string,
-  offsetX?: float,
-  offsetY?: float,
-  opacity?: float,
-  width?: float,
-}
-@unboxed type boolOrShadowOptionsObject = Bool(bool) | ShadowOptionsObject(shadowOptionsObject)
 type annotationMockPointOptionsObject = {
   x: float,
   xAxis: CommonTypes.stringOrNumber,
@@ -1214,7 +1844,9 @@ type annotationsTypesElliottWaveLabelStyleOptions = {
 module ChartsAnnotationsTypesElliottWaveLabelOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromAnnotationsTypesElliottWaveLabelStyleOptions: annotationsTypesElliottWaveLabelStyleOptions => t = "%identity"
+  external asAnnotationsTypesElliottWaveLabelStyleOptions: t => (annotationsTypesElliottWaveLabelStyleOptions) = "%identity"
 }
 type annotationsTypesElliottWaveTypeLineOptions = {
   fill?: string,
@@ -1223,7 +1855,9 @@ type annotationsTypesElliottWaveTypeLineOptions = {
 module ChartsAnnotationsTypesFibonacciLabelOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromAnnotationsTypesFibonacciLabelStyleOptions: annotationsTypesElliottWaveLabelStyleOptions => t = "%identity"
+  external asAnnotationsTypesFibonacciLabelStyleOptions: t => (annotationsTypesElliottWaveLabelStyleOptions) = "%identity"
 }
 type annotationsTypesFibonacciTimeZonesTypeControlPointOptions = {
   events?: string,  // ⚪ loose — was `any`
@@ -1263,7 +1897,9 @@ type annotationsTypesMeasureTypeLabelStyleOptions = {
 module ChartsAnnotationsTypesMeasureTypeLabelOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromAnnotationsTypesMeasureTypeLabelStyleOptions: annotationsTypesMeasureTypeLabelStyleOptions => t = "%identity"
+  external asAnnotationsTypesMeasureTypeLabelStyleOptions: t => (annotationsTypesMeasureTypeLabelStyleOptions) = "%identity"
 }
 type annotationsTypesMeasureTypeLabelOptions = {
   enabled?: bool,
@@ -1308,7 +1944,9 @@ type annotationsTypesTimeCyclesTypeOptions = {
 module ChartsAnnotationsTypesVerticalLineLabelOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromAnnotationsTypesVerticalLineLabelStyleOptions: annotationsTypesMeasureTypeLabelStyleOptions => t = "%identity"
+  external asAnnotationsTypesVerticalLineLabelStyleOptions: t => (annotationsTypesMeasureTypeLabelStyleOptions) = "%identity"
 }
 type annotationsTypesVerticalLineTypeConnectorOptions = {
   dashStyle?: dashStyleValue,
@@ -1340,9 +1978,6 @@ type boostOptions = {
   useGPUTranslations?: bool,
   usePreallocated?: bool,
 }
-type seriesAccessibilityKeyboardNavigationOptionsObject = {
-  enabled?: bool,
-}
 type plotAbandsBottomLineStylesOptions = {
   lineWidth?: float,
 }
@@ -1352,8 +1987,11 @@ type plotAbandsBottomLineOptions = {
 module ChartsPlotAbandsDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotAbandsDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotAbandsDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 type dataLabelsFilterOptionsObject = {
   operator?: optionsOperatorValue,
@@ -1372,353 +2010,141 @@ type plotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions = {
 module ChartsDataLabelsTextPathOptionsObjectAttributes = {
   type t
   external fromSVGAttributes: svgAttributes => t = "%identity"
+  external asSVGAttributes: t => (svgAttributes) = "%identity"
   external fromPlotDependencywheelDataLabelsTextPathAttributesOptions: plotDependencywheelDataLabelsTextPathAttributesOptions => t = "%identity"
+  external asPlotDependencywheelDataLabelsTextPathAttributesOptions: t => (plotDependencywheelDataLabelsTextPathAttributesOptions) = "%identity"
   external fromPlotTreegraphDataLabelsLinkTextPathAttributesOptions: plotTreegraphDataLabelsLinkTextPathAttributesOptions => t = "%identity"
+  external asPlotTreegraphDataLabelsLinkTextPathAttributesOptions: t => (plotTreegraphDataLabelsLinkTextPathAttributesOptions) = "%identity"
   external fromPlotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions: plotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions => t = "%identity"
+  external asPlotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions: t => (plotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions) = "%identity"
 }
 type dataLabelsTextPathOptionsObject = {
   attributes?: ChartsDataLabelsTextPathOptionsObjectAttributes.t,
   enabled?: bool,
 }
-type dataSortingOptionsObject = {
-  enabled?: bool,
-  matchByName?: bool,
-  sortKey?: string,
-}
-module ChartsSeriesAbandsOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotAbandsDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-type labelIntersectBoxObject = {
-  bottom: float,
-  left: float,
-  right: float,
-  top: float,
-}
-type plotAbandsLabelStyleOptions = {
-  fontSize?: CommonTypes.stringOrNumber,
-}
-type creditsStyleOptions = {
-  fontSize?: CommonTypes.stringOrNumber,
-}
-module ChartsSeriesLabelOptionsObjectStyle = {
-  type t
-  external fromCSSObject: cssObject => t = "%identity"
-  external fromPlotAbandsLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotAdLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotAoLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotApoLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotArcdiagramLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotAreaLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotArearangeLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotAreasplineLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotAreasplinerangeLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotAroonLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotAroonoscillatorLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotAtrLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotBarLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotBbLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotBellcurveLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotBoxplotLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotBubbleLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotBulletLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotCandlestickLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotCciLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotChaikinLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotCmfLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotCmoLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotColumnLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotColumnpyramidLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotColumnrangeLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotContourLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotCylinderLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotDemaLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotDependencywheelLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotDisparityindexLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotDmiLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotDpoLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotDumbbellLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotEmaLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotErrorbarLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotFlagsLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotFunnel3dLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotGanttLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotGaugeLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotHeatmapLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotHeikinashiLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotHistogramLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotHlcLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotHollowcandlestickLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotIkhLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotKeltnerchannelsLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotKlingerLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotLinearregressionangleLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotLinearregressioninterceptLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotLinearregressionLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotLinearregressionslopeLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotLineLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotLollipopLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotMacdLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotMfiLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotMomentumLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotNatrLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotObvLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotOhlcLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotOrganizationLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotPackedbubbleLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotParetoLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotPcLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotPictorialLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotPivotpointsLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotPointandfigureLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotPolygonLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotPpoLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotPriceenvelopesLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotPsarLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotPyramid3dLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotRenkoLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotRocLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotRsiLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotSankeyLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotScatter3dLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotScatterLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotSeriesLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotSlowstochasticLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotSmaLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotSolidgaugeLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotSplineLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotStochasticLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotStreamgraphLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotSupertrendLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotTemaLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotTilemapLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotTimelineLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotTreegraphLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotTreemapLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotTrendlineLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotTrixLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotVariwideLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotVbpLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotVectorLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotVwapLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotWaterfallLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotWilliamsrLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotWindbarbLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
-  external fromPlotWmaLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotWordcloudLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotXrangeLabelStyleOptions: creditsStyleOptions => t = "%identity"
-  external fromPlotZigzagLabelStyleOptions: creditsStyleOptions => t = "%identity"
-}
-type plotAbandsParamsOptions = {
-  index?: int,
-  period?: float,
-}
-type plotAbandsTooltipPositionOptions = {
-  align?: alignValue,
-  relativeTo?: optionsRelativeToValue,
-  verticalAlign?: verticalAlignValue,
-  x?: float,
-  y?: float,
-}
-type plotAdTooltipPositionOptions = {
-  align?: alignValue,
-  relativeTo?: optionsRelativeToValue,
-  verticalAlign?: verticalAlignValue,
-  x?: float,
-  y?: float,
-}
-module ChartsSeriesTooltipOptionsObjectPosition = {
-  type t
-  external fromPlotAbandsTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotAdTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotAoTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotApoTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotArcdiagramTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotArearangeTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotAreasplinerangeTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotAreasplineTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotAreaTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotAroonoscillatorTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotAroonTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotAtrTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotBarTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotBbTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotBellcurveTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotBoxplotTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotBubbleTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotBulletTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotCandlestickTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotCciTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotChaikinTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotCmfTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotCmoTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotColumnpyramidTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotColumnrangeTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotColumnTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotContourTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotCylinderTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotDemaTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotDependencywheelTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotDisparityindexTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotDmiTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotDpoTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotDumbbellTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotEmaTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotErrorbarTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotFlagsTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotFlowmapTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotFunnel3dTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotFunnelTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotGanttTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotGaugeTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotGeoheatmapTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotHeatmapTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotHeikinashiTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotHistogramTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotHlcTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotHollowcandlestickTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotIkhTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotItemTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotKeltnerchannelsTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotKlingerTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotLinearregressionangleTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotLinearregressioninterceptTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotLinearregressionslopeTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotLinearregressionTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotLineTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotLollipopTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotMacdTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotMapbubbleTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotMaplineTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotMappointTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotMapTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotMfiTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotMomentumTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotNatrTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotNetworkgraphTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotObvTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotOhlcTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotOrganizationTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotPackedbubbleTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotParetoTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotPcTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotPictorialTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotPieTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotPivotpointsTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotPointandfigureTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotPolygonTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotPpoTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotPriceenvelopesTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotPsarTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotPyramid3dTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotPyramidTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotRenkoTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotRocTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotRsiTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotSankeyTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotScatter3dTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotScatterTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotSeriesTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotSlowstochasticTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotSmaTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotSolidgaugeTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotSplineTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotStochasticTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotStreamgraphTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotSunburstTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotSupertrendTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotTemaTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotTilemapTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotTimelineTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotTreegraphTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotTreemapTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotTrendlineTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotTrixTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotVariablepieTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotVariwideTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotVbpTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotVectorTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotVennTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotVwapTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotWaterfallTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotWilliamsrTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotWindbarbTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotWmaTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-  external fromPlotWordcloudTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotXrangeTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
-  external fromPlotZigzagTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
-}
 type plotAdDataLabelsAnimationOptions = {
   defer?: float,
-}
-module ChartsPlotAdDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotAdDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
 }
 module ChartsDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromSeriesArcdiagramDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesArcdiagramDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesAreaDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesAreaDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesArearangeDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesArearangeDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesAreasplineDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesAreasplineDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesAreasplinerangeDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesAreasplinerangeDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesBarDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesBarDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesBoxplotDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesBoxplotDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesBubbleDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesBubbleDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesBulletDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesBulletDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesCandlestickDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesCandlestickDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesColumnDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesColumnDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesColumnpyramidDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesColumnpyramidDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesColumnrangeDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesColumnrangeDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesContourDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesContourDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesCylinderDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesCylinderDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesDumbbellDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesDumbbellDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesFunnel3dDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesFunnel3dDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesFunnelDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesFunnelDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesGaugeDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesGaugeDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesHeatmapDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesHeatmapDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesHeikinashiDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesHeikinashiDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesHlcDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesHlcDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesHollowcandlestickDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesHollowcandlestickDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesItemDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesItemDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesLineDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesLineDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesLollipopDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesLollipopDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesNetworkgraphDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesNetworkgraphDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesOhlcDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesOhlcDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesOrganizationDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesOrganizationDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesPackedbubbleDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesPackedbubbleDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesParetoDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesParetoDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesPictorialDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesPictorialDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesPieDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesPieDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesPointandfigureDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesPointandfigureDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesPolygonDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesPolygonDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesPyramid3dDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesPyramid3dDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesPyramidDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesPyramidDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesRenkoDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesRenkoDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesSankeyDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesSankeyDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesScatter3dDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesScatter3dDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesScatterDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesScatterDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesSolidgaugeDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesSolidgaugeDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesSplineDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesSplineDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesStreamgraphDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesStreamgraphDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesSunburstDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesSunburstDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesTilemapDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesTilemapDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesTimelineDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesTimelineDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesTreegraphDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesTreegraphDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesTreemapDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesTreemapDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesVariablepieDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesVariablepieDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesVariwideDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesVariwideDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesVectorDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesVectorDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesVennDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesVennDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesWaterfallDataDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesWaterfallDataDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesWindbarbDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesWindbarbDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesWordcloudDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesWordcloudDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesXrangeDataDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesXrangeDataDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 type dataLabelsOptions = {
   align?: alignValue,
@@ -1758,6 +2184,633 @@ type dataLabelsOptions = {
   yHigh?: float,
   yLow?: float,
 }
+type dataSortingOptionsObject = {
+  enabled?: bool,
+  matchByName?: bool,
+  sortKey?: string,
+}
+module ChartsSeriesAbandsOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotAbandsDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotAbandsDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+type labelIntersectBoxObject = {
+  bottom: float,
+  left: float,
+  right: float,
+  top: float,
+}
+type plotAbandsLabelStyleOptions = {
+  fontSize?: CommonTypes.stringOrNumber,
+}
+module ChartsSeriesLabelOptionsObjectStyle = {
+  type t
+  external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
+  external fromPlotAbandsLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotAbandsLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotAdLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotAdLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotAoLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotAoLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotApoLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotApoLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotArcdiagramLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotArcdiagramLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotAreaLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotAreaLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotArearangeLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotArearangeLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotAreasplineLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotAreasplineLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotAreasplinerangeLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotAreasplinerangeLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotAroonLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotAroonLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotAroonoscillatorLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotAroonoscillatorLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotAtrLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotAtrLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotBarLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotBarLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotBbLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotBbLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotBellcurveLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotBellcurveLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotBoxplotLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotBoxplotLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotBubbleLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotBubbleLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotBulletLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotBulletLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotCandlestickLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotCandlestickLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotCciLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotCciLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotChaikinLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotChaikinLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotCmfLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotCmfLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotCmoLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotCmoLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotColumnLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotColumnLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotColumnpyramidLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotColumnpyramidLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotColumnrangeLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotColumnrangeLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotContourLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotContourLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotCylinderLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotCylinderLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotDemaLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotDemaLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotDependencywheelLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotDependencywheelLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotDisparityindexLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotDisparityindexLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotDmiLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotDmiLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotDpoLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotDpoLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotDumbbellLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotDumbbellLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotEmaLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotEmaLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotErrorbarLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotErrorbarLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotFlagsLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotFlagsLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotFunnel3dLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotFunnel3dLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotGanttLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotGanttLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotGaugeLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotGaugeLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotHeatmapLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotHeatmapLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotHeikinashiLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotHeikinashiLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotHistogramLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotHistogramLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotHlcLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotHlcLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotHollowcandlestickLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotHollowcandlestickLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotIkhLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotIkhLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotKeltnerchannelsLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotKeltnerchannelsLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotKlingerLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotKlingerLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotLinearregressionangleLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotLinearregressionangleLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotLinearregressioninterceptLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotLinearregressioninterceptLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotLinearregressionLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotLinearregressionLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotLinearregressionslopeLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotLinearregressionslopeLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotLineLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotLineLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotLollipopLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotLollipopLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotMacdLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotMacdLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotMfiLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotMfiLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotMomentumLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotMomentumLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotNatrLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotNatrLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotObvLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotObvLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotOhlcLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotOhlcLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotOrganizationLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotOrganizationLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotPackedbubbleLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotPackedbubbleLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotParetoLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotParetoLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotPcLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotPcLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotPictorialLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotPictorialLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotPivotpointsLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotPivotpointsLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotPointandfigureLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotPointandfigureLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotPolygonLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotPolygonLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotPpoLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotPpoLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotPriceenvelopesLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotPriceenvelopesLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotPsarLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotPsarLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotPyramid3dLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotPyramid3dLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotRenkoLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotRenkoLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotRocLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotRocLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotRsiLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotRsiLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotSankeyLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotSankeyLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotScatter3dLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotScatter3dLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotScatterLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotScatterLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotSeriesLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotSeriesLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotSlowstochasticLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotSlowstochasticLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotSmaLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotSmaLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotSolidgaugeLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotSolidgaugeLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotSplineLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotSplineLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotStochasticLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotStochasticLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotStreamgraphLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotStreamgraphLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotSupertrendLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotSupertrendLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotTemaLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotTemaLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotTilemapLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotTilemapLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotTimelineLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotTimelineLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotTreegraphLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotTreegraphLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotTreemapLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotTreemapLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotTrendlineLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotTrendlineLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotTrixLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotTrixLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotVariwideLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotVariwideLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotVbpLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotVbpLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotVectorLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotVectorLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotVwapLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotVwapLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotWaterfallLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotWaterfallLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotWilliamsrLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotWilliamsrLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotWindbarbLabelStyleOptions: plotAbandsLabelStyleOptions => t = "%identity"
+  external asPlotWindbarbLabelStyleOptions: t => (plotAbandsLabelStyleOptions) = "%identity"
+  external fromPlotWmaLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotWmaLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotWordcloudLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotWordcloudLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotXrangeLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotXrangeLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+  external fromPlotZigzagLabelStyleOptions: creditsStyleOptions => t = "%identity"
+  external asPlotZigzagLabelStyleOptions: t => (creditsStyleOptions) = "%identity"
+}
+type plotAbandsParamsOptions = {
+  index?: int,
+  period?: float,
+}
+type plotAbandsTooltipPositionOptions = {
+  align?: alignValue,
+  relativeTo?: optionsRelativeToValue,
+  verticalAlign?: verticalAlignValue,
+  x?: float,
+  y?: float,
+}
+module ChartsSeriesTooltipOptionsObjectPosition = {
+  type t
+  external fromPlotAbandsTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotAbandsTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotAdTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotAdTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotAoTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotAoTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotApoTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotApoTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotArcdiagramTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotArcdiagramTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotArearangeTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotArearangeTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotAreasplinerangeTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotAreasplinerangeTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotAreasplineTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotAreasplineTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotAreaTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotAreaTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotAroonoscillatorTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotAroonoscillatorTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotAroonTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotAroonTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotAtrTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotAtrTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotBarTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotBarTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotBbTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotBbTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotBellcurveTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotBellcurveTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotBoxplotTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotBoxplotTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotBubbleTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotBubbleTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotBulletTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotBulletTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotCandlestickTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotCandlestickTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotCciTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotCciTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotChaikinTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotChaikinTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotCmfTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotCmfTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotCmoTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotCmoTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotColumnpyramidTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotColumnpyramidTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotColumnrangeTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotColumnrangeTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotColumnTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotColumnTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotContourTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotContourTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotCylinderTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotCylinderTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotDemaTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotDemaTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotDependencywheelTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotDependencywheelTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotDisparityindexTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotDisparityindexTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotDmiTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotDmiTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotDpoTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotDpoTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotDumbbellTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotDumbbellTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotEmaTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotEmaTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotErrorbarTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotErrorbarTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotFlagsTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotFlagsTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotFlowmapTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotFlowmapTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotFunnel3dTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotFunnel3dTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotFunnelTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotFunnelTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotGanttTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotGanttTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotGaugeTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotGaugeTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotGeoheatmapTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotGeoheatmapTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotHeatmapTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotHeatmapTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotHeikinashiTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotHeikinashiTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotHistogramTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotHistogramTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotHlcTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotHlcTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotHollowcandlestickTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotHollowcandlestickTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotIkhTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotIkhTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotItemTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotItemTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotKeltnerchannelsTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotKeltnerchannelsTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotKlingerTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotKlingerTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotLinearregressionangleTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotLinearregressionangleTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotLinearregressioninterceptTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotLinearregressioninterceptTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotLinearregressionslopeTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotLinearregressionslopeTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotLinearregressionTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotLinearregressionTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotLineTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotLineTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotLollipopTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotLollipopTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotMacdTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotMacdTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotMapbubbleTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotMapbubbleTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotMaplineTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotMaplineTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotMappointTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotMappointTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotMapTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotMapTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotMfiTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotMfiTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotMomentumTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotMomentumTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotNatrTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotNatrTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotNetworkgraphTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotNetworkgraphTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotObvTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotObvTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotOhlcTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotOhlcTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotOrganizationTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotOrganizationTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotPackedbubbleTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotPackedbubbleTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotParetoTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotParetoTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotPcTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotPcTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotPictorialTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotPictorialTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotPieTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotPieTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotPivotpointsTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotPivotpointsTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotPointandfigureTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotPointandfigureTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotPolygonTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotPolygonTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotPpoTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotPpoTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotPriceenvelopesTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotPriceenvelopesTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotPsarTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotPsarTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotPyramid3dTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotPyramid3dTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotPyramidTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotPyramidTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotRenkoTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotRenkoTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotRocTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotRocTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotRsiTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotRsiTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotSankeyTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotSankeyTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotScatter3dTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotScatter3dTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotScatterTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotScatterTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotSeriesTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotSeriesTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotSlowstochasticTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotSlowstochasticTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotSmaTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotSmaTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotSolidgaugeTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotSolidgaugeTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotSplineTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotSplineTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotStochasticTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotStochasticTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotStreamgraphTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotStreamgraphTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotSunburstTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotSunburstTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotSupertrendTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotSupertrendTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotTemaTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotTemaTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotTilemapTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotTilemapTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotTimelineTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotTimelineTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotTreegraphTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotTreegraphTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotTreemapTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotTreemapTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotTrendlineTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotTrendlineTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotTrixTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotTrixTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotVariablepieTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotVariablepieTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotVariwideTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotVariwideTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotVbpTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotVbpTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotVectorTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotVectorTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotVennTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotVennTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotVwapTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotVwapTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotWaterfallTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotWaterfallTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotWilliamsrTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotWilliamsrTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotWindbarbTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotWindbarbTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotWmaTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotWmaTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+  external fromPlotWordcloudTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotWordcloudTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotXrangeTooltipPositionOptions: plotAbandsTooltipPositionOptions => t = "%identity"
+  external asPlotXrangeTooltipPositionOptions: t => (plotAbandsTooltipPositionOptions) = "%identity"
+  external fromPlotZigzagTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
+  external asPlotZigzagTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
+}
+type dataGroupingOptionsObject = {
+  anchor?: string,
+  approximation?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
+  dateTimeLabelFormats?: string,  // ⚪ loose — was `object`
+  enabled?: bool,
+  firstAnchor?: string,
+  forced?: bool,
+  groupAll?: bool,
+  groupPixelWidth?: float,
+  lastAnchor?: string,
+  units?: array<(string, array<float>)>,
+}
+type rGBA = {
+  ...JsxDOM.domProps,
+  length: string,  // ⚪ loose — was `4`
+}
+type rec color = {
+  rgba: rGBA,
+  brighten: float => color,
+  get: option<string> => ColorType.t,
+  setOpacity: float => color,
+  tweenTo: (color, float) => ColorType.t,
+}
+type synthPatchEQFilter = {
+  frequency?: float,
+  gain?: float,
+  @as("Q") q?: float,
+}
+type synthPatchPassFilter = {
+  frequency?: float,
+  frequencyPitchTrackingMultiplier?: float,
+  @as("Q") q?: float,
+}
+type synthPatchOscillatorOptionsObject = {
+  attackEnvelope?: array<JSON.t>,
+  detune?: float,
+  fixedFrequency?: float,
+  fmOscillator?: float,
+  freqMultiplier?: float,
+  highpass?: synthPatchPassFilter,
+  lowpass?: synthPatchPassFilter,
+  pulseWidth?: float,
+  releaseEnvelope?: array<JSON.t>,
+  @as("type") type_?: synthPatchOscillatorType,
+  vmOscillator?: float,
+  volume?: float,
+  volumePitchTrackingMultiplier?: float,
+}
+type synthPatchOptionsObject = {
+  eq?: array<synthPatchEQFilter>,
+  masterAttackEnvelope?: array<JSON.t>,
+  masterReleaseEnvelope?: array<JSON.t>,
+  masterVolume?: float,
+  midiInstrument?: float,
+  noteGlideDuration?: float,
+  oscillators?: array<synthPatchOscillatorOptionsObject>,
+}
+@unboxed type stringOrSynthPatchOptionsObject = Str(string) | SynthPatchOptionsObject(synthPatchOptionsObject)
+type sonificationInstrumentMappingOptions = {
+  frequency?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentFrequencyOptions`
+  gapBetweenNotes?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentTimeOptions`
+  highpass?: string,  // ⚪ loose — was `SonificationInstrumentHighpassOptions`
+  lowpass?: string,  // ⚪ loose — was `SonificationInstrumentLowpassOptions`
+  noteDuration?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentTimeOptions`
+  pan?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentTimeOptions`
+  pitch?: string,  // ⚪ loose — was `string | number | Function | (string | number)[] | SonificationInstrumentPitchOptions`
+  playDelay?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentPlayDelayOptions`
+  rate?: string,  // ⚪ loose — was `string | number | Function | SonificationTracksRateOptions`
+  text?: string,  // ⚪ loose — was `string | Function`
+  time?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentTimeOptions`
+  tremolo?: string,  // ⚪ loose — was `SonificationInstrumentTremoloOptions`
+  volume?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentVolumeOptions`
+}
+type sonificationInstrumentPointGroupingOptions = {
+  algorithm?: string,
+  enabled?: bool,
+  groupTimespan?: float,
+  prop?: string,
+}
+type seriesSonificationContextTracksOptions = {
+  activeWhen?: string,  // ⚠️ REVIEW — was `Function | SonificationInstrumentActiveWhenOptions` — match the real type by hand
+  instrument?: stringOrSynthPatchOptionsObject,
+  mapping?: sonificationInstrumentMappingOptions,
+  midiName?: string,
+  pointGrouping?: sonificationInstrumentPointGroupingOptions,
+  roundToMusicalNotes?: bool,
+  showPlayMarker?: bool,
+  timeInterval?: float,
+  @as("type") type_?: sonifcationTypeValue,
+  valueInterval?: float,
+  valueMapFunction?: optionsValueMapFunctionValue,
+  valueProp?: string,
+}
+type seriesSonificationInstrumentOptions = {
+  activeWhen?: string,  // ⚠️ REVIEW — was `Function | SonificationInstrumentActiveWhenOptions` — match the real type by hand
+  instrument?: stringOrSynthPatchOptionsObject,
+  mapping?: sonificationInstrumentMappingOptions,
+  midiName?: string,
+  pointGrouping?: sonificationInstrumentPointGroupingOptions,
+  roundToMusicalNotes?: bool,
+  showPlayMarker?: bool,
+  @as("type") type_?: sonifcationTypeValue,
+}
+type sonificationSpeechMappingOptions = {
+  pitch?: string,  // ⚠️ REVIEW — was `string | number | Function | SonificationSpeechPitchOptions` — match the real type by hand
+  playDelay?: string,  // ⚠️ REVIEW — was `string | number | Function | SonificationSpeechPlayDelayOptions` — match the real type by hand
+  rate?: string,  // ⚠️ REVIEW — was `string | number | Function | SonificationInstrumentTimeOptions` — match the real type by hand
+  text?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
+  time?: string,  // ⚠️ REVIEW — was `string | number | Function | SonificationInstrumentTimeOptions` — match the real type by hand
+  volume?: string,  // ⚠️ REVIEW — was `string | number | Function | SonificationInstrumentVolumeOptions` — match the real type by hand
+}
+type seriesSonificationSpeechOptions = {
+  activeWhen?: string,  // ⚠️ REVIEW — was `Function | SonificationInstrumentActiveWhenOptions` — match the real type by hand
+  language?: string,
+  mapping?: sonificationSpeechMappingOptions,
+  pointGrouping?: sonificationInstrumentPointGroupingOptions,
+  preferredVoice?: string,
+  showPlayMarker?: bool,
+  @as("type") type_?: sonifcationTypeValue,
+}
+type seriesSonificationPointGroupingOptions = {
+  algorithm?: optionsAlgorithmValue,
+  enabled?: bool,
+  groupTimespan?: float,
+  prop?: string,
+}
+type seriesSonificationOptions = {
+  contextTracks?: array<seriesSonificationContextTracksOptions>,
+  defaultInstrumentOptions?: seriesSonificationInstrumentOptions,
+  defaultSpeechOptions?: seriesSonificationSpeechOptions,
+  enabled?: bool,
+  pointGrouping?: seriesSonificationPointGroupingOptions,
+  tracks?: array<seriesSonificationInstrumentOptions>,
+}
+module ChartsPlotAdDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotAdDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotAdDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
 type plotAdDataSortingOptions = {
   enabled?: bool,
   matchByName?: bool,
@@ -1766,7 +2819,9 @@ type plotAdDataSortingOptions = {
 module ChartsSeriesAdOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotAdDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotAdDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotAdParamsOptions = {
   index?: string,
@@ -1776,13 +2831,18 @@ type plotAdParamsOptions = {
 module ChartsPlotAoDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotAoDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotAoDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesAoOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotAoDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotAoDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 type plotAoParamsOptions = {
   index?: string,
@@ -1791,13 +2851,18 @@ type plotAoParamsOptions = {
 module ChartsPlotApoDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotApoDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotApoDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesApoOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotApoDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotApoDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotApoParamsOptions = {
   index?: int,
@@ -1807,427 +2872,80 @@ type plotApoParamsOptions = {
 module ChartsSeriesArcDiagramDataLabelsOptionsObjectAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotArcdiagramDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotArcdiagramDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesSankeyDataLabelsOptionsObjectAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotArcdiagramLevelsDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotArcdiagramLevelsDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromPlotDependencywheelDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotDependencywheelDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromPlotDependencywheelLevelsDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotDependencywheelLevelsDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromPlotOrganizationLevelsDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotOrganizationLevelsDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromPlotSankeyDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotSankeyDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromPlotSankeyLevelsDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotSankeyLevelsDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesArcdiagramNodesDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesArcdiagramNodesDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesDependencywheelNodesDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asSeriesDependencywheelNodesDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromSeriesOrganizationNodesDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesOrganizationNodesDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromSeriesSankeyNodesDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asSeriesSankeyNodesDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsPlotAreaDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotAreaDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotAreaDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesAreaOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotAreaDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-module ChartsSeriesAreaRangeDataLabelsOptionsObjectAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotArearangeDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-  external fromPlotAreasplinerangeDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-  external fromPlotColumnrangeDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-  external fromPlotDumbbellDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-  external fromPlotLollipopDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesArearangeOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotArearangeDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-module ChartsPlotAreasplineDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotAreasplineDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesAreasplineOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotAreasplineDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-module ChartsSeriesAreasplinerangeOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotAreasplinerangeDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-type plotAroonAroonDownStylesOptions = {
-  lineColor?: string,
-  lineWidth?: float,
-}
-type plotAroonAroonDownOptions = {
-  styles?: plotAroonAroonDownStylesOptions,
-}
-module ChartsPlotAroonDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotAroonDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesAroonOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotAroonDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-type plotAroonParamsOptions = {
-  index?: string,
-  period?: float,
-}
-module ChartsPlotAroonoscillatorDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotAroonoscillatorDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesAroonoscillatorOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotAroonoscillatorDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-type plotAroonoscillatorParamsOptions = {
-  index?: string,
-  period?: float,
-}
-module ChartsPlotAtrDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotAtrDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesAtrOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotAtrDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-type borderRadiusOptionsObject = {
-  radius: CommonTypes.stringOrNumber,
-  scope: ChartsTypes.chartsBorderRadiusOptionsObjectScope,
-  where: ChartsTypes.chartsBorderRadiusOptionsObjectWhere,
-}
-@unboxed type stringOrNumberOrBorderRadiusOptionsObject = Str(string) | Num(float) | BorderRadiusOptionsObject(borderRadiusOptionsObject)
-module ChartsPlotBarDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotBarDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesBarOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotBarDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-module ChartsPlotBbDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotBbDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesBbOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotBbDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-type plotBbParamsOptions = {
-  index?: int,
-  period?: float,
-  standardDeviation?: float,
-}
-module ChartsPlotBellcurveDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotBellcurveDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesBellcurveOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotBellcurveDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-module ChartsPlotBoxplotDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotBoxplotDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesBoxplotOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotBoxplotDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-module ChartsPlotBubbleDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotBubbleDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesBubbleOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotBubbleDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-type plotBubbleJitterOptions = {
-  x?: float,
-  y?: float,
-}
-module ChartsPlotBulletDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotBulletDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-type plotBulletTargetOptions = {
-  borderColor?: string,
-  borderRadius?: float,
-  borderWidth?: float,
-  color?: ColorType.t,
-  height?: float,
-  width?: CommonTypes.stringOrNumber,
-}
-module ChartsPlotCandlestickDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotCandlestickDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesCandlestickOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotCandlestickDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-module ChartsPlotCciDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotCciDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesCciOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotCciDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-module ChartsPlotChaikinDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotChaikinDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesChaikinOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotChaikinDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-type plotChaikinParamsOptions = {
-  index?: string,
-  period?: float,
-  periods?: array<float>,
-  volumeSeriesID?: string,
-}
-module ChartsPlotCmfDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotCmfDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesCmfOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotCmfDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-module ChartsPlotCmoDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotCmoDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesCmoOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotCmoDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-module ChartsPlotColumnDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotColumnDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesColumnOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotColumnDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-module ChartsPlotColumnpyramidDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotColumnpyramidDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesColumnpyramidOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotColumnpyramidDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-type plotColumnrangeBorderRadiusOptions = {
-  where?: string,
-}
-module ChartsSeriesColumnrangeOptionsBorderRadius = {
-  type t
-  external fromString: string => t = "%identity"
-  external fromNumber: float => t = "%identity"
-  external fromBorderRadiusOptionsObject: borderRadiusOptionsObject => t = "%identity"
-  external fromPlotColumnrangeBorderRadiusOptions: plotColumnrangeBorderRadiusOptions => t = "%identity"
-}
-module ChartsSeriesColumnrangeOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotColumnrangeDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-module ChartsPlotContourDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotContourDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesContourOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotContourDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-module ChartsPlotCylinderDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotCylinderDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesCylinderOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotCylinderDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-module ChartsPlotDemaDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotDemaDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesDemaOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotDemaDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-type plotDemaParamsOptions = {
-  index?: int,
-  period?: float,
-}
-module ChartsPlotDisparityindexDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotDisparityindexDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesDisparityindexOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotDisparityindexDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-type plotDisparityindexParamsOptions = {
-  average?: string,
-  index?: int,
-  period?: float,
-}
-module ChartsPlotDmiDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotDmiDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesDmiOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotDmiDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-type plotDmiPlusDILineStylesOptions = {
-  lineColor?: string,
-  lineWidth?: float,
-}
-type plotDmiPlusDILineOptions = {
-  styles?: plotDmiPlusDILineStylesOptions,
-}
-module ChartsPlotDpoDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotDpoDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesDpoOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotDpoDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-module ChartsSeriesDumbbellOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotDumbbellDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-module ChartsPlotEmaDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotEmaDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesEmaOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotEmaDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-}
-module ChartsPlotErrorbarDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotErrorbarDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesErrorbarOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotErrorbarDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-module ChartsPlotFlagsDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotFlagsDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsSeriesFlagsOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotFlagsDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
-type seriesFlowMapSeriesOptionsObject = {
-  enabled?: bool,
-  height?: CommonTypes.stringOrNumber,
-  markerType?: string,
-  width?: CommonTypes.stringOrNumber,
-}
-module ChartsPlotFunnel3dDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotFunnel3dDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotAreaDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+type seriesDragDropOptionsObject = {
+  draggableClose?: bool,
+  draggableEnd?: bool,
+  draggableHigh?: bool,
+  draggableLow?: bool,
+  draggableOpen?: bool,
+  draggableQ1?: bool,
+  draggableQ3?: bool,
+  draggableStart?: bool,
+  draggableTarget?: bool,
+  draggableX?: bool,
+  draggableX1?: bool,
+  draggableX2?: bool,
+  draggableY?: bool,
+  dragHandle?: dragDropHandleOptionsObject,
+  dragMaxX?: CommonTypes.stringOrNumber,
+  dragMaxY?: float,
+  dragMinX?: CommonTypes.stringOrNumber,
+  dragMinY?: float,
+  dragPrecisionX?: float,
+  dragPrecisionY?: float,
+  dragSensitivity?: float,
+  groupBy?: string,
+  guideBox?: string,  // ⚠️ REVIEW — was `PlotOptionsSeriesDragDropGuideBoxOptions | Dictionary<DragDropGuideBoxOptionsObject>` — match the real type by hand
+  liveRedraw?: bool,
 }
 type connectorsAnimationOptionsObject = {
   reversed?: bool,
@@ -2268,11 +2986,571 @@ type seriesConnectorsOptionsObject = {
   startMarker?: connectorsEndMarkerOptions,
   @as("type") type_?: string,
 }
+module ChartsPlotSeriesDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotSeriesDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotSeriesDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsPlotSeriesOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotSeriesDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotSeriesDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+module ChartsSeriesAreaRangeDataLabelsOptionsObjectAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotArearangeDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotArearangeDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+  external fromPlotAreasplinerangeDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotAreasplinerangeDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+  external fromPlotColumnrangeDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotColumnrangeDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+  external fromPlotDumbbellDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotDumbbellDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+  external fromPlotLollipopDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotLollipopDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsSeriesArearangeOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotArearangeDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotArearangeDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+module ChartsPlotAreasplineDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotAreasplineDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotAreasplineDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsSeriesAreasplineOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotAreasplineDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotAreasplineDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+module ChartsSeriesAreasplinerangeOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotAreasplinerangeDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotAreasplinerangeDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+type plotAroonAroonDownStylesOptions = {
+  lineColor?: string,
+  lineWidth?: float,
+}
+type plotAroonAroonDownOptions = {
+  styles?: plotAroonAroonDownStylesOptions,
+}
+module ChartsPlotAroonDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotAroonDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotAroonDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsSeriesAroonOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotAroonDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotAroonDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+type plotAroonParamsOptions = {
+  index?: string,
+  period?: float,
+}
+module ChartsPlotAroonoscillatorDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotAroonoscillatorDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotAroonoscillatorDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsSeriesAroonoscillatorOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotAroonoscillatorDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotAroonoscillatorDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+type plotAroonoscillatorParamsOptions = {
+  index?: string,
+  period?: float,
+}
+module ChartsPlotAtrDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotAtrDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotAtrDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsSeriesAtrOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotAtrDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotAtrDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+type borderRadiusOptionsObject = {
+  radius: CommonTypes.stringOrNumber,
+  scope: ChartsTypes.chartsBorderRadiusOptionsObjectScope,
+  where: ChartsTypes.chartsBorderRadiusOptionsObjectWhere,
+}
+@unboxed type stringOrNumberOrBorderRadiusOptionsObject = Str(string) | Num(float) | BorderRadiusOptionsObject(borderRadiusOptionsObject)
+module ChartsPlotBarDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotBarDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotBarDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+}
+module ChartsSeriesBarOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotBarDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotBarDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+module ChartsPlotBbDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotBbDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotBbDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsSeriesBbOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotBbDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotBbDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+type plotBbParamsOptions = {
+  index?: int,
+  period?: float,
+  standardDeviation?: float,
+}
+module ChartsPlotBellcurveDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotBellcurveDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotBellcurveDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+}
+module ChartsSeriesBellcurveOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotBellcurveDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotBellcurveDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+module ChartsPlotBoxplotDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotBoxplotDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotBoxplotDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+}
+module ChartsSeriesBoxplotOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotBoxplotDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotBoxplotDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+module ChartsPlotBubbleDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotBubbleDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotBubbleDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+}
+module ChartsSeriesBubbleOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotBubbleDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotBubbleDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+type plotBubbleJitterOptions = {
+  x?: float,
+  y?: float,
+}
+module ChartsPlotBulletDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotBulletDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotBulletDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+type plotBulletTargetOptions = {
+  borderColor?: string,
+  borderRadius?: float,
+  borderWidth?: float,
+  color?: ColorType.t,
+  height?: float,
+  width?: CommonTypes.stringOrNumber,
+}
+module ChartsPlotCandlestickDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotCandlestickDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotCandlestickDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+}
+module ChartsSeriesCandlestickOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotCandlestickDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotCandlestickDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+module ChartsPlotCciDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotCciDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotCciDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsSeriesCciOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotCciDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotCciDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+module ChartsPlotChaikinDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotChaikinDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotChaikinDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+}
+module ChartsSeriesChaikinOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotChaikinDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotChaikinDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+type plotChaikinParamsOptions = {
+  index?: string,
+  period?: float,
+  periods?: array<float>,
+  volumeSeriesID?: string,
+}
+module ChartsPlotCmfDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotCmfDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotCmfDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsSeriesCmfOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotCmfDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotCmfDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+module ChartsPlotCmoDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotCmoDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotCmoDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+}
+module ChartsSeriesCmoOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotCmoDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotCmoDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+module ChartsPlotColumnDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotColumnDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotColumnDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsSeriesColumnOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotColumnDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotColumnDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+module ChartsPlotColumnpyramidDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotColumnpyramidDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotColumnpyramidDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+}
+module ChartsSeriesColumnpyramidOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotColumnpyramidDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotColumnpyramidDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+type plotColumnrangeBorderRadiusOptions = {
+  where?: string,
+}
+module ChartsSeriesColumnrangeOptionsBorderRadius = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromNumber: float => t = "%identity"
+  external fromBorderRadiusOptionsObject: borderRadiusOptionsObject => t = "%identity"
+  external asBorderRadiusOptionsObject: t => (borderRadiusOptionsObject) = "%identity"
+  external fromPlotColumnrangeBorderRadiusOptions: plotColumnrangeBorderRadiusOptions => t = "%identity"
+  external asPlotColumnrangeBorderRadiusOptions: t => (plotColumnrangeBorderRadiusOptions) = "%identity"
+}
+module ChartsSeriesColumnrangeOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotColumnrangeDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotColumnrangeDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+module ChartsPlotContourDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotContourDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotContourDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+}
+module ChartsSeriesContourOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotContourDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotContourDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+module ChartsPlotCylinderDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotCylinderDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotCylinderDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+}
+module ChartsSeriesCylinderOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotCylinderDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotCylinderDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+module ChartsPlotDemaDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotDemaDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotDemaDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsSeriesDemaOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotDemaDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotDemaDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+type plotDemaParamsOptions = {
+  index?: int,
+  period?: float,
+}
+module ChartsPlotDisparityindexDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotDisparityindexDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotDisparityindexDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsSeriesDisparityindexOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotDisparityindexDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotDisparityindexDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+type plotDisparityindexParamsOptions = {
+  average?: string,
+  index?: int,
+  period?: float,
+}
+module ChartsPlotDmiDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotDmiDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotDmiDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+}
+module ChartsSeriesDmiOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotDmiDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotDmiDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+type plotDmiPlusDILineStylesOptions = {
+  lineColor?: string,
+  lineWidth?: float,
+}
+type plotDmiPlusDILineOptions = {
+  styles?: plotDmiPlusDILineStylesOptions,
+}
+module ChartsPlotDpoDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotDpoDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotDpoDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsSeriesDpoOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotDpoDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotDpoDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+module ChartsSeriesDumbbellOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotDumbbellDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotDumbbellDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+module ChartsPlotEmaDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotEmaDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotEmaDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+}
+module ChartsSeriesEmaOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotEmaDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotEmaDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+module ChartsPlotErrorbarDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotErrorbarDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotErrorbarDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsSeriesErrorbarOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotErrorbarDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotErrorbarDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+module ChartsPlotFlagsDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotFlagsDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotFlagsDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
+}
+module ChartsSeriesFlagsOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotFlagsDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotFlagsDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
+}
+type seriesFlowMapSeriesOptionsObject = {
+  enabled?: bool,
+  height?: CommonTypes.stringOrNumber,
+  markerType?: string,
+  width?: CommonTypes.stringOrNumber,
+}
+module ChartsPlotFunnel3dDataLabelsOptionsAnimation = {
+  type t
+  external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
+  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
+  external fromPlotFunnel3dDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotFunnel3dDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+}
 module ChartsPlotGanttDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotGanttDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotGanttDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 type plotGanttDataLabelsStyleOptions = {
   whiteSpace?: string,
@@ -2280,7 +3558,9 @@ type plotGanttDataLabelsStyleOptions = {
 module ChartsPlotGanttDataLabelsOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromPlotGanttDataLabelsStyleOptions: plotGanttDataLabelsStyleOptions => t = "%identity"
+  external asPlotGanttDataLabelsStyleOptions: t => (plotGanttDataLabelsStyleOptions) = "%identity"
 }
 type plotGanttPartialFillOptions = {
   fill?: ColorType.t,
@@ -2288,8 +3568,11 @@ type plotGanttPartialFillOptions = {
 module ChartsPlotGaugeDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotGaugeDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotGaugeDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 type plotGaugeDialOptions = {
   backgroundColor?: ColorType.t,
@@ -2311,8 +3594,11 @@ type plotGaugePivotOptions = {
 module ChartsPlotGeoheatmapDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotGeoheatmapDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotGeoheatmapDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 type interpolationOptionsObject = {
   blur: float,
@@ -2325,74 +3611,107 @@ type plotGeoheatmapInterpolationOptions = {
 module ChartsSeriesGeoheatmapOptionsInterpolation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromInterpolationOptionsObject: interpolationOptionsObject => t = "%identity"
+  external asInterpolationOptionsObject: t => (interpolationOptionsObject) = "%identity"
   external fromPlotGeoheatmapInterpolationOptions: plotGeoheatmapInterpolationOptions => t = "%identity"
+  external asPlotGeoheatmapInterpolationOptions: t => (plotGeoheatmapInterpolationOptions) = "%identity"
 }
 module ChartsPlotHeatmapDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotHeatmapDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotHeatmapDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesHeatmapOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotHeatmapDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotHeatmapDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 module ChartsPlotHeikinashiDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotHeikinashiDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotHeikinashiDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesHeikinashiOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotHeikinashiDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotHeikinashiDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 module ChartsPlotHistogramDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotHistogramDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotHistogramDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesHistogramOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotHistogramDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotHistogramDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsPlotHlcDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotHlcDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotHlcDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesHlcOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotHlcDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotHlcDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 module ChartsPlotHollowcandlestickDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotHollowcandlestickDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotHollowcandlestickDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesHollowcandlestickOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotHollowcandlestickDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotHollowcandlestickDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsPlotIkhDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotIkhDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotIkhDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesIkhOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotIkhDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotIkhDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 type plotIkhParamsOptions = {
   index?: string,
@@ -2407,24 +3726,34 @@ type plotIkhSenkouSpanOptions = {
 module ChartsPlotKeltnerchannelsDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotKeltnerchannelsDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotKeltnerchannelsDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesKeltnerchannelsOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotKeltnerchannelsDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotKeltnerchannelsDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsPlotKlingerDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotKlingerDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotKlingerDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesKlingerOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotKlingerDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotKlingerDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 type plotKlingerParamsOptions = {
   fastAvgPeriod?: float,
@@ -2435,13 +3764,18 @@ type plotKlingerParamsOptions = {
 module ChartsPlotLinearregressionangleDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotLinearregressionangleDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotLinearregressionangleDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesLinearregressionangleOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotLinearregressionangleDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotLinearregressionangleDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotLinearregressionangleParamsOptions = {
   index?: int,
@@ -2451,24 +3785,34 @@ type plotLinearregressionangleParamsOptions = {
 module ChartsPlotLinearregressioninterceptDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotLinearregressioninterceptDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotLinearregressioninterceptDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesLinearregressioninterceptOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotLinearregressioninterceptDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotLinearregressioninterceptDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsPlotLinearregressionDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotLinearregressionDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotLinearregressionDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesLinearregressionOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotLinearregressionDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotLinearregressionDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotLinearregressionParamsOptions = {
   index?: int,
@@ -2478,40 +3822,57 @@ type plotLinearregressionParamsOptions = {
 module ChartsPlotLinearregressionslopeDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotLinearregressionslopeDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotLinearregressionslopeDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesLinearregressionslopeOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotLinearregressionslopeDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotLinearregressionslopeDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsPlotLineDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotLineDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotLineDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesLineOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotLineDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotLineDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsSeriesLollipopOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotLollipopDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotLollipopDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 module ChartsPlotMacdDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotMacdDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotMacdDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesMacdOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotMacdDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotMacdDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotMacdMacdLineOptions = {
   styles?: plotAroonAroonDownStylesOptions,
@@ -2527,37 +3888,54 @@ type plotMacdParamsOptions = {
 module ChartsPlotMapbubbleDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotMapbubbleDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotMapbubbleDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsPlotMaplineDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotMaplineDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotMaplineDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsPlotMapDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotMapDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotMapDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsPlotMappointDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotMappointDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotMappointDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsPlotMfiDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotMfiDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotMfiDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesMfiOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotMfiDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotMfiDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotMfiParamsOptions = {
   decimals?: float,
@@ -2568,24 +3946,34 @@ type plotMfiParamsOptions = {
 module ChartsPlotMomentumDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotMomentumDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotMomentumDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesMomentumOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotMomentumDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotMomentumDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 module ChartsPlotNatrDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotNatrDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotNatrDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesNatrOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotNatrDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotNatrDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotNetworkgraphLinkOptions = {
   color?: string,
@@ -2593,16 +3981,37 @@ type plotNetworkgraphLinkOptions = {
   opacity?: float,
   width?: float,
 }
+type plotNetworkgraphLayoutAlgorithmOptions = {
+  approximation?: optionsApproximationValue,
+  attractiveForce?: string,  // ⚪ loose — was `Function`
+  enableSimulation?: bool,
+  friction?: float,
+  gravitationalConstant?: float,
+  initialPositionRadius?: float,
+  initialPositions?: string,  // ⚠️ REVIEW — was `Function | "circle" | "random"` — match the real type by hand
+  integration?: optionsIntegrationValue,
+  linkLength?: float,
+  maxIterations?: float,
+  maxSpeed?: float,
+  repulsiveForce?: string,  // ⚪ loose — was `Function`
+  theta?: float,
+  @as("type") type_?: string,  // ⚪ loose — was `"reingold-fruchterman"`
+}
 module ChartsPlotObvDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotObvDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotObvDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesObvOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotObvDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotObvDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 type plotObvParamsOptions = {
   index?: string,
@@ -2612,19 +4021,27 @@ type plotObvParamsOptions = {
 module ChartsPlotOhlcDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotOhlcDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotOhlcDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesOhlcOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotOhlcDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotOhlcDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsSeriesOrganizationDataLabelsOptionsObjectAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotOrganizationDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotOrganizationDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 type plotOrganizationDataLabelsLinkTextPathAttributesOptions = {
   startOffset?: float,
@@ -2642,27 +4059,68 @@ type plotOrganizationLinkOptions = {
 type plotPackedbubbleParentNodeOptions = {
   allowPointSelect?: bool,
 }
+type plotPackedbubbleLayoutAlgorithmParentNodeOptions = {
+  friction?: float,
+  gravitationalConstant?: float,
+  initialPositionRadius?: float,
+  initialPositions?: string,  // ⚠️ REVIEW — was `Function | "circle" | "random"` — match the real type by hand
+  integration?: optionsIntegrationValue,
+  linkLength?: float,
+  marker?: pointMarkerOptionsObject,
+  maxIterations?: float,
+  maxSpeed?: float,
+  seriesInteraction?: bool,
+  @as("type") type_?: string,  // ⚪ loose — was `"reingold-fruchterman"`
+}
+type plotPackedbubbleLayoutAlgorithmOptions = {
+  bubblePadding?: float,
+  dragBetweenSeries?: bool,
+  enableSimulation?: bool,
+  friction?: float,
+  gravitationalConstant?: float,
+  initialPositionRadius?: float,
+  initialPositions?: string,  // ⚠️ REVIEW — was `Function | "circle" | "random"` — match the real type by hand
+  integration?: optionsIntegrationValue,
+  linkLength?: float,
+  maxIterations?: float,
+  maxSpeed?: float,
+  parentNodeLimit?: bool,
+  parentNodeOptions?: plotPackedbubbleLayoutAlgorithmParentNodeOptions,
+  seriesInteraction?: bool,
+  splitSeries?: bool,
+  @as("type") type_?: string,  // ⚪ loose — was `"reingold-fruchterman"`
+}
 module ChartsPlotParetoDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotParetoDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotParetoDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesParetoOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotParetoDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotParetoDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsPlotPcDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotPcDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotPcDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesPcOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotPcDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotPcDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type seriesPictorialPathsOptionsObject = {
   definition?: string,
@@ -2671,19 +4129,27 @@ type seriesPictorialPathsOptionsObject = {
 module ChartsPlotPictorialDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotPictorialDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotPictorialDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsPlotPivotpointsDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotPivotpointsDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotPivotpointsDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesPivotpointsOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotPivotpointsDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotPivotpointsDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotPivotpointsParamsOptions = {
   algorithm?: string,
@@ -2693,13 +4159,18 @@ type plotPivotpointsParamsOptions = {
 module ChartsPlotPointandfigureDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotPointandfigureDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotPointandfigureDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesPointandfigureOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotPointandfigureDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotPointandfigureDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotPointandfigureJitterOptions = {
   x?: float,
@@ -2708,35 +4179,50 @@ type plotPointandfigureJitterOptions = {
 module ChartsPlotPolygonDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotPolygonDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotPolygonDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesPolygonOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotPolygonDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotPolygonDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsPlotPpoDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotPpoDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotPpoDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesPpoOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotPpoDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotPpoDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsPlotPriceenvelopesDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotPriceenvelopesDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotPriceenvelopesDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesPriceenvelopesOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotPriceenvelopesDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotPriceenvelopesDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 type plotPriceenvelopesParamsOptions = {
   bottomBand?: float,
@@ -2747,13 +4233,18 @@ type plotPriceenvelopesParamsOptions = {
 module ChartsPlotPsarDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotPsarDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotPsarDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesPsarOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotPsarDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotPsarDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotPsarParamsOptions = {
   decimals?: float,
@@ -2766,8 +4257,11 @@ type plotPsarParamsOptions = {
 module ChartsPlotPyramid3dDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotPyramid3dDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotPyramid3dDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 type plotRenkoBorderRadiusOptions = {
   where?: string,
@@ -2777,35 +4271,50 @@ module ChartsSeriesRenkoOptionsBorderRadius = {
   external fromString: string => t = "%identity"
   external fromNumber: float => t = "%identity"
   external fromBorderRadiusOptionsObject: borderRadiusOptionsObject => t = "%identity"
+  external asBorderRadiusOptionsObject: t => (borderRadiusOptionsObject) = "%identity"
   external fromPlotRenkoBorderRadiusOptions: plotRenkoBorderRadiusOptions => t = "%identity"
+  external asPlotRenkoBorderRadiusOptions: t => (plotRenkoBorderRadiusOptions) = "%identity"
 }
 module ChartsPlotRenkoDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotRenkoDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotRenkoDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsPlotRocDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotRocDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotRocDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesRocOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotRocDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotRocDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 module ChartsPlotRsiDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotRsiDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotRsiDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesRsiOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotRsiDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotRsiDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotRsiParamsOptions = {
   decimals?: float,
@@ -2815,35 +4324,79 @@ type plotRsiParamsOptions = {
 module ChartsPlotScatter3dDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotScatter3dDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotScatter3dDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesScatter3dOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotScatter3dDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotScatter3dDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 module ChartsPlotScatterDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotScatterDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotScatterDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesScatterOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotScatterDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotScatterDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+type plotScatterClusterDataLabelsOptions = {
+  style?: string,  // 🛑 BROKEN — contains `any`
+}
+module ChartsPlotScatterClusterOptionsDataLabels = {
+  type t
+  external fromDataLabelsOptions: dataLabelsOptions => t = "%identity"
+  external asDataLabelsOptions: t => (dataLabelsOptions) = "%identity"
+  external fromPlotScatterClusterDataLabelsOptions: plotScatterClusterDataLabelsOptions => t = "%identity"
+  external asPlotScatterClusterDataLabelsOptions: t => (plotScatterClusterDataLabelsOptions) = "%identity"
+}
+type plotScatterClusterLayoutAlgorithmOptions = {
+  distance?: CommonTypes.stringOrNumber,
+  gridSize?: CommonTypes.stringOrNumber,
+  iterations?: float,
+  kmeansThreshold?: float,
+  @as("type") type_?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
+}
+type plotScatterClusterStatesHoverOptions = {
+  fillColor?: ColorType.t,
+}
+type plotScatterClusterStatesOptions = {
+  hover?: plotScatterClusterStatesHoverOptions,
+}
+type plotScatterClusterZonesOptions = {
+  className?: string,
+  from?: float,
+  marker?: pointMarkerOptionsObject,
+  @as("to") to_?: float,
 }
 module ChartsPlotSlowstochasticDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotSlowstochasticDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotSlowstochasticDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesSlowstochasticOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotSlowstochasticDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotSlowstochasticDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 type plotSlowstochasticParamsOptions = {
   index?: string,
@@ -2853,41 +4406,59 @@ type plotSlowstochasticParamsOptions = {
 module ChartsPlotSmaDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotSmaDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotSmaDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesSmaOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotSmaDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotSmaDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsPlotSolidgaugeDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotSolidgaugeDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotSolidgaugeDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsPlotSplineDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotSplineDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotSplineDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesSplineOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotSplineDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotSplineDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsPlotStochasticDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotStochasticDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotStochasticDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesStochasticOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotStochasticDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotStochasticDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotStochasticParamsOptions = {
   index?: string,
@@ -2897,13 +4468,18 @@ type plotStochasticParamsOptions = {
 module ChartsPlotStreamgraphDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotStreamgraphDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotStreamgraphDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesStreamgraphOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotStreamgraphDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotStreamgraphDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 type plotSunburstBreadcrumbsButtonThemeStyleOptions = {
   color?: string,
@@ -2914,7 +4490,9 @@ type plotSunburstBreadcrumbsButtonThemeOptions = {
 module ChartsPlotSunburstBreadcrumbsOptionsButtonTheme = {
   type t
   external fromSVGAttributes: svgAttributes => t = "%identity"
+  external asSVGAttributes: t => (svgAttributes) = "%identity"
   external fromPlotSunburstBreadcrumbsButtonThemeOptions: plotSunburstBreadcrumbsButtonThemeOptions => t = "%identity"
+  external asPlotSunburstBreadcrumbsButtonThemeOptions: t => (plotSunburstBreadcrumbsButtonThemeOptions) = "%identity"
 }
 type breadcrumbOptions = {
   level: int,
@@ -2938,12 +4516,16 @@ type plotSunburstBreadcrumbsPositionOptions = {
 module ChartsPlotSunburstBreadcrumbsOptionsPosition = {
   type t
   external fromBreadcrumbsAlignOptions: breadcrumbsAlignOptions => t = "%identity"
+  external asBreadcrumbsAlignOptions: t => (breadcrumbsAlignOptions) = "%identity"
   external fromPlotSunburstBreadcrumbsPositionOptions: plotSunburstBreadcrumbsPositionOptions => t = "%identity"
+  external asPlotSunburstBreadcrumbsPositionOptions: t => (plotSunburstBreadcrumbsPositionOptions) = "%identity"
 }
 module ChartsPlotSunburstBreadcrumbsSeparatorOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromPlotSunburstBreadcrumbsSeparatorStyleOptions: annotationsTypesMeasureTypeLabelStyleOptions => t = "%identity"
+  external asPlotSunburstBreadcrumbsSeparatorStyleOptions: t => (annotationsTypesMeasureTypeLabelStyleOptions) = "%identity"
 }
 type plotSunburstBreadcrumbsSeparatorOptions = {
   style?: ChartsPlotSunburstBreadcrumbsSeparatorOptionsStyle.t,
@@ -2955,7 +4537,7 @@ type plotSunburstBreadcrumbsOptions = {
   events?: plotSunburstBreadcrumbsEventsOptions,
   floating?: bool,
   format?: string,
-  formatter?: string => string,  // ⚪ loose — was `BreadcrumbOptions`
+  formatter?: breadcrumbOptions => string,
   position?: ChartsPlotSunburstBreadcrumbsOptionsPosition.t,
   relativeTo?: buttonRelativeToValue,
   rtl?: bool,
@@ -2980,13 +4562,18 @@ type plotSupertrendChangeTrendLineOptions = {
 module ChartsPlotSupertrendDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotSupertrendDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotSupertrendDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesSupertrendOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotSupertrendDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotSupertrendDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotSupertrendParamsOptions = {
   index?: string,
@@ -2996,13 +4583,18 @@ type plotSupertrendParamsOptions = {
 module ChartsPlotTemaDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotTemaDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotTemaDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesTemaOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotTemaDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotTemaDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 type plotTiledwebmapProviderOptions = {
   apiKey?: string,
@@ -3014,16 +4606,21 @@ type plotTiledwebmapProviderOptions = {
 module ChartsPlotTilemapDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotTilemapDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotTilemapDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsTimelineDataLabelsOptionsObjectAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotTimelineDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotTimelineDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
-@unboxed type boolOrCssObject = Bool(bool) | CssObject(cssObject)
 type plotTreegraphCollapseButtonStyleOptions = {
   cursor?: string,
   fontSize?: float,
@@ -3043,9 +4640,13 @@ type plotTreegraphCollapseButtonOptions = {
 module ChartsSeriesTreegraphDataLabelsOptionsObjectAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotTreegraphDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotTreegraphDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromPlotTreegraphLevelsDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotTreegraphLevelsDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 type plotTreegraphDataLabelsStyleOptions = {
   textOverflow?: string,
@@ -3056,8 +4657,11 @@ type plotTreegraphLevelsDataLabelsStyleOptions = {
 module ChartsSeriesTreegraphDataLabelsOptionsObjectStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromPlotTreegraphDataLabelsStyleOptions: plotTreegraphDataLabelsStyleOptions => t = "%identity"
+  external asPlotTreegraphDataLabelsStyleOptions: t => (plotTreegraphDataLabelsStyleOptions) = "%identity"
   external fromPlotTreegraphLevelsDataLabelsStyleOptions: plotTreegraphLevelsDataLabelsStyleOptions => t = "%identity"
+  external asPlotTreegraphLevelsDataLabelsStyleOptions: t => (plotTreegraphLevelsDataLabelsStyleOptions) = "%identity"
 }
 type plotTreegraphLevelsColorVariationOptions = {
   key?: string,
@@ -3075,17 +4679,23 @@ type plotTreegraphLinkOptions = {
 module ChartsPlotTreemapBreadcrumbsOptionsButtonTheme = {
   type t
   external fromSVGAttributes: svgAttributes => t = "%identity"
+  external asSVGAttributes: t => (svgAttributes) = "%identity"
   external fromPlotTreemapBreadcrumbsButtonThemeOptions: plotSunburstBreadcrumbsButtonThemeOptions => t = "%identity"
+  external asPlotTreemapBreadcrumbsButtonThemeOptions: t => (plotSunburstBreadcrumbsButtonThemeOptions) = "%identity"
 }
 module ChartsPlotTreemapBreadcrumbsOptionsPosition = {
   type t
   external fromBreadcrumbsAlignOptions: breadcrumbsAlignOptions => t = "%identity"
+  external asBreadcrumbsAlignOptions: t => (breadcrumbsAlignOptions) = "%identity"
   external fromPlotTreemapBreadcrumbsPositionOptions: plotSunburstBreadcrumbsPositionOptions => t = "%identity"
+  external asPlotTreemapBreadcrumbsPositionOptions: t => (plotSunburstBreadcrumbsPositionOptions) = "%identity"
 }
 module ChartsPlotTreemapBreadcrumbsSeparatorOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromPlotTreemapBreadcrumbsSeparatorStyleOptions: annotationsTypesMeasureTypeLabelStyleOptions => t = "%identity"
+  external asPlotTreemapBreadcrumbsSeparatorStyleOptions: t => (annotationsTypesMeasureTypeLabelStyleOptions) = "%identity"
 }
 type plotTreemapBreadcrumbsSeparatorOptions = {
   style?: ChartsPlotTreemapBreadcrumbsSeparatorOptionsStyle.t,
@@ -3097,7 +4707,7 @@ type plotTreemapBreadcrumbsOptions = {
   events?: plotSunburstBreadcrumbsEventsOptions,
   floating?: bool,
   format?: string,
-  formatter?: string => string,  // ⚪ loose — was `BreadcrumbOptions`
+  formatter?: breadcrumbOptions => string,
   position?: ChartsPlotTreemapBreadcrumbsOptionsPosition.t,
   relativeTo?: buttonRelativeToValue,
   rtl?: bool,
@@ -3131,35 +4741,50 @@ type plotTreemapClusterOptions = {
 module ChartsPlotTreemapDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotTreemapDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotTreemapDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsPlotTreemapDataLabelsOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromPlotTreemapDataLabelsStyleOptions: plotTreegraphDataLabelsStyleOptions => t = "%identity"
+  external asPlotTreemapDataLabelsStyleOptions: t => (plotTreegraphDataLabelsStyleOptions) = "%identity"
 }
 module ChartsPlotTreemapLevelsDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotTreemapLevelsDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotTreemapLevelsDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsPlotTreemapLevelsDataLabelsOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromPlotTreemapLevelsDataLabelsStyleOptions: plotTreegraphLevelsDataLabelsStyleOptions => t = "%identity"
+  external asPlotTreemapLevelsDataLabelsStyleOptions: t => (plotTreegraphLevelsDataLabelsStyleOptions) = "%identity"
 }
 module ChartsPlotTrendlineDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotTrendlineDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotTrendlineDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesTrendlineOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotTrendlineDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotTrendlineDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 type plotTrendlineParamsOptions = {
   index?: int,
@@ -3168,35 +4793,50 @@ type plotTrendlineParamsOptions = {
 module ChartsPlotTrixDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotTrixDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotTrixDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesTrixOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotTrixDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotTrixDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsPlotVariwideDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotVariwideDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotVariwideDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesVariwideOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotVariwideDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotVariwideDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 module ChartsPlotVbpDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotVbpDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotVbpDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesVbpOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotVbpDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotVbpDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotVbpParamsOptions = {
   index?: string,
@@ -3219,74 +4859,121 @@ type plotVbpZoneLinesOptions = {
 module ChartsPlotVectorDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotVectorDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotVectorDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesVectorOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotVectorDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotVectorDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+module ChartsPlotVectorClusterOptionsDataLabels = {
+  type t
+  external fromDataLabelsOptions: dataLabelsOptions => t = "%identity"
+  external asDataLabelsOptions: t => (dataLabelsOptions) = "%identity"
+  external fromPlotVectorClusterDataLabelsOptions: plotScatterClusterDataLabelsOptions => t = "%identity"
+  external asPlotVectorClusterDataLabelsOptions: t => (plotScatterClusterDataLabelsOptions) = "%identity"
 }
 module ChartsPlotVennDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotVennDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotVennDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
+}
+module ChartsPlotVennClusterOptionsDataLabels = {
+  type t
+  external fromDataLabelsOptions: dataLabelsOptions => t = "%identity"
+  external asDataLabelsOptions: t => (dataLabelsOptions) = "%identity"
+  external fromPlotVennClusterDataLabelsOptions: plotScatterClusterDataLabelsOptions => t = "%identity"
+  external asPlotVennClusterDataLabelsOptions: t => (plotScatterClusterDataLabelsOptions) = "%identity"
 }
 module ChartsPlotVwapDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotVwapDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotVwapDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesVwapOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotVwapDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotVwapDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsPlotWaterfallDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotWaterfallDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotWaterfallDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesWaterfallOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotWaterfallDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotWaterfallDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 module ChartsPlotWilliamsrDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotWilliamsrDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotWilliamsrDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesWilliamsrOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotWilliamsrDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotWilliamsrDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 module ChartsPlotWindbarbDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotWindbarbDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotWindbarbDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesWindbarbOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotWindbarbDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotWindbarbDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 module ChartsPlotWmaDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotWmaDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotWmaDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesWmaOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotWmaDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotWmaDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotWordcloudRotationOptions = {
   from?: float,
@@ -3296,8 +4983,11 @@ type plotWordcloudRotationOptions = {
 module ChartsPlotXrangeDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotXrangeDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotXrangeDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 type plotXrangeDataLabelsStyleOptions = {
   whiteSpace?: string,
@@ -3305,7 +4995,9 @@ type plotXrangeDataLabelsStyleOptions = {
 module ChartsPlotXrangeDataLabelsOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromPlotXrangeDataLabelsStyleOptions: plotXrangeDataLabelsStyleOptions => t = "%identity"
+  external asPlotXrangeDataLabelsStyleOptions: t => (plotXrangeDataLabelsStyleOptions) = "%identity"
 }
 type plotXrangePartialFillOptions = {
   fill?: ColorType.t,
@@ -3313,13 +5005,18 @@ type plotXrangePartialFillOptions = {
 module ChartsPlotZigzagDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotZigzagDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotZigzagDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 module ChartsSeriesZigzagOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotZigzagDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
+  external asPlotZigzagDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
 type plotZigzagParamsOptions = {
   deviation?: float,
@@ -3360,11 +5057,6 @@ type chartPanningOptions = {
   enabled?: bool,
   @as("type") type_?: optionsChartPanningTypeValue,
 }
-type axisAccessibilityOptionsObject = {
-  description?: string,
-  enabled?: bool,
-  rangeDescription?: string,
-}
 type axisDateTimeLabelFormatsOptionsObject = {
   list?: array<stringOrDateTimeFormatOptions>,
   main?: stringOrDateTimeFormatOptions,
@@ -3381,22 +5073,12 @@ type axisDateTimeLabelFormatsOptions = {
   week?: stringOrAxisDateTimeLabelFormatsOptionsObject,
   year?: stringOrAxisDateTimeLabelFormatsOptionsObject,
 }
-type axisSetExtremesEventObject = {
-  preventDefault: string,  // ⚪ loose — was `Function`
-  target: string,  // ⚪ loose — was `SVGElement`
-  trigger: string,
-  @as("type") type_: string,
-  dataMax: float,
-  dataMin: float,
-  max: float,
-  min: float,
-  userMax?: float,
-  userMin?: float,
-}
 module ChartsChartParallelAxesLabelsOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromChartParallelAxesLabelsStyleOptions: creditsStyleOptions => t = "%identity"
+  external asChartParallelAxesLabelsStyleOptions: t => (creditsStyleOptions) = "%identity"
 }
 type yAxisBreaksOptions = {
   breakSize?: float,
@@ -3404,27 +5086,58 @@ type yAxisBreaksOptions = {
   repeat?: float,
   @as("to") to_?: CommonTypes.stringOrNumber,
 }
-type yAxisGridOptions = {
-  borderColor?: string,
-  borderWidth?: float,
-  cellHeight?: float,
-  columns?: array<string>,  // ⚪ loose — was `XAxisOptions`
-  enabled?: bool,
-}
-type yAxisLabelsLevelsOptions = {
-  level?: int,
-  style?: cssObject,
-}
-module ChartsYAxisLabelsOptionsStyle = {
+module ChartsCurrentDateIndicatorOptionsEvents = {
   type t
-  external fromCSSObject: cssObject => t = "%identity"
-  external fromYAxisLabelsStyleOptions: creditsStyleOptions => t = "%identity"
+  external fromNavigatorXAxisCurrentDateIndicatorEventsOptions: xAxisPlotLinesEventsOptions => t = "%identity"
+  external asNavigatorXAxisCurrentDateIndicatorEventsOptions: t => (xAxisPlotLinesEventsOptions) = "%identity"
+  external fromXAxisCurrentDateIndicatorEventsOptions: xAxisPlotLinesEventsOptions => t = "%identity"
+  external asXAxisCurrentDateIndicatorEventsOptions: t => (xAxisPlotLinesEventsOptions) = "%identity"
 }
-type yAxisLabelsSymbolOptions = {
-  height?: float,
-  width?: float,
+type navigatorXAxisCurrentDateIndicatorLabelOptions = {
+  align?: alignValue,
+  format?: LibTypes.stringOrEvent,
+  formatter?: @this ((string, option<string>) => string),  // ⚪ loose — was `PlotLineOrBand`
+  rotation?: float,
+  style?: cssObject,
+  text?: string,
+  textAlign?: alignValue,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
   x?: float,
   y?: float,
+}
+module ChartsCurrentDateIndicatorOptionsLabel = {
+  type t
+  external fromNavigatorXAxisCurrentDateIndicatorLabelOptions: navigatorXAxisCurrentDateIndicatorLabelOptions => t = "%identity"
+  external asNavigatorXAxisCurrentDateIndicatorLabelOptions: t => (navigatorXAxisCurrentDateIndicatorLabelOptions) = "%identity"
+  external fromXAxisCurrentDateIndicatorLabelOptions: navigatorXAxisCurrentDateIndicatorLabelOptions => t = "%identity"
+  external asXAxisCurrentDateIndicatorLabelOptions: t => (navigatorXAxisCurrentDateIndicatorLabelOptions) = "%identity"
+}
+module ChartsCurrentDateIndicatorOptionsLabels = {
+  type t
+  external fromNavigatorXAxisCurrentDateIndicatorLabelsOptions: xAxisPlotLinesLabelsOptions => t = "%identity"
+  external asNavigatorXAxisCurrentDateIndicatorLabelsOptions: t => (xAxisPlotLinesLabelsOptions) = "%identity"
+  external fromXAxisCurrentDateIndicatorLabelsOptions: xAxisPlotLinesLabelsOptions => t = "%identity"
+  external asXAxisCurrentDateIndicatorLabelsOptions: t => (xAxisPlotLinesLabelsOptions) = "%identity"
+}
+type currentDateIndicatorOptions = {
+  className?: string,
+  color?: string,
+  dashStyle?: dashStyleValue,
+  events?: ChartsCurrentDateIndicatorOptionsEvents.t,
+  id?: string,
+  label?: ChartsCurrentDateIndicatorOptionsLabel.t,
+  labels?: ChartsCurrentDateIndicatorOptionsLabels.t,
+  width?: float,
+  zIndex?: int,
+}
+@unboxed type boolOrCurrentDateIndicatorOptions = Bool(bool) | CurrentDateIndicatorOptions(currentDateIndicatorOptions)
+module ChartsXAxisLabelsOptionsStyle = {
+  type t
+  external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
+  external fromXAxisLabelsStyleOptions: creditsStyleOptions => t = "%identity"
+  external asXAxisLabelsStyleOptions: t => (creditsStyleOptions) = "%identity"
 }
 type yAxisPlotBandsLabelOptions = {
   align?: alignValue,
@@ -3436,6 +5149,62 @@ type yAxisPlotBandsLabelOptions = {
   textAlign?: alignValue,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
+  x?: float,
+  y?: float,
+}
+type xAxisPlotBandsOptions = {
+  acrossPanes?: bool,
+  borderColor?: string,
+  borderRadius?: CommonTypes.stringOrNumber,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  events?: xAxisPlotLinesEventsOptions,
+  from?: CommonTypes.stringOrNumber,
+  id?: string,
+  label?: yAxisPlotBandsLabelOptions,
+  @as("to") to_?: CommonTypes.stringOrNumber,
+  zIndex?: int,
+}
+type xAxisScrollbarOptions = {
+  barBackgroundColor?: ColorType.t,
+  barBorderColor?: ColorType.t,
+  barBorderRadius?: float,
+  barBorderWidth?: float,
+  buttonArrowColor?: ColorType.t,
+  buttonBackgroundColor?: ColorType.t,
+  buttonBorderColor?: ColorType.t,
+  buttonBorderRadius?: float,
+  buttonBorderWidth?: float,
+  buttonsEnabled?: bool,
+  enabled?: bool,
+  height?: float,
+  liveRedraw?: bool,
+  margin?: float,
+  minWidth?: float,
+  opposite?: bool,
+  rifleColor?: ColorType.t,
+  showFull?: bool,
+  trackBackgroundColor?: ColorType.t,
+  trackBorderColor?: ColorType.t,
+  trackBorderRadius?: float,
+  trackBorderWidth?: float,
+  zIndex?: int,
+}
+type yAxisLabelsLevelsOptions = {
+  level?: int,
+  style?: cssObject,
+}
+module ChartsYAxisLabelsOptionsStyle = {
+  type t
+  external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
+  external fromYAxisLabelsStyleOptions: creditsStyleOptions => t = "%identity"
+  external asYAxisLabelsStyleOptions: t => (creditsStyleOptions) = "%identity"
+}
+type yAxisLabelsSymbolOptions = {
+  height?: float,
+  width?: float,
   x?: float,
   y?: float,
 }
@@ -3498,13 +5267,18 @@ type yAxisScrollbarOptions = {
 module ChartsYAxisStackLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromYAxisStackLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asYAxisStackLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsYAxisStackLabelsOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromYAxisStackLabelsStyleOptions: creditsStyleOptions => t = "%identity"
+  external asYAxisStackLabelsStyleOptions: t => (creditsStyleOptions) = "%identity"
 }
 type yAxisStackLabelsOptions = {
   align?: alignValue,
@@ -3527,20 +5301,12 @@ type yAxisStackLabelsOptions = {
   x?: float,
   y?: float,
 }
-type timeTicksInfoObject = {
-  higherRanks: array<string>,
-  totalRange: float,
-  count?: int,
-  unitRange: float,
-}
-type axisTickPositionsArray = {
-  ...JsxDOM.domProps,
-  info?: timeTicksInfoObject,
-}
 module ChartsChartParallelAxesTitleOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromChartParallelAxesTitleStyleOptions: creditsStyleOptions => t = "%identity"
+  external asChartParallelAxesTitleStyleOptions: t => (creditsStyleOptions) = "%identity"
 }
 type chartParallelAxesTitleOptions = {
   align?: axisTitleAlignValue,
@@ -3566,7 +5332,9 @@ type chartResetZoomButtonPositionOptions = {
 module ChartsChartResetZoomButtonOptionsPosition = {
   type t
   external fromAlignObject: alignObject => t = "%identity"
+  external asAlignObject: t => (alignObject) = "%identity"
   external fromChartResetZoomButtonPositionOptions: chartResetZoomButtonPositionOptions => t = "%identity"
+  external asChartResetZoomButtonPositionOptions: t => (chartResetZoomButtonPositionOptions) = "%identity"
 }
 type chartResetZoomButtonThemeOptions = {
   zIndex?: int,
@@ -3574,7 +5342,9 @@ type chartResetZoomButtonThemeOptions = {
 module ChartsChartResetZoomButtonOptionsTheme = {
   type t
   external fromSVGAttributes: svgAttributes => t = "%identity"
+  external asSVGAttributes: t => (svgAttributes) = "%identity"
   external fromChartResetZoomButtonThemeOptions: chartResetZoomButtonThemeOptions => t = "%identity"
+  external asChartResetZoomButtonThemeOptions: t => (chartResetZoomButtonThemeOptions) = "%identity"
 }
 type chartResetZoomButtonOptions = {
   position?: ChartsChartResetZoomButtonOptionsPosition.t,
@@ -3594,7 +5364,9 @@ type chartZoomingResetButtonPositionOptions = {
 module ChartsChartZoomingResetButtonOptionsPosition = {
   type t
   external fromAlignObject: alignObject => t = "%identity"
+  external asAlignObject: t => (alignObject) = "%identity"
   external fromChartZoomingResetButtonPositionOptions: chartZoomingResetButtonPositionOptions => t = "%identity"
+  external asChartZoomingResetButtonPositionOptions: t => (chartZoomingResetButtonPositionOptions) = "%identity"
 }
 type chartZoomingResetButtonOptions = {
   position?: ChartsChartZoomingResetButtonOptionsPosition.t,
@@ -3608,44 +5380,6 @@ type chartZoomingOptions = {
   resetButton?: chartZoomingResetButtonOptions,
   singleTouch?: bool,
   @as("type") type_?: optionsChartZoomingTypeValue,
-}
-type colorAxisDataClassesOptions = {
-  color?: ColorType.t,
-  from?: float,
-  name?: string,
-  @as("to") to_?: float,
-}
-module ChartsColorAxisLabelsOptionsStyle = {
-  type t
-  external fromCSSObject: cssObject => t = "%identity"
-  external fromColorAxisLabelsStyleOptions: creditsStyleOptions => t = "%identity"
-}
-module ChartsColorAxisTitleOptionsStyle = {
-  type t
-  external fromCSSObject: cssObject => t = "%identity"
-  external fromColorAxisTitleStyleOptions: creditsStyleOptions => t = "%identity"
-}
-type colorAxisTitleOptions = {
-  align?: axisTitleAlignValue,
-  margin?: float,
-  offset?: float,
-  position3d?: ChartsTypes.chartsXAxisTitleOptionsPosition3d,
-  reserveSpace?: bool,
-  rotation?: float,
-  skew3d?: bool,
-  style?: ChartsColorAxisTitleOptionsStyle.t,
-  text?: string,
-  textAlign?: alignValue,
-  useHTML?: bool,
-  x?: float,
-  y?: float,
-}
-module ChartsColorAxisOptionsTitle = {
-  type t
-  external fromXAxisTitleOptions: xAxisTitleOptions => t = "%identity"
-  external fromYAxisTitleOptions: xAxisTitleOptions => t = "%identity"
-  external fromZAxisTitleOptions: xAxisTitleOptions => t = "%identity"
-  external fromColorAxisTitleOptions: colorAxisTitleOptions => t = "%identity"
 }
 type connectorsOptions = {
   algorithmMargin?: float,
@@ -3668,7 +5402,9 @@ type drilldownActiveDataLabelStyleOptions = {
 module ChartsDrilldownOptionsActiveDataLabelStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromDrilldownActiveDataLabelStyleOptions: drilldownActiveDataLabelStyleOptions => t = "%identity"
+  external asDrilldownActiveDataLabelStyleOptions: t => (drilldownActiveDataLabelStyleOptions) = "%identity"
 }
 type drilldownBreadcrumbsButtonThemeOptions = {
   style?: annotationsTypesElliottWaveLabelStyleOptions,
@@ -3676,7 +5412,9 @@ type drilldownBreadcrumbsButtonThemeOptions = {
 module ChartsDrilldownBreadcrumbsOptionsButtonTheme = {
   type t
   external fromSVGAttributes: svgAttributes => t = "%identity"
+  external asSVGAttributes: t => (svgAttributes) = "%identity"
   external fromDrilldownBreadcrumbsButtonThemeOptions: drilldownBreadcrumbsButtonThemeOptions => t = "%identity"
+  external asDrilldownBreadcrumbsButtonThemeOptions: t => (drilldownBreadcrumbsButtonThemeOptions) = "%identity"
 }
 type drilldownBreadcrumbsEventsOptions = {
   click?: (Dom.event, breadcrumbOptions) => unit,
@@ -3684,12 +5422,16 @@ type drilldownBreadcrumbsEventsOptions = {
 module ChartsDrilldownBreadcrumbsOptionsPosition = {
   type t
   external fromBreadcrumbsAlignOptions: breadcrumbsAlignOptions => t = "%identity"
+  external asBreadcrumbsAlignOptions: t => (breadcrumbsAlignOptions) = "%identity"
   external fromDrilldownBreadcrumbsPositionOptions: plotSunburstBreadcrumbsPositionOptions => t = "%identity"
+  external asDrilldownBreadcrumbsPositionOptions: t => (plotSunburstBreadcrumbsPositionOptions) = "%identity"
 }
 module ChartsDrilldownBreadcrumbsSeparatorOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromDrilldownBreadcrumbsSeparatorStyleOptions: annotationsTypesMeasureTypeLabelStyleOptions => t = "%identity"
+  external asDrilldownBreadcrumbsSeparatorStyleOptions: t => (annotationsTypesMeasureTypeLabelStyleOptions) = "%identity"
 }
 type drilldownBreadcrumbsSeparatorOptions = {
   style?: ChartsDrilldownBreadcrumbsSeparatorOptionsStyle.t,
@@ -3714,7 +5456,9 @@ type drilldownBreadcrumbsOptions = {
 module ChartsDrilldownDrillUpButtonOptionsPosition = {
   type t
   external fromAlignObject: alignObject => t = "%identity"
+  external asAlignObject: t => (alignObject) = "%identity"
   external fromDrilldownDrillUpButtonPositionOptions: plotSunburstBreadcrumbsPositionOptions => t = "%identity"
+  external asDrilldownDrillUpButtonPositionOptions: t => (plotSunburstBreadcrumbsPositionOptions) = "%identity"
 }
 type drilldownDrillUpButtonOptions = {
   position?: ChartsDrilldownDrillUpButtonOptionsPosition.t,
@@ -4213,63 +5957,6 @@ type langOptions = {
   zoomIn?: string,
   zoomOut?: string,
 }
-type legendAccessibilityOptions = {
-  enabled?: bool,
-  keyboardNavigation?: seriesAccessibilityKeyboardNavigationOptionsObject,
-}
-type bubbleLegendFormatterContextObject = {
-  center: float,
-  radius: float,
-  value: float,
-}
-type legendBubbleLegendLabelsOptions = {
-  align?: alignValue,
-  allowOverlap?: bool,
-  className?: string,
-  format?: string,
-  formatter?: @this ((bubbleLegendFormatterContextObject, option<bubbleLegendFormatterContextObject>) => string),
-  style?: cssObject,
-  x?: float,
-  y?: float,
-}
-type legendBubbleLegendRangesOptions = {
-  borderColor?: ColorType.t,
-  color?: ColorType.t,
-  connectorColor?: ColorType.t,
-  value?: float,
-}
-type legendBubbleLegendOptions = {
-  borderColor?: ColorType.t,
-  borderWidth?: float,
-  className?: string,
-  color?: ColorType.t,
-  connectorClassName?: string,
-  connectorColor?: ColorType.t,
-  connectorDistance?: float,
-  connectorWidth?: float,
-  enabled?: bool,
-  labels?: legendBubbleLegendLabelsOptions,
-  legendIndex?: float,
-  maxSize?: float,
-  minSize?: float,
-  ranges?: array<legendBubbleLegendRangesOptions>,
-  sizeBy?: bubbleSizeByValue,
-  sizeByAbsoluteValue?: bool,
-  zIndex?: int,
-  zThreshold?: float,
-}
-type legendNavigationOptions = {
-  activeColor?: ColorType.t,
-  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  arrowSize?: float,
-  enabled?: bool,
-  inactiveColor?: ColorType.t,
-  style?: cssObject,
-}
-type legendTitleOptions = {
-  style?: cssObject,
-  text?: string,
-}
 type loadingOptions = {
   hideDuration?: float,
   labelStyle?: cssObject,
@@ -4336,18 +6023,25 @@ type mapViewOptions = {
 module ChartsNavigationAnnotationsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromNavigationAnnotationsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asNavigationAnnotationsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsNavigationAnnotationsTypesElliottWaveLabelOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromNavigationAnnotationsTypesElliottWaveLabelStyleOptions: annotationsTypesElliottWaveLabelStyleOptions => t = "%identity"
+  external asNavigationAnnotationsTypesElliottWaveLabelStyleOptions: t => (annotationsTypesElliottWaveLabelStyleOptions) = "%identity"
 }
 module ChartsNavigationAnnotationsTypesFibonacciLabelOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromNavigationAnnotationsTypesFibonacciLabelStyleOptions: annotationsTypesElliottWaveLabelStyleOptions => t = "%identity"
+  external asNavigationAnnotationsTypesFibonacciLabelStyleOptions: t => (annotationsTypesElliottWaveLabelStyleOptions) = "%identity"
 }
 type navigationAnnotationsTypesMeasureTypeOptions = {
   background?: annotationsTypesFibonacciTimeZonesTypeLineOptions,
@@ -4363,22 +6057,30 @@ type navigationAnnotationsTypesMeasureTypeOptions = {
 module ChartsNavigationAnnotationsTypesVerticalLineLabelOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromNavigationAnnotationsTypesVerticalLineLabelStyleOptions: annotationsTypesMeasureTypeLabelStyleOptions => t = "%identity"
+  external asNavigationAnnotationsTypesVerticalLineLabelStyleOptions: t => (annotationsTypesMeasureTypeLabelStyleOptions) = "%identity"
 }
 module ChartsNavigationBreadcrumbsOptionsButtonTheme = {
   type t
   external fromSVGAttributes: svgAttributes => t = "%identity"
+  external asSVGAttributes: t => (svgAttributes) = "%identity"
   external fromNavigationBreadcrumbsButtonThemeOptions: drilldownBreadcrumbsButtonThemeOptions => t = "%identity"
+  external asNavigationBreadcrumbsButtonThemeOptions: t => (drilldownBreadcrumbsButtonThemeOptions) = "%identity"
 }
 module ChartsNavigationBreadcrumbsOptionsPosition = {
   type t
   external fromBreadcrumbsAlignOptions: breadcrumbsAlignOptions => t = "%identity"
+  external asBreadcrumbsAlignOptions: t => (breadcrumbsAlignOptions) = "%identity"
   external fromNavigationBreadcrumbsPositionOptions: plotSunburstBreadcrumbsPositionOptions => t = "%identity"
+  external asNavigationBreadcrumbsPositionOptions: t => (plotSunburstBreadcrumbsPositionOptions) = "%identity"
 }
 module ChartsNavigationBreadcrumbsSeparatorOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromNavigationBreadcrumbsSeparatorStyleOptions: annotationsTypesMeasureTypeLabelStyleOptions => t = "%identity"
+  external asNavigationBreadcrumbsSeparatorStyleOptions: t => (annotationsTypesMeasureTypeLabelStyleOptions) = "%identity"
 }
 type navigationBreadcrumbsSeparatorOptions = {
   style?: ChartsNavigationBreadcrumbsSeparatorOptionsStyle.t,
@@ -4440,112 +6142,21 @@ type navigatorHandlesOptions = {
   symbols?: array<string>,
   width?: float,
 }
-type dataGroupingOptionsObject = {
-  anchor?: string,
-  approximation?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
-  dateTimeLabelFormats?: string,  // ⚪ loose — was `object`
-  enabled?: bool,
-  firstAnchor?: string,
-  forced?: bool,
-  groupAll?: bool,
-  groupPixelWidth?: float,
-  lastAnchor?: string,
-  units?: array<(string, array<float>)>,
-}
 module ChartsNavigatorSeriesDataLabelsOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromNavigatorSeriesDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
-}
-module ChartsCurrentDateIndicatorOptionsEvents = {
-  type t
-  external fromNavigatorXAxisCurrentDateIndicatorEventsOptions: xAxisPlotLinesEventsOptions => t = "%identity"
-  external fromXAxisCurrentDateIndicatorEventsOptions: xAxisPlotLinesEventsOptions => t = "%identity"
-}
-type navigatorXAxisCurrentDateIndicatorLabelOptions = {
-  align?: alignValue,
-  format?: LibTypes.stringOrEvent,
-  formatter?: @this ((string, option<string>) => string),  // ⚪ loose — was `PlotLineOrBand`
-  rotation?: float,
-  style?: cssObject,
-  text?: string,
-  textAlign?: alignValue,
-  useHTML?: bool,
-  verticalAlign?: verticalAlignValue,
-  x?: float,
-  y?: float,
-}
-module ChartsCurrentDateIndicatorOptionsLabel = {
-  type t
-  external fromNavigatorXAxisCurrentDateIndicatorLabelOptions: navigatorXAxisCurrentDateIndicatorLabelOptions => t = "%identity"
-  external fromXAxisCurrentDateIndicatorLabelOptions: navigatorXAxisCurrentDateIndicatorLabelOptions => t = "%identity"
-}
-module ChartsCurrentDateIndicatorOptionsLabels = {
-  type t
-  external fromNavigatorXAxisCurrentDateIndicatorLabelsOptions: xAxisPlotLinesLabelsOptions => t = "%identity"
-  external fromXAxisCurrentDateIndicatorLabelsOptions: xAxisPlotLinesLabelsOptions => t = "%identity"
-}
-type currentDateIndicatorOptions = {
-  className?: string,
-  color?: string,
-  dashStyle?: dashStyleValue,
-  events?: ChartsCurrentDateIndicatorOptionsEvents.t,
-  id?: string,
-  label?: ChartsCurrentDateIndicatorOptionsLabel.t,
-  labels?: ChartsCurrentDateIndicatorOptionsLabels.t,
-  width?: float,
-  zIndex?: int,
-}
-@unboxed type boolOrCurrentDateIndicatorOptions = Bool(bool) | CurrentDateIndicatorOptions(currentDateIndicatorOptions)
-module ChartsXAxisLabelsOptionsStyle = {
-  type t
-  external fromCSSObject: cssObject => t = "%identity"
-  external fromXAxisLabelsStyleOptions: creditsStyleOptions => t = "%identity"
-}
-type xAxisPlotBandsOptions = {
-  acrossPanes?: bool,
-  borderColor?: string,
-  borderRadius?: CommonTypes.stringOrNumber,
-  borderWidth?: float,
-  className?: string,
-  color?: ColorType.t,
-  events?: xAxisPlotLinesEventsOptions,
-  from?: CommonTypes.stringOrNumber,
-  id?: string,
-  label?: yAxisPlotBandsLabelOptions,
-  @as("to") to_?: CommonTypes.stringOrNumber,
-  zIndex?: int,
-}
-type xAxisScrollbarOptions = {
-  barBackgroundColor?: ColorType.t,
-  barBorderColor?: ColorType.t,
-  barBorderRadius?: float,
-  barBorderWidth?: float,
-  buttonArrowColor?: ColorType.t,
-  buttonBackgroundColor?: ColorType.t,
-  buttonBorderColor?: ColorType.t,
-  buttonBorderRadius?: float,
-  buttonBorderWidth?: float,
-  buttonsEnabled?: bool,
-  enabled?: bool,
-  height?: float,
-  liveRedraw?: bool,
-  margin?: float,
-  minWidth?: float,
-  opposite?: bool,
-  rifleColor?: ColorType.t,
-  showFull?: bool,
-  trackBackgroundColor?: ColorType.t,
-  trackBorderColor?: ColorType.t,
-  trackBorderRadius?: float,
-  trackBorderWidth?: float,
-  zIndex?: int,
+  external asNavigatorSeriesDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsNavigatorXAxisLabelsOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromNavigatorXAxisLabelsStyleOptions: creditsStyleOptions => t = "%identity"
+  external asNavigatorXAxisLabelsStyleOptions: t => (creditsStyleOptions) = "%identity"
 }
 type navigatorXAxisPlotLinesLabelOptions = {
   align?: alignValue,
@@ -4575,7 +6186,9 @@ type navigatorXAxisPlotLinesOptions = {
 module ChartsNavigatorXAxisTitleOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromNavigatorXAxisTitleStyleOptions: creditsStyleOptions => t = "%identity"
+  external asNavigatorXAxisTitleStyleOptions: t => (creditsStyleOptions) = "%identity"
 }
 type navigatorXAxisTitleOptions = {
   align?: axisTitleAlignValue,
@@ -4593,12 +6206,16 @@ type navigatorXAxisTitleOptions = {
 module ChartsNavigatorYAxisLabelsOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromNavigatorYAxisLabelsStyleOptions: creditsStyleOptions => t = "%identity"
+  external asNavigatorYAxisLabelsStyleOptions: t => (creditsStyleOptions) = "%identity"
 }
 module ChartsNavigatorYAxisTitleOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromNavigatorYAxisTitleStyleOptions: creditsStyleOptions => t = "%identity"
+  external asNavigatorYAxisTitleStyleOptions: t => (creditsStyleOptions) = "%identity"
 }
 type navigatorYAxisTitleOptions = {
   align?: axisTitleAlignValue,
@@ -4616,7 +6233,9 @@ type navigatorYAxisTitleOptions = {
 module ChartsNoDataOptionsPosition = {
   type t
   external fromAlignObject: alignObject => t = "%identity"
+  external asAlignObject: t => (alignObject) = "%identity"
   external fromNoDataPositionOptions: plotSunburstBreadcrumbsPositionOptions => t = "%identity"
+  external asNoDataPositionOptions: t => (plotSunburstBreadcrumbsPositionOptions) = "%identity"
 }
 type noDataOptions = {
   attr?: svgAttributes,
@@ -4644,189 +6263,31 @@ type paneOptions = {
   startAngle?: float,
 }
 @unboxed type paneOptionsOrPaneOptionsArray = PaneOptions(paneOptions) | PaneOptionsArr(array<paneOptions>)
-type rGBA = {
-  ...JsxDOM.domProps,
-  length: string,  // ⚪ loose — was `4`
-}
-type rec color = {
-  rgba: rGBA,
-  brighten: float => color,
-  get: option<string> => ColorType.t,
-  setOpacity: float => color,
-  tweenTo: (color, float) => ColorType.t,
-}
-type synthPatchEQFilter = {
-  frequency?: float,
-  gain?: float,
-  @as("Q") q?: float,
-}
-type synthPatchPassFilter = {
-  frequency?: float,
-  frequencyPitchTrackingMultiplier?: float,
-  @as("Q") q?: float,
-}
-type synthPatchOscillatorOptionsObject = {
-  attackEnvelope?: array<JSON.t>,
-  detune?: float,
-  fixedFrequency?: float,
-  fmOscillator?: float,
-  freqMultiplier?: float,
-  highpass?: synthPatchPassFilter,
-  lowpass?: synthPatchPassFilter,
-  pulseWidth?: float,
-  releaseEnvelope?: array<JSON.t>,
-  @as("type") type_?: synthPatchOscillatorType,
-  vmOscillator?: float,
-  volume?: float,
-  volumePitchTrackingMultiplier?: float,
-}
-type synthPatchOptionsObject = {
-  eq?: array<synthPatchEQFilter>,
-  masterAttackEnvelope?: array<JSON.t>,
-  masterReleaseEnvelope?: array<JSON.t>,
-  masterVolume?: float,
-  midiInstrument?: float,
-  noteGlideDuration?: float,
-  oscillators?: array<synthPatchOscillatorOptionsObject>,
-}
-@unboxed type stringOrSynthPatchOptionsObject = Str(string) | SynthPatchOptionsObject(synthPatchOptionsObject)
-type sonificationInstrumentMappingOptions = {
-  frequency?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentFrequencyOptions`
-  gapBetweenNotes?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentTimeOptions`
-  highpass?: string,  // ⚪ loose — was `SonificationInstrumentHighpassOptions`
-  lowpass?: string,  // ⚪ loose — was `SonificationInstrumentLowpassOptions`
-  noteDuration?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentTimeOptions`
-  pan?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentTimeOptions`
-  pitch?: string,  // ⚪ loose — was `string | number | Function | (string | number)[] | SonificationInstrumentPitchOptions`
-  playDelay?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentPlayDelayOptions`
-  rate?: string,  // ⚪ loose — was `string | number | Function | SonificationTracksRateOptions`
-  text?: string,  // ⚪ loose — was `string | Function`
-  time?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentTimeOptions`
-  tremolo?: string,  // ⚪ loose — was `SonificationInstrumentTremoloOptions`
-  volume?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentVolumeOptions`
-}
-type sonificationInstrumentPointGroupingOptions = {
-  algorithm?: string,
-  enabled?: bool,
-  groupTimespan?: float,
-  prop?: string,
-}
-type seriesSonificationContextTracksOptions = {
-  activeWhen?: string,  // ⚠️ REVIEW — was `Function | SonificationInstrumentActiveWhenOptions` — match the real type by hand
-  instrument?: stringOrSynthPatchOptionsObject,
-  mapping?: sonificationInstrumentMappingOptions,
-  midiName?: string,
-  pointGrouping?: sonificationInstrumentPointGroupingOptions,
-  roundToMusicalNotes?: bool,
-  showPlayMarker?: bool,
-  timeInterval?: float,
-  @as("type") type_?: sonifcationTypeValue,
-  valueInterval?: float,
-  valueMapFunction?: optionsValueMapFunctionValue,
-  valueProp?: string,
-}
-type seriesSonificationInstrumentOptions = {
-  activeWhen?: string,  // ⚠️ REVIEW — was `Function | SonificationInstrumentActiveWhenOptions` — match the real type by hand
-  instrument?: stringOrSynthPatchOptionsObject,
-  mapping?: sonificationInstrumentMappingOptions,
-  midiName?: string,
-  pointGrouping?: sonificationInstrumentPointGroupingOptions,
-  roundToMusicalNotes?: bool,
-  showPlayMarker?: bool,
-  @as("type") type_?: sonifcationTypeValue,
-}
-type sonificationSpeechMappingOptions = {
-  pitch?: string,  // ⚠️ REVIEW — was `string | number | Function | SonificationSpeechPitchOptions` — match the real type by hand
-  playDelay?: string,  // ⚠️ REVIEW — was `string | number | Function | SonificationSpeechPlayDelayOptions` — match the real type by hand
-  rate?: string,  // ⚠️ REVIEW — was `string | number | Function | SonificationInstrumentTimeOptions` — match the real type by hand
-  text?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
-  time?: string,  // ⚠️ REVIEW — was `string | number | Function | SonificationInstrumentTimeOptions` — match the real type by hand
-  volume?: string,  // ⚠️ REVIEW — was `string | number | Function | SonificationInstrumentVolumeOptions` — match the real type by hand
-}
-type seriesSonificationSpeechOptions = {
-  activeWhen?: string,  // ⚠️ REVIEW — was `Function | SonificationInstrumentActiveWhenOptions` — match the real type by hand
-  language?: string,
-  mapping?: sonificationSpeechMappingOptions,
-  pointGrouping?: sonificationInstrumentPointGroupingOptions,
-  preferredVoice?: string,
-  showPlayMarker?: bool,
-  @as("type") type_?: sonifcationTypeValue,
-}
-type seriesSonificationPointGroupingOptions = {
-  algorithm?: optionsAlgorithmValue,
-  enabled?: bool,
-  groupTimespan?: float,
-  prop?: string,
-}
-type seriesSonificationOptions = {
-  contextTracks?: array<seriesSonificationContextTracksOptions>,
-  defaultInstrumentOptions?: seriesSonificationInstrumentOptions,
-  defaultSpeechOptions?: seriesSonificationSpeechOptions,
-  enabled?: bool,
-  pointGrouping?: seriesSonificationPointGroupingOptions,
-  tracks?: array<seriesSonificationInstrumentOptions>,
-}
-type dragDropHandleOptionsObject = {
-  className?: string,
-  color?: ColorType.t,
-  cursor?: string,
-  lineColor?: string,
-  lineWidth?: float,
-  pathFormatter?: string,  // ⚪ loose — was `Function`
-  zIndex?: int,
-}
-type seriesDragDropOptionsObject = {
-  draggableClose?: bool,
-  draggableEnd?: bool,
-  draggableHigh?: bool,
-  draggableLow?: bool,
-  draggableOpen?: bool,
-  draggableQ1?: bool,
-  draggableQ3?: bool,
-  draggableStart?: bool,
-  draggableTarget?: bool,
-  draggableX?: bool,
-  draggableX1?: bool,
-  draggableX2?: bool,
-  draggableY?: bool,
-  dragHandle?: dragDropHandleOptionsObject,
-  dragMaxX?: CommonTypes.stringOrNumber,
-  dragMaxY?: float,
-  dragMinX?: CommonTypes.stringOrNumber,
-  dragMinY?: float,
-  dragPrecisionX?: float,
-  dragPrecisionY?: float,
-  dragSensitivity?: float,
-  groupBy?: string,
-  guideBox?: string,  // ⚠️ REVIEW — was `PlotOptionsSeriesDragDropGuideBoxOptions | Dictionary<DragDropGuideBoxOptionsObject>` — match the real type by hand
-  liveRedraw?: bool,
-}
-module ChartsPlotSeriesDataLabelsOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromPlotSeriesDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsPlotSeriesOptionsDataSorting = {
-  type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external fromPlotSeriesDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
-}
 module ChartsSeriesPieDataLabelsOptionsObjectAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotFunnelDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotFunnelDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromPlotItemDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotItemDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromPlotPieDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotPieDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromPlotPyramidDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotPyramidDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
   external fromPlotVariablepieDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotVariablepieDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 module ChartsSeriesNetworkgraphDataLabelsOptionsObjectAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotNetworkgraphDataLabelsAnimationOptions: annotationsAnimationOptions => t = "%identity"
+  external asPlotNetworkgraphDataLabelsAnimationOptions: t => (annotationsAnimationOptions) = "%identity"
 }
 type plotNetworkgraphDataLabelsStyleOptions = {
   transition?: string,
@@ -4834,29 +6295,18 @@ type plotNetworkgraphDataLabelsStyleOptions = {
 module ChartsSeriesNetworkgraphDataLabelsOptionsObjectStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromPlotNetworkgraphDataLabelsStyleOptions: plotNetworkgraphDataLabelsStyleOptions => t = "%identity"
-}
-type plotNetworkgraphLayoutAlgorithmOptions = {
-  approximation?: optionsApproximationValue,
-  attractiveForce?: string,  // ⚪ loose — was `Function`
-  enableSimulation?: bool,
-  friction?: float,
-  gravitationalConstant?: float,
-  initialPositionRadius?: float,
-  initialPositions?: string,  // ⚠️ REVIEW — was `Function | "circle" | "random"` — match the real type by hand
-  integration?: optionsIntegrationValue,
-  linkLength?: float,
-  maxIterations?: float,
-  maxSpeed?: float,
-  repulsiveForce?: string,  // ⚪ loose — was `Function`
-  theta?: float,
-  @as("type") type_?: string,  // ⚪ loose — was `"reingold-fruchterman"`
+  external asPlotNetworkgraphDataLabelsStyleOptions: t => (plotNetworkgraphDataLabelsStyleOptions) = "%identity"
 }
 module ChartsSeriesPackedBubbleDataLabelsOptionsObjectAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotPackedbubbleDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotPackedbubbleDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 type plotPackedbubbleDataLabelsStyleOptions = {
   transition?: string,
@@ -4864,85 +6314,23 @@ type plotPackedbubbleDataLabelsStyleOptions = {
 module ChartsSeriesPackedBubbleDataLabelsOptionsObjectStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromPlotPackedbubbleDataLabelsStyleOptions: plotPackedbubbleDataLabelsStyleOptions => t = "%identity"
-}
-type plotPackedbubbleLayoutAlgorithmParentNodeOptions = {
-  friction?: float,
-  gravitationalConstant?: float,
-  initialPositionRadius?: float,
-  initialPositions?: string,  // ⚠️ REVIEW — was `Function | "circle" | "random"` — match the real type by hand
-  integration?: optionsIntegrationValue,
-  linkLength?: float,
-  marker?: pointMarkerOptionsObject,
-  maxIterations?: float,
-  maxSpeed?: float,
-  seriesInteraction?: bool,
-  @as("type") type_?: string,  // ⚪ loose — was `"reingold-fruchterman"`
-}
-type plotPackedbubbleLayoutAlgorithmOptions = {
-  bubblePadding?: float,
-  dragBetweenSeries?: bool,
-  enableSimulation?: bool,
-  friction?: float,
-  gravitationalConstant?: float,
-  initialPositionRadius?: float,
-  initialPositions?: string,  // ⚠️ REVIEW — was `Function | "circle" | "random"` — match the real type by hand
-  integration?: optionsIntegrationValue,
-  linkLength?: float,
-  maxIterations?: float,
-  maxSpeed?: float,
-  parentNodeLimit?: bool,
-  parentNodeOptions?: plotPackedbubbleLayoutAlgorithmParentNodeOptions,
-  seriesInteraction?: bool,
-  splitSeries?: bool,
-  @as("type") type_?: string,  // ⚪ loose — was `"reingold-fruchterman"`
+  external asPlotPackedbubbleDataLabelsStyleOptions: t => (plotPackedbubbleDataLabelsStyleOptions) = "%identity"
 }
 type plotRenkoNavigatorOptions = {
   @as("type") type_?: string,
 }
-type plotScatterClusterDataLabelsOptions = {
-  style?: string,  // 🛑 BROKEN — contains `any`
-}
-module ChartsPlotScatterClusterOptionsDataLabels = {
-  type t
-  external fromDataLabelsOptions: dataLabelsOptions => t = "%identity"
-  external fromPlotScatterClusterDataLabelsOptions: plotScatterClusterDataLabelsOptions => t = "%identity"
-}
-type plotScatterClusterLayoutAlgorithmOptions = {
-  distance?: CommonTypes.stringOrNumber,
-  gridSize?: CommonTypes.stringOrNumber,
-  iterations?: float,
-  kmeansThreshold?: float,
-  @as("type") type_?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
-}
-type plotScatterClusterStatesHoverOptions = {
-  fillColor?: ColorType.t,
-}
-type plotScatterClusterStatesOptions = {
-  hover?: plotScatterClusterStatesHoverOptions,
-}
-type plotScatterClusterZonesOptions = {
-  className?: string,
-  from?: float,
-  marker?: pointMarkerOptionsObject,
-  @as("to") to_?: float,
-}
 module ChartsSeriesSunburstDataLabelsOptionsObjectAnimation = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
+  external asPartial: t => (highchartsAnnotationsOptionsAnimationConfig) = "%identity"
   external fromPlotSunburstDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
+  external asPlotSunburstDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
   external fromPlotSunburstLevelsDataLabelsAnimationOptions: plotAdDataLabelsAnimationOptions => t = "%identity"
-}
-module ChartsPlotVectorClusterOptionsDataLabels = {
-  type t
-  external fromDataLabelsOptions: dataLabelsOptions => t = "%identity"
-  external fromPlotVectorClusterDataLabelsOptions: plotScatterClusterDataLabelsOptions => t = "%identity"
-}
-module ChartsPlotVennClusterOptionsDataLabels = {
-  type t
-  external fromDataLabelsOptions: dataLabelsOptions => t = "%identity"
-  external fromPlotVennClusterDataLabelsOptions: plotScatterClusterDataLabelsOptions => t = "%identity"
+  external asPlotSunburstLevelsDataLabelsAnimationOptions: t => (plotAdDataLabelsAnimationOptions) = "%identity"
 }
 type rangeSelectorButtonPositionOptions = {
   align?: alignValue,
@@ -5146,83 +6534,12 @@ type timeOptions = {
   timezone?: string,
   timezoneOffset?: float,
 }
-type tooltipAnimationOptions = {
-  duration?: float,
-}
-module ChartsTooltipOptionsAnimation = {
-  type t
-  external fromBool: bool => t = "%identity"
-  external fromPartial: highchartsAnnotationsOptionsAnimationConfig => t = "%identity"
-  external fromTooltipAnimationOptions: tooltipAnimationOptions => t = "%identity"
-}
-type symbolDictionary = {
-  arc?: string,  // ⚪ loose — was `Function`
-  callout?: string,  // ⚪ loose — was `Function`
-  circle?: string,  // ⚪ loose — was `Function`
-  diamond?: string,  // ⚪ loose — was `Function`
-  square?: string,  // ⚪ loose — was `Function`
-  triangle?: string,  // ⚪ loose — was `Function`
-}
-type rec astNode = {
-  attributes?: svgAttributes,
-  children?: array<astNode>,
-  tagName?: string,
-  textContent?: string,
-}
-type fontMetricsObject = {
-  b: float,
-  f: float,
-  h: float,
-}
-type symbolOptionsObject = {
-  anchorX?: float,
-  anchorY?: float,
-  end?: float,
-  @as("open") open_?: bool,
-  r?: float,
-  start?: float,
-}
-type svgRenderer = {
-  box: Dom.element,
-  boxWrapper: Dom.element,
-  defs: Dom.element,
-  @as("Element") element: Dom.element,
-  escapes: Dict.t<string>,
-  forExport?: bool,
-  symbols: symbolDictionary,
-  arc: string,  // ⚠️ REVIEW — match the real type by hand
-  button: (string, float, float, @this ((string, option<string>, option<string>) => bool), option<svgAttributes>, option<svgAttributes>, option<svgAttributes>, option<svgAttributes>, option<symbolKeyValue>, option<bool>) => Dom.element,  // ⚠️ REVIEW — was `SVGElement` — match the real type by hand
-  circle: string,  // ⚠️ REVIEW — match the real type by hand
-  clipRect: (option<float>, option<float>, option<float>, option<float>) => Dom.element,
-  createElement: string => Dom.element,
-  crispLine: (array<ChartsPointShapeArgsD.t>, float) => array<ChartsPointShapeArgsD.t>,
-  definition: astNode => Dom.element,
-  destroy: unit => string,  // ⚪ loose — was `null`
-  draw: unit => unit,
-  fontMetrics: string => fontMetricsObject,  // ⚠️ REVIEW — was `number | SVGElement | Highcharts.SVGElement` — match the real type by hand
-  g: option<string> => Dom.element,
-  getContrast: string => string,
-  image: (string, option<float>, option<float>, option<float>, option<float>, option<string>) => Dom.element,  // ⚪ loose — was `Function`
-  init: (Dom.element, float, float, option<cssObject>, option<bool>, option<bool>, option<bool>) => unit,
-  isHidden: unit => bool,
-  label: (string, float, option<float>, option<string>, option<float>, option<float>, option<bool>, option<bool>, option<string>) => Dom.element,
-  path: string,  // ⚠️ REVIEW — match the real type by hand
-  rect: string,  // ⚠️ REVIEW — match the real type by hand
-  roundedRect: svgAttributes => Dom.element,
-  setSize: (float, float, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  setStyle: cssObject => unit,
-  symbol: (string, option<float>, option<float>, option<float>, option<float>, option<symbolOptionsObject>) => Dom.element,
-  text: (option<string>, option<float>, option<float>, option<bool>) => Dom.element,
-}
-module ChartsTooltipOptionsStyle = {
-  type t
-  external fromCSSObject: cssObject => t = "%identity"
-  external fromTooltipStyleOptions: creditsStyleOptions => t = "%identity"
-}
 module ChartsZAxisLabelsOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
   external fromZAxisLabelsStyleOptions: creditsStyleOptions => t = "%identity"
+  external asZAxisLabelsStyleOptions: t => (creditsStyleOptions) = "%identity"
 }
 type chartsOptionsSeries_t<'b>
 type chartsPlotSunburstOptionsDataLabels_t
@@ -5233,14 +6550,14 @@ type chartsPlotFunnelOptionsDataLabels_t
 type chartsNavigatorOptionsXAxis_t
 type chartsNavigatorOptionsSeries_t<'b>
 type chartsNavigationOptionsAnnotationsOptions_t
-type chartsLegendItemClickEventObjectLegendItem_t
-type chartsLegendAllItems_t
 type chartsOptionsColorAxis_t
 type chartsChartOptionsParallelAxes_t
 type chartsSeriesSankeyNodesOptionsObjectDataLabels_t
 type chartsSeriesAccessibilityOptionsObjectPoint_t
 type seriesOptionsType_t<'b>
 type pointTarget_t
+type chartsLegendItemClickEventObjectLegendItem_t
+type chartsLegendAllItems_t
 type rec zAxisLabelsOptions<'b> = {
   align?: alignValue,
   allowOverlap?: bool,
@@ -5335,105 +6652,6 @@ and zAxisOptions<'b> = {
   visible?: bool,
   zIndex?: int,
   zoomEnabled?: bool,
-}
-and tooltipPositionerPointObject<'b> = {
-  isHeader: bool,
-  plotX: float,
-  plotY: float,
-  category: CommonTypes.stringOrNumber,
-  color?: ColorType.t,
-  colorIndex?: float,
-  graphic?: Dom.element,
-  graphics?: array<Dom.element>,
-  index: int,
-  key: CommonTypes.stringOrNumber,
-  name: string,
-  options: pointOptionsObject<'b>,
-  percentage?: float,
-  points?: array<point<'b>>,
-  selected: bool,
-  series: series<'b>,
-  shapeArgs?: highchartsPointShapeArgsConfig,
-  sliced?: bool,
-  tooltipPos?: array<float>,
-  total?: float,
-  visible: bool,
-  x: float,
-  y?: float,
-  getClassName: unit => string,
-  getZone: unit => seriesZonesOptionsObject,
-  haloPath: float => array<ChartsPointShapeArgsD.t>,
-  onMouseOut: unit => unit,
-  onMouseOver: option<pointerEventObject> => unit,
-  optionsToObject: stringOrNumberOrStringOrNumberArrayOrPointOptionsObject<'b> => Dict.t<string>,  // 🛑 BROKEN — contains `any`
-  pos: (bool, float) => array<float>,
-  remove: (option<bool>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  select: (option<bool>, option<bool>) => unit,
-  setNestedProperty: (string, string, string) => string,  // 🛑 BROKEN — contains `unknown`
-  setState: (option<ChartsTypes.chartsPointSetState>, option<bool>) => unit,
-  setVisible: (option<bool>, option<bool>) => unit,
-  tooltipFormatter: string => string,
-  update: (stringOrNumberOrStringOrNumberArrayOrPointOptionsObject<'b>, option<bool>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-}
-and tooltip<'b> = {
-  chart: chart<'b>,
-  container?: Dom.element,
-  options: tooltipOptions<'b>,
-  outside: bool,
-  renderer?: svgRenderer,
-  shared?: bool,
-  split?: bool,
-  defaultFormatter: tooltip<'b> => CommonTypes.stringOrStringArray,
-  destroy: unit => unit,
-  getClassName: unit => string,
-  getLabel: unit => Dom.element,
-  getPosition: (float, float, point<'b>) => positionObject,
-  hide: option<float> => unit,
-  refresh: (pointOrPointArray<'b>, option<pointerEventObject>) => unit,
-  update: tooltipOptions<'b> => unit,
-}
-and tooltipOptions<'b> = {
-  animation?: ChartsTooltipOptionsAnimation.t,
-  backgroundColor?: ColorType.t,
-  borderColor?: ColorType.t,
-  borderRadius?: float,
-  borderWidth?: float,
-  changeDecimals?: float,
-  className?: string,
-  clusterFormat?: string,
-  dateTimeLabelFormats?: Dict.t<stringOrDateTimeFormatOptions>,
-  distance?: float,
-  enabled?: bool,
-  fixed?: bool,
-  followPointer?: bool,
-  followTouchMove?: bool,
-  footerFormat?: string,
-  format?: string,
-  formatter?: @this ((point<'b>, tooltip<'b>, option<point<'b>>) => CommonTypes.boolOrStringOrStringArray),
-  headerFormat?: string,
-  headerShape?: optionsHeaderShapeValue,
-  hideDelay?: float,
-  nullFormat?: string,
-  nullFormatter?: @this ((point<'b>, tooltip<'b>, option<point<'b>>) => CommonTypes.boolOrStringOrStringArray),
-  outside?: bool,
-  padding?: float,
-  pointFormat?: string,
-  pointFormatter?: @this ((point<'b>, option<point<'b>>) => string),
-  position?: plotAdTooltipPositionOptions,
-  positioner?: @this ((tooltip<'b>, float, float, tooltipPositionerPointObject<'b>, option<tooltip<'b>>) => positionObject),
-  shadow?: boolOrShadowOptionsObject,
-  shape?: tooltipShapeValue,
-  shared?: bool,
-  showDelay?: float,
-  snap?: float,
-  split?: bool,
-  stickOnContact?: bool,
-  style?: ChartsTooltipOptionsStyle.t,
-  useHTML?: bool,
-  valueDecimals?: float,
-  valuePrefix?: string,
-  valueSuffix?: string,
-  xDateFormat?: stringOrDateTimeFormatOptions,
 }
 and unknownSeriesOptions<'b> = {
   className?: string,
@@ -6063,19 +7281,6 @@ and plotVwapOptions<'b> = {
   zones?: array<seriesZonesOptionsObject>,
   zoomEnabled?: bool,
 }
-and plotVennClusterOptions<'b> = {
-  allowOverlap?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  dataLabels?: ChartsPlotVennClusterOptionsDataLabels.t,
-  drillToCluster?: bool,
-  enabled?: bool,
-  events?: plotScatterClusterEventsOptions<'b>,
-  layoutAlgorithm?: plotScatterClusterLayoutAlgorithmOptions,
-  marker?: pointMarkerOptionsObject,
-  minimumClusterSize?: float,
-  states?: plotScatterClusterStatesOptions,
-  zones?: array<plotScatterClusterZonesOptions>,
-}
 and plotVennOptions<'b> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -6124,19 +7329,6 @@ and plotVennOptions<'b> = {
   turboThreshold?: float,
   visible?: bool,
   zoomEnabled?: bool,
-}
-and plotVectorClusterOptions<'b> = {
-  allowOverlap?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  dataLabels?: ChartsPlotVectorClusterOptionsDataLabels.t,
-  drillToCluster?: bool,
-  enabled?: bool,
-  events?: plotScatterClusterEventsOptions<'b>,
-  layoutAlgorithm?: plotScatterClusterLayoutAlgorithmOptions,
-  marker?: pointMarkerOptionsObject,
-  minimumClusterSize?: float,
-  states?: plotScatterClusterStatesOptions,
-  zones?: array<plotScatterClusterZonesOptions>,
 }
 and plotVectorOptions<'b> = {
   accessibility?: seriesAccessibilityOptionsObject,
@@ -7590,28 +8782,6 @@ and plotScatter3dOptions<'b> = {
   zoneAxis?: string,
   zones?: array<seriesZonesOptionsObject>,
   zoomEnabled?: bool,
-}
-and pointClickEventObject<'b> = {
-  ...JsxDOM.domProps,
-  point: point<'b>,
-  chartX: float,
-  chartY: float,
-}
-and plotScatterClusterEventsOptions<'b> = {
-  drillToCluster?: @this ((point<'b>, pointClickEventObject<'b>) => unit),
-}
-and plotScatterClusterOptions<'b> = {
-  allowOverlap?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  dataLabels?: ChartsPlotScatterClusterOptionsDataLabels.t,
-  drillToCluster?: bool,
-  enabled?: bool,
-  events?: plotScatterClusterEventsOptions<'b>,
-  layoutAlgorithm?: plotScatterClusterLayoutAlgorithmOptions,
-  marker?: pointMarkerOptionsObject,
-  minimumClusterSize?: float,
-  states?: plotScatterClusterStatesOptions,
-  zones?: array<plotScatterClusterZonesOptions>,
 }
 and plotScatterOptions<'b> = {
   accessibility?: seriesAccessibilityOptionsObject,
@@ -13581,127 +14751,6 @@ and plotArearangeOptions<'b> = {
   zones?: array<seriesZonesOptionsObject>,
   zoomEnabled?: bool,
 }
-and plotSeriesDataLabelsOptions<'b> = {
-  align?: alignValue,
-  alignTo?: string,
-  allowOverlap?: bool,
-  animation?: ChartsPlotSeriesDataLabelsOptionsAnimation.t,
-  backgroundColor?: ColorType.t,
-  borderColor?: ColorType.t,
-  borderRadius?: float,
-  borderWidth?: float,
-  className?: string,
-  color?: ColorType.t,
-  crop?: bool,
-  defer?: bool,
-  enabled?: bool,
-  filter?: dataLabelsFilterOptionsObject,
-  format?: string,
-  formatter?: @this ((point<'b>, dataLabelsOptions) => CommonTypes.stringOrNumber),
-  inside?: bool,
-  labelrank?: float,
-  nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: @this ((point<'b>, dataLabelsOptions) => CommonTypes.stringOrNumber),
-  overflow?: dataLabelsOverflowValue,
-  padding?: float,
-  position?: alignValue,
-  rotation?: float,
-  shadow?: boolOrShadowOptionsObject,
-  shape?: string,
-  style?: cssObject,
-  textPath?: dataLabelsTextPathOptionsObject,
-  useHTML?: bool,
-  verticalAlign?: verticalAlignValue,
-  x?: float,
-  y?: float,
-}
-and plotSeriesOptions<'b> = {
-  accessibility?: seriesAccessibilityOptionsObject,
-  allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
-  animationLimit?: float,
-  boostBlending?: optionsBoostBlendingValue,
-  boostThreshold?: float,
-  borderColor?: ColorType.t,
-  borderWidth?: float,
-  className?: string,
-  clip?: bool,
-  color?: ColorType.t,
-  colorAxis?: CommonTypes.boolOrStringOrNumber,
-  colorIndex?: float,
-  colorKey?: string,
-  compare?: optionsCompareValue,
-  compareBase?: CommonTypes.v0OrV100,
-  compareStart?: bool,
-  connectEnds?: bool,
-  connectNulls?: bool,
-  connectors?: seriesConnectorsOptionsObject,
-  crisp?: bool,
-  cropThreshold?: float,
-  cumulative?: bool,
-  cumulativeStart?: bool,
-  cursor?: string,
-  custom?: Dict.t<string>,  // 🛑 BROKEN — contains `any`
-  dashStyle?: dashStyleValue,
-  dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: plotSeriesDataLabelsOptionsOrPlotSeriesDataLabelsOptionsArray<'b>,
-  dataSorting?: ChartsPlotSeriesOptionsDataSorting.t,
-  description?: string,
-  dragDrop?: seriesDragDropOptionsObject,
-  enableMouseTracking?: bool,
-  events?: seriesEventsOptionsObject<'b>,
-  findNearestPointBy?: optionsFindNearestPointByValue,
-  gapSize?: float,
-  gapUnit?: optionsGapUnitValue,
-  getExtremesFromAll?: bool,
-  inactiveOtherPoints?: bool,
-  includeInDataExport?: bool,
-  joinBy?: CommonTypes.stringOrStringArray,
-  keys?: array<string>,
-  label?: seriesLabelOptionsObject<'b>,
-  lastPrice?: seriesLastPriceOptionsObject<'b>,
-  lastVisiblePrice?: seriesLastPriceOptionsObject<'b>,
-  legendSymbol?: optionsLegendSymbolValue,
-  legendSymbolColor?: ColorType.t,
-  linecap?: string,
-  lineWidth?: float,
-  linkedTo?: string,
-  marker?: pointMarkerOptionsObject,
-  navigatorOptions?: plotSeriesOptions<'b>,
-  negativeColor?: ColorType.t,
-  nullInteraction?: bool,
-  onPoint?: string,  // ⚠️ REVIEW — was `object | PlotSeriesOnPointOptions` — match the real type by hand
-  opacity?: float,
-  point?: plotSeriesPointOptions<'b>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
-  pointInterval?: float,
-  pointIntervalUnit?: optionsPointIntervalUnitValue,
-  pointPlacement?: CommonTypes.stringOrNumber,
-  pointRange?: float,
-  pointStart?: CommonTypes.stringOrNumber,
-  relativeXValue?: bool,
-  selected?: bool,
-  shadow?: boolOrShadowOptionsObject,
-  showCheckbox?: bool,
-  showInLegend?: bool,
-  showInNavigator?: bool,
-  skipKeyboardNavigation?: bool,
-  softThreshold?: bool,
-  sonification?: seriesSonificationOptions,
-  stacking?: optionsStackingValue,
-  states?: seriesStatesOptionsObject,
-  step?: optionsStepValue,
-  stickyTracking?: bool,
-  threshold?: float,
-  tooltip?: seriesTooltipOptionsObject<'b>,
-  turboThreshold?: float,
-  visible?: bool,
-  zIndex?: int,
-  zoneAxis?: string,
-  zones?: array<seriesZonesOptionsObject>,
-  zoomEnabled?: bool,
-}
 and plotAreaOptions<'b> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -14065,38 +15114,6 @@ and plotAdOptions<'b> = {
   zones?: array<seriesZonesOptionsObject>,
   zoomEnabled?: bool,
 }
-and seriesLegendItemClickEventObject<'b> = {
-  browserEvent: Dom.event,
-  defaultPrevented?: bool,
-  preventDefault: string,  // ⚪ loose — was `Function`
-  target: series<'b>,
-  @as("type") type_: string,  // ⚪ loose — was `"legendItemClick"`
-}
-and seriesClickEventObject<'b> = {
-  ...JsxDOM.domProps,
-  point: point<'b>,
-}
-and seriesCheckboxClickEventObject<'b> = {
-  checked: bool,
-  item: series<'b>,
-  target: series<'b>,
-  @as("type") type_: string,  // ⚪ loose — was `"checkboxClick"`
-}
-and seriesAfterAnimateEventObject<'b> = {
-  target: series<'b>,
-  @as("type") type_: string,  // ⚪ loose — was `"afterAnimate"`
-}
-and seriesEventsOptionsObject<'b> = {
-  afterAnimate?: @this ((series<'b>, seriesAfterAnimateEventObject<'b>) => unit),
-  checkboxClick?: @this ((series<'b>, seriesCheckboxClickEventObject<'b>) => string),  // 🛑 BROKEN — contains `any`
-  click?: @this ((series<'b>, seriesClickEventObject<'b>) => unit),
-  hide?: @this ((series<'b>, Dom.event) => unit),
-  legendItemClick?: @this ((series<'b>, seriesLegendItemClickEventObject<'b>) => unit),
-  mouseOut?: @this ((series<'b>, Dom.event) => unit),
-  mouseOver?: @this ((series<'b>, Dom.event) => unit),
-  setRootNode?: string,  // ⚪ loose — was `Function`
-  show?: @this ((series<'b>, Dom.event) => unit),
-}
 and plotAbandsOptions<'b> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -14409,125 +15426,6 @@ and navigatorXAxisLabelsOptions<'b> = {
   x?: float,
   y?: float,
   zIndex?: int,
-}
-and xAxisLabelsOptions<'b> = {
-  align?: alignValue,
-  allowOverlap?: bool,
-  autoRotation?: array<float>,
-  autoRotationLimit?: float,
-  distance?: float,
-  enabled?: bool,
-  format?: string,
-  formatter?: @this ((axisLabelsFormatterContextObject<'b>, axisLabelsFormatterContextObject<'b>) => string),
-  indentation?: float,
-  overflow?: optionsOverflowValue,
-  padding?: float,
-  position3d?: optionsPosition3dValue,
-  reserveSpace?: bool,
-  rotation?: float,
-  skew3d?: bool,
-  staggerLines?: float,
-  step?: float,
-  style?: ChartsXAxisLabelsOptionsStyle.t,
-  useHTML?: bool,
-  x?: float,
-  y?: float,
-  zIndex?: int,
-}
-and xAxisOptions<'b> = {
-  accessibility?: axisAccessibilityOptionsObject,
-  alignTicks?: bool,
-  allowDecimals?: bool,
-  alternateGridColor?: ColorType.t,
-  angle?: float,
-  breaks?: array<yAxisBreaksOptions>,
-  categories?: array<string>,
-  ceiling?: float,
-  className?: string,
-  crosshair?: boolOrAxisCrosshairOptions<'b>,
-  crossing?: float,
-  currentDateIndicator?: boolOrCurrentDateIndicatorOptions,
-  dateTimeLabelFormats?: axisDateTimeLabelFormatsOptions,
-  endOnTick?: bool,
-  events?: chartParallelAxesEventsOptions<'b>,
-  floor?: float,
-  grid?: xAxisGridOptions<'b>,
-  gridLineColor?: ColorType.t,
-  gridLineDashStyle?: dashStyleValue,
-  gridLineInterpolation?: optionsGridLineInterpolationValue,
-  gridLineWidth?: float,
-  gridZIndex?: float,
-  height?: CommonTypes.stringOrNumber,
-  id?: string,
-  labels?: xAxisLabelsOptions<'b>,
-  left?: CommonTypes.stringOrNumber,
-  lineColor?: ColorType.t,
-  lineWidth?: float,
-  linkedTo?: float,
-  margin?: float,
-  max?: CommonTypes.stringOrNumber,
-  maxPadding?: float,
-  maxRange?: float,
-  min?: CommonTypes.stringOrNumber,
-  minorGridLineColor?: ColorType.t,
-  minorGridLineDashStyle?: dashStyleValue,
-  minorGridLineWidth?: float,
-  minorTickColor?: ColorType.t,
-  minorTickInterval?: CommonTypes.autoOrNumber,
-  minorTickLength?: float,
-  minorTickPosition?: optionsMinorTickPositionValue,
-  minorTicks?: bool,
-  minorTicksPerMajor?: float,
-  minorTickWidth?: float,
-  minPadding?: float,
-  minRange?: float,
-  minTickInterval?: float,
-  offset?: float,
-  opposite?: bool,
-  ordinal?: bool,
-  overscroll?: CommonTypes.stringOrNumber,
-  pane?: float,
-  panningEnabled?: bool,
-  plotBands?: array<xAxisPlotBandsOptions>,
-  plotLines?: array<xAxisPlotLinesOptions>,
-  range?: float,
-  reversed?: bool,
-  reversedStacks?: bool,
-  scrollbar?: xAxisScrollbarOptions,
-  showEmpty?: bool,
-  showFirstLabel?: bool,
-  showLastLabel?: bool,
-  softMax?: float,
-  softMin?: float,
-  startOfWeek?: float,
-  startOnTick?: bool,
-  staticScale?: float,
-  tickAmount?: float,
-  tickColor?: ColorType.t,
-  tickInterval?: float,
-  tickLength?: float,
-  tickmarkPlacement?: optionsTickmarkPlacementValue,
-  tickPixelInterval?: float,
-  tickPosition?: optionsTickPositionValue,
-  tickPositioner?: @this ((axis<'b>, float, float, option<axis<'b>>) => axisTickPositionsArray),
-  tickPositions?: array<float>,
-  tickWidth?: float,
-  title?: xAxisTitleOptions,
-  top?: CommonTypes.stringOrNumber,
-  @as("type") type_?: axisTypeValue,
-  uniqueNames?: bool,
-  units?: array<array<JSON.t>>,
-  visible?: bool,
-  width?: CommonTypes.stringOrNumber,
-  zIndex?: int,
-  zoomEnabled?: bool,
-}
-and xAxisGridOptions<'b> = {
-  borderColor?: string,
-  borderWidth?: float,
-  cellHeight?: float,
-  columns?: array<xAxisOptions<'b>>,
-  enabled?: bool,
 }
 and navigatorXAxisOptions<'b> = {
   accessibility?: axisAccessibilityOptionsObject,
@@ -14857,72 +15755,6 @@ and navigationOptions = {
   menuItemStyle?: cssObject,
   menuStyle?: cssObject,
 }
-and legendItemClickEventObject<'b> = {
-  browserEvent: Dom.event,
-  legendItem: chartsLegendItemClickEventObjectLegendItem_t,
-  preventDefault: string,  // ⚪ loose — was `Function`
-  target: legend<'b>,
-  @as("type") type_: string,  // ⚪ loose — was `"itemClick"`
-}
-and legend<'b> = {
-  allItems: array<chartsLegendAllItems_t>,
-  box: Dom.element,
-  chart: chart<'b>,
-  group: Dom.element,
-  options: legendOptions<'b>,
-  title: Dom.element,
-  setText: chartsLegendAllItems_t => unit,
-  update: (legendOptions<'b>, option<bool>) => unit,
-}
-and legendEventsOptions<'b> = {
-  itemClick?: @this ((legend<'b>, legendItemClickEventObject<'b>) => unit),
-}
-and legendOptions<'b> = {
-  accessibility?: legendAccessibilityOptions,
-  align?: alignValue,
-  alignColumns?: bool,
-  backgroundColor?: ColorType.t,
-  borderColor?: ColorType.t,
-  borderRadius?: float,
-  borderWidth?: float,
-  bubbleLegend?: legendBubbleLegendOptions,
-  className?: string,
-  enabled?: bool,
-  events?: legendEventsOptions<'b>,
-  floating?: bool,
-  itemCheckboxStyle?: cssObject,
-  itemDistance?: float,
-  itemHiddenStyle?: cssObject,
-  itemHoverStyle?: cssObject,
-  itemMarginBottom?: float,
-  itemMarginTop?: float,
-  itemStyle?: cssObject,
-  itemWidth?: float,
-  labelFormat?: string,
-  labelFormatter?: @this ((chartsLegendAllItems_t, option<chartsLegendAllItems_t>) => string),
-  layout?: optionsLayoutValue,
-  margin?: float,
-  maxHeight?: float,
-  maxWidth?: CommonTypes.stringOrNumber,
-  navigation?: legendNavigationOptions,
-  padding?: float,
-  reversed?: bool,
-  rtl?: bool,
-  shadow?: boolOrCssObject,
-  squareSymbol?: bool,
-  symbolHeight?: float,
-  symbolPadding?: float,
-  symbolRadius?: float,
-  symbolWidth?: float,
-  title?: legendTitleOptions,
-  useHTML?: bool,
-  valueDecimals?: float,
-  valueSuffix?: string,
-  verticalAlign?: verticalAlignValue,
-  width?: CommonTypes.stringOrNumber,
-  x?: float,
-  y?: float,
-}
 and exportingOptions<'b> = {
   accessibility?: seriesAccessibilityKeyboardNavigationOptionsObject,
   allowHTML?: bool,
@@ -14993,107 +15825,6 @@ and dataOptions<'b> = {
   switchRowsAndColumns?: bool,
   table?: string,  // ⚠️ REVIEW — was `string | HTMLElement` — match the real type by hand
 }
-and colorAxisLabelsOptions<'b> = {
-  align?: alignValue,
-  allowOverlap?: bool,
-  autoRotation?: array<float>,
-  autoRotationLimit?: float,
-  distance?: float,
-  enabled?: bool,
-  format?: string,
-  formatter?: @this ((axisLabelsFormatterContextObject<'b>, axisLabelsFormatterContextObject<'b>) => string),
-  overflow?: optionsOverflowValue,
-  padding?: float,
-  position3d?: optionsPosition3dValue,
-  reserveSpace?: bool,
-  rotation?: float,
-  skew3d?: bool,
-  staggerLines?: float,
-  step?: float,
-  style?: ChartsColorAxisLabelsOptionsStyle.t,
-  useHTML?: bool,
-  x?: float,
-  y?: float,
-  zIndex?: int,
-}
-and colorAxisEventsOptions<'b> = {
-  afterSetExtremes?: @this ((axis<'b>, axisSetExtremesEventObject) => unit),
-  legendItemClick?: string,  // ⚪ loose — was `Function`
-  setExtremes?: @this ((axis<'b>, axisSetExtremesEventObject) => unit),
-}
-and colorAxisOptions<'b> = {
-  accessibility?: axisAccessibilityOptionsObject,
-  allowDecimals?: bool,
-  angle?: float,
-  ceiling?: float,
-  className?: string,
-  crossing?: float,
-  dataClassColor?: optionsDataClassColorValue,
-  dataClasses?: array<colorAxisDataClassesOptions>,
-  endOnTick?: bool,
-  events?: colorAxisEventsOptions<'b>,
-  floor?: float,
-  gridLineColor?: ColorType.t,
-  gridLineDashStyle?: dashStyleValue,
-  gridLineInterpolation?: optionsGridLineInterpolationValue,
-  gridLineWidth?: float,
-  gridZIndex?: float,
-  height?: CommonTypes.stringOrNumber,
-  id?: string,
-  labels?: colorAxisLabelsOptions<'b>,
-  layout?: string,
-  lineColor?: ColorType.t,
-  margin?: float,
-  marker?: pointMarkerOptionsObject,
-  max?: float,
-  maxColor?: ColorType.t,
-  maxPadding?: float,
-  maxRange?: float,
-  min?: float,
-  minColor?: ColorType.t,
-  minorGridLineColor?: ColorType.t,
-  minorGridLineDashStyle?: dashStyleValue,
-  minorGridLineWidth?: float,
-  minorTickColor?: ColorType.t,
-  minorTickInterval?: CommonTypes.autoOrNumber,
-  minorTickLength?: float,
-  minorTickPosition?: optionsMinorTickPositionValue,
-  minorTicks?: bool,
-  minorTicksPerMajor?: float,
-  minorTickWidth?: float,
-  minPadding?: float,
-  ordinal?: bool,
-  overscroll?: CommonTypes.stringOrNumber,
-  panningEnabled?: bool,
-  range?: float,
-  reversed?: bool,
-  showFirstLabel?: bool,
-  showInLegend?: bool,
-  showLastLabel?: bool,
-  softMax?: float,
-  softMin?: float,
-  startOfWeek?: float,
-  startOnTick?: bool,
-  staticScale?: float,
-  stops?: array<(float, string)>,
-  tickAmount?: float,
-  tickColor?: ColorType.t,
-  tickInterval?: float,
-  tickLength?: float,
-  tickmarkPlacement?: optionsTickmarkPlacementValue,
-  tickPixelInterval?: float,
-  tickPosition?: optionsTickPositionValue,
-  tickPositioner?: @this ((axis<'b>, float, float, option<axis<'b>>) => axisTickPositionsArray),
-  tickPositions?: array<float>,
-  tickWidth?: float,
-  title?: ChartsColorAxisOptionsTitle.t,
-  @as("type") type_?: colorAxisTypeValue,
-  uniqueNames?: bool,
-  units?: array<(string, array<float>)>,
-  visible?: bool,
-  width?: CommonTypes.stringOrNumber,
-  zIndex?: int,
-}
 and yAxisLabelsOptions<'b> = {
   align?: alignValue,
   allowOverlap?: bool,
@@ -15120,6 +15851,132 @@ and yAxisLabelsOptions<'b> = {
   y?: float,
   zIndex?: int,
 }
+and xAxisLabelsOptions<'b> = {
+  align?: alignValue,
+  allowOverlap?: bool,
+  autoRotation?: array<float>,
+  autoRotationLimit?: float,
+  distance?: float,
+  enabled?: bool,
+  format?: string,
+  formatter?: @this ((axisLabelsFormatterContextObject<'b>, axisLabelsFormatterContextObject<'b>) => string),
+  indentation?: float,
+  overflow?: optionsOverflowValue,
+  padding?: float,
+  position3d?: optionsPosition3dValue,
+  reserveSpace?: bool,
+  rotation?: float,
+  skew3d?: bool,
+  staggerLines?: float,
+  step?: float,
+  style?: ChartsXAxisLabelsOptionsStyle.t,
+  useHTML?: bool,
+  x?: float,
+  y?: float,
+  zIndex?: int,
+}
+and xAxisGridOptions<'b> = {
+  borderColor?: string,
+  borderWidth?: float,
+  cellHeight?: float,
+  columns?: array<xAxisOptions<'b>>,
+  enabled?: bool,
+}
+and xAxisOptions<'b> = {
+  accessibility?: axisAccessibilityOptionsObject,
+  alignTicks?: bool,
+  allowDecimals?: bool,
+  alternateGridColor?: ColorType.t,
+  angle?: float,
+  breaks?: array<yAxisBreaksOptions>,
+  categories?: array<string>,
+  ceiling?: float,
+  className?: string,
+  crosshair?: boolOrAxisCrosshairOptions<'b>,
+  crossing?: float,
+  currentDateIndicator?: boolOrCurrentDateIndicatorOptions,
+  dateTimeLabelFormats?: axisDateTimeLabelFormatsOptions,
+  endOnTick?: bool,
+  events?: chartParallelAxesEventsOptions<'b>,
+  floor?: float,
+  grid?: xAxisGridOptions<'b>,
+  gridLineColor?: ColorType.t,
+  gridLineDashStyle?: dashStyleValue,
+  gridLineInterpolation?: optionsGridLineInterpolationValue,
+  gridLineWidth?: float,
+  gridZIndex?: float,
+  height?: CommonTypes.stringOrNumber,
+  id?: string,
+  labels?: xAxisLabelsOptions<'b>,
+  left?: CommonTypes.stringOrNumber,
+  lineColor?: ColorType.t,
+  lineWidth?: float,
+  linkedTo?: float,
+  margin?: float,
+  max?: CommonTypes.stringOrNumber,
+  maxPadding?: float,
+  maxRange?: float,
+  min?: CommonTypes.stringOrNumber,
+  minorGridLineColor?: ColorType.t,
+  minorGridLineDashStyle?: dashStyleValue,
+  minorGridLineWidth?: float,
+  minorTickColor?: ColorType.t,
+  minorTickInterval?: CommonTypes.autoOrNumber,
+  minorTickLength?: float,
+  minorTickPosition?: optionsMinorTickPositionValue,
+  minorTicks?: bool,
+  minorTicksPerMajor?: float,
+  minorTickWidth?: float,
+  minPadding?: float,
+  minRange?: float,
+  minTickInterval?: float,
+  offset?: float,
+  opposite?: bool,
+  ordinal?: bool,
+  overscroll?: CommonTypes.stringOrNumber,
+  pane?: float,
+  panningEnabled?: bool,
+  plotBands?: array<xAxisPlotBandsOptions>,
+  plotLines?: array<xAxisPlotLinesOptions>,
+  range?: float,
+  reversed?: bool,
+  reversedStacks?: bool,
+  scrollbar?: xAxisScrollbarOptions,
+  showEmpty?: bool,
+  showFirstLabel?: bool,
+  showLastLabel?: bool,
+  softMax?: float,
+  softMin?: float,
+  startOfWeek?: float,
+  startOnTick?: bool,
+  staticScale?: float,
+  tickAmount?: float,
+  tickColor?: ColorType.t,
+  tickInterval?: float,
+  tickLength?: float,
+  tickmarkPlacement?: optionsTickmarkPlacementValue,
+  tickPixelInterval?: float,
+  tickPosition?: optionsTickPositionValue,
+  tickPositioner?: @this ((axis<'b>, float, float, option<axis<'b>>) => axisTickPositionsArray),
+  tickPositions?: array<float>,
+  tickWidth?: float,
+  title?: xAxisTitleOptions,
+  top?: CommonTypes.stringOrNumber,
+  @as("type") type_?: axisTypeValue,
+  uniqueNames?: bool,
+  units?: array<array<JSON.t>>,
+  visible?: bool,
+  width?: CommonTypes.stringOrNumber,
+  zIndex?: int,
+  zoomEnabled?: bool,
+}
+and yAxisGridOptions<'b> = {
+  borderColor?: string,
+  borderWidth?: float,
+  cellHeight?: float,
+  columns?: array<xAxisOptions<'b>>,
+  enabled?: bool,
+}
 and yAxisOptions<'b> = {
   accessibility?: axisAccessibilityOptionsObject,
   alignTicks?: bool,
@@ -15140,7 +15997,7 @@ and yAxisOptions<'b> = {
   endOnTick?: bool,
   events?: chartParallelAxesEventsOptions<'b>,
   floor?: float,
-  grid?: yAxisGridOptions,
+  grid?: yAxisGridOptions<'b>,
   gridLineColor?: ColorType.t,
   gridLineDashStyle?: dashStyleValue,
   gridLineInterpolation?: optionsGridLineInterpolationValue,
@@ -15217,17 +16074,6 @@ and yAxisOptions<'b> = {
   width?: CommonTypes.stringOrNumber,
   zIndex?: int,
   zoomEnabled?: bool,
-}
-and axisLabelsFormatterContextObject<'b> = {
-  axis: axis<'b>,
-  chart: chart<'b>,
-  dateTimeLabelFormat?: string,
-  isFirst: bool,
-  isLast: bool,
-  pos: float,
-  text?: string,
-  tick: string,  // ⚪ loose — was `Tick`
-  value: CommonTypes.stringOrNumber,
 }
 and chartParallelAxesLabelsOptions<'b> = {
   align?: string,
@@ -15440,12 +16286,12 @@ and seriesZigzagOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotZigzagDataLabelsOptionsOrPlotZigzagDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesZigzagOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -15477,7 +16323,7 @@ and seriesZigzagOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -15562,12 +16408,12 @@ and seriesXrangeOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotXrangeDataLabelsOptionsOrPlotXrangeDataLabelsOptionsArray<'b>,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   grouping?: bool,
   groupPadding?: float,
   groupZPadding?: float,
@@ -15582,7 +16428,7 @@ and seriesXrangeOptions<'b> = {
   linkedTo?: string,
   maxPointWidth?: float,
   minPointLength?: float,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotXrangeOnPointOptions`
   opacity?: float,
@@ -15600,7 +16446,7 @@ and seriesXrangeOptions<'b> = {
   showInLegend?: bool,
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -15642,7 +16488,7 @@ and seriesWordcloudOptions<'b> = {
   description?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
   keys?: array<string>,
@@ -15664,7 +16510,7 @@ and seriesWordcloudOptions<'b> = {
   selected?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   spiral?: optionsSpiralValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -15744,12 +16590,12 @@ and seriesWmaOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotWmaDataLabelsOptionsOrPlotWmaDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesWmaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -15781,7 +16627,7 @@ and seriesWmaOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -15864,7 +16710,7 @@ and seriesWindbarbOptions<'b> = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotWindbarbDataLabelsOptionsOrPlotWindbarbDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesWindbarbOptionsDataSorting.t,
   depth?: float,
@@ -15872,7 +16718,7 @@ and seriesWindbarbOptions<'b> = {
   edgeColor?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -15890,7 +16736,7 @@ and seriesWindbarbOptions<'b> = {
   linkedTo?: string,
   maxPointWidth?: float,
   minPointLength?: float,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotWindbarbOnPointOptions`
@@ -15913,7 +16759,7 @@ and seriesWindbarbOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
@@ -15998,12 +16844,12 @@ and seriesWilliamsrOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotWilliamsrDataLabelsOptionsOrPlotWilliamsrDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesWilliamsrOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -16035,7 +16881,7 @@ and seriesWilliamsrOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -16119,11 +16965,11 @@ and seriesWaterfallOptions<'b> = {
   dataSorting?: ChartsSeriesWaterfallOptionsDataSorting.t,
   depth?: float,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   edgeColor?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -16161,7 +17007,7 @@ and seriesWaterfallOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -16244,12 +17090,12 @@ and seriesVwapOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotVwapDataLabelsOptionsOrPlotVwapDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesVwapOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -16281,7 +17127,7 @@ and seriesVwapOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -16300,6 +17146,19 @@ and seriesVwapOptions<'b> = {
   xAxis?: CommonTypes.stringOrNumber,
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
+}
+and plotVennClusterOptions<'b> = {
+  allowOverlap?: bool,
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  dataLabels?: ChartsPlotVennClusterOptionsDataLabels.t,
+  drillToCluster?: bool,
+  enabled?: bool,
+  events?: plotScatterClusterEventsOptions<'b>,
+  layoutAlgorithm?: plotScatterClusterLayoutAlgorithmOptions,
+  marker?: pointMarkerOptionsObject,
+  minimumClusterSize?: float,
+  states?: plotScatterClusterStatesOptions,
+  zones?: array<plotScatterClusterZonesOptions>,
 }
 and plotVennDataLabelsOptions<'b> = {
   align?: alignValue,
@@ -16352,7 +17211,7 @@ and seriesVennOptions<'b> = {
   brighten?: float,
   className?: string,
   clip?: bool,
-  cluster?: string,  // ⚪ loose — was `PlotVennClusterOptions`
+  cluster?: plotVennClusterOptions<'b>,
   color?: ColorType.t,
   colorAxis?: CommonTypes.boolOrStringOrNumber,
   colorByPoint?: bool,
@@ -16365,7 +17224,7 @@ and seriesVennOptions<'b> = {
   dataLabels?: plotVennDataLabelsOptionsOrPlotVennDataLabelsOptionsArray<'b>,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
   inactiveOtherPoints?: bool,
@@ -16383,7 +17242,7 @@ and seriesVennOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -16397,6 +17256,19 @@ and seriesVennOptions<'b> = {
   mapData?: string,  // ⚪ loose — was `object | GeoJSON | SeriesMapDataOptions[]`
   name?: string,
   zIndex?: int,
+}
+and plotVectorClusterOptions<'b> = {
+  allowOverlap?: bool,
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  dataLabels?: ChartsPlotVectorClusterOptionsDataLabels.t,
+  drillToCluster?: bool,
+  enabled?: bool,
+  events?: plotScatterClusterEventsOptions<'b>,
+  layoutAlgorithm?: plotScatterClusterLayoutAlgorithmOptions,
+  marker?: pointMarkerOptionsObject,
+  minimumClusterSize?: float,
+  states?: plotScatterClusterStatesOptions,
+  zones?: array<plotScatterClusterZonesOptions>,
 }
 and plotVectorDataLabelsOptions<'b> = {
   align?: alignValue,
@@ -16443,7 +17315,7 @@ and seriesVectorOptions<'b> = {
   animationLimit?: float,
   className?: string,
   clip?: bool,
-  cluster?: string,  // ⚪ loose — was `PlotVectorClusterOptions`
+  cluster?: plotVectorClusterOptions<'b>,
   color?: ColorType.t,
   colorAxis?: CommonTypes.boolOrStringOrNumber,
   colorIndex?: float,
@@ -16460,7 +17332,7 @@ and seriesVectorOptions<'b> = {
   dataSorting?: ChartsSeriesVectorOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   inactiveOtherPoints?: bool,
@@ -16473,7 +17345,7 @@ and seriesVectorOptions<'b> = {
   lineWidth?: float,
   linkedTo?: string,
   marker?: string,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotVectorOnPointOptions`
@@ -16493,7 +17365,7 @@ and seriesVectorOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
@@ -16575,12 +17447,12 @@ and seriesVbpOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotVbpDataLabelsOptionsOrPlotVbpDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesVbpOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -16613,7 +17485,7 @@ and seriesVbpOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -16695,9 +17567,9 @@ and seriesVariwideOptions<'b> = {
   dataLabels?: plotVariwideDataLabelsOptionsOrPlotVariwideDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesVariwideOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -16732,7 +17604,7 @@ and seriesVariwideOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -16783,7 +17655,7 @@ and seriesVariablepieOptions<'b> = {
   description?: string,
   enableMouseTracking?: bool,
   endAngle?: float,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -16813,7 +17685,7 @@ and seriesVariablepieOptions<'b> = {
   sizeBy?: variablePieSizeByValue,
   skipKeyboardNavigation?: bool,
   slicedOffset?: float,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   startAngle?: float,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -16890,12 +17762,12 @@ and seriesTrixOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotTrixDataLabelsOptionsOrPlotTrixDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesTrixOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -16927,7 +17799,7 @@ and seriesTrixOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -17008,12 +17880,12 @@ and seriesTrendlineOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotTrendlineDataLabelsOptionsOrPlotTrendlineDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesTrendlineOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -17045,7 +17917,7 @@ and seriesTrendlineOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -17179,7 +18051,7 @@ and seriesTreemapOptions<'b> = {
   dataLabels?: plotTreemapDataLabelsOptionsOrPlotTreemapDataLabelsOptionsArray<'b>,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -17216,7 +18088,7 @@ and seriesTreemapOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   sortIndex?: float,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
@@ -17320,7 +18192,7 @@ and seriesTreegraphOptions<'b> = {
   dataLabels?: seriesTreegraphDataLabelsOptionsObjectOrSeriesTreegraphDataLabelsOptionsObjectArray<'b>,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillSpace?: bool,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
@@ -17353,7 +18225,7 @@ and seriesTreegraphOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
@@ -17430,9 +18302,9 @@ and seriesTimelineOptions<'b> = {
   custom?: Dict.t<JSON.t>,
   dataLabels?: timelineDataLabelsOptionsObjectOrTimelineDataLabelsOptionsObjectArray<'b>,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
   ignoreHiddenPoint?: bool,
@@ -17458,7 +18330,7 @@ and seriesTimelineOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -17534,7 +18406,7 @@ and seriesTilemapOptions<'b> = {
   dataLabels?: plotTilemapDataLabelsOptionsOrPlotTilemapDataLabelsOptionsArray<'b>,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
   inactiveOtherPoints?: bool,
@@ -17560,7 +18432,7 @@ and seriesTilemapOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tileShape?: tilemapShapeValue,
@@ -17578,7 +18450,7 @@ and seriesTilemapOptions<'b> = {
   xAxis?: CommonTypes.stringOrNumber,
   yAxis?: CommonTypes.stringOrNumber,
 }
-and seriesTiledwebmapOptions = {
+and seriesTiledwebmapOptions<'b> = {
   affectsMapView?: string,  // ⚪ loose — was `undefined`
   allAreas?: string,  // ⚪ loose — was `undefined`
   colorByPoint?: string,  // ⚪ loose — was `undefined`
@@ -17591,7 +18463,7 @@ and seriesTiledwebmapOptions = {
   className?: string,
   custom?: Dict.t<JSON.t>,
   description?: string,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
   legendSymbol?: optionsLegendSymbolValue,
@@ -17674,12 +18546,12 @@ and seriesTemaOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotTemaDataLabelsOptionsOrPlotTemaDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesTemaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -17711,7 +18583,7 @@ and seriesTemaOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -17794,12 +18666,12 @@ and seriesSupertrendOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotSupertrendDataLabelsOptionsOrPlotSupertrendDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesSupertrendOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fallingTrendColor?: ColorType.t,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
@@ -17832,7 +18704,7 @@ and seriesSupertrendOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -17878,7 +18750,7 @@ and seriesSunburstOptions<'b> = {
   dataLabels?: string,  // ⚪ loose — was `SeriesSunburstDataLabelsOptionsObject | SeriesSunburstDataLabelsOptionsObject[]`
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
@@ -17903,7 +18775,7 @@ and seriesSunburstOptions<'b> = {
   size?: CommonTypes.stringOrNumber,
   skipKeyboardNavigation?: bool,
   slicedOffset?: float,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   startAngle?: float,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -17981,13 +18853,13 @@ and seriesStreamgraphOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotStreamgraphDataLabelsOptionsOrPlotStreamgraphDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesStreamgraphOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   fillOpacity?: float,
   findNearestPointBy?: optionsFindNearestPointByValue,
@@ -18007,7 +18879,7 @@ and seriesStreamgraphOptions<'b> = {
   lineWidth?: float,
   linkedTo?: string,
   marker?: pointMarkerOptionsObject,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   negativeFillColor?: ColorType.t,
   nullInteraction?: bool,
@@ -18029,7 +18901,7 @@ and seriesStreamgraphOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: string,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -18113,12 +18985,12 @@ and seriesStochasticOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotStochasticDataLabelsOptionsOrPlotStochasticDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesStochasticOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -18151,7 +19023,7 @@ and seriesStochasticOptions<'b> = {
   skipKeyboardNavigation?: bool,
   smoothedLine?: plotAroonAroonDownOptions,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -18232,13 +19104,13 @@ and seriesSplineOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotSplineDataLabelsOptionsOrPlotSplineDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesSplineOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -18255,7 +19127,7 @@ and seriesSplineOptions<'b> = {
   lineWidth?: float,
   linkedTo?: string,
   marker?: pointMarkerOptionsObject,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotSplineOnPointOptions`
@@ -18276,7 +19148,7 @@ and seriesSplineOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -18356,7 +19228,7 @@ and seriesSolidgaugeOptions<'b> = {
   dataLabels?: plotSolidgaugeDataLabelsOptionsOrPlotSolidgaugeDataLabelsOptionsArray<'b>,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
   inactiveOtherPoints?: bool,
@@ -18386,7 +19258,7 @@ and seriesSolidgaugeOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stickyTracking?: bool,
   threshold?: float,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -18463,12 +19335,12 @@ and seriesSmaOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotSmaDataLabelsOptionsOrPlotSmaDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesSmaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -18500,7 +19372,7 @@ and seriesSmaOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -18580,12 +19452,12 @@ and seriesSlowstochasticOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotSlowstochasticDataLabelsOptionsOrPlotSlowstochasticDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesSlowstochasticOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -18618,7 +19490,7 @@ and seriesSlowstochasticOptions<'b> = {
   skipKeyboardNavigation?: bool,
   smoothedLine?: plotDmiPlusDILineOptions,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -18637,6 +19509,22 @@ and seriesSlowstochasticOptions<'b> = {
   xAxis?: CommonTypes.stringOrNumber,
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
+}
+and plotScatterClusterEventsOptions<'b> = {
+  drillToCluster?: @this ((point<'b>, pointClickEventObject<'b>) => unit),
+}
+and plotScatterClusterOptions<'b> = {
+  allowOverlap?: bool,
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  dataLabels?: ChartsPlotScatterClusterOptionsDataLabels.t,
+  drillToCluster?: bool,
+  enabled?: bool,
+  events?: plotScatterClusterEventsOptions<'b>,
+  layoutAlgorithm?: plotScatterClusterLayoutAlgorithmOptions,
+  marker?: pointMarkerOptionsObject,
+  minimumClusterSize?: float,
+  states?: plotScatterClusterStatesOptions,
+  zones?: array<plotScatterClusterZonesOptions>,
 }
 and plotScatterDataLabelsOptions<'b> = {
   align?: alignValue,
@@ -18686,7 +19574,7 @@ and seriesScatterOptions<'b> = {
   boostThreshold?: float,
   className?: string,
   clip?: bool,
-  cluster?: string,  // ⚪ loose — was `PlotScatterClusterOptions`
+  cluster?: plotScatterClusterOptions<'b>,
   color?: ColorType.t,
   colorAxis?: CommonTypes.boolOrStringOrNumber,
   colorIndex?: float,
@@ -18702,13 +19590,13 @@ and seriesScatterOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotScatterDataLabelsOptionsOrPlotScatterDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesScatterOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -18725,7 +19613,7 @@ and seriesScatterOptions<'b> = {
   lineWidth?: float,
   linkedTo?: string,
   marker?: pointMarkerOptionsObject,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotScatterOnPointOptions`
@@ -18744,7 +19632,7 @@ and seriesScatterOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
@@ -18823,7 +19711,7 @@ and seriesScatter3dOptions<'b> = {
   dataSorting?: ChartsSeriesScatter3dOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -18854,7 +19742,7 @@ and seriesScatter3dOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
@@ -18927,7 +19815,7 @@ and seriesSankeyOptions<'b> = {
   dataLabels?: seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'b>,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   getExtremesFromAll?: bool,
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
@@ -18954,7 +19842,7 @@ and seriesSankeyOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -19032,12 +19920,12 @@ and seriesRsiOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotRsiDataLabelsOptionsOrPlotRsiDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesRsiOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -19069,7 +19957,7 @@ and seriesRsiOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -19150,12 +20038,12 @@ and seriesRocOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotRocDataLabelsOptionsOrPlotRocDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesRocOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -19187,7 +20075,7 @@ and seriesRocOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -19269,7 +20157,7 @@ and seriesRenkoOptions<'b> = {
   description?: string,
   downColor?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: string,
   findNearestPointBy?: optionsFindNearestPointByValue,
   grouping?: bool,
@@ -19304,7 +20192,7 @@ and seriesRenkoOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -19353,7 +20241,7 @@ and seriesPyramidOptions<'b> = {
   description?: string,
   enableMouseTracking?: bool,
   endAngle?: float,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -19382,7 +20270,7 @@ and seriesPyramidOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   slicedOffset?: float,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   startAngle?: float,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -19459,11 +20347,11 @@ and seriesPyramid3dOptions<'b> = {
   dataLabels?: plotPyramid3dDataLabelsOptionsOrPlotPyramid3dDataLabelsOptionsArray<'b>,
   depth?: float,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   edgeColor?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   gradientForSides?: bool,
@@ -19503,7 +20391,7 @@ and seriesPyramid3dOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -19586,12 +20474,12 @@ and seriesPsarOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotPsarDataLabelsOptionsOrPlotPsarDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesPsarOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -19623,7 +20511,7 @@ and seriesPsarOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -19705,12 +20593,12 @@ and seriesPriceenvelopesOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotPriceenvelopesDataLabelsOptionsOrPlotPriceenvelopesDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesPriceenvelopesOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -19742,7 +20630,7 @@ and seriesPriceenvelopesOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -19825,12 +20713,12 @@ and seriesPpoOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotPpoDataLabelsOptionsOrPlotPpoDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesPpoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -19862,7 +20750,7 @@ and seriesPpoOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -19943,13 +20831,13 @@ and seriesPolygonOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotPolygonDataLabelsOptionsOrPlotPolygonDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesPolygonOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -19965,7 +20853,7 @@ and seriesPolygonOptions<'b> = {
   lineWidth?: float,
   linkedTo?: string,
   marker?: pointMarkerOptionsObject,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotPolygonOnPointOptions`
@@ -19983,7 +20871,7 @@ and seriesPolygonOptions<'b> = {
   showInLegend?: bool,
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
@@ -20062,7 +20950,7 @@ and seriesPointandfigureOptions<'b> = {
   dataSorting?: ChartsSeriesPointandfigureOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -20081,7 +20969,7 @@ and seriesPointandfigureOptions<'b> = {
   linkedTo?: string,
   marker?: pointMarkerOptionsObject,
   markerUp?: pointMarkerOptionsObject,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotPointandfigureOnPointOptions`
@@ -20102,7 +20990,7 @@ and seriesPointandfigureOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
@@ -20185,12 +21073,12 @@ and seriesPivotpointsOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotPivotpointsDataLabelsOptionsOrPlotPivotpointsDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesPivotpointsOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -20222,7 +21110,7 @@ and seriesPivotpointsOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -20272,7 +21160,7 @@ and seriesPieOptions<'b> = {
   description?: string,
   enableMouseTracking?: bool,
   endAngle?: float,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -20300,7 +21188,7 @@ and seriesPieOptions<'b> = {
   size?: CommonTypes.stringOrNumber,
   skipKeyboardNavigation?: bool,
   slicedOffset?: float,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   startAngle?: float,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -20378,11 +21266,11 @@ and seriesPictorialOptions<'b> = {
   dataLabels?: plotPictorialDataLabelsOptionsOrPlotPictorialDataLabelsOptionsArray<'b>,
   depth?: float,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   edgeColor?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -20416,7 +21304,7 @@ and seriesPictorialOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -20498,13 +21386,13 @@ and seriesPcOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotPcDataLabelsOptionsOrPlotPcDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesPcOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
-  fillColor?: string,  // ⚪ loose — was `Color`
+  events?: seriesEventsOptionsObject<'b>,
+  fillColor?: color,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -20536,7 +21424,7 @@ and seriesPcOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -20616,7 +21504,7 @@ and seriesParetoOptions<'b> = {
   dataSorting?: ChartsSeriesParetoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   getExtremesFromAll?: bool,
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
@@ -20638,7 +21526,7 @@ and seriesParetoOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -20680,7 +21568,7 @@ and seriesPackedbubbleOptions<'b> = {
   displayNegative?: bool,
   draggable?: bool,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -20688,7 +21576,7 @@ and seriesPackedbubbleOptions<'b> = {
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
   label?: seriesLabelOptionsObject<'b>,
-  layoutAlgorithm?: string,  // ⚪ loose — was `PlotPackedbubbleLayoutAlgorithmOptions`
+  layoutAlgorithm?: plotPackedbubbleLayoutAlgorithmOptions,
   legendSymbol?: optionsLegendSymbolValue,
   linecap?: string,
   lineWidth?: float,
@@ -20714,7 +21602,7 @@ and seriesPackedbubbleOptions<'b> = {
   sizeBy?: string,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -20797,7 +21685,7 @@ and seriesOrganizationOptions<'b> = {
   dataLabels?: seriesOrganizationDataLabelsOptionsObjectOrSeriesOrganizationDataLabelsOptionsObjectArray<'b>,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   getExtremesFromAll?: bool,
   hangingIndent?: float,
   hangingIndentTranslation?: organizationHangingIndentTranslationValue,
@@ -20829,7 +21717,7 @@ and seriesOrganizationOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -20909,13 +21797,13 @@ and seriesOhlcOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotOhlcDataLabelsOptionsOrPlotOhlcDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesOhlcOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -20932,7 +21820,7 @@ and seriesOhlcOptions<'b> = {
   linkedTo?: string,
   maxPointWidth?: float,
   minPointLength?: float,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotOhlcOnPointOptions`
@@ -20956,7 +21844,7 @@ and seriesOhlcOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -21037,12 +21925,12 @@ and seriesObvOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotObvDataLabelsOptionsOrPlotObvDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesObvOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -21074,7 +21962,7 @@ and seriesObvOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -21115,14 +22003,14 @@ and seriesNetworkgraphOptions<'b> = {
   description?: string,
   draggable?: bool,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
   keys?: array<string>,
-  layoutAlgorithm?: string,  // ⚪ loose — was `PlotNetworkgraphLayoutAlgorithmOptions`
+  layoutAlgorithm?: plotNetworkgraphLayoutAlgorithmOptions,
   legendSymbol?: optionsLegendSymbolValue,
   legendSymbolColor?: ColorType.t,
   lineWidth?: float,
@@ -21141,7 +22029,7 @@ and seriesNetworkgraphOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -21217,12 +22105,12 @@ and seriesNatrOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotNatrDataLabelsOptionsOrPlotNatrDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesNatrOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -21254,7 +22142,7 @@ and seriesNatrOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -21335,12 +22223,12 @@ and seriesMomentumOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotMomentumDataLabelsOptionsOrPlotMomentumDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesMomentumOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -21372,7 +22260,7 @@ and seriesMomentumOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -21453,12 +22341,12 @@ and seriesMfiOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotMfiDataLabelsOptionsOrPlotMfiDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesMfiOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -21490,7 +22378,7 @@ and seriesMfiOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -21567,9 +22455,9 @@ and seriesMappointOptions<'b> = {
   dashStyle?: dashStyleValue,
   dataLabels?: plotMappointDataLabelsOptionsOrPlotMappointDataLabelsOptionsArray<'b>,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
@@ -21588,7 +22476,7 @@ and seriesMappointOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -21665,7 +22553,7 @@ and seriesMapOptions<'b> = {
   dataLabels?: plotMapDataLabelsOptionsOrPlotMapDataLabelsOptionsArray<'b>,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
@@ -21684,7 +22572,7 @@ and seriesMapOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -21761,7 +22649,7 @@ and seriesMaplineOptions<'b> = {
   dataLabels?: plotMaplineDataLabelsOptionsOrPlotMaplineDataLabelsOptionsArray<'b>,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   findNearestPointBy?: optionsFindNearestPointByValue,
   inactiveOtherPoints?: bool,
@@ -21782,7 +22670,7 @@ and seriesMaplineOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -21857,9 +22745,9 @@ and seriesMapbubbleOptions<'b> = {
   dataLabels?: plotMapbubbleDataLabelsOptionsOrPlotMapbubbleDataLabelsOptionsArray<'b>,
   description?: string,
   displayNegative?: bool,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
@@ -21882,7 +22770,7 @@ and seriesMapbubbleOptions<'b> = {
   showInLegend?: bool,
   sizeBy?: bubbleSizeByValue,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -21959,12 +22847,12 @@ and seriesMacdOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotMacdDataLabelsOptionsOrPlotMacdDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesMacdOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -22001,7 +22889,7 @@ and seriesMacdOptions<'b> = {
   signalLine?: plotMacdMacdLineOptions,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -22049,13 +22937,13 @@ and seriesLollipopOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'b>,
   dataSorting?: ChartsSeriesLollipopOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -22074,7 +22962,7 @@ and seriesLollipopOptions<'b> = {
   linkedTo?: string,
   lowMarker?: pointMarkerOptionsObject,
   marker?: pointMarkerOptionsObject,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   negativeFillColor?: ColorType.t,
   nullInteraction?: bool,
@@ -22097,7 +22985,7 @@ and seriesLollipopOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   threshold?: float,
@@ -22180,13 +23068,13 @@ and seriesLineOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotLineDataLabelsOptionsOrPlotLineDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesLineOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -22203,7 +23091,7 @@ and seriesLineOptions<'b> = {
   lineWidth?: float,
   linkedTo?: string,
   marker?: pointMarkerOptionsObject,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotLineOnPointOptions`
@@ -22224,7 +23112,7 @@ and seriesLineOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
@@ -22308,12 +23196,12 @@ and seriesLinearregressionslopeOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotLinearregressionslopeDataLabelsOptionsOrPlotLinearregressionslopeDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesLinearregressionslopeOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -22345,7 +23233,7 @@ and seriesLinearregressionslopeOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -22426,12 +23314,12 @@ and seriesLinearregressionOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotLinearregressionDataLabelsOptionsOrPlotLinearregressionDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesLinearregressionOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -22463,7 +23351,7 @@ and seriesLinearregressionOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -22544,12 +23432,12 @@ and seriesLinearregressioninterceptOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotLinearregressioninterceptDataLabelsOptionsOrPlotLinearregressioninterceptDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesLinearregressioninterceptOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -22581,7 +23469,7 @@ and seriesLinearregressioninterceptOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -22662,12 +23550,12 @@ and seriesLinearregressionangleOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotLinearregressionangleDataLabelsOptionsOrPlotLinearregressionangleDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesLinearregressionangleOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -22699,7 +23587,7 @@ and seriesLinearregressionangleOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -22780,12 +23668,12 @@ and seriesKlingerOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotKlingerDataLabelsOptionsOrPlotKlingerDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesKlingerOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -22818,7 +23706,7 @@ and seriesKlingerOptions<'b> = {
   signalLine?: plotDmiPlusDILineOptions,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -22899,13 +23787,13 @@ and seriesKeltnerchannelsOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotKeltnerchannelsDataLabelsOptionsOrPlotKeltnerchannelsDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesKeltnerchannelsOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
-  fillColor?: string,  // ⚪ loose — was `Color`
+  events?: seriesEventsOptionsObject<'b>,
+  fillColor?: color,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -22937,7 +23825,7 @@ and seriesKeltnerchannelsOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -22985,7 +23873,7 @@ and seriesItemOptions<'b> = {
   description?: string,
   enableMouseTracking?: bool,
   endAngle?: float,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -23013,7 +23901,7 @@ and seriesItemOptions<'b> = {
   showInLegend?: bool,
   size?: CommonTypes.stringOrNumber,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   startAngle?: float,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -23088,12 +23976,12 @@ and seriesIkhOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotIkhDataLabelsOptionsOrPlotIkhDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesIkhOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -23129,7 +24017,7 @@ and seriesIkhOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -23213,13 +24101,13 @@ and seriesHollowcandlestickOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotHollowcandlestickDataLabelsOptionsOrPlotHollowcandlestickDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesHollowcandlestickOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -23237,7 +24125,7 @@ and seriesHollowcandlestickOptions<'b> = {
   linkedTo?: string,
   maxPointWidth?: float,
   minPointLength?: float,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotHollowcandlestickOnPointOptions`
@@ -23261,7 +24149,7 @@ and seriesHollowcandlestickOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
@@ -23346,13 +24234,13 @@ and seriesHlcOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotHlcDataLabelsOptionsOrPlotHlcDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesHlcOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -23369,7 +24257,7 @@ and seriesHlcOptions<'b> = {
   linkedTo?: string,
   maxPointWidth?: float,
   minPointLength?: float,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotHlcOnPointOptions`
@@ -23393,7 +24281,7 @@ and seriesHlcOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -23482,7 +24370,7 @@ and seriesHistogramOptions<'b> = {
   edgeColor?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -23516,7 +24404,7 @@ and seriesHistogramOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
@@ -23599,13 +24487,13 @@ and seriesHeikinashiOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotHeikinashiDataLabelsOptionsOrPlotHeikinashiDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesHeikinashiOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -23623,7 +24511,7 @@ and seriesHeikinashiOptions<'b> = {
   linkedTo?: string,
   maxPointWidth?: float,
   minPointLength?: float,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotHeikinashiOnPointOptions`
@@ -23647,7 +24535,7 @@ and seriesHeikinashiOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
@@ -23731,7 +24619,7 @@ and seriesHeatmapOptions<'b> = {
   dataSorting?: ChartsSeriesHeatmapOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
   inactiveOtherPoints?: bool,
@@ -23758,7 +24646,7 @@ and seriesHeatmapOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -23839,7 +24727,7 @@ and seriesGeoheatmapOptions<'b> = {
   dataLabels?: plotGeoheatmapDataLabelsOptionsOrPlotGeoheatmapDataLabelsOptionsArray<'b>,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
   interpolation?: ChartsSeriesGeoheatmapOptionsInterpolation.t,
@@ -23856,7 +24744,7 @@ and seriesGeoheatmapOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -23926,7 +24814,7 @@ and seriesGaugeOptions<'b> = {
   description?: string,
   dial?: plotGaugeDialOptions,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
   inactiveOtherPoints?: bool,
@@ -23954,7 +24842,7 @@ and seriesGaugeOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
   visible?: bool,
@@ -24026,9 +24914,9 @@ and seriesGanttOptions<'b> = {
   dashStyle?: dashStyleValue,
   dataLabels?: plotGanttDataLabelsOptionsOrPlotGanttDataLabelsOptionsArray<'b>,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   grouping?: bool,
   groupPadding?: float,
   inactiveOtherPoints?: bool,
@@ -24053,7 +24941,7 @@ and seriesGanttOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -24100,7 +24988,7 @@ and seriesFunnelOptions<'b> = {
   description?: string,
   enableMouseTracking?: bool,
   endAngle?: float,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -24129,7 +25017,7 @@ and seriesFunnelOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   slicedOffset?: float,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   startAngle?: float,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -24206,11 +25094,11 @@ and seriesFunnel3dOptions<'b> = {
   dataLabels?: plotFunnel3dDataLabelsOptionsOrPlotFunnel3dDataLabelsOptionsArray<'b>,
   depth?: float,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   edgeColor?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   gradientForSides?: bool,
@@ -24251,7 +25139,7 @@ and seriesFunnel3dOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -24295,7 +25183,7 @@ and seriesFlowmapOptions<'b> = {
   custom?: Dict.t<JSON.t>,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   fillOpacity?: float,
   findNearestPointBy?: optionsFindNearestPointByValue,
@@ -24316,7 +25204,7 @@ and seriesFlowmapOptions<'b> = {
   selected?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -24403,9 +25291,9 @@ and seriesFlagsOptions<'b> = {
   dataLabels?: plotFlagsDataLabelsOptionsOrPlotFlagsDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesFlagsOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
@@ -24425,7 +25313,7 @@ and seriesFlagsOptions<'b> = {
   linkedTo?: string,
   maxPointWidth?: float,
   minPointLength?: float,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onKey?: optionsOnKeyValue,
@@ -24449,7 +25337,7 @@ and seriesFlagsOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stackDistance?: float,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
@@ -24538,11 +25426,11 @@ and seriesErrorbarOptions<'b> = {
   dataSorting?: ChartsSeriesErrorbarOptionsDataSorting.t,
   depth?: float,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   edgeColor?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
@@ -24582,7 +25470,7 @@ and seriesErrorbarOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   stemColor?: ColorType.t,
   stemDashStyle?: dashStyleValue,
@@ -24669,12 +25557,12 @@ and seriesEmaOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotEmaDataLabelsOptionsOrPlotEmaDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesEmaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -24706,7 +25594,7 @@ and seriesEmaOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -24754,13 +25642,13 @@ and seriesDumbbellOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'b>,
   dataSorting?: ChartsSeriesDumbbellOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
@@ -24780,7 +25668,7 @@ and seriesDumbbellOptions<'b> = {
   lowColor?: ColorType.t,
   lowMarker?: pointMarkerOptionsObject,
   marker?: pointMarkerOptionsObject,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   negativeFillColor?: ColorType.t,
   nullInteraction?: bool,
@@ -24803,7 +25691,7 @@ and seriesDumbbellOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   threshold?: float,
@@ -24883,12 +25771,12 @@ and seriesDpoOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotDpoDataLabelsOptionsOrPlotDpoDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesDpoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -24920,7 +25808,7 @@ and seriesDpoOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -25002,12 +25890,12 @@ and seriesDmiOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotDmiDataLabelsOptionsOrPlotDmiDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesDmiOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -25041,7 +25929,7 @@ and seriesDmiOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -25123,12 +26011,12 @@ and seriesDisparityindexOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotDisparityindexDataLabelsOptionsOrPlotDisparityindexDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesDisparityindexOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -25160,7 +26048,7 @@ and seriesDisparityindexOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -25215,7 +26103,7 @@ and seriesDependencywheelOptions<'b> = {
   dataLabels?: seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'b>,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   getExtremesFromAll?: bool,
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
@@ -25241,7 +26129,7 @@ and seriesDependencywheelOptions<'b> = {
   showInLegend?: bool,
   size?: CommonTypes.stringOrNumber,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   startAngle?: float,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -25319,12 +26207,12 @@ and seriesDemaOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotDemaDataLabelsOptionsOrPlotDemaDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesDemaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -25356,7 +26244,7 @@ and seriesDemaOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -25441,7 +26329,7 @@ and seriesCylinderOptions<'b> = {
   edgeColor?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -25477,7 +26365,7 @@ and seriesCylinderOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -25564,7 +26452,7 @@ and seriesContourOptions<'b> = {
   dataSorting?: ChartsSeriesContourOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -25590,7 +26478,7 @@ and seriesContourOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   smoothColoring?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -25642,16 +26530,16 @@ and seriesColumnrangeOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'b>,
   dataSorting?: ChartsSeriesColumnrangeOptionsDataSorting.t,
   depth?: float,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   edgeColor?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -25668,7 +26556,7 @@ and seriesColumnrangeOptions<'b> = {
   linkedTo?: string,
   maxPointWidth?: float,
   minPointLength?: float,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotColumnrangeOnPointOptions`
   opacity?: float,
@@ -25689,7 +26577,7 @@ and seriesColumnrangeOptions<'b> = {
   showInLegend?: bool,
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -25770,13 +26658,13 @@ and seriesColumnpyramidOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotColumnpyramidDataLabelsOptionsOrPlotColumnpyramidDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesColumnpyramidOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -25792,7 +26680,7 @@ and seriesColumnpyramidOptions<'b> = {
   linkedTo?: string,
   maxPointWidth?: float,
   minPointLength?: float,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotColumnpyramidOnPointOptions`
   opacity?: float,
@@ -25813,7 +26701,7 @@ and seriesColumnpyramidOptions<'b> = {
   showInLegend?: bool,
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -25898,16 +26786,16 @@ and seriesColumnOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotColumnDataLabelsOptionsOrPlotColumnDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesColumnOptionsDataSorting.t,
   depth?: float,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   edgeColor?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -25924,7 +26812,7 @@ and seriesColumnOptions<'b> = {
   linkedTo?: string,
   maxPointWidth?: float,
   minPointLength?: float,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotColumnOnPointOptions`
@@ -25947,7 +26835,7 @@ and seriesColumnOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -26029,12 +26917,12 @@ and seriesCmoOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotCmoDataLabelsOptionsOrPlotCmoDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesCmoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -26066,7 +26954,7 @@ and seriesCmoOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -26146,12 +27034,12 @@ and seriesCmfOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotCmfDataLabelsOptionsOrPlotCmfDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesCmfOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -26183,7 +27071,7 @@ and seriesCmfOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -26265,12 +27153,12 @@ and seriesChaikinOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotChaikinDataLabelsOptionsOrPlotChaikinDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesChaikinOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -26302,7 +27190,7 @@ and seriesChaikinOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -26383,12 +27271,12 @@ and seriesCciOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotCciDataLabelsOptionsOrPlotCciDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesCciOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -26420,7 +27308,7 @@ and seriesCciOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -26503,13 +27391,13 @@ and seriesCandlestickOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotCandlestickDataLabelsOptionsOrPlotCandlestickDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesCandlestickOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -26527,7 +27415,7 @@ and seriesCandlestickOptions<'b> = {
   linkedTo?: string,
   maxPointWidth?: float,
   minPointLength?: float,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotCandlestickOnPointOptions`
@@ -26551,7 +27439,7 @@ and seriesCandlestickOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
@@ -26635,11 +27523,11 @@ and seriesBulletOptions<'b> = {
   dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'b>,
   depth?: float,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   edgeColor?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -26675,7 +27563,7 @@ and seriesBulletOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -26760,14 +27648,14 @@ and seriesBubbleOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotBubbleDataLabelsOptionsOrPlotBubbleDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesBubbleOptionsDataSorting.t,
   description?: string,
   displayNegative?: bool,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -26786,7 +27674,7 @@ and seriesBubbleOptions<'b> = {
   marker?: pointMarkerOptionsObject,
   maxSize?: CommonTypes.stringOrNumber,
   minSize?: CommonTypes.stringOrNumber,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   nullInteraction?: bool,
   onPoint?: string,  // ⚪ loose — was `object | PlotBubbleOnPointOptions`
@@ -26807,7 +27695,7 @@ and seriesBubbleOptions<'b> = {
   sizeByAbsoluteValue?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
@@ -26894,11 +27782,11 @@ and seriesBoxplotOptions<'b> = {
   dataSorting?: ChartsSeriesBoxplotOptionsDataSorting.t,
   depth?: float,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   edgeColor?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
@@ -26938,7 +27826,7 @@ and seriesBoxplotOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   stemColor?: ColorType.t,
   stemDashStyle?: dashStyleValue,
@@ -27024,7 +27912,7 @@ and seriesBellcurveOptions<'b> = {
   dataSorting?: ChartsSeriesBellcurveOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   fillOpacity?: float,
   findNearestPointBy?: optionsFindNearestPointByValue,
@@ -27061,7 +27949,7 @@ and seriesBellcurveOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
@@ -27144,12 +28032,12 @@ and seriesBbOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotBbDataLabelsOptionsOrPlotBbDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesBbOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
@@ -27182,7 +28070,7 @@ and seriesBbOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -27269,11 +28157,11 @@ and seriesBarOptions<'b> = {
   dataSorting?: ChartsSeriesBarOptionsDataSorting.t,
   depth?: float,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   edgeColor?: string,
   edgeWidth?: float,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   getExtremesFromAll?: bool,
   grouping?: bool,
@@ -27309,7 +28197,7 @@ and seriesBarOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -27391,12 +28279,12 @@ and seriesAtrOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotAtrDataLabelsOptionsOrPlotAtrDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesAtrOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -27428,7 +28316,7 @@ and seriesAtrOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -27509,12 +28397,12 @@ and seriesAroonoscillatorOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotAroonoscillatorDataLabelsOptionsOrPlotAroonoscillatorDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesAroonoscillatorOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -27546,7 +28434,7 @@ and seriesAroonoscillatorOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -27627,12 +28515,12 @@ and seriesAroonOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotAroonDataLabelsOptionsOrPlotAroonDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesAroonOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -27664,7 +28552,7 @@ and seriesAroonOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -27712,13 +28600,13 @@ and seriesAreasplinerangeOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'b>,
   dataSorting?: ChartsSeriesAreasplinerangeOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   fillOpacity?: float,
   findNearestPointBy?: optionsFindNearestPointByValue,
@@ -27739,7 +28627,7 @@ and seriesAreasplinerangeOptions<'b> = {
   linkedTo?: string,
   lowMarker?: pointMarkerOptionsObject,
   marker?: pointMarkerOptionsObject,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   negativeFillColor?: ColorType.t,
   nullInteraction?: bool,
@@ -27761,7 +28649,7 @@ and seriesAreasplinerangeOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   threshold?: float,
@@ -27842,13 +28730,13 @@ and seriesAreasplineOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotAreasplineDataLabelsOptionsOrPlotAreasplineDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesAreasplineOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   fillOpacity?: float,
   findNearestPointBy?: optionsFindNearestPointByValue,
@@ -27868,7 +28756,7 @@ and seriesAreasplineOptions<'b> = {
   lineWidth?: float,
   linkedTo?: string,
   marker?: pointMarkerOptionsObject,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   negativeFillColor?: ColorType.t,
   nullInteraction?: bool,
@@ -27890,7 +28778,7 @@ and seriesAreasplineOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
@@ -27980,13 +28868,13 @@ and seriesArearangeOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'b>,
   dataSorting?: ChartsSeriesArearangeOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   fillOpacity?: float,
   findNearestPointBy?: optionsFindNearestPointByValue,
@@ -28007,7 +28895,7 @@ and seriesArearangeOptions<'b> = {
   linkedTo?: string,
   lowMarker?: pointMarkerOptionsObject,
   marker?: pointMarkerOptionsObject,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   negativeFillColor?: ColorType.t,
   nullInteraction?: bool,
@@ -28029,7 +28917,7 @@ and seriesArearangeOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -28049,6 +28937,127 @@ and seriesArearangeOptions<'b> = {
   xAxis?: CommonTypes.stringOrNumber,
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
+}
+and plotSeriesDataLabelsOptions<'b> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: ChartsPlotSeriesDataLabelsOptionsAnimation.t,
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'b>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'b>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  x?: float,
+  y?: float,
+}
+and plotSeriesOptions<'b> = {
+  accessibility?: seriesAccessibilityOptionsObject,
+  allowPointSelect?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animationLimit?: float,
+  boostBlending?: optionsBoostBlendingValue,
+  boostThreshold?: float,
+  borderColor?: ColorType.t,
+  borderWidth?: float,
+  className?: string,
+  clip?: bool,
+  color?: ColorType.t,
+  colorAxis?: CommonTypes.boolOrStringOrNumber,
+  colorIndex?: float,
+  colorKey?: string,
+  compare?: optionsCompareValue,
+  compareBase?: CommonTypes.v0OrV100,
+  compareStart?: bool,
+  connectEnds?: bool,
+  connectNulls?: bool,
+  connectors?: seriesConnectorsOptionsObject,
+  crisp?: bool,
+  cropThreshold?: float,
+  cumulative?: bool,
+  cumulativeStart?: bool,
+  cursor?: string,
+  custom?: Dict.t<string>,  // 🛑 BROKEN — contains `any`
+  dashStyle?: dashStyleValue,
+  dataGrouping?: dataGroupingOptionsObject,
+  dataLabels?: plotSeriesDataLabelsOptionsOrPlotSeriesDataLabelsOptionsArray<'b>,
+  dataSorting?: ChartsPlotSeriesOptionsDataSorting.t,
+  description?: string,
+  dragDrop?: seriesDragDropOptionsObject,
+  enableMouseTracking?: bool,
+  events?: seriesEventsOptionsObject<'b>,
+  findNearestPointBy?: optionsFindNearestPointByValue,
+  gapSize?: float,
+  gapUnit?: optionsGapUnitValue,
+  getExtremesFromAll?: bool,
+  inactiveOtherPoints?: bool,
+  includeInDataExport?: bool,
+  joinBy?: CommonTypes.stringOrStringArray,
+  keys?: array<string>,
+  label?: seriesLabelOptionsObject<'b>,
+  lastPrice?: seriesLastPriceOptionsObject<'b>,
+  lastVisiblePrice?: seriesLastPriceOptionsObject<'b>,
+  legendSymbol?: optionsLegendSymbolValue,
+  legendSymbolColor?: ColorType.t,
+  linecap?: string,
+  lineWidth?: float,
+  linkedTo?: string,
+  marker?: pointMarkerOptionsObject,
+  navigatorOptions?: plotSeriesOptions<'b>,
+  negativeColor?: ColorType.t,
+  nullInteraction?: bool,
+  onPoint?: string,  // ⚠️ REVIEW — was `object | PlotSeriesOnPointOptions` — match the real type by hand
+  opacity?: float,
+  point?: plotSeriesPointOptions<'b>,
+  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointInterval?: float,
+  pointIntervalUnit?: optionsPointIntervalUnitValue,
+  pointPlacement?: CommonTypes.stringOrNumber,
+  pointRange?: float,
+  pointStart?: CommonTypes.stringOrNumber,
+  relativeXValue?: bool,
+  selected?: bool,
+  shadow?: boolOrShadowOptionsObject,
+  showCheckbox?: bool,
+  showInLegend?: bool,
+  showInNavigator?: bool,
+  skipKeyboardNavigation?: bool,
+  softThreshold?: bool,
+  sonification?: seriesSonificationOptions,
+  stacking?: optionsStackingValue,
+  states?: seriesStatesOptionsObject,
+  step?: optionsStepValue,
+  stickyTracking?: bool,
+  threshold?: float,
+  tooltip?: seriesTooltipOptionsObject<'b>,
+  turboThreshold?: float,
+  visible?: bool,
+  zIndex?: int,
+  zoneAxis?: string,
+  zones?: array<seriesZonesOptionsObject>,
+  zoomEnabled?: bool,
 }
 and plotAreaDataLabelsOptions<'b> = {
   align?: alignValue,
@@ -28114,13 +29123,13 @@ and seriesAreaOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotAreaDataLabelsOptionsOrPlotAreaDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesAreaOptionsDataSorting.t,
   description?: string,
-  dragDrop?: string,  // ⚪ loose — was `SeriesDragDropOptionsObject`
+  dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   fillColor?: ColorType.t,
   fillOpacity?: float,
   findNearestPointBy?: optionsFindNearestPointByValue,
@@ -28140,7 +29149,7 @@ and seriesAreaOptions<'b> = {
   lineWidth?: float,
   linkedTo?: string,
   marker?: pointMarkerOptionsObject,
-  navigatorOptions?: string,  // ⚪ loose — was `PlotSeriesOptions`
+  navigatorOptions?: plotSeriesOptions<'b>,
   negativeColor?: ColorType.t,
   negativeFillColor?: ColorType.t,
   nullInteraction?: bool,
@@ -28162,7 +29171,7 @@ and seriesAreaOptions<'b> = {
   showInNavigator?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   stacking?: optionsStackingValue,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
@@ -28301,7 +29310,7 @@ and seriesArcdiagramOptions<'b> = {
   description?: string,
   enableMouseTracking?: bool,
   equalNodes?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
   keys?: array<string>,
@@ -28326,7 +29335,7 @@ and seriesArcdiagramOptions<'b> = {
   showCheckbox?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   stickyTracking?: bool,
   tooltip?: seriesTooltipOptionsObject<'b>,
@@ -28402,12 +29411,12 @@ and seriesApoOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotApoDataLabelsOptionsOrPlotApoDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesApoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -28439,7 +29448,7 @@ and seriesApoOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -28521,12 +29530,12 @@ and seriesAoOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesAoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -28562,7 +29571,7 @@ and seriesAoOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -28643,12 +29652,12 @@ and seriesAdOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesAdOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
+  events?: seriesEventsOptionsObject<'b>,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -28680,7 +29689,7 @@ and seriesAdOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -28700,6 +29709,38 @@ and seriesAdOptions<'b> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and seriesLegendItemClickEventObject<'b> = {
+  browserEvent: Dom.event,
+  defaultPrevented?: bool,
+  preventDefault: string,  // ⚪ loose — was `Function`
+  target: series<'b>,
+  @as("type") type_: string,  // ⚪ loose — was `"legendItemClick"`
+}
+and seriesClickEventObject<'b> = {
+  ...JsxDOM.domProps,
+  point: point<'b>,
+}
+and seriesCheckboxClickEventObject<'b> = {
+  checked: bool,
+  item: series<'b>,
+  target: series<'b>,
+  @as("type") type_: string,  // ⚪ loose — was `"checkboxClick"`
+}
+and seriesAfterAnimateEventObject<'b> = {
+  target: series<'b>,
+  @as("type") type_: string,  // ⚪ loose — was `"afterAnimate"`
+}
+and seriesEventsOptionsObject<'b> = {
+  afterAnimate?: @this ((series<'b>, seriesAfterAnimateEventObject<'b>) => unit),
+  checkboxClick?: @this ((series<'b>, seriesCheckboxClickEventObject<'b>) => string),  // 🛑 BROKEN — contains `any`
+  click?: @this ((series<'b>, seriesClickEventObject<'b>) => unit),
+  hide?: @this ((series<'b>, Dom.event) => unit),
+  legendItemClick?: @this ((series<'b>, seriesLegendItemClickEventObject<'b>) => unit),
+  mouseOut?: @this ((series<'b>, Dom.event) => unit),
+  mouseOver?: @this ((series<'b>, Dom.event) => unit),
+  setRootNode?: string,  // ⚪ loose — was `Function`
+  show?: @this ((series<'b>, Dom.event) => unit),
+}
 and seriesTooltipOptionsObject<'b> = {
   changeDecimals?: float,
   clusterFormat?: string,
@@ -28714,7 +29755,7 @@ and seriesTooltipOptionsObject<'b> = {
   nodeFormat?: string,
   nodeFormatter?: @this ((string, option<string>) => string),  // ⚪ loose — was `SankeyNodeObject`
   nullFormat?: string,
-  nullFormatter?: @this ((point<'b>, string, option<point<'b>>) => CommonTypes.boolOrStringOrStringArray),  // ⚪ loose — was `Tooltip`
+  nullFormatter?: @this ((point<'b>, tooltip<'b>, option<point<'b>>) => CommonTypes.boolOrStringOrStringArray),
   pointFormat?: string,
   pointFormatter?: @this ((point<'b>, option<point<'b>>) => string),
   position?: ChartsSeriesTooltipOptionsObjectPosition.t,
@@ -28776,11 +29817,11 @@ and plotAbandsDataLabelsOptions<'b> = {
   enabled?: bool,
   filter?: dataLabelsFilterOptionsObject,
   format?: string,
-  formatter?: @this ((point<'b>, string) => CommonTypes.stringOrNumber),  // ⚪ loose — was `DataLabelsOptions`
+  formatter?: @this ((point<'b>, dataLabelsOptions) => CommonTypes.stringOrNumber),
   inside?: bool,
   labelrank?: float,
   nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: @this ((point<'b>, string) => CommonTypes.stringOrNumber),  // ⚪ loose — was `DataLabelsOptions`
+  nullFormatter?: @this ((point<'b>, dataLabelsOptions) => CommonTypes.stringOrNumber),
   overflow?: dataLabelsOverflowValue,
   padding?: float,
   position?: alignValue,
@@ -28840,13 +29881,13 @@ and seriesAbandsOptions<'b> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataGrouping?: string,  // ⚪ loose — was `DataGroupingOptionsObject`
+  dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: plotAbandsDataLabelsOptionsOrPlotAbandsDataLabelsOptionsArray<'b>,
   dataSorting?: ChartsSeriesAbandsOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
-  events?: string,  // ⚪ loose — was `SeriesEventsOptionsObject`
-  fillColor?: string,  // ⚪ loose — was `Color`
+  events?: seriesEventsOptionsObject<'b>,
+  fillColor?: color,
   findNearestPointBy?: optionsFindNearestPointByValue,
   gapSize?: float,
   gapUnit?: optionsGapUnitValue,
@@ -28878,7 +29919,7 @@ and seriesAbandsOptions<'b> = {
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
   softThreshold?: bool,
-  sonification?: string,  // ⚪ loose — was `SeriesSonificationOptions`
+  sonification?: seriesSonificationOptions,
   states?: seriesStatesOptionsObject,
   step?: optionsStepValue,
   stickyTracking?: bool,
@@ -29322,12 +30363,343 @@ and accessibilityPointOptions<'b> = {
   valuePrefix?: string,
   valueSuffix?: string,
 }
+and colorAxisLabelsOptions<'b> = {
+  align?: alignValue,
+  allowOverlap?: bool,
+  autoRotation?: array<float>,
+  autoRotationLimit?: float,
+  distance?: float,
+  enabled?: bool,
+  format?: string,
+  formatter?: @this ((axisLabelsFormatterContextObject<'b>, axisLabelsFormatterContextObject<'b>) => string),
+  overflow?: optionsOverflowValue,
+  padding?: float,
+  position3d?: optionsPosition3dValue,
+  reserveSpace?: bool,
+  rotation?: float,
+  skew3d?: bool,
+  staggerLines?: float,
+  step?: float,
+  style?: ChartsColorAxisLabelsOptionsStyle.t,
+  useHTML?: bool,
+  x?: float,
+  y?: float,
+  zIndex?: int,
+}
+and colorAxisEventsOptions<'b> = {
+  afterSetExtremes?: @this ((axis<'b>, axisSetExtremesEventObject) => unit),
+  legendItemClick?: string,  // ⚪ loose — was `Function`
+  setExtremes?: @this ((axis<'b>, axisSetExtremesEventObject) => unit),
+}
+and colorAxisOptions<'b> = {
+  accessibility?: axisAccessibilityOptionsObject,
+  allowDecimals?: bool,
+  angle?: float,
+  ceiling?: float,
+  className?: string,
+  crossing?: float,
+  dataClassColor?: optionsDataClassColorValue,
+  dataClasses?: array<colorAxisDataClassesOptions>,
+  endOnTick?: bool,
+  events?: colorAxisEventsOptions<'b>,
+  floor?: float,
+  gridLineColor?: ColorType.t,
+  gridLineDashStyle?: dashStyleValue,
+  gridLineInterpolation?: optionsGridLineInterpolationValue,
+  gridLineWidth?: float,
+  gridZIndex?: float,
+  height?: CommonTypes.stringOrNumber,
+  id?: string,
+  labels?: colorAxisLabelsOptions<'b>,
+  layout?: string,
+  lineColor?: ColorType.t,
+  margin?: float,
+  marker?: pointMarkerOptionsObject,
+  max?: float,
+  maxColor?: ColorType.t,
+  maxPadding?: float,
+  maxRange?: float,
+  min?: float,
+  minColor?: ColorType.t,
+  minorGridLineColor?: ColorType.t,
+  minorGridLineDashStyle?: dashStyleValue,
+  minorGridLineWidth?: float,
+  minorTickColor?: ColorType.t,
+  minorTickInterval?: CommonTypes.autoOrNumber,
+  minorTickLength?: float,
+  minorTickPosition?: optionsMinorTickPositionValue,
+  minorTicks?: bool,
+  minorTicksPerMajor?: float,
+  minorTickWidth?: float,
+  minPadding?: float,
+  ordinal?: bool,
+  overscroll?: CommonTypes.stringOrNumber,
+  panningEnabled?: bool,
+  range?: float,
+  reversed?: bool,
+  showFirstLabel?: bool,
+  showInLegend?: bool,
+  showLastLabel?: bool,
+  softMax?: float,
+  softMin?: float,
+  startOfWeek?: float,
+  startOnTick?: bool,
+  staticScale?: float,
+  stops?: array<(float, string)>,
+  tickAmount?: float,
+  tickColor?: ColorType.t,
+  tickInterval?: float,
+  tickLength?: float,
+  tickmarkPlacement?: optionsTickmarkPlacementValue,
+  tickPixelInterval?: float,
+  tickPosition?: optionsTickPositionValue,
+  tickPositioner?: @this ((axis<'b>, float, float, option<axis<'b>>) => axisTickPositionsArray),
+  tickPositions?: array<float>,
+  tickWidth?: float,
+  title?: ChartsColorAxisOptionsTitle.t,
+  @as("type") type_?: colorAxisTypeValue,
+  uniqueNames?: bool,
+  units?: array<(string, array<float>)>,
+  visible?: bool,
+  width?: CommonTypes.stringOrNumber,
+  zIndex?: int,
+}
+and axisLabelsFormatterContextObject<'b> = {
+  axis: axis<'b>,
+  chart: chart<'b>,
+  dateTimeLabelFormat?: string,
+  isFirst: bool,
+  isLast: bool,
+  pos: float,
+  text?: string,
+  tick: string,  // ⚪ loose — was `Tick`
+  value: CommonTypes.stringOrNumber,
+}
+and axis<'b> = {
+  categories: array<string>,
+  chart: chart<'b>,
+  coll: string,
+  crosshair: string,  // ⚪ loose — was `boolean | AxisCrosshairOptions`
+  horiz?: bool,
+  isXAxis?: bool,
+  len: float,
+  max?: float,
+  min?: float,
+  minorTicks: Dict.t<JSON.t>,
+  options: string,  // ⚪ loose — was `AxisOptions`
+  pos: float,
+  reversed: bool,
+  series: array<series<'b>>,
+  side: float,
+  tickPositions?: axisTickPositionsArray,
+  ticks: Dict.t<JSON.t>,
+  userOptions: string,  // ⚪ loose — was `AxisOptions`
+  addPlotBand: string => string,  // ⚪ loose — was `PlotLineOrBand`
+  addPlotLine: AxisPlotLinesOptions.t => string,  // ⚪ loose — was `PlotLineOrBand`
+  addTitle: option<bool> => unit,
+  defaultLabelFormatter: @this ((axisLabelsFormatterContextObject<'b>) => string),
+  drawCrosshair: (option<pointerEventObject>, option<point<'b>>) => unit,
+  getExtremes: unit => extremesObject,
+  getLinearTickPositions: (float, float, float) => array<float>,
+  getLinePath: float => array<JSON.t>,
+  getMinorTickInterval: unit => CommonTypes.autoOrNumber,
+  getMinorTickPositions: unit => array<float>,
+  getPlotBandPath: (float, float, string) => array<JSON.t>,  // ⚪ loose — was `AxisPlotBandsOptions | AxisPlotLinesOptions`
+  getPlotLinePath: axisPlotLinePathOptionsObject => array<JSON.t>,
+  getThreshold: float => float,
+  hasData: unit => bool,
+  hideCrosshair: unit => unit,
+  init: (chart<'b>, string) => unit,  // ⚪ loose — was `AxisOptions`
+  remove: option<bool> => unit,
+  removePlotBand: string => unit,
+  removePlotLine: string => unit,
+  renderLine: unit => unit,
+  renderMinorTick: (float, bool) => unit,
+  renderTick: (float, float, bool) => unit,
+  setCategories: (array<string>, option<bool>) => unit,
+  setExtremes: (option<CommonTypes.stringOrNumber>, option<CommonTypes.stringOrNumber>, option<bool>, option<string>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  setTitle: (AxisTitleOptions.t, option<bool>) => unit,
+  toPixels: (CommonTypes.stringOrNumber, option<bool>) => float,
+  toValue: (float, option<bool>) => float,
+  update: (string, option<bool>) => unit,  // ⚪ loose — was `AxisOptions`
+}
+and tooltipPositionerPointObject<'b> = {
+  isHeader: bool,
+  plotX: float,
+  plotY: float,
+  category: CommonTypes.stringOrNumber,
+  color?: ColorType.t,
+  colorIndex?: float,
+  graphic?: Dom.element,
+  graphics?: array<Dom.element>,
+  index: int,
+  key: CommonTypes.stringOrNumber,
+  name: string,
+  options: pointOptionsObject<'b>,
+  percentage?: float,
+  points?: array<point<'b>>,
+  selected: bool,
+  series: series<'b>,
+  shapeArgs?: highchartsPointShapeArgsConfig,
+  sliced?: bool,
+  tooltipPos?: array<float>,
+  total?: float,
+  visible: bool,
+  x: float,
+  y?: float,
+  getClassName: unit => string,
+  getZone: unit => seriesZonesOptionsObject,
+  haloPath: float => array<ChartsPointShapeArgsD.t>,
+  onMouseOut: unit => unit,
+  onMouseOver: option<pointerEventObject> => unit,
+  optionsToObject: stringOrNumberOrStringOrNumberArrayOrPointOptionsObject<'b> => Dict.t<string>,  // 🛑 BROKEN — contains `any`
+  pos: (bool, float) => array<float>,
+  remove: (option<bool>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  select: (option<bool>, option<bool>) => unit,
+  setNestedProperty: (string, string, string) => string,  // 🛑 BROKEN — contains `unknown`
+  setState: (option<ChartsTypes.chartsPointSetState>, option<bool>) => unit,
+  setVisible: (option<bool>, option<bool>) => unit,
+  tooltipFormatter: string => string,
+  update: (stringOrNumberOrStringOrNumberArrayOrPointOptionsObject<'b>, option<bool>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+}
+and tooltipOptions<'b> = {
+  animation?: ChartsTooltipOptionsAnimation.t,
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  changeDecimals?: float,
+  className?: string,
+  clusterFormat?: string,
+  dateTimeLabelFormats?: Dict.t<stringOrDateTimeFormatOptions>,
+  distance?: float,
+  enabled?: bool,
+  fixed?: bool,
+  followPointer?: bool,
+  followTouchMove?: bool,
+  footerFormat?: string,
+  format?: string,
+  formatter?: @this ((point<'b>, tooltip<'b>, option<point<'b>>) => CommonTypes.boolOrStringOrStringArray),
+  headerFormat?: string,
+  headerShape?: optionsHeaderShapeValue,
+  hideDelay?: float,
+  nullFormat?: string,
+  nullFormatter?: @this ((point<'b>, tooltip<'b>, option<point<'b>>) => CommonTypes.boolOrStringOrStringArray),
+  outside?: bool,
+  padding?: float,
+  pointFormat?: string,
+  pointFormatter?: @this ((point<'b>, option<point<'b>>) => string),
+  position?: plotAdTooltipPositionOptions,
+  positioner?: @this ((tooltip<'b>, float, float, tooltipPositionerPointObject<'b>, option<tooltip<'b>>) => positionObject),
+  shadow?: boolOrShadowOptionsObject,
+  shape?: tooltipShapeValue,
+  shared?: bool,
+  showDelay?: float,
+  snap?: float,
+  split?: bool,
+  stickOnContact?: bool,
+  style?: ChartsTooltipOptionsStyle.t,
+  useHTML?: bool,
+  valueDecimals?: float,
+  valuePrefix?: string,
+  valueSuffix?: string,
+  xDateFormat?: stringOrDateTimeFormatOptions,
+}
+and tooltip<'b> = {
+  chart: chart<'b>,
+  container?: Dom.element,
+  options: tooltipOptions<'b>,
+  outside: bool,
+  renderer?: svgRenderer,
+  shared?: bool,
+  split?: bool,
+  defaultFormatter: tooltip<'b> => CommonTypes.stringOrStringArray,
+  destroy: unit => unit,
+  getClassName: unit => string,
+  getLabel: unit => Dom.element,
+  getPosition: (float, float, point<'b>) => positionObject,
+  hide: option<float> => unit,
+  refresh: (pointOrPointArray<'b>, option<pointerEventObject>) => unit,
+  update: tooltipOptions<'b> => unit,
+}
+and legendItemClickEventObject<'b> = {
+  browserEvent: Dom.event,
+  legendItem: chartsLegendItemClickEventObjectLegendItem_t,
+  preventDefault: string,  // ⚪ loose — was `Function`
+  target: legend<'b>,
+  @as("type") type_: string,  // ⚪ loose — was `"itemClick"`
+}
+and legendEventsOptions<'b> = {
+  itemClick?: @this ((legend<'b>, legendItemClickEventObject<'b>) => unit),
+}
+and legendOptions<'b> = {
+  accessibility?: legendAccessibilityOptions,
+  align?: alignValue,
+  alignColumns?: bool,
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  bubbleLegend?: legendBubbleLegendOptions,
+  className?: string,
+  enabled?: bool,
+  events?: legendEventsOptions<'b>,
+  floating?: bool,
+  itemCheckboxStyle?: cssObject,
+  itemDistance?: float,
+  itemHiddenStyle?: cssObject,
+  itemHoverStyle?: cssObject,
+  itemMarginBottom?: float,
+  itemMarginTop?: float,
+  itemStyle?: cssObject,
+  itemWidth?: float,
+  labelFormat?: string,
+  labelFormatter?: @this ((chartsLegendAllItems_t, option<chartsLegendAllItems_t>) => string),
+  layout?: optionsLayoutValue,
+  margin?: float,
+  maxHeight?: float,
+  maxWidth?: CommonTypes.stringOrNumber,
+  navigation?: legendNavigationOptions,
+  padding?: float,
+  reversed?: bool,
+  rtl?: bool,
+  shadow?: boolOrCssObject,
+  squareSymbol?: bool,
+  symbolHeight?: float,
+  symbolPadding?: float,
+  symbolRadius?: float,
+  symbolWidth?: float,
+  title?: legendTitleOptions,
+  useHTML?: bool,
+  valueDecimals?: float,
+  valueSuffix?: string,
+  verticalAlign?: verticalAlignValue,
+  width?: CommonTypes.stringOrNumber,
+  x?: float,
+  y?: float,
+}
+and legend<'b> = {
+  allItems: array<chartsLegendAllItems_t>,
+  box: Dom.element,
+  chart: chart<'b>,
+  group: Dom.element,
+  options: legendOptions<'b>,
+  title: Dom.element,
+  setText: chartsLegendAllItems_t => unit,
+  update: (legendOptions<'b>, option<bool>) => unit,
+}
+and pointClickEventObject<'b> = {
+  ...JsxDOM.domProps,
+  point: point<'b>,
+  chartX: float,
+  chartY: float,
+}
 and pointUpdateEventObject<'b> = {
   ...JsxDOM.domProps,
   options: stringOrNumberOrStringOrNumberArrayOrPointOptionsObject<'b>,
 }
 and pointEventsOptionsObject<'b> = {
-  click?: @this ((point<'b>, string) => unit),  // ⚪ loose — was `PointClickEventObject`
+  click?: @this ((point<'b>, pointClickEventObject<'b>) => unit),
   drag?: @this ((point<'b>, string) => unit),  // ⚪ loose — was `PointDragEventObject`
   dragStart?: @this ((point<'b>, string) => unit),  // ⚪ loose — was `PointDragStartEventObject`
   drop?: @this ((point<'b>, string) => unit),  // ⚪ loose — was `PointDropEventObject`
@@ -29441,61 +30813,13 @@ and point<'b> = {
   tooltipFormatter: string => string,
   update: (stringOrNumberOrStringOrNumberArrayOrPointOptionsObject<'b>, option<bool>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
 }
-and axis<'b> = {
-  categories: array<string>,
-  chart: chart<'b>,
-  coll: string,
-  crosshair: string,  // ⚪ loose — was `boolean | AxisCrosshairOptions`
-  horiz?: bool,
-  isXAxis?: bool,
-  len: float,
-  max?: float,
-  min?: float,
-  minorTicks: Dict.t<JSON.t>,
-  options: string,  // ⚪ loose — was `AxisOptions`
-  pos: float,
-  reversed: bool,
-  series: array<series<'b>>,
-  side: float,
-  tickPositions?: string,  // ⚪ loose — was `AxisTickPositionsArray`
-  ticks: Dict.t<JSON.t>,
-  userOptions: string,  // ⚪ loose — was `AxisOptions`
-  addPlotBand: string => string,  // ⚪ loose — was `PlotLineOrBand`
-  addPlotLine: AxisPlotLinesOptions.t => string,  // ⚪ loose — was `PlotLineOrBand`
-  addTitle: option<bool> => unit,
-  defaultLabelFormatter: @this ((string) => string),  // ⚪ loose — was `AxisLabelsFormatterContextObject`
-  drawCrosshair: (option<string>, option<string>) => unit,  // ⚪ loose — was `PointerEventObject`
-  getExtremes: unit => extremesObject,
-  getLinearTickPositions: (float, float, float) => array<float>,
-  getLinePath: float => array<JSON.t>,
-  getMinorTickInterval: unit => CommonTypes.autoOrNumber,
-  getMinorTickPositions: unit => array<float>,
-  getPlotBandPath: (float, float, string) => array<JSON.t>,  // ⚪ loose — was `AxisPlotBandsOptions | AxisPlotLinesOptions`
-  getPlotLinePath: axisPlotLinePathOptionsObject => array<JSON.t>,
-  getThreshold: float => float,
-  hasData: unit => bool,
-  hideCrosshair: unit => unit,
-  init: (chart<'b>, string) => unit,  // ⚪ loose — was `AxisOptions`
-  remove: option<bool> => unit,
-  removePlotBand: string => unit,
-  removePlotLine: string => unit,
-  renderLine: unit => unit,
-  renderMinorTick: (float, bool) => unit,
-  renderTick: (float, float, bool) => unit,
-  setCategories: (array<string>, option<bool>) => unit,
-  setExtremes: (option<CommonTypes.stringOrNumber>, option<CommonTypes.stringOrNumber>, option<bool>, option<string>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  setTitle: (AxisTitleOptions.t, option<bool>) => unit,
-  toPixels: (CommonTypes.stringOrNumber, option<bool>) => float,
-  toValue: (float, option<bool>) => float,
-  update: (string, option<bool>) => unit,  // ⚪ loose — was `AxisOptions`
-}
 and pointer<'b> = {
   destroy: unit => unit,
-  findNearestKDPoint: (array<series<'b>>, bool, string) => string,  // ⚪ loose — was `Point`
+  findNearestKDPoint: (array<series<'b>>, bool, pointerEventObject) => point<'b>,
   getChartPosition: unit => chartPositionObject,
-  getCoordinates: string => pointerAxisCoordinatesObject,  // ⚪ loose — was `PointerEventObject`
+  getCoordinates: pointerEventObject => pointerAxisCoordinatesObject,
   inClass: (string, string) => bool,  // ⚪ loose — was `HTMLElement | SVGElement`
-  normalize: (string, option<offsetObject>) => string,  // ⚪ loose — was `PointerEventObject`
+  normalize: (string, option<offsetObject>) => pointerEventObject,  // ⚪ loose — was `MouseEvent | PointerEvent | TouchEvent`
   reset: (option<bool>, option<float>) => unit,
 }
 and chart<'b> = {
@@ -29504,12 +30828,12 @@ and chart<'b> = {
   chartWidth: float,
   container: string,  // ⚪ loose — was `HTMLElement`
   credits: string,  // ⚪ loose — was `SVGElement`
-  hoverPoint: string,  // ⚪ loose — was `Point`
+  hoverPoint: point<'b>,
   hoverPoints: array<JSON.t>,
   hoverSeries: series<'b>,
   index: int,
   inverted?: bool,
-  legend: string,  // ⚪ loose — was `Legend`
+  legend: legend<'b>,
   numberFormatter: (float, float, option<string>, option<string>, option<chart<'b>>) => string,
   options: options<'b>,
   plotHeight: float,
@@ -29517,18 +30841,18 @@ and chart<'b> = {
   plotTop: float,
   plotWidth: float,
   pointer: pointer<'b>,
-  renderer: string,  // ⚪ loose — was `SVGRenderer`
+  renderer: svgRenderer,
   series: array<series<'b>>,
   styledMode: bool,
   subtitle: string,  // ⚪ loose — was `SubtitleObject`
   time: time,
   title: string,  // ⚪ loose — was `TitleObject`
-  tooltip: string,  // ⚪ loose — was `Tooltip`
+  tooltip: tooltip<'b>,
   userOptions: options<'b>,
   xAxis: array<JSON.t>,
   yAxis: array<JSON.t>,
-  addAxis: (string, option<bool>, option<bool>, option<string>) => string,  // ⚪ loose — was `Axis`
-  addColorAxis: (string, option<bool>, option<string>) => string,  // ⚪ loose — was `Axis`
+  addAxis: (string, option<bool>, option<bool>, option<string>) => axis<'b>,  // ⚪ loose — was `AxisOptions`
+  addColorAxis: (colorAxisOptions<'b>, option<bool>, option<string>) => axis<'b>,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
   addCredits: option<creditsOptions> => unit,
   addSeries: (string, option<bool>, option<string>) => series<'b>,  // ⚪ loose — was `SeriesOptionsType`
   destroy: unit => unit,
@@ -29556,7 +30880,7 @@ and series<'b> = {
   center: array<float>,
   chart: chart<'b>,
   color?: string,  // ⚠️ REVIEW — was `ColorType` — match the real type by hand
-  data: array<string>,  // ⚪ loose — was `Point`
+  data: array<point<'b>>,
   dataMax?: float,
   dataMin?: float,
   index: int,
@@ -29565,7 +30889,7 @@ and series<'b> = {
   linkedSeries: array<series<'b>>,
   name: string,
   options: string,  // ⚠️ REVIEW — was `SeriesOptionsType` — match the real type by hand
-  points: array<string>,  // ⚪ loose — was `Point`
+  points: array<point<'b>>,
   selected: bool,
   @as("type") type_: string,
   userOptions: string,  // ⚠️ REVIEW — was `SeriesOptionsType` — match the real type by hand
@@ -29580,13 +30904,13 @@ and series<'b> = {
   getValidPoints: (option<array<JSON.t>>, option<bool>, option<bool>) => array<JSON.t>,
   hide: unit => unit,
   is: string => bool,
-  markerAttribs: (string, option<string>) => string,  // ⚪ loose — was `SVGAttributes`
+  markerAttribs: (point<'b>, option<string>) => svgAttributes,
   onMouseOut: unit => unit,
   onMouseOver: unit => unit,
   remove: (option<bool>, option<string>, option<bool>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
   removePoint: (float, option<bool>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
   render: unit => unit,
-  searchPoint: (string, option<bool>) => string,  // ⚪ loose — was `Point`
+  searchPoint: (string, option<bool>) => point<'b>,  // ⚪ loose — was `PointerEvent`
   select: option<bool> => unit,
   setData: (array<JSON.t>, option<bool>, option<string>, option<bool>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
   setState: (option<ChartsTypes.chartsSeriesSetState>, option<bool>) => unit,
@@ -29658,10 +30982,8 @@ and options<'b> = {
 @unboxed and zAxisOptionsOrZAxisOptionsArray<'b> = ZAxisOptions(zAxisOptions<'b>) | ZAxisOptionsArr(array<zAxisOptions<'b>>)
 @unboxed and yAxisOptionsOrYAxisOptionsArray<'b> = YAxisOptions(yAxisOptions<'b>) | YAxisOptionsArr(array<yAxisOptions<'b>>)
 @unboxed and xAxisOptionsOrXAxisOptionsArray<'b> = XAxisOptions(xAxisOptions<'b>) | XAxisOptionsArr(array<xAxisOptions<'b>>)
-@unboxed and pointOrPointArray<'b> = Point(point<'b>) | PointArr(array<point<'b>>)
 @unboxed and seriesSunburstDataLabelsOptionsObjectOrSeriesSunburstDataLabelsOptionsObjectArray<'b> = SeriesSunburstDataLabelsOptionsObject(seriesSunburstDataLabelsOptionsObject<'b>) | SeriesSunburstDataLabelsOptionsObjectArr(array<seriesSunburstDataLabelsOptionsObject<'b>>)
 @unboxed and seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'b> = SeriesPieDataLabelsOptionsObject(seriesPieDataLabelsOptionsObject<'b>) | SeriesPieDataLabelsOptionsObjectArr(array<seriesPieDataLabelsOptionsObject<'b>>)
-@unboxed and plotSeriesDataLabelsOptionsOrPlotSeriesDataLabelsOptionsArray<'b> = PlotSeriesDataLabelsOptions(plotSeriesDataLabelsOptions<'b>) | PlotSeriesDataLabelsOptionsArr(array<plotSeriesDataLabelsOptions<'b>>)
 @unboxed and navigatorYAxisOptionsOrNavigatorYAxisOptionsArray<'b> = NavigatorYAxisOptions(navigatorYAxisOptions<'b>) | NavigatorYAxisOptionsArr(array<navigatorYAxisOptions<'b>>)
 @unboxed and navigatorSeriesDataLabelsOptionsOrNavigatorSeriesDataLabelsOptionsArray<'b> = NavigatorSeriesDataLabelsOptions(navigatorSeriesDataLabelsOptions<'b>) | NavigatorSeriesDataLabelsOptionsArr(array<navigatorSeriesDataLabelsOptions<'b>>)
 @unboxed and highchartsNavigationAnnotationsShapesOptionsPoints<'b> = Str(string) | Fn(annotationControllable<'b> => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
@@ -29765,6 +31087,7 @@ and options<'b> = {
 @unboxed and plotAroonDataLabelsOptionsOrPlotAroonDataLabelsOptionsArray<'b> = PlotAroonDataLabelsOptions(plotAroonDataLabelsOptions<'b>) | PlotAroonDataLabelsOptionsArr(array<plotAroonDataLabelsOptions<'b>>)
 @unboxed and plotAreasplineDataLabelsOptionsOrPlotAreasplineDataLabelsOptionsArray<'b> = PlotAreasplineDataLabelsOptions(plotAreasplineDataLabelsOptions<'b>) | PlotAreasplineDataLabelsOptionsArr(array<plotAreasplineDataLabelsOptions<'b>>)
 @unboxed and seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'b> = SeriesAreaRangeDataLabelsOptionsObject(seriesAreaRangeDataLabelsOptionsObject<'b>) | SeriesAreaRangeDataLabelsOptionsObjectArr(array<seriesAreaRangeDataLabelsOptionsObject<'b>>)
+@unboxed and plotSeriesDataLabelsOptionsOrPlotSeriesDataLabelsOptionsArray<'b> = PlotSeriesDataLabelsOptions(plotSeriesDataLabelsOptions<'b>) | PlotSeriesDataLabelsOptionsArr(array<plotSeriesDataLabelsOptions<'b>>)
 @unboxed and plotAreaDataLabelsOptionsOrPlotAreaDataLabelsOptionsArray<'b> = PlotAreaDataLabelsOptions(plotAreaDataLabelsOptions<'b>) | PlotAreaDataLabelsOptionsArr(array<plotAreaDataLabelsOptions<'b>>)
 @unboxed and seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'b> = SeriesSankeyDataLabelsOptionsObject(seriesSankeyDataLabelsOptionsObject<'b>) | SeriesSankeyDataLabelsOptionsObjectArr(array<seriesSankeyDataLabelsOptionsObject<'b>>)
 @unboxed and seriesArcDiagramDataLabelsOptionsObjectOrSeriesArcDiagramDataLabelsOptionsObjectArray<'b> = SeriesArcDiagramDataLabelsOptionsObject(seriesArcDiagramDataLabelsOptionsObject<'b>) | SeriesArcDiagramDataLabelsOptionsObjectArr(array<seriesArcDiagramDataLabelsOptionsObject<'b>>)
@@ -29776,565 +31099,1074 @@ and options<'b> = {
 @unboxed and highchartsAnnotationsShapesOptionsPoint<'b> = Str(string) | Fn(annotationControllable<'b> => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
 @unboxed and highchartsAnnotationsLabelsOptionsPoint<'b> = Str(string) | Fn(annotationControllable<'b> => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
 @unboxed and annotationControlPointOptionsObjectOrAnnotationControlPointOptionsObjectArray<'b> = AnnotationControlPointOptionsObject(annotationControlPointOptionsObject<'b>) | AnnotationControlPointOptionsObjectArr(array<annotationControlPointOptionsObject<'b>>)
+@unboxed and pointOrPointArray<'b> = Point(point<'b>) | PointArr(array<point<'b>>)
 @unboxed and stringOrNumberOrStringOrNumberArrayOrPointOptionsObject<'b> = Str(string) | Num(float) | Arr(array<CommonTypes.stringOrNumber>) | PointOptionsObject(pointOptionsObject<'b>)
 module ChartsOptionsSeries = {
   type t<'b> = chartsOptionsSeries_t<'b>
   external fromSeriesAbandsOptions: seriesAbandsOptions<'b> => t<'b> = "%identity"
+  external asSeriesAbandsOptions: t<'b> => (seriesAbandsOptions<'b>) = "%identity"
   external fromSeriesAdOptions: seriesAdOptions<'b> => t<'b> = "%identity"
+  external asSeriesAdOptions: t<'b> => (seriesAdOptions<'b>) = "%identity"
   external fromSeriesAoOptions: seriesAoOptions<'b> => t<'b> = "%identity"
+  external asSeriesAoOptions: t<'b> => (seriesAoOptions<'b>) = "%identity"
   external fromSeriesApoOptions: seriesApoOptions<'b> => t<'b> = "%identity"
+  external asSeriesApoOptions: t<'b> => (seriesApoOptions<'b>) = "%identity"
   external fromSeriesArcdiagramOptions: seriesArcdiagramOptions<'b> => t<'b> = "%identity"
+  external asSeriesArcdiagramOptions: t<'b> => (seriesArcdiagramOptions<'b>) = "%identity"
   external fromSeriesAreaOptions: seriesAreaOptions<'b> => t<'b> = "%identity"
+  external asSeriesAreaOptions: t<'b> => (seriesAreaOptions<'b>) = "%identity"
   external fromSeriesArearangeOptions: seriesArearangeOptions<'b> => t<'b> = "%identity"
+  external asSeriesArearangeOptions: t<'b> => (seriesArearangeOptions<'b>) = "%identity"
   external fromSeriesAreasplineOptions: seriesAreasplineOptions<'b> => t<'b> = "%identity"
+  external asSeriesAreasplineOptions: t<'b> => (seriesAreasplineOptions<'b>) = "%identity"
   external fromSeriesAreasplinerangeOptions: seriesAreasplinerangeOptions<'b> => t<'b> = "%identity"
+  external asSeriesAreasplinerangeOptions: t<'b> => (seriesAreasplinerangeOptions<'b>) = "%identity"
   external fromSeriesAroonOptions: seriesAroonOptions<'b> => t<'b> = "%identity"
+  external asSeriesAroonOptions: t<'b> => (seriesAroonOptions<'b>) = "%identity"
   external fromSeriesAroonoscillatorOptions: seriesAroonoscillatorOptions<'b> => t<'b> = "%identity"
+  external asSeriesAroonoscillatorOptions: t<'b> => (seriesAroonoscillatorOptions<'b>) = "%identity"
   external fromSeriesAtrOptions: seriesAtrOptions<'b> => t<'b> = "%identity"
+  external asSeriesAtrOptions: t<'b> => (seriesAtrOptions<'b>) = "%identity"
   external fromSeriesBarOptions: seriesBarOptions<'b> => t<'b> = "%identity"
+  external asSeriesBarOptions: t<'b> => (seriesBarOptions<'b>) = "%identity"
   external fromSeriesBbOptions: seriesBbOptions<'b> => t<'b> = "%identity"
+  external asSeriesBbOptions: t<'b> => (seriesBbOptions<'b>) = "%identity"
   external fromSeriesBellcurveOptions: seriesBellcurveOptions<'b> => t<'b> = "%identity"
+  external asSeriesBellcurveOptions: t<'b> => (seriesBellcurveOptions<'b>) = "%identity"
   external fromSeriesBoxplotOptions: seriesBoxplotOptions<'b> => t<'b> = "%identity"
+  external asSeriesBoxplotOptions: t<'b> => (seriesBoxplotOptions<'b>) = "%identity"
   external fromSeriesBubbleOptions: seriesBubbleOptions<'b> => t<'b> = "%identity"
+  external asSeriesBubbleOptions: t<'b> => (seriesBubbleOptions<'b>) = "%identity"
   external fromSeriesBulletOptions: seriesBulletOptions<'b> => t<'b> = "%identity"
+  external asSeriesBulletOptions: t<'b> => (seriesBulletOptions<'b>) = "%identity"
   external fromSeriesCandlestickOptions: seriesCandlestickOptions<'b> => t<'b> = "%identity"
+  external asSeriesCandlestickOptions: t<'b> => (seriesCandlestickOptions<'b>) = "%identity"
   external fromSeriesCciOptions: seriesCciOptions<'b> => t<'b> = "%identity"
+  external asSeriesCciOptions: t<'b> => (seriesCciOptions<'b>) = "%identity"
   external fromSeriesChaikinOptions: seriesChaikinOptions<'b> => t<'b> = "%identity"
+  external asSeriesChaikinOptions: t<'b> => (seriesChaikinOptions<'b>) = "%identity"
   external fromSeriesCmfOptions: seriesCmfOptions<'b> => t<'b> = "%identity"
+  external asSeriesCmfOptions: t<'b> => (seriesCmfOptions<'b>) = "%identity"
   external fromSeriesCmoOptions: seriesCmoOptions<'b> => t<'b> = "%identity"
+  external asSeriesCmoOptions: t<'b> => (seriesCmoOptions<'b>) = "%identity"
   external fromSeriesColumnOptions: seriesColumnOptions<'b> => t<'b> = "%identity"
+  external asSeriesColumnOptions: t<'b> => (seriesColumnOptions<'b>) = "%identity"
   external fromSeriesColumnpyramidOptions: seriesColumnpyramidOptions<'b> => t<'b> = "%identity"
+  external asSeriesColumnpyramidOptions: t<'b> => (seriesColumnpyramidOptions<'b>) = "%identity"
   external fromSeriesColumnrangeOptions: seriesColumnrangeOptions<'b> => t<'b> = "%identity"
+  external asSeriesColumnrangeOptions: t<'b> => (seriesColumnrangeOptions<'b>) = "%identity"
   external fromSeriesContourOptions: seriesContourOptions<'b> => t<'b> = "%identity"
+  external asSeriesContourOptions: t<'b> => (seriesContourOptions<'b>) = "%identity"
   external fromSeriesCylinderOptions: seriesCylinderOptions<'b> => t<'b> = "%identity"
+  external asSeriesCylinderOptions: t<'b> => (seriesCylinderOptions<'b>) = "%identity"
   external fromSeriesDemaOptions: seriesDemaOptions<'b> => t<'b> = "%identity"
+  external asSeriesDemaOptions: t<'b> => (seriesDemaOptions<'b>) = "%identity"
   external fromSeriesDependencywheelOptions: seriesDependencywheelOptions<'b> => t<'b> = "%identity"
+  external asSeriesDependencywheelOptions: t<'b> => (seriesDependencywheelOptions<'b>) = "%identity"
   external fromSeriesDisparityindexOptions: seriesDisparityindexOptions<'b> => t<'b> = "%identity"
+  external asSeriesDisparityindexOptions: t<'b> => (seriesDisparityindexOptions<'b>) = "%identity"
   external fromSeriesDmiOptions: seriesDmiOptions<'b> => t<'b> = "%identity"
+  external asSeriesDmiOptions: t<'b> => (seriesDmiOptions<'b>) = "%identity"
   external fromSeriesDpoOptions: seriesDpoOptions<'b> => t<'b> = "%identity"
+  external asSeriesDpoOptions: t<'b> => (seriesDpoOptions<'b>) = "%identity"
   external fromSeriesDumbbellOptions: seriesDumbbellOptions<'b> => t<'b> = "%identity"
+  external asSeriesDumbbellOptions: t<'b> => (seriesDumbbellOptions<'b>) = "%identity"
   external fromSeriesEmaOptions: seriesEmaOptions<'b> => t<'b> = "%identity"
+  external asSeriesEmaOptions: t<'b> => (seriesEmaOptions<'b>) = "%identity"
   external fromSeriesErrorbarOptions: seriesErrorbarOptions<'b> => t<'b> = "%identity"
+  external asSeriesErrorbarOptions: t<'b> => (seriesErrorbarOptions<'b>) = "%identity"
   external fromSeriesFlagsOptions: seriesFlagsOptions<'b> => t<'b> = "%identity"
+  external asSeriesFlagsOptions: t<'b> => (seriesFlagsOptions<'b>) = "%identity"
   external fromSeriesFlowmapOptions: seriesFlowmapOptions<'b> => t<'b> = "%identity"
+  external asSeriesFlowmapOptions: t<'b> => (seriesFlowmapOptions<'b>) = "%identity"
   external fromSeriesFunnel3dOptions: seriesFunnel3dOptions<'b> => t<'b> = "%identity"
+  external asSeriesFunnel3dOptions: t<'b> => (seriesFunnel3dOptions<'b>) = "%identity"
   external fromSeriesFunnelOptions: seriesFunnelOptions<'b> => t<'b> = "%identity"
+  external asSeriesFunnelOptions: t<'b> => (seriesFunnelOptions<'b>) = "%identity"
   external fromSeriesGanttOptions: seriesGanttOptions<'b> => t<'b> = "%identity"
+  external asSeriesGanttOptions: t<'b> => (seriesGanttOptions<'b>) = "%identity"
   external fromSeriesGaugeOptions: seriesGaugeOptions<'b> => t<'b> = "%identity"
+  external asSeriesGaugeOptions: t<'b> => (seriesGaugeOptions<'b>) = "%identity"
   external fromSeriesGeoheatmapOptions: seriesGeoheatmapOptions<'b> => t<'b> = "%identity"
+  external asSeriesGeoheatmapOptions: t<'b> => (seriesGeoheatmapOptions<'b>) = "%identity"
   external fromSeriesHeatmapOptions: seriesHeatmapOptions<'b> => t<'b> = "%identity"
+  external asSeriesHeatmapOptions: t<'b> => (seriesHeatmapOptions<'b>) = "%identity"
   external fromSeriesHeikinashiOptions: seriesHeikinashiOptions<'b> => t<'b> = "%identity"
+  external asSeriesHeikinashiOptions: t<'b> => (seriesHeikinashiOptions<'b>) = "%identity"
   external fromSeriesHistogramOptions: seriesHistogramOptions<'b> => t<'b> = "%identity"
+  external asSeriesHistogramOptions: t<'b> => (seriesHistogramOptions<'b>) = "%identity"
   external fromSeriesHlcOptions: seriesHlcOptions<'b> => t<'b> = "%identity"
+  external asSeriesHlcOptions: t<'b> => (seriesHlcOptions<'b>) = "%identity"
   external fromSeriesHollowcandlestickOptions: seriesHollowcandlestickOptions<'b> => t<'b> = "%identity"
+  external asSeriesHollowcandlestickOptions: t<'b> => (seriesHollowcandlestickOptions<'b>) = "%identity"
   external fromSeriesIkhOptions: seriesIkhOptions<'b> => t<'b> = "%identity"
+  external asSeriesIkhOptions: t<'b> => (seriesIkhOptions<'b>) = "%identity"
   external fromSeriesItemOptions: seriesItemOptions<'b> => t<'b> = "%identity"
+  external asSeriesItemOptions: t<'b> => (seriesItemOptions<'b>) = "%identity"
   external fromSeriesKeltnerchannelsOptions: seriesKeltnerchannelsOptions<'b> => t<'b> = "%identity"
+  external asSeriesKeltnerchannelsOptions: t<'b> => (seriesKeltnerchannelsOptions<'b>) = "%identity"
   external fromSeriesKlingerOptions: seriesKlingerOptions<'b> => t<'b> = "%identity"
+  external asSeriesKlingerOptions: t<'b> => (seriesKlingerOptions<'b>) = "%identity"
   external fromSeriesLinearregressionangleOptions: seriesLinearregressionangleOptions<'b> => t<'b> = "%identity"
+  external asSeriesLinearregressionangleOptions: t<'b> => (seriesLinearregressionangleOptions<'b>) = "%identity"
   external fromSeriesLinearregressioninterceptOptions: seriesLinearregressioninterceptOptions<'b> => t<'b> = "%identity"
+  external asSeriesLinearregressioninterceptOptions: t<'b> => (seriesLinearregressioninterceptOptions<'b>) = "%identity"
   external fromSeriesLinearregressionOptions: seriesLinearregressionOptions<'b> => t<'b> = "%identity"
+  external asSeriesLinearregressionOptions: t<'b> => (seriesLinearregressionOptions<'b>) = "%identity"
   external fromSeriesLinearregressionslopeOptions: seriesLinearregressionslopeOptions<'b> => t<'b> = "%identity"
+  external asSeriesLinearregressionslopeOptions: t<'b> => (seriesLinearregressionslopeOptions<'b>) = "%identity"
   external fromSeriesLineOptions: seriesLineOptions<'b> => t<'b> = "%identity"
+  external asSeriesLineOptions: t<'b> => (seriesLineOptions<'b>) = "%identity"
   external fromSeriesLollipopOptions: seriesLollipopOptions<'b> => t<'b> = "%identity"
+  external asSeriesLollipopOptions: t<'b> => (seriesLollipopOptions<'b>) = "%identity"
   external fromSeriesMacdOptions: seriesMacdOptions<'b> => t<'b> = "%identity"
+  external asSeriesMacdOptions: t<'b> => (seriesMacdOptions<'b>) = "%identity"
   external fromSeriesMapbubbleOptions: seriesMapbubbleOptions<'b> => t<'b> = "%identity"
+  external asSeriesMapbubbleOptions: t<'b> => (seriesMapbubbleOptions<'b>) = "%identity"
   external fromSeriesMaplineOptions: seriesMaplineOptions<'b> => t<'b> = "%identity"
+  external asSeriesMaplineOptions: t<'b> => (seriesMaplineOptions<'b>) = "%identity"
   external fromSeriesMapOptions: seriesMapOptions<'b> => t<'b> = "%identity"
+  external asSeriesMapOptions: t<'b> => (seriesMapOptions<'b>) = "%identity"
   external fromSeriesMappointOptions: seriesMappointOptions<'b> => t<'b> = "%identity"
+  external asSeriesMappointOptions: t<'b> => (seriesMappointOptions<'b>) = "%identity"
   external fromSeriesMfiOptions: seriesMfiOptions<'b> => t<'b> = "%identity"
+  external asSeriesMfiOptions: t<'b> => (seriesMfiOptions<'b>) = "%identity"
   external fromSeriesMomentumOptions: seriesMomentumOptions<'b> => t<'b> = "%identity"
+  external asSeriesMomentumOptions: t<'b> => (seriesMomentumOptions<'b>) = "%identity"
   external fromSeriesNatrOptions: seriesNatrOptions<'b> => t<'b> = "%identity"
+  external asSeriesNatrOptions: t<'b> => (seriesNatrOptions<'b>) = "%identity"
   external fromSeriesNetworkgraphOptions: seriesNetworkgraphOptions<'b> => t<'b> = "%identity"
+  external asSeriesNetworkgraphOptions: t<'b> => (seriesNetworkgraphOptions<'b>) = "%identity"
   external fromSeriesObvOptions: seriesObvOptions<'b> => t<'b> = "%identity"
+  external asSeriesObvOptions: t<'b> => (seriesObvOptions<'b>) = "%identity"
   external fromSeriesOhlcOptions: seriesOhlcOptions<'b> => t<'b> = "%identity"
+  external asSeriesOhlcOptions: t<'b> => (seriesOhlcOptions<'b>) = "%identity"
   external fromSeriesOrganizationOptions: seriesOrganizationOptions<'b> => t<'b> = "%identity"
+  external asSeriesOrganizationOptions: t<'b> => (seriesOrganizationOptions<'b>) = "%identity"
   external fromSeriesPackedbubbleOptions: seriesPackedbubbleOptions<'b> => t<'b> = "%identity"
+  external asSeriesPackedbubbleOptions: t<'b> => (seriesPackedbubbleOptions<'b>) = "%identity"
   external fromSeriesParetoOptions: seriesParetoOptions<'b> => t<'b> = "%identity"
+  external asSeriesParetoOptions: t<'b> => (seriesParetoOptions<'b>) = "%identity"
   external fromSeriesPcOptions: seriesPcOptions<'b> => t<'b> = "%identity"
+  external asSeriesPcOptions: t<'b> => (seriesPcOptions<'b>) = "%identity"
   external fromSeriesPictorialOptions: seriesPictorialOptions<'b> => t<'b> = "%identity"
+  external asSeriesPictorialOptions: t<'b> => (seriesPictorialOptions<'b>) = "%identity"
   external fromSeriesPieOptions: seriesPieOptions<'b> => t<'b> = "%identity"
+  external asSeriesPieOptions: t<'b> => (seriesPieOptions<'b>) = "%identity"
   external fromSeriesPivotpointsOptions: seriesPivotpointsOptions<'b> => t<'b> = "%identity"
+  external asSeriesPivotpointsOptions: t<'b> => (seriesPivotpointsOptions<'b>) = "%identity"
   external fromSeriesPointandfigureOptions: seriesPointandfigureOptions<'b> => t<'b> = "%identity"
+  external asSeriesPointandfigureOptions: t<'b> => (seriesPointandfigureOptions<'b>) = "%identity"
   external fromSeriesPolygonOptions: seriesPolygonOptions<'b> => t<'b> = "%identity"
+  external asSeriesPolygonOptions: t<'b> => (seriesPolygonOptions<'b>) = "%identity"
   external fromSeriesPpoOptions: seriesPpoOptions<'b> => t<'b> = "%identity"
+  external asSeriesPpoOptions: t<'b> => (seriesPpoOptions<'b>) = "%identity"
   external fromSeriesPriceenvelopesOptions: seriesPriceenvelopesOptions<'b> => t<'b> = "%identity"
+  external asSeriesPriceenvelopesOptions: t<'b> => (seriesPriceenvelopesOptions<'b>) = "%identity"
   external fromSeriesPsarOptions: seriesPsarOptions<'b> => t<'b> = "%identity"
+  external asSeriesPsarOptions: t<'b> => (seriesPsarOptions<'b>) = "%identity"
   external fromSeriesPyramid3dOptions: seriesPyramid3dOptions<'b> => t<'b> = "%identity"
+  external asSeriesPyramid3dOptions: t<'b> => (seriesPyramid3dOptions<'b>) = "%identity"
   external fromSeriesPyramidOptions: seriesPyramidOptions<'b> => t<'b> = "%identity"
+  external asSeriesPyramidOptions: t<'b> => (seriesPyramidOptions<'b>) = "%identity"
   external fromSeriesRenkoOptions: seriesRenkoOptions<'b> => t<'b> = "%identity"
+  external asSeriesRenkoOptions: t<'b> => (seriesRenkoOptions<'b>) = "%identity"
   external fromSeriesRocOptions: seriesRocOptions<'b> => t<'b> = "%identity"
+  external asSeriesRocOptions: t<'b> => (seriesRocOptions<'b>) = "%identity"
   external fromSeriesRsiOptions: seriesRsiOptions<'b> => t<'b> = "%identity"
+  external asSeriesRsiOptions: t<'b> => (seriesRsiOptions<'b>) = "%identity"
   external fromSeriesSankeyOptions: seriesSankeyOptions<'b> => t<'b> = "%identity"
+  external asSeriesSankeyOptions: t<'b> => (seriesSankeyOptions<'b>) = "%identity"
   external fromSeriesScatter3dOptions: seriesScatter3dOptions<'b> => t<'b> = "%identity"
+  external asSeriesScatter3dOptions: t<'b> => (seriesScatter3dOptions<'b>) = "%identity"
   external fromSeriesScatterOptions: seriesScatterOptions<'b> => t<'b> = "%identity"
+  external asSeriesScatterOptions: t<'b> => (seriesScatterOptions<'b>) = "%identity"
   external fromSeriesSlowstochasticOptions: seriesSlowstochasticOptions<'b> => t<'b> = "%identity"
+  external asSeriesSlowstochasticOptions: t<'b> => (seriesSlowstochasticOptions<'b>) = "%identity"
   external fromSeriesSmaOptions: seriesSmaOptions<'b> => t<'b> = "%identity"
+  external asSeriesSmaOptions: t<'b> => (seriesSmaOptions<'b>) = "%identity"
   external fromSeriesSolidgaugeOptions: seriesSolidgaugeOptions<'b> => t<'b> = "%identity"
+  external asSeriesSolidgaugeOptions: t<'b> => (seriesSolidgaugeOptions<'b>) = "%identity"
   external fromSeriesSplineOptions: seriesSplineOptions<'b> => t<'b> = "%identity"
+  external asSeriesSplineOptions: t<'b> => (seriesSplineOptions<'b>) = "%identity"
   external fromSeriesStochasticOptions: seriesStochasticOptions<'b> => t<'b> = "%identity"
+  external asSeriesStochasticOptions: t<'b> => (seriesStochasticOptions<'b>) = "%identity"
   external fromSeriesStreamgraphOptions: seriesStreamgraphOptions<'b> => t<'b> = "%identity"
+  external asSeriesStreamgraphOptions: t<'b> => (seriesStreamgraphOptions<'b>) = "%identity"
   external fromSeriesSunburstOptions: seriesSunburstOptions<'b> => t<'b> = "%identity"
+  external asSeriesSunburstOptions: t<'b> => (seriesSunburstOptions<'b>) = "%identity"
   external fromSeriesSupertrendOptions: seriesSupertrendOptions<'b> => t<'b> = "%identity"
+  external asSeriesSupertrendOptions: t<'b> => (seriesSupertrendOptions<'b>) = "%identity"
   external fromSeriesTemaOptions: seriesTemaOptions<'b> => t<'b> = "%identity"
-  external fromSeriesTiledwebmapOptions: seriesTiledwebmapOptions => t<'b> = "%identity"
+  external asSeriesTemaOptions: t<'b> => (seriesTemaOptions<'b>) = "%identity"
+  external fromSeriesTiledwebmapOptions: seriesTiledwebmapOptions<'b> => t<'b> = "%identity"
+  external asSeriesTiledwebmapOptions: t<'b> => (seriesTiledwebmapOptions<'b>) = "%identity"
   external fromSeriesTilemapOptions: seriesTilemapOptions<'b> => t<'b> = "%identity"
+  external asSeriesTilemapOptions: t<'b> => (seriesTilemapOptions<'b>) = "%identity"
   external fromSeriesTimelineOptions: seriesTimelineOptions<'b> => t<'b> = "%identity"
+  external asSeriesTimelineOptions: t<'b> => (seriesTimelineOptions<'b>) = "%identity"
   external fromSeriesTreegraphOptions: seriesTreegraphOptions<'b> => t<'b> = "%identity"
+  external asSeriesTreegraphOptions: t<'b> => (seriesTreegraphOptions<'b>) = "%identity"
   external fromSeriesTreemapOptions: seriesTreemapOptions<'b> => t<'b> = "%identity"
+  external asSeriesTreemapOptions: t<'b> => (seriesTreemapOptions<'b>) = "%identity"
   external fromSeriesTrendlineOptions: seriesTrendlineOptions<'b> => t<'b> = "%identity"
+  external asSeriesTrendlineOptions: t<'b> => (seriesTrendlineOptions<'b>) = "%identity"
   external fromSeriesTrixOptions: seriesTrixOptions<'b> => t<'b> = "%identity"
+  external asSeriesTrixOptions: t<'b> => (seriesTrixOptions<'b>) = "%identity"
   external fromSeriesVariablepieOptions: seriesVariablepieOptions<'b> => t<'b> = "%identity"
+  external asSeriesVariablepieOptions: t<'b> => (seriesVariablepieOptions<'b>) = "%identity"
   external fromSeriesVariwideOptions: seriesVariwideOptions<'b> => t<'b> = "%identity"
+  external asSeriesVariwideOptions: t<'b> => (seriesVariwideOptions<'b>) = "%identity"
   external fromSeriesVbpOptions: seriesVbpOptions<'b> => t<'b> = "%identity"
+  external asSeriesVbpOptions: t<'b> => (seriesVbpOptions<'b>) = "%identity"
   external fromSeriesVectorOptions: seriesVectorOptions<'b> => t<'b> = "%identity"
+  external asSeriesVectorOptions: t<'b> => (seriesVectorOptions<'b>) = "%identity"
   external fromSeriesVennOptions: seriesVennOptions<'b> => t<'b> = "%identity"
+  external asSeriesVennOptions: t<'b> => (seriesVennOptions<'b>) = "%identity"
   external fromSeriesVwapOptions: seriesVwapOptions<'b> => t<'b> = "%identity"
+  external asSeriesVwapOptions: t<'b> => (seriesVwapOptions<'b>) = "%identity"
   external fromSeriesWaterfallOptions: seriesWaterfallOptions<'b> => t<'b> = "%identity"
+  external asSeriesWaterfallOptions: t<'b> => (seriesWaterfallOptions<'b>) = "%identity"
   external fromSeriesWilliamsrOptions: seriesWilliamsrOptions<'b> => t<'b> = "%identity"
+  external asSeriesWilliamsrOptions: t<'b> => (seriesWilliamsrOptions<'b>) = "%identity"
   external fromSeriesWindbarbOptions: seriesWindbarbOptions<'b> => t<'b> = "%identity"
+  external asSeriesWindbarbOptions: t<'b> => (seriesWindbarbOptions<'b>) = "%identity"
   external fromSeriesWmaOptions: seriesWmaOptions<'b> => t<'b> = "%identity"
+  external asSeriesWmaOptions: t<'b> => (seriesWmaOptions<'b>) = "%identity"
   external fromSeriesWordcloudOptions: seriesWordcloudOptions<'b> => t<'b> = "%identity"
+  external asSeriesWordcloudOptions: t<'b> => (seriesWordcloudOptions<'b>) = "%identity"
   external fromSeriesXrangeOptions: seriesXrangeOptions<'b> => t<'b> = "%identity"
+  external asSeriesXrangeOptions: t<'b> => (seriesXrangeOptions<'b>) = "%identity"
   external fromSeriesZigzagOptions: seriesZigzagOptions<'b> => t<'b> = "%identity"
+  external asSeriesZigzagOptions: t<'b> => (seriesZigzagOptions<'b>) = "%identity"
   external fromUnknownSeriesOptions: unknownSeriesOptions<'b> => t<'b> = "%identity"
+  external asUnknownSeriesOptions: t<'b> => (unknownSeriesOptions<'b>) = "%identity"
 }
 module ChartsPlotSunburstOptionsDataLabels = {
   type t = chartsPlotSunburstOptionsDataLabels_t
   external fromSeriesSunburstDataLabelsOptionsObject: seriesSunburstDataLabelsOptionsObject<'b> => t = "%identity"
+  external asSeriesSunburstDataLabelsOptionsObject: t => (seriesSunburstDataLabelsOptionsObject<'b>) = "%identity"
   external fromSeriesSunburstDataLabelsOptionsObjects: array<seriesSunburstDataLabelsOptionsObject<'b>> => t = "%identity"
+  external asSeriesSunburstDataLabelsOptionsObjects: t => (array<seriesSunburstDataLabelsOptionsObject<'b>>) = "%identity"
 }
 module ChartsPlotRenkoOptionsNavigatorOptions = {
   type t = chartsPlotRenkoOptionsNavigatorOptions_t
   external fromPlotSeriesOptions: plotSeriesOptions<'b> => t = "%identity"
+  external asPlotSeriesOptions: t => (plotSeriesOptions<'b>) = "%identity"
   external fromPlotRenkoNavigatorOptions: plotRenkoNavigatorOptions => t = "%identity"
+  external asPlotRenkoNavigatorOptions: t => (plotRenkoNavigatorOptions) = "%identity"
 }
 module ChartsPlotPackedbubbleOptionsDataLabels = {
   type t = chartsPlotPackedbubbleOptionsDataLabels_t
   external fromSeriesPackedBubbleDataLabelsOptionsObject: seriesPackedBubbleDataLabelsOptionsObject<'b> => t = "%identity"
+  external asSeriesPackedBubbleDataLabelsOptionsObject: t => (seriesPackedBubbleDataLabelsOptionsObject<'b>) = "%identity"
   external fromSeriesPackedBubbleDataLabelsOptionsObjects: array<seriesPackedBubbleDataLabelsOptionsObject<'b>> => t = "%identity"
+  external asSeriesPackedBubbleDataLabelsOptionsObjects: t => (array<seriesPackedBubbleDataLabelsOptionsObject<'b>>) = "%identity"
 }
 module ChartsPlotNetworkgraphOptionsDataLabels = {
   type t = chartsPlotNetworkgraphOptionsDataLabels_t
   external fromSeriesNetworkgraphDataLabelsOptionsObject: seriesNetworkgraphDataLabelsOptionsObject<'b> => t = "%identity"
+  external asSeriesNetworkgraphDataLabelsOptionsObject: t => (seriesNetworkgraphDataLabelsOptionsObject<'b>) = "%identity"
   external fromSeriesNetworkgraphDataLabelsOptionsObjects: array<seriesNetworkgraphDataLabelsOptionsObject<'b>> => t = "%identity"
+  external asSeriesNetworkgraphDataLabelsOptionsObjects: t => (array<seriesNetworkgraphDataLabelsOptionsObject<'b>>) = "%identity"
 }
 module ChartsPlotFunnelOptionsDataLabels = {
   type t = chartsPlotFunnelOptionsDataLabels_t
   external fromSeriesPieDataLabelsOptionsObject: seriesPieDataLabelsOptionsObject<'b> => t = "%identity"
+  external asSeriesPieDataLabelsOptionsObject: t => (seriesPieDataLabelsOptionsObject<'b>) = "%identity"
   external fromSeriesPieDataLabelsOptionsObjects: array<seriesPieDataLabelsOptionsObject<'b>> => t = "%identity"
+  external asSeriesPieDataLabelsOptionsObjects: t => (array<seriesPieDataLabelsOptionsObject<'b>>) = "%identity"
 }
 module ChartsNavigatorOptionsXAxis = {
   type t = chartsNavigatorOptionsXAxis_t
   external fromNavigatorXAxisOptions: navigatorXAxisOptions<'b> => t = "%identity"
+  external asNavigatorXAxisOptions: t => (navigatorXAxisOptions<'b>) = "%identity"
   external fromNavigatorXAxisOptionss: array<navigatorXAxisOptions<'b>> => t = "%identity"
+  external asNavigatorXAxisOptionss: t => (array<navigatorXAxisOptions<'b>>) = "%identity"
 }
 module ChartsNavigatorOptionsSeries = {
   type t<'b> = chartsNavigatorOptionsSeries_t<'b>
   external fromSeriesAbandsOptions: seriesAbandsOptions<'b> => t<'b> = "%identity"
+  external asSeriesAbandsOptions: t<'b> => (seriesAbandsOptions<'b>) = "%identity"
   external fromSeriesAdOptions: seriesAdOptions<'b> => t<'b> = "%identity"
+  external asSeriesAdOptions: t<'b> => (seriesAdOptions<'b>) = "%identity"
   external fromSeriesAoOptions: seriesAoOptions<'b> => t<'b> = "%identity"
+  external asSeriesAoOptions: t<'b> => (seriesAoOptions<'b>) = "%identity"
   external fromSeriesApoOptions: seriesApoOptions<'b> => t<'b> = "%identity"
+  external asSeriesApoOptions: t<'b> => (seriesApoOptions<'b>) = "%identity"
   external fromSeriesArcdiagramOptions: seriesArcdiagramOptions<'b> => t<'b> = "%identity"
+  external asSeriesArcdiagramOptions: t<'b> => (seriesArcdiagramOptions<'b>) = "%identity"
   external fromSeriesAreaOptions: seriesAreaOptions<'b> => t<'b> = "%identity"
+  external asSeriesAreaOptions: t<'b> => (seriesAreaOptions<'b>) = "%identity"
   external fromSeriesArearangeOptions: seriesArearangeOptions<'b> => t<'b> = "%identity"
+  external asSeriesArearangeOptions: t<'b> => (seriesArearangeOptions<'b>) = "%identity"
   external fromSeriesAreasplineOptions: seriesAreasplineOptions<'b> => t<'b> = "%identity"
+  external asSeriesAreasplineOptions: t<'b> => (seriesAreasplineOptions<'b>) = "%identity"
   external fromSeriesAreasplinerangeOptions: seriesAreasplinerangeOptions<'b> => t<'b> = "%identity"
+  external asSeriesAreasplinerangeOptions: t<'b> => (seriesAreasplinerangeOptions<'b>) = "%identity"
   external fromSeriesAroonOptions: seriesAroonOptions<'b> => t<'b> = "%identity"
+  external asSeriesAroonOptions: t<'b> => (seriesAroonOptions<'b>) = "%identity"
   external fromSeriesAroonoscillatorOptions: seriesAroonoscillatorOptions<'b> => t<'b> = "%identity"
+  external asSeriesAroonoscillatorOptions: t<'b> => (seriesAroonoscillatorOptions<'b>) = "%identity"
   external fromSeriesAtrOptions: seriesAtrOptions<'b> => t<'b> = "%identity"
+  external asSeriesAtrOptions: t<'b> => (seriesAtrOptions<'b>) = "%identity"
   external fromSeriesBarOptions: seriesBarOptions<'b> => t<'b> = "%identity"
+  external asSeriesBarOptions: t<'b> => (seriesBarOptions<'b>) = "%identity"
   external fromSeriesBbOptions: seriesBbOptions<'b> => t<'b> = "%identity"
+  external asSeriesBbOptions: t<'b> => (seriesBbOptions<'b>) = "%identity"
   external fromSeriesBellcurveOptions: seriesBellcurveOptions<'b> => t<'b> = "%identity"
+  external asSeriesBellcurveOptions: t<'b> => (seriesBellcurveOptions<'b>) = "%identity"
   external fromSeriesBoxplotOptions: seriesBoxplotOptions<'b> => t<'b> = "%identity"
+  external asSeriesBoxplotOptions: t<'b> => (seriesBoxplotOptions<'b>) = "%identity"
   external fromSeriesBubbleOptions: seriesBubbleOptions<'b> => t<'b> = "%identity"
+  external asSeriesBubbleOptions: t<'b> => (seriesBubbleOptions<'b>) = "%identity"
   external fromSeriesBulletOptions: seriesBulletOptions<'b> => t<'b> = "%identity"
+  external asSeriesBulletOptions: t<'b> => (seriesBulletOptions<'b>) = "%identity"
   external fromSeriesCandlestickOptions: seriesCandlestickOptions<'b> => t<'b> = "%identity"
+  external asSeriesCandlestickOptions: t<'b> => (seriesCandlestickOptions<'b>) = "%identity"
   external fromSeriesCciOptions: seriesCciOptions<'b> => t<'b> = "%identity"
+  external asSeriesCciOptions: t<'b> => (seriesCciOptions<'b>) = "%identity"
   external fromSeriesChaikinOptions: seriesChaikinOptions<'b> => t<'b> = "%identity"
+  external asSeriesChaikinOptions: t<'b> => (seriesChaikinOptions<'b>) = "%identity"
   external fromSeriesCmfOptions: seriesCmfOptions<'b> => t<'b> = "%identity"
+  external asSeriesCmfOptions: t<'b> => (seriesCmfOptions<'b>) = "%identity"
   external fromSeriesCmoOptions: seriesCmoOptions<'b> => t<'b> = "%identity"
+  external asSeriesCmoOptions: t<'b> => (seriesCmoOptions<'b>) = "%identity"
   external fromSeriesColumnOptions: seriesColumnOptions<'b> => t<'b> = "%identity"
+  external asSeriesColumnOptions: t<'b> => (seriesColumnOptions<'b>) = "%identity"
   external fromSeriesColumnpyramidOptions: seriesColumnpyramidOptions<'b> => t<'b> = "%identity"
+  external asSeriesColumnpyramidOptions: t<'b> => (seriesColumnpyramidOptions<'b>) = "%identity"
   external fromSeriesColumnrangeOptions: seriesColumnrangeOptions<'b> => t<'b> = "%identity"
+  external asSeriesColumnrangeOptions: t<'b> => (seriesColumnrangeOptions<'b>) = "%identity"
   external fromSeriesContourOptions: seriesContourOptions<'b> => t<'b> = "%identity"
+  external asSeriesContourOptions: t<'b> => (seriesContourOptions<'b>) = "%identity"
   external fromSeriesCylinderOptions: seriesCylinderOptions<'b> => t<'b> = "%identity"
+  external asSeriesCylinderOptions: t<'b> => (seriesCylinderOptions<'b>) = "%identity"
   external fromSeriesDemaOptions: seriesDemaOptions<'b> => t<'b> = "%identity"
+  external asSeriesDemaOptions: t<'b> => (seriesDemaOptions<'b>) = "%identity"
   external fromSeriesDependencywheelOptions: seriesDependencywheelOptions<'b> => t<'b> = "%identity"
+  external asSeriesDependencywheelOptions: t<'b> => (seriesDependencywheelOptions<'b>) = "%identity"
   external fromSeriesDisparityindexOptions: seriesDisparityindexOptions<'b> => t<'b> = "%identity"
+  external asSeriesDisparityindexOptions: t<'b> => (seriesDisparityindexOptions<'b>) = "%identity"
   external fromSeriesDmiOptions: seriesDmiOptions<'b> => t<'b> = "%identity"
+  external asSeriesDmiOptions: t<'b> => (seriesDmiOptions<'b>) = "%identity"
   external fromSeriesDpoOptions: seriesDpoOptions<'b> => t<'b> = "%identity"
+  external asSeriesDpoOptions: t<'b> => (seriesDpoOptions<'b>) = "%identity"
   external fromSeriesDumbbellOptions: seriesDumbbellOptions<'b> => t<'b> = "%identity"
+  external asSeriesDumbbellOptions: t<'b> => (seriesDumbbellOptions<'b>) = "%identity"
   external fromSeriesEmaOptions: seriesEmaOptions<'b> => t<'b> = "%identity"
+  external asSeriesEmaOptions: t<'b> => (seriesEmaOptions<'b>) = "%identity"
   external fromSeriesErrorbarOptions: seriesErrorbarOptions<'b> => t<'b> = "%identity"
+  external asSeriesErrorbarOptions: t<'b> => (seriesErrorbarOptions<'b>) = "%identity"
   external fromSeriesFlagsOptions: seriesFlagsOptions<'b> => t<'b> = "%identity"
+  external asSeriesFlagsOptions: t<'b> => (seriesFlagsOptions<'b>) = "%identity"
   external fromSeriesFlowmapOptions: seriesFlowmapOptions<'b> => t<'b> = "%identity"
+  external asSeriesFlowmapOptions: t<'b> => (seriesFlowmapOptions<'b>) = "%identity"
   external fromSeriesFunnel3dOptions: seriesFunnel3dOptions<'b> => t<'b> = "%identity"
+  external asSeriesFunnel3dOptions: t<'b> => (seriesFunnel3dOptions<'b>) = "%identity"
   external fromSeriesFunnelOptions: seriesFunnelOptions<'b> => t<'b> = "%identity"
+  external asSeriesFunnelOptions: t<'b> => (seriesFunnelOptions<'b>) = "%identity"
   external fromSeriesGanttOptions: seriesGanttOptions<'b> => t<'b> = "%identity"
+  external asSeriesGanttOptions: t<'b> => (seriesGanttOptions<'b>) = "%identity"
   external fromSeriesGaugeOptions: seriesGaugeOptions<'b> => t<'b> = "%identity"
+  external asSeriesGaugeOptions: t<'b> => (seriesGaugeOptions<'b>) = "%identity"
   external fromSeriesGeoheatmapOptions: seriesGeoheatmapOptions<'b> => t<'b> = "%identity"
+  external asSeriesGeoheatmapOptions: t<'b> => (seriesGeoheatmapOptions<'b>) = "%identity"
   external fromSeriesHeatmapOptions: seriesHeatmapOptions<'b> => t<'b> = "%identity"
+  external asSeriesHeatmapOptions: t<'b> => (seriesHeatmapOptions<'b>) = "%identity"
   external fromSeriesHeikinashiOptions: seriesHeikinashiOptions<'b> => t<'b> = "%identity"
+  external asSeriesHeikinashiOptions: t<'b> => (seriesHeikinashiOptions<'b>) = "%identity"
   external fromSeriesHistogramOptions: seriesHistogramOptions<'b> => t<'b> = "%identity"
+  external asSeriesHistogramOptions: t<'b> => (seriesHistogramOptions<'b>) = "%identity"
   external fromSeriesHlcOptions: seriesHlcOptions<'b> => t<'b> = "%identity"
+  external asSeriesHlcOptions: t<'b> => (seriesHlcOptions<'b>) = "%identity"
   external fromSeriesHollowcandlestickOptions: seriesHollowcandlestickOptions<'b> => t<'b> = "%identity"
+  external asSeriesHollowcandlestickOptions: t<'b> => (seriesHollowcandlestickOptions<'b>) = "%identity"
   external fromSeriesIkhOptions: seriesIkhOptions<'b> => t<'b> = "%identity"
+  external asSeriesIkhOptions: t<'b> => (seriesIkhOptions<'b>) = "%identity"
   external fromSeriesItemOptions: seriesItemOptions<'b> => t<'b> = "%identity"
+  external asSeriesItemOptions: t<'b> => (seriesItemOptions<'b>) = "%identity"
   external fromSeriesKeltnerchannelsOptions: seriesKeltnerchannelsOptions<'b> => t<'b> = "%identity"
+  external asSeriesKeltnerchannelsOptions: t<'b> => (seriesKeltnerchannelsOptions<'b>) = "%identity"
   external fromSeriesKlingerOptions: seriesKlingerOptions<'b> => t<'b> = "%identity"
+  external asSeriesKlingerOptions: t<'b> => (seriesKlingerOptions<'b>) = "%identity"
   external fromSeriesLinearregressionangleOptions: seriesLinearregressionangleOptions<'b> => t<'b> = "%identity"
+  external asSeriesLinearregressionangleOptions: t<'b> => (seriesLinearregressionangleOptions<'b>) = "%identity"
   external fromSeriesLinearregressioninterceptOptions: seriesLinearregressioninterceptOptions<'b> => t<'b> = "%identity"
+  external asSeriesLinearregressioninterceptOptions: t<'b> => (seriesLinearregressioninterceptOptions<'b>) = "%identity"
   external fromSeriesLinearregressionOptions: seriesLinearregressionOptions<'b> => t<'b> = "%identity"
+  external asSeriesLinearregressionOptions: t<'b> => (seriesLinearregressionOptions<'b>) = "%identity"
   external fromSeriesLinearregressionslopeOptions: seriesLinearregressionslopeOptions<'b> => t<'b> = "%identity"
+  external asSeriesLinearregressionslopeOptions: t<'b> => (seriesLinearregressionslopeOptions<'b>) = "%identity"
   external fromSeriesLineOptions: seriesLineOptions<'b> => t<'b> = "%identity"
+  external asSeriesLineOptions: t<'b> => (seriesLineOptions<'b>) = "%identity"
   external fromSeriesLollipopOptions: seriesLollipopOptions<'b> => t<'b> = "%identity"
+  external asSeriesLollipopOptions: t<'b> => (seriesLollipopOptions<'b>) = "%identity"
   external fromSeriesMacdOptions: seriesMacdOptions<'b> => t<'b> = "%identity"
+  external asSeriesMacdOptions: t<'b> => (seriesMacdOptions<'b>) = "%identity"
   external fromSeriesMapbubbleOptions: seriesMapbubbleOptions<'b> => t<'b> = "%identity"
+  external asSeriesMapbubbleOptions: t<'b> => (seriesMapbubbleOptions<'b>) = "%identity"
   external fromSeriesMaplineOptions: seriesMaplineOptions<'b> => t<'b> = "%identity"
+  external asSeriesMaplineOptions: t<'b> => (seriesMaplineOptions<'b>) = "%identity"
   external fromSeriesMapOptions: seriesMapOptions<'b> => t<'b> = "%identity"
+  external asSeriesMapOptions: t<'b> => (seriesMapOptions<'b>) = "%identity"
   external fromSeriesMappointOptions: seriesMappointOptions<'b> => t<'b> = "%identity"
+  external asSeriesMappointOptions: t<'b> => (seriesMappointOptions<'b>) = "%identity"
   external fromSeriesMfiOptions: seriesMfiOptions<'b> => t<'b> = "%identity"
+  external asSeriesMfiOptions: t<'b> => (seriesMfiOptions<'b>) = "%identity"
   external fromSeriesMomentumOptions: seriesMomentumOptions<'b> => t<'b> = "%identity"
+  external asSeriesMomentumOptions: t<'b> => (seriesMomentumOptions<'b>) = "%identity"
   external fromSeriesNatrOptions: seriesNatrOptions<'b> => t<'b> = "%identity"
+  external asSeriesNatrOptions: t<'b> => (seriesNatrOptions<'b>) = "%identity"
   external fromSeriesNetworkgraphOptions: seriesNetworkgraphOptions<'b> => t<'b> = "%identity"
+  external asSeriesNetworkgraphOptions: t<'b> => (seriesNetworkgraphOptions<'b>) = "%identity"
   external fromSeriesObvOptions: seriesObvOptions<'b> => t<'b> = "%identity"
+  external asSeriesObvOptions: t<'b> => (seriesObvOptions<'b>) = "%identity"
   external fromSeriesOhlcOptions: seriesOhlcOptions<'b> => t<'b> = "%identity"
+  external asSeriesOhlcOptions: t<'b> => (seriesOhlcOptions<'b>) = "%identity"
   external fromSeriesOrganizationOptions: seriesOrganizationOptions<'b> => t<'b> = "%identity"
+  external asSeriesOrganizationOptions: t<'b> => (seriesOrganizationOptions<'b>) = "%identity"
   external fromSeriesPackedbubbleOptions: seriesPackedbubbleOptions<'b> => t<'b> = "%identity"
+  external asSeriesPackedbubbleOptions: t<'b> => (seriesPackedbubbleOptions<'b>) = "%identity"
   external fromSeriesParetoOptions: seriesParetoOptions<'b> => t<'b> = "%identity"
+  external asSeriesParetoOptions: t<'b> => (seriesParetoOptions<'b>) = "%identity"
   external fromSeriesPcOptions: seriesPcOptions<'b> => t<'b> = "%identity"
+  external asSeriesPcOptions: t<'b> => (seriesPcOptions<'b>) = "%identity"
   external fromSeriesPictorialOptions: seriesPictorialOptions<'b> => t<'b> = "%identity"
+  external asSeriesPictorialOptions: t<'b> => (seriesPictorialOptions<'b>) = "%identity"
   external fromSeriesPieOptions: seriesPieOptions<'b> => t<'b> = "%identity"
+  external asSeriesPieOptions: t<'b> => (seriesPieOptions<'b>) = "%identity"
   external fromSeriesPivotpointsOptions: seriesPivotpointsOptions<'b> => t<'b> = "%identity"
+  external asSeriesPivotpointsOptions: t<'b> => (seriesPivotpointsOptions<'b>) = "%identity"
   external fromSeriesPointandfigureOptions: seriesPointandfigureOptions<'b> => t<'b> = "%identity"
+  external asSeriesPointandfigureOptions: t<'b> => (seriesPointandfigureOptions<'b>) = "%identity"
   external fromSeriesPolygonOptions: seriesPolygonOptions<'b> => t<'b> = "%identity"
+  external asSeriesPolygonOptions: t<'b> => (seriesPolygonOptions<'b>) = "%identity"
   external fromSeriesPpoOptions: seriesPpoOptions<'b> => t<'b> = "%identity"
+  external asSeriesPpoOptions: t<'b> => (seriesPpoOptions<'b>) = "%identity"
   external fromSeriesPriceenvelopesOptions: seriesPriceenvelopesOptions<'b> => t<'b> = "%identity"
+  external asSeriesPriceenvelopesOptions: t<'b> => (seriesPriceenvelopesOptions<'b>) = "%identity"
   external fromSeriesPsarOptions: seriesPsarOptions<'b> => t<'b> = "%identity"
+  external asSeriesPsarOptions: t<'b> => (seriesPsarOptions<'b>) = "%identity"
   external fromSeriesPyramid3dOptions: seriesPyramid3dOptions<'b> => t<'b> = "%identity"
+  external asSeriesPyramid3dOptions: t<'b> => (seriesPyramid3dOptions<'b>) = "%identity"
   external fromSeriesPyramidOptions: seriesPyramidOptions<'b> => t<'b> = "%identity"
+  external asSeriesPyramidOptions: t<'b> => (seriesPyramidOptions<'b>) = "%identity"
   external fromSeriesRenkoOptions: seriesRenkoOptions<'b> => t<'b> = "%identity"
+  external asSeriesRenkoOptions: t<'b> => (seriesRenkoOptions<'b>) = "%identity"
   external fromSeriesRocOptions: seriesRocOptions<'b> => t<'b> = "%identity"
+  external asSeriesRocOptions: t<'b> => (seriesRocOptions<'b>) = "%identity"
   external fromSeriesRsiOptions: seriesRsiOptions<'b> => t<'b> = "%identity"
+  external asSeriesRsiOptions: t<'b> => (seriesRsiOptions<'b>) = "%identity"
   external fromSeriesSankeyOptions: seriesSankeyOptions<'b> => t<'b> = "%identity"
+  external asSeriesSankeyOptions: t<'b> => (seriesSankeyOptions<'b>) = "%identity"
   external fromSeriesScatter3dOptions: seriesScatter3dOptions<'b> => t<'b> = "%identity"
+  external asSeriesScatter3dOptions: t<'b> => (seriesScatter3dOptions<'b>) = "%identity"
   external fromSeriesScatterOptions: seriesScatterOptions<'b> => t<'b> = "%identity"
+  external asSeriesScatterOptions: t<'b> => (seriesScatterOptions<'b>) = "%identity"
   external fromSeriesSlowstochasticOptions: seriesSlowstochasticOptions<'b> => t<'b> = "%identity"
+  external asSeriesSlowstochasticOptions: t<'b> => (seriesSlowstochasticOptions<'b>) = "%identity"
   external fromSeriesSmaOptions: seriesSmaOptions<'b> => t<'b> = "%identity"
+  external asSeriesSmaOptions: t<'b> => (seriesSmaOptions<'b>) = "%identity"
   external fromSeriesSolidgaugeOptions: seriesSolidgaugeOptions<'b> => t<'b> = "%identity"
+  external asSeriesSolidgaugeOptions: t<'b> => (seriesSolidgaugeOptions<'b>) = "%identity"
   external fromSeriesSplineOptions: seriesSplineOptions<'b> => t<'b> = "%identity"
+  external asSeriesSplineOptions: t<'b> => (seriesSplineOptions<'b>) = "%identity"
   external fromSeriesStochasticOptions: seriesStochasticOptions<'b> => t<'b> = "%identity"
+  external asSeriesStochasticOptions: t<'b> => (seriesStochasticOptions<'b>) = "%identity"
   external fromSeriesStreamgraphOptions: seriesStreamgraphOptions<'b> => t<'b> = "%identity"
+  external asSeriesStreamgraphOptions: t<'b> => (seriesStreamgraphOptions<'b>) = "%identity"
   external fromSeriesSunburstOptions: seriesSunburstOptions<'b> => t<'b> = "%identity"
+  external asSeriesSunburstOptions: t<'b> => (seriesSunburstOptions<'b>) = "%identity"
   external fromSeriesSupertrendOptions: seriesSupertrendOptions<'b> => t<'b> = "%identity"
+  external asSeriesSupertrendOptions: t<'b> => (seriesSupertrendOptions<'b>) = "%identity"
   external fromSeriesTemaOptions: seriesTemaOptions<'b> => t<'b> = "%identity"
-  external fromSeriesTiledwebmapOptions: seriesTiledwebmapOptions => t<'b> = "%identity"
+  external asSeriesTemaOptions: t<'b> => (seriesTemaOptions<'b>) = "%identity"
+  external fromSeriesTiledwebmapOptions: seriesTiledwebmapOptions<'b> => t<'b> = "%identity"
+  external asSeriesTiledwebmapOptions: t<'b> => (seriesTiledwebmapOptions<'b>) = "%identity"
   external fromSeriesTilemapOptions: seriesTilemapOptions<'b> => t<'b> = "%identity"
+  external asSeriesTilemapOptions: t<'b> => (seriesTilemapOptions<'b>) = "%identity"
   external fromSeriesTimelineOptions: seriesTimelineOptions<'b> => t<'b> = "%identity"
+  external asSeriesTimelineOptions: t<'b> => (seriesTimelineOptions<'b>) = "%identity"
   external fromSeriesTreegraphOptions: seriesTreegraphOptions<'b> => t<'b> = "%identity"
+  external asSeriesTreegraphOptions: t<'b> => (seriesTreegraphOptions<'b>) = "%identity"
   external fromSeriesTreemapOptions: seriesTreemapOptions<'b> => t<'b> = "%identity"
+  external asSeriesTreemapOptions: t<'b> => (seriesTreemapOptions<'b>) = "%identity"
   external fromSeriesTrendlineOptions: seriesTrendlineOptions<'b> => t<'b> = "%identity"
+  external asSeriesTrendlineOptions: t<'b> => (seriesTrendlineOptions<'b>) = "%identity"
   external fromSeriesTrixOptions: seriesTrixOptions<'b> => t<'b> = "%identity"
+  external asSeriesTrixOptions: t<'b> => (seriesTrixOptions<'b>) = "%identity"
   external fromSeriesVariablepieOptions: seriesVariablepieOptions<'b> => t<'b> = "%identity"
+  external asSeriesVariablepieOptions: t<'b> => (seriesVariablepieOptions<'b>) = "%identity"
   external fromSeriesVariwideOptions: seriesVariwideOptions<'b> => t<'b> = "%identity"
+  external asSeriesVariwideOptions: t<'b> => (seriesVariwideOptions<'b>) = "%identity"
   external fromSeriesVbpOptions: seriesVbpOptions<'b> => t<'b> = "%identity"
+  external asSeriesVbpOptions: t<'b> => (seriesVbpOptions<'b>) = "%identity"
   external fromSeriesVectorOptions: seriesVectorOptions<'b> => t<'b> = "%identity"
+  external asSeriesVectorOptions: t<'b> => (seriesVectorOptions<'b>) = "%identity"
   external fromSeriesVennOptions: seriesVennOptions<'b> => t<'b> = "%identity"
+  external asSeriesVennOptions: t<'b> => (seriesVennOptions<'b>) = "%identity"
   external fromSeriesVwapOptions: seriesVwapOptions<'b> => t<'b> = "%identity"
+  external asSeriesVwapOptions: t<'b> => (seriesVwapOptions<'b>) = "%identity"
   external fromSeriesWaterfallOptions: seriesWaterfallOptions<'b> => t<'b> = "%identity"
+  external asSeriesWaterfallOptions: t<'b> => (seriesWaterfallOptions<'b>) = "%identity"
   external fromSeriesWilliamsrOptions: seriesWilliamsrOptions<'b> => t<'b> = "%identity"
+  external asSeriesWilliamsrOptions: t<'b> => (seriesWilliamsrOptions<'b>) = "%identity"
   external fromSeriesWindbarbOptions: seriesWindbarbOptions<'b> => t<'b> = "%identity"
+  external asSeriesWindbarbOptions: t<'b> => (seriesWindbarbOptions<'b>) = "%identity"
   external fromSeriesWmaOptions: seriesWmaOptions<'b> => t<'b> = "%identity"
+  external asSeriesWmaOptions: t<'b> => (seriesWmaOptions<'b>) = "%identity"
   external fromSeriesWordcloudOptions: seriesWordcloudOptions<'b> => t<'b> = "%identity"
+  external asSeriesWordcloudOptions: t<'b> => (seriesWordcloudOptions<'b>) = "%identity"
   external fromSeriesXrangeOptions: seriesXrangeOptions<'b> => t<'b> = "%identity"
+  external asSeriesXrangeOptions: t<'b> => (seriesXrangeOptions<'b>) = "%identity"
   external fromSeriesZigzagOptions: seriesZigzagOptions<'b> => t<'b> = "%identity"
+  external asSeriesZigzagOptions: t<'b> => (seriesZigzagOptions<'b>) = "%identity"
   external fromSeriesOptionsTypes: array<seriesOptionsType_t<'b>> => t<'b> = "%identity"
+  external asSeriesOptionsTypes: t<'b> => (array<seriesOptionsType_t<'b>>) = "%identity"
   external fromNavigatorSeriesOptions: navigatorSeriesOptions<'b> => t<'b> = "%identity"
+  external asNavigatorSeriesOptions: t<'b> => (navigatorSeriesOptions<'b>) = "%identity"
   external fromNavigatorSeriesOptionss: array<navigatorSeriesOptions<'b>> => t<'b> = "%identity"
+  external asNavigatorSeriesOptionss: t<'b> => (array<navigatorSeriesOptions<'b>>) = "%identity"
 }
 module ChartsNavigationOptionsAnnotationsOptions = {
   type t = chartsNavigationOptionsAnnotationsOptions_t
   external fromAnnotationsOptions: annotationsOptions<'b> => t = "%identity"
+  external asAnnotationsOptions: t => (annotationsOptions<'b>) = "%identity"
   external fromNavigationAnnotationsOptions: navigationAnnotationsOptions<'b> => t = "%identity"
-}
-module ChartsLegendItemClickEventObjectLegendItem = {
-  type t = chartsLegendItemClickEventObjectLegendItem_t
-  external fromSeries: series<'b> => t = "%identity"
-  external fromPoint: point<'b> => t = "%identity"
-  external fromLegendItemObject: legendItemObject => t = "%identity"
-}
-module ChartsLegendAllItems = {
-  type t = chartsLegendAllItems_t
-  external fromSeries: series<'b> => t = "%identity"
-  external fromPoint: point<'b> => t = "%identity"
+  external asNavigationAnnotationsOptions: t => (navigationAnnotationsOptions<'b>) = "%identity"
 }
 module ChartsOptionsColorAxis = {
   type t = chartsOptionsColorAxis_t
   external fromColorAxisOptions: colorAxisOptions<'b> => t = "%identity"
+  external asColorAxisOptions: t => (colorAxisOptions<'b>) = "%identity"
   external fromColorAxisOptionss: array<colorAxisOptions<'b>> => t = "%identity"
+  external asColorAxisOptionss: t => (array<colorAxisOptions<'b>>) = "%identity"
 }
 module ChartsChartOptionsParallelAxes = {
   type t = chartsChartOptionsParallelAxes_t
   external fromChartParallelAxesOptions: chartParallelAxesOptions<'b> => t = "%identity"
+  external asChartParallelAxesOptions: t => (chartParallelAxesOptions<'b>) = "%identity"
   external fromChartParallelAxesOptionss: array<chartParallelAxesOptions<'b>> => t = "%identity"
+  external asChartParallelAxesOptionss: t => (array<chartParallelAxesOptions<'b>>) = "%identity"
 }
 module ChartsSeriesSankeyNodesOptionsObjectDataLabels = {
   type t = chartsSeriesSankeyNodesOptionsObjectDataLabels_t
   external fromSeriesArcDiagramDataLabelsOptionsObject: seriesArcDiagramDataLabelsOptionsObject<'b> => t = "%identity"
+  external asSeriesArcDiagramDataLabelsOptionsObject: t => (seriesArcDiagramDataLabelsOptionsObject<'b>) = "%identity"
   external fromSeriesArcDiagramDataLabelsOptionsObjects: array<seriesArcDiagramDataLabelsOptionsObject<'b>> => t = "%identity"
+  external asSeriesArcDiagramDataLabelsOptionsObjects: t => (array<seriesArcDiagramDataLabelsOptionsObject<'b>>) = "%identity"
   external fromSeriesSankeyDataLabelsOptionsObject: seriesSankeyDataLabelsOptionsObject<'b> => t = "%identity"
+  external asSeriesSankeyDataLabelsOptionsObject: t => (seriesSankeyDataLabelsOptionsObject<'b>) = "%identity"
   external fromSeriesSankeyDataLabelsOptionsObjects: array<seriesSankeyDataLabelsOptionsObject<'b>> => t = "%identity"
+  external asSeriesSankeyDataLabelsOptionsObjects: t => (array<seriesSankeyDataLabelsOptionsObject<'b>>) = "%identity"
   external fromSeriesOrganizationDataLabelsOptionsObject: seriesOrganizationDataLabelsOptionsObject<'b> => t = "%identity"
+  external asSeriesOrganizationDataLabelsOptionsObject: t => (seriesOrganizationDataLabelsOptionsObject<'b>) = "%identity"
   external fromSeriesOrganizationDataLabelsOptionsObjects: array<seriesOrganizationDataLabelsOptionsObject<'b>> => t = "%identity"
+  external asSeriesOrganizationDataLabelsOptionsObjects: t => (array<seriesOrganizationDataLabelsOptionsObject<'b>>) = "%identity"
 }
 module ChartsSeriesAccessibilityOptionsObjectPoint = {
   type t = chartsSeriesAccessibilityOptionsObjectPoint_t
   external fromPlotAbandsAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotAbandsAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotAdAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotAdAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotAoAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotAoAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotApoAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotApoAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotArcdiagramAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotArcdiagramAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotAreaAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotAreaAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotArearangeAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotArearangeAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotAreasplineAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotAreasplineAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotAreasplinerangeAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotAreasplinerangeAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotAroonAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotAroonAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotAroonoscillatorAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotAroonoscillatorAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotAtrAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotAtrAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotBarAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotBarAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotBbAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotBbAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotBellcurveAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotBellcurveAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotBoxplotAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotBoxplotAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotBubbleAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotBubbleAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotBulletAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotBulletAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotCandlestickAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotCandlestickAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotCciAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotCciAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotChaikinAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotChaikinAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotCmfAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotCmfAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotCmoAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotCmoAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotColumnAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotColumnAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotColumnpyramidAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotColumnpyramidAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotColumnrangeAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotColumnrangeAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotContourAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotContourAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotCylinderAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotCylinderAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotDemaAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotDemaAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotDependencywheelAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotDependencywheelAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotDisparityindexAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotDisparityindexAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotDmiAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotDmiAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotDpoAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotDpoAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotDumbbellAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotDumbbellAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotEmaAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotEmaAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotErrorbarAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotErrorbarAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotFlagsAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotFlagsAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotFlowmapAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotFlowmapAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotFunnel3dAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotFunnel3dAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotFunnelAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotFunnelAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotGanttAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotGanttAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotGaugeAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotGaugeAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotGeoheatmapAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotGeoheatmapAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotHeatmapAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotHeatmapAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotHeikinashiAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotHeikinashiAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotHistogramAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotHistogramAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotHlcAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotHlcAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotHollowcandlestickAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotHollowcandlestickAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotIkhAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotIkhAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotItemAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotItemAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotKeltnerchannelsAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotKeltnerchannelsAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotKlingerAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotKlingerAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotLineAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotLineAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotLinearregressionAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotLinearregressionAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotLinearregressionangleAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotLinearregressionangleAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotLinearregressioninterceptAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotLinearregressioninterceptAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotLinearregressionslopeAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotLinearregressionslopeAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotLollipopAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotLollipopAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotMacdAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotMacdAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotMapAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotMapAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotMapbubbleAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotMapbubbleAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotMaplineAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotMaplineAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotMappointAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotMappointAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotMfiAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotMfiAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotMomentumAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotMomentumAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotNatrAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotNatrAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotNetworkgraphAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotNetworkgraphAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotObvAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotObvAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotOhlcAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotOhlcAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotOrganizationAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotOrganizationAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotPackedbubbleAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotPackedbubbleAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotParetoAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotParetoAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotPcAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotPcAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotPictorialAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotPictorialAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotPieAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotPieAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotPivotpointsAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotPivotpointsAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotPointandfigureAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotPointandfigureAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotPolygonAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotPolygonAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotPpoAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotPpoAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotPriceenvelopesAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotPriceenvelopesAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotPsarAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotPsarAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotPyramid3dAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotPyramid3dAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotPyramidAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotPyramidAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotRenkoAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotRenkoAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotRocAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotRocAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotRsiAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotRsiAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotSankeyAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotSankeyAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotScatter3dAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotScatter3dAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotScatterAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotScatterAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotSeriesAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotSeriesAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotSlowstochasticAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotSlowstochasticAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotSmaAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotSmaAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotSolidgaugeAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotSolidgaugeAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotSplineAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotSplineAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotStochasticAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotStochasticAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotStreamgraphAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotStreamgraphAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotSunburstAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotSunburstAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotSupertrendAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotSupertrendAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotTemaAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotTemaAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotTiledwebmapAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotTiledwebmapAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotTilemapAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotTilemapAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotTimelineAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotTimelineAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotTreegraphAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotTreegraphAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotTreemapAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotTreemapAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotTrendlineAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotTrendlineAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotTrixAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotTrixAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotVariablepieAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotVariablepieAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotVariwideAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotVariwideAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotVbpAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotVbpAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotVectorAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotVectorAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotVennAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotVennAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotVwapAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotVwapAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotWaterfallAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotWaterfallAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotWilliamsrAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotWilliamsrAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotWindbarbAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotWindbarbAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotWmaAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotWmaAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotWordcloudAccessibilityPointOptions: plotAbandsAccessibilityPointOptions<'b> => t = "%identity"
+  external asPlotWordcloudAccessibilityPointOptions: t => (plotAbandsAccessibilityPointOptions<'b>) = "%identity"
   external fromPlotXrangeAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotXrangeAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
   external fromPlotZigzagAccessibilityPointOptions: accessibilityPointOptions<'b> => t = "%identity"
+  external asPlotZigzagAccessibilityPointOptions: t => (accessibilityPointOptions<'b>) = "%identity"
 }
 module SeriesOptionsType = {
   type t<'b> = seriesOptionsType_t<'b>
   external fromSeriesAbandsOptions: seriesAbandsOptions<'b> => t<'b> = "%identity"
+  external asSeriesAbandsOptions: t<'b> => (seriesAbandsOptions<'b>) = "%identity"
   external fromSeriesAdOptions: seriesAdOptions<'b> => t<'b> = "%identity"
+  external asSeriesAdOptions: t<'b> => (seriesAdOptions<'b>) = "%identity"
   external fromSeriesAoOptions: seriesAoOptions<'b> => t<'b> = "%identity"
+  external asSeriesAoOptions: t<'b> => (seriesAoOptions<'b>) = "%identity"
   external fromSeriesApoOptions: seriesApoOptions<'b> => t<'b> = "%identity"
+  external asSeriesApoOptions: t<'b> => (seriesApoOptions<'b>) = "%identity"
   external fromSeriesArcdiagramOptions: seriesArcdiagramOptions<'b> => t<'b> = "%identity"
+  external asSeriesArcdiagramOptions: t<'b> => (seriesArcdiagramOptions<'b>) = "%identity"
   external fromSeriesAreaOptions: seriesAreaOptions<'b> => t<'b> = "%identity"
+  external asSeriesAreaOptions: t<'b> => (seriesAreaOptions<'b>) = "%identity"
   external fromSeriesArearangeOptions: seriesArearangeOptions<'b> => t<'b> = "%identity"
+  external asSeriesArearangeOptions: t<'b> => (seriesArearangeOptions<'b>) = "%identity"
   external fromSeriesAreasplineOptions: seriesAreasplineOptions<'b> => t<'b> = "%identity"
+  external asSeriesAreasplineOptions: t<'b> => (seriesAreasplineOptions<'b>) = "%identity"
   external fromSeriesAreasplinerangeOptions: seriesAreasplinerangeOptions<'b> => t<'b> = "%identity"
+  external asSeriesAreasplinerangeOptions: t<'b> => (seriesAreasplinerangeOptions<'b>) = "%identity"
   external fromSeriesAroonOptions: seriesAroonOptions<'b> => t<'b> = "%identity"
+  external asSeriesAroonOptions: t<'b> => (seriesAroonOptions<'b>) = "%identity"
   external fromSeriesAroonoscillatorOptions: seriesAroonoscillatorOptions<'b> => t<'b> = "%identity"
+  external asSeriesAroonoscillatorOptions: t<'b> => (seriesAroonoscillatorOptions<'b>) = "%identity"
   external fromSeriesAtrOptions: seriesAtrOptions<'b> => t<'b> = "%identity"
+  external asSeriesAtrOptions: t<'b> => (seriesAtrOptions<'b>) = "%identity"
   external fromSeriesBarOptions: seriesBarOptions<'b> => t<'b> = "%identity"
+  external asSeriesBarOptions: t<'b> => (seriesBarOptions<'b>) = "%identity"
   external fromSeriesBbOptions: seriesBbOptions<'b> => t<'b> = "%identity"
+  external asSeriesBbOptions: t<'b> => (seriesBbOptions<'b>) = "%identity"
   external fromSeriesBellcurveOptions: seriesBellcurveOptions<'b> => t<'b> = "%identity"
+  external asSeriesBellcurveOptions: t<'b> => (seriesBellcurveOptions<'b>) = "%identity"
   external fromSeriesBoxplotOptions: seriesBoxplotOptions<'b> => t<'b> = "%identity"
+  external asSeriesBoxplotOptions: t<'b> => (seriesBoxplotOptions<'b>) = "%identity"
   external fromSeriesBubbleOptions: seriesBubbleOptions<'b> => t<'b> = "%identity"
+  external asSeriesBubbleOptions: t<'b> => (seriesBubbleOptions<'b>) = "%identity"
   external fromSeriesBulletOptions: seriesBulletOptions<'b> => t<'b> = "%identity"
+  external asSeriesBulletOptions: t<'b> => (seriesBulletOptions<'b>) = "%identity"
   external fromSeriesCandlestickOptions: seriesCandlestickOptions<'b> => t<'b> = "%identity"
+  external asSeriesCandlestickOptions: t<'b> => (seriesCandlestickOptions<'b>) = "%identity"
   external fromSeriesCciOptions: seriesCciOptions<'b> => t<'b> = "%identity"
+  external asSeriesCciOptions: t<'b> => (seriesCciOptions<'b>) = "%identity"
   external fromSeriesChaikinOptions: seriesChaikinOptions<'b> => t<'b> = "%identity"
+  external asSeriesChaikinOptions: t<'b> => (seriesChaikinOptions<'b>) = "%identity"
   external fromSeriesCmfOptions: seriesCmfOptions<'b> => t<'b> = "%identity"
+  external asSeriesCmfOptions: t<'b> => (seriesCmfOptions<'b>) = "%identity"
   external fromSeriesCmoOptions: seriesCmoOptions<'b> => t<'b> = "%identity"
+  external asSeriesCmoOptions: t<'b> => (seriesCmoOptions<'b>) = "%identity"
   external fromSeriesColumnOptions: seriesColumnOptions<'b> => t<'b> = "%identity"
+  external asSeriesColumnOptions: t<'b> => (seriesColumnOptions<'b>) = "%identity"
   external fromSeriesColumnpyramidOptions: seriesColumnpyramidOptions<'b> => t<'b> = "%identity"
+  external asSeriesColumnpyramidOptions: t<'b> => (seriesColumnpyramidOptions<'b>) = "%identity"
   external fromSeriesColumnrangeOptions: seriesColumnrangeOptions<'b> => t<'b> = "%identity"
+  external asSeriesColumnrangeOptions: t<'b> => (seriesColumnrangeOptions<'b>) = "%identity"
   external fromSeriesContourOptions: seriesContourOptions<'b> => t<'b> = "%identity"
+  external asSeriesContourOptions: t<'b> => (seriesContourOptions<'b>) = "%identity"
   external fromSeriesCylinderOptions: seriesCylinderOptions<'b> => t<'b> = "%identity"
+  external asSeriesCylinderOptions: t<'b> => (seriesCylinderOptions<'b>) = "%identity"
   external fromSeriesDemaOptions: seriesDemaOptions<'b> => t<'b> = "%identity"
+  external asSeriesDemaOptions: t<'b> => (seriesDemaOptions<'b>) = "%identity"
   external fromSeriesDependencywheelOptions: seriesDependencywheelOptions<'b> => t<'b> = "%identity"
+  external asSeriesDependencywheelOptions: t<'b> => (seriesDependencywheelOptions<'b>) = "%identity"
   external fromSeriesDisparityindexOptions: seriesDisparityindexOptions<'b> => t<'b> = "%identity"
+  external asSeriesDisparityindexOptions: t<'b> => (seriesDisparityindexOptions<'b>) = "%identity"
   external fromSeriesDmiOptions: seriesDmiOptions<'b> => t<'b> = "%identity"
+  external asSeriesDmiOptions: t<'b> => (seriesDmiOptions<'b>) = "%identity"
   external fromSeriesDpoOptions: seriesDpoOptions<'b> => t<'b> = "%identity"
+  external asSeriesDpoOptions: t<'b> => (seriesDpoOptions<'b>) = "%identity"
   external fromSeriesDumbbellOptions: seriesDumbbellOptions<'b> => t<'b> = "%identity"
+  external asSeriesDumbbellOptions: t<'b> => (seriesDumbbellOptions<'b>) = "%identity"
   external fromSeriesEmaOptions: seriesEmaOptions<'b> => t<'b> = "%identity"
+  external asSeriesEmaOptions: t<'b> => (seriesEmaOptions<'b>) = "%identity"
   external fromSeriesErrorbarOptions: seriesErrorbarOptions<'b> => t<'b> = "%identity"
+  external asSeriesErrorbarOptions: t<'b> => (seriesErrorbarOptions<'b>) = "%identity"
   external fromSeriesFlagsOptions: seriesFlagsOptions<'b> => t<'b> = "%identity"
+  external asSeriesFlagsOptions: t<'b> => (seriesFlagsOptions<'b>) = "%identity"
   external fromSeriesFlowmapOptions: seriesFlowmapOptions<'b> => t<'b> = "%identity"
+  external asSeriesFlowmapOptions: t<'b> => (seriesFlowmapOptions<'b>) = "%identity"
   external fromSeriesFunnel3dOptions: seriesFunnel3dOptions<'b> => t<'b> = "%identity"
+  external asSeriesFunnel3dOptions: t<'b> => (seriesFunnel3dOptions<'b>) = "%identity"
   external fromSeriesFunnelOptions: seriesFunnelOptions<'b> => t<'b> = "%identity"
+  external asSeriesFunnelOptions: t<'b> => (seriesFunnelOptions<'b>) = "%identity"
   external fromSeriesGanttOptions: seriesGanttOptions<'b> => t<'b> = "%identity"
+  external asSeriesGanttOptions: t<'b> => (seriesGanttOptions<'b>) = "%identity"
   external fromSeriesGaugeOptions: seriesGaugeOptions<'b> => t<'b> = "%identity"
+  external asSeriesGaugeOptions: t<'b> => (seriesGaugeOptions<'b>) = "%identity"
   external fromSeriesGeoheatmapOptions: seriesGeoheatmapOptions<'b> => t<'b> = "%identity"
+  external asSeriesGeoheatmapOptions: t<'b> => (seriesGeoheatmapOptions<'b>) = "%identity"
   external fromSeriesHeatmapOptions: seriesHeatmapOptions<'b> => t<'b> = "%identity"
+  external asSeriesHeatmapOptions: t<'b> => (seriesHeatmapOptions<'b>) = "%identity"
   external fromSeriesHeikinashiOptions: seriesHeikinashiOptions<'b> => t<'b> = "%identity"
+  external asSeriesHeikinashiOptions: t<'b> => (seriesHeikinashiOptions<'b>) = "%identity"
   external fromSeriesHistogramOptions: seriesHistogramOptions<'b> => t<'b> = "%identity"
+  external asSeriesHistogramOptions: t<'b> => (seriesHistogramOptions<'b>) = "%identity"
   external fromSeriesHlcOptions: seriesHlcOptions<'b> => t<'b> = "%identity"
+  external asSeriesHlcOptions: t<'b> => (seriesHlcOptions<'b>) = "%identity"
   external fromSeriesHollowcandlestickOptions: seriesHollowcandlestickOptions<'b> => t<'b> = "%identity"
+  external asSeriesHollowcandlestickOptions: t<'b> => (seriesHollowcandlestickOptions<'b>) = "%identity"
   external fromSeriesIkhOptions: seriesIkhOptions<'b> => t<'b> = "%identity"
+  external asSeriesIkhOptions: t<'b> => (seriesIkhOptions<'b>) = "%identity"
   external fromSeriesItemOptions: seriesItemOptions<'b> => t<'b> = "%identity"
+  external asSeriesItemOptions: t<'b> => (seriesItemOptions<'b>) = "%identity"
   external fromSeriesKeltnerchannelsOptions: seriesKeltnerchannelsOptions<'b> => t<'b> = "%identity"
+  external asSeriesKeltnerchannelsOptions: t<'b> => (seriesKeltnerchannelsOptions<'b>) = "%identity"
   external fromSeriesKlingerOptions: seriesKlingerOptions<'b> => t<'b> = "%identity"
+  external asSeriesKlingerOptions: t<'b> => (seriesKlingerOptions<'b>) = "%identity"
   external fromSeriesLinearregressionangleOptions: seriesLinearregressionangleOptions<'b> => t<'b> = "%identity"
+  external asSeriesLinearregressionangleOptions: t<'b> => (seriesLinearregressionangleOptions<'b>) = "%identity"
   external fromSeriesLinearregressioninterceptOptions: seriesLinearregressioninterceptOptions<'b> => t<'b> = "%identity"
+  external asSeriesLinearregressioninterceptOptions: t<'b> => (seriesLinearregressioninterceptOptions<'b>) = "%identity"
   external fromSeriesLinearregressionOptions: seriesLinearregressionOptions<'b> => t<'b> = "%identity"
+  external asSeriesLinearregressionOptions: t<'b> => (seriesLinearregressionOptions<'b>) = "%identity"
   external fromSeriesLinearregressionslopeOptions: seriesLinearregressionslopeOptions<'b> => t<'b> = "%identity"
+  external asSeriesLinearregressionslopeOptions: t<'b> => (seriesLinearregressionslopeOptions<'b>) = "%identity"
   external fromSeriesLineOptions: seriesLineOptions<'b> => t<'b> = "%identity"
+  external asSeriesLineOptions: t<'b> => (seriesLineOptions<'b>) = "%identity"
   external fromSeriesLollipopOptions: seriesLollipopOptions<'b> => t<'b> = "%identity"
+  external asSeriesLollipopOptions: t<'b> => (seriesLollipopOptions<'b>) = "%identity"
   external fromSeriesMacdOptions: seriesMacdOptions<'b> => t<'b> = "%identity"
+  external asSeriesMacdOptions: t<'b> => (seriesMacdOptions<'b>) = "%identity"
   external fromSeriesMapbubbleOptions: seriesMapbubbleOptions<'b> => t<'b> = "%identity"
+  external asSeriesMapbubbleOptions: t<'b> => (seriesMapbubbleOptions<'b>) = "%identity"
   external fromSeriesMaplineOptions: seriesMaplineOptions<'b> => t<'b> = "%identity"
+  external asSeriesMaplineOptions: t<'b> => (seriesMaplineOptions<'b>) = "%identity"
   external fromSeriesMapOptions: seriesMapOptions<'b> => t<'b> = "%identity"
+  external asSeriesMapOptions: t<'b> => (seriesMapOptions<'b>) = "%identity"
   external fromSeriesMappointOptions: seriesMappointOptions<'b> => t<'b> = "%identity"
+  external asSeriesMappointOptions: t<'b> => (seriesMappointOptions<'b>) = "%identity"
   external fromSeriesMfiOptions: seriesMfiOptions<'b> => t<'b> = "%identity"
+  external asSeriesMfiOptions: t<'b> => (seriesMfiOptions<'b>) = "%identity"
   external fromSeriesMomentumOptions: seriesMomentumOptions<'b> => t<'b> = "%identity"
+  external asSeriesMomentumOptions: t<'b> => (seriesMomentumOptions<'b>) = "%identity"
   external fromSeriesNatrOptions: seriesNatrOptions<'b> => t<'b> = "%identity"
+  external asSeriesNatrOptions: t<'b> => (seriesNatrOptions<'b>) = "%identity"
   external fromSeriesNetworkgraphOptions: seriesNetworkgraphOptions<'b> => t<'b> = "%identity"
+  external asSeriesNetworkgraphOptions: t<'b> => (seriesNetworkgraphOptions<'b>) = "%identity"
   external fromSeriesObvOptions: seriesObvOptions<'b> => t<'b> = "%identity"
+  external asSeriesObvOptions: t<'b> => (seriesObvOptions<'b>) = "%identity"
   external fromSeriesOhlcOptions: seriesOhlcOptions<'b> => t<'b> = "%identity"
+  external asSeriesOhlcOptions: t<'b> => (seriesOhlcOptions<'b>) = "%identity"
   external fromSeriesOrganizationOptions: seriesOrganizationOptions<'b> => t<'b> = "%identity"
+  external asSeriesOrganizationOptions: t<'b> => (seriesOrganizationOptions<'b>) = "%identity"
   external fromSeriesPackedbubbleOptions: seriesPackedbubbleOptions<'b> => t<'b> = "%identity"
+  external asSeriesPackedbubbleOptions: t<'b> => (seriesPackedbubbleOptions<'b>) = "%identity"
   external fromSeriesParetoOptions: seriesParetoOptions<'b> => t<'b> = "%identity"
+  external asSeriesParetoOptions: t<'b> => (seriesParetoOptions<'b>) = "%identity"
   external fromSeriesPcOptions: seriesPcOptions<'b> => t<'b> = "%identity"
+  external asSeriesPcOptions: t<'b> => (seriesPcOptions<'b>) = "%identity"
   external fromSeriesPictorialOptions: seriesPictorialOptions<'b> => t<'b> = "%identity"
+  external asSeriesPictorialOptions: t<'b> => (seriesPictorialOptions<'b>) = "%identity"
   external fromSeriesPieOptions: seriesPieOptions<'b> => t<'b> = "%identity"
+  external asSeriesPieOptions: t<'b> => (seriesPieOptions<'b>) = "%identity"
   external fromSeriesPivotpointsOptions: seriesPivotpointsOptions<'b> => t<'b> = "%identity"
+  external asSeriesPivotpointsOptions: t<'b> => (seriesPivotpointsOptions<'b>) = "%identity"
   external fromSeriesPointandfigureOptions: seriesPointandfigureOptions<'b> => t<'b> = "%identity"
+  external asSeriesPointandfigureOptions: t<'b> => (seriesPointandfigureOptions<'b>) = "%identity"
   external fromSeriesPolygonOptions: seriesPolygonOptions<'b> => t<'b> = "%identity"
+  external asSeriesPolygonOptions: t<'b> => (seriesPolygonOptions<'b>) = "%identity"
   external fromSeriesPpoOptions: seriesPpoOptions<'b> => t<'b> = "%identity"
+  external asSeriesPpoOptions: t<'b> => (seriesPpoOptions<'b>) = "%identity"
   external fromSeriesPriceenvelopesOptions: seriesPriceenvelopesOptions<'b> => t<'b> = "%identity"
+  external asSeriesPriceenvelopesOptions: t<'b> => (seriesPriceenvelopesOptions<'b>) = "%identity"
   external fromSeriesPsarOptions: seriesPsarOptions<'b> => t<'b> = "%identity"
+  external asSeriesPsarOptions: t<'b> => (seriesPsarOptions<'b>) = "%identity"
   external fromSeriesPyramid3dOptions: seriesPyramid3dOptions<'b> => t<'b> = "%identity"
+  external asSeriesPyramid3dOptions: t<'b> => (seriesPyramid3dOptions<'b>) = "%identity"
   external fromSeriesPyramidOptions: seriesPyramidOptions<'b> => t<'b> = "%identity"
+  external asSeriesPyramidOptions: t<'b> => (seriesPyramidOptions<'b>) = "%identity"
   external fromSeriesRenkoOptions: seriesRenkoOptions<'b> => t<'b> = "%identity"
+  external asSeriesRenkoOptions: t<'b> => (seriesRenkoOptions<'b>) = "%identity"
   external fromSeriesRocOptions: seriesRocOptions<'b> => t<'b> = "%identity"
+  external asSeriesRocOptions: t<'b> => (seriesRocOptions<'b>) = "%identity"
   external fromSeriesRsiOptions: seriesRsiOptions<'b> => t<'b> = "%identity"
+  external asSeriesRsiOptions: t<'b> => (seriesRsiOptions<'b>) = "%identity"
   external fromSeriesSankeyOptions: seriesSankeyOptions<'b> => t<'b> = "%identity"
+  external asSeriesSankeyOptions: t<'b> => (seriesSankeyOptions<'b>) = "%identity"
   external fromSeriesScatter3dOptions: seriesScatter3dOptions<'b> => t<'b> = "%identity"
+  external asSeriesScatter3dOptions: t<'b> => (seriesScatter3dOptions<'b>) = "%identity"
   external fromSeriesScatterOptions: seriesScatterOptions<'b> => t<'b> = "%identity"
+  external asSeriesScatterOptions: t<'b> => (seriesScatterOptions<'b>) = "%identity"
   external fromSeriesSlowstochasticOptions: seriesSlowstochasticOptions<'b> => t<'b> = "%identity"
+  external asSeriesSlowstochasticOptions: t<'b> => (seriesSlowstochasticOptions<'b>) = "%identity"
   external fromSeriesSmaOptions: seriesSmaOptions<'b> => t<'b> = "%identity"
+  external asSeriesSmaOptions: t<'b> => (seriesSmaOptions<'b>) = "%identity"
   external fromSeriesSolidgaugeOptions: seriesSolidgaugeOptions<'b> => t<'b> = "%identity"
+  external asSeriesSolidgaugeOptions: t<'b> => (seriesSolidgaugeOptions<'b>) = "%identity"
   external fromSeriesSplineOptions: seriesSplineOptions<'b> => t<'b> = "%identity"
+  external asSeriesSplineOptions: t<'b> => (seriesSplineOptions<'b>) = "%identity"
   external fromSeriesStochasticOptions: seriesStochasticOptions<'b> => t<'b> = "%identity"
+  external asSeriesStochasticOptions: t<'b> => (seriesStochasticOptions<'b>) = "%identity"
   external fromSeriesStreamgraphOptions: seriesStreamgraphOptions<'b> => t<'b> = "%identity"
+  external asSeriesStreamgraphOptions: t<'b> => (seriesStreamgraphOptions<'b>) = "%identity"
   external fromSeriesSunburstOptions: seriesSunburstOptions<'b> => t<'b> = "%identity"
+  external asSeriesSunburstOptions: t<'b> => (seriesSunburstOptions<'b>) = "%identity"
   external fromSeriesSupertrendOptions: seriesSupertrendOptions<'b> => t<'b> = "%identity"
+  external asSeriesSupertrendOptions: t<'b> => (seriesSupertrendOptions<'b>) = "%identity"
   external fromSeriesTemaOptions: seriesTemaOptions<'b> => t<'b> = "%identity"
-  external fromSeriesTiledwebmapOptions: seriesTiledwebmapOptions => t<'b> = "%identity"
+  external asSeriesTemaOptions: t<'b> => (seriesTemaOptions<'b>) = "%identity"
+  external fromSeriesTiledwebmapOptions: seriesTiledwebmapOptions<'b> => t<'b> = "%identity"
+  external asSeriesTiledwebmapOptions: t<'b> => (seriesTiledwebmapOptions<'b>) = "%identity"
   external fromSeriesTilemapOptions: seriesTilemapOptions<'b> => t<'b> = "%identity"
+  external asSeriesTilemapOptions: t<'b> => (seriesTilemapOptions<'b>) = "%identity"
   external fromSeriesTimelineOptions: seriesTimelineOptions<'b> => t<'b> = "%identity"
+  external asSeriesTimelineOptions: t<'b> => (seriesTimelineOptions<'b>) = "%identity"
   external fromSeriesTreegraphOptions: seriesTreegraphOptions<'b> => t<'b> = "%identity"
+  external asSeriesTreegraphOptions: t<'b> => (seriesTreegraphOptions<'b>) = "%identity"
   external fromSeriesTreemapOptions: seriesTreemapOptions<'b> => t<'b> = "%identity"
+  external asSeriesTreemapOptions: t<'b> => (seriesTreemapOptions<'b>) = "%identity"
   external fromSeriesTrendlineOptions: seriesTrendlineOptions<'b> => t<'b> = "%identity"
+  external asSeriesTrendlineOptions: t<'b> => (seriesTrendlineOptions<'b>) = "%identity"
   external fromSeriesTrixOptions: seriesTrixOptions<'b> => t<'b> = "%identity"
+  external asSeriesTrixOptions: t<'b> => (seriesTrixOptions<'b>) = "%identity"
   external fromSeriesVariablepieOptions: seriesVariablepieOptions<'b> => t<'b> = "%identity"
+  external asSeriesVariablepieOptions: t<'b> => (seriesVariablepieOptions<'b>) = "%identity"
   external fromSeriesVariwideOptions: seriesVariwideOptions<'b> => t<'b> = "%identity"
+  external asSeriesVariwideOptions: t<'b> => (seriesVariwideOptions<'b>) = "%identity"
   external fromSeriesVbpOptions: seriesVbpOptions<'b> => t<'b> = "%identity"
+  external asSeriesVbpOptions: t<'b> => (seriesVbpOptions<'b>) = "%identity"
   external fromSeriesVectorOptions: seriesVectorOptions<'b> => t<'b> = "%identity"
+  external asSeriesVectorOptions: t<'b> => (seriesVectorOptions<'b>) = "%identity"
   external fromSeriesVennOptions: seriesVennOptions<'b> => t<'b> = "%identity"
+  external asSeriesVennOptions: t<'b> => (seriesVennOptions<'b>) = "%identity"
   external fromSeriesVwapOptions: seriesVwapOptions<'b> => t<'b> = "%identity"
+  external asSeriesVwapOptions: t<'b> => (seriesVwapOptions<'b>) = "%identity"
   external fromSeriesWaterfallOptions: seriesWaterfallOptions<'b> => t<'b> = "%identity"
+  external asSeriesWaterfallOptions: t<'b> => (seriesWaterfallOptions<'b>) = "%identity"
   external fromSeriesWilliamsrOptions: seriesWilliamsrOptions<'b> => t<'b> = "%identity"
+  external asSeriesWilliamsrOptions: t<'b> => (seriesWilliamsrOptions<'b>) = "%identity"
   external fromSeriesWindbarbOptions: seriesWindbarbOptions<'b> => t<'b> = "%identity"
+  external asSeriesWindbarbOptions: t<'b> => (seriesWindbarbOptions<'b>) = "%identity"
   external fromSeriesWmaOptions: seriesWmaOptions<'b> => t<'b> = "%identity"
+  external asSeriesWmaOptions: t<'b> => (seriesWmaOptions<'b>) = "%identity"
   external fromSeriesWordcloudOptions: seriesWordcloudOptions<'b> => t<'b> = "%identity"
+  external asSeriesWordcloudOptions: t<'b> => (seriesWordcloudOptions<'b>) = "%identity"
   external fromSeriesXrangeOptions: seriesXrangeOptions<'b> => t<'b> = "%identity"
+  external asSeriesXrangeOptions: t<'b> => (seriesXrangeOptions<'b>) = "%identity"
   external fromSeriesZigzagOptions: seriesZigzagOptions<'b> => t<'b> = "%identity"
+  external asSeriesZigzagOptions: t<'b> => (seriesZigzagOptions<'b>) = "%identity"
 }
 module PointTarget = {
   type t = pointTarget_t
   external fromPoint: point<'b> => t = "%identity"
+  external asPoint: t => (point<'b>) = "%identity"
   external fromAnnotationMockPointOptionsObject: annotationMockPointOptionsObject => t = "%identity"
+  external asAnnotationMockPointOptionsObject: t => (annotationMockPointOptionsObject) = "%identity"
+}
+module ChartsLegendItemClickEventObjectLegendItem = {
+  type t = chartsLegendItemClickEventObjectLegendItem_t
+  external fromSeries: series<'b> => t = "%identity"
+  external asSeries: t => (series<'b>) = "%identity"
+  external fromPoint: point<'b> => t = "%identity"
+  external asPoint: t => (point<'b>) = "%identity"
+  external fromLegendItemObject: legendItemObject => t = "%identity"
+  external asLegendItemObject: t => (legendItemObject) = "%identity"
+}
+module ChartsLegendAllItems = {
+  type t = chartsLegendAllItems_t
+  external fromSeries: series<'b> => t = "%identity"
+  external asSeries: t => (series<'b>) = "%identity"
+  external fromPoint: point<'b> => t = "%identity"
+  external asPoint: t => (point<'b>) = "%identity"
 }
 type dragDropGuideBoxOptionsObject = {
   className?: string,
@@ -30361,7 +32193,9 @@ type defsReverseArrowOptions = {
 module ChartsDefsOptionsReverseArrow = {
   type t
   external fromASTNode: astNode => t = "%identity"
+  external asASTNode: t => (astNode) = "%identity"
   external fromDefsReverseArrowOptions: defsReverseArrowOptions => t = "%identity"
+  external asDefsReverseArrowOptions: t => (defsReverseArrowOptions) = "%identity"
 }
 type chartsDefsOptionsArrow_t
 type rec defsArrowOptions = {
@@ -30376,7 +32210,9 @@ and defsOptions = {
 module ChartsDefsOptionsArrow = {
   type t = chartsDefsOptionsArrow_t
   external fromASTNode: astNode => t = "%identity"
+  external asASTNode: t => (astNode) = "%identity"
   external fromDefsArrowOptions: defsArrowOptions => t = "%identity"
+  external asDefsArrowOptions: t => (defsArrowOptions) = "%identity"
 }
 type exportingMenuItemDefinitionsDownloadCSVOptions = {
   textKey?: string,
@@ -30417,5 +32253,7 @@ type mapViewInsetsOptions = {
 module ChartV2LegendItem = {
   type t
   external fromSeries: series<'b> => t = "%identity"
+  external asSeries: t => (series<'b>) = "%identity"
   external fromPoint: point<'b> => t = "%identity"
+  external asPoint: t => (point<'b>) = "%identity"
 }

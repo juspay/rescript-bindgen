@@ -9,5 +9,7 @@ type dropdown = {
 module ShapeCollapseDropdown = {
   type t
   external fromDropdown: dropdown => t = "%identity"
+  external asDropdown: t => (dropdown) = "%identity"
   external fromDropdowns: array<dropdown> => t = "%identity"
+  external asDropdowns: t => (array<dropdown>) = "%identity"
 }

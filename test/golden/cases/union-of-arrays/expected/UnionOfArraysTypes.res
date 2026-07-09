@@ -20,12 +20,18 @@ type rangeDefinition = {
 module PresetsConfig = {
   type t
   external fromPreset: preset => t = "%identity"
+  external asPreset: t => (preset) = "%identity"
   external fromRangeConfig: rangeConfig => t = "%identity"
+  external asRangeConfig: t => (rangeConfig) = "%identity"
   external fromRangeDefinition: rangeDefinition => t = "%identity"
+  external asRangeDefinition: t => (rangeDefinition) = "%identity"
 }
 module PresetsConfigSingle = {
   type t
   external fromPreset: preset => t = "%identity"
+  external asPreset: t => (preset) = "%identity"
   external fromRangeConfig: rangeConfig => t = "%identity"
+  external asRangeConfig: t => (rangeConfig) = "%identity"
   external fromRangeDefinition: rangeDefinition => t = "%identity"
+  external asRangeDefinition: t => (rangeDefinition) = "%identity"
 }

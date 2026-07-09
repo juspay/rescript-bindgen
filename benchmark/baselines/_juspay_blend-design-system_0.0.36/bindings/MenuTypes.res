@@ -132,7 +132,9 @@ type responsiveMenuTokensType = {
 module MenuCollisonBoundaryRef = {
   type t
   external fromElement: Dom.element => t = "%identity"
+  external asElement: t => (Dom.element) = "%identity"
   external fromElements: array<Dom.element> => t = "%identity"
+  external asElements: t => (array<Dom.element>) = "%identity"
 }
 type menuOverflowMenuPropsConfig = {
   trigger?: React.element,

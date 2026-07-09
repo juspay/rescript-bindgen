@@ -72,6 +72,7 @@ module ValidateTarget = {
   external fromString: string => t = "%identity"
   external fromArray: array<string> => t = "%identity"
   external fromPromise: promise<stringOrStringArray> => t = "%identity"
+  external asPromise: t => (promise<stringOrStringArray>) = "%identity"
   external fromUnit: unit => t = "%identity"
   let none: t = fromUnit()
 }

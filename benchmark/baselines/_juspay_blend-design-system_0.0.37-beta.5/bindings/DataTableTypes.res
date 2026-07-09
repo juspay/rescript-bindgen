@@ -724,6 +724,7 @@ type dataTablePivotTableConfigPreviewColumnsConfig = {
 type dataTablePivotTableConfigPreviewRowsConfig = {
   __pivotId: string,
 }
+@set_index external dataTablePivotTableConfigPreviewRowsConfigSet: (dataTablePivotTableConfigPreviewRowsConfig, string, JSON.t) => unit = ""
 type dataTablePivotTableConfigOnConfigChangeConfig = {
   rows: array<string>,
   columns: array<string>,
@@ -770,29 +771,50 @@ type pivotPreviewRow = {
   __pivotId: string,
   __pivotRowType?: dataTablePivotPreviewRowPivotRowType,
 }
+@set_index external pivotPreviewRowSet: (pivotPreviewRow, string, JSON.t) => unit = ""
 module ColumnDefinition = {
   type t
   external fromDataTableColumnsTextConfig: dataTableColumnsTextConfig<'a> => t = "%identity"
+  external asDataTableColumnsTextConfig: t => (dataTableColumnsTextConfig<'a>) = "%identity"
   external fromDataTableColumnsNumberConfig: dataTableColumnsNumberConfig<'a> => t = "%identity"
+  external asDataTableColumnsNumberConfig: t => (dataTableColumnsNumberConfig<'a>) = "%identity"
   external fromDataTableColumnsAvatarConfig: dataTableColumnsAvatarConfig<'a> => t = "%identity"
+  external asDataTableColumnsAvatarConfig: t => (dataTableColumnsAvatarConfig<'a>) = "%identity"
   external fromDataTableColumnsTagConfig: dataTableColumnsTagConfig<'a> => t = "%identity"
+  external asDataTableColumnsTagConfig: t => (dataTableColumnsTagConfig<'a>) = "%identity"
   external fromDataTableColumnsProgressConfig: dataTableColumnsProgressConfig<'a> => t = "%identity"
+  external asDataTableColumnsProgressConfig: t => (dataTableColumnsProgressConfig<'a>) = "%identity"
   external fromDataTableColumnsDropdownConfig: dataTableColumnsDropdownConfig<'a> => t = "%identity"
+  external asDataTableColumnsDropdownConfig: t => (dataTableColumnsDropdownConfig<'a>) = "%identity"
   external fromDataTableColumnsDateConfig: dataTableColumnsDateConfig<'a> => t = "%identity"
+  external asDataTableColumnsDateConfig: t => (dataTableColumnsDateConfig<'a>) = "%identity"
   external fromDataTableColumnsSliderConfig: dataTableColumnsSliderConfig<'a> => t = "%identity"
+  external asDataTableColumnsSliderConfig: t => (dataTableColumnsSliderConfig<'a>) = "%identity"
   external fromDataTableColumnsReactElementConfig: dataTableColumnsReactElementConfig<'a> => t = "%identity"
+  external asDataTableColumnsReactElementConfig: t => (dataTableColumnsReactElementConfig<'a>) = "%identity"
   external fromDataTableColumnsFilterTypeConfig: dataTableColumnsFilterTypeConfig<'a> => t = "%identity"
+  external asDataTableColumnsFilterTypeConfig: t => (dataTableColumnsFilterTypeConfig<'a>) = "%identity"
 }
 module ColumnDefinition2 = {
   type t
   external fromDataTableColumnsTextConfig: dataTableColumnsTextConfig<'a> => t = "%identity"
+  external asDataTableColumnsTextConfig: t => (dataTableColumnsTextConfig<'a>) = "%identity"
   external fromDataTableColumnsNumberConfig: dataTableColumnsNumberConfig<'a> => t = "%identity"
+  external asDataTableColumnsNumberConfig: t => (dataTableColumnsNumberConfig<'a>) = "%identity"
   external fromDataTableColumnsAvatarConfig: dataTableColumnsAvatarConfig<'a> => t = "%identity"
+  external asDataTableColumnsAvatarConfig: t => (dataTableColumnsAvatarConfig<'a>) = "%identity"
   external fromDataTableColumnsTagConfig: dataTableColumnsTagConfig<'a> => t = "%identity"
+  external asDataTableColumnsTagConfig: t => (dataTableColumnsTagConfig<'a>) = "%identity"
   external fromDataTableColumnsProgressConfig: dataTableColumnsProgressConfig<'a> => t = "%identity"
+  external asDataTableColumnsProgressConfig: t => (dataTableColumnsProgressConfig<'a>) = "%identity"
   external fromDataTableColumnsDropdownConfig: dataTableColumnsDropdownConfig<'a> => t = "%identity"
+  external asDataTableColumnsDropdownConfig: t => (dataTableColumnsDropdownConfig<'a>) = "%identity"
   external fromDataTableColumnsDateConfig: dataTableColumnsDateConfig<'a> => t = "%identity"
+  external asDataTableColumnsDateConfig: t => (dataTableColumnsDateConfig<'a>) = "%identity"
   external fromDataTableColumnsSliderConfig: dataTableColumnsSliderConfig<'a> => t = "%identity"
+  external asDataTableColumnsSliderConfig: t => (dataTableColumnsSliderConfig<'a>) = "%identity"
   external fromDataTableColumnsReactElementConfig: dataTableColumnsReactElementConfig<'a> => t = "%identity"
+  external asDataTableColumnsReactElementConfig: t => (dataTableColumnsReactElementConfig<'a>) = "%identity"
   external fromDataTableColumnsFilterTypeConfig: dataTableColumnsFilterTypeConfig<'a> => t = "%identity"
+  external asDataTableColumnsFilterTypeConfig: t => (dataTableColumnsFilterTypeConfig<'a>) = "%identity"
 }

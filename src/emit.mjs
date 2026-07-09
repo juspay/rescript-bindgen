@@ -771,6 +771,16 @@ function renderOpaque(t, lines, cfg, tAlias) {
         // instead of one tuple arg — `((cmd, float, float)) => t`.
         const arg = (m.type.kind === 'callback' || m.type.kind === 'tuple') ? `(${rendered})` : rendered
         lines.push(`  external ${fn}: ${arg} => ${rt} = "%identity"`)
+        // #122: the INVERSE zero-cost READER — read a constructed arm back out of the opaque union,
+        // so consumers can inspect/transform an existing value (e.g. `options.series`), not only
+        // build one. Symmetric to `from<X>` and equally leak-free at the binding layer (the value
+        // passes through unchanged). The caller discriminates on the union's runtime tag for
+        // arm-SPECIFIC fields; fields common to every arm (`name`, `data`) are always safe to read.
+        // An allowed `as*` opaque-module accessor (CLAUDE.md). Emitted only for STRUCTURED arms
+        // (record/callback/tuple/named) — literal/tag/unit arms above are their own runtime value.
+        if (m.type.kind === 'typeRef' || m.type.kind === 'callback' || m.type.kind === 'tuple' || m.type.kind === 'record' || m.name) {
+            lines.push(`  external as${fn.slice(4)}: ${rt} => (${rendered}) = "%identity"`)
+        }
     }
     lines.push(`}`)
 }
@@ -799,6 +809,16 @@ function renderRecordGroup(records, lines, cfg, isRec) {
         }
         lines.push('}')
     })
+    // #119: a record that carried a TS string index signature keeps its named fields typed AND
+    // preserves the index sig via a `@set_index` setter — `obj->fooSet("zIndex", v)` writes a FLAT
+    // key (`obj["zIndex"] = v`), so un-named keys are reachable without an unsafe cast. Emitted after
+    // the group (an `external` can't live between `and` clauses of a `type rec`).
+    for (const r of records || []) {
+        if (!r.indexValue) continue
+        const tp = r.tparams && r.tparams.length ? `<${r.tparams.join(', ')}>` : ''
+        const vt = renderType(r.indexValue, 'value', cfg)
+        lines.push(`@set_index external ${r.name}Set: (${r.name}${tp}, string, ${vt}) => unit = ""`)
+    }
 }
 
 /** The trailing flag comment for a degraded record FIELD (mirrors propLine's buckets), or ''. */

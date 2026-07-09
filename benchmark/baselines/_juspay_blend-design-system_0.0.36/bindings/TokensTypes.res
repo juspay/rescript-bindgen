@@ -9,6 +9,7 @@ type tokensFoundationTokenTypeShadowsConfig = {
   focusPrimary: string,
   focusError: string,
 }
+@set_index external tokensFoundationTokenTypeShadowsConfigSet: (tokensFoundationTokenTypeShadowsConfig, string, string) => unit = ""
 type tokensFoundationTokenTypeBorderWidthConfig = {
   @as("0") _0: string,
   @as("1") _1: string,
@@ -17,6 +18,7 @@ type tokensFoundationTokenTypeBorderWidthConfig = {
   @as("3") _3: string,
   @as("4") _4: string,
 }
+@set_index external tokensFoundationTokenTypeBorderWidthConfigSet: (tokensFoundationTokenTypeBorderWidthConfig, string, string) => unit = ""
 type tokensFoundationTokenTypeBorderRadiusConfig = {
   @as("0") _0: string,
   @as("2") _2: string,
@@ -29,6 +31,7 @@ type tokensFoundationTokenTypeBorderRadiusConfig = {
   @as("20") _20: string,
   full: string,
 }
+@set_index external tokensFoundationTokenTypeBorderRadiusConfigSet: (tokensFoundationTokenTypeBorderRadiusConfig, string, string) => unit = ""
 type tokensFoundationTokenTypeBorderConfig = {
   width: tokensFoundationTokenTypeBorderWidthConfig,
   radius: tokensFoundationTokenTypeBorderRadiusConfig,
@@ -170,6 +173,7 @@ type tokensFoundationTokenTypeOpacityConfig = {
   @as("90") _90: string,
   @as("100") _100: string,
 }
+@set_index external tokensFoundationTokenTypeOpacityConfigSet: (tokensFoundationTokenTypeOpacityConfig, string, string) => unit = ""
 type tokensFoundationTokenTypeUnitConfig = {
   @as("0") _0: string,  // ⚪ loose — was `UnitType`
   @as("0.5") _0_5: string,  // ⚪ loose — was `UnitType`
@@ -207,6 +211,7 @@ type tokensFoundationTokenTypeUnitConfig = {
   @as("144") _144: string,  // ⚪ loose — was `UnitType`
   auto: string,  // ⚪ loose — was `UnitType`
 }
+@set_index external tokensFoundationTokenTypeUnitConfigSet: (tokensFoundationTokenTypeUnitConfig, string, JSON.t) => unit = ""
 type colorTokensType = {
   gray: Dict.t<string>,
   primary: Dict.t<string>,
@@ -216,6 +221,7 @@ type colorTokensType = {
   green: Dict.t<string>,
   yellow: Dict.t<string>,
 }
+@set_index external colorTokensTypeSet: (colorTokensType, string, Dict.t<string>) => unit = ""
 type tokensFoundationTokenTypeZIndexConfig = {
   @as("0") _0: string,
   @as("9999") _9999: string,
@@ -223,6 +229,7 @@ type tokensFoundationTokenTypeZIndexConfig = {
   @as("1100") _1100: string,
   @as("1200") _1200: string,
 }
+@set_index external tokensFoundationTokenTypeZIndexConfigSet: (tokensFoundationTokenTypeZIndexConfig, string, string) => unit = ""
 type foundationTokenType = {
   shadows: tokensFoundationTokenTypeShadowsConfig,
   border: tokensFoundationTokenTypeBorderConfig,

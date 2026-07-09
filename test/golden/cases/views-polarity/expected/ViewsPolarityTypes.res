@@ -11,13 +11,18 @@ module ViewsPolarityMode = {
   external fromLazy: [#"lazy"] => t = "%identity"
   let lazy_: t = fromLazy(#"lazy")
   external fromVirtualBox: virtualBox => t = "%identity"
+  external asVirtualBox: t => (virtualBox) = "%identity"
   external fromPlainSpot: plainSpot => t = "%identity"
+  external asPlainSpot: t => (plainSpot) = "%identity"
 }
 module ResolveTarget = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromVirtualBox: virtualBox => t = "%identity"
+  external asVirtualBox: t => (virtualBox) = "%identity"
   external fromPlainSpot: plainSpot => t = "%identity"
+  external asPlainSpot: t => (plainSpot) = "%identity"
   external fromUnit: unit => t = "%identity"
   let none: t = fromUnit()
 }
