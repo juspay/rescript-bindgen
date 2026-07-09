@@ -8,6 +8,10 @@
 //                       (SCREAMING_SNAKE id → camelCase, original JS name in the `= "…"`)
 //   - defaultConfig  a lowercase const with a named interface type -> `external defaultConfig: settings`
 //   - VERSION        a primitive const -> `external version: string = "VERSION"`
+//   - literal consts (`DEFAULT_AVATAR_ALT = "Avatar"`, `MAX_INITIALS_LENGTH = 2`) widen
+//                    to their runtime primitive type instead of being skipped (#108)
+//   - readonly literal tuples used as const values become arrays (`array<string>`) (#108)
+//   - literal fields inside const records widen too (`{ modal: 1000 }` -> `modal: float`)
 //   - opaqueValue    typed by an unresolvable vendor type -> stays SKIPPED (flag-don't-fake:
 //                    an unmodellable value never becomes a bogus binding)
 //   - a DEFAULT-export const (`export default LIMITS`) -> binds via `= "default"` with the
@@ -29,6 +33,29 @@ export declare const THEME_TOKENS: {
 export declare const defaultConfig: Settings
 
 export declare const VERSION: string
+
+export declare const DEFAULT_AVATAR_ALT = "Avatar"
+
+export declare const MAX_INITIALS_LENGTH = 2
+
+export declare const SELECT_V2_MENU_Z_INDEX = 101
+
+export declare const IS_READY = true
+
+export declare const MENU_SCROLL_SELECTORS: readonly ["[role=option]", "[data-active]"]
+
+export declare const DEFAULT_RANGE: readonly [0, 100]
+
+export declare const Z_INDEX: {
+  modal: 1000
+  popover: 900
+}
+
+export declare const CONST_LABELS: {
+  small: "sm"
+  large: "lg"
+  enabled: true
+}
 
 // vendor type that can't be modelled — the whole value stays skipped, never `external x: string`
 export declare const opaqueValue: import('some-untyped-vendor').VendorThing
