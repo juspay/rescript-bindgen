@@ -528,6 +528,16 @@ When a union can't be an `@unboxed` variant — **multiple object shapes**, or *
 (abstract members that `typeof`/`Array.isArray` can't split into a recognized variant shape) — it
 becomes an opaque-type module: an abstract `t` plus zero-cost `%identity` `from*` constructors.
 
+**Every structured arm also gets its inverse `as*` READER (#122).** A module that only had `from*`
+writers was write-only — you could put a `seriesLineOptions` into `options.series` but never read one
+back (`chartsOptionsSeries_t` is abstract), blocking consumers that inspect/transform existing options
+(the portal's `mapOutages` reads `.name`/`.data` off each series). So each record/callback/tuple/named
+arm now emits a symmetric `external as<X>: t => armType = "%identity"` alongside its `from<X>`. It's the
+zero-cost reverse view (value passes through unchanged), an **allowed `as*` form**; the caller
+discriminates on the union's runtime tag for arm-SPECIFIC fields, while fields common to every arm are
+always safe. Literal/tag/`unit` arms get no reader (the value IS its own runtime tag). Symmetric with
+the overloaded-function module, which was already reader-based.
+
 Three member forms beyond plain `from*` constructors (#39):
 
 | Union member | Module arm |

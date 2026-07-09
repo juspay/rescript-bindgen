@@ -206,9 +206,12 @@ module RootFilteredItems = {
   type t
   external fromTypeVar: 'e => t = "%identity"
   external fromGroup: group<'f> => t = "%identity"
+  external asGroup: t => (group<'f>) = "%identity"
 }
 module CollisionAvoidance = {
   type t
   external fromSideFlipMode: sideFlipMode => t = "%identity"
+  external asSideFlipMode: t => (sideFlipMode) = "%identity"
   external fromSideShiftMode: sideShiftMode => t = "%identity"
+  external asSideShiftMode: t => (sideShiftMode) = "%identity"
 }

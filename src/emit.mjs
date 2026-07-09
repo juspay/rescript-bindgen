@@ -771,6 +771,16 @@ function renderOpaque(t, lines, cfg, tAlias) {
         // instead of one tuple arg — `((cmd, float, float)) => t`.
         const arg = (m.type.kind === 'callback' || m.type.kind === 'tuple') ? `(${rendered})` : rendered
         lines.push(`  external ${fn}: ${arg} => ${rt} = "%identity"`)
+        // #122: the INVERSE zero-cost READER — read a constructed arm back out of the opaque union,
+        // so consumers can inspect/transform an existing value (e.g. `options.series`), not only
+        // build one. Symmetric to `from<X>` and equally leak-free at the binding layer (the value
+        // passes through unchanged). The caller discriminates on the union's runtime tag for
+        // arm-SPECIFIC fields; fields common to every arm (`name`, `data`) are always safe to read.
+        // An allowed `as*` opaque-module accessor (CLAUDE.md). Emitted only for STRUCTURED arms
+        // (record/callback/tuple/named) — literal/tag/unit arms above are their own runtime value.
+        if (m.type.kind === 'typeRef' || m.type.kind === 'callback' || m.type.kind === 'tuple' || m.type.kind === 'record' || m.name) {
+            lines.push(`  external as${fn.slice(4)}: ${rt} => (${rendered}) = "%identity"`)
+        }
     }
     lines.push(`}`)
 }

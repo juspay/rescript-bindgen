@@ -2204,16 +2204,27 @@ type iMouseTargetOutsideEditor = {
 module IMouseTarget = {
   type t
   external fromIMouseTargetUnknown: iMouseTargetUnknown => t = "%identity"
+  external asIMouseTargetUnknown: t => (iMouseTargetUnknown) = "%identity"
   external fromIMouseTargetTextarea: iMouseTargetTextarea => t = "%identity"
+  external asIMouseTargetTextarea: t => (iMouseTargetTextarea) = "%identity"
   external fromIMouseTargetMargin: iMouseTargetMargin => t = "%identity"
+  external asIMouseTargetMargin: t => (iMouseTargetMargin) = "%identity"
   external fromIMouseTargetViewZone: iMouseTargetViewZone => t = "%identity"
+  external asIMouseTargetViewZone: t => (iMouseTargetViewZone) = "%identity"
   external fromIMouseTargetContentText: iMouseTargetContentText => t = "%identity"
+  external asIMouseTargetContentText: t => (iMouseTargetContentText) = "%identity"
   external fromIMouseTargetContentEmpty: iMouseTargetContentEmpty => t = "%identity"
+  external asIMouseTargetContentEmpty: t => (iMouseTargetContentEmpty) = "%identity"
   external fromIMouseTargetContentWidget: iMouseTargetContentWidget => t = "%identity"
+  external asIMouseTargetContentWidget: t => (iMouseTargetContentWidget) = "%identity"
   external fromIMouseTargetOverlayWidget: iMouseTargetContentWidget => t = "%identity"
+  external asIMouseTargetOverlayWidget: t => (iMouseTargetContentWidget) = "%identity"
   external fromIMouseTargetScrollbar: iMouseTargetScrollbar => t = "%identity"
+  external asIMouseTargetScrollbar: t => (iMouseTargetScrollbar) = "%identity"
   external fromIMouseTargetOverviewRuler: iMouseTargetUnknown => t = "%identity"
+  external asIMouseTargetOverviewRuler: t => (iMouseTargetUnknown) = "%identity"
   external fromIMouseTargetOutsideEditor: iMouseTargetOutsideEditor => t = "%identity"
+  external asIMouseTargetOutsideEditor: t => (iMouseTargetOutsideEditor) = "%identity"
 }
 type iEditorMouseEvent = {
   event: iMouseEvent,
@@ -3645,7 +3656,9 @@ type iDiffEditorViewModel<'a> = {
 module CodeEditorV2IStandaloneDiffEditorSetModel = {
   type t
   external fromIDiffEditorModel: iDiffEditorModel<'a> => t = "%identity"
+  external asIDiffEditorModel: t => (iDiffEditorModel<'a>) = "%identity"
   external fromIDiffEditorViewModel: iDiffEditorViewModel<'a> => t = "%identity"
+  external asIDiffEditorViewModel: t => (iDiffEditorViewModel<'a>) = "%identity"
 }
 type iCharChange = {
   originalStartColumn: float,
@@ -4463,5 +4476,7 @@ type chatInputV2AttachedFile = {
 module InputsV2Dropdown = {
   type t
   external fromTextInputV2Dropdown: textInputV2Dropdown => t = "%identity"
+  external asTextInputV2Dropdown: t => (textInputV2Dropdown) = "%identity"
   external fromTextInputV2Dropdowns: array<textInputV2Dropdown> => t = "%identity"
+  external asTextInputV2Dropdowns: t => (array<textInputV2Dropdown>) = "%identity"
 }

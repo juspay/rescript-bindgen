@@ -617,13 +617,18 @@ type classNames = {
 module CjsDayPickerContextSelect = {
   type t
   external fromDate: Date.t => t = "%identity"
+  external asDate: t => (Date.t) = "%identity"
   external fromDates: array<Date.t> => t = "%identity"
+  external asDates: t => (array<Date.t>) = "%identity"
   external fromDateRange: dateRange => t = "%identity"
+  external asDateRange: t => (dateRange) = "%identity"
 }
 module CjsOnSelect = {
   type t
   external fromMouseEvent: ReactEvent.Mouse.t => t = "%identity"
+  external asMouseEvent: t => (ReactEvent.Mouse.t) = "%identity"
   external fromKeyboardEvent: ReactEvent.Keyboard.t => t = "%identity"
+  external asKeyboardEvent: t => (ReactEvent.Keyboard.t) = "%identity"
 }
 type customComponents = {
   @as("Chevron") chevron: ComponentsTypes.componentsComponentsChevronConfig => Dom.element,
@@ -677,27 +682,46 @@ type formatters = {
 module Matcher = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromDate: Date.t => t = "%identity"
+  external asDate: t => (Date.t) = "%identity"
   external fromDates: array<Date.t> => t = "%identity"
+  external asDates: t => (array<Date.t>) = "%identity"
   external fromFn: (Date.t => bool) => t = "%identity"
+  external asFn: t => (Date.t => bool) = "%identity"
   external fromDateRange: dateRange => t = "%identity"
+  external asDateRange: t => (dateRange) = "%identity"
   external fromDateBefore: dateBefore => t = "%identity"
+  external asDateBefore: t => (dateBefore) = "%identity"
   external fromDateAfter: dateAfter => t = "%identity"
+  external asDateAfter: t => (dateAfter) = "%identity"
   external fromDateInterval: dateInterval => t = "%identity"
+  external asDateInterval: t => (dateInterval) = "%identity"
   external fromDayOfWeek: dayOfWeek => t = "%identity"
+  external asDayOfWeek: t => (dayOfWeek) = "%identity"
 }
 module CjsDisabled = {
   type t
   external fromBool: bool => t = "%identity"
+  external asBool: t => (bool) = "%identity"
   external fromDate: Date.t => t = "%identity"
+  external asDate: t => (Date.t) = "%identity"
   external fromDates: array<Date.t> => t = "%identity"
+  external asDates: t => (array<Date.t>) = "%identity"
   external fromFn: (Date.t => bool) => t = "%identity"
+  external asFn: t => (Date.t => bool) = "%identity"
   external fromDateRange: dateRange => t = "%identity"
+  external asDateRange: t => (dateRange) = "%identity"
   external fromDateBefore: dateBefore => t = "%identity"
+  external asDateBefore: t => (dateBefore) = "%identity"
   external fromDateAfter: dateAfter => t = "%identity"
+  external asDateAfter: t => (dateAfter) = "%identity"
   external fromDateInterval: dateInterval => t = "%identity"
+  external asDateInterval: t => (dateInterval) = "%identity"
   external fromDayOfWeek: dayOfWeek => t = "%identity"
+  external asDayOfWeek: t => (dayOfWeek) = "%identity"
   external fromMatchers: array<Matcher.t> => t = "%identity"
+  external asMatchers: t => (array<Matcher.t>) = "%identity"
 }
 type dayPickerProps = {
   mode?: cjsMode,

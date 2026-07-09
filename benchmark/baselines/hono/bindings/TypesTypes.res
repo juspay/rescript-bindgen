@@ -20,7 +20,9 @@ type executionContext = {
 module TypesContextOptionsExecutionCtx = {
   type t
   external fromFetchEventLike: fetchEventLike => t = "%identity"
+  external asFetchEventLike: t => (fetchEventLike) = "%identity"
   external fromExecutionContext: executionContext => t = "%identity"
+  external asExecutionContext: t => (executionContext) = "%identity"
 }
 type contextOptions = {
   env?: string,  // ⚪ loose — was `E["Bindings"]`
@@ -60,6 +62,7 @@ type routerRoute = {
 module MatchTarget = {
   type t
   external fromTuple2: ((array<array<JSON.t>>, array<string>)) => t = "%identity"
+  external asTuple2: t => ((array<array<JSON.t>>, array<string>)) = "%identity"
   external fromArray: array<array<array<JSON.t>>> => t = "%identity"
 }
 type router = {
@@ -87,11 +90,15 @@ type typesOptionsConfig = {
 module TypesHandler = {
   type t
   external fromError: JsError.t => t = "%identity"
+  external asError: t => (JsError.t) = "%identity"
   external fromHTTPResponseError: httpResponseError => t = "%identity"
+  external asHTTPResponseError: t => (httpResponseError) = "%identity"
 }
 module TypesInput = {
   type t
   external fromString: string => t = "%identity"
   external fromRequest: WebTypes.request => t = "%identity"
+  external asRequest: t => (WebTypes.request) = "%identity"
   external fromURL: WebTypes.url => t = "%identity"
+  external asURL: t => (WebTypes.url) = "%identity"
 }

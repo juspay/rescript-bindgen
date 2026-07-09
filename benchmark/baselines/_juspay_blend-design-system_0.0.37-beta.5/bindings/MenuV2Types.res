@@ -178,11 +178,16 @@ type menuV2FlattenMenuV2GroupsItemConfig = {
 module MenuV2CollisionBoundaryRef = {
   type t
   external fromHTMLElement: Dom.element => t = "%identity"
+  external asHTMLElement: t => (Dom.element) = "%identity"
   external fromHTMLElements: array<Dom.element> => t = "%identity"
+  external asHTMLElements: t => (array<Dom.element>) = "%identity"
 }
 module MenuV2FlatRow = {
   type t
   external fromMenuV2FlattenMenuV2GroupsLabelConfig: menuV2FlattenMenuV2GroupsLabelConfig => t = "%identity"
+  external asMenuV2FlattenMenuV2GroupsLabelConfig: t => (menuV2FlattenMenuV2GroupsLabelConfig) = "%identity"
   external fromMenuV2FlattenMenuV2GroupsSeparatorConfig: menuV2FlattenMenuV2GroupsSeparatorConfig => t = "%identity"
+  external asMenuV2FlattenMenuV2GroupsSeparatorConfig: t => (menuV2FlattenMenuV2GroupsSeparatorConfig) = "%identity"
   external fromMenuV2FlattenMenuV2GroupsItemConfig: menuV2FlattenMenuV2GroupsItemConfig => t = "%identity"
+  external asMenuV2FlattenMenuV2GroupsItemConfig: t => (menuV2FlattenMenuV2GroupsItemConfig) = "%identity"
 }

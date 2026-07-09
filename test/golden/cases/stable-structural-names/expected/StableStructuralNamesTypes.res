@@ -49,5 +49,7 @@ type stableStructuralNamesItemsIconConfig = {
 module StableStructuralNamesItems = {
   type t
   external fromStableStructuralNamesItemsTextConfig: stableStructuralNamesItemsTextConfig => t = "%identity"
+  external asStableStructuralNamesItemsTextConfig: t => (stableStructuralNamesItemsTextConfig) = "%identity"
   external fromStableStructuralNamesItemsIconConfig: stableStructuralNamesItemsIconConfig => t = "%identity"
+  external asStableStructuralNamesItemsIconConfig: t => (stableStructuralNamesItemsIconConfig) = "%identity"
 }

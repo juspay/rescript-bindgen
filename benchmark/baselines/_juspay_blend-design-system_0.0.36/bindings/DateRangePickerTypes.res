@@ -271,6 +271,9 @@ type responsiveCalendarTokens = {
 module PresetsConfig = {
   type t
   external fromDateRangePreset: dateRangePreset => t = "%identity"
+  external asDateRangePreset: t => (dateRangePreset) = "%identity"
   external fromCustomPresetConfig: customPresetConfig => t = "%identity"
+  external asCustomPresetConfig: t => (customPresetConfig) = "%identity"
   external fromCustomPresetDefinition: customPresetDefinition => t = "%identity"
+  external asCustomPresetDefinition: t => (customPresetDefinition) = "%identity"
 }
