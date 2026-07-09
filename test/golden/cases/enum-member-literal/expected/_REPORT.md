@@ -2,9 +2,7 @@
 
 **1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**12** function binding(s) → `DemoBindings.res`.
-
-**5** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**4** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -13,29 +11,12 @@
 | required | `@rescript/react + stdlib` | JsxDOM, Dom, React, ReactEvent | ✓ present |
 | optional | `rescript-webapi` | File, FileList | ✗ not installed |
 
-## 🔧 Function bindings
-
-Standalone function exports, emitted as positional `@module external` bindings in `DemoBindings.res`.
-
-- `THEME_TOKENS`
-- `defaultConfig`
-- `VERSION`
-- `DEFAULT_AVATAR_ALT`
-- `MAX_INITIALS_LENGTH`
-- `SELECT_V2_MENU_Z_INDEX`
-- `IS_READY`
-- `MENU_SCROLL_SELECTORS`
-- `DEFAULT_RANGE`
-- `Z_INDEX`
-- `CONST_LABELS`
-- `LIMITS`
-
 ## ✅ Usable
 
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- Widget
+- EnumMember
 
 ## ⚪ Loosely typed (widened to `string`)
 

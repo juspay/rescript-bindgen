@@ -1,3 +1,4 @@
+@module("@base-ui-components/react") external parentCheckbox: string = "PARENT_CHECKBOX"
 @module("@base-ui-components/react") external useDirection: unit => DirectionProviderTypes.textDirection = "useDirection"
 @module("@base-ui-components/react") external useMenuSubmenuRootContext: unit => SubmenuRootTypes.menuSubmenuRootContext = "useMenuSubmenuRootContext"
 // ⚠️ REVIEW: `mergeProps` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.

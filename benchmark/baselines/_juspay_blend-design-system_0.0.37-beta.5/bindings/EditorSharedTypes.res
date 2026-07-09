@@ -1871,8 +1871,8 @@ type embeddedSingleSelectOptions = {
   defaultSingleSelectGroupPosition: ChartsTypes.chartsSeriesOrganizationOptionsHangingSide,
 }
 type inputsV2FOCUSRINGSTYLESConfig = {
-  boxShadow: string,  // ⚪ loose — was `"0 0 0 3px #EFF6FF"`
-  backgroundColor: string,  // ⚪ loose — was `"rgba(239, 246, 255, 0.15)"`
+  boxShadow: string,
+  backgroundColor: string,
 }
 type inputsV2GetInputStateErrorConfig = {
   show: bool,
@@ -4456,10 +4456,10 @@ type accessibilitySetupResult = {
   ariaAttributes: ariaAttributes,
 }
 type singleSelectV2VIRTUALROWESTIMATESConfig = {
-  label: string,  // ⚪ loose — was `32`
-  separator: string,  // ⚪ loose — was `8`
-  item: string,  // ⚪ loose — was `38`
-  itemWithSubLabel: string,  // ⚪ loose — was `58`
+  label: float,
+  separator: float,
+  item: float,
+  itemWithSubLabel: float,
 }
 type chatInputV2TopQuery = {
   id: string,

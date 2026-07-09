@@ -1031,6 +1031,7 @@ function buildValueIR(checker, sym, source, importName, from, opts) {
         sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
         path: [importName],
         produced: false,
+        constValue: true,
     }
     const valueType = classify(type, ctx, importName, 0)
     return { module: importName, import: { from, name: importName }, kind: 'value', enums, records, unboxed, value: { type: valueType } }
@@ -2257,6 +2258,15 @@ function classify(type, ctx, propName = '', depth = 0) {
     // primitives
     if (flags & ts.TypeFlags.String) return { kind: 'string' }
     if (flags & ts.TypeFlags.Number) return { kind: 'number' }
+    // A fresh string/number LITERAL widens to its runtime primitive — but ONLY for a const-value
+    // binding (`ctx.constValue`: `DEFAULT_AVATAR_ALT = "Avatar"` → string), and NEVER for an enum
+    // member. TS sets `StringLiteral`/`NumberLiteral` ALSO on `Size.Sm`/`Mode.A`, so without the
+    // `EnumLike` guard a prop/const typed as a specific enum member would silently drop to
+    // `string`/`float` instead of keeping its enum. Scoping to const also preserves the
+    // `⚪ loose — was "x"` discriminant/brand flag in prop/record contexts (a bare `"line"` isn't
+    // enum-like, so it stays flagged, not silently widened). (#108)
+    if (ctx.constValue && (flags & ts.TypeFlags.StringLiteral) && !(flags & ts.TypeFlags.EnumLike)) return { kind: 'string' }
+    if (ctx.constValue && (flags & ts.TypeFlags.NumberLiteral) && !(flags & ts.TypeFlags.EnumLike)) return { kind: 'number' }
     if (flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) return { kind: 'boolean' }
     // `bigint` is a first-class ReScript 12 type (`Stdlib_BigInt`, `123n` literals). A bigint
     // LITERAL (`123n`) folds into the `bigint` type — ReScript has no `@as` for bigint literals.
@@ -2492,6 +2502,19 @@ function classify(type, ctx, propName = '', depth = 0) {
         const tref = type.target || type
         const variadic = (tref.elementFlags || []).some((f) => f & (ts.ElementFlags.Rest | ts.ElementFlags.Variadic | ts.ElementFlags.Optional))
         const elems = checker.getTypeArguments(type) || []
+        const classifyElems = () => {
+            const prevAE = ctx.inArrayElem; ctx.inArrayElem = true
+            const nodes = elems.map((e) => classify(e, ctx, propName, depth + 1))
+            ctx.inArrayElem = prevAE
+            return nodes
+        }
+        if (ctx.constValue && tref.readonly && elems.length) {
+            const nodes = classifyElems()
+            const first = nodes[0]
+            if (first && !irHasImperfection(first) && nodes.every((n) => n && !irHasImperfection(n) && typeSig(n) === typeSig(first))) {
+                return { kind: 'array', of: first }
+            }
+        }
         if (elems.length === 1) {
             const prevAE = ctx.inArrayElem; ctx.inArrayElem = true
             const of = classify(elems[0], ctx, propName, depth + 1)

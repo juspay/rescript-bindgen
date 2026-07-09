@@ -1,0 +1,10 @@
+type sm =
+  | @as("sm") Sm
+type a =
+  | @as(1) A
+type size =
+  | @as("sm") Sm
+  | @as("lg") Lg
+type mode =
+  | @as(1) A
+  | @as(2) B

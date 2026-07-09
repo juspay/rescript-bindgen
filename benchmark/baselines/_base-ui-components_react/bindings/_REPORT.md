@@ -2,7 +2,7 @@
 
 **195** components · ✅ **195** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**9** function binding(s) → `ReactBindings.res`.
+**10** function binding(s) → `ReactBindings.res`.
 
 **544** shared types deduplicated into **58** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
@@ -17,6 +17,7 @@
 
 Standalone function exports, emitted as positional `@module external` bindings in `ReactBindings.res`.
 
+- `PARENT_CHECKBOX`
 - `useDirection`
 - `useMenuSubmenuRootContext`
 - `mergeProps`

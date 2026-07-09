@@ -1,5 +1,13 @@
 @module("demo") external themeTokens: ConstValueExportTypes.constValueExportTHEMETOKENSConfig = "THEME_TOKENS"
 @module("demo") external defaultConfig: ConstValueExportTypes.settings = "defaultConfig"
 @module("demo") external version: string = "VERSION"
+@module("demo") external defaultAvatarAlt: string = "DEFAULT_AVATAR_ALT"
+@module("demo") external maxInitialsLength: float = "MAX_INITIALS_LENGTH"
+@module("demo") external selectV2MenuZIndex: float = "SELECT_V2_MENU_Z_INDEX"
+@module("demo") external isReady: bool = "IS_READY"
+@module("demo") external menuScrollSelectors: array<string> = "MENU_SCROLL_SELECTORS"
+@module("demo") external defaultRange: array<float> = "DEFAULT_RANGE"
+@module("demo") external zIndex: ConstValueExportTypes.constValueExportZINDEXConfig = "Z_INDEX"
+@module("demo") external constLabels: ConstValueExportTypes.constValueExportCONSTLABELSConfig = "CONST_LABELS"
 // ⚠️ `LIMITS` is a DEFAULT export — bound as `= "default"`. If the package does `module.exports = LIMITS` (CJS), this may need a hand-adjustment; verify the import at runtime.
 @module("demo") external limits: ConstValueExportTypes.constValueExportLIMITSConfig = "default"
