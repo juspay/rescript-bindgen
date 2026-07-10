@@ -44,6 +44,22 @@ const classCode = variadicBox ? emitClass(variadicBox.ir) : ''
 const busCode = bus ? emitClass(bus.ir) : ''
 const tupleCtorCode = tupleCtor ? emitClass(tupleCtor.ir) : ''
 
+// CommonJS `export =` (#102): resolve the assigned module value in addition to the namespace/static
+// members returned by getExportsOfModule, then reuse the normal function/class emitters.
+const cjsCallable = extractModule(join(here, 'golden', 'cases', 'export-equals-callable', 'index.d.ts'), { from: 'demo' })
+const cx = cjsCallable.functions.find((f) => f.name === 'cx')
+const bind = cjsCallable.functions.find((f) => f.name === 'bind')
+const cxCode = cx ? emitFunction(cx.ir) : ''
+const cjsClass = extractModule(join(here, 'golden', 'cases', 'export-equals-class', 'index.d.ts'), { from: 'demo' })
+const counter = cjsClass.classes.find((c) => c.name === 'Counter')
+const counterCode = counter ? emitClass(counter.ir) : ''
+// clsx shape: the merged namespace re-exposes the root under its own name. That member's real JS
+// name works under BOTH module systems (`require("clsx").clsx`), while the synthetic root's
+// `= "default"` is undefined under a CommonJS target — the named member must win the dedup.
+const cjsMerged = extractModule(join(here, 'golden', 'cases', 'export-equals-merged-callable', 'index.d.ts'), { from: 'demo' })
+const mergedClsx = cjsMerged.functions.find((f) => f.name === 'clsx')
+const mergedClsxCode = mergedClsx ? emitFunction(mergedClsx.ir) : ''
+
 const checks = [
   ['string-literal union -> variant', /@as\("sm"\) Sm/.test(code)],
   ['count number -> int (name heuristic)', /~count: int=\?/.test(code)],
@@ -63,6 +79,9 @@ const checks = [
   ['bad tuple-rest method is reported', rest.skipped.some((s) => s.name === 'Bus.emit' && s.reason.includes('unsupported-rest-parameter'))],
   ['bad tuple-rest constructor keeps class methods', !/external make:/.test(tupleCtorCode) && /external info:/.test(tupleCtorCode)],
   ['bad tuple-rest constructor is reported', rest.skipped.some((s) => s.name === 'TupleCtor.constructor' && s.reason.includes('unsupported-rest-parameter'))],
+  ['export= callable keeps root + namespace member', !!cx && !!bind && /= "default"/.test(cxCode)],
+  ['export= class uses normal class pipeline', /external make:/.test(counterCode) && /external increment: \(t,/.test(counterCode) && /external value: t/.test(counterCode)],
+  ['same-named namespace member beats export= root', /= "clsx"/.test(mergedClsxCode) && !/= "default"/.test(mergedClsxCode) && cjsMerged.functions.length === 1],
 ]
 
 let ok = true

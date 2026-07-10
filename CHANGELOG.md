@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- **CommonJS `export =` lost the assigned callable/class value** (#102) — TypeScript exposes the
+  assignment's namespace/static members through `getExportsOfModule`, but not the module value
+  itself. The extractor now follows `checker.resolveExternalModuleSymbol`: a callable root emits
+  alongside its merged namespace members, and a class root reuses the normal
+  `type t`/`@new`/`@send`/`@get` pipeline instead of producing zero output. When a merged namespace
+  member shares the root's name (clsx's `module.exports.clsx = e`), the member's real JS name wins
+  over the root's `= "default"`, which is undefined under a CommonJS target. Fixtures:
+  `export-equals-callable`, `export-equals-class`, `export-equals-merged-callable`.
 - **Rest parameters emitted with the wrong JavaScript calling convention** (#105) —
   `(...args: T[])` was treated as one optional labeled array, so generated calls passed
   `fn([a, b])` instead of `fn(a, b)`. Homogeneous final rests now carry explicit IR metadata and

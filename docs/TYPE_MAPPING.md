@@ -657,6 +657,23 @@ reported as `skipped` (planned as a later milestone).
 a package that does `module.exports = fn` (plain CJS) exposes the value as the module itself, so
 `require("pkg").default` is undefined — the consumer must verify that case at runtime.
 
+**CommonJS `export = value` assignments** are resolved through TypeScript's external-module symbol,
+not only `getExportsOfModule`. The latter exposes a callable's merged namespace members (or a
+class's `prototype`) but omits the assigned root value — previously `export = cx` emitted only
+`cx.bind`, while `export = Counter` emitted nothing and the CLI exited 1. A distinct
+`checker.resolveExternalModuleSymbol(moduleSymbol)` result is now processed as a synthetic
+`export=`/default entry **after** the ordinary members: callables reuse the standalone-function path,
+classes reuse the `type t` + `@new`/`@send`/`@get` path, and merged namespace members still emit once.
+The ordering is load-bearing: when a merged namespace member shares the root's name (the real clsx
+shape — `module.exports = e; module.exports.clsx = e`), the member's real JS name (`= "clsx"`) works
+under both CommonJS and ESM targets, while the root's `= "default"` is `undefined` under a CommonJS
+target (`require("clsx").default`). The named member therefore wins the dedup, and the
+interop-dependent root binding is emitted only when no same-named member exists. The default/CJS
+runtime caveat remains visible above a root binding. Fixtures:
+[`export-equals-callable`](../test/golden/cases/export-equals-callable),
+[`export-equals-class`](../test/golden/cases/export-equals-class),
+[`export-equals-merged-callable`](../test/golden/cases/export-equals-merged-callable). (#102)
+
 **Return-only generics** ([`fn-optional-generic`](../test/golden/cases/fn-optional-generic)) are
 demoted to their constraint, never `'a`. A type parameter used *only* in the return doesn't
 round-trip, so `'a` would be unsound (rule #4): `nanoid<T extends string>(size?): T` becomes
