@@ -520,6 +520,61 @@ function typeName(type) {
 }
 
 /**
+ * A TypeScript branded primitive is an intersection such as
+ * `string & {readonly __brand: "user"}`. The object arm is compile-time-only:
+ * the runtime value is still the primitive, so treating the checker's flattened
+ * properties as a record invents an object that does not exist.
+ *
+ * Return the primitive payload IR only when every non-primitive arm is a
+ * non-callable marker object and at least one marker property exists. The
+ * property requirement deliberately excludes the `(string & {})` autocomplete
+ * escape used in open literal unions; that form is not a nominal brand.
+ */
+function brandedPrimitivePayload(type) {
+    if (!(type.flags & ts.TypeFlags.Intersection)) return null
+    let primitive = null
+    let markerFields = 0
+    for (const part of type.types || []) {
+        let kind = null
+        if (part.flags & ts.TypeFlags.String) kind = 'string'
+        else if (part.flags & ts.TypeFlags.Number) kind = 'number'
+        else if (part.flags & ts.TypeFlags.BigInt) kind = 'bigint'
+        else if (part.flags & ts.TypeFlags.Boolean) kind = 'boolean'
+        if (kind) {
+            if (primitive && primitive !== kind) return null
+            primitive = kind
+            continue
+        }
+        if (!(part.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) ||
+            (part.getCallSignatures && part.getCallSignatures().length)) return null
+        markerFields += part.getProperties ? part.getProperties().length : 0
+    }
+    if (!primitive || markerFields === 0) return null
+    // A TS `number` has one runtime representation; force the existing @unboxed
+    // payload convention (`float`) instead of applying a field-name int heuristic.
+    return primitive === 'number' ? { kind: 'number', _float: true } : { kind: primitive }
+}
+
+/** Register a branded primitive as a nominal, single-constructor `@unboxed`
+ * variant. ReScript keeps the aliases distinct statically while erasing the
+ * constructor at runtime, so JS still receives the original primitive. */
+function brandedPrimitiveNode(type, ctx, propName) {
+    const payload = brandedPrimitivePayload(type)
+    if (!payload || isCssType(type)) return null
+    const alias = type.aliasSymbol && type.aliasSymbol.getName()
+    const base = alias && alias !== '__type'
+        ? lower(alias)
+        : stableAnonBase(ctx, type, propName)
+    const members = [{ ctor: pascal(alias || base), type: payload }]
+    if (ctx.shared) return registerNamed(ctx, type, 'unboxed', base, { members, _brand: true })
+    if (!ctx.seenUnboxed.has(base)) {
+        ctx.seenUnboxed.set(base, true)
+        ctx.unboxed.push({ name: base, members, _brand: true })
+    }
+    return { kind: 'typeRef', to: base, _unboxed: true }
+}
+
+/**
  * Make a valid ReScript variant CONSTRUCTOR name from a raw value.
  * `"primary"` -> `Primary`, `"icon-only"` -> `IconOnly`, `"2xl"` -> `V2xl`
  * (constructors must start with an uppercase letter, so digit-leading get a `V`).
@@ -2060,6 +2115,12 @@ const PAST_BOUND_CAP = 3 // deepest object nesting materialized past MAX_DEPTH
 function classify(type, ctx, propName = '', depth = 0) {
     const { checker } = ctx
     const flags = type.flags
+
+    // Branded primitive intersections are dependency-free runtime leaves. Handle
+    // them before the depth/object paths so they can never become a fake record
+    // (or a deep `string` fallback) merely because the checker exposes the marker.
+    const branded = brandedPrimitiveNode(type, ctx, propName)
+    if (branded) return branded
 
     // depth / cycle guards — complex library types resolve to deep self-referential object graphs;
     // beyond a few levels we emit opaque + flag (truncates UNBOUNDED NEW expansion).

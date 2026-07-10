@@ -34,7 +34,7 @@ export interface RecordDecl {
   fields: { name: string; optional: boolean; type: IRType }[]
 }
 
-/** An `@unboxed` untagged-variant declaration (type-safe multi-type props). */
+/** An `@unboxed` declaration: an untagged union or a zero-cost branded-primitive wrapper. */
 export interface UnboxedDecl {
   name: string
   members: { ctor: string; type: IRType }[]
