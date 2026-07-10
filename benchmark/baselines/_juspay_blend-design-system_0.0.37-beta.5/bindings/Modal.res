@@ -1,26 +1,7 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~isOpen: bool,
-  ~isCustom: bool=?,
-  ~onClose: unit => unit,
-  ~title: string=?,
-  ~subtitle: string=?,
-  ~children: React.element,
-  ~primaryAction: ModalTypes.modalButtonAction=?,
-  ~secondaryAction: ModalTypes.modalButtonAction=?,
-  ~showCloseButton: bool=?,
-  ~showHeader: bool=?,
-  ~showFooter: bool=?,
-  ~closeOnBackdropClick: bool=?,
-  ~customHeader: React.element=?,
-  ~customFooter: React.element=?,
-  ~headerRightSlot: React.element=?,
-  ~showDivider: bool=?,
-  ~minWidth: string=?,
-  ~useDrawerOnMobile: bool=?,
-  ~skeleton: ModalTypes.modalSkeletonProps=?,
-  ~maxWidth: string=?,
-  ~maxHeight: string=?,
-  ~minHeight: string=?,
-  ~ref: React.ref<Nullable.t<Dom.element>>=?,
-) => React.element = "Modal"
+type props = {
+  ...ModalTypes.modalProps,
+  ref?: React.ref<Nullable.t<Dom.element>>,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "Modal"

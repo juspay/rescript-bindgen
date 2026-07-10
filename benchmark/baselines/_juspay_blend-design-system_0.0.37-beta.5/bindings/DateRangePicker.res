@@ -1,36 +1,7 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~value: DateRangePickerTypes.dateRange=?,
-  ~onChange: DateRangePickerTypes.dateRange => unit=?,
-  ~onPresetSelection: DateRangePickerTypes.presetSelectionData => unit=?,
-  ~showDateTimePicker: bool=?,
-  ~showDateInput: bool=?,
-  ~showPresets: bool=?,
-  ~customPresets: array<DateRangePickerTypes.PresetsConfig.t>=?,  // ⓘ was `DateRangePreset | CustomPresetConfig | CustomPresetDefinition` — opaque; build with PresetsConfig.fromDateRangePreset / PresetsConfig.fromCustomPresetConfig / PresetsConfig.fromCustomPresetDefinition
-  ~placeholder: string=?,
-  ~isDisabled: bool=?,
-  ~icon: React.element=?,
-  ~minDate: Date.t=?,
-  ~maxDate: Date.t=?,
-  ~dateFormat: string=?,
-  ~allowSingleDateSelection: bool=?,
-  ~isSingleDatePicker: bool=?,
-  ~disableFutureDates: bool=?,
-  ~disablePastDates: bool=?,
-  ~hideFutureDates: bool=?,
-  ~hidePastDates: bool=?,
-  ~customDisableDates: Date.t => bool=?,
-  ~customRangeConfig: DateRangePickerTypes.customRangeConfig=?,
-  ~triggerElement: React.element=?,
-  ~useDrawerOnMobile: bool=?,
-  ~skipQuickFiltersOnMobile: bool=?,
-  ~size: DateRangePickerTypes.dateRangePickerSize=?,
-  ~formatConfig: DateRangePickerTypes.dateFormatConfig=?,
-  ~triggerConfig: DateRangePickerTypes.triggerConfig=?,
-  ~popoverConfig: DateRangePickerTypes.dateRangePickerPopoverConfig=?,
-  ~maxMenuHeight: float=?,
-  ~showPreset: bool=?,
-  ~timezone: string=?,
-  ~maxYearOffset: float=?,
-  ~ref: React.ref<Nullable.t<Dom.element>>=?,
-) => React.element = "DateRangePicker"
+type props = {
+  ...DateRangePickerTypes.dateRangePickerProps,
+  ref?: React.ref<Nullable.t<Dom.element>>,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "DateRangePicker"

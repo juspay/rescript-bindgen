@@ -1,12 +1,12 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
-  ~chartType: ChartsTypes.chartType=?,
-  ~data: Nullable.t<array<ChartsTypes.newNestedDataPoint>>=?,
-  ~colors: array<ChartsTypes.chartsColorsConfig>=?,
+  ~chartType: HighchartsSharedTypes.chartType=?,
+  ~data: Nullable.t<array<HighchartsSharedTypes.newNestedDataPoint>>=?,
+  ~colors: array<HighchartsSharedTypes.chartsColorsConfig>=?,
   ~barsize: float=?,
-  ~xAxis: ChartsTypes.axisConfig=?,
-  ~yAxis: ChartsTypes.axisConfig=?,
-  ~tooltip: ChartsTypes.tooltipConfig=?,
+  ~xAxis: HighchartsSharedTypes.axisConfig=?,
+  ~yAxis: HighchartsSharedTypes.axisConfig=?,
+  ~tooltip: HighchartsSharedTypes.tooltipConfig=?,
   ~height: CommonTypes.stringOrNumber=?,
   ~width: CommonTypes.stringOrNumber=?,
   ~isSmallScreen: bool=?,

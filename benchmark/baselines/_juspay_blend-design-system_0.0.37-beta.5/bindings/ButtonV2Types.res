@@ -95,6 +95,26 @@ type buttonSkeleton = {
   showSkeleton?: bool,
   skeletonVariant?: SkeletonTypes.skeletonVariant,
 }
+type buttonBaseProps = {
+  buttonType?: buttonV2Type,
+  size?: buttonV2Size,
+  subType?: buttonV2SubType,
+  text?: string,
+  leftSlot?: buttonSlot,
+  rightSlot?: buttonSlot,
+  loading?: bool,
+  skeleton?: buttonSkeleton,
+  buttonGroupPosition?: ButtonTypes.buttonButtonGroupPosition,
+  width?: CommonTypes.stringOrNumber,
+  minWidth?: CommonTypes.stringOrNumber,
+  maxWidth?: CommonTypes.stringOrNumber,
+  state?: buttonV2State,
+}
+type buttonGroupV2Props = {
+  stacked?: bool,
+  gap?: CommonTypes.stringOrNumber,
+  children: React.element,
+}
 type buttonV2GetButtonBorderStylesConfig = {
   border?: string,
   borderTop?: string,
@@ -122,7 +142,7 @@ type buttonV2GetButtonPaddingConfig = {
   bottom: string,
   left: string,
 }
-type buttonV2ButtonPropsConfig = {
+type buttonV2TimelineShowMorePropsButtonPropsConfig = {
   minWidth?: CommonTypes.stringOrNumber,
   maxWidth?: CommonTypes.stringOrNumber,
   width?: CommonTypes.stringOrNumber,

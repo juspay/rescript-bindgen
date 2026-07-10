@@ -8,8 +8,8 @@ external make: (
   ~targetControlX: float=?,
   ~linkWidth: float=?,
   ~index: int=?,
-  ~payload: ChartsTypes.sankeyLink=?,
-  ~linkColors: array<ChartsTypes.stringOrChartsColorsConfig>=?,
-  ~onMouseEnter: (ChartsTypes.sankeyTooltipData, ReactEvent.Mouse.t) => unit=?,
+  ~payload: HighchartsSharedTypes.sankeyLink=?,
+  ~linkColors: array<HighchartsSharedTypes.stringOrChartsColorsConfig>=?,
+  ~onMouseEnter: (HighchartsSharedTypes.sankeyTooltipData, ReactEvent.Mouse.t) => unit=?,
   ~onMouseLeave: unit => unit=?,
 ) => React.element = "SankeyLink"

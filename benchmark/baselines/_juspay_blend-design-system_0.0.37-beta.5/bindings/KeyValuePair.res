@@ -1,15 +1,7 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~keyString: string,
-  ~size: KeyValuePairTypes.keyValuePairSize=?,
-  ~value: string=?,
-  ~keySlot: React.element=?,
-  ~valueLeftSlot: React.element=?,
-  ~valueRightSlot: React.element=?,
-  ~keyValuePairState: KeyValuePairTypes.keyValuePairStateType=?,
-  ~maxWidth: string=?,
-  ~textOverflow: KeyValuePairTypes.textOverflowMode=?,
-  ~maxLines: float=?,
-  ~showTooltipOnTruncate: bool=?,
-  ~ref: React.ref<Nullable.t<Dom.element>>=?,
-) => React.element = "KeyValuePair"
+type props = {
+  ...KeyValuePairTypes.keyValuePairPropTypes,
+  ref?: React.ref<Nullable.t<Dom.element>>,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "KeyValuePair"

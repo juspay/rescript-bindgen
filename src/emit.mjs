@@ -257,11 +257,13 @@ export function emit(ir, options = {}) {
     if (lines.length) lines.push('')
 
     // 3. the external binding — two forms:
-    //    record-props (ir.attrsBase.ref): `type props = {...HtmlAttrs.x, own…}` +
-    //      `external make: React.component<props>` — the HTML attribute surface is ONE
-    //      shared spread; JSX call sites are unchanged (JSX v4 lowers to make/props).
+    //    record-props (ir.attrsBase.ref and/or ir.baseSpreads, #82): `type props =
+    //      {...HtmlAttrs.x, ...PkgTypes.styledBlockProps, own…}` + `external make:
+    //      React.component<props>` — the HTML attribute surface and each shared package
+    //      base is ONE spread; JSX call sites are unchanged (JSX v4 lowers to make/props).
     //    labeled args (default): the classic `@react.component external make: (~p: t=?, …)`.
-    const recordProps = !!(ir.attrsBase && ir.attrsBase.ref)
+    const baseSpreads = ir.baseSpreads || []
+    const recordProps = !!(ir.attrsBase && ir.attrsBase.ref) || baseSpreads.length > 0
     // Render-prop FUNCTION-form wrappers (#46): the prop itself binds as `React.element`
     // (an @unboxed `Element | Fn` cannot compile — React.element is abstract), so the
     // function form gets a zero-cost `<prop>Fn` %identity wrapper, typed with the EXACT
@@ -289,7 +291,8 @@ export function emit(ir, options = {}) {
         for (const p of ir.props) collectVarNames(p.type, tvars)
         const tp = tvars.size ? `<${[...tvars].join(', ')}>` : ''
         lines.push(`type props${tp} = {`)
-        lines.push(`  ...${ir.attrsBase.ref},`)
+        if (ir.attrsBase && ir.attrsBase.ref) lines.push(`  ...${ir.attrsBase.ref},`)
+        for (const b of baseSpreads) lines.push(`  ...${renderType(b.ref, '', cfg)},`)
         for (const p of ir.props) lines.push(...propLine(p, cfg, 'record'))
         lines.push(`}`)
         lines.push('')

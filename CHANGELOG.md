@@ -6,6 +6,15 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- **HtmlAttrs spread detection missed indirect attribute surfaces; package CSS bases inlined
+  per component** (#130, #82) — blend's `Omit<BlockProps, 'children'>` (attrs reachable only
+  through a package-local alias and a nested `Omit`) flattened ~149 labeled args into every
+  Block-extending component. The attrs walk is now transitive with omit keys composed across
+  layers, and a pure package-local named intersection part (`StyledBlockProps`,
+  `BaseSkeletonProps`) becomes ONE shared record spread by every consumer
+  (`type props = { ...HtmlAttrs.…, ...BlendTypes.styledBlockProps, own… }`). A shadowed or
+  otherwise unprovable base falls back to inline flattening — never a duplicate-label compile
+  error. Fixture: `shared-base-records`.
 - **Compound-component statics silently dropped** (#100) — `const Menu: FC<MenuProps> &
   { Item: FC<ItemProps> }` bound only `Menu`; `Menu.Item` vanished with no skip entry (antd,
   react-bootstrap, headlessui's dominant idiom). Component-typed statics now bind as sibling

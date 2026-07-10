@@ -239,6 +239,15 @@ type customPresetDefinition = {
   getDateRange: unit => dateRange,
   visible?: bool,
 }
+module PresetsConfig = {
+  type t
+  external fromDateRangePreset: dateRangePreset => t = "%identity"
+  external asDateRangePreset: t => (dateRangePreset) = "%identity"
+  external fromCustomPresetConfig: customPresetConfig => t = "%identity"
+  external asCustomPresetConfig: t => (customPresetConfig) = "%identity"
+  external fromCustomPresetDefinition: customPresetDefinition => t = "%identity"
+  external asCustomPresetDefinition: t => (customPresetDefinition) = "%identity"
+}
 type customRangeConfig = {
   calculateEndDate?: (Date.t, option<dateRange>) => Nullable.t<Date.t>,
   fixedDayRange?: float,
@@ -282,12 +291,37 @@ type dateRangePickerPopoverConfig = {
   align?: dateRangePickerDateRangePickerPopoverConfigAlign,
   sideOffset?: float,
 }
-module PresetsConfig = {
-  type t
-  external fromDateRangePreset: dateRangePreset => t = "%identity"
-  external asDateRangePreset: t => (dateRangePreset) = "%identity"
-  external fromCustomPresetConfig: customPresetConfig => t = "%identity"
-  external asCustomPresetConfig: t => (customPresetConfig) = "%identity"
-  external fromCustomPresetDefinition: customPresetDefinition => t = "%identity"
-  external asCustomPresetDefinition: t => (customPresetDefinition) = "%identity"
+type dateRangePickerProps = {
+  value?: dateRange,
+  onChange?: dateRange => unit,
+  onPresetSelection?: presetSelectionData => unit,
+  showDateTimePicker?: bool,
+  showDateInput?: bool,
+  showPresets?: bool,
+  customPresets?: array<PresetsConfig.t>,
+  placeholder?: string,
+  isDisabled?: bool,
+  icon?: React.element,
+  minDate?: Date.t,
+  maxDate?: Date.t,
+  dateFormat?: string,
+  allowSingleDateSelection?: bool,
+  isSingleDatePicker?: bool,
+  disableFutureDates?: bool,
+  disablePastDates?: bool,
+  hideFutureDates?: bool,
+  hidePastDates?: bool,
+  customDisableDates?: Date.t => bool,
+  customRangeConfig?: customRangeConfig,
+  triggerElement?: React.element,
+  useDrawerOnMobile?: bool,
+  skipQuickFiltersOnMobile?: bool,
+  size?: dateRangePickerSize,
+  formatConfig?: dateFormatConfig,
+  triggerConfig?: triggerConfig,
+  popoverConfig?: dateRangePickerPopoverConfig,
+  maxMenuHeight?: float,
+  showPreset?: bool,
+  timezone?: string,
+  maxYearOffset?: float,
 }

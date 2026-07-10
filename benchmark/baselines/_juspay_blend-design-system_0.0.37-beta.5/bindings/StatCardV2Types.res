@@ -83,6 +83,12 @@ type statCardV2SkeletonProps = {
   maxWidth?: string,
   minWidth?: string,
 }
+type statCardV2Dimensions = {
+  width?: string,
+  maxWidth?: string,
+  minWidth?: string,
+  height?: string,
+}
 type statCardV2BuildStatCardV2AriaLabelParamsConfig = {
   title?: string,
   value?: string,

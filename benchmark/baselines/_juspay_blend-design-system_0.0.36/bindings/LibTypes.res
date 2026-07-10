@@ -1,4 +1,4 @@
-type event = {
+type dateTimeFormatOptionsLib = {
   ...JsxDOM.domProps,
 }
-@unboxed type stringOrEvent = Str(string) | Event(event)
+@unboxed type stringOrDateTimeFormatOptions = Str(string) | DateTimeFormatOptions(dateTimeFormatOptionsLib)

@@ -5,9 +5,9 @@ external make: (
   ~width: float=?,
   ~height: float=?,
   ~index: int=?,
-  ~payload: ChartsTypes.chartsPayloadConfig=?,
+  ~payload: HighchartsSharedTypes.chartsPayloadConfig=?,
   ~containerWidth: float=?,
-  ~nodeColors: array<ChartsTypes.stringOrChartsColorsConfig>=?,
-  ~onMouseEnter: (ChartsTypes.sankeyTooltipData, ReactEvent.Mouse.t) => unit=?,
+  ~nodeColors: array<HighchartsSharedTypes.stringOrChartsColorsConfig>=?,
+  ~onMouseEnter: (HighchartsSharedTypes.sankeyTooltipData, ReactEvent.Mouse.t) => unit=?,
   ~onMouseLeave: unit => unit=?,
 ) => React.element = "SankeyNode"

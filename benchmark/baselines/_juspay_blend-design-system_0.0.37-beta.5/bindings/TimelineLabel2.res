@@ -1,5 +1,7 @@
-@module("@juspay/blend-design-system") @scope("Timeline") @react.component
-external make: (
-  ~text: string,
-  ~ref: React.ref<Nullable.t<Dom.element>>=?,
-) => React.element = "Label"
+type props = {
+  ...TimelineTypes.timelineLabelProps,
+  ref?: React.ref<Nullable.t<Dom.element>>,
+}
+
+@module("@juspay/blend-design-system") @scope("Timeline")
+external make: React.component<props> = "Label"

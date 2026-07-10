@@ -24,7 +24,7 @@ type variantTokenV1snf12 = {
   container: string,
   @as("no-container") noContainer: string,
 }
-type sizeTokenV10us3 = {
+type sizeTokenV1798j = {
   sm: variantTokenV1snf12,
   md: variantTokenV1snf12,
   lg: variantTokenV1snf12,
@@ -35,23 +35,23 @@ type multiSelectV2VariantTokenContainerConfig = {
   bottom: string,
   left: string,
 }
-type variantTokenV1g74p = {
+type variantTokenW19kz = {
   container: multiSelectV2VariantTokenContainerConfig,
   @as("no-container") noContainer: multiSelectV2VariantTokenContainerConfig,
 }
-type sizeTokenV1sgfn = {
-  sm: variantTokenV1g74p,
-  md: variantTokenV1g74p,
-  lg: variantTokenV1g74p,
+type sizeTokenV9tpzo = {
+  sm: variantTokenW19kz,
+  md: variantTokenW19kz,
+  lg: variantTokenW19kz,
 }
 type triggerStateTokenMultiSelectV2 = {
   hover: string,
   @as("open") open_: string,
-  error: string,
   focus: string,
+  error: string,
   closed: string,
 }
-type variantTokenV1m5o3 = {
+type variantTokenV7pvbk = {
   container: triggerStateTokenMultiSelectV2,
   @as("no-container") noContainer: triggerStateTokenMultiSelectV2,
 }
@@ -102,12 +102,12 @@ type multiSelectV2MultiSelectV2TokensTypeTriggerPlaceholderConfig = {
   fontWeight: string,
 }
 type multiSelectV2MultiSelectV2TokensTypeTriggerConfig = {
-  height: sizeTokenV10us3,
-  padding: sizeTokenV1sgfn,
-  borderRadius: sizeTokenV10us3,
+  height: sizeTokenV1798j,
+  padding: sizeTokenV9tpzo,
+  borderRadius: sizeTokenV1798j,
   boxShadow: variantTokenV1snf12,
-  backgroundColor: variantTokenV1m5o3,
-  outline: variantTokenV1m5o3,
+  backgroundColor: variantTokenV7pvbk,
+  outline: variantTokenV7pvbk,
   slot: multiSelectV2MultiSelectV2TokensTypeTriggerSlotConfig,
   selectionTag: contextMultiSelectV2TokensTypeTriggerSelectionTagConfig,
   chevron: multiSelectV2MultiSelectV2TokensTypeTriggerChevronConfig,
@@ -174,7 +174,7 @@ type multiSelectV2MultiSelectV2TokensTypeMenuConfig = {
   backgroundColor: string,
   border: string,
   borderRadius: string,
-  padding: sizeTokenV1sgfn,
+  padding: sizeTokenV9tpzo,
   minWidth: string,
   scroll: multiSelectV2MultiSelectV2TokensTypeMenuScrollConfig,
   header: multiSelectV2MultiSelectV2TokensTypeMenuHeaderConfig,
@@ -270,7 +270,7 @@ type componentTokenType = {
   @as("STAT_CARD") statCard?: StatCardTypes.responsiveStatCardTokens,
   @as("PROGRESS_BAR") progressBar?: ProgressBarTypes.responsiveProgressBarTokens,
   @as("DRAWER") drawer?: DrawerTypes.responsiveDrawerTokens,
-  @as("CHARTS") charts?: ChartsTypes.responsiveChartTokens,
+  @as("CHARTS") charts?: HighchartsSharedTypes.responsiveChartTokens,
   @as("SNACKBAR") snackbar?: SnackbarTypes.responsiveSnackbarTokens,
   @as("STEPPER") stepper?: StepperTypes.responsiveStepperTokens,
   @as("KEYVALUEPAIR") keyvaluepair?: KeyValuePairTypes.responsiveKeyValuePairTokens,
@@ -332,7 +332,7 @@ type contextThemeContextTypeComponentTokensConfig = {
   @as("STAT_CARD") statCard: StatCardTypes.responsiveStatCardTokens,
   @as("PROGRESS_BAR") progressBar: ProgressBarTypes.responsiveProgressBarTokens,
   @as("DRAWER") drawer: DrawerTypes.responsiveDrawerTokens,
-  @as("CHARTS") charts: ChartsTypes.responsiveChartTokens,
+  @as("CHARTS") charts: HighchartsSharedTypes.responsiveChartTokens,
   @as("SNACKBAR") snackbar: SnackbarTypes.responsiveSnackbarTokens,
   @as("STEPPER") stepper: StepperTypes.responsiveStepperTokens,
   @as("KEYVALUEPAIR") keyvaluepair: KeyValuePairTypes.responsiveKeyValuePairTokens,

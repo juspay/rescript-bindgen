@@ -9,6 +9,19 @@ type textOverflowMode =
   | @as("wrap") Wrap
   | @as("truncate") Truncate
   | @as("wrap-clamp") WrapClamp
+type keyValuePairPropTypes = {
+  keyString: string,
+  size?: keyValuePairSize,
+  value?: string,
+  keySlot?: React.element,
+  valueLeftSlot?: React.element,
+  valueRightSlot?: React.element,
+  keyValuePairState?: keyValuePairStateType,
+  maxWidth?: string,
+  textOverflow?: textOverflowMode,
+  maxLines?: float,
+  showTooltipOnTruncate?: bool,
+}
 type keyValuePairKeyValuePairTokensTypeGapConfig = {
   horizontal: string,
   vertical: string,

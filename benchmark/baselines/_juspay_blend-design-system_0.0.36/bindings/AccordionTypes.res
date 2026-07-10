@@ -4,6 +4,14 @@ type accordionType =
 type accordionChevronPosition =
   | @as("left") Left
   | @as("right") Right
+type accordionProps = {
+  children: React.element,
+  accordionType?: accordionType,
+  defaultValue?: CommonTypes.stringOrStringArray,
+  value?: CommonTypes.stringOrStringArray,
+  isMultiple?: bool,
+  onValueChange?: CommonTypes.stringOrStringArray => unit,
+}
 type slotRenderProps = {
   isExpanded: bool,
   toggle: unit => unit,

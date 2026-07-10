@@ -111,3 +111,8 @@ type alertV2CloseButtonConfig = {
   show?: bool,
   onClick?: ReactEvent.Mouse.t => unit,
 }
+type alertV2Dimensions = {
+  width?: string,
+  maxWidth?: string,
+  minWidth?: string,
+}

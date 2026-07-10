@@ -5,6 +5,18 @@ type radioMaxLengthConfig = {
   label?: float,
   subtext?: float,
 }
+type radioGroupProps = {
+  id?: string,
+  label?: string,
+  name: string,
+  defaultValue?: string,
+  value?: string,
+  children: React.element,
+  onChange?: string => unit,
+  disabled?: bool,
+  required?: bool,
+  error?: bool,
+}
 type radioResponsiveRadioTokensSmGroupConfig = {
   gap: string,
 }

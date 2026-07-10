@@ -1,9 +1,35 @@
 type switchSize =
   | @as("sm") Sm
   | @as("md") Md
-type switch_MaxLengthConfig = {
+type switch_SwitchPropsMaxLengthConfig = {
   label?: float,
   subtext?: float,
+}
+type switchProps = {
+  id?: string,
+  checked?: bool,
+  defaultChecked?: bool,
+  onChange?: bool => unit,
+  disabled?: bool,
+  required?: bool,
+  error?: bool,
+  size?: switchSize,
+  label?: string,
+  subtext?: string,
+  slot?: React.element,
+  name?: string,
+  value?: string,
+  maxLength?: switch_SwitchPropsMaxLengthConfig,
+}
+type switchGroupProps = {
+  id?: string,
+  label?: string,
+  name?: string,
+  children: React.element,
+  disabled?: bool,
+  value?: array<string>,
+  defaultValue?: array<string>,
+  onChange?: array<string> => unit,
 }
 type switch_SwitchTokensTypeSwitchContainerHeightConfig = {
   sm: string,

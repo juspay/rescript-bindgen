@@ -65,6 +65,11 @@ type responsiveSnackbarV2Tokens = {
   sm: snackbarV2TokensType,
   lg: snackbarV2TokensType,
 }
+type snackbarV2Props = {
+  position?: snackbarV2Position,
+  dismissOnClickAway?: bool,
+  maxWidth?: CommonTypes.stringOrNumber,
+}
 type snackbarV2Action = {
   label: string,
   onClick: unit => unit,
@@ -82,4 +87,9 @@ type snackbarV2ToastOptions = {
   maxWidth?: CommonTypes.stringOrNumber,
   width?: CommonTypes.stringOrNumber,
   minWidth?: CommonTypes.stringOrNumber,
+}
+type snackbarV2Dimensions = {
+  width?: string,
+  maxWidth?: string,
+  minWidth?: string,
 }

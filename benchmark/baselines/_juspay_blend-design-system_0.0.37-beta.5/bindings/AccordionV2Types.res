@@ -69,3 +69,8 @@ type responsiveAccordionV2Tokens = {
   sm: accordionV2TokensType,
   lg: accordionV2TokensType,
 }
+type accordionV2Dimensions = {
+  width?: string,
+  maxWidth?: string,
+  minWidth?: string,
+}

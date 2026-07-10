@@ -39,3 +39,16 @@ type responsiveKeyValuePairTokens = {
   sm: keyValuePairTokensType,
   lg: keyValuePairTokensType,
 }
+type keyValuePairPropTypes = {
+  keyString: string,
+  size?: keyValuePairSize,
+  value?: string,
+  keySlot?: React.element,
+  valueLeftSlot?: React.element,
+  valueRightSlot?: React.element,
+  keyValuePairState?: keyValuePairStateType,
+  maxWidth?: string,
+  textOverflow?: textOverflowMode,
+  maxLines?: float,
+  showTooltipOnTruncate?: bool,
+}

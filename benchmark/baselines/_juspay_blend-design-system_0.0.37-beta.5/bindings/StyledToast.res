@@ -1,5 +1,6 @@
 type props = {
   ...HtmlAttrs.htmlAttributesOmitClassNameSlotStyle,
+  ...SnackbarV2Types.snackbarV2Dimensions,
   header: string,
   description?: string,
   variant: SnackbarV2Types.snackbarV2Variant,
@@ -7,9 +8,6 @@ type props = {
   onClose?: unit => unit,
   actionButton?: SnackbarV2Types.snackbarV2Action,
   toastId?: CommonTypes.stringOrNumber,
-  width?: string,
-  maxWidth?: string,
-  minWidth?: string,
 }
 
 @module("@juspay/blend-design-system")

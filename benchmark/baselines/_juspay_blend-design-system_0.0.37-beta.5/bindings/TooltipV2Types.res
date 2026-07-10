@@ -38,3 +38,20 @@ type responsiveTooltipV2Tokens = {
   sm: tooltipV2TokensType,
   lg: tooltipV2TokensType,
 }
+type tooltipV2Props = {
+  children: React.element,
+  content: React.element,
+  @as("open") open_?: bool,
+  onOpenChange?: bool => unit,
+  side?: tooltipV2Side,
+  align?: tooltipV2Align,
+  showArrow?: bool,
+  size?: tooltipV2Size,
+  slot?: React.element,
+  slotDirection?: tooltipV2SlotDirection,
+  delayDuration?: float,
+  offset?: float,
+  maxWidth?: string,
+  fullWidth?: bool,
+  disableInteractive?: bool,
+}

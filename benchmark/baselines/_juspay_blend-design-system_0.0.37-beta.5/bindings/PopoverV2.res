@@ -1,5 +1,6 @@
 type props = {
   ...HtmlAttrs.htmlAttributesOmitChildrenClassNameSlotStyle,
+  ...PopoverV2Types.popoverV2Dimensions,
   heading?: string,
   description?: string,
   trigger: React.element,
@@ -19,12 +20,6 @@ type props = {
   useDrawerOnMobile?: bool,
   avoidCollisions?: bool,
   skeleton?: PopoverV2Types.popoverV2SkeletonProps,
-  width?: float,
-  maxWidth?: float,
-  minWidth?: float,
-  height?: float,
-  minHeight?: float,
-  maxHeight?: float,
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 

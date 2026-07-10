@@ -142,8 +142,8 @@ type singleSelectSingleSelectTokensTypeTriggerPaddingConfig = {
 type singleSelectSingleSelectTokensTypeTriggerBackgroundColorContainerConfig = {
   hover: string,
   @as("open") open_: string,
-  error: string,
   focus: string,
+  error: string,
   closed: string,
 }
 type singleSelectSingleSelectTokensTypeTriggerBackgroundColorConfig = {

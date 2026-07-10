@@ -16,7 +16,7 @@ external make: (
   ~minWidth: string=?,
   ~xAxis: StatCardTypes.statCardAxisConfig=?,
   ~yAxis: StatCardTypes.statCardAxisConfig=?,
-  ~valueFormatter: ChartsTypes.axisType=?,
+  ~valueFormatter: HighchartsSharedTypes.axisType=?,
   ~height: string=?,
   ~direction: StatCardTypes.statCardDirection=?,
   ~skeleton: StatCardTypes.statCardSkeletonProps=?,

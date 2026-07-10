@@ -71,6 +71,11 @@ type responsiveSkeletonTokens = {
   sm: skeletonTokensType,
   lg: skeletonTokensType,
 }
+type baseSkeletonProps = {
+  variant?: skeletonVariant,
+  loading?: bool,
+  @as("data-testid") dataTestid?: string,
+}
 type skeletonUseSkeletonBaseConfig = {
   shouldRender: bool,
   fallback: React.element,

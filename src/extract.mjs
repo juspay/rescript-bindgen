@@ -676,19 +676,56 @@ function isReactComponent(type, checker) {
 // a component touching either keeps the legacy labeled-args output entirely.
 const BLOCKED_ATTRS = new Set(['AllHTMLAttributes', 'SVGAttributes'])
 
+// React / third-party WRAPPER type names that must never become a shared-base spread (#82):
+// on a real package these are vendor-declared (path-excluded), but self-contained fixtures
+// stub them locally — the name keeps fixture behavior identical to real-package behavior.
+const VENDOR_WRAPPER_NAMES = new Set(['RefAttributes', 'ClassAttributes', 'Attributes', 'PropsWithChildren', 'PropsWithRef', 'PropsWithoutRef', 'ExecutionProps', 'ThemeProps'])
+
 /**
  * Detect a component-props HTML-attributes base (issue #16): an intersection part or
  * heritage `extends` whose interface NAME is one of the vendored attribute groups
  * (`ButtonHTMLAttributes`, …), optionally wrapped in `Omit` (keys recorded) or
  * `Partial` (a no-op — every attribute field is optional anyway). Name-based, so
  * self-contained golden stubs work exactly like the real @types/react.
- * @returns {{leaf: string, omitKeys: string[]} | null}  null -> legacy labeled args
+ *
+ * The walk is TRANSITIVE (#130): blend's `Omit<BlockProps, 'children'>` where
+ * `BlockProps = StyledBlockProps & Omit<React.HTMLAttributes<HTMLElement>, 'as'|'color'> & {…}`
+ * reaches the attrs surface only through a package-local ALIAS-of-intersection and nested
+ * `Omit` wrappers — the recursion accumulates every layer's omit keys and still finds the leaf.
+ * Heritage names strip a `React.` qualifier, and non-vendored heritage interfaces recurse too.
+ *
+ * Along the way it collects `bases` (#82): PURE package-local NAMED parts (an alias/interface
+ * whose flattened properties carry no vendor declarations — blend's `StyledBlockProps` ~95 CSS
+ * fields, `BaseSkeletonProps`). buildComponentIR turns each into a shared-record SPREAD instead
+ * of inlining its fields, when it can prove that's collision-free.
+ *
+ * @returns {{leaf: string|null, omitKeys: string[], bases: ts.Type[]} | null}
+ *          null -> a BLOCKED surface or unanalyzable Omit; caller uses legacy labeled args
  */
 function detectAttrsBase(propsType, checker) {
-    const parts = (propsType.flags & ts.TypeFlags.Intersection) ? propsType.types : [propsType]
     const leaves = []
     const omitKeys = []
-    for (const part of parts) {
+    const bases = []
+    const seenBase = new Set()
+    let blocked = false
+    const isPureLocal = (t) => {
+        // a named part is a shared-base candidate only when NONE of its flattened props is
+        // vendor-declared — then spreading it can never overlap the HtmlAttrs chain's decls.
+        // "Vendor" is BOTH path-based (real @types/react, styled-components, …: isVendorDecl)
+        // and NAME-based (TS_NAME_TO_GROUP + the wrapper set below — self-contained golden
+        // stubs declare these locally, and fixtures must behave exactly like real packages),
+        // the same duality coveredBySpread relies on. An impure part (blend's BlockProps)
+        // descends instead, so its attrs portion still becomes the HtmlAttrs leaf.
+        const props = checker.getPropertiesOfType(t) || []
+        if (!props.length) return false
+        return props.every((p) => (p.declarations || []).length > 0 && (p.declarations || []).every((d) => {
+            if (isVendorDecl(d)) return false
+            const parent = d.parent
+            return !(parent && ts.isInterfaceDeclaration(parent) && TS_NAME_TO_GROUP.has(parent.name.text))
+        }))
+    }
+    const visit = (part, depth, inIntersection) => {
+        if (blocked || depth > 6) return
         const aliasName = part.aliasSymbol && part.aliasSymbol.getName()
         let core = part
         if (aliasName === 'Omit' || aliasName === 'Partial') {
@@ -698,23 +735,58 @@ function detectAttrsBase(propsType, checker) {
                 const keys = args[1]
                 for (const k of keys ? (keys.isUnion() ? keys.types : [keys]) : []) {
                     if (k.isStringLiteral()) omitKeys.push(k.value)
-                    else return null // computed/non-literal Omit keys -> legacy
+                    else { blocked = true; return } // computed/non-literal Omit keys -> legacy
                 }
             }
         }
         const coreSym = core.aliasSymbol || core.getSymbol?.()
         const coreName = coreSym && coreSym.getName()
-        if (coreName && BLOCKED_ATTRS.has(coreName)) return null
-        if (coreName && TS_NAME_TO_GROUP.has(coreName)) { leaves.push(TS_NAME_TO_GROUP.get(coreName)); continue }
-        // own interface that `extends ButtonHTMLAttributes<…>` (heritage instead of `&`)
+        if (coreName && BLOCKED_ATTRS.has(coreName)) { blocked = true; return }
+        if (coreName && TS_NAME_TO_GROUP.has(coreName)) { leaves.push(TS_NAME_TO_GROUP.get(coreName)); return }
+        // A pure package-local NAMED part is a shared-base candidate — spread whole, no descent.
+        // Only as a member of some intersection: a component whose props are ONE named alias
+        // keeps today's inline record (a spread-only `props` adds indirection for no dedup win).
+        // Known REACT/vendor WRAPPER names never qualify (fixtures stub them locally, but on a
+        // real package they're vendor-declared and must behave identically): `RefAttributes`
+        // carries the reserved `ref` the #98 synthesis owns; `ExecutionProps` is styled-components'.
+        if (inIntersection && coreName && coreName !== '__type' && !(coreSym.flags & ts.SymbolFlags.TypeParameter)
+            && !VENDOR_WRAPPER_NAMES.has(coreName) && isPureLocal(core)) {
+            if (core.id != null && !seenBase.has(core.id)) { seenBase.add(core.id); bases.push(core) }
+            return
+        }
+        // Impure named part over an intersection (blend's BlockProps): descend into its parts.
+        // TypeScript NORMALIZES nested intersections into one flat `.types` list, dissolving
+        // intermediate aliases (`StyledBlockProps = StateStyles & {…}` disappears into its
+        // members) — so prefer the SYNTACTIC members of the alias declaration, where each type
+        // reference resolves with its aliasSymbol intact and can become a base candidate.
+        if (core.flags & ts.TypeFlags.Intersection) {
+            const aliasDecl = core.aliasSymbol && (core.aliasSymbol.declarations || []).find((d) => ts.isTypeAliasDeclaration(d) && d.type && ts.isIntersectionTypeNode(d.type))
+            if (aliasDecl) {
+                for (const m of aliasDecl.type.types) {
+                    try { visit(checker.getTypeFromTypeNode(m), depth + 1, true) } catch { /* unresolvable member: its fields inline via the normal flatten */ }
+                }
+                return
+            }
+            for (const t of core.types) visit(t, depth + 1, true)
+            return
+        }
+        // own interface `extends …` (heritage instead of `&`): vendored base -> leaf; a
+        // package-local base recurses (its own heritage may reach the vendored surface).
         const ifaceDecl = coreSym && (coreSym.declarations || []).find((d) => ts.isInterfaceDeclaration(d))
         if (ifaceDecl) for (const h of ifaceDecl.heritageClauses || []) for (const t of h.types) {
-            const base = t.expression.getText()
-            if (BLOCKED_ATTRS.has(base)) return null
-            if (TS_NAME_TO_GROUP.has(base)) leaves.push(TS_NAME_TO_GROUP.get(base))
+            const base = t.expression.getText().replace(/^React\./, '')
+            if (BLOCKED_ATTRS.has(base)) { blocked = true; return }
+            if (TS_NAME_TO_GROUP.has(base)) { leaves.push(TS_NAME_TO_GROUP.get(base)); continue }
+            try {
+                const hs = checker.getSymbolAtLocation(t.expression)
+                const hr = hs && ((hs.flags & ts.SymbolFlags.Alias) ? checker.getAliasedSymbol(hs) : hs)
+                if (hr && hr.declarations && hr.declarations.some((d) => ts.isInterfaceDeclaration(d))) visit(checker.getDeclaredTypeOfSymbol(hr), depth + 1, inIntersection)
+            } catch { /* unresolvable heritage: skip */ }
         }
     }
-    if (!leaves.length) return null
+    visit(propsType, 0, false)
+    if (blocked) return null
+    if (!leaves.length) return (bases.length ? { leaf: null, omitKeys, bases } : null)
     // Deepest chain wins (field-count is the depth proxy); a second base must be fully
     // contained in the winner's chain (Button extends HTML — fine), else -> legacy.
     leaves.sort((a, b) => chainFields(b).size - chainFields(a).size)
@@ -722,7 +794,7 @@ function detectAttrsBase(propsType, checker) {
     for (const other of leaves.slice(1)) {
         for (const f of chainFields(other)) if (!chainFields(leaf).has(f)) return null
     }
-    return { leaf, omitKeys }
+    return { leaf, omitKeys, bases }
 }
 
 /** `Omit<X, K>` → `{ base: X, omit: Set<string> }` (K's string-literal members), else null.
@@ -835,7 +907,7 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     // a vendored attribute interface inside the leaf's chain. Anything redeclared in the
     // component's OWN types keeps its own (more specific) mapping and joins `removed`.
     const coveredBySpread = (p) => {
-        if (!attrsBase) return false
+        if (!attrsBase || !attrsBase.leaf) return false
         const decls = p.declarations || []
         return decls.length > 0 && decls.every((d) => {
             const parent = d.parent
@@ -897,9 +969,64 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
         propSyms = [...commonSyms, ...extra]
     }
 
+    // Shared-base spreads (#82): a pure package-local NAMED part (blend's StyledBlockProps —
+    // the ~95-field Block CSS surface — or BaseSkeletonProps) becomes ONE shared record spread
+    // (`...BlendTypes.styledBlockProps`) instead of inlining its fields into every component.
+    // A base spreads ONLY when provably collision-free (ReScript record spreads hard-error on
+    // duplicate labels):
+    //   (a) UNSHADOWED — every base field's flattened prop resolves to the base's OWN property
+    //       DECLARATIONS. Symbol identity is NOT enough: an `Omit<>` wrapper (blend's
+    //       `Omit<BlockProps, 'children'>`) synthesizes fresh mapped symbols, but they keep the
+    //       original declaration nodes — while a component-level redeclaration adds a declaration
+    //       OUTSIDE the base, breaking containment exactly when it must. This also proves no
+    //       `Omit` key stripped a base field: a stripped field never reaches the flattened props
+    //       (and a same-named survivor from ANOTHER part fails the containment);
+    //   (b) no ReScript-id collision with the component's remaining own props or another base.
+    // Anything failing a gate silently falls back to today's inline flattening.
+    const baseCandidates = (attrsBase && attrsBase.bases) || []
+    const spreadBases = []
+    if (baseCandidates.length) {
+        const flatByName = new Map(propSyms.map((p) => [p.getName(), p]))
+        for (const bt of baseCandidates) {
+            const fields = checker.getPropertiesOfType(bt) || []
+            const declsOf = (s) => s.declarations || []
+            const baseDecls = new Set(fields.flatMap(declsOf))
+            const coveredFlat = (f) => {
+                const pf = flatByName.get(f.getName())
+                return !!pf && declsOf(pf).length > 0 && declsOf(pf).every((d) => baseDecls.has(d))
+            }
+            const usable = fields.length > 0 && fields.every(coveredFlat) // (a) containment: unshadowed
+            // `flat` keeps the FLATTENED symbols (the Omit-mapped ones) — ownership filtering on
+            // propSyms must use these, not the base's originals, or the fields inline AND spread.
+            if (usable) spreadBases.push({ type: bt, fields, flat: fields.map((f) => flatByName.get(f.getName())), ids: new Set(fields.map((f) => label(f.getName()).id)) })
+        }
+        // (c) id-level fixpoint: a base colliding with the inline surface (or a dropped base's
+        // returned fields, or a prior base) drops back to inline. Drops only grow the inline
+        // id set, so iterate to stability.
+        const baseOwnedSyms = () => new Set(spreadBases.flatMap((b) => b.flat))
+        let stable = false
+        while (!stable) {
+            stable = true
+            const owned = baseOwnedSyms()
+            const inlineIds = new Set(propSyms
+                .filter((p) => !['ref', 'key'].includes(p.getName()) && !coveredBySpread(p) && !owned.has(p))
+                .filter((p) => !isInherited(p) || allow.has(p.getName()))
+                .map((p) => label(p.getName()).id))
+            for (let i = 0; i < spreadBases.length; i++) {
+                const b = spreadBases[i]
+                const priorIds = new Set(spreadBases.slice(0, i).flatMap((o) => [...o.ids]))
+                if ([...b.ids].some((id) => inlineIds.has(id) || priorIds.has(id))) {
+                    spreadBases.splice(i, 1); stable = false; break
+                }
+            }
+        }
+    }
+    const baseOwned = new Set(spreadBases.flatMap((b) => b.flat))
+
     const props = propSyms
         .filter((p) => !['ref', 'key'].includes(p.getName()))
         .filter((p) => !coveredBySpread(p))
+        .filter((p) => !baseOwned.has(p))
         .filter((p) => !isInherited(p) || allow.has(p.getName()))
         .map((p) => {
             const name = p.getName()
@@ -983,8 +1110,10 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     // id level (raw `children` = chain `children`, but also own `ariaLabel` vs chain
     // `aria-label` — both render to the id `ariaLabel`). The own prop always wins; the
     // base is narrowed so the spread can never produce a duplicate-field compile error.
+    // A shared-base spread's fields narrow the chain the same way (blend's
+    // `StyledBlockProps.color` vs the chain's `color`): the package-specific field wins.
     let attrsBaseInfo = null
-    if (attrsBase) {
+    if (attrsBase && attrsBase.leaf) {
         const chain = chainFields(attrsBase.leaf)
         const idToRaw = new Map()
         for (const n of chain) idToRaw.set(label(n).id, n)
@@ -993,10 +1122,40 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
             const hit = idToRaw.get(label(p.name).id)
             if (hit) removed.add(hit)
         }
+        for (const b of spreadBases) for (const f of b.fields) {
+            const hit = idToRaw.get(label(f.getName()).id)
+            if (hit) removed.add(hit)
+        }
         attrsBaseInfo = { leaf: attrsBase.leaf, removed: [...removed].sort() }
     }
 
-    return { module: importName, import: { from, name: importName }, kind: 'react-component', enums, records, unboxed, props, attrsBase: attrsBaseInfo }
+    // Register each surviving base in the shared registry (dedup by type.id makes every
+    // consumer spread the SAME record) and keep its typeRef for emit. classify is deferred
+    // to here — past every gate — so a rejected candidate never registers an orphan record.
+    // Only a plain (non-generic) record ref can be spread; anything else falls back inline.
+    const baseSpreads = []
+    for (const b of spreadBases) {
+        ctx.lastAnyAlias = null
+        const ref = withPath(ctx, importName, () => classify(b.type, ctx, typeName(b.type) || importName))
+        if (ref && ref.kind === 'typeRef' && !(ref.tparams && ref.tparams.length) && !irHasImperfection(ref)) {
+            baseSpreads.push({ ref })
+        } else {
+            // fall back: re-inline this base's fields (rebuild the prop nodes it owned)
+            for (const f of b.fields) {
+                const name = f.getName()
+                if (props.some((p) => p.name === name)) continue
+                const t = checker.getTypeOfSymbolAtLocation(f, decl)
+                ctx.lastAnyAlias = null
+                const node = withPath(ctx, name, () => salvageCallbackParams(classify(t, ctx, name), ctx))
+                props.push({
+                    name, optional: (f.getFlags() & ts.SymbolFlags.Optional) !== 0, inherited: false,
+                    type: node, tsType: checker.typeToString(t).replace(/\s+/g, ' ').slice(0, 200), declText: '',
+                })
+            }
+        }
+    }
+
+    return { module: importName, import: { from, name: importName }, kind: 'react-component', enums, records, unboxed, props, attrsBase: attrsBaseInfo, baseSpreads }
 }
 
 /**
@@ -1651,7 +1810,7 @@ export function extractModule(entryFile, opts = {}) {
             // A component with zero OWN props is still real when its whole surface is
             // the HTML-attributes spread (e.g. day-picker's `NextMonthButton(props:
             // ButtonHTMLAttributes<…>)`) — `type props = {...HtmlAttrs.x}` alone.
-            if (ir.props.length || ir.attrsBase) {
+            if (ir.props.length || ir.attrsBase || (ir.baseSpreads && ir.baseSpreads.length)) {
                 components.push({ name, ir })
                 // Compound candidate (#100): its own value-properties are checked AFTER the
                 // export loop, so an also-exported flat sibling (`MenuItem`) is already
@@ -1704,7 +1863,7 @@ export function extractModule(entryFile, opts = {}) {
                     const cir = buildComponentIR(checker, p, source, modName, from, { ...opts, shared })
                     cir.import.scope = cc.scopePath.length === 1 ? cc.scopePath[0] : cc.scopePath
                     cir.import.jsName = member
-                    if (cir.props.length || cir.attrsBase) {
+                    if (cir.props.length || cir.attrsBase || (cir.baseSpreads && cir.baseSpreads.length)) {
                         seen.add(modName)
                         components.push({ name: modName, ir: cir })
                         target = modName

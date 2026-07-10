@@ -61,6 +61,15 @@ type responsiveProgressBarV2Tokens = {
   sm: progressBarV2TokenType,
   lg: progressBarV2TokenType,
 }
+type progressBarV2InternalProps = {
+  value: float,
+  min: float,
+  max: float,
+  ariaLabel?: string,
+  ariaLabelledby?: string,
+  showLabel: bool,
+  tokens: progressBarV2TokenType,
+}
 type progressBarV2NormalizeRangeConfig = {
   min: float,
   max: float,

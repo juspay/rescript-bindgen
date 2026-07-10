@@ -1,4 +1,4 @@
-type sidebarV2OnSidebarStateChange =
+type sidebarV2SidebarV2PropsOnSidebarStateChange =
   | @as("expanded") Expanded
   | @as("collapsed") Collapsed
   | @as("intermediate") Intermediate
@@ -198,8 +198,33 @@ type secondarySidebarInfo = {
   items: array<secondarySidebarItem>,
   selected: string,
   onSelect: string => unit,
-  buttonProps?: ReactTypes.reactPrimaryActionButtonPropsConfig,
+  buttonProps?: ReactTypes.reactSidebarPropsPrimaryActionButtonPropsConfig,
   footerSlot?: React.element,
+}
+type sidebarV2Props = {
+  height?: string,
+  children?: React.element,
+  data?: Nullable.t<array<DirectoryTypes.directoryData>>,
+  secondarySidebar?: secondarySidebarInfo,
+  topbar?: React.element,
+  footer?: React.element,
+  sidebarTopSlot?: React.element,
+  sidebarCollapseKey?: string,
+  merchantInfo?: TopbarTypes.merchantInfo,
+  rightActions?: React.element,
+  enableTopbarAutoHide?: bool,
+  isTopbarVisible?: bool,
+  onTopbarVisibilityChange?: bool => unit,
+  defaultIsTopbarVisible?: bool,
+  isExpanded?: bool,
+  onExpandedChange?: bool => unit,
+  onSidebarStateChange?: sidebarV2SidebarV2PropsOnSidebarStateChange => unit,
+  defaultIsExpanded?: bool,
+  showMobilePrimaryActionButton?: bool,
+  mobilePrimaryActionButtonProps?: ReactTypes.reactSidebarPropsPrimaryActionButtonPropsConfig,
+  activeItem?: Nullable.t<string>,
+  onActiveItemChange?: Nullable.t<string> => unit,
+  defaultActiveItem?: Nullable.t<string>,
 }
 type sidebarV2MerchantInfoItemsConfig = {
   label: string,

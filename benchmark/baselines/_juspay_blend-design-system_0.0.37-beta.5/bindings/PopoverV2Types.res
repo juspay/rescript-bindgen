@@ -89,3 +89,11 @@ type popoverV2SkeletonProps = {
   variant?: SkeletonTypes.skeletonVariant,
   bodySkeletonProps?: bodySkeletonV2Props,
 }
+type popoverV2Dimensions = {
+  width?: float,
+  maxWidth?: float,
+  minWidth?: float,
+  height?: float,
+  minHeight?: float,
+  maxHeight?: float,
+}

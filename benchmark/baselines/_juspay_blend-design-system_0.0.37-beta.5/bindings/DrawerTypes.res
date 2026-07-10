@@ -54,6 +54,23 @@ type drawerMobileOffsetConfig = {
   left?: string,
   right?: string,
 }
+type drawerContentProps = {
+  children: React.element,
+  className?: string,
+  style?: JsxDOM.style,
+  @as("aria-label") ariaLabel?: string,
+  @as("aria-describedby") ariaDescribedby?: string,
+  fullScreen?: bool,
+}
+type drawerHeaderProps = {
+  children: React.element,
+  className?: string,
+}
+type drawerTitleProps = {
+  children: React.element,
+  className?: string,
+  id?: string,
+}
 type selectDrawerItem = {
   value: string,
   label: string,

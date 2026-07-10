@@ -1,9 +1,8 @@
-@module("demo") @react.component
-external make: (
-  ~value: string=?,
-  ~onValueChange: string => unit=?,
-  ~orientation: StyledConcreteSignatureTypes.styledConcreteSignatureOrientation=?,
-  ~children: StyledConcreteSignatureTypes.jsxElement=?,
-  @as("as") ~as_: string=?,
-  ~forwardedAs: string=?,
-) => React.element = "StyledTabs"
+type props = {
+  ...StyledConcreteSignatureTypes.tabsProps,
+  @as("as") as_?: string,
+  forwardedAs?: string,
+}
+
+@module("demo")
+external make: React.component<props> = "StyledTabs"

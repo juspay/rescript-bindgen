@@ -16,6 +16,20 @@ type alertAction = {
   label: string,
   onClick: unit => unit,
 }
+type alertProps = {
+  heading: string,
+  description: string,
+  variant?: alertVariant,
+  style?: alertStyle,
+  primaryAction?: alertAction,
+  secondaryAction?: alertAction,
+  onClose?: unit => unit,
+  icon?: React.element,
+  actionPlacement?: alertActionPlacement,
+  maxWidth?: string,
+  minWidth?: string,
+  width?: string,
+}
 type alertAlertTokenTypeBackgroundPrimaryConfig = {
   subtle: string,
   noFill: string,

@@ -63,6 +63,10 @@ export interface ComponentIR {
    *  this component's file; each target is a sibling module bound through this component's
    *  runtime object via `@scope`. */
   statics?: { member: string; target: string }[]
+  /** Shared-base props spreads (#82): pure package-local named intersection parts emitted as
+   *  ONE shared record each and spread into this component's `type props`
+   *  (`...BlendTypes.styledBlockProps`). Present only when provably collision-free. */
+  baseSpreads?: { ref: IRType }[]
 }
 
 /** IR for a standalone function / const-with-call-signature export (generic TS). */

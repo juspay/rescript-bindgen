@@ -1,3 +1,3 @@
-type reactPrimaryActionButtonPropsConfig = {
+type reactSidebarPropsPrimaryActionButtonPropsConfig = {
   ...JsxDOM.domProps,
 }

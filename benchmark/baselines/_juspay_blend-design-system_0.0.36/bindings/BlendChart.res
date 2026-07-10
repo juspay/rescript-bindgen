@@ -1,12 +1,12 @@
 @module("@juspay/blend-design-system") @react.component
 external make: (
+  ~ref: React.ref<Nullable.t<DistTypes.highchartsReactRefObject<'a, 'b, 'c>>>=?,
   ~allowChartUpdate: bool=?,
-  ~constructorType: ChartsTypes.chartsConstructorType=?,
-  ~containerProps: Dict.t<'a>=?,
+  ~constructorType: HighchartsSharedTypes.chartsBlendChartPropsConstructorType=?,
+  ~containerProps: Dict.t<'t6>=?,
   ~highcharts: InstanceTypes.highchartsModule=?,
   ~immutable: bool=?,
-  ~options: HighchartsSharedTypes.options<'b>=?,
+  ~options: HighchartsSharedTypes.options<'a, 'b, 'c>=?,
   ~updateArgs: array<bool>=?,
-  ~callback: HighchartsSharedTypes.chart<'b> => unit=?,
-  ~ref: React.ref<Nullable.t<DistTypes.highchartsReactRefObject<'b>>>=?,
+  ~callback: HighchartsSharedTypes.chart<'a, 'b, 'c> => unit=?,
 ) => React.element = "BlendChart"

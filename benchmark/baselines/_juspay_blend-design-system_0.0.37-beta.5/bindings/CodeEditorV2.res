@@ -1,5 +1,6 @@
 type props = {
   ...HtmlAttrs.htmlAttributesOmitAutoFocusChildrenClassNameOnBlurOnChangeOnFocusStyle,
+  ...EditorSharedTypes.codeEditorV2Dimensions,
   value: string,
   onChange?: string => unit,
   variant?: EditorSharedTypes.codeEditorV2Variant,
@@ -18,12 +19,6 @@ type props = {
   isDiffUnchangedCollapsed?: bool,
   diffContextLines?: float,
   diffExpandChunk?: float,
-  width?: string,
-  maxWidth?: string,
-  minWidth?: string,
-  height?: string,
-  maxHeight?: string,
-  minHeight?: string,
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 
