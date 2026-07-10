@@ -342,7 +342,7 @@ async function main() {
     const reports = []   // per-prop detail, for --report
     for (const { name, ir } of units) {
         const code = emit(ir, compRef)
-        const rep = report(ir)
+        const rep = report(ir, shared) // registry-aware: defects inside shared types surface here (#133)
         totalDefects += rep.defects.length
         writeFileSync(join(outDir, `${name}.res`), code)
         written.add(`${name}.res`)

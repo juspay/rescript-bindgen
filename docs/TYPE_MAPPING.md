@@ -33,7 +33,12 @@ The rules:
    callback position is unsound). A type variable `'a` is reserved for a genuine generic that
    round-trips. See [Generics](#generics--erased-generics).
 
-The report buckets a prop by the *worst* imperfection in its type tree:
+The report buckets a prop by the *worst* imperfection in its type tree — **including, in module
+mode, imperfections reachable THROUGH typeRefs into shared types** (#133): a 🛑/🔍 field inside a
+shared record surfaces on every component that carries it, with the defect row naming the owning
+type + field (`config.theme`). A nested ⚪ loose field deliberately does NOT re-list per consumer
+(it doesn't change the usability verdict; the shared type's own inline comment covers it).
+Fixture: [`shared-defect-report`](../test/golden/cases/shared-defect-report).
 
 | Bucket | Meaning | Emitted as |
 |---|---|---|

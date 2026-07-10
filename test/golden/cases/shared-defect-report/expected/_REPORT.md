@@ -1,8 +1,8 @@
 # Binding report — `demo`
 
-**1** components · ✅ **0** usable · 🔍 **0** need review · 🛑 **1** broken
+**2** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **1** broken
 
-**1** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**2** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -16,7 +16,7 @@
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-_(none)_
+- Tree
 
 ## ⚪ Loosely typed (widened to `string`)
 
@@ -34,9 +34,9 @@ _(none)_
 
 These props resolved to `unknown`/`any` (usually a generic `T`). They're emitted as a placeholder so the file still compiles, but **the props will not work as typed** — they need a concrete type upstream, or generic-binding support.
 
-### Widget
+### Panel
 
 | Prop | Real TypeScript | Why it won't work |
 |------|-----------------|-------------------|
-| `meta` | `meta?: WidgetMeta` | Carries flagged field(s) inside a shared type: `widgetMeta.payload` (`any`) — the prop itself binds, but those fields are `string` placeholders. |
+| `config` | `config?: Config;` | Carries flagged field(s) inside a shared type: `config.theme` (declared type does not resolve — broken import) — the prop itself binds, but those fields are `string` placeholders. |
 

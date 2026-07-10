@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- **Report buckets were blind to defects inside shared types** (#133) — a 🛑 field in a
+  registered shared record (blend's `themeContextType.foundationTokens` shape, base-ui's
+  `any[]` values) was correctly flagged inline but the CARRYING component still read
+  ✅ usable, under-counting the headline. The report walk is now registry-aware: it follows
+  typeRefs into shared record fields / `@unboxed` members / opaque views (cycle-safe,
+  memoized) and elevates `review`+ imperfections to the component's bucket, with the defect
+  row naming the owning type + field (`config.theme`). Nested ⚪ loose fields deliberately
+  don't re-list per consumer. Single-file mode unchanged. Fixture: `shared-defect-report`.
 - **Error-`any` from unresolvable imports silently became `'a`/`string`** (#107) — a broken
   import in a package's .d.ts (blend's `ThemeType` through the shadowed `../tokens` path) made
   the checker's error type masquerade as author-written `any`, and the implicit-generic salvage

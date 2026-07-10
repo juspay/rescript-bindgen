@@ -961,24 +961,107 @@ function imperfection(t) {
 }
 
 /**
+ * Registry-aware DEEP imperfection (#133): follow `typeRef`s into their shared-registry
+ * entries and walk record fields / `@unboxed` members / opaque-module views, so a defect
+ * INSIDE a shared type surfaces on the component that carries it — previously the ref node
+ * was opaque to `imperfection()` and the component read ✅ usable while shipping a 🛑 field.
+ *
+ * Deliberately elevates only `review`+ (rank ≥ 2): a nested ⚪ `opaque` (loose) field doesn't
+ * change a component's usability verdict, and re-listing every shared loose field on every
+ * consumer would drown the report — the shared type's own inline comment already covers it.
+ *
+ * Returns the worst nested kind (or null) plus up to 4 `causes` naming the owning shared
+ * type and field (`{owner, field, kind, unresolved}`) for the report's "why" column.
+ * Memoized on the registry (`shared._deepMemo`); a visited-set cuts recursive records
+ * (styledBlockProps._hover).
+ */
+function deepImperfection(t, shared) {
+    if (!shared || !shared.byKey) return { worst: null, causes: [] }
+    if (!shared._deepMemo) shared._deepMemo = new Map()
+    if (!shared._byName) shared._byName = new Map((shared.entries || []).map((e) => [e.name, e]))
+    const rank = { unknown: 3, any: 3, review: 2 }
+    const causes = []
+    const visiting = new Set()
+    const resolve = (ref) => (ref.key && shared.byKey.get(ref.key))
+        || shared._byName.get(String(ref.to).replace(/\.t$/, '')) || null
+    const entryChildren = (e) => {
+        if (e.kind === 'record') return (e.fields || []).map((f) => ({ field: f.name, type: f.type }))
+        if (e.kind === 'unboxed') return (e.members || []).map((m) => ({ field: m.ctor || '(member)', type: m.type }))
+        if (e.kind === 'opaque') return [
+            ...(e.members || []).map((m) => ({ field: m.name || '(arm)', type: m.type })),
+            ...(e.sigs || []).map((s) => ({ field: s.accessor, type: s.fn })),
+            ...(e.props || []).map((m) => ({ field: m.jsName, type: m.fn || m.get })),
+        ].filter((c) => c.type)
+        return []
+    }
+    const walkEntry = (e) => {
+        if (shared._deepMemo.has(e.key)) {
+            const memo = shared._deepMemo.get(e.key)
+            if (memo && causes.length < 4) causes.push(...memo.causes.slice(0, 4 - causes.length))
+            return memo ? memo.worst : null
+        }
+        if (visiting.has(e.key)) return null
+        visiting.add(e.key)
+        let worst = null
+        const localCauses = []
+        for (const { field, type } of entryChildren(e)) {
+            const direct = imperfection(type)
+            if (direct && rank[direct]) {
+                if (!worst || rank[direct] > rank[worst]) worst = direct
+                if (localCauses.length < 4) localCauses.push({ owner: e.name, field, kind: direct, unresolved: hasUnresolved(type) })
+            }
+            const nested = walkNode(type)
+            if (nested && (!worst || rank[nested] > rank[worst])) worst = nested
+        }
+        visiting.delete(e.key)
+        // memo only clean completions — a cycle-cut walk may be partial
+        if (!visiting.size) shared._deepMemo.set(e.key, worst ? { worst, causes: localCauses } : null)
+        if (causes.length < 4) causes.push(...localCauses.slice(0, 4 - causes.length))
+        return worst
+    }
+    const walkNode = (n) => {
+        if (!n || typeof n !== 'object') return null
+        if (n.kind === 'typeRef') {
+            const e = resolve(n)
+            return e ? walkEntry(e) : null
+        }
+        let worst = null
+        const consider = (x) => { const r = walkNode(x); if (r && (!worst || rank[r] > rank[worst])) worst = r }
+        for (const k of ['of', 'ret', 'thisArg', 'arg', 'mapKey', 'mapVal']) if (n[k]) consider(n[k])
+        if (Array.isArray(n.params)) n.params.forEach(consider)
+        return worst
+    }
+    return { worst: walkNode(t), causes }
+}
+
+/**
  * Bucket a component's props by how well they could be bound. Drives `_REPORT.md`.
  *
  * - **defects** — props that resolved to `unknown`/`any` (won't work as typed)
  * - **review**  — multi-type unions we refuse to bind unsafely (need a human)
  * - **loose**   — real types widened to `string` (compile & work, just loosely typed)
  *
+ * With `shared` (module mode), a prop is ALSO bucketed by the worst `review`+ imperfection
+ * reachable through its typeRefs into shared types (#133) — `item.nested` then names the
+ * owning shared type + field so the consumer knows where to look.
+ *
  * @param {import('../types').ComponentIR} ir
+ * @param {{byKey: Map, entries: object[]}} [shared]  the module-level type registry
  * @returns {{ loose: object[], defects: object[], review: object[] }}
- *   each item: `{ prop, kind, tsType, declText }`
+ *   each item: `{ prop, kind, tsType, declText, nested? }`
  */
-export function report(ir) {
+export function report(ir, shared) {
     const loose = []
     const defects = []
     const review = []
+    const rank = { unknown: 3, any: 3, review: 2, opaque: 1 }
     for (const p of ir.props) {
-        const v = imperfection(p.type) // same recursion the emitter uses — report ⇔ code agree
+        let v = imperfection(p.type) // same recursion the emitter uses — report ⇔ code agree
+        const deep = deepImperfection(p.type, shared)
+        let nested = null
+        if (deep.worst && (!v || rank[deep.worst] > rank[v])) { v = deep.worst; nested = deep.causes }
         if (!v) continue
-        const item = { prop: p.name, kind: v, tsType: p.tsType, declText: p.declText, unresolved: hasUnresolved(p.type) }
+        const item = { prop: p.name, kind: v, tsType: p.tsType, declText: p.declText, unresolved: hasUnresolved(p.type), ...(nested && nested.length ? { nested } : {}) }
         if (v === 'unknown' || v === 'any') defects.push(item)
         else if (v === 'review') review.push(item)
         else { item.emittedAs = 'string'; loose.push(item) } // opaque
