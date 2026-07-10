@@ -1154,14 +1154,34 @@ function returnNode(sig, ctx, depth = 0) {
 /**
  * Whether a function/constructor PARAMETER is optional. Parameter symbols don't carry
  * `SymbolFlags.Optional` reliably (that flag is for object properties), so read it off the
- * declaration: a `?` token, a default initializer, or a rest param all make the arg omittable.
+ * declaration: a `?` token or default initializer makes the arg omittable. A REST param is
+ * deliberately NOT optional: `...args: T[]` means zero-or-more positional JS arguments, not one
+ * optional array argument. It is tracked separately by `isRestParam` and emitted via `@variadic`.
  * @param {ts.Symbol} paramSym
  * @returns {boolean}
  */
 function isOptionalParam(paramSym) {
     if (paramSym.getFlags() & ts.SymbolFlags.Optional) return true
     const d = paramSym.valueDeclaration || (paramSym.declarations && paramSym.declarations[0])
-    return !!(d && ts.isParameter(d) && (d.questionToken || d.initializer || d.dotDotDotToken))
+    return !!(d && ts.isParameter(d) && (d.questionToken || d.initializer))
+}
+
+/** Whether a signature parameter is declared with `...` (a variadic JS call boundary). */
+function isRestParam(paramSym) {
+    const d = paramSym.valueDeclaration || (paramSym.declarations && paramSym.declarations[0])
+    return !!(d && ts.isParameter(d) && d.dotDotDotToken)
+}
+
+/**
+ * `@variadic` can faithfully model only a FINAL homogeneous array rest (`...args: T[]`). Reject
+ * tuple/other rest shapes instead of emitting an external that passes one aggregate JS argument.
+ */
+function assertSupportedRestParams(params) {
+    const restAt = params.findIndex((p) => p.rest)
+    if (restAt < 0) return
+    if (restAt !== params.length - 1) {
+        throw new Error('unsupported-rest-parameter: only a final homogeneous `...args: T[]` can use @variadic')
+    }
 }
 
 /**
@@ -1169,7 +1189,7 @@ function isOptionalParam(paramSym) {
  * optionality (class methods/constructors bind as labeled args, unlike M1's positional
  * functions, because methods lean on optional params and ReScript only allows optionals
  * when labeled). React-event params are recognised the same way functionNode does.
- * @returns {{params: Array<{name:string, optional:boolean, type:object}>, ret:object}}
+ * @returns {{params: Array<{name:string, optional:boolean, rest:boolean, type:object}>, ret:object}}
  */
 function sigToMembers(sig, ctx, depth = 0) {
     const { checker } = ctx
@@ -1183,13 +1203,20 @@ function sigToMembers(sig, ctx, depth = 0) {
     ctx.produced = true
     const params = sig.getParameters().map((pp) => {
         const pt = checker.getTypeOfSymbolAtLocation(pp, ctx.decl)
-        const optional = isOptionalParam(pp)
+        const rest = isRestParam(pp)
+        const optional = !rest && isOptionalParam(pp)
+        // Reject tuple/other rest shapes BEFORE classify can register shared types for a binding
+        // that will be skipped. `asArray` resolves Array/ReadonlyArray aliases too.
+        if (rest && !asArray(pt, checker)) {
+            throw new Error('unsupported-rest-parameter: only a final homogeneous `...args: T[]` can use @variadic')
+        }
         const n = typeName(pt)
         const type = (n && Object.prototype.hasOwnProperty.call(REACT_EVENTS, n))
             ? { kind: 'event', res: REACT_EVENTS[n] }
             : withPath(ctx, pp.getName(), () => classify(pt, ctx, pp.getName(), depth + 1)) // path-anchor param `{…}` (#90)
-        return { name: pp.getName(), optional, type }
+        return { name: pp.getName(), optional, rest, type }
     })
+    assertSupportedRestParams(params)
     ctx.produced = false
     const ret = returnNode(sig, ctx, depth)
     ctx.produced = prev

@@ -241,7 +241,7 @@
 @module("@juspay/blend-design-system") external defaultEndReachedThreshold: float = "DEFAULT_END_REACHED_THRESHOLD"
 @module("@juspay/blend-design-system") external generateAccessibilityIds: (string, EditorSharedTypes.singleSelectV2GenerateAccessibilityIdsOptionsConfig) => EditorSharedTypes.singleSelectV2GenerateAccessibilityIdsConfig = "generateAccessibilityIds"
 @module("@juspay/blend-design-system") external extractSingleSelectV2AriaProps: (Dict.t<JSON.t>) => EditorSharedTypes.extractedAriaProps = "extractSingleSelectV2AriaProps"
-@module("@juspay/blend-design-system") external mergeSingleSelectV2AriaDescribedBy: (~ids: array<string>=?, unit) => string = "mergeSingleSelectV2AriaDescribedBy"
+@module("@juspay/blend-design-system") @variadic external mergeSingleSelectV2AriaDescribedBy: array<string> => string = "mergeSingleSelectV2AriaDescribedBy"
 @module("@juspay/blend-design-system") external buildAriaAttributes: (EditorSharedTypes.singleSelectV2BuildAriaAttributesOptionsConfig) => EditorSharedTypes.ariaAttributes = "buildAriaAttributes"
 @module("@juspay/blend-design-system") external setupAccessibility: (EditorSharedTypes.accessibilitySetupOptions) => EditorSharedTypes.accessibilitySetupResult = "setupAccessibility"
 @module("@juspay/blend-design-system") external virtualRowEstimates: EditorSharedTypes.singleSelectV2VIRTUALROWESTIMATESConfig = "VIRTUAL_ROW_ESTIMATES"
