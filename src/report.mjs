@@ -169,7 +169,12 @@ export function writeReport(path, label, rows, reports, deps, shared, fnInfo, cl
             L.push(`|------|-----------------|-------------------|`)
             for (const x of (d?.defects || [])) {
                 const decl = (x.declText || x.tsType || '').replace(/\|/g, '\\|')
-                const why = /\(.*\)\s*=>/.test(x.declText || '')
+                // #107: an UNRESOLVABLE reference (checker error-`any` from a broken import) is
+                // named as such — the declared type usually EXISTS in the package (the import
+                // path is what's broken), so hand-matching it is a seconds-long fix.
+                const why = x.unresolved
+                    ? "The declared type **does not resolve** (broken import in the package's .d.ts) → emitted as `string`. The type itself likely exists — fix the upstream import path, or hand-match it from the declaration shown."
+                    : /\(.*\)\s*=>/.test(x.declText || '')
                     ? "It's a **callback** typed `unknown` → emitted as `string`; passing a string does nothing."
                     : "Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly."
                 L.push(`| \`${x.prop}\` | \`${decl}\` | ${why} |`)

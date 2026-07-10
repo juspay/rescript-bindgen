@@ -7,9 +7,9 @@
   },
   {
     "name": "@juspay/blend-design-system",
-    "version": "0.0.37-beta.5",
+    "version": "0.0.37-beta.8",
     "flags": ["--webapi"],
-    "notes": "the beta line blend-rescript ACTUALLY regenerates from — exports the chart hooks (useChartLegend/useChartRefs) + Highcharts surface that 0.0.36 lacks; added after the #110 tparam regression compiled fine on 0.0.36 but broke here (caught only by downstream validation)"
+    "notes": "the beta line blend-rescript ACTUALLY regenerates from (tracks the `beta` dist-tag; bumped from beta.5) — exports the chart hooks (useChartLegend/useChartRefs) + Highcharts surface that 0.0.36 lacks; added after the #110 tparam regression compiled fine on 0.0.36 but broke here (caught only by downstream validation)"
   },
   {
     "name": "react-day-picker",

@@ -130,6 +130,20 @@ const checks = [
       ['single-alias props stay legacy labeled args', !!plain && !(plain.ir.baseSpreads || []).length && !plain.ir.attrsBase],
     ]
   })(),
+  ...(() => {
+    // Error-`any` from an unresolvable import (#107): flagged placeholder, never a silent `'a`;
+    // author-written `any` keeps the implicit-generic salvage.
+    const ea = extractModule(join(here, 'golden', 'cases', 'error-any-unresolved', 'index.d.ts'), { from: 'demo' })
+    const tp = ea.components.find((c) => c.name === 'ThemeProvider')
+    const ft = tp && tp.ir.props.find((p) => p.name === 'foundationTokens')
+    const gt = ea.functions.find((f) => f.name === 'getTabsTokens')
+    const la = ea.functions.find((f) => f.name === 'legitAny')
+    return [
+      ['error-any prop is a flagged placeholder, not a silent type var', !!ft && ft.type.kind === 'any' && ft.type.unresolved === true],
+      ['error-any function param is flagged too', !!gt && gt.ir.sig.params[0].type.kind === 'any' && gt.ir.sig.params[0].type.unresolved === true && /DOES NOT RESOLVE/.test(emitFunction(gt.ir))],
+      ['author-written any keeps the implicit generic', !!la && la.ir.sig.params[0].type.kind === 'typeVar'],
+    ]
+  })(),
 ]
 
 let ok = true

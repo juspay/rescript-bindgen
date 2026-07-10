@@ -6,6 +6,21 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- **Error-`any` from unresolvable imports silently became `'a`/`string`** (#107) — a broken
+  import in a package's .d.ts (blend's `ThemeType` through the shadowed `../tokens` path) made
+  the checker's error type masquerade as author-written `any`, and the implicit-generic salvage
+  emitted a silent `~foundationTokens: 'a=?` with `defects=0`. Error-any is now detected via the
+  checker's `error` intrinsic and emits a 🛑-flagged placeholder naming the broken-import cause
+  everywhere (props, function params/returns, record fields, class members); the report explains
+  the type likely exists and can be hand-matched. Author-written `any` behavior is unchanged.
+  react-rating's `itemShapes` now names the cause. Fixture: `error-any-unresolved`.
+
+### Changed
+- **Benchmark: blend beta pin bumped `0.0.37-beta.5` → `0.0.37-beta.8`** (tracks the `beta`
+  dist-tag). Upstream fixed the shadowed `../tokens` import between the two, so
+  `ThemeProvider.foundationTokens` and the `getAvatarTokens` family now bind their REAL types
+  (`TokensTypes.foundationTokenType`) with no generator change — blend beta.8 scores a clean
+  222/222 usable, 0 broken/review/loose.
 - **HtmlAttrs spread detection missed indirect attribute surfaces; package CSS bases inlined
   per component** (#130, #82) — blend's `Omit<BlockProps, 'children'>` (attrs reachable only
   through a package-local alias and a nested `Omit`) flattened ~149 labeled args into every

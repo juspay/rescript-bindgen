@@ -33,7 +33,7 @@ type itemStyles = {
   inactiveStrokeColor?: string,
   inactiveBoxColor?: string,
   inactiveBoxBorderColor?: string,
-  itemShapes: string,  // 🛑 BROKEN — contains `any`
+  itemShapes: string,  // 🛑 BROKEN — declared type does not resolve (broken import in the package's .d.ts)
   itemStrokeWidth?: float,
   boxBorderWidth?: float,
 }
