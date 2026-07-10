@@ -2578,14 +2578,15 @@ function classify(type, ctx, propName = '', depth = 0) {
     // string placeholder that silently does nothing. Inside SHARED record fields it stays
     // a flagged defect (a shared type can't be component-generic). (#31, probe I-2)
     if (flags & ts.TypeFlags.Any) {
-        // ERROR-any (#107): the checker's error type (intrinsicName 'error') means the TYPE
-        // REFERENCE ITSELF DOES NOT RESOLVE — a broken import in the package's .d.ts (blend's
-        // `ThemeType` through the shadowed `../tokens` path), NOT an author-written `any`. The
+        // ERROR-any (#107): the checker's error type (intrinsicName 'error' — or its sibling
+        // 'unresolved', used by some unresolvable-reference paths) means the TYPE REFERENCE
+        // ITSELF DOES NOT RESOLVE — a broken import in the package's .d.ts (blend's `ThemeType`
+        // through the shadowed `../tokens` path), NOT an author-written `any`. The
         // implicit-generic salvage below would turn it into a silent `'a` (ThemeProvider's
         // `~foundationTokens: 'a=?`, defects=0) — a contract violation twice over: `'a` is
         // reserved for genuine round-trip generics, and nothing may degrade unflagged. Emit a
         // marked placeholder instead; the report's declText names the failing reference.
-        if (type.intrinsicName === 'error') return { kind: 'any', unresolved: true }
+        if (type.intrinsicName === 'error' || type.intrinsicName === 'unresolved') return { kind: 'any', unresolved: true }
         // A record-field `any` normally stays a flagged defect (#31) — a shared record
         // can't carry a per-component var, and a generic record referenced as a callback
         // param inside a shared `className`/`style` @unboxed doesn't thread its `<'a>`
