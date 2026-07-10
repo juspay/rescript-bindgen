@@ -1410,6 +1410,23 @@ export function extractModule(entryFile, opts = {}) {
     const moduleSymbol = checker.getSymbolAtLocation(source)
     if (!moduleSymbol) throw new Error(`No module symbol for ${entryFile}`)
     const exports = checker.getExportsOfModule(moduleSymbol)
+    // `export = value` describes `module.exports = value`: getExportsOfModule exposes the
+    // assigned value's namespace/static members (`bind`, `prototype`, …) but NOT the root
+    // callable/class itself. resolveExternalModuleSymbol follows the assignment; for ordinary
+    // ESM modules it returns moduleSymbol unchanged. Treat a distinct result as a synthetic
+    // `export=` entry AFTER the normal members: when a merged namespace member shares the root's
+    // name (clsx's `namespace clsx { function clsx }`), the member's real JS name works under BOTH
+    // module systems, while the root's `= "default"` is undefined under a CommonJS target
+    // (`require("clsx").default`) — so the named member must win the `seen` dedup. (#102)
+    let exportEqualsSymbol = null
+    try {
+        const resolved = checker.resolveExternalModuleSymbol(moduleSymbol)
+        if (resolved && resolved !== moduleSymbol) exportEqualsSymbol = resolved
+    } catch { /* malformed external module: ordinary export traversal still reports what it can */ }
+    const exportEntries = [
+        ...exports.map((exp) => ({ exp, exportName: exp.getName() })),
+        ...(exportEqualsSymbol ? [{ exp: exportEqualsSymbol, exportName: 'export=' }] : []),
+    ]
     const from = opts.from
 
     // Module-level registry: every generated type lives here ONCE, keyed by type.id
@@ -1421,11 +1438,11 @@ export function extractModule(entryFile, opts = {}) {
     // name, so a method/param/return typed as another exported class resolves to `Name.t`
     // (not a misclassified record). Built up front so cross-class refs work in any order.
     const classTypes = new Map()
-    for (const exp of exports) {
+    for (const { exp, exportName } of exportEntries) {
         let s = exp
         if (s.flags & ts.SymbolFlags.Alias) s = checker.getAliasedSymbol(s)
         if (!(s.flags & ts.SymbolFlags.Class)) continue
-        let nm = exp.getName()
+        let nm = exportName
         if (nm === 'default' || nm === 'export=') nm = s.getName()
         if (!nm || !/^[A-Z]/.test(nm)) continue
         classTypes.set(s, nm)
@@ -1507,14 +1524,13 @@ export function extractModule(entryFile, opts = {}) {
     const skipped = []
     const seen = new Set()
     const componentBySym = new Map() // resolved symbol -> emitted module name (for NS alias files)
-    for (const exp of exports) {
+    for (const { exp, exportName } of exportEntries) {
         let sym = exp
         if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
         // Resolve a usable binding name + the actual JS export name. For a default export the
         // JS name is `"default"` (NOT the resolved identifier) — binding `= "mitt"`/`= "index"`
         // would call `require("pkg").mitt`, which doesn't exist. The ReScript id prefers the
         // declaration's own name (e.g. `mitt`), even lowercase, falling back to the file name.
-        const exportName = exp.getName()
         const isDefault = exportName === 'default' || exportName === 'export='
         let name = exportName
         if (isDefault) {
