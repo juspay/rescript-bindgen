@@ -45,7 +45,7 @@ The report buckets a prop by the *worst* imperfection in its type tree:
 ---
 
 ## Primitives & opaque values
-Fixture: [`primitives`](../test/golden/cases/primitives)
+Fixtures: [`primitives`](../test/golden/cases/primitives), [`branded-types`](../test/golden/cases/branded-types)
 
 | TypeScript | ReScript | Notes |
 |---|---|---|
@@ -53,6 +53,7 @@ Fixture: [`primitives`](../test/golden/cases/primitives)
 | `number` | `int` *or* `float` | name heuristic: count-like names (`count`, `width`, `index`, `size`, `length`, `tabIndex`, …) → `int`; else `float` |
 | `boolean` | `bool` | |
 | `bigint` (and a `bigint` literal `123n`) | `bigint` | first-class ReScript 12 type (`Stdlib_BigInt`). A bigint literal folds into the `bigint` type (no `@as` for bigint literals). (#70) |
+| branded primitive — `type UserId = string & {readonly __brand: "user"}` | `@unboxed type userId = UserId(string)` | the marker object is phantom; the runtime value remains a primitive. A single-constructor `@unboxed` wrapper is zero-cost while preserving nominal separation. Each alias keeps its own type, so branded strings and numbers cannot collapse into one fake marker record. A branded `number` payload uses `float`. Fixture: [`branded-types`](../test/golden/cases/branded-types). (#106) |
 | `keyof T` (an index type, incl. over a generic `T`) | `string` | a key is a string at runtime; keeps an array faithful — `(keyof T)[]` → `array<string>` instead of collapsing the whole prop to a flat `string`. Fixture: [`shape-collapse`](../test/golden/cases/shape-collapse). (#79) |
 | `React.ComponentProps<'div'>` / `DetailedHTMLProps<HTMLAttributes<…>, …>` / `ComponentPropsWith(out)Ref` (all DOM attrs of an element) | `JsxDOM.domProps` | the DOM-attribute bag bindgen already uses for HTML-attr spreads — never a flagged `string`. Fixture: [`shape-collapse`](../test/golden/cases/shape-collapse). (#79) |
 | `unknown` | `JSON.t` | opaque value you build/decode — **not** a defect, **not** a type variable |

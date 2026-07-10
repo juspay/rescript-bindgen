@@ -5,7 +5,13 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-_Nothing yet._
+### Fixed
+- **Branded primitives became fake records and collapsed across aliases** (#106) — intersections such
+  as `type UserId = string & {__brand: "user"}` are primitives at runtime; the marker exists only for
+  TypeScript's checker. They now emit as distinct zero-cost wrappers (`@unboxed type userId =
+  UserId(string)`, with `float` for branded numbers) instead of `{__brand: string}` records. This also
+  prevents unrelated branded strings and numbers from being structurally deduplicated into one type.
+  Fixture: `branded-types`.
 
 ## [1.2.6-beta.1] — 2026-06-25
 
