@@ -281,7 +281,7 @@ async function main() {
     // Module mode: plan per-domain type modules (SCC-merged). Component files then
     // reference types qualified (e.g. `MenuTypes.menuItemType`) instead of redeclaring.
     const plan = shared ? planSharedModules(shared) : null
-    const compRef = plan ? { resolveRef: makeResolveRef(plan.finalOf, null, shared && shared.renames) } : {}
+    const compRef = plan ? { resolveRef: makeResolveRef(plan.finalOf, null, shared.renames, shared.byKey) } : {}
 
     if (opts.stdout && units.length === 1) {
         process.stdout.write(emit(units[0].ir, compRef))
@@ -324,7 +324,7 @@ async function main() {
     if (plan) {
         for (const [mod, entries] of plan.byModule) {
             const p = join(typesDir, `${mod}.res`)
-            writeFileSync(p, emitSharedModule(mod, entries, plan.finalOf, { renames: shared && shared.renames }))
+            writeFileSync(p, emitSharedModule(mod, entries, plan.finalOf, { renames: shared.renames, byKey: shared.byKey }))
             written.add(relative(outDir, p))
         }
         console.error(`[bindgen] wrote ${plan.byModule.size} shared type module(s) (${shared.entries.length} unique types) to ${typesDir}`)

@@ -1120,15 +1120,23 @@ export function report(ir, shared) {
  * = null so everything is qualified.
  * @param {Map<string,string>} finalOf  home-domain -> final module name
  * @param {string|null} currentModule
+ * @param {Map<string,object>} [byKey]  the registry — keyed refs resolve `home` through it (#128)
  * @returns {(t:object)=>string}
  */
-export function makeResolveRef(finalOf, currentModule, renames) {
+export function makeResolveRef(finalOf, currentModule, renames, byKey) {
     return (t) => {
-        const fm = finalOf.get(t.home) || t.home || 'CommonTypes'
+        // #128: home is LATE-BOUND for keyed refs — read the entry's CURRENT home from the
+        // registry, not the mint-time copy on the ref. An entry whose home is refined after
+        // refs to it were minted (a callable module re-homed once its prop-derived deps are
+        // known) still qualifies correctly. Keyless refs (sinks, locals) keep the minted home.
+        const e = byKey && t.key ? byKey.get(t.key) : null
+        const home = (e && e.home) || t.home
+        const fm = finalOf.get(home) || home || 'CommonTypes'
         // #90 residual: a stabilized type was renamed post-extraction; translate the ref's cached
         // (old) name to the entry's final name here — the single chokepoint every ref flows through,
-        // so keyless refs and every IR shape are covered without mutating the IR.
-        const nm = (renames && renames.get(t.home + '|' + t.to)) || t.to
+        // so keyless refs and every IR shape are covered without mutating the IR. (The rename map
+        // is recorded against the entry's final home, so look up with the resolved home.)
+        const nm = (renames && renames.get(home + '|' + t.to)) || t.to
         return currentModule && fm === currentModule ? nm : `${fm}.${nm}`
     }
 }
@@ -1226,7 +1234,7 @@ export function emitSharedModule(mod, entries, finalOf, options = {}) {
     const cfg = {
         refType: options.refType || 'React.ref<Nullable.t<Dom.element>>',
         opaqueFallback: options.opaqueFallback || 'string',
-        resolveRef: makeResolveRef(finalOf, mod, options.renames),
+        resolveRef: makeResolveRef(finalOf, mod, options.renames, options.byKey),
     }
     const lines = []
     const unboxed = entries.filter((e) => e.kind === 'unboxed')

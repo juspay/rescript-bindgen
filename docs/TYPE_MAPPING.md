@@ -358,6 +358,18 @@ and made Tarjan fuse `CommonTypes`/`ButtonTypes`/`ChartsTypes` into `HighchartsS
 ref. `planSharedModules` also structurally skips sink out-edges and flags (never silently merges) any
 sink pulled into a cycle. Fixture: [`sink-no-merge`](../test/golden/cases/sink-no-merge). (#115)
 
+**Callable-module placement sees prop-derived deps; ref homes are late-bound (#128).** A
+callable-with-properties module whose call signatures are dep-free but whose carried props reference
+another module (axios-style `defaults: Config` where the `(url) => Promise<string>` call side touches
+nothing) **co-locates with its prop deps**: the #115 non-sink home pick re-runs after carried-prop
+classification with the complete dep set (excluding the SELF dep a `create(): Client` method adds, so
+it can't out-vote the real ones). Re-homing after the entry has registered is safe because a keyed
+ref's home is resolved **through the registry at render time** (`makeResolveRef` looks the entry up by
+`ref.key`) rather than trusting the mint-time copy — refs minted *during* prop classification (the
+recursion cache for self-returning methods, records referencing the module) can never strand on a
+stale home. Placement-only: the dep/SCC graph was already complete either way. Fixture:
+[`callable-home-prop-deps`](../test/golden/cases/callable-home-prop-deps). (#128)
+
 **No generated type shadows a builtin.** An upstream interface named `Array`/`Option`/… lowercases
 to `array`/`option`; emitted bare it would shadow the ReScript pervasive within its module, so
 `array<string>` fails to compile ("the type array is not generic"). `uniqueName` suffixes a base that
