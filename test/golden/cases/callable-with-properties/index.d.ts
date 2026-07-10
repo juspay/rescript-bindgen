@@ -38,3 +38,12 @@ export interface Stamp {
   $stampBrand: never
 }
 export declare const stamp: Stamp
+
+// A carried property whose sanitized ReScript id COLLIDES with the `asFn` signature view keeps
+// BOTH bindings: the view stays `asFn`, the property disambiguates to `asFn2` while its
+// `= "asFn"` JS-name string keeps the real property — nothing is silently skipped.
+export interface Odd {
+  (x: string): string
+  asFn: string
+}
+export declare const odd: Odd

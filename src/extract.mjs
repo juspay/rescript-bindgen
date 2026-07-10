@@ -3227,6 +3227,12 @@ function overloadModule(ctx, type, callSigs, propName, depth, props = null) {
     const name = uniqueName(pascal(typeName(type) || stableAnonBase(ctx, type, propName)), ctx.shared) // a MODULE name; anonymous -> path-anchored (#96)
     const deps = new Set()
     for (const s of sigs) collectRefKeys(s.fn, deps)
+    // Home preference DELIBERATELY sees only sig-derived deps: it must be final before the entry
+    // pre-registers below, because every ref minted during carried-prop classification (the
+    // recursion cache, records referencing this module, …) copies `home` at mint time — refining
+    // it afterwards would strand those refs on a stale home and mis-qualify at render. Prop deps
+    // still join `deps` (same Set, mutated below), so the SCC/edge graph is complete; a callable
+    // module whose only deps are prop-derived just keeps its natural declaring-file home.
     let home = homeOf(type, ctx)
     if (deps.size) { const ds = [...deps].map((k) => ctx.shared.byKey.get(k)).filter((d) => d && d.home); const pick = ds.find((d) => !SINK_HOMES.has(d.home)) || ds[0]; if (pick) home = pick.home } // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
     const entry = { key, kind: 'opaque', variant: props && props.length ? 'callable' : 'overload', name, home, sigs, deps, note: '' }

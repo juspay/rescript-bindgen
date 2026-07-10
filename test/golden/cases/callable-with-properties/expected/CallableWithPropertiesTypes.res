@@ -10,3 +10,8 @@ module Client = {
   @get external baseUrl: t => string = "baseUrl"
   @send external create: (t, string) => t = "create"
 }
+module Odd = {
+  type t
+  external asFn: t => (string => string) = "%identity"
+  @get external asFn2: t => string = "asFn"
+}

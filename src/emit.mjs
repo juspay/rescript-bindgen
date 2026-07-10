@@ -731,8 +731,12 @@ function renderOpaque(t, lines, cfg, tAlias) {
             lines.push(`  external ${s.accessor}: ${rt} => (${renderType(s.fn, '', cfgSelf)}) = "%identity"`)
         }
         for (const m of t.props || []) {
-            const id = label(m.jsName).id
-            if (seen.has(id)) continue
+            // A collision with a signature view (a prop literally named `asFn`) or another prop's
+            // sanitized id disambiguates with a numeric suffix — the `= "…"` JS name string keeps
+            // the real property, so nothing is silently skipped (the ⓘ note lists every JS name).
+            const idBase = label(m.jsName).id
+            let id = idBase, n = 2
+            while (seen.has(id)) id = idBase + n++
             seen.add(id)
             if (m.fn) {
                 // method: the callback node's params become positional args after the self `t`
