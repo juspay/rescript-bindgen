@@ -23,6 +23,24 @@ export declare class VariadicBox {
   append(separator: string, ...values: string[]): string
 }
 
+// A typed event emitter's indexed tuple rest is unsupported, but it must remove ONLY `emit` —
+// the constructor and sibling methods remain useful class bindings.
+interface BusEvents {
+  data: [payload: string, attempts: number]
+}
+export declare class Bus {
+  constructor(name: string)
+  on(event: string): void
+  emit<K extends keyof BusEvents>(event: K, ...args: BusEvents[K]): boolean
+  close(): void
+}
+
+// The same isolation applies to a bad constructor: keep the abstract type and methods, omit make.
+export declare class TupleCtor {
+  constructor(...args: [name: string, size: number])
+  info(message: string): void
+}
+
 // Heterogeneous tuple rests cannot be represented by ReScript's homogeneous `@variadic` array.
 // This export must be explicitly skipped instead of passing one tuple argument to JavaScript.
 export declare function mixed(...args: [string, number]): void

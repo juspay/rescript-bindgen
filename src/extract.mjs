@@ -1172,16 +1172,16 @@ function isRestParam(paramSym) {
     return !!(d && ts.isParameter(d) && d.dotDotDotToken)
 }
 
-/**
- * `@variadic` can faithfully model only a FINAL homogeneous array rest (`...args: T[]`). Reject
- * tuple/other rest shapes instead of emitting an external that passes one aggregate JS argument.
- */
-function assertSupportedRestParams(params) {
-    const restAt = params.findIndex((p) => p.rest)
-    if (restAt < 0) return
-    if (restAt !== params.length - 1) {
-        throw new Error('unsupported-rest-parameter: only a final homogeneous `...args: T[]` can use @variadic')
-    }
+const UNSUPPORTED_REST = 'unsupported-rest-parameter: only a final homogeneous `...args: T[]` can use @variadic'
+
+function unsupportedRestError() {
+    const error = new Error(UNSUPPORTED_REST)
+    error.code = 'UNSUPPORTED_REST_PARAMETER'
+    return error
+}
+
+function isUnsupportedRestError(error) {
+    return error && error.code === 'UNSUPPORTED_REST_PARAMETER'
 }
 
 /**
@@ -1201,26 +1201,26 @@ function sigToMembers(sig, ctx, depth = 0) {
     // anything. (functionNode flips this again for any nested callback values.)
     const prev = ctx.produced
     ctx.produced = true
-    const params = sig.getParameters().map((pp) => {
-        const pt = checker.getTypeOfSymbolAtLocation(pp, ctx.decl)
-        const rest = isRestParam(pp)
-        const optional = !rest && isOptionalParam(pp)
-        // Reject tuple/other rest shapes BEFORE classify can register shared types for a binding
-        // that will be skipped. `asArray` resolves Array/ReadonlyArray aliases too.
-        if (rest && !asArray(pt, checker)) {
-            throw new Error('unsupported-rest-parameter: only a final homogeneous `...args: T[]` can use @variadic')
-        }
-        const n = typeName(pt)
-        const type = (n && Object.prototype.hasOwnProperty.call(REACT_EVENTS, n))
-            ? { kind: 'event', res: REACT_EVENTS[n] }
-            : withPath(ctx, pp.getName(), () => classify(pt, ctx, pp.getName(), depth + 1)) // path-anchor param `{…}` (#90)
-        return { name: pp.getName(), optional, rest, type }
-    })
-    assertSupportedRestParams(params)
-    ctx.produced = false
-    const ret = returnNode(sig, ctx, depth)
-    ctx.produced = prev
-    return { params, ret }
+    try {
+        const params = sig.getParameters().map((pp) => {
+            const pt = checker.getTypeOfSymbolAtLocation(pp, ctx.decl)
+            const rest = isRestParam(pp)
+            // `asArray` accepts Array/ReadonlyArray aliases but rejects heterogeneous tuple rests.
+            // The finally below restores signature polarity when a class catches this error and
+            // continues extracting sibling members.
+            if (rest && !asArray(pt, checker)) throw unsupportedRestError()
+            const optional = !rest && isOptionalParam(pp)
+            const n = typeName(pt)
+            const type = (n && Object.prototype.hasOwnProperty.call(REACT_EVENTS, n))
+                ? { kind: 'event', res: REACT_EVENTS[n] }
+                : withPath(ctx, pp.getName(), () => classify(pt, ctx, pp.getName(), depth + 1)) // path-anchor param `{…}` (#90)
+            return { name: pp.getName(), optional, rest, type }
+        })
+        ctx.produced = false
+        return { params, ret: returnNode(sig, ctx, depth) }
+    } finally {
+        ctx.produced = prev
+    }
 }
 
 /** Deep-replace `typeVar` nodes named in `subst` with their substitute IR. */
@@ -1292,9 +1292,19 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
         sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
     }
 
-    // Constructor: first construct signature (overloads collapse to the first).
+    // Constructor: first construct signature (overloads collapse to the first). An unsupported
+    // tuple rest removes only `make`; the abstract class type + usable methods still emit.
+    const skippedMembers = []
     const ctors = staticType.getConstructSignatures()
-    const ctor = ctors.length ? { params: sigToMembers(ctors[0], ctx, 0).params } : null
+    let ctor = null
+    if (ctors.length) {
+        try {
+            ctor = { params: sigToMembers(ctors[0], ctx, 0).params }
+        } catch (error) {
+            if (!isUnsupportedRestError(error)) throw error
+            skippedMembers.push({ name: 'constructor', reason: error.message })
+        }
+    }
 
     // Instance members. A property whose type has a call signature is a method (-> @send);
     // anything else is a data property / getter (-> @get). Inherited lib/@types members and
@@ -1317,8 +1327,13 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
         if (isInherited(p) || isHidden(p)) continue
         const pt = checker.getTypeOfSymbolAtLocation(p, decl)
         if (pt.getCallSignatures().length) {
-            const { params, ret } = sigToMembers(pt.getCallSignatures()[0], ctx, 0)
-            methods.push({ jsName: pname, params, ret })
+            try {
+                const { params, ret } = sigToMembers(pt.getCallSignatures()[0], ctx, 0)
+                methods.push({ jsName: pname, params, ret })
+            } catch (error) {
+                if (!isUnsupportedRestError(error)) throw error
+                skippedMembers.push({ name: pname, reason: error.message })
+            }
         } else {
             // A getter / data property is consumer-RECEIVED (output): mark `produced=false`
             // so an output-only `any` inside it (hono's `routes: RouterRoute[]` whose
@@ -1338,7 +1353,7 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
         enums, records, unboxed,
         // The class's own abstract type in the sink — emit aliases `type t = InstanceTypes.<sinkName>`.
         sinkName: (opts.classSink && opts.classSink.get(importName)) || lower(importName),
-        ctor, methods, getters,
+        ctor, methods, getters, skippedMembers,
     }
 }
 
@@ -1554,6 +1569,9 @@ export function extractModule(entryFile, opts = {}) {
                     ir.import.isDefault = isDefault
                     seen.add(name)
                     classes.push({ name, ir })
+                    for (const member of ir.skippedMembers || []) {
+                        skipped.push({ name: `${name}.${member.name}`, reason: member.reason })
+                    }
                 } catch (e) {
                     skipped.push({ name, reason: 'class-extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
                 }

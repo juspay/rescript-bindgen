@@ -36,9 +36,13 @@ const rest = extractModule(join(here, 'golden', 'cases', 'rest-parameters', 'ind
 const collect = rest.functions.find((f) => f.name === 'collect')
 const configure = rest.functions.find((f) => f.name === 'configure')
 const variadicBox = rest.classes.find((c) => c.name === 'VariadicBox')
+const bus = rest.classes.find((c) => c.name === 'Bus')
+const tupleCtor = rest.classes.find((c) => c.name === 'TupleCtor')
 const collectCode = collect ? emitFunction(collect.ir) : ''
 const configureCode = configure ? emitFunction(configure.ir) : ''
 const classCode = variadicBox ? emitClass(variadicBox.ir) : ''
+const busCode = bus ? emitClass(bus.ir) : ''
+const tupleCtorCode = tupleCtor ? emitClass(tupleCtor.ir) : ''
 
 const checks = [
   ['string-literal union -> variant', /@as\("sm"\) Sm/.test(code)],
@@ -55,6 +59,10 @@ const checks = [
   ['optional-before-rest has no unit sentinel', /\(~label: string=\?, array<bool>\)/.test(configureCode) && !/array<bool>, unit/.test(configureCode)],
   ['class constructor/method emit @variadic', /@new @module\("demo"\) @variadic/.test(classCode) && /@send @variadic external append/.test(classCode)],
   ['heterogeneous tuple rest is explicitly skipped', rest.skipped.some((s) => s.name === 'mixed' && s.reason.includes('unsupported-rest-parameter'))],
+  ['bad tuple-rest method keeps class siblings', /external make:/.test(busCode) && /external on:/.test(busCode) && /external close:/.test(busCode) && !/external emit:/.test(busCode)],
+  ['bad tuple-rest method is reported', rest.skipped.some((s) => s.name === 'Bus.emit' && s.reason.includes('unsupported-rest-parameter'))],
+  ['bad tuple-rest constructor keeps class methods', !/external make:/.test(tupleCtorCode) && /external info:/.test(tupleCtorCode)],
+  ['bad tuple-rest constructor is reported', rest.skipped.some((s) => s.name === 'TupleCtor.constructor' && s.reason.includes('unsupported-rest-parameter'))],
 ]
 
 let ok = true

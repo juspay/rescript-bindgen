@@ -4,9 +4,9 @@
 
 **5** function binding(s) → `DemoBindings.res`.
 
-**1** class module(s) → `@new`/`@send`/`@get` bindings.
+**3** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**1** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**3** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -32,6 +32,8 @@ Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new
 | Class | Constructor | Methods | Properties |
 |-------|-------------|---------|------------|
 | `VariadicBox` | ✓ | 1 | 0 |
+| `Bus` | ✓ | 2 | 0 |
+| `TupleCtor` | — | 1 | 0 |
 
 ## ✅ Usable
 

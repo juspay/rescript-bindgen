@@ -100,6 +100,8 @@ export interface ClassIR {
   methods: { jsName: string; params: ParamIR[]; ret: IRType }[]
   /** Data properties / getters (`@get`): each a JS name + its type. */
   getters: { jsName: string; type: IRType }[]
+  /** Members omitted without dropping the rest of the class (for example unsupported tuple rests). */
+  skippedMembers?: { name: string; reason: string }[]
 }
 
 export interface ExtractOptions {

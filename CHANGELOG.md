@@ -10,7 +10,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   `(...args: T[])` was treated as one optional labeled array, so generated calls passed
   `fn([a, b])` instead of `fn(a, b)`. Homogeneous final rests now carry explicit IR metadata and
   emit through `@variadic` for standalone functions, class constructors, and instance methods.
-  Heterogeneous tuple rests are explicitly skipped rather than faked. Fixture: `rest-parameters`.
+  Heterogeneous tuple rests are explicitly skipped rather than faked; an unsupported class
+  constructor or method is isolated and reported without deleting the class's usable siblings.
+  Fixture: `rest-parameters`.
 - **Branded primitives became fake records and collapsed across aliases** (#106) — intersections such
   as `type UserId = string & {__brand: "user"}` are primitives at runtime; the marker exists only for
   TypeScript's checker. They now emit as distinct zero-cost wrappers (`@unboxed type userId =

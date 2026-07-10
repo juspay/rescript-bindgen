@@ -626,9 +626,11 @@ so the optional can be omitted. A homogeneous final rest parameter (`...args: T[
 it stays an `array<T>` on the ReScript side and the external gets `@variadic`, so the compiler spreads
 the array into separate positional JavaScript arguments. It is never emitted as one optional labeled
 array. A heterogeneous rest tuple is explicitly skipped because `@variadic` requires one homogeneous
-element type. The JS export name stays in the `= "…"` string, so a reserved or capitalized name still
-binds. Params and the return reuse the same `classify` pipeline as component props, so named types land
-in the shared `*Types.res` (referenced qualified). Fixture:
+element type. For a standalone function that skips the export; for a class it skips and reports only
+the unsupported constructor/method while retaining the abstract type and every usable sibling. The JS
+export name stays in the `= "…"` string, so a reserved or capitalized name still binds. Params and the
+return reuse the same `classify` pipeline as component props, so named types land in the shared
+`*Types.res` (referenced qualified). Fixture:
 [`rest-parameters`](../test/golden/cases/rest-parameters). (#105)
 
 | TypeScript export | ReScript |
@@ -675,7 +677,10 @@ Method/constructor params bind as **labeled args** (unlike [function exports](#s
 which are positional) — class APIs lean on optional params, and ReScript only allows optionals when
 labeled. A trailing optional gets a `unit` sentinel, the standard ReScript pattern. A homogeneous
 final rest array becomes a positional final parameter with `@new @variadic` or `@send @variadic`,
-using the same JS calling-convention rule as standalone functions.
+using the same JS calling-convention rule as standalone functions. If one class member instead has an
+unsupported tuple rest (common in typed event emitters such as `emit<K>(event, ...args: Events[K])`),
+only that member is omitted and added to the skipped list; the constructor/type/sibling methods still
+emit. An unsupported constructor similarly omits `make` but retains the class type and methods.
 
 **The `InstanceTypes` sink.** Every class's abstract instance type lives in a single dependency-free
 module, `InstanceTypes` (`type counter`, `type tracker`, …). Each class file aliases its own
