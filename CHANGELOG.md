@@ -6,6 +6,13 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- **Callable-with-properties values dropped the object side unflagged** (#103) — i18next's `t`,
+  framer-motion's `motion`, axios instances: `interface T { (key: string): string; locale: string }`
+  bound as a bare `string => string`, silently losing every carried property. Such a type is now an
+  opaque module — a zero-cost `asFn` call view plus runtime-real `@get`/`@send` accessors per
+  property — and an exported value of that type binds as `external t: …Translator.t`, not a
+  flattened function. Untypeable properties are named in a ⚠️ note instead of vanishing.
+  Fixture: `callable-with-properties`.
 - **CommonJS `export =` lost the assigned callable/class value** (#102) — TypeScript exposes the
   assignment's namespace/static members through `getExportsOfModule`, but not the module value
   itself. The extractor now follows `checker.resolveExternalModuleSymbol`: a callable root emits

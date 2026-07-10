@@ -1591,7 +1591,13 @@ export function extractModule(entryFile, opts = {}) {
                 } catch (e) {
                     skipped.push({ name, reason: 'class-extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
                 }
-            } else if (sym.valueDeclaration && type.getCallSignatures().length) {
+            } else if (sym.valueDeclaration && type.getCallSignatures().length &&
+                ((sym.flags & ts.SymbolFlags.Module) || !callableOwnProps(type, checker, decl).length)) {
+                // A callable that also CARRIES own properties (i18next's `t`, axios instances)
+                // falls through to the value branch below so classify can model it as an opaque
+                // callable module (#103) — EXCEPT a function+namespace merge (clsx's `export=`
+                // shape, #102), whose "properties" are the namespace's own members: those emit
+                // separately, and the root must stay a plain positional function binding.
                 try {
                     const ir = buildFunctionIR(checker, sym, source, name, from, { ...opts, shared })
                     ir.import.jsName = jsName
@@ -1842,11 +1848,12 @@ function healGhostsFromTwin(shared) {
 function entryChildTypes(e) {
     if (e.kind === 'record') return e.fields.map((f) => f.type)
     if (e.kind === 'unboxed') return e.members.map((m) => m.type)
-    // opaque-views modules reference records through their `from*` externals (and overload
-    // modules through their signature views) — those refs must re-sync tparams too, or a
-    // record that turns generic post-hoc renders bare (`fromZAxisOptions: zAxisOptions => t`
-    // while the record is `zAxisOptions<'b>` — compile break). (#110 fallout)
-    if (e.kind === 'opaque') return [...(e.members || []).map((m) => m.type), ...(e.sigs || []).map((s) => s.fn)].filter(Boolean)
+    // opaque-views modules reference records through their `from*` externals (and overload /
+    // callable modules through their signature views and property accessors) — those refs must
+    // re-sync tparams too, or a record that turns generic post-hoc renders bare
+    // (`fromZAxisOptions: zAxisOptions => t` while the record is `zAxisOptions<'b>` — compile
+    // break). (#110 fallout)
+    if (e.kind === 'opaque') return [...(e.members || []).map((m) => m.type), ...(e.sigs || []).map((s) => s.fn), ...(e.props || []).map((m) => m.fn || m.get)].filter(Boolean)
     return []
 }
 
@@ -2698,27 +2705,38 @@ function classify(type, ctx, propName = '', depth = 0) {
     // functions / callbacks
     const callSigs = type.getCallSignatures()
     if (callSigs.length) {
-        // Overloaded function — ≥2 call signatures (a TS intersection of call sigs `A & B`,
-        // or a multi-call-signature interface). No native ReScript overload type, so model it
-        // as an opaque module with one zero-cost `%identity` accessor VIEW per signature (so
-        // NEITHER overload is dropped). Falls back to 🔍 review if it can't be modelled cleanly.
+        // First-party signature selection, shared by the callable-with-properties and overload
+        // paths. NOT every multi-call-signature type is a real overload:
+        //   (a) a MERGED function property reports an inherited signature too — `onClick?:
+        //       (e?: MouseEvent) => void` (own) merged with `@types/react`'s `MouseEventHandler`
+        //       (Button.onClick). The FIRST-PARTY signature is the library's intent.
+        //   (b) an OPTIONAL parameter expands ONE declaration into several sigs (`(e?: X) => void`
+        //       -> `() => void` + `(e: X) => void`).
+        // In both, use the most-complete relevant signature so the param maps to `option<…>`,
+        // not a misleading opaque overload module. A GENUINE overload (≥2 separate first-party
+        // declarations) still becomes the views module so no overload is dropped. (#65 B4)
+        const ownSigs = callSigs.filter((s) => s.declaration && !isVendorDecl(s.declaration))
+        const effective = ownSigs.length ? ownSigs : callSigs
+        const decls = new Set(effective.map((s) => s.declaration).filter(Boolean))
+        const collapsed = (effective.length === 1 || decls.size === 1)
+            ? [effective.slice().sort((a, b) => b.getParameters().length - a.getParameters().length)[0]]
+            : effective
+        // Callable-with-properties (#103) — i18next's `t`, framer-motion's `motion`, axios
+        // instances: the value is a function AND an object; a bare arrow type silently drops
+        // the object side. Model it as an opaque module — zero-cost `as*` call view(s) plus
+        // runtime-real `@get`/`@send` accessors per carried property.
+        const carried = callableOwnProps(type, ctx.checker, ctx.decl)
+        if (carried.length) {
+            const cm = overloadModule(ctx, type, collapsed, propName, depth, carried)
+            if (cm) return cm
+            return { kind: 'review', note: `callable with ${carried.length} propert${carried.length === 1 ? 'y' : 'ies'} (${carried.map((p) => p.getName()).join(', ')}) — couldn't be modelled as an opaque module` }
+        }
+        // Overloaded function — ≥2 first-party call signatures (a TS intersection of call sigs
+        // `A & B`, or a multi-call-signature interface). No native ReScript overload type, so
+        // model it as an opaque module with one zero-cost `%identity` accessor VIEW per
+        // signature (so NEITHER overload is dropped). Falls back to 🔍 review otherwise.
         if (callSigs.length > 1) {
-            // NOT every multi-call-signature type is a real overload:
-            //   (a) a MERGED function property reports an inherited signature too — `onClick?:
-            //       (e?: MouseEvent) => void` (own) merged with `@types/react`'s `MouseEventHandler`
-            //       (Button.onClick). The FIRST-PARTY signature is the library's intent.
-            //   (b) an OPTIONAL parameter expands ONE declaration into several sigs (`(e?: X) => void`
-            //       -> `() => void` + `(e: X) => void`).
-            // In both, use the most-complete relevant signature so the param maps to `option<…>`,
-            // not a misleading opaque overload module. A GENUINE overload (≥2 separate first-party
-            // declarations) still becomes the views module so no overload is dropped. (#65 B4)
-            const ownSigs = callSigs.filter((s) => s.declaration && !isVendorDecl(s.declaration))
-            const effective = ownSigs.length ? ownSigs : callSigs
-            const decls = new Set(effective.map((s) => s.declaration).filter(Boolean))
-            if (effective.length === 1 || decls.size === 1) {
-                const full = effective.slice().sort((a, b) => b.getParameters().length - a.getParameters().length)[0]
-                return functionNode(full, ctx, propName, depth)
-            }
+            if (collapsed.length === 1) return functionNode(collapsed[0], ctx, propName, depth)
             const ov = overloadModule(ctx, type, callSigs, propName, depth)
             return ov || { kind: 'review', note: `overloaded function (${callSigs.length} call signatures) — no single ReScript type` }
         }
@@ -3143,15 +3161,43 @@ function nodeImperfect(t) {
 }
 
 /**
- * An overloaded function (≥2 call signatures) has no native ReScript type. Model it as an
- * opaque-type module with one zero-cost `%identity` ACCESSOR per signature —
- * `external asReason: t => (option<…> => unit) = "%identity"` — so EVERY overload stays
- * callable with no runtime cost (the value passes straight through, unchanged). The fidelity
- * fallback for "can't @unboxed". Module mode only. Returns the prop's `<Module>.t` typeRef,
- * or null if it can't be modelled cleanly (the caller then flags it 🔍 review).
+ * Own VALUE properties carried on a callable type — the object side of a
+ * callable-with-properties interface/intersection (i18next's `t.locale`, framer-motion's
+ * `motion.div`). Vendor/lib-declared members (`FC.displayName`, `Function.bind`) are not the
+ * library's own surface and don't qualify; neither does a class-static `prototype`. PHANTOM
+ * BRAND markers don't either: a `$`-prefixed name (i18next's `TFunction.$TFunctionBrand`) or a
+ * property whose type resolves to `never` (a `never` property can't exist at runtime) is a
+ * compile-time-only nominal tag, and counting it would needlessly reroute a plain callable
+ * through the opaque-module path. (#103)
+ * @param {ts.TypeChecker} checker
+ * @param {ts.Node} decl  location for symbol->type resolution
+ * @returns {ts.Symbol[]}
+ */
+function callableOwnProps(type, checker, decl) {
+    return (type.getProperties() || []).filter((p) => {
+        const n = p.getName()
+        if (n === 'prototype' || /^[#_@$]/.test(n)) return false
+        const d = p.declarations && p.declarations[0]
+        if (!d || isVendorDecl(d)) return false
+        try { if (checker.getTypeOfSymbolAtLocation(p, decl).flags & ts.TypeFlags.Never) return false } catch { /* unresolvable: keep — downstream classify flags it */ }
+        return true
+    })
+}
+
+/**
+ * An overloaded function (≥2 call signatures) OR a callable-with-properties value (#103) has
+ * no native ReScript type. Model it as an opaque-type module with one zero-cost `%identity`
+ * ACCESSOR per signature — `external asReason: t => (option<…> => unit) = "%identity"` — so
+ * EVERY overload stays callable with no runtime cost (the value passes straight through,
+ * unchanged); a lone signature is exposed as `asFn`. Carried properties (`props`) additionally
+ * emit runtime-real accessors: `@get external locale: t => string` for data,
+ * `@send external setLocale: (t, string) => unit` for methods — no `%identity` involved.
+ * The fidelity fallback for "can't @unboxed". Module mode only. Returns the prop's
+ * `<Module>.t` typeRef, or null if it can't be modelled cleanly (the caller then flags it 🔍).
+ * @param {ts.Symbol[]|null} props  carried value properties (callable-with-properties mode)
  * @returns {{kind:'typeRef', to:string, home:string, key:string} | null}
  */
-function overloadModule(ctx, type, callSigs, propName, depth) {
+function overloadModule(ctx, type, callSigs, propName, depth, props = null) {
     if (!ctx.shared) return null // needs the shared-type registry (module mode)
     const key = 't:' + type.id
     const ref = (e) => ({ kind: 'typeRef', to: e.name + '.t', home: e.home, key: e.key, ...(e.note ? { note: e.note } : {}) })
@@ -3176,16 +3222,48 @@ function overloadModule(ctx, type, callSigs, propName, depth) {
         used.add(accessor)
         sigs.push({ accessor, fn })
     }
-    if (sigs.length < 2) return null
+    if (sigs.length < 2 && !(props && props.length)) return null
+    if (sigs.length === 1) sigs[0].accessor = 'asFn' // one way to call it — the descriptive per-overload name adds nothing
     const name = uniqueName(pascal(typeName(type) || stableAnonBase(ctx, type, propName)), ctx.shared) // a MODULE name; anonymous -> path-anchored (#96)
     const deps = new Set()
     for (const s of sigs) collectRefKeys(s.fn, deps)
     let home = homeOf(type, ctx)
     if (deps.size) { const ds = [...deps].map((k) => ctx.shared.byKey.get(k)).filter((d) => d && d.home); const pick = ds.find((d) => !SINK_HOMES.has(d.home)) || ds[0]; if (pick) home = pick.home } // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
-    const note = `was overloaded \`${typeName(type) || 'function'}\` (${callSigs.length} call signatures) — opaque; view with ${sigs.map((s) => `${name}.${s.accessor}`).join(' / ')}`
-    const entry = { key, kind: 'opaque', variant: 'overload', name, home, sigs, deps, note }
+    const entry = { key, kind: 'opaque', variant: props && props.length ? 'callable' : 'overload', name, home, sigs, deps, note: '' }
+    // Register BEFORE classifying carried properties: a method returning the callable itself
+    // (axios' `create(config): AxiosInstance`) must resolve to `<name>.t` via the cache, not
+    // recurse forever. Sig nodes are already built, so plain overloads are unaffected.
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
+    const members = []
+    const dropped = []
+    if (props && props.length) {
+        const prevP = ctx.produced
+        for (const p of props) {
+            const jsName = p.getName()
+            const pt = ctx.checker.getTypeOfSymbolAtLocation(p, ctx.decl)
+            const psigs = pt.getCallSignatures()
+            if (psigs.length) {
+                const fn = functionNode(psigs[0], ctx, jsName, depth + 1)
+                if (nodeImperfect(fn)) { dropped.push(jsName); continue }
+                members.push({ jsName, fn })
+            } else {
+                // read OFF the received value — consumer-received, like class getters (#50 review)
+                ctx.produced = false
+                const node = withPath(ctx, jsName, () => classify(pt, ctx, jsName, depth + 1))
+                ctx.produced = prevP
+                if (nodeImperfect(node)) { dropped.push(jsName); continue }
+                members.push({ jsName, get: node })
+            }
+        }
+        ctx.produced = prevP
+        for (const m of members) collectRefKeys(m.fn || m.get, deps)
+        entry.props = members
+    }
+    const viewList = sigs.map((s) => `${name}.${s.accessor}`).join(' / ')
+    entry.note = props && props.length
+        ? `was callable-with-properties \`${typeName(type) || 'function'}\` — opaque; call via ${viewList}${members.length ? `; props: ${members.map((m) => m.jsName).join(', ')}` : ''}${dropped.length ? `; ⚠️ propert${dropped.length === 1 ? 'y' : 'ies'} NOT bound (couldn't be typed): ${dropped.join(', ')}` : ''}`
+        : `was overloaded \`${typeName(type) || 'function'}\` (${callSigs.length} call signatures) — opaque; view with ${viewList}`
     return ref(entry)
 }
 
