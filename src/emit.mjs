@@ -420,6 +420,9 @@ export function emitFunction(ir, options = {}) {
         if (imp === 'unknown' || imp === 'any') lines.push(`// 🛑 BROKEN: \`${ir.import.name}\` value couldn't be typed exactly — \`${cfg.opaqueFallback}\` placeholder.`)
         else if (imp === 'review') lines.push(`// ⚠️ REVIEW: \`${ir.import.name}\` value couldn't be auto-typed exactly — \`${cfg.opaqueFallback}\` placeholder.`)
         else if (imp === 'opaque') lines.push(`// ⚪ loose: \`${ir.import.name}\` value widened to \`${cfg.opaqueFallback}\`.`)
+        // A typeRef carrying a note (a callable-with-properties module, #103) surfaces it here the
+        // same way a component prop would — this is the only line the consumer reads for the value.
+        if (ir.value.type.note) lines.push(`// ⓘ ${ir.value.type.note}`)
         if (ir.import.isDefault) lines.push(defaultExportNote(ir.import.name))
         lines.push(`@module(${JSON.stringify(cfg.from)}) external ${id}: ${vt} = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
         return lines.join('\n')
@@ -710,14 +713,42 @@ function renderOpaque(t, lines, cfg, tAlias) {
     const alias = tAlias ? (tp ? `${tAlias}${tp}` : tAlias) : null
     // Overloaded function: a module of zero-cost `%identity` ACCESSOR views (opaque -> concrete),
     // one per call signature — `external asReason: t => (option<…> => unit) = "%identity"`.
-    if (t.variant === 'overload') {
+    // A callable-with-properties value (#103) is the same module plus runtime-real accessors for
+    // the carried object side: `@get` for data props, `@send` for methods — no `%identity` there,
+    // they compile to plain property reads / method calls.
+    if (t.variant === 'overload' || t.variant === 'callable') {
+        // A SELF-reference (axios' `create(config): Client` inside `module Client`) can't name
+        // the module from its own body — resolve it to the bare `t`. Composes with the hoisted
+        // cycle aliases: those rewrite first (cfg.resolveRef), so `b` is already the local name.
+        const selfRef = `${t.name}.t`
+        const cfgSelf = { ...cfg, resolveRef: (r) => { const b = cfg.resolveRef ? cfg.resolveRef(r) : r.to; return b === selfRef ? rt : b } }
         lines.push(`module ${t.name} = {`)
         lines.push(alias ? `  type t${tp} = ${alias}` : `  type t${tp}`)
         const seen = new Set()
         for (const s of t.sigs) {
             if (seen.has(s.accessor)) continue
             seen.add(s.accessor)
-            lines.push(`  external ${s.accessor}: ${rt} => (${renderType(s.fn, '', cfg)}) = "%identity"`)
+            lines.push(`  external ${s.accessor}: ${rt} => (${renderType(s.fn, '', cfgSelf)}) = "%identity"`)
+        }
+        for (const m of t.props || []) {
+            // A collision with a signature view (a prop literally named `asFn`) or another prop's
+            // sanitized id disambiguates with a numeric suffix — the `= "…"` JS name string keeps
+            // the real property, so nothing is silently skipped (the ⓘ note lists every JS name).
+            const idBase = label(m.jsName).id
+            let id = idBase, n = 2
+            while (seen.has(id)) id = idBase + n++
+            seen.add(id)
+            if (m.fn) {
+                // method: the callback node's params become positional args after the self `t`
+                // (an optional param renders `option<…>` — None compiles to `undefined`).
+                const args = [rt, ...(m.fn.params || []).map((p) => {
+                    const base = p.kind === 'event' ? p.res : renderType(p, m.jsName, cfgSelf)
+                    return p.optional ? `option<${base}>` : base
+                })]
+                lines.push(`  @send external ${id}: (${args.join(', ')}) => ${renderType(m.fn.ret || { kind: 'unit' }, m.jsName, cfgSelf)} = ${JSON.stringify(m.jsName)}`)
+            } else {
+                lines.push(`  @get external ${id}: ${rt} => ${renderType(m.get, m.jsName, cfgSelf)} = ${JSON.stringify(m.jsName)}`)
+            }
         }
         lines.push(`}`)
         return

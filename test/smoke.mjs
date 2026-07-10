@@ -60,6 +60,15 @@ const cjsMerged = extractModule(join(here, 'golden', 'cases', 'export-equals-mer
 const mergedClsx = cjsMerged.functions.find((f) => f.name === 'clsx')
 const mergedClsxCode = mergedClsx ? emitFunction(mergedClsx.ir) : ''
 
+// Callable-with-properties (#103): the value is a function AND an object — modelled as an opaque
+// module (asFn view + @get/@send accessors), never a bare arrow type that drops the object side.
+const cwp = extractModule(join(here, 'golden', 'cases', 'callable-with-properties', 'index.d.ts'), { from: 'demo' })
+const cwpT = cwp.functions.find((f) => f.name === 't')
+const cwpClient = cwp.functions.find((f) => f.name === 'client')
+const cwpTCode = cwpT ? emitFunction(cwpT.ir) : ''
+const cwpTranslator = cwp.shared && cwp.shared.entries.find((e) => e.variant === 'callable' && e.name === 'Translator')
+const cwpClientEntry = cwp.shared && cwp.shared.entries.find((e) => e.variant === 'callable' && e.name === 'Client')
+
 const checks = [
   ['string-literal union -> variant', /@as\("sm"\) Sm/.test(code)],
   ['count number -> int (name heuristic)', /~count: int=\?/.test(code)],
@@ -82,6 +91,12 @@ const checks = [
   ['export= callable keeps root + namespace member', !!cx && !!bind && /= "default"/.test(cxCode)],
   ['export= class uses normal class pipeline', /external make:/.test(counterCode) && /external increment: \(t,/.test(counterCode) && /external value: t/.test(counterCode)],
   ['same-named namespace member beats export= root', /= "clsx"/.test(mergedClsxCode) && !/= "default"/.test(mergedClsxCode) && cjsMerged.functions.length === 1],
+  ['callable-with-props binds as typed value, not bare fn', !!cwpT?.ir.value && cwpT.ir.value.type.kind === 'typeRef' && cwpT.ir.value.type.to === 'Translator.t'],
+  ['callable module carries asFn view + prop accessors', !!cwpTranslator && cwpTranslator.sigs[0].accessor === 'asFn' && cwpTranslator.props.map((p) => p.jsName).join() === 'locale,setLocale'],
+  ['untypeable carried prop is flagged, not faked', !!cwpClientEntry && !cwpClientEntry.props.some((p) => p.jsName === 'debug') && /NOT bound[^\n]*debug/.test(cwpClientEntry.note)],
+  ['self-returning method resolves through the registry', !!cwpClientEntry && cwpClientEntry.props.some((p) => p.fn && p.fn.ret && p.fn.ret.kind === 'typeRef' && p.fn.ret.to === 'Client.t')],
+  ['value binding surfaces the ⓘ note', /ⓘ was callable-with-properties `Translator`/.test(cwpTCode)],
+  ['phantom brand marker does not reroute a plain callable', (() => { const s = cwp.functions.find((f) => f.name === 'stamp'); return !!s && !s.ir.value && !!s.ir.sig })()],
 ]
 
 let ok = true
