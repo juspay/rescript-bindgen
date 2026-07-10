@@ -359,6 +359,13 @@ function propLine(p, cfg, form) {
     const imp = imperfection(p.type)
     const realTs = (p.tsType || p.type.text || '').replace(/\s+/g, ' ').slice(0, 110)
     if (imp === 'unknown' || imp === 'any') {
+        // #107: an UNRESOLVABLE type reference (checker error-`any` from a broken import) gets
+        // its own wording — the type usually exists in the package; the import path is broken,
+        // so "fix the upstream import / hand-match" is actionable where "needs a concrete type
+        // upstream" would mislead.
+        if (hasUnresolved(p.type)) {
+            return [`  // 🛑 BROKEN: \`${p.name}\`'s declared type DOES NOT RESOLVE (broken import in the package's .d.ts — see the declaration in the report); emitted as \`${cfg.opaqueFallback}\` placeholder. Fix the upstream import or hand-match the real type.`, field(cfg.opaqueFallback)]
+        }
         return [`  // 🛑 BROKEN: \`${p.name}\` is \`${realTs}\` — contains \`${imp}\`; emitted as \`${cfg.opaqueFallback}\` placeholder and WON'T WORK. Needs a concrete type upstream.`, field(cfg.opaqueFallback)]
     }
     if (imp === 'review') {
@@ -465,7 +472,9 @@ export function emitFunction(ir, options = {}) {
     // flag-don't-fake: surface the WORST imperfection across return + params above the line.
     const imps = [ir.sig.ret, ...params.map((p) => p.type)].map(imperfection).filter(Boolean)
     if (imps.includes('unknown') || imps.includes('any')) {
-        lines.push(`// 🛑 BROKEN: \`${ir.import.name}\` has an \`unknown\`/\`any\` in its signature — emitted with \`${cfg.opaqueFallback}\` placeholder(s) and WON'T WORK. Needs a concrete type upstream.`)
+        if ([ir.sig.ret, ...params.map((p) => p.type)].some(hasUnresolved)) {
+            lines.push(`// 🛑 BROKEN: \`${ir.import.name}\` has a param/return whose declared type DOES NOT RESOLVE (broken import in the package's .d.ts) — \`${cfg.opaqueFallback}\` placeholder(s) emitted. Fix the upstream import or hand-match the real type.`)
+        } else lines.push(`// 🛑 BROKEN: \`${ir.import.name}\` has an \`unknown\`/\`any\` in its signature — emitted with \`${cfg.opaqueFallback}\` placeholder(s) and WON'T WORK. Needs a concrete type upstream.`)
     } else if (imps.includes('review')) {
         lines.push(`// ⚠️ REVIEW: \`${ir.import.name}\` couldn't be auto-typed exactly — \`${cfg.opaqueFallback}\` placeholder(s) emitted. Match the real type by hand.`)
     } else if (imps.includes('opaque')) {
@@ -546,7 +555,10 @@ export function emitClass(ir, options = {}) {
     // Worst imperfection across a member's types -> a leading flag comment (or null).
     const flag = (memberName, types) => {
         const imps = types.map(imperfection).filter(Boolean)
-        if (imps.includes('unknown') || imps.includes('any')) return `// 🛑 BROKEN: \`${memberName}\` has an \`unknown\`/\`any\` — emitted with \`${cfg.opaqueFallback}\` placeholder(s) and WON'T WORK. Needs a concrete type upstream.`
+        if (imps.includes('unknown') || imps.includes('any')) {
+            if (types.some(hasUnresolved)) return `// 🛑 BROKEN: \`${memberName}\` has a type that DOES NOT RESOLVE (broken import in the package's .d.ts) — \`${cfg.opaqueFallback}\` placeholder(s) emitted. Fix the upstream import or hand-match the real type.`
+            return `// 🛑 BROKEN: \`${memberName}\` has an \`unknown\`/\`any\` — emitted with \`${cfg.opaqueFallback}\` placeholder(s) and WON'T WORK. Needs a concrete type upstream.`
+        }
         if (imps.includes('review')) return `// ⚠️ REVIEW: \`${memberName}\` couldn't be auto-typed exactly — \`${cfg.opaqueFallback}\` placeholder(s) emitted. Match the real type by hand.`
         if (imps.includes('opaque')) return `// ⚪ loose: \`${memberName}\` has a param/return widened to \`${cfg.opaqueFallback}\`.`
         return null
@@ -884,7 +896,10 @@ function looseMark(f, cfg) {
     if (!imp) return ''
     const realTs = (f.tsType || findLooseText(f.type) || '').replace(/\s+/g, ' ').slice(0, 110)
     const was = realTs ? ` — was \`${realTs}\`` : ''
-    if (imp === 'unknown' || imp === 'any') return `  // 🛑 BROKEN — contains \`${imp}\`${was}`
+    if (imp === 'unknown' || imp === 'any') {
+        if (hasUnresolved(f.type)) return `  // 🛑 BROKEN — declared type does not resolve (broken import in the package's .d.ts)${was}`
+        return `  // 🛑 BROKEN — contains \`${imp}\`${was}`
+    }
     if (imp === 'review') return `  // ⚠️ REVIEW${was} — match the real type by hand`
     return `  // ⚪ loose${was}`
 }
@@ -915,6 +930,16 @@ function findNote(t) {
  * @param {object} t
  * @returns {'unknown'|'any'|'review'|'opaque'|null}
  */
+/** Deep-walk for the #107 error-`any` marker: the checker's ERROR type from an unresolvable
+ *  type reference (a broken import in the package's .d.ts), as opposed to author-written
+ *  `any`. Drives the more actionable BROKEN wording — the type usually exists upstream; the
+ *  import path is what's broken. */
+function hasUnresolved(t) {
+    if (!t) return false
+    if (t.unresolved) return true
+    return ['of', 'ret', 'thisArg', 'arg', 'mapKey', 'mapVal'].some((k) => hasUnresolved(t[k])) || (t.params || []).some(hasUnresolved)
+}
+
 function imperfection(t) {
     if (!t) return null
     if (t.kind === 'unknown') return 'unknown'
@@ -953,7 +978,7 @@ export function report(ir) {
     for (const p of ir.props) {
         const v = imperfection(p.type) // same recursion the emitter uses — report ⇔ code agree
         if (!v) continue
-        const item = { prop: p.name, kind: v, tsType: p.tsType, declText: p.declText }
+        const item = { prop: p.name, kind: v, tsType: p.tsType, declText: p.declText, unresolved: hasUnresolved(p.type) }
         if (v === 'unknown' || v === 'any') defects.push(item)
         else if (v === 'review') review.push(item)
         else { item.emittedAs = 'string'; loose.push(item) } // opaque

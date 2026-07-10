@@ -6,6 +6,11 @@
 // ============================================================================
 import { writeFileSync } from 'fs'
 
+/** Escape a value for a markdown TABLE CELL: backslashes FIRST, then `|` — escaping only the
+ *  pipe lets a preexisting `\` in a TS declaration (`'C:\\x' | 'y'`) eat the added escape and
+ *  break the row (CodeQL js/incomplete-sanitization). */
+const mdCell = (s) => String(s).replace(/\\/g, '\\\\').replace(/\|/g, '\\|')
+
 /**
  * Write `_REPORT.md` summarising a batch of generated bindings.
  *
@@ -124,7 +129,7 @@ export function writeReport(path, label, rows, reports, deps, shared, fnInfo, cl
         L.push(`|--------------------------|-----------|-------|---------------|`)
         for (const [type, items] of sorted) {
             const props = [...new Set(items.map((i) => i.prop))].slice(0, 4).join(', ')
-            L.push(`| \`${type.replace(/\|/g, '\\|') || '(anonymous)'}\` | \`string\` | ${items.length} | ${props}${items.length > 4 ? ' …' : ''} |`)
+            L.push(`| \`${mdCell(type) || '(anonymous)'}\` | \`string\` | ${items.length} | ${props}${items.length > 4 ? ' …' : ''} |`)
         }
         L.push(``)
     } else {
@@ -144,7 +149,7 @@ export function writeReport(path, label, rows, reports, deps, shared, fnInfo, cl
             L.push(``)
             L.push(`| Prop | Real TypeScript |`)
             L.push(`|------|-----------------|`)
-            for (const x of (d?.review || [])) L.push(`| \`${x.prop}\` | \`${(x.declText || x.tsType || '').replace(/\|/g, '\\|')}\` |`)
+            for (const x of (d?.review || [])) L.push(`| \`${x.prop}\` | \`${mdCell(x.declText || x.tsType || '')}\` |`)
             L.push(``)
         }
     } else {
@@ -168,8 +173,13 @@ export function writeReport(path, label, rows, reports, deps, shared, fnInfo, cl
             L.push(`| Prop | Real TypeScript | Why it won't work |`)
             L.push(`|------|-----------------|-------------------|`)
             for (const x of (d?.defects || [])) {
-                const decl = (x.declText || x.tsType || '').replace(/\|/g, '\\|')
-                const why = /\(.*\)\s*=>/.test(x.declText || '')
+                const decl = mdCell(x.declText || x.tsType || '')
+                // #107: an UNRESOLVABLE reference (checker error-`any` from a broken import) is
+                // named as such — the declared type usually EXISTS in the package (the import
+                // path is what's broken), so hand-matching it is a seconds-long fix.
+                const why = x.unresolved
+                    ? "The declared type **does not resolve** (broken import in the package's .d.ts) → emitted as `string`. The type itself likely exists — fix the upstream import path, or hand-match it from the declaration shown."
+                    : /\(.*\)\s*=>/.test(x.declText || '')
                     ? "It's a **callback** typed `unknown` → emitted as `string`; passing a string does nothing."
                     : "Resolved to `unknown` (generic `T` / untyped) → emitted as `string`; real values won't be used correctly."
                 L.push(`| \`${x.prop}\` | \`${decl}\` | ${why} |`)
