@@ -61,6 +61,9 @@ type baseUIEvent = {
 type htmlProps = {
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
+type nativeButtonProps = {
+  nativeButton?: bool,
+}
 type utilsFloatingRootStoreSetOpenConfig = {
   reason: string,
   event: LibTypes.event,

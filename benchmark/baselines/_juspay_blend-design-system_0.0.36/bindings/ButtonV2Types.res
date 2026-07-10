@@ -87,7 +87,7 @@ type buttonSkeleton = {
   showSkeleton?: bool,
   skeletonVariant?: SkeletonTypes.skeletonVariant,
 }
-type buttonV2ButtonPropsConfig = {
+type buttonV2TimelineShowMorePropsButtonPropsConfig = {
   width?: CommonTypes.stringOrNumber,
   size?: buttonV2Size,
   minWidth?: CommonTypes.stringOrNumber,

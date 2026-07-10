@@ -1,7 +1,7 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~position: SnackbarV2Types.snackbarV2Position=?,
-  ~dismissOnClickAway: bool=?,
-  ~maxWidth: CommonTypes.stringOrNumber=?,
-  ~ref: React.ref<Nullable.t<Dom.element>>=?,
-) => React.element = "SnackbarV2"
+type props = {
+  ...SnackbarV2Types.snackbarV2Props,
+  ref?: React.ref<Nullable.t<Dom.element>>,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "SnackbarV2"

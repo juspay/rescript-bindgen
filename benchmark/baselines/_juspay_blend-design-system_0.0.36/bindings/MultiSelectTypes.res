@@ -111,8 +111,8 @@ type multiSelectMultiSelectTokensTypeTriggerPaddingConfig = {
 type multiSelectMultiSelectTokensTypeTriggerBackgroundColorContainerConfig = {
   hover: string,
   @as("open") open_: string,
-  error: string,
   focus: string,
+  error: string,
   closed: string,
 }
 type multiSelectMultiSelectTokensTypeTriggerBackgroundColorConfig = {

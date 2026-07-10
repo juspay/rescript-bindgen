@@ -114,6 +114,22 @@ const checks = [
       ['nested static carries a scope path', !!row && Array.isArray(row.ir.import.scope) && row.ir.import.scope.join('.') === 'Table.Summary' && row.ir.import.jsName === 'Row'],
     ]
   })(),
+  ...(() => {
+    // Shared-base props records (#82) + transitive HtmlAttrs detection (#130): the attrs
+    // surface is found through alias/Omit indirection, pure named intersection parts spread as
+    // shared records, a shadowed base falls back inline, and single-alias props stay legacy.
+    const sb = extractModule(join(here, 'golden', 'cases', 'shared-base-records', 'index.d.ts'), { from: 'demo' })
+    const avatar = sb.components.find((c) => c.name === 'SkeletonAvatar')
+    const badge = sb.components.find((c) => c.name === 'SkeletonBadge')
+    const plain = sb.components.find((c) => c.name === 'Plain')
+    const spreadTos = (c) => (c?.ir.baseSpreads || []).map((b) => b.ref.to).sort().join()
+    return [
+      ['attrs leaf found through alias + Omit indirection', !!avatar && avatar.ir.attrsBase?.leaf === 'htmlAttributes' && avatar.ir.attrsBase.removed.join() === 'children,color'],
+      ['pure named intersection parts spread as shared records', spreadTos(avatar) === 'baseSkeletonProps,styledBlockProps'],
+      ['shadowed base falls back inline, unshadowed still spreads', spreadTos(badge) === 'styledBlockProps' && badge.ir.props.some((p) => p.name === 'loading')],
+      ['single-alias props stay legacy labeled args', !!plain && !(plain.ir.baseSpreads || []).length && !plain.ir.attrsBase],
+    ]
+  })(),
 ]
 
 let ok = true

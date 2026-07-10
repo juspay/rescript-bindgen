@@ -433,6 +433,10 @@ type codeEditorV2IEditorOptionsCursorStyle =
   | @as("line-thin") LineThin
   | @as("block-outline") BlockOutline
   | @as("underline-thin") UnderlineThin
+type codeEditorV2IEditorOptionsDefaultColorDecorators =
+  | @as("auto") Auto
+  | @as("always") Always
+  | @as("never") Never
 type codeEditorV2IEditorOptionsWordWrap =
   | @as("off") Off
   | @as("on") On
@@ -1598,7 +1602,7 @@ type componentTokenType = {
   @as("STAT_CARD") statCard?: StatCardTypes.responsiveStatCardTokens,
   @as("PROGRESS_BAR") progressBar?: ProgressBarTypes.responsiveProgressBarTokens,
   @as("DRAWER") drawer?: DrawerTypes.responsiveDrawerTokens,
-  @as("CHARTS") charts?: ChartsTypes.responsiveChartTokens,
+  @as("CHARTS") charts?: HighchartsSharedTypes.responsiveChartTokens,
   @as("SNACKBAR") snackbar?: SnackbarTypes.responsiveSnackbarTokens,
   @as("STEPPER") stepper?: StepperTypes.responsiveStepperTokens,
   @as("KEYVALUEPAIR") keyvaluepair?: KeyValuePairTypes.responsiveKeyValuePairTokens,
@@ -1678,7 +1682,7 @@ type contextThemeContextTypeComponentTokensConfig = {
   @as("STAT_CARD") statCard: StatCardTypes.responsiveStatCardTokens,
   @as("PROGRESS_BAR") progressBar: ProgressBarTypes.responsiveProgressBarTokens,
   @as("DRAWER") drawer: DrawerTypes.responsiveDrawerTokens,
-  @as("CHARTS") charts: ChartsTypes.responsiveChartTokens,
+  @as("CHARTS") charts: HighchartsSharedTypes.responsiveChartTokens,
   @as("SNACKBAR") snackbar: SnackbarTypes.responsiveSnackbarTokens,
   @as("STEPPER") stepper: StepperTypes.responsiveStepperTokens,
   @as("KEYVALUEPAIR") keyvaluepair: KeyValuePairTypes.responsiveKeyValuePairTokens,
@@ -1868,7 +1872,7 @@ type embeddedSingleSelectOptions = {
   menuAlignment: SelectV2Types.selectV2Alignment,
   menuSideOffset: float,
   menuAlignOffset: float,
-  defaultSingleSelectGroupPosition: ChartsTypes.chartsSeriesOrganizationOptionsHangingSide,
+  defaultSingleSelectGroupPosition: HighchartsSharedTypes.chartsSeriesOrganizationOptionsHangingSide,
 }
 type inputsV2FOCUSRINGSTYLESConfig = {
   boxShadow: string,
@@ -1907,6 +1911,14 @@ type codeEditorV2HeaderConfig = {
   leftSlot?: React.element,
   rightSlot?: React.element,
   showCopyButton?: bool,
+}
+type codeEditorV2Dimensions = {
+  width?: string,
+  maxWidth?: string,
+  minWidth?: string,
+  height?: string,
+  maxHeight?: string,
+  minHeight?: string,
 }
 type editorMetrics = {
   fontSize: float,
@@ -2564,7 +2576,7 @@ type iEditorStickyScrollOptions = {
 type iEditorMinimapOptions = {
   enabled?: bool,
   autohide?: codeEditorV2IEditorMinimapOptionsAutohide,
-  side?: ChartsTypes.chartsSeriesOrganizationOptionsHangingSide,
+  side?: HighchartsSharedTypes.chartsSeriesOrganizationOptionsHangingSide,
   size?: codeEditorV2IEditorMinimapOptionsSize,
   showSlider?: codeEditorV2IEditorMinimapOptionsShowSlider,
   renderCharacters?: bool,
@@ -2769,7 +2781,7 @@ type iEditorOptions = {
   cursorHeight?: float,
   fontLigatures?: CommonTypes.boolOrString,
   fontVariations?: CommonTypes.boolOrString,
-  defaultColorDecorators?: ChartsTypes.chartsDateTimeFormatOptionsHour12,
+  defaultColorDecorators?: codeEditorV2IEditorOptionsDefaultColorDecorators,
   disableLayerHinting?: bool,
   disableMonospaceOptimizations?: bool,
   hideCursorInOverviewRuler?: bool,
@@ -3192,7 +3204,7 @@ type editorGetMonacoViewModeOptionsConfig = {
   cursorHeight?: float,
   fontLigatures?: CommonTypes.boolOrString,
   fontVariations?: CommonTypes.boolOrString,
-  defaultColorDecorators?: ChartsTypes.chartsDateTimeFormatOptionsHour12,
+  defaultColorDecorators?: codeEditorV2IEditorOptionsDefaultColorDecorators,
   disableLayerHinting?: bool,
   disableMonospaceOptimizations?: bool,
   hideCursorInOverviewRuler?: bool,
@@ -3376,7 +3388,7 @@ type codeEditorV2IStandaloneCodeEditorUpdateOptionsConfig = {
   cursorHeight?: float,
   fontLigatures?: CommonTypes.boolOrString,
   fontVariations?: CommonTypes.boolOrString,
-  defaultColorDecorators?: ChartsTypes.chartsDateTimeFormatOptionsHour12,
+  defaultColorDecorators?: codeEditorV2IEditorOptionsDefaultColorDecorators,
   disableLayerHinting?: bool,
   disableMonospaceOptimizations?: bool,
   hideCursorInOverviewRuler?: bool,
@@ -3738,7 +3750,7 @@ type iDiffEditorOptions = {
   cursorHeight?: float,
   fontLigatures?: CommonTypes.boolOrString,
   fontVariations?: CommonTypes.boolOrString,
-  defaultColorDecorators?: ChartsTypes.chartsDateTimeFormatOptionsHour12,
+  defaultColorDecorators?: codeEditorV2IEditorOptionsDefaultColorDecorators,
   disableLayerHinting?: bool,
   disableMonospaceOptimizations?: bool,
   hideCursorInOverviewRuler?: bool,
@@ -3995,7 +4007,7 @@ type iStandaloneEditorConstructionOptions<'a> = {
   cursorHeight?: float,
   fontLigatures?: CommonTypes.boolOrString,
   fontVariations?: CommonTypes.boolOrString,
-  defaultColorDecorators?: ChartsTypes.chartsDateTimeFormatOptionsHour12,
+  defaultColorDecorators?: codeEditorV2IEditorOptionsDefaultColorDecorators,
   disableLayerHinting?: bool,
   disableMonospaceOptimizations?: bool,
   hideCursorInOverviewRuler?: bool,
@@ -4177,7 +4189,7 @@ type iDiffEditorConstructionOptions = {
   cursorHeight?: float,
   fontLigatures?: CommonTypes.boolOrString,
   fontVariations?: CommonTypes.boolOrString,
-  defaultColorDecorators?: ChartsTypes.chartsDateTimeFormatOptionsHour12,
+  defaultColorDecorators?: codeEditorV2IEditorOptionsDefaultColorDecorators,
   disableLayerHinting?: bool,
   disableMonospaceOptimizations?: bool,
   hideCursorInOverviewRuler?: bool,
@@ -4373,6 +4385,10 @@ type multiSelectV2SecondaryActionConfig = {
   disabled?: bool,
   loading?: bool,
 }
+type multiSelectV2SkeletonComponentProps = {
+  multiSelectTokens: multiSelectV2TokensType,
+  skeleton: SelectV2Types.selectV2SkeletonProps,
+}
 type flattenedMultiSelectV2Item = {
   id: string,
   @as("type") type_: multiSelectV2FlattenedMultiSelectV2ItemType,
@@ -4388,6 +4404,13 @@ type multiSelectV2GetSelectAllStateConfig = {
   allSelected: bool,
   someSelected: bool,
 }
+type menuListSharedProps = {
+  selected: string,
+  onSelect: string => unit,
+  singleSelectTokens: singleSelectV2TokensType,
+  size: SelectV2Types.selectV2Size,
+  variant: SelectV2Types.selectV2Variant,
+}
 type flattenedItem = {
   id: string,
   @as("type") type_: multiSelectV2FlattenedMultiSelectV2ItemType,
@@ -4399,6 +4422,10 @@ type virtualItemShape = {
   key: CommonTypes.stringOrNumberOrBigInt,
   index: int,
   start: float,
+}
+type singleSelectV2SkeletonComponentProps = {
+  singleSelectTokens: singleSelectV2TokensType,
+  skeleton: SelectV2Types.selectV2SkeletonProps,
 }
 type singleSelectV2GetSingleSelectV2BorderRadiusConfig = {
   borderRadius: string,

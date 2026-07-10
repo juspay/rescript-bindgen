@@ -1,9 +1,25 @@
 type checkboxSize =
   | @as("sm") Sm
   | @as("md") Md
-type checkboxMaxLengthConfig = {
+type checkboxCheckboxPropsMaxLengthConfig = {
   label?: float,
   subtext?: float,
+}
+type checkboxProps = {
+  label?: string,
+  id?: string,
+  name?: string,
+  checked?: CommonTypes.boolOrIndeterminate,
+  defaultChecked?: bool,
+  onCheckedChange?: CommonTypes.boolOrIndeterminate => unit,
+  disabled?: bool,
+  required?: bool,
+  error?: bool,
+  size?: checkboxSize,
+  children?: React.element,
+  subtext?: string,
+  slot?: React.element,
+  maxLength?: checkboxCheckboxPropsMaxLengthConfig,
 }
 type checkboxCheckboxTokensTypeSlotConfig = {
   marginLeft: string,

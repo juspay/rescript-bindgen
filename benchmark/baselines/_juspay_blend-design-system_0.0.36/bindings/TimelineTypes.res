@@ -145,8 +145,17 @@ type responsiveTimelineTokens = {
   sm: timelineTokensType,
   lg: timelineTokensType,
 }
+type timelineLabelProps = {
+  text: string,
+}
 type timelineUser = {
   name: string,
   avatar?: string,
   fallbackText?: string,
+}
+type timelineShowMoreProps = {
+  count: int,
+  label?: string,
+  onShowMore?: unit => unit,
+  buttonProps?: ButtonV2Types.buttonV2TimelineShowMorePropsButtonPropsConfig,
 }

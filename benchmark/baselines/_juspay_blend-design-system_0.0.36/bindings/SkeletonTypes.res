@@ -9,6 +9,11 @@ type skeletonShapeV61p6w =
 type skeletonShapeV126nt =
   | @as("circle") Circle
   | @as("square") Square
+type baseSkeletonProps = {
+  variant?: skeletonVariant,
+  loading?: bool,
+  @as("data-testid") dataTestid?: string,
+}
 type skeletonSkeletonTokensTypeAnimationConfig = {
   duration: string,
   timingFunction: string,

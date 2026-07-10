@@ -1,8 +1,7 @@
-@module("@juspay/blend-design-system") @scope("Timeline") @react.component
-external make: (
-  ~count: int,
-  ~label: string=?,
-  ~onShowMore: unit => unit=?,
-  ~buttonProps: ButtonV2Types.buttonV2ButtonPropsConfig=?,
-  ~ref: React.ref<Nullable.t<Dom.element>>=?,
-) => React.element = "ShowMore"
+type props = {
+  ...TimelineTypes.timelineShowMoreProps,
+  ref?: React.ref<Nullable.t<Dom.element>>,
+}
+
+@module("@juspay/blend-design-system") @scope("Timeline")
+external make: React.component<props> = "ShowMore"

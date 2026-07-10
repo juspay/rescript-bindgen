@@ -2,7 +2,7 @@
 external make: (
   ~chartContainerRef: React.ref<Nullable.t<Dom.element>>,
   ~keys: array<string>,
-  ~colors: array<ChartsTypes.chartsColorsConfig>,
+  ~colors: array<HighchartsSharedTypes.chartsColorsConfig>,
   ~handleLegendClick: string => unit,
   ~handleLegendEnter: string => unit,
   ~handleLegendLeave: unit => unit,
@@ -12,6 +12,6 @@ external make: (
   ~activeKeys: Nullable.t<array<string>>,
   ~stacked: bool=?,
   ~isSmallScreen: bool=?,
-  ~stackedLegendsData: array<ChartsTypes.stackedLegendsDataPoint>=?,
-  ~legends: array<ChartsTypes.chartsLegendsConfig>=?,
+  ~stackedLegendsData: array<HighchartsSharedTypes.stackedLegendsDataPoint>=?,
+  ~legends: array<HighchartsSharedTypes.chartsLegendsConfig>=?,
 ) => React.element = "ChartLegends"

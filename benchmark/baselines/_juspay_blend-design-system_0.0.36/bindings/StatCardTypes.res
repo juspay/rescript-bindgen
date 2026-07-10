@@ -23,7 +23,7 @@ type chartDataPoint = {
   name: string,
 }
 type statCardAxisConfig = {
-  @as("type") type_?: ChartsTypes.axisType,
+  @as("type") type_?: HighchartsSharedTypes.axisType,
   tickFormatter?: CommonTypes.stringOrNumber => string,
   dateOnly?: bool,
   useUTC?: bool,

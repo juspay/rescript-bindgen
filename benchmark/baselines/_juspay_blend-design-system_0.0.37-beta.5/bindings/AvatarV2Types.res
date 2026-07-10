@@ -105,6 +105,10 @@ type avatarV2SkeletonConfig = {
   show: bool,
   variant?: avatarV2AvatarV2SkeletonConfigVariant,
 }
+type avatarV2Dimensions = {
+  width?: string,
+  height?: string,
+}
 type avatarV2DEFAULTPOSITIONConfig = {
   top: string,
   right: string,

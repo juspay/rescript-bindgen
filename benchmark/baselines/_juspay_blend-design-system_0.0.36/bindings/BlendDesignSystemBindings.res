@@ -11,7 +11,7 @@
 @module("@juspay/blend-design-system") external addSnackbar: (SnackbarTypes.addToastOptions) => CommonTypes.stringOrNumber = "addSnackbar"
 @module("@juspay/blend-design-system") external getSnackbarTokens: (TokensTypes.foundationTokenType) => SnackbarTypes.responsiveSnackbarTokens = "getSnackbarTokens"
 @module("@juspay/blend-design-system") external getPopoverTokens: (TokensTypes.foundationTokenType) => PopoverTypes.responsivePopoverTokens = "getPopoverTokens"
-@module("@juspay/blend-design-system") external getChartTokens: (TokensTypes.foundationTokenType) => ChartsTypes.responsiveChartTokens = "getChartTokens"
+@module("@juspay/blend-design-system") external getChartTokens: (TokensTypes.foundationTokenType) => HighchartsSharedTypes.responsiveChartTokens = "getChartTokens"
 @module("@juspay/blend-design-system") external blendChartBaseInstance: InstanceTypes.highchartsModule = "BlendChartBaseInstance"
 @module("@juspay/blend-design-system") external getCalendarToken: (TokensTypes.foundationTokenType) => DateRangePickerTypes.responsiveCalendarTokens = "getCalendarToken"
 @module("@juspay/blend-design-system") external getStatCardToken: (TokensTypes.foundationTokenType) => StatCardTypes.responsiveStatCardTokens = "getStatCardToken"

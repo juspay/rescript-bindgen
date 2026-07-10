@@ -1,32 +1,7 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~showLeftPanel: bool=?,
-  ~children: React.element,
-  ~data: array<DirectoryTypes.directoryData>,
-  ~leftPanel: SidebarTypes.leftPanelInfo=?,
-  ~topbar: React.element,
-  ~footer: React.element=?,
-  ~sidebarTopSlot: React.element=?,
-  ~sidebarCollapseKey: string=?,
-  ~merchantInfo: TopbarTypes.merchantInfo=?,
-  ~rightActions: React.element=?,
-  ~enableTopbarAutoHide: bool=?,
-  ~isTopbarVisible: bool=?,
-  ~onTopbarVisibilityChange: bool => unit=?,
-  ~defaultIsTopbarVisible: bool=?,
-  ~isExpanded: bool=?,
-  ~onExpandedChange: bool => unit=?,
-  ~onSidebarStateChange: SidebarTypes.sidebarStateChangeType => unit=?,
-  ~defaultIsExpanded: bool=?,
-  ~panelOnlyMode: bool=?,
-  ~disableIntermediateState: bool=?,
-  ~iconOnlyMode: bool=?,
-  ~hideOnIconOnlyToggle: bool=?,
-  ~showPrimaryActionButton: bool=?,
-  ~primaryActionButtonProps: ReactTypes.reactPrimaryActionButtonPropsConfig=?,
-  ~activeItem: Nullable.t<string>=?,
-  ~onActiveItemChange: Nullable.t<string> => unit=?,
-  ~defaultActiveItem: Nullable.t<string>=?,
-  ~onHoveringChange: bool => unit=?,
-  ~ref: React.ref<Nullable.t<Dom.element>>=?,
-) => React.element = "Sidebar"
+type props = {
+  ...SidebarTypes.sidebarProps,
+  ref?: React.ref<Nullable.t<Dom.element>>,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "Sidebar"

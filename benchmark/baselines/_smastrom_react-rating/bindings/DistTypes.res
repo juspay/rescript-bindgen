@@ -16,7 +16,7 @@ type transitions =
   | @as("position") Position
   | @as("opacity") Opacity
   | @as("colors") Colors
-type distPreventDefault =
+type distInputPropsPreventDefault =
   | @as("none") None
   | @as("click") Click
   | @as("keydown") Keydown
@@ -36,4 +36,37 @@ type itemStyles = {
   itemShapes: string,  // 🛑 BROKEN — contains `any`
   itemStrokeWidth?: float,
   boxBorderWidth?: float,
+}
+type sharedProps = {
+  value: float,
+  items?: CommonTypes.v1OrV2OrV3OrV4OrV5OrV6OrV7OrV8OrV9OrV10,
+  readOnly?: bool,
+  highlightOnlySelected?: bool,
+  orientation?: orientation,
+  spaceInside?: spacings,
+  spaceBetween?: spacings,
+  radius?: sizes,
+  itemStyles?: itemStyles,
+  id?: string,
+  className?: string,
+  style?: JsxDOM.style,
+}
+type readOnlyProps = {
+  halfFillMode?: hF,
+}
+type inputProps<'a> = {
+  onChange?: float => 'a,
+  onHoverChange?: float => unit => unit,
+  onBlur?: option<option<option<option<option<option<option<string> => unit> => unit> => unit> => unit> => unit> => unit> => unit,  // ⚪ loose — was `FocusEvent_2`
+  onFocus?: option<option<option<option<option<option<option<string> => unit> => unit> => unit> => unit> => unit> => unit> => unit,  // ⚪ loose — was `FocusEvent_2`
+  isDisabled?: bool,
+  resetOnSecondClick?: bool,
+  transition?: transitions,
+  isRequired?: bool,
+  invisibleLabel?: string,
+  invisibleItemLabels?: array<string>,
+  visibleLabelId?: string,
+  visibleItemLabelIds?: array<string>,
+  resetLabel?: string,
+  preventDefault?: distInputPropsPreventDefault,
 }

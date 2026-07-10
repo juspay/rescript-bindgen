@@ -1,15 +1,7 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~code: string,
-  ~variant: CodeBlockTypes.codeBlockVariant=?,
-  ~showLineNumbers: bool=?,
-  ~showHeader: bool=?,
-  ~header: string=?,
-  ~headerLeftSlot: React.element=?,
-  ~headerRightSlot: React.element=?,
-  ~diffLines: array<CodeBlockTypes.diffLine>=?,
-  ~showCopyButton: bool=?,
-  ~autoFormat: bool=?,
-  ~language: CodeBlockTypes.supportedLanguage=?,
-  ~ref: React.ref<Nullable.t<Dom.element>>=?,
-) => React.element = "CodeBlock"
+type props = {
+  ...CodeBlockTypes.codeBlockProps,
+  ref?: React.ref<Nullable.t<Dom.element>>,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "CodeBlock"

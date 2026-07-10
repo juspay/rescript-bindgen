@@ -4,7 +4,7 @@
 
 **6** function binding(s) → `ReactRatingBindings.res`.
 
-**9** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**12** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 

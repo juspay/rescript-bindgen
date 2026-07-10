@@ -23,6 +23,19 @@ type diffLine = {
   content: string,
   @as("type") type_: diffLineType,
 }
+type codeBlockProps = {
+  code: string,
+  variant?: codeBlockVariant,
+  showLineNumbers?: bool,
+  showHeader?: bool,
+  header?: string,
+  headerLeftSlot?: React.element,
+  headerRightSlot?: React.element,
+  diffLines?: array<diffLine>,
+  showCopyButton?: bool,
+  autoFormat?: bool,
+  language?: supportedLanguage,
+}
 type codeBlockCodeBlockTokenTypeHeaderPaddingConfig = {
   x: string,
   y: string,

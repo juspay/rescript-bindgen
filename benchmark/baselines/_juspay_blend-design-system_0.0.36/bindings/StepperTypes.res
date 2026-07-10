@@ -24,6 +24,13 @@ type step = {
   isExpandable?: bool,
   isExpanded?: bool,
 }
+type stepperProps = {
+  steps: array<step>,
+  onStepClick?: float => unit,
+  onSubstepClick?: (float, float) => unit,
+  clickable?: bool,
+  stepperType?: stepperType,
+}
 type stepperStepperTokensTypeContainerDefaultConfig = {
   gap: string,
 }

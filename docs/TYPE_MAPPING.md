@@ -214,19 +214,51 @@ The prop name is camelCased with the original kept: `@as("aria-checked") ~ariaCh
 ---
 
 ## Components extending HTML attributes (record-props + `HtmlAttrs.res`)
-Fixtures: [`html-attrs-component`](../test/golden/cases/html-attrs-component), [`html-attrs-omit`](../test/golden/cases/html-attrs-omit), [`html-attrs-collision`](../test/golden/cases/html-attrs-collision), [`html-attrs-no-match`](../test/golden/cases/html-attrs-no-match)
+Fixtures: [`html-attrs-component`](../test/golden/cases/html-attrs-component), [`html-attrs-omit`](../test/golden/cases/html-attrs-omit), [`html-attrs-collision`](../test/golden/cases/html-attrs-collision), [`html-attrs-no-match`](../test/golden/cases/html-attrs-no-match), [`shared-base-records`](../test/golden/cases/shared-base-records)
 
 A component whose props intersect (or whose interface `extends`) a React attribute
 interface — `ButtonHTMLAttributes<T>`, `InputHTMLAttributes<T>`, any `*HTMLAttributes`,
 optionally wrapped in `Omit<…, K>` / `Partial<…>` — does NOT inline the attribute
-surface as labeled args. It emits the **record-props form** with one shared spread:
+surface as labeled args. It emits the **record-props form** with one shared spread.
+Detection is **transitive** (#130): the attrs interface may arrive through package-local
+aliases and nested `Omit<>` wrappers (blend's `Omit<BlockProps, 'children'>` where
+`BlockProps = StyledBlockProps & Omit<React.HTMLAttributes<HTMLElement>, 'as'|'color'> & {…}`)
+— omit keys compose across every layer, and interface heritage recurses through
+package-local bases (a `React.` qualifier on the heritage name is stripped):
 
 | TypeScript | ReScript |
 |---|---|
 | `OwnProps & ButtonHTMLAttributes<HTMLButtonElement>` | `type props = { ...HtmlAttrs.buttonHTMLAttributes, <own fields> }` + `external make: React.component<props>` |
 | `OwnProps & Omit<ButtonHTMLAttributes<…>, 'style' \| 'className'>` | spread of a **narrowed variant** `HtmlAttrs.buttonHTMLAttributesOmitClassNameStyle` — only the hierarchy slice containing the removed keys is re-materialized; aria + events stay shared. Variants are deduped by removed-set. |
 | own prop colliding with a chain field (e.g. own `onClick: (v, i) => void`) | the own prop WINS with its own mapping; the base spread is narrowed (`…OmitOnClick`) so a duplicate-field compile error is impossible |
+| `Base & Omit<BlockProps, 'children'>` — the attrs interface nested INSIDE `BlockProps`, behind a second `Omit` | the leaf is still found; the slice composes ALL layers' keys: `...HtmlAttrs.htmlAttributesOmitChildrenColor` (#130) |
 | `& SVGAttributes<…>` / `& AllHTMLAttributes<…>` / non-literal `Omit` keys / generic component / `--file`/`--stdout` mode | **legacy labeled-args output** (unchanged) |
+
+**Shared-base props records (#82).** A PURE package-local NAMED intersection part — an
+alias/interface none of whose fields is vendor-declared (blend's `StyledBlockProps`, the
+~95-field Block CSS surface; `BaseSkeletonProps`) — becomes ONE shared record in `*Types.res`,
+spread by every consumer instead of being inlined per component:
+
+```rescript
+type props = {
+  ...HtmlAttrs.htmlAttributesOmitChildrenColor,
+  ...BlendTypes.baseSkeletonProps,
+  ...BlendTypes.styledBlockProps,
+  size?: skeletonSize,   // only genuinely own props stay inline
+}
+```
+
+TypeScript dissolves nested intersections, so an intermediate alias (`StyledBlockProps`)
+is recovered from the alias declaration's SYNTAX. A base spreads only when provably
+collision-free (ReScript record spreads hard-error on duplicate labels): every base field's
+flattened prop must resolve to the base's own property declarations — an `Omit<>` wrapper's
+mapped symbols keep the original declarations, while a component-level redeclaration breaks
+the containment and that base falls back to today's inline flattening (a shadowed base is
+never a compile error). React/vendor wrapper types (`RefAttributes`, styled-components'
+`ExecutionProps`, …) never spread — on real packages they're vendor-declared; the name-set
+keeps self-contained fixtures behaving identically. A component whose props are ONE named
+alias (no intersection) keeps the legacy inline form — a spread-only `props` would add
+indirection with no dedup win.
 
 `HtmlAttrs.res` is written once per run (manifest-tracked) and models React's hierarchy
 with record type spread, generated from the **exact-pinned `@types/react` devDependency**

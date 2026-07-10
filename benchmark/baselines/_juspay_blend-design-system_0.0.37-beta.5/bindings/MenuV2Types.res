@@ -159,6 +159,59 @@ type menuV2VirtualScrollingConfig = {
   overscan?: float,
   threshold?: float,
 }
+module MenuV2MenuV2PropsCollisionBoundaryRef = {
+  type t
+  external fromHTMLElement: Dom.element => t = "%identity"
+  external asHTMLElement: t => (Dom.element) = "%identity"
+  external fromHTMLElements: array<Dom.element> => t = "%identity"
+  external asHTMLElements: t => (array<Dom.element>) = "%identity"
+}
+type menuV2Props = {
+  trigger: React.element,
+  items?: array<menuV2GroupType>,
+  dimensions?: menuV2Dimensions,
+  enableSearch?: bool,
+  searchPlaceholder?: string,
+  enableVirtualScrolling?: bool,
+  virtualScrolling?: menuV2VirtualScrollingConfig,
+  @as("open") open_?: bool,
+  onOpenChange?: bool => unit,
+  asModal?: bool,
+  alignment?: menuV2Alignment,
+  side?: menuV2Side,
+  sideOffset?: float,
+  alignOffset?: float,
+  collisionBoundaryRef?: MenuV2MenuV2PropsCollisionBoundaryRef.t,
+  triggerProps?: ReactTypes.reactSidebarPropsPrimaryActionButtonPropsConfig,
+}
+type menuV2ContentProps = {
+  filteredItems: array<menuV2GroupType>,
+  menuTokens: menuV2TokensType,
+  enableSearch: bool,
+  searchPlaceholder: string,
+  searchText: string,
+  onSearchTextChange: string => unit,
+  maxHeight?: string,
+  minHeight?: string,
+  minWidth?: string,
+  maxWidth?: string,
+  enableVirtualScrolling?: bool,
+  virtualScrolling?: menuV2VirtualScrollingConfig,
+  alignment?: DateRangePickerTypes.dateRangePickerDateRangePickerPopoverConfigAlign,
+  side?: DateRangePickerTypes.dateRangePickerDateRangePickerPopoverConfigSide,
+  sideOffset?: float,
+  alignOffset?: float,
+  collisionBoundaryRef?: MenuV2MenuV2PropsCollisionBoundaryRef.t,
+  onInteractOutside?: JSON.t => unit,
+  onPointerDownOutside?: JSON.t => unit,
+  onFocusCapture?: ReactEvent.Focus.t => unit,
+  onKeyDown?: ReactEvent.Keyboard.t => unit,
+}
+type menuV2ItemProps = {
+  item: menuV2ItemType,
+  index: int,
+  itemTokens: menuV2MenuV2TokensTypeGroupItemConfig,
+}
 type menuV2FlattenMenuV2GroupsLabelConfig = {
   @as("type") type_: string,  // ⚪ loose — was `"label"`
   id: string,
@@ -174,13 +227,6 @@ type menuV2FlattenMenuV2GroupsItemConfig = {
   item: menuV2ItemType,
   groupId: float,
   itemIndex: float,
-}
-module MenuV2CollisionBoundaryRef = {
-  type t
-  external fromHTMLElement: Dom.element => t = "%identity"
-  external asHTMLElement: t => (Dom.element) = "%identity"
-  external fromHTMLElements: array<Dom.element> => t = "%identity"
-  external asHTMLElements: t => (array<Dom.element>) = "%identity"
 }
 module MenuV2FlatRow = {
   type t

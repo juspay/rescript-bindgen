@@ -1,5 +1,6 @@
 type props = {
   ...HtmlAttrs.htmlAttributesOmitChildrenClassNameStyle,
+  ...AvatarV2Types.avatarV2Dimensions,
   src?: string,
   alt?: string,
   fallbackText?: string,
@@ -13,8 +14,6 @@ type props = {
   disabled?: bool,
   onImageError?: JsError.t => unit,
   onImageLoad?: unit => unit,
-  width?: string,
-  height?: string,
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 

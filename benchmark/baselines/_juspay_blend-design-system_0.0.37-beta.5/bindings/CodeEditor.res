@@ -1,25 +1,7 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~value: string,
-  ~onChange: string => unit=?,
-  ~variant: CodeEditorTypes.codeEditorVariant=?,
-  ~showLineNumbers: bool=?,
-  ~showHeader: bool=?,
-  ~header: string=?,
-  ~headerLeftSlot: React.element=?,
-  ~headerRightSlot: React.element=?,
-  ~showLeftIcon: bool=?,
-  ~showCopyButton: bool=?,
-  ~language: CodeBlockTypes.supportedLanguage=?,
-  ~placeholder: string=?,
-  ~readOnly: bool=?,
-  ~disabled: bool=?,
-  ~minHeight: CommonTypes.stringOrNumber=?,
-  ~maxHeight: CommonTypes.stringOrNumber=?,
-  ~height: CommonTypes.stringOrNumber=?,
-  ~className: string=?,
-  ~onBlur: unit => unit=?,
-  ~onFocus: unit => unit=?,
-  ~autoFocus: bool=?,
-  ~ref: React.ref<Nullable.t<Dom.element>>=?,
-) => React.element = "CodeEditor"
+type props = {
+  ...CodeEditorTypes.codeEditorProps,
+  ref?: React.ref<Nullable.t<Dom.element>>,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "CodeEditor"

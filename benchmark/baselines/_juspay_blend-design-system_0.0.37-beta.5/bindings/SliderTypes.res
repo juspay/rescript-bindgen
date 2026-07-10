@@ -1,10 +1,13 @@
+type sliderOrientation =
+  | @as("horizontal") Horizontal
+  | @as("vertical") Vertical
+type sliderVariant =
+  | @as("primary") Primary
+  | @as("secondary") Secondary
 type sliderSize =
   | @as("sm") Sm
   | @as("md") Md
   | @as("lg") Lg
-type sliderVariant =
-  | @as("primary") Primary
-  | @as("secondary") Secondary
 type sliderValueType =
   | @as("number") Number
   | @as("percentage") Percentage
@@ -13,9 +16,6 @@ type sliderLabelPosition =
   | @as("top") Top
   | @as("bottom") Bottom
   | @as("inline") Inline
-type sliderOrientation =
-  | @as("horizontal") Horizontal
-  | @as("vertical") Vertical
 type sliderGetSliderLabelStylesPosition =
   | @as("top") Top
   | @as("bottom") Bottom
@@ -27,6 +27,13 @@ type sliderValueFormatConfig = {
   suffix?: string,
   showLabels?: bool,
   formatter?: float => string,
+}
+type sliderProps = {
+  variant?: sliderVariant,
+  size?: sliderSize,
+  valueFormat?: sliderValueFormatConfig,
+  showValueLabels?: bool,
+  labelPosition?: sliderLabelPosition,
 }
 type sliderSliderCSSPropertiesHoverConfig = {
   boxShadow?: string,
