@@ -69,15 +69,18 @@ export interface FunctionIR {
   enums: EnumDecl[]
   records: RecordDecl[]
   unboxed: UnboxedDecl[]
-  /** The classified call signature: params (name + optionality + type) + return type.
-   *  Required params bind positionally; optional ones bind as labeled `~name=?`. */
+  /** The classified call signature: params (name + optional/rest metadata + type) + return type.
+   *  Required params bind positionally; optional ones bind as labeled `~name=?`; a homogeneous
+   *  final rest array binds through `@variadic`. */
   sig: { params: ParamIR[]; ret: IRType }
 }
 
-/** A labeled-argument member (class constructor / method param): name + optionality + type. */
+/** A callable parameter: name + optional/rest metadata + type. */
 export interface ParamIR {
   name: string
   optional: boolean
+  /** Final homogeneous rest parameter (`...args: T[]`) emitted through `@variadic`. */
+  rest?: boolean
   type: IRType
 }
 
@@ -97,6 +100,8 @@ export interface ClassIR {
   methods: { jsName: string; params: ParamIR[]; ret: IRType }[]
   /** Data properties / getters (`@get`): each a JS name + its type. */
   getters: { jsName: string; type: IRType }[]
+  /** Members omitted without dropping the rest of the class (for example unsupported tuple rests). */
+  skippedMembers?: { name: string; reason: string }[]
 }
 
 export interface ExtractOptions {

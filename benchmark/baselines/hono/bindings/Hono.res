@@ -16,7 +16,7 @@ type t = InstanceTypes.hono
 @send external all: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => string) => t = "all"
 // 🛑 BROKEN: `on` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
 @send external on: (t, ~method: string, ~path: string, ~handler: (InstanceTypes.context, unit => promise<unit>) => string) => t = "on"
-@send external use: (t, ~handlers: array<(InstanceTypes.context, unit => promise<unit>) => promise<WebTypes.response>>=?, unit) => t = "use"
+@send @variadic external use: (t, array<(InstanceTypes.context, unit => promise<unit>) => promise<WebTypes.response>>) => t = "use"
 @send external getPath: (t, ~request: WebTypes.request, ~options: TypesTypes.typesHonoOptionsGetPathConfig=?, unit) => string = "getPath"
 // 🛑 BROKEN: `route` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
 @send external route: (t, ~path: string, ~app: t) => t = "route"

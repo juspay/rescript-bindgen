@@ -428,16 +428,21 @@ export function emitFunction(ir, options = {}) {
     const render1 = (p) => (p.type.kind === 'event' ? p.type.res : renderType(p.type, p.name, cfg))
     const params = ir.sig.params || []
     // Required params stay POSITIONAL (idiomatic for plain functions); optional params bind as
-    // labeled `~name=?` (a positional external can't express a trailing optional). A trailing
-    // `unit` sentinel is added when any param is optional, so the optional can be omitted.
+    // labeled `~name=?` (a positional external can't express a trailing optional). A homogeneous
+    // final REST param stays an array in the ReScript type and `@variadic` spreads it only at the
+    // JS call boundary. It is never a labeled optional or followed by the optional `unit` sentinel.
     const segs = []
     let hasOpt = false
+    const hasRest = params.some((p) => p.rest)
     for (const p of params) {
-        if (p.optional) { hasOpt = true; segs.push(`~${label(p.name).id}: ${render1(p)}=?`) }
+        if (p.rest) segs.push(render1(p))
+        else if (p.optional) { hasOpt = true; segs.push(`~${label(p.name).id}: ${render1(p)}=?`) }
         else segs.push(render1(p))
     }
-    if (hasOpt) segs.push('unit')
-    const paramStr = segs.length ? `(${segs.join(', ')})` : 'unit'
+    if (hasOpt && !hasRest) segs.push('unit')
+    const paramStr = !segs.length ? 'unit'
+        : (hasRest && segs.length === 1) ? segs[0]
+            : `(${segs.join(', ')})`
     const ret = renderType(ir.sig.ret || { kind: 'unit' }, '', cfg)
 
     // flag-don't-fake: surface the WORST imperfection across return + params above the line.
@@ -450,7 +455,7 @@ export function emitFunction(ir, options = {}) {
         lines.push(`// ⚪ loose: \`${ir.import.name}\` has a param/return widened to \`${cfg.opaqueFallback}\`.`)
     }
     if (ir.import.isDefault) lines.push(defaultExportNote(ir.import.name))
-    lines.push(`@module(${JSON.stringify(cfg.from)}) external ${id}: ${paramStr} => ${ret} = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
+    lines.push(`@module(${JSON.stringify(cfg.from)})${hasRest ? ' @variadic' : ''} external ${id}: ${paramStr} => ${ret} = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
 
     return lines.join('\n')
 }
@@ -511,10 +516,13 @@ export function emitClass(ir, options = {}) {
 
     // Labeled-arg segment for a param list: `~id: type` (+ `=?` when optional), plus a
     // trailing `unit` sentinel when the LAST param is optional (ReScript requires it so the
-    // optional can be omitted at the call site).
+    // optional can be omitted at the call site). A final REST array is positional because
+    // `@variadic` must spread that exact final argument at the JS boundary.
     const render1 = (p) => (p.type.kind === 'event' ? p.type.res : renderType(p.type, p.name, cfg))
     const argSegs = (params) => {
-        const segs = params.map((p) => `~${label(p.name).id}: ${render1(p)}${p.optional ? '=?' : ''}`)
+        const segs = params.map((p) => p.rest
+            ? render1(p)
+            : `~${label(p.name).id}: ${render1(p)}${p.optional ? '=?' : ''}`)
         if (params.length && params[params.length - 1].optional) segs.push('unit')
         return segs
     }
@@ -532,14 +540,18 @@ export function emitClass(ir, options = {}) {
         if (c) lines.push(c)
         if (ir.import.isDefault) lines.push(defaultExportNote(ir.import.name))
         const segs = argSegs(ir.ctor.params)
-        const paramStr = segs.length ? `(${segs.join(', ')})` : 'unit'
-        lines.push(`@new @module(${JSON.stringify(cfg.from)}) external make: ${paramStr} => t = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
+        const hasRest = ir.ctor.params.some((p) => p.rest)
+        const paramStr = !segs.length ? 'unit'
+            : (hasRest && segs.length === 1) ? segs[0]
+                : `(${segs.join(', ')})`
+        lines.push(`@new @module(${JSON.stringify(cfg.from)})${hasRest ? ' @variadic' : ''} external make: ${paramStr} => t = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
     }
     for (const m of ir.methods) {
         const c = flag(m.jsName, [m.ret, ...m.params.map((p) => p.type)])
         if (c) lines.push(c)
         const args = ['t', ...argSegs(m.params)]
-        lines.push(`@send external ${label(m.jsName).id}: (${args.join(', ')}) => ${renderType(m.ret, '', cfg)} = ${JSON.stringify(m.jsName)}`)
+        const hasRest = m.params.some((p) => p.rest)
+        lines.push(`@send${hasRest ? ' @variadic' : ''} external ${label(m.jsName).id}: (${args.join(', ')}) => ${renderType(m.ret, '', cfg)} = ${JSON.stringify(m.jsName)}`)
     }
     for (const g of ir.getters) {
         const c = flag(g.jsName, [g.type])

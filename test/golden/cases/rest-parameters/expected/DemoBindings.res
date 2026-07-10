@@ -1,0 +1,5 @@
+@module("demo") @variadic external collect: array<string> => string = "collect"
+@module("demo") @variadic external format: (string, array<float>) => string = "format"
+@module("demo") @variadic external configure: (~label: string=?, array<bool>) => unit = "configure"
+@module("demo") @variadic external collectGeneric: array<'a> => array<'a> = "collectGeneric"
+@module("demo") @variadic external join: array<string> => string = "join"

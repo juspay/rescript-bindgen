@@ -622,9 +622,16 @@ signature) are bound too — this is what lets the generator target non-React TS
 date-fns, …). Each becomes a `@module external` in one bundled `<Pkg>Bindings.res` file. **Required
 params bind positionally; optional params bind as labeled `~name=?`** (a positional external can't
 express a trailing optional — `nanoid(size?)` would otherwise force the arg), with a `unit` sentinel
-so the optional can be omitted. The JS export name stays in the `= "…"` string, so a reserved or
-capitalized name still binds. Params and the return reuse the same `classify` pipeline as component
-props, so named types land in the shared `*Types.res` (referenced qualified).
+so the optional can be omitted. A homogeneous final rest parameter (`...args: T[]`) is different:
+it stays an `array<T>` on the ReScript side and the external gets `@variadic`, so the compiler spreads
+the array into separate positional JavaScript arguments. It is never emitted as one optional labeled
+array. A heterogeneous rest tuple is explicitly skipped because `@variadic` requires one homogeneous
+element type. For a standalone function that skips the export; for a class it skips and reports only
+the unsupported constructor/method while retaining the abstract type and every usable sibling. The JS
+export name stays in the `= "…"` string, so a reserved or capitalized name still binds. Params and the
+return reuse the same `classify` pipeline as component props, so named types land in the shared
+`*Types.res` (referenced qualified). Fixture:
+[`rest-parameters`](../test/golden/cases/rest-parameters). (#105)
 
 | TypeScript export | ReScript |
 |---|---|
@@ -632,6 +639,8 @@ props, so named types land in the shared `*Types.res` (referenced qualified).
 | `function now(): number` (zero args) | `@module("pkg") external now: unit => float = "now"` — an external can't take no args |
 | `function forEach(items: number[], fn: (v: number, i: number) => void): void` | `external forEach: (array<float>, (float, float) => unit) => unit = "forEach"` |
 | `function greet(name: string, greeting?: string): string` | `external greet: (string, ~greeting: string=?, unit) => string = "greet"` (optional → labeled `=?`) |
+| `function collect(...items: string[]): string` | `@variadic external collect: array<string> => string = "collect"` — `collect(["a", "b"])` compiles to `collect("a", "b")`, not `collect(["a", "b"])` |
+| `function format(prefix: string, ...values: number[]): string` | `@variadic external format: (string, array<float>) => string = "format"` — fixed prefix preserved, final array spread |
 | `const translate: (p: Point, dx: number, dy: number) => Point` | `external translate: (PkgTypes.point, float, float) => PkgTypes.point = "translate"` (named `Point` → shared record) |
 | `const renderThing: (a: Point, b: Point) => JSX.Element` | a **function**, not a `@react.component` — a React FC takes 0 or 1 (props) arg, so a **multi-arg** callable (even one returning JSX) binds as a function and keeps **every** arg. (#63 C4) |
 | `const getSlots: (item: Item) => [ReactNode?]` | a **function** — a React element must **be** the return, not merely appear inside a **tuple/array** (`[ReactNode?]`, `ReactNode[]`); such a data-returning util is not a component. (#63 C4) |
@@ -666,7 +675,12 @@ same `classify` pipeline, so records/enums/unions land in the shared `*Types.res
 
 Method/constructor params bind as **labeled args** (unlike [function exports](#standalone-function-exports-non-react),
 which are positional) — class APIs lean on optional params, and ReScript only allows optionals when
-labeled. A trailing optional gets a `unit` sentinel, the standard ReScript pattern.
+labeled. A trailing optional gets a `unit` sentinel, the standard ReScript pattern. A homogeneous
+final rest array becomes a positional final parameter with `@new @variadic` or `@send @variadic`,
+using the same JS calling-convention rule as standalone functions. If one class member instead has an
+unsupported tuple rest (common in typed event emitters such as `emit<K>(event, ...args: Events[K])`),
+only that member is omitted and added to the skipped list; the constructor/type/sibling methods still
+emit. An unsupported constructor similarly omits `make` but retains the class type and methods.
 
 **The `InstanceTypes` sink.** Every class's abstract instance type lives in a single dependency-free
 module, `InstanceTypes` (`type counter`, `type tracker`, …). Each class file aliases its own
@@ -682,6 +696,7 @@ we don't fully emit (e.g. a generic one) still resolves to its abstract type —
 |---|---|
 | `class Counter { constructor(start: number, step?: number) }` | `@new @module("pkg") external make: (~start: float, ~step: int=?, unit) => t = "Counter"` |
 | `increment(by: number): Counter` (returns self) | `@send external increment: (t, ~by: float) => t = "increment"` |
+| `append(separator: string, ...values: string[]): string` | `@send @variadic external append: (t, ~separator: string, array<string>) => string = "append"` |
 | `get(...): HonoBase<…>` (returns a NON-exported first-party base — hono's chaining shape) | `@send external get: (t, …) => t = "get"` — base-class symbols of exported classes register transitively (ambiguity-guarded; **library** bases like `Date`/`EventTarget` are never claimed). Fixture: [`class-self-return`](../test/golden/cases/class-self-return) |
 | `get value(): number` | `@get external value: t => float = "value"` |
 | `reset(): void` | `@send external reset: (t) => unit = "reset"` |

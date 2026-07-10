@@ -1,1 +1,1 @@
-@module("clsx") external clsx: (~inputs: array<CommonTypes.boolOrStringOrNumberOrBigIntOrValueArrayOrValue<'a>>=?, unit) => string = "clsx"
+@module("clsx") @variadic external clsx: array<CommonTypes.boolOrStringOrNumberOrBigIntOrValueArrayOrValue<'a>> => string = "clsx"
