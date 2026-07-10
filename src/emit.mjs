@@ -277,7 +277,11 @@ export function emit(ir, options = {}) {
     if (ir.import.isDefault) lines.push(defaultExportNote(ir.import.name))
     // A namespace member binds THROUGH the namespace object — `@scope("Accordion") = "Root"`
     // — because the flat export may be type-only (undefined at runtime, base-ui). (#25)
-    const scopeAttr = ir.import.scope ? ` @scope(${JSON.stringify(ir.import.scope)})` : ''
+    // A NESTED compound static (Table.Summary.Row, #100) carries a scope PATH — the tuple
+    // form `@scope(("Table", "Summary"))` walks each segment.
+    const scopeAttr = ir.import.scope
+        ? ` @scope(${Array.isArray(ir.import.scope) ? `(${ir.import.scope.map((s) => JSON.stringify(s)).join(', ')})` : JSON.stringify(ir.import.scope)})`
+        : ''
     if (recordProps) {
         // Type variables in props (explicit generics or implicit `any` vars, #31) make
         // the record parameterized: `type props<'a> = …`.
@@ -296,6 +300,13 @@ export function emit(ir, options = {}) {
         lines.push(`external make: (`)
         for (const p of ir.props) lines.push(...propLine(p, cfg, 'labeled'))
         lines.push(`) => React.element = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
+    }
+    // Compound statics (#100): zero-cost aliases over the sibling modules (which bind through
+    // this component via @scope), enabling the package's documented `<Menu.Item />` idiom.
+    if (ir.statics && ir.statics.length) {
+        lines.push('')
+        lines.push(`// Compound statics — zero-cost aliases; use <${ir.import.name}.${ir.statics[0].member} />`)
+        for (const s of ir.statics) lines.push(`module ${s.member} = ${s.target}`)
     }
     lines.push('')
 

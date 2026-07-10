@@ -1524,6 +1524,7 @@ export function extractModule(entryFile, opts = {}) {
     const skipped = []
     const seen = new Set()
     const componentBySym = new Map() // resolved symbol -> emitted module name (for NS alias files)
+    const compounds = [] // component exports queued for the compound-statics pass below (#100)
     for (const { exp, exportName } of exportEntries) {
         let sym = exp
         if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
@@ -1650,11 +1651,74 @@ export function extractModule(entryFile, opts = {}) {
             // A component with zero OWN props is still real when its whole surface is
             // the HTML-attributes spread (e.g. day-picker's `NextMonthButton(props:
             // ButtonHTMLAttributes<…>)`) — `type props = {...HtmlAttrs.x}` alone.
-            if (ir.props.length || ir.attrsBase) components.push({ name, ir })
-            else skipped.push({ name, reason: 'no-props' })
+            if (ir.props.length || ir.attrsBase) {
+                components.push({ name, ir })
+                // Compound candidate (#100): its own value-properties are checked AFTER the
+                // export loop, so an also-exported flat sibling (`MenuItem`) is already
+                // registered (componentBySym) and a `typeof MenuItem` static aliases to it
+                // instead of duplicating.
+                compounds.push({
+                    parentName: name, parentIr: ir, type, decl, depth: 0,
+                    scopePath: [...(ir.import.scope ? [].concat(ir.import.scope) : []), ir.import.jsName || name],
+                })
+            } else skipped.push({ name, reason: 'no-props' })
         } catch (e) {
             skipped.push({ name, reason: 'extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
         }
+    }
+    // Compound-component statics (#100) — `const Menu: FC<…> & { Item: FC<…> }`, the dominant
+    // pre-Radix idiom (antd's Menu.Item / Select.Option, react-bootstrap, headlessui). Each
+    // component-typed own value-property of a component export becomes a sibling module bound
+    // THROUGH the parent object (`@scope("Menu") … = "Item"` — the #25 machinery; runtime-correct
+    // because the static lives ON the parent value), plus a zero-cost `module Item = MenuItem`
+    // alias inside the parent file enabling the documented `<Menu.Item />` idiom. A non-component
+    // static lands in `skipped` — previously every static vanished with no trace. Nested compounds
+    // (antd's Table.Summary.Row) recurse via the queue, depth-capped defensively.
+    while (compounds.length) {
+        const cc = compounds.shift()
+        const aliases = []
+        for (const p of callableOwnProps(cc.type, checker, cc.decl)) {
+            const member = p.getName()
+            const label = `${cc.parentName}.${member}`
+            let pt
+            try { pt = checker.getTypeOfSymbolAtLocation(p, cc.decl) } catch { skipped.push({ name: label, reason: 'static-type-error' }); continue }
+            if (!isReactComponent(pt, checker)) { skipped.push({ name: label, reason: 'compound-static-not-a-component' }); continue }
+            // Dedup ONLY on VALUE identity — a `typeof SelectOption` type-query provably names the
+            // same runtime value as the flat export, so alias to its module. Structural/type-id
+            // matching is unsound here: blend's `Skeleton.Circle/Rectangle/Rounded` share one
+            // instantiated props TYPE yet are three different runtime components — collapsing
+            // them would render the wrong component.
+            let target = null
+            const pd = p.valueDeclaration || (p.declarations && p.declarations[0])
+            if (pd && pd.type && ts.isTypeQueryNode(pd.type)) {
+                try {
+                    let qs = checker.getSymbolAtLocation(pd.type.exprName)
+                    if (qs && (qs.flags & ts.SymbolFlags.Alias)) qs = checker.getAliasedSymbol(qs)
+                    target = (qs && componentBySym.get(qs)) || null
+                } catch { /* unresolvable typeof: build a scope-bound sibling below (always runtime-correct) */ }
+            }
+            if (!target) {
+                let modName = cc.parentName + pascal(member), n2 = 2
+                while (seen.has(modName)) modName = cc.parentName + pascal(member) + n2++
+                try {
+                    const cir = buildComponentIR(checker, p, source, modName, from, { ...opts, shared })
+                    cir.import.scope = cc.scopePath.length === 1 ? cc.scopePath[0] : cc.scopePath
+                    cir.import.jsName = member
+                    if (cir.props.length || cir.attrsBase) {
+                        seen.add(modName)
+                        components.push({ name: modName, ir: cir })
+                        target = modName
+                        if (cc.depth < 3) compounds.push({ parentName: modName, parentIr: cir, type: pt, decl: cc.decl, depth: cc.depth + 1, scopePath: [...cc.scopePath, member] })
+                    } else skipped.push({ name: label, reason: 'no-props' })
+                } catch (e) {
+                    skipped.push({ name: label, reason: 'static-extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
+                }
+            }
+            // The alias must be a valid ReScript module name; a lowercase static still emits its
+            // sibling module above (and is listed in the report), it just can't be aliased.
+            if (target && /^[A-Z]/.test(member)) aliases.push({ member, target })
+        }
+        if (aliases.length) cc.parentIr.statics = aliases.sort((a, b) => a.member.localeCompare(b.member))
     }
     // Namespace alias modules: `Accordion.res` with `module Root = AccordionRoot` — the
     // package's documented idiom (`<Accordion.Root>`), zero-cost ReScript module aliases

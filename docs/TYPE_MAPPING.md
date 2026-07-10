@@ -792,6 +792,28 @@ functions are a follow-up — only components bind through namespaces today.
 
 ---
 
+## Compound-component statics (`Menu.Item`, `Select.Option`)
+Fixture: [`compound-component-statics`](../test/golden/cases/compound-component-statics)
+
+A component VALUE that carries other components as properties — `const Menu: FC<MenuProps> &
+{ Item: FC<ItemProps> }`, the dominant pre-Radix idiom (antd, react-bootstrap, headlessui). Each
+component-typed own value-property becomes a **sibling module bound through the parent object**
+(the same `@scope` mechanism as namespace exports — runtime-correct because the static lives ON
+the parent value), and the parent file ends with zero-cost aliases enabling the documented JSX
+idiom. Own-property enumeration reuses the callable-with-properties filter (#103): vendor-declared
+members (`FC.displayName`, `propTypes`) and phantom brands never count.
+
+| TypeScript | ReScript |
+|---|---|
+| `const Menu: FC<{open?}> & { Item: FC<{label}> }` | `MenuItem.res`: `@module("pkg") @scope("Menu") external make: (~label: string) => React.element = "Item"`; `Menu.res` ends with `module Item = MenuItem` → `<Menu.Item label="…" />` works |
+| `Menu.VERSION: string` (non-component static) | **reported** in the skipped list (`Menu.VERSION`, `compound-static-not-a-component`) — previously every static vanished silently |
+| `const Select: FC<…> & { Option: typeof SelectOption }` where `SelectOption` is ALSO exported flat | no duplicate sibling — the static dedupes by type identity and `Select.res` aliases the existing flat module (`module Option = SelectOption`, bound `= "SelectOption"` which is runtime-real) |
+| `const Table: FC<…> & { Summary: FC<…> & { Row: FC<…> } }` (nested, antd's `Table.Summary.Row`) | the inner static binds with a scope PATH — `TableSummaryRow.res`: `@scope(("Table", "Summary")) … = "Row"` — and each level aliases its children, so `<Table.Summary.Row />` compiles to `pkg.Table.Summary.Row` (depth-capped defensively) |
+
+(#100)
+
+---
+
 ## Worked examples (from real `@juspay/blend-design-system` work)
 
 | Real prop | Shape | Resolution | Pattern |
