@@ -1,4 +1,4 @@
-@module("@juspay/blend-design-system") @react.component
+@module("@juspay/blend-design-system") @scope("Skeleton") @react.component
 external make: (
   ~variant: SkeletonTypes.skeletonVariant=?,
   ~loading: bool=?,
@@ -59,7 +59,7 @@ external make: (
   ~right: string=?,
   ~justifyContent: string=?,
   ~boxShadow: string=?,
-  ~width: CommonTypes.stringOrNumber=?,
+  ~width: string=?,
   ~borderRadius: string=?,
   ~letterSpacing: string=?,
   ~fontSize: string=?,
@@ -68,12 +68,12 @@ external make: (
   ~display: string=?,
   ~fontWeight: string=?,
   ~opacity: string=?,
-  ~height: CommonTypes.stringOrNumber=?,
+  ~height: string=?,
   ~gap: string=?,
   ~padding: CommonTypes.stringOrNumber=?,
   ~margin: CommonTypes.stringOrNumber=?,
   ~zIndex: string=?,
-  ~maxHeight: CommonTypes.stringOrNumber=?,
+  ~maxHeight: string=?,
   ~bottom: string=?,
   ~top: string=?,
   ~border: string=?,
@@ -121,9 +121,9 @@ external make: (
   ~outlineWidth: string=?,
   ~outlineStyle: string=?,
   ~outlineOffset: string=?,
-  ~minWidth: CommonTypes.stringOrNumber=?,
-  ~minHeight: CommonTypes.stringOrNumber=?,
-  ~maxWidth: CommonTypes.stringOrNumber=?,
+  ~minWidth: string=?,
+  ~minHeight: string=?,
+  ~maxWidth: string=?,
   ~backgroundImage: string=?,
   ~backgroundSize: string=?,
   ~borderTop: string=?,
@@ -148,15 +148,5 @@ external make: (
   ~transitionTimingFunction: string=?,
   ~transitionDelay: string=?,
   ~children: React.element=?,
-  ~animate: bool=?,
-  ~shape: SkeletonTypes.skeletonShapeV61p6w=?,
   ~ref: React.ref<Nullable.t<Dom.element>>=?,
-) => React.element = "Skeleton"
-
-// Compound statics — zero-cost aliases; use <Skeleton.Avatar />
-module Avatar = SkeletonAvatar2
-module Base = SkeletonBase2
-module Card = SkeletonCard2
-module Circle = SkeletonCircle
-module Rectangle = SkeletonRectangle
-module Rounded = SkeletonRounded
+) => React.element = "Card"

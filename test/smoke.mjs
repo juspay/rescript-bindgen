@@ -97,6 +97,23 @@ const checks = [
   ['self-returning method resolves through the registry', !!cwpClientEntry && cwpClientEntry.props.some((p) => p.fn && p.fn.ret && p.fn.ret.kind === 'typeRef' && p.fn.ret.to === 'Client.t')],
   ['value binding surfaces the ⓘ note', /ⓘ was callable-with-properties `Translator`/.test(cwpTCode)],
   ['phantom brand marker does not reroute a plain callable', (() => { const s = cwp.functions.find((f) => f.name === 'stamp'); return !!s && !s.ir.value && !!s.ir.sig })()],
+  ...(() => {
+    // Compound-component statics (#100): siblings bind through the parent via @scope, the parent
+    // carries zero-cost aliases, non-component statics are reported, flat exports dedupe, and
+    // nested statics get a scope PATH.
+    const cs = extractModule(join(here, 'golden', 'cases', 'compound-component-statics', 'index.d.ts'), { from: 'demo' })
+    const menu = cs.components.find((c) => c.name === 'Menu')
+    const item = cs.components.find((c) => c.name === 'MenuItem')
+    const row = cs.components.find((c) => c.name === 'TableSummaryRow')
+    const sel = cs.components.find((c) => c.name === 'Select')
+    return [
+      ['compound statics bind through the parent scope', !!item && item.ir.import.scope === 'Menu' && item.ir.import.jsName === 'Item'],
+      ['parent carries zero-cost aliases', !!menu && (menu.ir.statics || []).map((s) => `${s.member}=${s.target}`).join() === 'Divider=MenuDivider,Item=MenuItem'],
+      ['non-component static is reported, not silent', cs.skipped.some((s) => s.name === 'Menu.VERSION' && s.reason === 'compound-static-not-a-component')],
+      ['flat-exported static dedupes to an alias', !cs.components.some((c) => c.name === 'SelectOption2') && (sel?.ir.statics || []).some((s) => s.member === 'Option' && s.target === 'SelectOption')],
+      ['nested static carries a scope path', !!row && Array.isArray(row.ir.import.scope) && row.ir.import.scope.join('.') === 'Table.Summary' && row.ir.import.jsName === 'Row'],
+    ]
+  })(),
 ]
 
 let ok = true

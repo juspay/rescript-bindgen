@@ -59,6 +59,10 @@ export interface ComponentIR {
   records: RecordDecl[]
   unboxed: UnboxedDecl[]
   props: PropIR[]
+  /** Compound statics (#100): zero-cost `module Item = MenuItem` aliases emitted at the end of
+   *  this component's file; each target is a sibling module bound through this component's
+   *  runtime object via `@scope`. */
+  statics?: { member: string; target: string }[]
 }
 
 /** IR for a standalone function / const-with-call-signature export (generic TS). */

@@ -6,6 +6,13 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- **Compound-component statics silently dropped** (#100) — `const Menu: FC<MenuProps> &
+  { Item: FC<ItemProps> }` bound only `Menu`; `Menu.Item` vanished with no skip entry (antd,
+  react-bootstrap, headlessui's dominant idiom). Component-typed statics now bind as sibling
+  modules through the parent object (`@scope("Menu") … = "Item"`), the parent file gains
+  zero-cost `module Item = MenuItem` aliases (`<Menu.Item />` works), flat-exported twins
+  dedupe by type identity, nested statics (`Table.Summary.Row`) bind with a scope path, and
+  non-component statics are reported in the skipped list. Fixture: `compound-component-statics`.
 - **Callable-with-properties values dropped the object side unflagged** (#103) — i18next's `t`,
   framer-motion's `motion`, axios instances: `interface T { (key: string): string; locale: string }`
   bound as a bare `string => string`, silently losing every carried property. Such a type is now an

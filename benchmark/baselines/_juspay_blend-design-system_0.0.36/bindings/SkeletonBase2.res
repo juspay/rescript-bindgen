@@ -1,4 +1,4 @@
-@module("@juspay/blend-design-system") @react.component
+@module("@juspay/blend-design-system") @scope("Skeleton") @react.component
 external make: (
   ~variant: SkeletonTypes.skeletonVariant=?,
   ~loading: bool=?,
@@ -151,12 +151,4 @@ external make: (
   ~animate: bool=?,
   ~shape: SkeletonTypes.skeletonShapeV61p6w=?,
   ~ref: React.ref<Nullable.t<Dom.element>>=?,
-) => React.element = "Skeleton"
-
-// Compound statics — zero-cost aliases; use <Skeleton.Avatar />
-module Avatar = SkeletonAvatar2
-module Base = SkeletonBase2
-module Card = SkeletonCard2
-module Circle = SkeletonCircle
-module Rectangle = SkeletonRectangle
-module Rounded = SkeletonRounded
+) => React.element = "Base"
