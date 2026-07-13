@@ -13,6 +13,15 @@ export interface Wrap {
 }
 export declare const wrap: Wrap
 
+// same rule via the OTHER entry point: the SIGNATURE itself carries the sink dep
+// (`(x: string | number) => …`). The sig-derived first pick is `nonSinkOnly` too, so entry.home
+// is never sink-contaminated — `SigWrap` keeps its own module rather than sinking into CommonTypes.
+export interface SigWrap {
+  (x: string | number): string
+  label: string | number
+}
+export declare const sigWrap: SigWrap
+
 // contrast: a callable with a NON-sink prop dep still co-locates with it (the main #128 case).
 export interface Opts { retries?: number }
 export interface Client {

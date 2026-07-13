@@ -3477,10 +3477,13 @@ function overloadModule(ctx, type, callSigs, propName, depth, props = null) {
     // classification with the complete dep set (#128). Re-homing post-registration is safe because
     // render homes are LATE-BOUND: makeResolveRef resolves a keyed ref through the registry entry,
     // so refs minted during prop classification (recursion cache, records referencing this module)
-    // never strand on a stale mint-time home.
+    // never strand on a stale mint-time home. For a CALLABLE, both picks are `nonSinkOnly` — a
+    // `module <Name> = {…}` never sinks into a primitive sink, even when the SIGNATURE's only dep is
+    // a sink (`(x: string|number) => …`); it keeps its own module. Overloads keep the legacy pick.
+    const isCallable = !!(props && props.length)
     let home = homeOf(type, ctx)
-    if (deps.size) home = depHome(deps, ctx.shared, home) // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
-    const entry = { key, kind: 'opaque', variant: props && props.length ? 'callable' : 'overload', name, home, sigs, deps, note: '' }
+    if (deps.size) home = depHome(deps, ctx.shared, home, isCallable) // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
+    const entry = { key, kind: 'opaque', variant: isCallable ? 'callable' : 'overload', name, home, sigs, deps, note: '' }
     // Register BEFORE classifying carried properties: a method returning the callable itself
     // (axios' `create(config): AxiosInstance`) must resolve to `<name>.t` via the cache, not
     // recurse forever. Sig nodes are already built, so plain overloads are unaffected.

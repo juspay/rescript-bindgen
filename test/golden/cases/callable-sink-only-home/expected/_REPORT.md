@@ -2,9 +2,9 @@
 
 **0** components · ✅ **0** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**2** function binding(s) → `DemoBindings.res`.
+**3** function binding(s) → `DemoBindings.res`.
 
-**4** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**5** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -18,6 +18,7 @@
 Standalone function exports, emitted as positional `@module external` bindings in `DemoBindings.res`.
 
 - `wrap`
+- `sigWrap`
 - `client`
 
 ## ✅ Usable

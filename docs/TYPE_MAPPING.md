@@ -367,10 +367,12 @@ it can't out-vote the real ones). Re-homing after the entry has registered is sa
 ref's home is resolved **through the registry at render time** (`makeResolveRef` looks the entry up by
 `ref.key`) rather than trusting the mint-time copy — refs minted *during* prop classification (the
 recursion cache for self-returning methods, records referencing the module) can never strand on a
-stale home. Placement-only: the dep/SCC graph was already complete either way. The callable re-pick
-re-homes only to a genuine **non-sink** dep: a callable whose props are ALL sink-homed (e.g. only
-`size: string | number` → `stringOrNumber` in CommonTypes) keeps its OWN module rather than sinking a
-`module <Name> = {…}` into a primitive sink — CommonTypes stays the leaf for primitive unions.
+stale home. Placement-only: the dep/SCC graph was already complete either way. BOTH callable home
+picks (the sig-derived one and the post-prop re-pick) re-home only to a genuine **non-sink** dep: a
+callable whose deps are ALL sink-homed — whether from a prop (`size: string | number`) or from the
+SIGNATURE itself (`(x: string | number) => …`), both resolving to `stringOrNumber` in CommonTypes —
+keeps its OWN module rather than sinking a `module <Name> = {…}` into a primitive sink. CommonTypes
+stays the leaf for primitive unions. (Overloads without carried props keep the legacy pick.)
 Fixtures: [`callable-home-prop-deps`](../test/golden/cases/callable-home-prop-deps),
 [`callable-sink-only-home`](../test/golden/cases/callable-sink-only-home). (#128)
 
