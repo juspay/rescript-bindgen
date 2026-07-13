@@ -960,6 +960,111 @@ function imperfection(t) {
     return worst
 }
 
+const DEEP_RANK = { unknown: 3, any: 3, review: 2 }
+/** The type nodes a shared-registry entry directly contains (record fields / `@unboxed` members /
+ *  opaque-module views), each paired with a field label for cause reporting. */
+function deepEntryChildren(e) {
+    if (e.kind === 'record') return (e.fields || []).map((f) => ({ field: f.name, type: f.type }))
+    if (e.kind === 'unboxed') return (e.members || []).map((m) => ({ field: m.ctor || '(member)', type: m.type }))
+    if (e.kind === 'opaque') return [
+        ...(e.members || []).map((m) => ({ field: m.name || '(arm)', type: m.type })),
+        ...(e.sigs || []).map((s) => ({ field: s.accessor, type: s.fn })),
+        ...(e.props || []).map((m) => ({ field: m.jsName, type: m.fn || m.get })),
+    ].filter((c) => c.type)
+    return []
+}
+/** join `more` causes into `acc`, capped at 4 (best-effort; buckets don't depend on it). */
+function deepAddCauses(acc, more) { for (const c of more) if (acc.length < 4 && !acc.some((x) => x.owner === c.owner && x.field === c.field)) acc.push(c) }
+
+/**
+ * Precompute (once per registry, memoized on `shared._deepEntry`) the TRANSITIVE worst
+ * imperfection + up to 4 cause fields reachable from every shared-type entry (#133/#139).
+ *
+ * blend's shared-type graph is ~2600 nodes with `--webapi`, heavily cross-referenced, with a
+ * large mutually-recursive Highcharts SCC. A per-prop recursive walk (any memo variant) either
+ * hangs (uncached SCC re-walks combinatorially) or under-reports (caching a cycle-truncated
+ * result drops defects). The correct-and-fast answer is a **worklist fixed-point** over the entry
+ * graph: worst[e] = join(e's own direct worst, worst of every entry e references). Monotone over a
+ * height-3 lattice → converges; cycles are handled naturally by the fixed-point (no under-report);
+ * O(edges × height), no deep recursion, no hang. Each prop then just does cheap table lookups.
+ */
+function buildDeepEntryTable(shared) {
+    if (shared._deepEntry) return shared._deepEntry
+    const byName = new Map((shared.entries || []).map((e) => [e.name, e]))
+    const resolve = (ref) => (ref.key && shared.byKey.get(ref.key)) || byName.get(String(ref.to).replace(/\.t$/, '')) || null
+    const collectRefs = (n, out) => {
+        if (!n || typeof n !== 'object') return
+        if (n.kind === 'typeRef') { const e = resolve(n); if (e) out.add(e.key); return }
+        for (const k of ['of', 'ret', 'thisArg', 'arg', 'mapKey', 'mapVal']) if (n[k]) collectRefs(n[k], out)
+        if (Array.isArray(n.params)) n.params.forEach((p) => collectRefs(p, out))
+    }
+    const higher = (a, b) => (!a ? b : !b ? a : DEEP_RANK[a] >= DEEP_RANK[b] ? a : b)
+    const worst = new Map(), causes = new Map(), out = new Map(), preds = new Map()
+    const entries = shared.entries || []
+    for (const e of entries) {
+        let w = null; const cz = []; const outs = new Set()
+        for (const { field, type } of deepEntryChildren(e)) {
+            const d = imperfection(type)
+            if (d && DEEP_RANK[d]) { w = higher(w, d); if (cz.length < 4) cz.push({ owner: e.name, field, kind: d, unresolved: hasUnresolved(type) }) }
+            collectRefs(type, outs)
+        }
+        outs.delete(e.key)
+        worst.set(e.key, w); causes.set(e.key, cz); out.set(e.key, outs)
+    }
+    for (const e of entries) for (const f of out.get(e.key)) { if (!preds.has(f)) preds.set(f, new Set()); preds.get(f).add(e.key) }
+    // worklist fixed-point: info flows from a referenced entry back to its referrers.
+    const work = entries.map((e) => e.key)
+    const inWork = new Set(work)
+    while (work.length) {
+        const k = work.pop(); inWork.delete(k)
+        let w = worst.get(k)
+        const cz = causes.get(k).slice()
+        for (const f of out.get(k)) { w = higher(w, worst.get(f)); deepAddCauses(cz, causes.get(f)) }
+        if (w !== worst.get(k) || cz.length !== causes.get(k).length) { // monotone: worst rises, causes grow (capped) → terminates
+            worst.set(k, w); causes.set(k, cz)
+            for (const p of (preds.get(k) || [])) if (!inWork.has(p)) { work.push(p); inWork.add(p) }
+        }
+    }
+    const table = new Map()
+    for (const e of entries) table.set(e.key, { worst: worst.get(e.key), causes: causes.get(e.key) })
+    shared._deepEntry = table
+    return table
+}
+
+/**
+ * Registry-aware DEEP imperfection (#133): the worst imperfection + cause fields reachable from a
+ * prop's type THROUGH `typeRef`s into shared types, so a defect inside a shared record surfaces on
+ * the component that carries it (the ref node is otherwise opaque to `imperfection()`). Elevates
+ * only `review`+ (rank ≥ 2): a nested ⚪ loose field doesn't change usability and re-listing it per
+ * consumer would drown the report. Cheap — walks only the prop's OWN node tree and looks up each
+ * ref's precomputed transitive result (see `buildDeepEntryTable`).
+ */
+function deepImperfection(t, shared) {
+    if (!shared || !shared.byKey) return { worst: null, causes: [] }
+    const table = buildDeepEntryTable(shared)
+    const byName = shared._byName || (shared._byName = new Map((shared.entries || []).map((e) => [e.name, e])))
+    const resolve = (ref) => (ref.key && shared.byKey.get(ref.key)) || byName.get(String(ref.to).replace(/\.t$/, '')) || null
+    const higher = (a, b) => (!a ? b : !b ? a : DEEP_RANK[a] >= DEEP_RANK[b] ? a : b)
+    let worst = null
+    const causes = []
+    const seen = new Set()
+    const walk = (n) => {
+        if (!n || typeof n !== 'object') return
+        if (n.kind === 'typeRef') {
+            const e = resolve(n)
+            if (!e || seen.has(e.key)) return
+            seen.add(e.key)
+            const d = table.get(e.key)
+            if (d && d.worst) { worst = higher(worst, d.worst); deepAddCauses(causes, d.causes) }
+            return
+        }
+        for (const k of ['of', 'ret', 'thisArg', 'arg', 'mapKey', 'mapVal']) if (n[k]) walk(n[k])
+        if (Array.isArray(n.params)) n.params.forEach(walk)
+    }
+    walk(t)
+    return { worst, causes }
+}
+
 /**
  * Bucket a component's props by how well they could be bound. Drives `_REPORT.md`.
  *
@@ -967,18 +1072,37 @@ function imperfection(t) {
  * - **review**  — multi-type unions we refuse to bind unsafely (need a human)
  * - **loose**   — real types widened to `string` (compile & work, just loosely typed)
  *
+ * With `shared` (module mode), a prop is ALSO bucketed by the worst `review`+ imperfection
+ * reachable through its typeRefs into shared types (#133) — `item.nested` then names the
+ * owning shared type + field so the consumer knows where to look.
+ *
  * @param {import('../types').ComponentIR} ir
+ * @param {{byKey: Map, entries: object[]}} [shared]  the module-level type registry
  * @returns {{ loose: object[], defects: object[], review: object[] }}
- *   each item: `{ prop, kind, tsType, declText }`
+ *   each item: `{ prop, kind, tsType, declText, nested? }`
  */
-export function report(ir) {
+export function report(ir, shared) {
     const loose = []
     const defects = []
     const review = []
+    const rank = { unknown: 3, any: 3, review: 2, opaque: 1 }
     for (const p of ir.props) {
-        const v = imperfection(p.type) // same recursion the emitter uses — report ⇔ code agree
+        const shallow = imperfection(p.type) // the prop's OWN surface (doesn't follow refs)
+        const deep = deepImperfection(p.type, shared) // worst reachable THROUGH shared typeRefs
+        let v = shallow
+        let nested = null
+        // #133: a defect reachable only THROUGH a shared type elevates the component to
+        // 🔍 review AT MOST, never 🛑 broken — the prop's own surface binds fine; a shared type
+        // it references carries a flagged field a human should check. A DIRECT unknown/any on the
+        // prop still buckets 🛑 broken (shallow wins). This keeps flagship components off the
+        // "broken" list over a leaf buried deep in a library type, while still pulling them out
+        // of "✅ use directly" so nothing reads silently usable.
+        if (deep.worst) {
+            const contribution = 'review' // nested severity is capped here
+            if (rank[contribution] > (rank[v] || 0)) { v = contribution; nested = deep.causes }
+        }
         if (!v) continue
-        const item = { prop: p.name, kind: v, tsType: p.tsType, declText: p.declText, unresolved: hasUnresolved(p.type) }
+        const item = { prop: p.name, kind: v, tsType: p.tsType, declText: p.declText, unresolved: hasUnresolved(p.type), ...(nested && nested.length ? { nested } : {}) }
         if (v === 'unknown' || v === 'any') defects.push(item)
         else if (v === 'review') review.push(item)
         else { item.emittedAs = 'string'; loose.push(item) } // opaque

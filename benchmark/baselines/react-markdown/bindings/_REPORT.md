@@ -43,6 +43,7 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 |------|-----------------|
 | `rehypePlugins` | `rehypePlugins?: PluggableList \| null \| undefined;` |
 | `remarkPlugins` | `remarkPlugins?: PluggableList \| null \| undefined;` |
+| `remarkRehypeOptions` | `remarkRehypeOptions?: Readonly<RemarkRehypeOptions> \| null \| undefined;` — binds, but references shared field(s) `libMarkdownAsyncOptionsRemarkRehypeOptionsConfig.footnoteBackContent` (`review`), `libMarkdownAsyncOptionsRemarkRehypeOptionsConfig.unknownHandler` (`any`), `state.applyData` (`unknown`), `state.one` (`review`) emitted as `string` |
 
 ### MarkdownHooks
 
@@ -50,6 +51,7 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 |------|-----------------|
 | `rehypePlugins` | `rehypePlugins?: PluggableList \| null \| undefined;` |
 | `remarkPlugins` | `remarkPlugins?: PluggableList \| null \| undefined;` |
+| `remarkRehypeOptions` | `remarkRehypeOptions?: Readonly<RemarkRehypeOptions> \| null \| undefined;` — binds, but references shared field(s) `libMarkdownAsyncOptionsRemarkRehypeOptionsConfig.footnoteBackContent` (`review`), `libMarkdownAsyncOptionsRemarkRehypeOptionsConfig.unknownHandler` (`any`), `state.applyData` (`unknown`), `state.one` (`review`) emitted as `string` |
 
 ## 🛑 Broken — needs serious component change
 

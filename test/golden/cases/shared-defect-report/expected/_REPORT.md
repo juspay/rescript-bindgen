@@ -1,8 +1,8 @@
 # Binding report — `demo`
 
-**1** components · ✅ **0** usable · 🔍 **1** need review · 🛑 **0** broken
+**2** components · ✅ **1** usable · 🔍 **1** need review · 🛑 **0** broken
 
-**1** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**2** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -16,7 +16,7 @@
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-_(none)_
+- Tree
 
 ## ⚪ Loosely typed (widened to `string`)
 
@@ -28,11 +28,11 @@ _(none)_
 
 A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object shapes), so an `@unboxed` variant won't work and we **refuse to use `%identity`/unsafe casts**. The prop is emitted as a `string` placeholder with an inline `// ⚠️ REVIEW` comment — bind it by hand or fix the type upstream.
 
-### Widget
+### Panel
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `meta` | `meta?: WidgetMeta` — binds, but references shared field(s) `widgetMeta.payload` (`any`) emitted as `string` |
+| `config` | `config?: Config;` — binds, but references shared field(s) `config.theme` (broken import) emitted as `string` |
 
 ## 🛑 Broken — needs serious component change
 

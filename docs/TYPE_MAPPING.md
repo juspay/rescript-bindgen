@@ -33,14 +33,23 @@ The rules:
    callback position is unsound). A type variable `'a` is reserved for a genuine generic that
    round-trips. See [Generics](#generics--erased-generics).
 
-The report buckets a prop by the *worst* imperfection in its type tree:
+The report buckets a prop by the *worst* imperfection in its **own** type tree. In module mode it
+*also* looks THROUGH typeRefs into shared types (#133), but with a deliberate cap: a defect reached
+only *through* a shared type elevates the carrying component to **🔍 review AT MOST, never 🛑
+broken** — the prop's own surface binds; a shared type it references carries a flagged field a human
+should check. A *direct* `any`/`unknown` on the prop still buckets 🛑 broken. The review row names
+the owning type + field (`config.theme`). This keeps a flagship component off the "broken" list over
+a leaf buried deep in a library type, while still pulling it out of "✅ use directly" so nothing
+reads silently usable. A nested ⚪ loose field doesn't elevate at all (it doesn't change usability;
+the shared type's own inline comment covers it). Fixture:
+[`shared-defect-report`](../test/golden/cases/shared-defect-report).
 
 | Bucket | Meaning | Emitted as |
 |---|---|---|
 | ✅ exact | maps precisely | the real ReScript type |
 | ⚪ loose | a real but complex type widened | `string` + `// ⚪ loose — was …` |
-| 🔍 review | a multi-type prop we refuse to bind unsafely | `string` + `// ⚠️ REVIEW` |
-| 🛑 broken | resolved to `any` (untyped) | `string` + `// 🛑 BROKEN` |
+| 🔍 review | a multi-type prop we refuse to bind unsafely, **or** a prop that binds but references a shared type with a flagged field (#133) | `string` + `// ⚠️ REVIEW` |
+| 🛑 broken | the prop's OWN type resolved to `any` (untyped) | `string` + `// 🛑 BROKEN` |
 
 ---
 

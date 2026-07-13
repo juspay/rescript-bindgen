@@ -144,6 +144,22 @@ const checks = [
       ['author-written any keeps the implicit generic', !!la && la.ir.sig.params[0].type.kind === 'typeVar'],
     ]
   })(),
+  ...(() => {
+    // Deep report imperfection (#133): a defect reached only THROUGH a shared type surfaces on the
+    // carrying component and elevates it to 🔍 REVIEW at most (never 🛑 broken); recursive shared
+    // records don't loop; without the registry the report keeps its old shallow behavior.
+    const sd = extractModule(join(here, 'golden', 'cases', 'shared-defect-report', 'index.d.ts'), { from: 'demo' })
+    const panel = sd.components.find((c) => c.name === 'Panel')
+    const tree = sd.components.find((c) => c.name === 'Tree')
+    const deepRep = panel ? report(panel.ir, sd.shared) : { review: [], defects: [] }
+    const shallowRep = panel ? report(panel.ir) : { review: [{}], defects: [] }
+    const treeRep = tree ? report(tree.ir, sd.shared) : { defects: [{}], review: [{}] }
+    return [
+      ['nested shared-type defect elevates the component to review, not broken', deepRep.defects.length === 0 && deepRep.review.some((d) => d.prop === 'config' && d.nested?.some((n) => n.owner === 'config' && n.field === 'theme' && n.unresolved))],
+      ['without the registry the shallow walk is unchanged (usable)', shallowRep.review.length === 0 && shallowRep.defects.length === 0],
+      ['recursive shared record stays clean and does not loop', treeRep.defects.length === 0 && treeRep.review.length === 0],
+    ]
+  })(),
 ]
 
 let ok = true
