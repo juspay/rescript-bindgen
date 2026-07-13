@@ -1,6 +1,6 @@
 @module("demo") @react.component
 external make: (
-  ~gap: StableNameCollisionTypes.sizeTokenHeeig=?,
-  ~label: StableNameCollisionTypes.sizeTokenFxyei=?,
-  ~padding: StableNameCollisionTypes.sizeTokenV1fkr5=?,
+  ~gap: StableNameCollisionTypes.sizeTokenV1jhmz=?,
+  ~label: StableNameCollisionTypes.sizeTokenV1hngb=?,
+  ~padding: StableNameCollisionTypes.sizeTokenV4lpxx=?,
 ) => React.element = "Widget"

@@ -94,7 +94,7 @@ type props = {
   transitionDuration?: string,
   transitionTimingFunction?: string,
   transitionDelay?: string,
-  shape?: SkeletonTypes.skeletonShapeV126nt,
+  shape?: SkeletonTypes.skeletonShapeV1uw3c,
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 

@@ -1,5 +1,5 @@
 /** zero-cost wrapper: pass the FUNCTION form of `children` — `children={childrenFn((…) => …)}` */
-external childrenFn: (PopupsTypes.popupsChildrenConfigV2rd08<'a> => React.element) => React.element = "%identity"
+external childrenFn: (PopupsTypes.popupsChildrenConfigV6oib1<'a> => React.element) => React.element = "%identity"
 
 @module("@base-ui-components/react") @scope("Menu") @react.component
 external make: (
@@ -16,6 +16,6 @@ external make: (
   ~actionsRef: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>=?,
   ~triggerId: Nullable.t<string>=?,
   ~defaultTriggerId: Nullable.t<string>=?,
-  ~handle: RootSharedTypes.menuHandleV1v3rq<'a>=?,
+  ~handle: RootSharedTypes.menuHandleV8ejfb<'a>=?,
   ~children: React.element=?,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
 ) => React.element = "Root"

@@ -65,7 +65,7 @@ external make: (
   ~value: CommonTypes.stringOrNumberOrStringArray=?,
   ~className: TriggerTypes.dialogTriggerClassName=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
-  ~handle: RootSharedTypes.popoverHandleC2eo0<'a>=?,
+  ~handle: RootSharedTypes.popoverHandleV1e4gs2<'a>=?,
   ~payload: 'a=?,
   ~openOnHover: bool=?,
   ~delay: float=?,

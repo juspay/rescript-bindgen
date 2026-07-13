@@ -1,31 +1,31 @@
-type rec routerPqjgj = {
-  use: unit => routerPqjgj,
-  add: unit => routerPqjgj,
+type rec routerN1ffa = {
+  use: unit => routerN1ffa,
+  add: unit => routerN1ffa,
   build: unit => string,  // ⚪ loose — was `{ a: true; } & { b: true; }`
 }
-type genericRecordDedupRouterBuildConfigV14p3v = {
+type genericRecordDedupRouterBuildConfigV1lc66 = {
   a: bool,
 }
-type rec routerRs9d5 = {
-  use: unit => routerRs9d5,
-  add: unit => routerPqjgj,
-  build: unit => genericRecordDedupRouterBuildConfigV14p3v,
+type rec routerOckfe = {
+  use: unit => routerOckfe,
+  add: unit => routerN1ffa,
+  build: unit => genericRecordDedupRouterBuildConfigV1lc66,
 }
-type rec routerV1mdf8 = {
-  use: unit => routerV1mdf8,
-  add: unit => routerV1mdf8,
+type rec routerN1ffa2 = {
+  use: unit => routerN1ffa2,
+  add: unit => routerN1ffa2,
   build: unit => string,  // ⚪ loose — was `{ b: true; } & { a: true; }`
 }
-type genericRecordDedupRouterBuildConfigV1fa6k = {
+type genericRecordDedupRouterBuildConfigXtid4 = {
   b: bool,
 }
-type rec routerUix75 = {
-  use: unit => routerV1mdf8,
-  add: unit => routerUix75,
-  build: unit => genericRecordDedupRouterBuildConfigV1fa6k,
+type rec routerV3f469 = {
+  use: unit => routerN1ffa2,
+  add: unit => routerV3f469,
+  build: unit => genericRecordDedupRouterBuildConfigXtid4,
 }
-type routerV89air = {
-  use: unit => routerRs9d5,
-  add: unit => routerUix75,
+type routerV1g9se = {
+  use: unit => routerOckfe,
+  add: unit => routerV3f469,
   build: unit => JSON.t,
 }

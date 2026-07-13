@@ -6,6 +6,16 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- **Structural type names churned across compiler versions / unrelated upstream edits** (#90) — the
+  stable-name hash for colliding shapes was seeded from `entrySig`/`recordSig`, which embed the
+  checker's `type.id` (via ref keys). `type.id` is assigned in encounter order, so an unrelated
+  upstream edit — or a TypeScript version bump — renumbered it and a byte-identical shape got a
+  different name (`fooConfig3` ⇄ `fooConfig`), source-breaking for downstream consumers. The hash is
+  now seeded from a new `structuralSig` that encodes STRUCTURE ONLY (recursing into referenced
+  shapes, cycle-guarded) with no `type.id`. Identical shape ⇒ identical name across versions and
+  edits — verified byte-identical on blend across TypeScript 5.9 and 6.0.3. One-time rename of the
+  affected hash-suffixed names in this release; stable thereafter. Guarded by a renumber-invariance
+  smoke check.
 - **Report buckets were blind to defects inside shared types** (#133) — a flagged field in a
   registered shared record (blend's `themeContextType.foundationTokens`, base-ui's `any[]` values)
   was correctly flagged inline but the CARRYING component read ✅ usable, under-counting the

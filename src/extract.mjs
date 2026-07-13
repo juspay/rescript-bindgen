@@ -169,7 +169,7 @@ function uniqueName(base, shared) {
 /** A short, deterministic, version-stable content token (base36) — the LAST-resort disambiguator
  *  for two distinct shapes sharing a base AND a home. Unlike an encounter-order counter it is a
  *  pure function of the shape, so adding/removing a sibling never renumbers it. (#90 residual) */
-function shapeHash(sig) {
+export function shapeHash(sig) {
     let h = 2166136261 >>> 0 // FNV-1a
     for (let i = 0; i < sig.length; i++) { h ^= sig.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0 }
     return h.toString(36).slice(0, 5)
@@ -189,6 +189,48 @@ function entrySig(e) {
     const tp = 'tp:' + ((e.tparams || []).join(',')) + '|'
     if (e.members) return e.kind + ':' + tp + e.members.map((m) => (m.ctor || '') + (m.as !== undefined ? '=' + m.as : '') + (m.type ? ':' + typeSig(m.type) : '')).join(',')
     return e.kind + ':' + tp + (e.name || '')
+}
+
+/**
+ * A PURELY STRUCTURAL signature of a shared entry, for #90's stable-name hash — like `entrySig`,
+ * but a `typeRef` to another entry recurses into THAT entry's SHAPE instead of encoding its
+ * `type.id`-based key. `entrySig`/`recordSig` fold `type.id` into the sig (via ref keys), and
+ * `type.id` is assigned in checker encounter order, so an unrelated upstream edit OR a compiler
+ * version bump renumbers it and the "stable" hash churns (`fooConfig3` → `fooConfig`). This
+ * bottoms out on structure only, so identical shapes hash identically across versions/edits.
+ * Cycle- and diamond-safe via an add-only `seen` set: a re-encountered entry emits `Rcyc`, so each
+ * entry is expanded at most once per call (linear, no exponential blow-up on deep DAGs). Used
+ * ONLY for the hash suffix — dedup and the merge keep the id-based `entrySig` (correct within a run).
+ */
+function structuralTypeSig(t, shared, seen) {
+    if (!t || typeof t !== 'object') return JSON.stringify(t)
+    if (t.kind === 'typeRef') {
+        const re = t.key && shared.byKey.get(t.key)
+        if (!re) return 'R(' + (t.to || '?') + ')' // unresolved (rare): fall back to the name
+        if (seen.has(re.key)) return 'Rcyc' + (t.tparams ? '<' + t.tparams.join(',') + '>' : '')
+        return 'R{' + structuralSig(re, shared, seen) + '}' + (t.tparams ? '<' + t.tparams.join(',') + '>' : '')
+    }
+    switch (t.kind) {
+        case 'array': return 'A[' + structuralTypeSig(t.of, shared, seen) + ']'
+        case 'tuple': return 'T[' + (t.params || []).map((x) => structuralTypeSig(x, shared, seen)).join(',') + ']'
+        case 'nullable': return 'N[' + structuralTypeSig(t.of, shared, seen) + ']'
+        case 'dict': return 'D[' + structuralTypeSig(t.of, shared, seen) + ']'
+        case 'map': return 'M[' + structuralTypeSig(t.mapKey, shared, seen) + ',' + structuralTypeSig(t.mapVal, shared, seen) + ']'
+        case 'set': return 'S[' + structuralTypeSig(t.of, shared, seen) + ']'
+        case 'promise': return 'P[' + structuralTypeSig(t.of, shared, seen) + ']'
+        case 'callback': return 'F(' + (t.params || []).map((x) => structuralTypeSig(x, shared, seen)).join(',') + ')=>' + structuralTypeSig(t.ret || { kind: 'unit' }, shared, seen)
+        default: return typeSig(t) // scalars / event / raw / typeVar / classRef(home.name) / opaque — already id-free
+    }
+}
+export function structuralSig(e, shared, seen = new Set()) {
+    seen.add(e.key)
+    const enc = (t) => structuralTypeSig(t, shared, seen)
+    if (e.kind === 'record') {
+        return 'rec:sp' + (e.spread || '') + '|tp' + ((e.tparams || []).join(',')) + '|' +
+            e.fields.map((f) => f.name + (f.optional ? '?' : '') + ':' + enc(f.type)).join(';')
+    }
+    if (e.members) return e.kind + ':tp' + ((e.tparams || []).join(',')) + '|' + e.members.map((m) => (m.ctor || '') + (m.as !== undefined ? '=' + m.as : '') + (m.type ? ':' + enc(m.type) : '')).join(',')
+    return e.kind + ':' + (e.base || '')
 }
 
 /** FINALIZATION pass (#90 residual): reassign names so a base shared by ≥2 DISTINCT shapes gets a
@@ -239,7 +281,7 @@ function stabilizeNames(shared) {
         for (const e of entries) {
             const stem = homeStem(e)
             const ownPrefixed = homeUnique && stem && base.startsWith(stem)
-            const target = ownPrefixed ? base : base + (homeUnique ? pascal(stem) : pascal(shapeHash(entrySig(e))))
+            const target = ownPrefixed ? base : base + (homeUnique ? pascal(stem) : pascal(shapeHash(structuralSig(e, shared)))) // #90: id-FREE structural hash so identical shapes get identical names across compiler versions / unrelated edits
             let cand = target, i = 2
             while (shared.names.has(cand) && cand !== e.name) cand = target + (i++)
             if (cand !== e.name) {

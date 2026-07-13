@@ -9,9 +9,9 @@ type popupTriggerMap = {
   entries: unit => string,  // ⚪ loose — was `IterableIterator<[string, Element]>`
   size: float,
 }
-type popupsChildrenConfigV2rd08<'a> = {
+type popupsChildrenConfigV6oib1<'a> = {
   payload?: 'a,
 }
-type popupsChildrenConfigV1u6b5 = {
+type popupsChildrenConfigPopis = {
   payload?: JSON.t,
 }

@@ -2,11 +2,11 @@ type skeletonVariant =
   | @as("pulse") Pulse
   | @as("wave") Wave
   | @as("shimmer") Shimmer
-type skeletonShapeV61p6w =
+type skeletonShapeV27sir =
   | @as("circle") Circle
   | @as("rectangle") Rectangle
   | @as("rounded") Rounded
-type skeletonShapeV126nt =
+type skeletonShapeV1uw3c =
   | @as("circle") Circle
   | @as("square") Square
 type baseSkeletonProps = {

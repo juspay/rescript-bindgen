@@ -1,14 +1,14 @@
-type sizeTokenHeeig = {
+type sizeTokenV1jhmz = {
   sm: float,
   md: float,
   lg: float,
 }
-type sizeTokenFxyei = {
+type sizeTokenV1hngb = {
   sm: string,
   md: string,
   lg: string,
 }
-type sizeTokenV1fkr5 = {
+type sizeTokenV4lpxx = {
   sm: bool,
   md: bool,
   lg: bool,

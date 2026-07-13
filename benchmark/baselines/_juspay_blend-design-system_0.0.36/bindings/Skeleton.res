@@ -96,7 +96,7 @@ type props = {
   transitionDelay?: string,
   children?: React.element,
   animate?: bool,
-  shape?: SkeletonTypes.skeletonShapeV61p6w,
+  shape?: SkeletonTypes.skeletonShapeV27sir,
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 
