@@ -2172,6 +2172,18 @@ const WEB_MODULE = 'WebTypes'
  *  giant `…SharedTypes` module. Sinks must stay edge-free so each is always its own module. (#115 pkg) */
 const SINK_HOMES = new Set(['CommonTypes', INSTANCE_MODULE, WEB_MODULE])
 
+/** The #115 home preference: co-locate a synthetic entry with its first NON-sink dep (see
+ *  SINK_HOMES above — a sink must never gain an out-edge). Falls back to the first dep with
+ *  a home, then to `fallback` when no dep resolves.
+ *  `nonSinkOnly` (a callable-module re-pick, #128): re-home ONLY to a genuine non-sink dep;
+ *  when every dep is sink-homed, keep `fallback` rather than sinking a callable MODULE into a
+ *  sink (CommonTypes is the leaf for primitive unions, not a home for `module <Name> = {…}`). */
+function depHome(deps, shared, fallback, nonSinkOnly = false) {
+    const ds = [...deps].map((k) => shared.byKey.get(k)).filter((d) => d && d.home)
+    const pick = ds.find((d) => !SINK_HOMES.has(d.home)) || (nonSinkOnly ? null : ds[0])
+    return pick ? pick.home : fallback
+}
+
 /** lib.dom classes worth an abstract sink type. Conservative allowlist: names common in
  *  server/client APIs that do NOT collide with frequent first-party type names (no
  *  `Event`, `Body`, `Text`, …). The lib.dom-declaration guard protects the rest. */
@@ -3366,7 +3378,7 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     // Sit with the records it references (first dep's home); else the prop's own
     // domain module (so anonymous prop-unions land in <Component>Types, not Common).
     let home = homeOf(type, ctx)
-    if (deps.size) { const ds = [...deps].map((k) => ctx.shared.byKey.get(k)).filter((d) => d && d.home); const pick = ds.find((d) => !SINK_HOMES.has(d.home)) || ds[0]; if (pick) home = pick.home } // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
+    if (deps.size) home = depHome(deps, ctx.shared, home) // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
     // Note telling the caller how to build this opaque value (the `from*` ctors),
     // since the prop only shows `<Module>.t`. Mirrors the Dom-node note convention.
     const ctorName = (m) => m.tagSet ? `${name}.fromTag` : m.literal ? `${name}.${lower(pascal(m.literal))}` : m.none ? `${name}.none` : `${name}.from${pascal(m.name)}`
@@ -3459,15 +3471,19 @@ function overloadModule(ctx, type, callSigs, propName, depth, props = null) {
     const name = uniqueName(pascal(typeName(type) || stableAnonBase(ctx, type, propName)), ctx.shared) // a MODULE name; anonymous -> path-anchored (#96)
     const deps = new Set()
     for (const s of sigs) collectRefKeys(s.fn, deps)
-    // Home preference DELIBERATELY sees only sig-derived deps: it must be final before the entry
-    // pre-registers below, because every ref minted during carried-prop classification (the
-    // recursion cache, records referencing this module, …) copies `home` at mint time — refining
-    // it afterwards would strand those refs on a stale home and mis-qualify at render. Prop deps
-    // still join `deps` (same Set, mutated below), so the SCC/edge graph is complete; a callable
-    // module whose only deps are prop-derived just keeps its natural declaring-file home.
+    // Home pick runs TWICE for a callable: this best-effort pass sees only sig-derived deps (props
+    // aren't classified yet — nested entries built inside them read `entry.home` for their own
+    // naming/home picks, so it must be plausible now), then the pick re-runs after carried-prop
+    // classification with the complete dep set (#128). Re-homing post-registration is safe because
+    // render homes are LATE-BOUND: makeResolveRef resolves a keyed ref through the registry entry,
+    // so refs minted during prop classification (recursion cache, records referencing this module)
+    // never strand on a stale mint-time home. For a CALLABLE, both picks are `nonSinkOnly` — a
+    // `module <Name> = {…}` never sinks into a primitive sink, even when the SIGNATURE's only dep is
+    // a sink (`(x: string|number) => …`); it keeps its own module. Overloads keep the legacy pick.
+    const isCallable = !!(props && props.length)
     let home = homeOf(type, ctx)
-    if (deps.size) { const ds = [...deps].map((k) => ctx.shared.byKey.get(k)).filter((d) => d && d.home); const pick = ds.find((d) => !SINK_HOMES.has(d.home)) || ds[0]; if (pick) home = pick.home } // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
-    const entry = { key, kind: 'opaque', variant: props && props.length ? 'callable' : 'overload', name, home, sigs, deps, note: '' }
+    if (deps.size) home = depHome(deps, ctx.shared, home, isCallable) // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
+    const entry = { key, kind: 'opaque', variant: isCallable ? 'callable' : 'overload', name, home, sigs, deps, note: '' }
     // Register BEFORE classifying carried properties: a method returning the callable itself
     // (axios' `create(config): AxiosInstance`) must resolve to `<name>.t` via the cache, not
     // recurse forever. Sig nodes are already built, so plain overloads are unaffected.
@@ -3497,6 +3513,15 @@ function overloadModule(ctx, type, callSigs, propName, depth, props = null) {
         ctx.produced = prevP
         for (const m of members) collectRefKeys(m.fn || m.get, deps)
         entry.props = members
+        // #128: prop-derived deps are in — re-run the home pick so a callable whose only deps
+        // come from its props co-locates with them (axios-style `defaults: Config`). The SELF
+        // dep (a method returning the callable, `create(): Client`) is excluded: it resolves to
+        // this entry's own pre-pick home and would out-vote the real prop deps. Safe
+        // post-registration because render homes are late-bound (see the pick above).
+        // `nonSinkOnly`: a callable whose props are ALL sink-homed (e.g. only `size: string|number`
+        // → CommonTypes) keeps its OWN module rather than sinking a `module <Name> = {…}` into a
+        // primitive sink — CommonTypes stays the leaf of primitive unions.
+        if (deps.size) entry.home = depHome([...deps].filter((k) => k !== key), ctx.shared, entry.home, true)
     }
     const viewList = sigs.map((s) => `${name}.${s.accessor}`).join(' / ')
     entry.note = props && props.length
@@ -3906,7 +3931,7 @@ function unionNode(type, ctx, propName, depth = 0) {
                 const key = 'u:' + sname + ':' + members.map((m) => (m.as !== undefined ? '@' + m.as : typeSig(m.type))).join('|')
                 if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
                 let home = 'CommonTypes'
-                if (deps.size) { const ds = [...deps].map((k) => ctx.shared.byKey.get(k)).filter((d) => d && d.home); const pick = ds.find((d) => !SINK_HOMES.has(d.home)) || ds[0]; if (pick) home = pick.home } // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
+                if (deps.size) home = depHome(deps, ctx.shared, home) // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
                 const entry = { key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), base: sname, home, members, deps, tparams }
                 ctx.shared.byKey.set(key, entry)
                 ctx.shared.entries.push(entry)
