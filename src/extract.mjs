@@ -169,7 +169,7 @@ function uniqueName(base, shared) {
 /** A short, deterministic, version-stable content token (base36) — the LAST-resort disambiguator
  *  for two distinct shapes sharing a base AND a home. Unlike an encounter-order counter it is a
  *  pure function of the shape, so adding/removing a sibling never renumbers it. (#90 residual) */
-function shapeHash(sig) {
+export function shapeHash(sig) {
     let h = 2166136261 >>> 0 // FNV-1a
     for (let i = 0; i < sig.length; i++) { h ^= sig.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0 }
     return h.toString(36).slice(0, 5)
@@ -189,6 +189,64 @@ function entrySig(e) {
     const tp = 'tp:' + ((e.tparams || []).join(',')) + '|'
     if (e.members) return e.kind + ':' + tp + e.members.map((m) => (m.ctor || '') + (m.as !== undefined ? '=' + m.as : '') + (m.type ? ':' + typeSig(m.type) : '')).join(',')
     return e.kind + ':' + tp + (e.name || '')
+}
+
+/**
+ * A PURELY STRUCTURAL signature of a shared entry, for #90's stable-name hash — like `entrySig`,
+ * but a `typeRef` to another entry recurses into THAT entry's SHAPE instead of encoding its
+ * `type.id`-based key. `entrySig`/`recordSig` fold `type.id` into the sig (via ref keys), and
+ * `type.id` is assigned in checker encounter order, so an unrelated upstream edit OR a compiler
+ * version bump renumbers it and the "stable" hash churns (`fooConfig3` → `fooConfig`). This
+ * bottoms out on structure only, so identical shapes hash identically across versions/edits.
+ * Cycle- and diamond-safe via an add-only `seen` set: a re-encountered entry emits `Rcyc`, so each
+ * entry is expanded at most once per call (linear, no exponential blow-up on deep DAGs). Used
+ * ONLY for the hash suffix — dedup and the merge keep the id-based `entrySig` (correct within a run).
+ */
+function structuralTypeSig(t, shared, seen) {
+    if (!t || typeof t !== 'object') return JSON.stringify(t)
+    if (t.kind === 'typeRef') {
+        const tp = t.tparams ? '<' + t.tparams.join(',') + '>' : ''
+        const re = t.key && shared.byKey.get(t.key)
+        if (!re) return 'R(' + (t.to || '?') + ')' // unresolved (rare): fall back to the name
+        // Include the referenced entry's anchor BASE (stable — path/named-type/discriminant derived,
+        // NOT counter-suffixed, NOT id-based). Two records that differ ONLY in a ref to a distinct
+        // but STRUCTURALLY-IDENTICAL entry (base-ui's `rootMenuStore…` vs `triggerMenuStore…`, both
+        // broken→opaque) would otherwise hash alike and collide onto an order-dependent counter —
+        // a narrower slice of the very churn #90 kills. The base distinguishes them stably. (#90 rev)
+        const b = re.base || re.name || ''
+        if (seen.has(re.key)) return 'Rcyc:' + b + tp
+        return 'R:' + b + '{' + structuralSig(re, shared, seen) + '}' + tp
+    }
+    switch (t.kind) {
+        case 'array': return 'A[' + structuralTypeSig(t.of, shared, seen) + ']'
+        case 'tuple': return 'T[' + (t.params || []).map((x) => structuralTypeSig(x, shared, seen)).join(',') + ']'
+        case 'nullable': return 'N[' + structuralTypeSig(t.of, shared, seen) + ']'
+        case 'dict': return 'D[' + structuralTypeSig(t.of, shared, seen) + ']'
+        case 'map': return 'M[' + structuralTypeSig(t.mapKey, shared, seen) + ',' + structuralTypeSig(t.mapVal, shared, seen) + ']'
+        case 'set': return 'S[' + structuralTypeSig(t.of, shared, seen) + ']'
+        case 'promise': return 'P[' + structuralTypeSig(t.of, shared, seen) + ']'
+        case 'callback': return 'F(' + (t.params || []).map((x) => structuralTypeSig(x, shared, seen)).join(',') + ')=>' + structuralTypeSig(t.ret || { kind: 'unit' }, shared, seen)
+        // Broken/opaque fields all EMIT `string`, but two records distinguishable ONLY through them
+        // must still hash apart (else collision → order-dependent counter). The original TS type
+        // text is stable (source-declared, not id/order-based), so a bounded slice discriminates
+        // them without instability. (typeSig collapses these to 'opaque' — correct for DEDUP, not
+        // for the stable-name hash.) (#90 rev)
+        case 'opaque':
+        case 'review':
+        case 'unknown':
+        case 'any': return t.kind + '(' + String(t.text || '').replace(/\s+/g, '').slice(0, 48) + ')'
+        default: return typeSig(t) // scalars / event / raw / typeVar / classRef(home.name) — already id-free
+    }
+}
+export function structuralSig(e, shared, seen = new Set()) {
+    seen.add(e.key)
+    const enc = (t) => structuralTypeSig(t, shared, seen)
+    if (e.kind === 'record') {
+        return 'rec:sp' + (e.spread || '') + '|tp' + ((e.tparams || []).join(',')) + '|' +
+            e.fields.map((f) => f.name + (f.optional ? '?' : '') + ':' + enc(f.type)).join(';')
+    }
+    if (e.members) return e.kind + ':tp' + ((e.tparams || []).join(',')) + '|' + e.members.map((m) => (m.ctor || '') + (m.as !== undefined ? '=' + m.as : '') + (m.type ? ':' + enc(m.type) : '')).join(',')
+    return e.kind + ':' + (e.base || '')
 }
 
 /** FINALIZATION pass (#90 residual): reassign names so a base shared by ≥2 DISTINCT shapes gets a
@@ -227,6 +285,14 @@ function stabilizeNames(shared) {
             } else { bySig.set(s, e); entries.push(e) }
         }
         if (entries.length < 2) continue // single distinct shape → bare base stays (zero churn)
+        // Deterministic order (#90 rev): sort colliders by their STRUCTURAL signature so the counter
+        // tiebreak below (when two distinct shapes land on the same target) is order-INDEPENDENT —
+        // not assigned by registration order, which an unrelated upstream edit can permute. Memoized
+        // (the sig is reused for the hash). Two entries with an identical structuralSig sort equal —
+        // a vanishingly narrow residual (identical base + fields + referenced shapes + broken-field
+        // text) noted in TYPE_MAPPING; everything genuinely distinct now orders stably.
+        const sigOf = new Map(entries.map((e) => [e, structuralSig(e, shared)]))
+        entries.sort((a, b) => (sigOf.get(a) < sigOf.get(b) ? -1 : sigOf.get(a) > sigOf.get(b) ? 1 : 0))
         const homeStem = (e) => lower((e.home || '').replace(/Types$/, ''))
         const stems = entries.map(homeStem)
         // home stem disambiguates when every collider has a DISTINCT home. The doubling check is
@@ -239,7 +305,7 @@ function stabilizeNames(shared) {
         for (const e of entries) {
             const stem = homeStem(e)
             const ownPrefixed = homeUnique && stem && base.startsWith(stem)
-            const target = ownPrefixed ? base : base + (homeUnique ? pascal(stem) : pascal(shapeHash(entrySig(e))))
+            const target = ownPrefixed ? base : base + (homeUnique ? pascal(stem) : pascal(shapeHash(sigOf.get(e)))) // #90: id-FREE structural hash so identical shapes get identical names across compiler versions / unrelated edits
             let cand = target, i = 2
             while (shared.names.has(cand) && cand !== e.name) cand = target + (i++)
             if (cand !== e.name) {

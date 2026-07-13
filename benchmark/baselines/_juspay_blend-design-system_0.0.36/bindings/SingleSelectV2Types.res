@@ -20,14 +20,14 @@ type singleSelectV2SingleSelectV2TokensTypeErrorMessageConfig = {
 type singleSelectV2SingleSelectV2TokensTypeRequiredConfig = {
   color: string,
 }
-type variantTokenV1snf1 = {
+type variantTokenV1p7v1 = {
   container: string,
   @as("no-container") noContainer: string,
 }
-type sizeTokenV1auh1 = {
-  sm: variantTokenV1snf1,
-  md: variantTokenV1snf1,
-  lg: variantTokenV1snf1,
+type sizeTokenI7cok = {
+  sm: variantTokenV1p7v1,
+  md: variantTokenV1p7v1,
+  lg: variantTokenV1p7v1,
 }
 type singleSelectV2VariantTokenContainerConfig = {
   top: string,
@@ -35,14 +35,14 @@ type singleSelectV2VariantTokenContainerConfig = {
   bottom: string,
   left: string,
 }
-type variantTokenV1sibo = {
+type variantTokenWwo0h = {
   container: singleSelectV2VariantTokenContainerConfig,
   @as("no-container") noContainer: singleSelectV2VariantTokenContainerConfig,
 }
-type sizeTokenLg1b2 = {
-  sm: variantTokenV1sibo,
-  md: variantTokenV1sibo,
-  lg: variantTokenV1sibo,
+type sizeTokenFjyre = {
+  sm: variantTokenWwo0h,
+  md: variantTokenWwo0h,
+  lg: variantTokenWwo0h,
 }
 type triggerStateTokenSingleSelectV2 = {
   hover: string,
@@ -51,7 +51,7 @@ type triggerStateTokenSingleSelectV2 = {
   error: string,
   closed: string,
 }
-type variantTokenV1cvd5 = {
+type variantTokenV1omnb = {
   container: triggerStateTokenSingleSelectV2,
   @as("no-container") noContainer: triggerStateTokenSingleSelectV2,
 }
@@ -65,12 +65,12 @@ type singleSelectV2SingleSelectV2TokensTypeTriggerPlaceholderConfig = {
   fontWeight: string,
 }
 type singleSelectV2SingleSelectV2TokensTypeTriggerConfig = {
-  height: sizeTokenV1auh1,
-  padding: sizeTokenLg1b2,
-  borderRadius: sizeTokenV1auh1,
-  boxShadow: variantTokenV1snf1,
-  backgroundColor: variantTokenV1cvd5,
-  outline: variantTokenV1cvd5,
+  height: sizeTokenI7cok,
+  padding: sizeTokenFjyre,
+  borderRadius: sizeTokenI7cok,
+  boxShadow: variantTokenV1p7v1,
+  backgroundColor: variantTokenV1omnb,
+  outline: variantTokenV1omnb,
   slot: singleSelectV2SingleSelectV2TokensTypeTriggerSlotConfig,
   placeholder: singleSelectV2SingleSelectV2TokensTypeTriggerPlaceholderConfig,
   selectedValue: singleSelectV2SingleSelectV2TokensTypeTriggerPlaceholderConfig,
@@ -142,7 +142,7 @@ type singleSelectV2SingleSelectV2TokensTypeMenuSubmenuConfig = {
 }
 type singleSelectV2SingleSelectV2TokensTypeMenuConfig = {
   content: singleSelectV2SingleSelectV2TokensTypeMenuContentConfig,
-  padding: sizeTokenLg1b2,
+  padding: sizeTokenFjyre,
   groupLabel: singleSelectV2SingleSelectV2TokensTypeMenuGroupLabelConfig,
   item: singleSelectV2SingleSelectV2TokensTypeMenuItemConfig,
   submenu: singleSelectV2SingleSelectV2TokensTypeMenuSubmenuConfig,

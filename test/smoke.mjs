@@ -1,7 +1,7 @@
 // Self-contained smoke test — no network, no blend install required.
 // Writes a tiny .d.ts fixture, extracts + emits, and asserts the output
 // contains the expected ReScript constructs.
-import { extractComponent, extractModule } from '../src/extract.mjs'
+import { extractComponent, extractModule, shapeHash, structuralSig } from '../src/extract.mjs'
 import { emit, emitClass, emitFunction, report } from '../src/emit.mjs'
 import { writeFileSync, mkdtempSync } from 'fs'
 import { dirname, join } from 'path'
@@ -158,6 +158,41 @@ const checks = [
       ['nested shared-type defect elevates the component to review, not broken', deepRep.defects.length === 0 && deepRep.review.some((d) => d.prop === 'config' && d.nested?.some((n) => n.owner === 'config' && n.field === 'theme' && n.unresolved))],
       ['without the registry the shallow walk is unchanged (usable)', shallowRep.review.length === 0 && shallowRep.defects.length === 0],
       ['recursive shared record stays clean and does not loop', treeRep.defects.length === 0 && treeRep.review.length === 0],
+    ]
+  })(),
+  ...(() => {
+    // #90: the stable-name hash is derived from STRUCTURE only, so an identical shape hashes the
+    // same across compiler versions / unrelated upstream edits (both renumber `type.id`, which the
+    // entry keys embed). Build the same 2-entry shape under two totally different key-numberings
+    // (and different name suffixes) and confirm the structural hash is identical — the id-based
+    // `entrySig`/`recordSig` would differ.
+    const mk = (a, b) => {
+      const inner = { key: 'id:' + b, kind: 'record', base: 'inner', name: 'inner' + b, home: 'T', fields: [{ name: 'x', optional: false, type: { kind: 'string' } }] }
+      const outer = { key: 'id:' + a, kind: 'record', base: 'outer', name: 'outer' + a, home: 'T', fields: [{ name: 'self', optional: true, type: { kind: 'typeRef', to: 'outer' + a, key: 'id:' + a } }, { name: 'inner', optional: false, type: { kind: 'typeRef', to: inner.name, key: inner.key } }] }
+      return { byKey: new Map([[inner.key, inner], [outer.key, outer]]), outer }
+    }
+    const r1 = mk(10, 11)        // ids 10/11
+    const r2 = mk(9002, 137)     // totally different ids + name suffixes, SAME shape (incl. a self-ref cycle)
+    const h1 = shapeHash(structuralSig(r1.outer, r1))
+    const h2 = shapeHash(structuralSig(r2.outer, r2))
+    // control: a genuinely different shape must hash differently
+    const diff = mk(10, 11); diff.outer.fields[1].optional = true
+    // #90 rev: two records identical EXCEPT a field referencing a distinct-BASE but structurally-
+    // identical (broken) entry — base-ui's `rootMenuStore…` vs `triggerMenuStore…` — must hash apart
+    // (the referenced entry's stable base discriminates), else they'd collide onto a counter.
+    const brokenRef = (refBase) => {
+      const leaf = { key: 'id:5', kind: 'opaque', base: refBase, name: refBase, home: 'T' } // both broken/leaf → same shape
+      const rec = { key: 'id:6', kind: 'record', base: 'store', name: 'store', home: 'T', fields: [{ name: 'use', optional: false, type: { kind: 'typeRef', to: refBase, key: 'id:5' } }] }
+      return { byKey: new Map([[leaf.key, leaf], [rec.key, rec]]), rec }
+    }
+    const root = brokenRef('rootMenuStoreUseSyncedValue'), trig = brokenRef('triggerMenuStoreUseSyncedValue')
+    // #90 rev: a bare opaque field distinguished only by its TS type text must also hash apart
+    const opaqueRec = (text) => ({ kind: 'record', base: 'r', name: 'r', home: 'T', key: 'id:'+text, fields: [{ name: 'x', optional: false, type: { kind: 'opaque', text } }] })
+    return [
+      ['#90: identical shape hashes identically across id renumbering', h1 === h2],
+      ['#90: a different shape still hashes differently', shapeHash(structuralSig(diff.outer, diff)) !== h1],
+      ['#90 rev: distinct-base broken-typed field discriminates (no false collision)', shapeHash(structuralSig(root.rec, root)) !== shapeHash(structuralSig(trig.rec, trig))],
+      ['#90 rev: opaque field distinguished by its TS type text', shapeHash(structuralSig(opaqueRec('RootState'), { byKey: new Map() })) !== shapeHash(structuralSig(opaqueRec('TriggerState'), { byKey: new Map() }))],
     ]
   })(),
 ]

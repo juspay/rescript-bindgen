@@ -6,7 +6,7 @@ type selectSelectMenuItemTypeTooltipPropsConfig = {
   delayDuration?: float,
   offset?: float,
 }
-type rec selectMenuItemType = {
+type rec selectMenuItemType2 = {
   label: string,
   value: string,
   checked?: bool,
@@ -17,14 +17,14 @@ type rec selectMenuItemType = {
   slot4?: React.element,
   disabled?: bool,
   onClick?: unit => unit,
-  subMenu?: array<selectMenuItemType>,
+  subMenu?: array<selectMenuItemType2>,
   tooltip?: React.element,
   tooltipProps?: selectSelectMenuItemTypeTooltipPropsConfig,
   disableTruncation?: bool,
   isDisabled?: bool,
 }
-type selectMenuGroupType = {
+type selectMenuGroupType2 = {
   groupLabel?: string,
-  items: array<selectMenuItemType>,
+  items: array<selectMenuItemType2>,
   showSeparator?: bool,
 }

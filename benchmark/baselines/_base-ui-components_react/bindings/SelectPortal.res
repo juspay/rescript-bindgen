@@ -4,7 +4,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, JSON.t) => React.element) 
 @module("@base-ui-components/react") @scope("Select") @react.component
 external make: (
   ~container: PortalTypes.PortalContainer.t=?,  // ⓘ was `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot>` — opaque; build with PortalContainer.fromHTMLElement / PortalContainer.fromShadowRoot / PortalContainer.fromRefObject
-  ~style: CommonTypes.portalStyleQn0e4=?,
+  ~style: CommonTypes.portalStyleV1dkur=?,
   ~title: string=?,
   ~autoFocus: bool=?,
   ~hidden: bool=?,
@@ -53,7 +53,7 @@ external make: (
   ~onMouseUp: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onScroll: PositionerSharedTypes.baseUIEvent => unit=?,
   ~onWheel: PositionerSharedTypes.baseUIEvent => unit=?,
-  ~className: CommonTypes.portalClassNameV1fhpr=?,
+  ~className: CommonTypes.portalClassNameV1591y=?,
   ~render: React.element=?,  // ⓘ function form: wrap with `renderFn` (zero-cost)
   ~ref: React.ref<Nullable.t<Dom.element>>=?,
 ) => React.element = "Portal"

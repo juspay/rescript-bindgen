@@ -138,7 +138,7 @@ type formatLong = {
   time: formatLongFnOptions => string,
   dateTime: formatLongFnOptions => string,
 }
-type matchFnResultV7tcjg = {
+type matchFnResultE4mzv = {
   value: float,
   rest: string,
 }
@@ -147,7 +147,7 @@ type classesMatchOrdinalNumberConfig = {
   valueCallback?: string => float,
   unit: localeUnit,
 }
-type matchFnResultM61mw = {
+type matchFnResultI3cm9 = {
   value: CommonTypes.v0OrV1,
   rest: string,
 }
@@ -156,7 +156,7 @@ type classesMatchEraConfig = {
   valueCallback?: string => CommonTypes.v0OrV1,
 }
 @set_index external classesMatchEraConfigSet: (classesMatchEraConfig, string, JSON.t) => unit = ""
-type matchFnResultNbwx0 = {
+type matchFnResultTkxir = {
   value: CommonTypes.v1OrV2OrV3OrV4,
   rest: string,
 }
@@ -165,7 +165,7 @@ type classesMatchQuarterConfig = {
   valueCallback?: string => CommonTypes.v1OrV2OrV3OrV4,
 }
 @set_index external classesMatchQuarterConfigSet: (classesMatchQuarterConfig, string, JSON.t) => unit = ""
-type matchFnResultV1h0do = {
+type matchFnResultDbjzg = {
   value: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6OrV7OrV8OrV9OrV10OrV11,
   rest: string,
 }
@@ -174,7 +174,7 @@ type classesMatchMonthConfig = {
   valueCallback?: string => CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6OrV7OrV8OrV9OrV10OrV11,
 }
 @set_index external classesMatchMonthConfigSet: (classesMatchMonthConfig, string, JSON.t) => unit = ""
-type matchFnResultV8j2j7 = {
+type matchFnResultV1m0kk = {
   value: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
   rest: string,
 }
@@ -183,7 +183,7 @@ type classesMatchDayConfig = {
   valueCallback?: string => CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
 }
 @set_index external classesMatchDayConfigSet: (classesMatchDayConfig, string, JSON.t) => unit = ""
-type matchFnResultV1r63c = {
+type matchFnResultV23d3o = {
   value: localeDayPeriod,
   rest: string,
 }
@@ -193,12 +193,12 @@ type classesMatchDayPeriodConfig = {
 }
 @set_index external classesMatchDayPeriodConfigSet: (classesMatchDayPeriodConfig, string, JSON.t) => unit = ""
 type match = {
-  ordinalNumber: (string, option<classesMatchOrdinalNumberConfig>) => Nullable.t<matchFnResultV7tcjg>,
-  era: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResultM61mw>,
-  quarter: (string, option<classesMatchQuarterConfig>) => Nullable.t<matchFnResultNbwx0>,
-  month: (string, option<classesMatchMonthConfig>) => Nullable.t<matchFnResultV1h0do>,
-  day: (string, option<classesMatchDayConfig>) => Nullable.t<matchFnResultV8j2j7>,
-  dayPeriod: (string, option<classesMatchDayPeriodConfig>) => Nullable.t<matchFnResultV1r63c>,
+  ordinalNumber: (string, option<classesMatchOrdinalNumberConfig>) => Nullable.t<matchFnResultE4mzv>,
+  era: (string, option<classesMatchEraConfig>) => Nullable.t<matchFnResultI3cm9>,
+  quarter: (string, option<classesMatchQuarterConfig>) => Nullable.t<matchFnResultTkxir>,
+  month: (string, option<classesMatchMonthConfig>) => Nullable.t<matchFnResultDbjzg>,
+  day: (string, option<classesMatchDayConfig>) => Nullable.t<matchFnResultV1m0kk>,
+  dayPeriod: (string, option<classesMatchDayPeriodConfig>) => Nullable.t<matchFnResultV23d3o>,
 }
 type rec dayPickerLocaleLabels = {
   labelNav?: CommonTypes.classesDayPickerLocaleLabelsLabelNav,
@@ -787,7 +787,7 @@ type dayPickerProps = {
   onDayMouseLeave?: (Date.t, Dict.t<bool>, ReactEvent.Mouse.t) => unit,
   dateLib?: classesOverridesConfig,
 }
-type dayPickerContextZmanz = {
+type dayPickerContextV1tj1m = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,
@@ -803,7 +803,7 @@ type dayPickerContextZmanz = {
   formatters: formatters,
   dayPickerProps: dayPickerProps,
 }
-type dayPickerContextV1lbzj = {
+type dayPickerContextP17u5 = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,

@@ -263,55 +263,55 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `handle` | `handle?: DialogHandle<Payload>;` — binds, but references shared field(s) `dialogStoreV798wq.controlledValues` (`any`), `dialogStoreV798wq.selectors` (`any`), `dialogStoreV798wq.useSyncedValue` (`unknown`), `dialogStoreV798wq.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
+| `handle` | `handle?: DialogHandle<Payload>;` — binds, but references shared field(s) `dialogStoreV9pmvf.controlledValues` (`any`), `dialogStoreV9pmvf.selectors` (`any`), `dialogStoreV9pmvf.useSyncedValue` (`unknown`), `dialogStoreV9pmvf.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
 
 ### ContextMenuRoot
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `handle` | `handle?: MenuHandle<Payload>;` — binds, but references shared field(s) `menuStoreV1p49k.unsubscribeParentListener` (`any`), `menuStoreV1p49k.controlledValues` (`any`), `menuStoreV1p49k.selectors` (`any`), `menuStoreV1p49k.useSyncedValue` (`unknown`) emitted as `string` |
+| `handle` | `handle?: MenuHandle<Payload>;` — binds, but references shared field(s) `menuStoreV15tin.unsubscribeParentListener` (`any`), `menuStoreV15tin.controlledValues` (`any`), `menuStoreV15tin.selectors` (`any`), `menuStoreV15tin.useSyncedValue` (`unknown`) emitted as `string` |
 
 ### DialogRoot
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `handle` | `handle?: DialogHandle<Payload>;` — binds, but references shared field(s) `dialogStoreV1esv5.controlledValues` (`any`), `dialogStoreV1esv5.selectors` (`any`), `dialogStoreV1esv5.useSyncedValue` (`unknown`), `dialogStoreV1esv5.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
+| `handle` | `handle?: DialogHandle<Payload>;` — binds, but references shared field(s) `dialogStoreV9pmvf2.controlledValues` (`any`), `dialogStoreV9pmvf2.selectors` (`any`), `dialogStoreV9pmvf2.useSyncedValue` (`unknown`), `dialogStoreV9pmvf2.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
 
 ### DialogTrigger
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `handle` | `handle?: DialogHandle<Payload>;` — binds, but references shared field(s) `dialogStoreV17530.controlledValues` (`any`), `dialogStoreV17530.selectors` (`any`), `dialogStoreV17530.useSyncedValue` (`unknown`), `dialogStoreV17530.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
+| `handle` | `handle?: DialogHandle<Payload>;` — binds, but references shared field(s) `dialogStoreNkdc0.controlledValues` (`any`), `dialogStoreNkdc0.selectors` (`any`), `dialogStoreNkdc0.useSyncedValue` (`unknown`), `dialogStoreNkdc0.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
 
 ### MenuRoot
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `handle` | `handle?: MenuHandle<Payload>;` — binds, but references shared field(s) `menuStoreO5vcw.unsubscribeParentListener` (`any`), `menuStoreO5vcw.controlledValues` (`any`), `menuStoreO5vcw.selectors` (`any`), `menuStoreO5vcw.useSyncedValue` (`unknown`) emitted as `string` |
+| `handle` | `handle?: MenuHandle<Payload>;` — binds, but references shared field(s) `menuStoreFoqt4.unsubscribeParentListener` (`any`), `menuStoreFoqt4.controlledValues` (`any`), `menuStoreFoqt4.selectors` (`any`), `menuStoreFoqt4.useSyncedValue` (`unknown`) emitted as `string` |
 
 ### MenuSubmenuRoot
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `handle` | `handle?: MenuHandle<Payload>;` — binds, but references shared field(s) `menuStoreV1p49k.unsubscribeParentListener` (`any`), `menuStoreV1p49k.controlledValues` (`any`), `menuStoreV1p49k.selectors` (`any`), `menuStoreV1p49k.useSyncedValue` (`unknown`) emitted as `string` |
+| `handle` | `handle?: MenuHandle<Payload>;` — binds, but references shared field(s) `menuStoreV15tin.unsubscribeParentListener` (`any`), `menuStoreV15tin.controlledValues` (`any`), `menuStoreV15tin.selectors` (`any`), `menuStoreV15tin.useSyncedValue` (`unknown`) emitted as `string` |
 
 ### MenuTrigger
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `handle` | `handle?: MenuHandle<Payload>;` — binds, but references shared field(s) `menuStoreJhwnn.unsubscribeParentListener` (`any`), `menuStoreJhwnn.controlledValues` (`any`), `menuStoreJhwnn.selectors` (`any`), `menuStoreJhwnn.useSyncedValue` (`unknown`) emitted as `string` |
+| `handle` | `handle?: MenuHandle<Payload>;` — binds, but references shared field(s) `menuStoreSoi6r.unsubscribeParentListener` (`any`), `menuStoreSoi6r.controlledValues` (`any`), `menuStoreSoi6r.selectors` (`any`), `menuStoreSoi6r.useSyncedValue` (`unknown`) emitted as `string` |
 
 ### PopoverRoot
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `handle` | `handle?: PopoverHandle<Payload>;` — binds, but references shared field(s) `popoverStoreV19e7t.disposeEffect` (`any`), `popoverStoreV19e7t.controlledValues` (`any`), `popoverStoreV19e7t.selectors` (`any`), `popoverStoreV19e7t.useSyncedValue` (`unknown`) emitted as `string` |
+| `handle` | `handle?: PopoverHandle<Payload>;` — binds, but references shared field(s) `popoverStoreHwjc8.disposeEffect` (`any`), `popoverStoreHwjc8.controlledValues` (`any`), `popoverStoreHwjc8.selectors` (`any`), `popoverStoreHwjc8.useSyncedValue` (`unknown`) emitted as `string` |
 
 ### PopoverTrigger
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `handle` | `handle?: PopoverHandle<Payload>;` — binds, but references shared field(s) `popoverStoreV7ir51.disposeEffect` (`any`), `popoverStoreV7ir51.controlledValues` (`any`), `popoverStoreV7ir51.selectors` (`any`), `popoverStoreV7ir51.useSyncedValue` (`unknown`) emitted as `string` |
+| `handle` | `handle?: PopoverHandle<Payload>;` — binds, but references shared field(s) `popoverStoreM8ie2.disposeEffect` (`any`), `popoverStoreM8ie2.controlledValues` (`any`), `popoverStoreM8ie2.selectors` (`any`), `popoverStoreM8ie2.useSyncedValue` (`unknown`) emitted as `string` |
 
 ### SelectTrigger
 
@@ -349,13 +349,13 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `handle` | `handle?: TooltipHandle<Payload>;` — binds, but references shared field(s) `tooltipStoreV1sf5p.controlledValues` (`any`), `tooltipStoreV1sf5p.selectors` (`any`), `tooltipStoreV1sf5p.useSyncedValue` (`unknown`), `tooltipStoreV1sf5p.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
+| `handle` | `handle?: TooltipHandle<Payload>;` — binds, but references shared field(s) `tooltipStoreY7ia3.controlledValues` (`any`), `tooltipStoreY7ia3.selectors` (`any`), `tooltipStoreY7ia3.useSyncedValue` (`unknown`), `tooltipStoreY7ia3.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
 
 ### TooltipTrigger
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `handle` | `handle?: TooltipHandle<Payload>;` — binds, but references shared field(s) `tooltipStoreV1mj2t.controlledValues` (`any`), `tooltipStoreV1mj2t.selectors` (`any`), `tooltipStoreV1mj2t.useSyncedValue` (`unknown`), `tooltipStoreV1mj2t.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
+| `handle` | `handle?: TooltipHandle<Payload>;` — binds, but references shared field(s) `tooltipStoreSd50v.controlledValues` (`any`), `tooltipStoreSd50v.selectors` (`any`), `tooltipStoreSd50v.useSyncedValue` (`unknown`), `tooltipStoreSd50v.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
 
 ## 🛑 Broken — needs serious component change
 
