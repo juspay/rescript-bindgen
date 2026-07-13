@@ -1,6 +1,6 @@
 # Binding report — `@base-ui-components/react@1.0.0-rc.0`
 
-**195** components · ✅ **195** usable · 🔍 **0** need review · 🛑 **0** broken
+**195** components · ✅ **174** usable · 🔍 **21** need review · 🛑 **0** broken
 
 **10** function binding(s) → `ReactBindings.res`.
 
@@ -33,12 +33,6 @@ Standalone function exports, emitted as positional `@module external` bindings i
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- AccordionHeader
-- AccordionItem
-- AccordionPanel
-- AccordionRoot
-- AccordionTrigger
-- AlertDialogRoot
 - AutocompleteRoot
 - AutocompleteValue
 - AvatarFallback
@@ -74,16 +68,13 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - ComboboxStatus
 - ComboboxTrigger
 - ComboboxValue
-- ContextMenuRoot
 - ContextMenuTrigger
 - DialogBackdrop
 - DialogClose
 - DialogDescription
 - DialogPopup
 - DialogPortal
-- DialogRoot
 - DialogTitle
-- DialogTrigger
 - DialogViewport
 - DirectionProvider
 - FieldControl
@@ -110,10 +101,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - MenuRadioGroup
 - MenuRadioItem
 - MenuRadioItemIndicator
-- MenuRoot
-- MenuSubmenuRoot
 - MenuSubmenuTrigger
-- MenuTrigger
 - MeterIndicator
 - MeterLabel
 - MeterRoot  _(1 loose)_
@@ -146,9 +134,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - PopoverPopup
 - PopoverPortal
 - PopoverPositioner  _(1 loose)_
-- PopoverRoot
 - PopoverTitle
-- PopoverTrigger
 - PopoverViewport
 - PreviewCardArrow
 - PreviewCardBackdrop
@@ -186,8 +172,6 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - SelectRoot  _(2 loose)_
 - SelectScrollDownArrow
 - SelectScrollUpArrow
-- SelectTrigger
-- SelectValue
 - Separator
 - SliderControl
 - SliderIndicator
@@ -208,9 +192,6 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - ToastContent
 - ToastDescription
 - ToastPortal
-- ToastPositioner  _(1 loose)_
-- ToastProvider
-- ToastRoot
 - ToastTitle
 - ToastViewport
 - Toggle
@@ -226,8 +207,6 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - TooltipPortal
 - TooltipPositioner  _(1 loose)_
 - TooltipProvider
-- TooltipRoot
-- TooltipTrigger
 
 ## ⚪ Loosely typed (widened to `string`)
 
@@ -245,7 +224,138 @@ These resolved to a real but complex type and were widened to `string` (they com
 
 A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object shapes), so an `@unboxed` variant won't work and we **refuse to use `%identity`/unsafe casts**. The prop is emitted as a `string` placeholder with an inline `// ⚠️ REVIEW` comment — bind it by hand or fix the type upstream.
 
-_(none)_
+### AccordionHeader
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `style` | `style?: CSSProperties \| undefined;` — binds, but references shared field(s) `accordionItemState.value` (`any`) emitted as `string` |
+| `className` | `className?: string \| ((state: State) => string \| undefined);` — binds, but references shared field(s) `accordionItemState.value` (`any`) emitted as `string` |
+
+### AccordionItem
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `style` | `style?: CSSProperties \| undefined;` — binds, but references shared field(s) `accordionItemState.value` (`any`) emitted as `string` |
+| `className` | `className?: string \| ((state: State) => string \| undefined);` — binds, but references shared field(s) `accordionItemState.value` (`any`) emitted as `string` |
+
+### AccordionPanel
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `style` | `style?: CSSProperties \| undefined;` — binds, but references shared field(s) `accordionPanelState.value` (`any`) emitted as `string` |
+| `className` | `className?: string \| ((state: State) => string \| undefined);` — binds, but references shared field(s) `accordionPanelState.value` (`any`) emitted as `string` |
+
+### AccordionRoot
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `style` | `style?: CSSProperties \| undefined;` — binds, but references shared field(s) `accordionRootState.value` (`any`) emitted as `string` |
+| `className` | `className?: string \| ((state: State) => string \| undefined);` — binds, but references shared field(s) `accordionRootState.value` (`any`) emitted as `string` |
+
+### AccordionTrigger
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `style` | `style?: CSSProperties \| undefined;` — binds, but references shared field(s) `accordionItemState.value` (`any`) emitted as `string` |
+| `className` | `className?: string \| ((state: State) => string \| undefined);` — binds, but references shared field(s) `accordionItemState.value` (`any`) emitted as `string` |
+
+### AlertDialogRoot
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `handle` | `handle?: DialogHandle<Payload>;` — binds, but references shared field(s) `dialogStoreV798wq.controlledValues` (`any`), `dialogStoreV798wq.selectors` (`any`), `dialogStoreV798wq.useSyncedValue` (`unknown`), `dialogStoreV798wq.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
+
+### ContextMenuRoot
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `handle` | `handle?: MenuHandle<Payload>;` — binds, but references shared field(s) `menuStoreV1p49k.unsubscribeParentListener` (`any`), `menuStoreV1p49k.controlledValues` (`any`), `menuStoreV1p49k.selectors` (`any`), `menuStoreV1p49k.useSyncedValue` (`unknown`) emitted as `string` |
+
+### DialogRoot
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `handle` | `handle?: DialogHandle<Payload>;` — binds, but references shared field(s) `dialogStoreV1esv5.controlledValues` (`any`), `dialogStoreV1esv5.selectors` (`any`), `dialogStoreV1esv5.useSyncedValue` (`unknown`), `dialogStoreV1esv5.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
+
+### DialogTrigger
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `handle` | `handle?: DialogHandle<Payload>;` — binds, but references shared field(s) `dialogStoreV17530.controlledValues` (`any`), `dialogStoreV17530.selectors` (`any`), `dialogStoreV17530.useSyncedValue` (`unknown`), `dialogStoreV17530.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
+
+### MenuRoot
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `handle` | `handle?: MenuHandle<Payload>;` — binds, but references shared field(s) `menuStoreO5vcw.unsubscribeParentListener` (`any`), `menuStoreO5vcw.controlledValues` (`any`), `menuStoreO5vcw.selectors` (`any`), `menuStoreO5vcw.useSyncedValue` (`unknown`) emitted as `string` |
+
+### MenuSubmenuRoot
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `handle` | `handle?: MenuHandle<Payload>;` — binds, but references shared field(s) `menuStoreV1p49k.unsubscribeParentListener` (`any`), `menuStoreV1p49k.controlledValues` (`any`), `menuStoreV1p49k.selectors` (`any`), `menuStoreV1p49k.useSyncedValue` (`unknown`) emitted as `string` |
+
+### MenuTrigger
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `handle` | `handle?: MenuHandle<Payload>;` — binds, but references shared field(s) `menuStoreJhwnn.unsubscribeParentListener` (`any`), `menuStoreJhwnn.controlledValues` (`any`), `menuStoreJhwnn.selectors` (`any`), `menuStoreJhwnn.useSyncedValue` (`unknown`) emitted as `string` |
+
+### PopoverRoot
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `handle` | `handle?: PopoverHandle<Payload>;` — binds, but references shared field(s) `popoverStoreV19e7t.disposeEffect` (`any`), `popoverStoreV19e7t.controlledValues` (`any`), `popoverStoreV19e7t.selectors` (`any`), `popoverStoreV19e7t.useSyncedValue` (`unknown`) emitted as `string` |
+
+### PopoverTrigger
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `handle` | `handle?: PopoverHandle<Payload>;` — binds, but references shared field(s) `popoverStoreV7ir51.disposeEffect` (`any`), `popoverStoreV7ir51.controlledValues` (`any`), `popoverStoreV7ir51.selectors` (`any`), `popoverStoreV7ir51.useSyncedValue` (`unknown`) emitted as `string` |
+
+### SelectTrigger
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `style` | `style?: CSSProperties \| undefined;` — binds, but references shared field(s) `selectTriggerState.value` (`any`) emitted as `string` |
+| `className` | `className?: string \| ((state: State) => string \| undefined);` — binds, but references shared field(s) `selectTriggerState.value` (`any`) emitted as `string` |
+
+### SelectValue
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `className` | `className?: string \| ((state: State) => string \| undefined);` — binds, but references shared field(s) `selectValueState.value` (`any`) emitted as `string` |
+| `style` | `style?: CSSProperties \| undefined;` — binds, but references shared field(s) `selectValueState.value` (`any`) emitted as `string` |
+
+### ToastPositioner  _(1 loose)_
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `toast` | `toast: ToastObject<any>;` — binds, but references shared field(s) `toastObject.data` (`any`) emitted as `string` |
+
+### ToastProvider
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `toastManager` | `toastManager?: ToastManager;` — binds, but references shared field(s) `toastManager.promise` (`unknown`), `toastManagerEvent.options` (`any`), `toastManagerAddOptions.data` (`unknown`), `toastManagerPromiseOptions.loading` (`review`) emitted as `string` |
+
+### ToastRoot
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `toast` | `toast: ToastRootToastObject<any>;` — binds, but references shared field(s) `toastRootToastObject.data` (`any`) emitted as `string` |
+
+### TooltipRoot
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `handle` | `handle?: TooltipHandle<Payload>;` — binds, but references shared field(s) `tooltipStoreV1sf5p.controlledValues` (`any`), `tooltipStoreV1sf5p.selectors` (`any`), `tooltipStoreV1sf5p.useSyncedValue` (`unknown`), `tooltipStoreV1sf5p.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
+
+### TooltipTrigger
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `handle` | `handle?: TooltipHandle<Payload>;` — binds, but references shared field(s) `tooltipStoreV1mj2t.controlledValues` (`any`), `tooltipStoreV1mj2t.selectors` (`any`), `tooltipStoreV1mj2t.useSyncedValue` (`unknown`), `tooltipStoreV1mj2t.useSyncedValueWithCleanup` (`unknown`) emitted as `string` |
 
 ## 🛑 Broken — needs serious component change
 

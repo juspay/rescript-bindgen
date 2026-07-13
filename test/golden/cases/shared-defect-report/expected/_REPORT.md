@@ -1,6 +1,6 @@
 # Binding report — `demo`
 
-**2** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **1** broken
+**2** components · ✅ **1** usable · 🔍 **1** need review · 🛑 **0** broken
 
 **2** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
@@ -28,15 +28,15 @@ _(none)_
 
 A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object shapes), so an `@unboxed` variant won't work and we **refuse to use `%identity`/unsafe casts**. The prop is emitted as a `string` placeholder with an inline `// ⚠️ REVIEW` comment — bind it by hand or fix the type upstream.
 
-_(none)_
+### Panel
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `config` | `config?: Config;` — binds, but references shared field(s) `config.theme` (broken import) emitted as `string` |
 
 ## 🛑 Broken — needs serious component change
 
 These props resolved to `unknown`/`any` (usually a generic `T`). They're emitted as a placeholder so the file still compiles, but **the props will not work as typed** — they need a concrete type upstream, or generic-binding support.
 
-### Panel
-
-| Prop | Real TypeScript | Why it won't work |
-|------|-----------------|-------------------|
-| `config` | `config?: Config;` | Carries flagged field(s) inside a shared type: `config.theme` (declared type does not resolve — broken import) — the prop itself binds, but those fields are `string` placeholders. |
+_(none)_ 🎉
 

@@ -1,6 +1,6 @@
 # Binding report — `react-day-picker@10.0.1`
 
-**26** components · ✅ **26** usable · 🔍 **0** need review · 🛑 **0** broken
+**26** components · ✅ **19** usable · 🔍 **7** need review · 🛑 **0** broken
 
 **35** function binding(s) → `ReactDayPickerBindings.res`.
 
@@ -74,14 +74,9 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 
 - CaptionLabel
 - Chevron
-- Day
-- DayButton
-- DayPicker
 - Dropdown
 - DropdownNav
 - Footer
-- Month
-- MonthCaption
 - MonthGrid
 - Months
 - MonthsDropdown
@@ -91,10 +86,8 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - PreviousMonthButton
 - Root
 - Select
-- Week
 - Weekday
 - Weekdays
-- WeekNumber
 - WeekNumberHeader
 - Weeks
 - YearsDropdown
@@ -109,7 +102,51 @@ _(none)_
 
 A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object shapes), so an `@unboxed` variant won't work and we **refuse to use `%identity`/unsafe casts**. The prop is emitted as a `string` placeholder with an inline `// ⚠️ REVIEW` comment — bind it by hand or fix the type upstream.
 
-_(none)_
+### Day
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `day` | `day: CalendarDay;` — binds, but references shared field(s) `dateLib2.getDigitMap` (`any`), `dateLib2.replaceDigits` (`any`), `dateLibOptions.in` (`review`), `interval.start` (`review`) emitted as `string` |
+
+### DayButton
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `day` | `day: CalendarDay;` — binds, but references shared field(s) `dateLib2.getDigitMap` (`any`), `dateLib2.replaceDigits` (`any`), `dateLibOptions.in` (`review`), `interval.start` (`review`) emitted as `string` |
+
+### DayPicker
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `components` | `components?: Partial<CustomComponents>;` — binds, but references shared field(s) `dateLib2.getDigitMap` (`any`), `dateLib2.replaceDigits` (`any`), `dateLibOptions.in` (`review`), `interval.start` (`review`) emitted as `string` |
+| `labels` | `labels?: Partial<Labels>;` — binds, but references shared field(s) `dateLibOptions.in` (`review`), `dateLib2.getDigitMap` (`any`), `dateLib2.replaceDigits` (`any`), `interval.start` (`review`) emitted as `string` |
+| `formatters` | `formatters?: Partial<Formatters>;` — binds, but references shared field(s) `dateLibOptions.in` (`review`), `dateLib2.getDigitMap` (`any`), `dateLib2.replaceDigits` (`any`), `interval.start` (`review`) emitted as `string` |
+| `locale` | `locale?: Partial<DayPickerLocale> \| undefined;` — binds, but references shared field(s) `classesLocaleConfig.formatRelative` (`unknown`), `localize.preprocessor` (`unknown`), `dateLibOptions.in` (`review`), `dayPickerLocale.formatRelative` (`unknown`) emitted as `string` |
+| `dateLib` | `dateLib?: Partial<typeof DateLib.prototype> \| undefined;` — binds, but references shared field(s) `dateLibOptions.in` (`review`), `interval.start` (`review`), `interval.end` (`review`), `endOfWeekOptions.in` (`review`) emitted as `string` |
+
+### Month
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `calendarMonth` | `calendarMonth: CalendarMonth;` — binds, but references shared field(s) `dateLib2.getDigitMap` (`any`), `dateLib2.replaceDigits` (`any`), `dateLibOptions.in` (`review`), `interval.start` (`review`) emitted as `string` |
+
+### MonthCaption
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `calendarMonth` | `calendarMonth: CalendarMonth;` — binds, but references shared field(s) `dateLib2.getDigitMap` (`any`), `dateLib2.replaceDigits` (`any`), `dateLibOptions.in` (`review`), `interval.start` (`review`) emitted as `string` |
+
+### Week
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `week` | `week: CalendarWeek;` — binds, but references shared field(s) `dateLib2.getDigitMap` (`any`), `dateLib2.replaceDigits` (`any`), `dateLibOptions.in` (`review`), `interval.start` (`review`) emitted as `string` |
+
+### WeekNumber
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `week` | `week: CalendarWeek;` — binds, but references shared field(s) `dateLib2.getDigitMap` (`any`), `dateLib2.replaceDigits` (`any`), `dateLibOptions.in` (`review`), `interval.start` (`review`) emitted as `string` |
 
 ## 🛑 Broken — needs serious component change
 

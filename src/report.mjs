@@ -149,7 +149,15 @@ export function writeReport(path, label, rows, reports, deps, shared, fnInfo, cl
             L.push(``)
             L.push(`| Prop | Real TypeScript |`)
             L.push(`|------|-----------------|`)
-            for (const x of (d?.review || [])) L.push(`| \`${x.prop}\` | \`${mdCell(x.declText || x.tsType || '')}\`${x.nested?.length ? ` — via shared ${x.nested.map((n) => `\`${n.owner}.${n.field}\``).join(', ')}` : ''} |`)
+            for (const x of (d?.review || [])) {
+                // #133: a prop that binds fine but references a shared type with a flagged field
+                // gets an inline suffix naming it; a genuinely-undiscriminable prop keeps the bare
+                // 2-column row (so existing review reports are unchanged).
+                const suffix = x.nested?.length
+                    ? ` — binds, but references shared field(s) ${x.nested.map((n) => `\`${n.owner}.${n.field}\`${n.unresolved ? ' (broken import)' : ` (\`${n.kind}\`)`}`).join(', ')} emitted as \`string\``
+                    : ''
+                L.push(`| \`${x.prop}\` | \`${mdCell(x.declText || x.tsType || '')}\`${suffix} |`)
+            }
             L.push(``)
         }
     } else {
@@ -176,12 +184,10 @@ export function writeReport(path, label, rows, reports, deps, shared, fnInfo, cl
                 const decl = mdCell(x.declText || x.tsType || '')
                 // #107: an UNRESOLVABLE reference (checker error-`any` from a broken import) is
                 // named as such — the declared type usually EXISTS in the package (the import
-                // path is what's broken), so hand-matching it is a seconds-long fix.
-                // #133: a defect NESTED inside a shared type names the owning type + field, so
-                // the consumer knows where inside the shared record to look.
-                const why = x.nested?.length
-                    ? `Carries flagged field(s) inside a shared type: ${x.nested.map((n) => `\`${n.owner}.${n.field}\`${n.unresolved ? ' (declared type does not resolve — broken import)' : ` (\`${n.kind}\`)`}`).join(', ')} — the prop itself binds, but those fields are \`string\` placeholders.`
-                    : x.unresolved
+                // path is what's broken), so hand-matching it is a seconds-long fix. (A defect
+                // reached only THROUGH a shared type never lands here — it caps at 🔍 review, #133 —
+                // so this bucket is always a DIRECT `unknown`/`any` on the prop's own type.)
+                const why = x.unresolved
                     ? "The declared type **does not resolve** (broken import in the package's .d.ts) → emitted as `string`. The type itself likely exists — fix the upstream import path, or hand-match it from the declaration shown."
                     : /\(.*\)\s*=>/.test(x.declText || '')
                     ? "It's a **callback** typed `unknown` → emitted as `string`; passing a string does nothing."

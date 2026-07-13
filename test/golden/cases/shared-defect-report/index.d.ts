@@ -2,8 +2,10 @@
 // component that carries it. Previously the typeRef was opaque to the report walk — the
 // shared record's field was correctly 🛑-flagged inline, but the component read ✅ usable
 // (blend's themeContextType.foundationTokens shape). Now the registry-aware walk descends
-// into shared record fields and the component lands in the 🛑 bucket with a row naming the
-// owning type + field (`config.theme`).
+// into shared record fields and the component is pulled into the 🔍 REVIEW bucket (a defect
+// reached only THROUGH a shared type elevates to review AT MOST, never 🛑 broken — the prop
+// itself binds; a human should check whether the flagged shared field matters), with a row
+// naming the owning type + field (`config.theme`).
 import { ThemeType } from './tokens'
 type JsxElement = { __brand: 'element' }
 

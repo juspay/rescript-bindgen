@@ -6,14 +6,18 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
-- **Report buckets were blind to defects inside shared types** (#133) — a 🛑 field in a
-  registered shared record (blend's `themeContextType.foundationTokens` shape, base-ui's
-  `any[]` values) was correctly flagged inline but the CARRYING component still read
-  ✅ usable, under-counting the headline. The report walk is now registry-aware: it follows
-  typeRefs into shared record fields / `@unboxed` members / opaque views (cycle-safe,
-  memoized) and elevates `review`+ imperfections to the component's bucket, with the defect
-  row naming the owning type + field (`config.theme`). Nested ⚪ loose fields deliberately
-  don't re-list per consumer. Single-file mode unchanged. Fixture: `shared-defect-report`.
+- **Report buckets were blind to defects inside shared types** (#133) — a flagged field in a
+  registered shared record (blend's `themeContextType.foundationTokens`, base-ui's `any[]` values)
+  was correctly flagged inline but the CARRYING component read ✅ usable, under-counting the
+  headline. The report walk is now registry-aware: it follows typeRefs into shared record fields /
+  `@unboxed` members / opaque views (cycle-safe, memoized — the memo is load-bearing, without it
+  blend's ~2000-node shared-type DAG re-walks exponentially and generation hangs). A defect reached
+  only THROUGH a shared type elevates the component to 🔍 review AT MOST, never 🛑 broken — the
+  prop's own surface binds; the review row names the owning type + field (`config.theme`). A direct
+  `any`/`unknown` still buckets broken. No generated `.res` changes — report/metrics only. The
+  transitive worst is precomputed once per registry via a worklist fixed-point over the shared-type
+  graph — correct for cyclic groups (no under-report) and fast on blend's large `--webapi`
+  Highcharts SCC where a recursive walk hangs (#139). Fixture: `shared-defect-report`.
 - **Error-`any` from unresolvable imports silently became `'a`/`string`** (#107) — a broken
   import in a package's .d.ts (blend's `ThemeType` through the shadowed `../tokens` path) made
   the checker's error type masquerade as author-written `any`, and the implicit-generic salvage
