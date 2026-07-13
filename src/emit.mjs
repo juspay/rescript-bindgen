@@ -972,16 +972,24 @@ function imperfection(t) {
  *
  * Returns the worst nested kind (or null) plus up to 4 `causes` naming the owning shared
  * type and field (`{owner, field, kind, unresolved}`) for the report's "why" column.
- * Memoized on the registry (`shared._deepMemo`); a visited-set cuts recursive records
- * (styledBlockProps._hover).
+ *
+ * Each entry is memoized GLOBALLY on the registry (`shared._deepMemo`) — walked to completion
+ * exactly once across the whole run. This is load-bearing for performance, not just a nicety:
+ * blend's ~2000-node shared-type DAG has heavy diamond sharing, so without the memo the report
+ * phase re-walks shared subtrees exponentially and hangs. A per-query visited-set cuts cycles
+ * (styledBlockProps._hover → styledBlockProps).
+ *
+ * LIMITATION: within a cyclic shared-type group (SCC), the back-edge cut can under-report a
+ * defect to some SCC members' transitive worst. Every defect is ALWAYS flagged inline on its
+ * own field regardless, and any acyclic path to it still surfaces it; genuine defects inside
+ * cyclic shared records are rare, so full SCC condensation isn't worth the weight.
  */
 function deepImperfection(t, shared) {
-    if (!shared || !shared.byKey) return { worst: null, causes: [] }
+    const EMPTY = { worst: null, causes: [] }
+    if (!shared || !shared.byKey) return EMPTY
     if (!shared._deepMemo) shared._deepMemo = new Map()
     if (!shared._byName) shared._byName = new Map((shared.entries || []).map((e) => [e.name, e]))
     const rank = { unknown: 3, any: 3, review: 2 }
-    const causes = []
-    const visiting = new Set()
     const resolve = (ref) => (ref.key && shared.byKey.get(ref.key))
         || shared._byName.get(String(ref.to).replace(/\.t$/, '')) || null
     const entryChildren = (e) => {
@@ -994,44 +1002,47 @@ function deepImperfection(t, shared) {
         ].filter((c) => c.type)
         return []
     }
-    const walkEntry = (e) => {
-        if (shared._deepMemo.has(e.key)) {
-            const memo = shared._deepMemo.get(e.key)
-            if (memo && causes.length < 4) causes.push(...memo.causes.slice(0, 4 - causes.length))
-            return memo ? memo.worst : null
-        }
-        if (visiting.has(e.key)) return null
+    // join `more` causes into `acc`, capped at 4 (best-effort; buckets don't depend on it).
+    const addCauses = (acc, more) => { for (const c of more) if (acc.length < 4 && !acc.some((x) => x.owner === c.owner && x.field === c.field)) acc.push(c) }
+    const walkEntry = (e, visiting) => {
+        if (shared._deepMemo.has(e.key)) return shared._deepMemo.get(e.key) || EMPTY
+        if (visiting.has(e.key)) return EMPTY // cycle back-edge — see LIMITATION above
         visiting.add(e.key)
         let worst = null
-        const localCauses = []
+        const causes = []
         for (const { field, type } of entryChildren(e)) {
             const direct = imperfection(type)
             if (direct && rank[direct]) {
                 if (!worst || rank[direct] > rank[worst]) worst = direct
-                if (localCauses.length < 4) localCauses.push({ owner: e.name, field, kind: direct, unresolved: hasUnresolved(type) })
+                addCauses(causes, [{ owner: e.name, field, kind: direct, unresolved: hasUnresolved(type) }])
             }
-            const nested = walkNode(type)
-            if (nested && (!worst || rank[nested] > rank[worst])) worst = nested
+            const sub = walkNode(type, visiting)
+            if (sub.worst && (!worst || rank[sub.worst] > rank[worst])) worst = sub.worst
+            addCauses(causes, sub.causes)
         }
         visiting.delete(e.key)
-        // memo only clean completions — a cycle-cut walk may be partial
-        if (!visiting.size) shared._deepMemo.set(e.key, worst ? { worst, causes: localCauses } : null)
-        if (causes.length < 4) causes.push(...localCauses.slice(0, 4 - causes.length))
-        return worst
+        const res = worst ? { worst, causes } : null
+        shared._deepMemo.set(e.key, res)
+        return res || EMPTY
     }
-    const walkNode = (n) => {
-        if (!n || typeof n !== 'object') return null
+    const walkNode = (n, visiting) => {
+        if (!n || typeof n !== 'object') return EMPTY
         if (n.kind === 'typeRef') {
             const e = resolve(n)
-            return e ? walkEntry(e) : null
+            return e ? walkEntry(e, visiting) : EMPTY
         }
         let worst = null
-        const consider = (x) => { const r = walkNode(x); if (r && (!worst || rank[r] > rank[worst])) worst = r }
+        const causes = []
+        const consider = (x) => {
+            const r = walkNode(x, visiting)
+            if (r.worst && (!worst || rank[r.worst] > rank[worst])) worst = r.worst
+            addCauses(causes, r.causes)
+        }
         for (const k of ['of', 'ret', 'thisArg', 'arg', 'mapKey', 'mapVal']) if (n[k]) consider(n[k])
         if (Array.isArray(n.params)) n.params.forEach(consider)
-        return worst
+        return { worst, causes }
     }
-    return { worst: walkNode(t), causes }
+    return walkNode(t, new Set())
 }
 
 /**
