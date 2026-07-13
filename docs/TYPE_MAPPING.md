@@ -744,12 +744,31 @@ because `T` *does* round-trip (it appears in a parameter).
 ---
 
 ## Class exports (non-React)
-Fixture: [`class-exports`](../test/golden/cases/class-exports)
+Fixtures: [`class-exports`](../test/golden/cases/class-exports), [`react-class-component`](../test/golden/cases/react-class-component)
 
 A `class` export binds to its **own `<ClassName>.res` file** (a file *is* a ReScript module) holding
 the canonical abstract-`type t` pattern: constructor → `@new`, instance methods → `@send` (the
 instance is the first arg), data properties / getters → `@get`. Member param/return types reuse the
 same `classify` pipeline, so records/enums/unions land in the shared `*Types.res`.
+
+**React CLASS components are the exception (#101).** A `class Slider extends React.Component<Props>`
+has *construct* signatures, not *call* signatures, so `isReactComponent` (call-sig based) missed it
+and it bound as an unusable `@new external make: unit => t` + `@send render` — wrong ctor arity, not
+usable in JSX. React renders a class component identically to an FC, so a class whose heritage matches
+`^(Pure)?Component$` now binds `@module @react.component external make` from its `Props` — `P` in
+`Component<P>`, or the constructor's `props` param when it extends `Component` un-parameterized — the
+same emit path an FC uses. The Component **heritage is required**: a `render()` method alone is NOT
+enough, because canvas/chart/D3 renderers and custom-element wrappers ship `render(): HTMLElement` + a
+constructor yet are not React components — firing on `render()` alone would reintroduce the exact
+silently-wrong output this fixes. A plain (non-React) class is unaffected and keeps the
+`@new`/`@send`/`@get` pattern above (and doesn't get an orphan `InstanceTypes` nominal). Heritage is
+name-matched syntactically (like the HtmlAttrs detection), so it works for real `@types/react` and
+self-contained stubs alike. Still ships in react-slick / react-datepicker / draft-js / recharts v1.
+
+| TypeScript | ReScript |
+|---|---|
+| `class Slider extends React.Component<{ value: number; onChange?: … }>` | `@module("pkg") @react.component external make: (~value: float, ~onChange: …=?) => React.element = "Slider"` (was `@new external make: unit => t`) |
+| `class Store { constructor(n: number); get(): number }` (plain class) | `@new external make: (~n: float) => t` / `@send external get: (t) => float` — unchanged |
 
 Method/constructor params bind as **labeled args** (unlike [function exports](#standalone-function-exports-non-react),
 which are positional) — class APIs lean on optional params, and ReScript only allows optionals when

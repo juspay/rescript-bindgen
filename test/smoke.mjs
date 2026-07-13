@@ -195,6 +195,20 @@ const checks = [
       ['#90 rev: opaque field distinguished by its TS type text', shapeHash(structuralSig(opaqueRec('RootState'), { byKey: new Map() })) !== shapeHash(structuralSig(opaqueRec('TriggerState'), { byKey: new Map() }))],
     ]
   })(),
+  ...(() => {
+    // #101: a React CLASS component (`extends Component<P>` / render()) binds as a @react.component
+    // from its Props, not an unusable @new/@send class module; a plain class stays a class.
+    const rc = extractModule(join(here, 'golden', 'cases', 'react-class-component', 'index.d.ts'), { from: 'demo' })
+    const slider = rc.components.find((c) => c.name === 'Slider')
+    const legacy = rc.components.find((c) => c.name === 'Legacy')
+    return [
+      ['#101: class component binds as @react.component with real props', !!slider && slider.ir.kind === 'react-component' && slider.ir.props.some((p) => p.name === 'value')],
+      ['#101: PureComponent + render-fallback also detected', rc.components.some((c) => c.name === 'Badge') && !!legacy && legacy.ir.props.some((p) => p.name === 'title')],
+      ['#101: a plain non-React class stays a @new/@send class', rc.classes.some((c) => c.name === 'Store') && !rc.components.some((c) => c.name === 'Store')],
+      // rev: a render()+ctor class that does NOT extend Component must NOT be mistaken for a component
+      ['#101 rev: render()-only class (no Component heritage) is NOT a false-positive component', rc.classes.some((c) => c.name === 'ChartWidget') && !rc.components.some((c) => c.name === 'ChartWidget')],
+    ]
+  })(),
 ]
 
 let ok = true
