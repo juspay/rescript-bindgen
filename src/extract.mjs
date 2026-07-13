@@ -2174,10 +2174,13 @@ const SINK_HOMES = new Set(['CommonTypes', INSTANCE_MODULE, WEB_MODULE])
 
 /** The #115 home preference: co-locate a synthetic entry with its first NON-sink dep (see
  *  SINK_HOMES above — a sink must never gain an out-edge). Falls back to the first dep with
- *  a home, then to `fallback` when no dep resolves. */
-function depHome(deps, shared, fallback) {
+ *  a home, then to `fallback` when no dep resolves.
+ *  `nonSinkOnly` (a callable-module re-pick, #128): re-home ONLY to a genuine non-sink dep;
+ *  when every dep is sink-homed, keep `fallback` rather than sinking a callable MODULE into a
+ *  sink (CommonTypes is the leaf for primitive unions, not a home for `module <Name> = {…}`). */
+function depHome(deps, shared, fallback, nonSinkOnly = false) {
     const ds = [...deps].map((k) => shared.byKey.get(k)).filter((d) => d && d.home)
-    const pick = ds.find((d) => !SINK_HOMES.has(d.home)) || ds[0]
+    const pick = ds.find((d) => !SINK_HOMES.has(d.home)) || (nonSinkOnly ? null : ds[0])
     return pick ? pick.home : fallback
 }
 
@@ -3512,7 +3515,10 @@ function overloadModule(ctx, type, callSigs, propName, depth, props = null) {
         // dep (a method returning the callable, `create(): Client`) is excluded: it resolves to
         // this entry's own pre-pick home and would out-vote the real prop deps. Safe
         // post-registration because render homes are late-bound (see the pick above).
-        if (deps.size) entry.home = depHome([...deps].filter((k) => k !== key), ctx.shared, entry.home)
+        // `nonSinkOnly`: a callable whose props are ALL sink-homed (e.g. only `size: string|number`
+        // → CommonTypes) keeps its OWN module rather than sinking a `module <Name> = {…}` into a
+        // primitive sink — CommonTypes stays the leaf of primitive unions.
+        if (deps.size) entry.home = depHome([...deps].filter((k) => k !== key), ctx.shared, entry.home, true)
     }
     const viewList = sigs.map((s) => `${name}.${s.accessor}`).join(' / ')
     entry.note = props && props.length
