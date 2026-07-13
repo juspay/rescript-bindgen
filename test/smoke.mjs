@@ -177,9 +177,22 @@ const checks = [
     const h2 = shapeHash(structuralSig(r2.outer, r2))
     // control: a genuinely different shape must hash differently
     const diff = mk(10, 11); diff.outer.fields[1].optional = true
+    // #90 rev: two records identical EXCEPT a field referencing a distinct-BASE but structurally-
+    // identical (broken) entry — base-ui's `rootMenuStore…` vs `triggerMenuStore…` — must hash apart
+    // (the referenced entry's stable base discriminates), else they'd collide onto a counter.
+    const brokenRef = (refBase) => {
+      const leaf = { key: 'id:5', kind: 'opaque', base: refBase, name: refBase, home: 'T' } // both broken/leaf → same shape
+      const rec = { key: 'id:6', kind: 'record', base: 'store', name: 'store', home: 'T', fields: [{ name: 'use', optional: false, type: { kind: 'typeRef', to: refBase, key: 'id:5' } }] }
+      return { byKey: new Map([[leaf.key, leaf], [rec.key, rec]]), rec }
+    }
+    const root = brokenRef('rootMenuStoreUseSyncedValue'), trig = brokenRef('triggerMenuStoreUseSyncedValue')
+    // #90 rev: a bare opaque field distinguished only by its TS type text must also hash apart
+    const opaqueRec = (text) => ({ kind: 'record', base: 'r', name: 'r', home: 'T', key: 'id:'+text, fields: [{ name: 'x', optional: false, type: { kind: 'opaque', text } }] })
     return [
       ['#90: identical shape hashes identically across id renumbering', h1 === h2],
       ['#90: a different shape still hashes differently', shapeHash(structuralSig(diff.outer, diff)) !== h1],
+      ['#90 rev: distinct-base broken-typed field discriminates (no false collision)', shapeHash(structuralSig(root.rec, root)) !== shapeHash(structuralSig(trig.rec, trig))],
+      ['#90 rev: opaque field distinguished by its TS type text', shapeHash(structuralSig(opaqueRec('RootState'), { byKey: new Map() })) !== shapeHash(structuralSig(opaqueRec('TriggerState'), { byKey: new Map() }))],
     ]
   })(),
 ]

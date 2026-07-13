@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, TriggerTypes.dialogTrigger
 
 @module("@base-ui-components/react") @scope("AlertDialog") @react.component
 external make: (
-  ~handle: RootSharedTypes.dialogHandleP3bf23<'a>=?,
+  ~handle: RootSharedTypes.dialogHandleV22jqj<'a>=?,
   ~payload: 'a=?,
   ~id: string=?,
   ~nativeButton: bool=?,

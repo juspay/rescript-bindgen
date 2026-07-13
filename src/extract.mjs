@@ -205,10 +205,17 @@ function entrySig(e) {
 function structuralTypeSig(t, shared, seen) {
     if (!t || typeof t !== 'object') return JSON.stringify(t)
     if (t.kind === 'typeRef') {
+        const tp = t.tparams ? '<' + t.tparams.join(',') + '>' : ''
         const re = t.key && shared.byKey.get(t.key)
         if (!re) return 'R(' + (t.to || '?') + ')' // unresolved (rare): fall back to the name
-        if (seen.has(re.key)) return 'Rcyc' + (t.tparams ? '<' + t.tparams.join(',') + '>' : '')
-        return 'R{' + structuralSig(re, shared, seen) + '}' + (t.tparams ? '<' + t.tparams.join(',') + '>' : '')
+        // Include the referenced entry's anchor BASE (stable — path/named-type/discriminant derived,
+        // NOT counter-suffixed, NOT id-based). Two records that differ ONLY in a ref to a distinct
+        // but STRUCTURALLY-IDENTICAL entry (base-ui's `rootMenuStore…` vs `triggerMenuStore…`, both
+        // broken→opaque) would otherwise hash alike and collide onto an order-dependent counter —
+        // a narrower slice of the very churn #90 kills. The base distinguishes them stably. (#90 rev)
+        const b = re.base || re.name || ''
+        if (seen.has(re.key)) return 'Rcyc:' + b + tp
+        return 'R:' + b + '{' + structuralSig(re, shared, seen) + '}' + tp
     }
     switch (t.kind) {
         case 'array': return 'A[' + structuralTypeSig(t.of, shared, seen) + ']'
@@ -219,7 +226,16 @@ function structuralTypeSig(t, shared, seen) {
         case 'set': return 'S[' + structuralTypeSig(t.of, shared, seen) + ']'
         case 'promise': return 'P[' + structuralTypeSig(t.of, shared, seen) + ']'
         case 'callback': return 'F(' + (t.params || []).map((x) => structuralTypeSig(x, shared, seen)).join(',') + ')=>' + structuralTypeSig(t.ret || { kind: 'unit' }, shared, seen)
-        default: return typeSig(t) // scalars / event / raw / typeVar / classRef(home.name) / opaque — already id-free
+        // Broken/opaque fields all EMIT `string`, but two records distinguishable ONLY through them
+        // must still hash apart (else collision → order-dependent counter). The original TS type
+        // text is stable (source-declared, not id/order-based), so a bounded slice discriminates
+        // them without instability. (typeSig collapses these to 'opaque' — correct for DEDUP, not
+        // for the stable-name hash.) (#90 rev)
+        case 'opaque':
+        case 'review':
+        case 'unknown':
+        case 'any': return t.kind + '(' + String(t.text || '').replace(/\s+/g, '').slice(0, 48) + ')'
+        default: return typeSig(t) // scalars / event / raw / typeVar / classRef(home.name) — already id-free
     }
 }
 export function structuralSig(e, shared, seen = new Set()) {
@@ -269,6 +285,14 @@ function stabilizeNames(shared) {
             } else { bySig.set(s, e); entries.push(e) }
         }
         if (entries.length < 2) continue // single distinct shape → bare base stays (zero churn)
+        // Deterministic order (#90 rev): sort colliders by their STRUCTURAL signature so the counter
+        // tiebreak below (when two distinct shapes land on the same target) is order-INDEPENDENT —
+        // not assigned by registration order, which an unrelated upstream edit can permute. Memoized
+        // (the sig is reused for the hash). Two entries with an identical structuralSig sort equal —
+        // a vanishingly narrow residual (identical base + fields + referenced shapes + broken-field
+        // text) noted in TYPE_MAPPING; everything genuinely distinct now orders stably.
+        const sigOf = new Map(entries.map((e) => [e, structuralSig(e, shared)]))
+        entries.sort((a, b) => (sigOf.get(a) < sigOf.get(b) ? -1 : sigOf.get(a) > sigOf.get(b) ? 1 : 0))
         const homeStem = (e) => lower((e.home || '').replace(/Types$/, ''))
         const stems = entries.map(homeStem)
         // home stem disambiguates when every collider has a DISTINCT home. The doubling check is
@@ -281,7 +305,7 @@ function stabilizeNames(shared) {
         for (const e of entries) {
             const stem = homeStem(e)
             const ownPrefixed = homeUnique && stem && base.startsWith(stem)
-            const target = ownPrefixed ? base : base + (homeUnique ? pascal(stem) : pascal(shapeHash(structuralSig(e, shared)))) // #90: id-FREE structural hash so identical shapes get identical names across compiler versions / unrelated edits
+            const target = ownPrefixed ? base : base + (homeUnique ? pascal(stem) : pascal(shapeHash(sigOf.get(e)))) // #90: id-FREE structural hash so identical shapes get identical names across compiler versions / unrelated edits
             let cand = target, i = 2
             while (shared.names.has(cand) && cand !== e.name) cand = target + (i++)
             if (cand !== e.name) {

@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, TriggerTypes.contextMenuTr
 
 @module("@base-ui-components/react") @scope("Tooltip") @react.component
 external make: (
-  ~handle: RootSharedTypes.tooltipHandleV10sxq2<'a>=?,
+  ~handle: RootSharedTypes.tooltipHandleGdn9f<'a>=?,
   ~payload: 'a=?,
   ~delay: float=?,
   ~closeDelay: float=?,

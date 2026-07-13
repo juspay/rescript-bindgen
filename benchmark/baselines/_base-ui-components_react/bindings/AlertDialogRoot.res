@@ -5,7 +5,7 @@ external childrenFn: (PopupsTypes.popupsChildrenConfigV6oib1<'a> => React.elemen
 external make: (
   ~onOpenChange: (bool, RootSharedTypes.alertDialogRootChangeEventDetails) => unit=?,
   ~actionsRef: React.ref<Nullable.t<RootSharedTypes.dialogRootActions>>=?,
-  ~handle: RootSharedTypes.dialogHandleP3bf2<'a>=?,
+  ~handle: RootSharedTypes.dialogHandleV1h2j6<'a>=?,
   ~children: React.element=?,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
   @as("open") ~open_: bool=?,
   ~defaultOpen: bool=?,

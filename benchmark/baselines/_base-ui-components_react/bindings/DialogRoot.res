@@ -10,7 +10,7 @@ external make: (
   ~onOpenChangeComplete: bool => unit=?,
   ~disablePointerDismissal: bool=?,
   ~actionsRef: React.ref<Nullable.t<RootSharedTypes.dialogRootActions>>=?,
-  ~handle: RootSharedTypes.dialogHandleP3bf22<'a>=?,
+  ~handle: RootSharedTypes.dialogHandleV1h2j62<'a>=?,
   ~children: React.element=?,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
   ~triggerId: Nullable.t<string>=?,
   ~defaultTriggerId: Nullable.t<string>=?,
