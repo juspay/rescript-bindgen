@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- **React class components bound as unusable `@new` class modules** (#101) — `class Slider extends
+  React.Component<Props>` has construct (not call) signatures, so `isReactComponent` missed it and it
+  emitted `@new external make: unit => t` + `@send render` — wrong ctor arity, unusable in JSX, and
+  `render` even flagged broken. A class whose heritage matches `^(Pure)?Component$` (or which has a
+  `render(): ReactElement/ReactNode` + a constructor `props` param) now binds `@react.component
+  external make` from its `Props`, the same path an FC uses. Plain non-React classes are unchanged.
+  Still ships in react-slick / react-datepicker / draft-js / recharts v1. Fixture:
+  `react-class-component`.
 - **Structural type names churned across compiler versions / unrelated upstream edits** (#90) — the
   stable-name hash for colliding shapes was seeded from `entrySig`/`recordSig`, which embed the
   checker's `type.id` (via ref keys). `type.id` is assigned in encounter order, so an unrelated

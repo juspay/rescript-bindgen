@@ -723,6 +723,52 @@ function isReactComponent(type, checker) {
 }
 
 /**
+ * A React CLASS component (#101): `class Slider extends React.Component<Props>`. Its export type
+ * has CONSTRUCT signatures, not call signatures, so `isReactComponent` (call-sig based) misses it
+ * and it binds as an unusable `@new`/`@send` module (`make: unit => t`, `@send render`). React
+ * renders a class component identically to an FC in JSX, so it should bind `@react.component
+ * external make` from its Props. Returns the props type node (`P` in `Component<P>`, or the
+ * constructor's first param when a `render(): ReactElement` is present) + the class's type params,
+ * or null for a non-React class (which keeps the `@new`/`@send` path). Syntactic heritage match
+ * (like `detectAttrsBase`), so self-contained golden stubs behave like real `@types/react`.
+ * @returns {{propsNode: ts.TypeNode, typeParams: ts.NodeArray|[]} | null}
+ */
+const _reactClassPropsCache = new WeakMap() // #101: computed once per class symbol (pre-pass + main loop both ask)
+function reactClassComponentProps(sym, checker) {
+    if (_reactClassPropsCache.has(sym)) return _reactClassPropsCache.get(sym)
+    const result = computeReactClassComponentProps(sym, checker)
+    _reactClassPropsCache.set(sym, result)
+    return result
+}
+function computeReactClassComponentProps(sym, checker) {
+    const decl = (sym.declarations || []).find((d) => ts.isClassDeclaration(d) || ts.isInterfaceDeclaration(d))
+    if (!decl) return null
+    const typeParams = decl.typeParameters || []
+    // A real React class component ALWAYS extends (Pure)Component. Require that heritage — a
+    // `render()` method alone is NOT sufficient: canvas/chart/D3 renderers and custom-element
+    // wrappers have `render(): HTMLElement/SVGElement` + a constructor but are NOT React components.
+    // Firing on render() alone would reintroduce the exact silently-wrong output #101 eliminates. (rev)
+    let extendsComponent = false
+    for (const h of decl.heritageClauses || []) {
+        if (h.token !== ts.SyntaxKind.ExtendsKeyword) continue
+        for (const t of h.types) {
+            const base = t.expression.getText().replace(/^React\./, '')
+            if (/^(Pure)?Component$/.test(base)) {
+                extendsComponent = true
+                if (t.typeArguments && t.typeArguments[0]) return { propsNode: t.typeArguments[0], typeParams } // Component<P> — props are P
+            }
+        }
+    }
+    if (!extendsComponent) return null
+    // `extends Component` with no (or `{}`) type arg → it IS a React component; props come from the
+    // constructor's first param when present (else it's a no-props component and is skipped upstream).
+    const ctor = (decl.members || []).find((m) => ts.isConstructorDeclaration(m))
+    const p0 = ctor && ctor.parameters && ctor.parameters[0]
+    if (p0 && p0.type) return { propsNode: p0.type, typeParams }
+    return null
+}
+
+/**
  * Build the IR for one component symbol — the core of the brain.
  *
  * Steps: resolve the symbol's type -> take the first call-signature parameter
@@ -897,7 +943,11 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     // several exist; a single-signature generic component (VirtualList<T>) is untouched. (#84)
     const sig = (sigs.length > 1 && sigs.find((s) => s.parameters.length && !(s.typeParameters || []).length)) || sigs[0]
     let propsType
-    if (sigs.length && sig.parameters.length) {
+    if (opts.propsType) {
+        // React CLASS component (#101): props come from `Component<P>` (or the ctor param), NOT a
+        // call signature — the caller resolved and passes `P` directly.
+        propsType = opts.propsType
+    } else if (sigs.length && sig.parameters.length) {
         propsType = checker.getTypeOfSymbolAtLocation(sig.parameters[0], decl)
     } else {
         const args = checker.getTypeArguments?.(compType) || []
@@ -911,7 +961,10 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     // hand-written DataTable binding).
     const typeVars = new Map()
     const TV = ['a', 'b', 'c', 'd', 'e', 'f']
-    const tparams = (sigs.length && sig.typeParameters) || []
+    // A class component's type params come off the class declaration, not a call signature. (#101)
+    const tparams = opts.propsType
+        ? (opts.classTypeParams || []).map((tp) => checker.getTypeAtLocation(tp).symbol).filter(Boolean).map((symbol) => ({ symbol }))
+        : (sigs.length && sig.typeParameters) || []
     tparams.forEach((tp, i) => { if (tp.symbol) typeVars.set(tp.symbol, "'" + (TV[i] || `t${i}`)) })
 
     // Erased generic: a `forwardRef`/`memo` export pins a generic props alias to a
@@ -1667,6 +1720,9 @@ export function extractModule(entryFile, opts = {}) {
         let s = exp
         if (s.flags & ts.SymbolFlags.Alias) s = checker.getAliasedSymbol(s)
         if (!(s.flags & ts.SymbolFlags.Class)) continue
+        // A React CLASS component (#101) binds as a component, not an `InstanceTypes` nominal — skip
+        // it here so the classSink pre-pass below doesn't emit an orphan `type slider` no ref uses.
+        if (reactClassComponentProps(s, checker)) continue
         let nm = exportName
         if (nm === 'default' || nm === 'export=') nm = s.getName()
         if (!nm || !/^[A-Z]/.test(nm)) continue
@@ -1797,6 +1853,25 @@ export function extractModule(entryFile, opts = {}) {
                 functions.push({ name, ir })
             } catch (e) {
                 skipped.push({ name, reason: 'context-extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
+            }
+            continue
+        }
+        // React CLASS component (#101): `class X extends React.Component<P>`. Its type has construct
+        // (not call) signatures, so isReactComponent misses it and it would bind as an unusable
+        // `@new`/`@send` module. Bind it `@react.component` from `P` — React renders it like an FC.
+        const classProps = (sym.flags & ts.SymbolFlags.Class) ? reactClassComponentProps(sym, checker) : null
+        if (classProps) {
+            try {
+                const propsType = checker.getTypeFromTypeNode(classProps.propsNode)
+                const ir = buildComponentIR(checker, sym, source, name, from, { ...opts, shared, propsType, classTypeParams: classProps.typeParams })
+                ir.import.jsName = jsName
+                ir.import.isDefault = isDefault
+                componentBySym.set(sym, name)
+                seen.add(name)
+                if (ir.props.length || ir.attrsBase || (ir.baseSpreads && ir.baseSpreads.length)) components.push({ name, ir })
+                else skipped.push({ name, reason: 'no-props' })
+            } catch (e) {
+                skipped.push({ name, reason: 'class-component-extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
             }
             continue
         }
