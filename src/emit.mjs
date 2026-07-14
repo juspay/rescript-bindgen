@@ -277,6 +277,9 @@ export function emit(ir, options = {}) {
         lines.push('')
     }
     if (ir.import.isDefault) lines.push(defaultExportNote(ir.import.name))
+    // #109.3: symbol-keyed props can't be a JSX attribute (TS mangles them to `__@sym@N`) — skipped,
+    // noted so the consumer knows the surface is incomplete rather than silently missing.
+    if (ir.symbolProps && ir.symbolProps.length) lines.push(`// ⓘ ${ir.symbolProps.length} symbol-keyed prop(s) skipped (not representable as JSX attributes): ${ir.symbolProps.join(', ')}`)
     // A namespace member binds THROUGH the namespace object — `@scope("Accordion") = "Root"`
     // — because the flat export may be type-only (undefined at runtime, base-ui). (#25)
     // A NESTED compound static (Table.Summary.Row, #100) carries a scope PATH — the tuple

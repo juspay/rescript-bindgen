@@ -1142,8 +1142,13 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
     }
     const baseOwned = new Set(spreadBases.flatMap((b) => b.flat))
 
+    // Symbol-keyed props (`[kSecret]?: string`, #109.3) surface as TS's mangled internal name
+    // (`__@kSecret@69`) — a JSX attribute that can't exist at runtime. Skip them; record the source
+    // names so the emitter can leave an ⓘ note instead of emitting a broken `@as("__@…")` binding.
+    const symbolProps = propSyms.filter((p) => /^__@/.test(p.getName())).map((p) => p.getName().replace(/^__@/, '').replace(/@\d+$/, ''))
     const props = propSyms
         .filter((p) => !['ref', 'key'].includes(p.getName()))
+        .filter((p) => !/^__@/.test(p.getName()))
         .filter((p) => !coveredBySpread(p))
         .filter((p) => !baseOwned.has(p))
         .filter((p) => !isInherited(p) || allow.has(p.getName()))
@@ -1274,7 +1279,7 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
         }
     }
 
-    return { module: importName, import: { from, name: importName }, kind: 'react-component', enums, records, unboxed, props, attrsBase: attrsBaseInfo, baseSpreads }
+    return { module: importName, import: { from, name: importName }, kind: 'react-component', enums, records, unboxed, props, attrsBase: attrsBaseInfo, baseSpreads, ...(symbolProps.length ? { symbolProps } : {}) }
 }
 
 /**
@@ -1646,13 +1651,31 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
  * @returns {import('../types').ComponentIR}
  * @throws if no exported component is found
  */
+/**
+ * The module symbol for the entry source. A `.d.ts` with top-level exports resolves via
+ * `getSymbolAtLocation`. An AMBIENT-MODULE-ONLY file (`declare module "pkg" { … }`, no top-level
+ * exports — common in older `@types/*`) has NO source symbol, so it crashed "No module symbol";
+ * fall back to the ambient module declared in this file (preferring one whose name matches the
+ * package). (#109.1)
+ * @returns {ts.Symbol | null}
+ */
+function entryModuleSymbol(checker, source, from) {
+    const direct = checker.getSymbolAtLocation(source)
+    if (direct) return direct
+    const ambient = (checker.getAmbientModules && checker.getAmbientModules()) || []
+    const inFile = ambient.filter((m) => (m.declarations || []).some((d) => d.getSourceFile && d.getSourceFile() === source))
+    if (!inFile.length) return null
+    const bare = (m) => m.getName().replace(/^["']|["']$/g, '') // symbol name is quoted: `"pkg"`
+    return inFile.find((m) => from && bare(m) === from) || inFile[0]
+}
+
 export function extractComponent(entryFile, opts = {}) {
     const program = makeProgram(entryFile, opts.augment || [])
     const checker = program.getTypeChecker()
     const source = program.getSourceFile(entryFile)
     if (!source) throw new Error(`Could not load source file: ${entryFile}`)
 
-    const moduleSymbol = checker.getSymbolAtLocation(source)
+    const moduleSymbol = entryModuleSymbol(checker, source, opts.from)
     if (!moduleSymbol) throw new Error(`No module symbol for ${entryFile}`)
     const exports = checker.getExportsOfModule(moduleSymbol)
 
@@ -1685,7 +1708,7 @@ export function extractModule(entryFile, opts = {}) {
     const source = program.getSourceFile(entryFile)
     if (!source) throw new Error(`Could not load source file: ${entryFile}`)
 
-    const moduleSymbol = checker.getSymbolAtLocation(source)
+    const moduleSymbol = entryModuleSymbol(checker, source, opts.from)
     if (!moduleSymbol) throw new Error(`No module symbol for ${entryFile}`)
     const exports = checker.getExportsOfModule(moduleSymbol)
     // `export = value` describes `module.exports = value`: getExportsOfModule exposes the
@@ -2659,7 +2682,10 @@ function classify(type, ctx, propName = '', depth = 0) {
             return { kind: 'array', of }
         }
         {
-            const si = checker.getIndexInfoOfType?.(type, ts.IndexKind.String)
+            // String index (`{ [k: string]: V }`) -> `Dict.t<V>`. A NUMERIC index (`{ [n: number]: V }`,
+            // #109.6) is the same at runtime — JS object keys are always strings — so it maps to
+            // `Dict.t<V>` too, instead of collapsing to an opaque `JSON.t`.
+            const si = checker.getIndexInfoOfType?.(type, ts.IndexKind.String) || checker.getIndexInfoOfType?.(type, ts.IndexKind.Number)
             if (si && si.type && !(type.getProperties && type.getProperties().length)) {
                 const of = classify(si.type, ctx, propName, depth + 1)
                 return { kind: 'dict', of: irHasImperfection(of) ? { kind: 'raw', res: 'JSON.t' } : of }
@@ -3043,6 +3069,25 @@ function classify(type, ctx, propName = '', depth = 0) {
         }
     }
 
+    // #109.2: a PURE `interface X extends Array<T> {}` (classnames' `ArgumentArray`, Highcharts'
+    // `AxisTickPositionsArray`) IS an array, not a record. `isArrayType` is FALSE for the interface
+    // itself, so it fell to `recordNode` which built a bogus record from the Array prototype methods
+    // (`{ ...JsxDOM.domProps }`, shape lost). Follow the base to the Array element type. Gated on the
+    // interface adding NO OWN members: a HYBRID (`TimeTicksInfoObject extends Array<number> { higherRanks;
+    // totalRange }`) can't be both an array and a record in ReScript, so it keeps the record of its own
+    // fields (dropping array-indexing) rather than dropping the fields.
+    if ((flags & ts.TypeFlags.Object) && type.isClassOrInterface?.() && !checker.isArrayType?.(type)) {
+        const arrBase = (checker.getBaseTypes?.(type) || []).find((b) => checker.isArrayType?.(b))
+        // "No own members" is measured against the resolved property SET, not the first declaration's
+        // syntax — so DECLARATION MERGING (`interface M extends Array<T> {}` + `interface M { extra }`)
+        // is handled: `extra` is in `getProperties()` (which merges all declarations) but not in the
+        // Array base, so the delta is non-empty and M keeps its record (no silent field drop). (#109.2 rev)
+        const baseProps = arrBase && new Set((arrBase.getProperties?.() || []).map((p) => p.getName()))
+        const ownProps = arrBase && (type.getProperties?.() || []).filter((p) => !baseProps.has(p.getName()))
+        const elem = arrBase && ownProps.length === 0 && (checker.getTypeArguments?.(arrBase) || [])[0]
+        if (elem) return { kind: 'array', of: classify(elem, ctx, propName, depth + 1) }
+    }
+
     // arrays
     if (checker.isArrayType?.(type)) {
         const elem = checker.getTypeArguments(type)[0]
@@ -3081,8 +3126,10 @@ function classify(type, ctx, propName = '', depth = 0) {
         if (!val) { const si = checker.getIndexInfoOfType?.(type, ts.IndexKind.String); val = si && si.type }
         return { kind: 'dict', of: val ? classify(val, ctx, propName, depth + 1) : { kind: 'opaque', text: 'JSON.t' } }
     }
-    // `{ [k: string]: V }` — a string-index map with no named props -> `Dict.t<V>`.
-    const strIndex = checker.getIndexInfoOfType?.(type, ts.IndexKind.String)
+    // `{ [k: string]: V }` — a string-index map with no named props -> `Dict.t<V>`. A NUMERIC index
+    // (`{ [n: number]: V }`, #109.6) is the same at runtime (JS object keys are always strings), so it
+    // maps to `Dict.t<V>` too instead of collapsing to an opaque `JSON.t`.
+    const strIndex = checker.getIndexInfoOfType?.(type, ts.IndexKind.String) || checker.getIndexInfoOfType?.(type, ts.IndexKind.Number)
     if (strIndex && type.getProperties().length === 0) {
         return { kind: 'dict', of: classify(strIndex.type, ctx, propName, depth + 1) }
     }

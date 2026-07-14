@@ -225,6 +225,11 @@ The prop name is camelCased with the original kept: `@as("aria-checked") ~ariaCh
 ## Components extending HTML attributes (record-props + `HtmlAttrs.res`)
 Fixtures: [`html-attrs-component`](../test/golden/cases/html-attrs-component), [`html-attrs-omit`](../test/golden/cases/html-attrs-omit), [`html-attrs-collision`](../test/golden/cases/html-attrs-collision), [`html-attrs-no-match`](../test/golden/cases/html-attrs-no-match), [`shared-base-records`](../test/golden/cases/shared-base-records)
 
+A **symbol-keyed prop** (`[kSecret]?: string`, #109.3) surfaces as TypeScript's mangled internal name
+(`__@kSecret@69`) — a JSX attribute that can't exist at runtime. It is skipped (never emitted as a
+broken `@as("__@…")` binding), with an ⓘ note above `make` listing the skipped names so the surface
+is known-incomplete rather than silently missing. Fixture: [`coverage-papercuts`](../test/golden/cases/coverage-papercuts).
+
 A component whose props intersect (or whose interface `extends`) a React attribute
 interface — `ButtonHTMLAttributes<T>`, `InputHTMLAttributes<T>`, any `*HTMLAttributes`,
 optionally wrapped in `Omit<…, K>` / `Partial<…>` — does NOT inline the attribute
@@ -318,6 +323,8 @@ Fixture: [`records`](../test/golden/cases/records)
 | named `interface MenuItemType { … }` | `type menuItemType = { … }` — a NAMED library type keeps its own name (no home prefix), per the "follow the library" rule. (#62) |
 | self-referential `{ subItems?: MenuItemType[] }` | `type rec menuItemType = { subItems?: array<menuItemType> }` (`rec` **only** when genuinely recursive) — a DIRECT self-reference resolves even when the record is first reached past `MAX_DEPTH` (the depth bound truncates unbounded NEW expansion, but a self-ref is a zero-expansion cycle to the record itself; truncating it to a silent `string` degraded e.g. `SingleSelectV2ItemType.subMenu` while the shallower `MultiSelectV2ItemType` stayed recursive). (#63 validation) |
 | `interface EmptyState {}` (empty object) | `JSON.t` — a real object arrives at runtime but has no modellable fields (the `unknown` precedent). Fixture: [`empty-state-and-salvage`](../test/golden/cases/empty-state-and-salvage) |
+| `interface ArgumentArray extends Array<T> {}` (pure — no own members; classnames' shape) | `array<T>` — it IS an array. Was silently a bogus `{ ...JsxDOM.domProps }` record (Array prototype methods), losing the array shape. A HYBRID (`extends Array<T>` **plus** own fields, e.g. Highcharts' `TimeTicksInfoObject`) can't be both in ReScript, so it keeps the record of its own fields. Fixture: [`coverage-papercuts`](../test/golden/cases/coverage-papercuts). (#109.2) |
+| `{ [n: number]: V }` (numeric index signature) | `Dict.t<V>` — JS object keys are strings at runtime, so a numeric index is the same as a string index (was an opaque `JSON.t`). Fixture: [`coverage-papercuts`](../test/golden/cases/coverage-papercuts). (#109.6) |
 | `Partial<BaseProps>` | record with all fields optional (utility unwrapped: `Partial`/`Required`/`Readonly`/`Pick`/`Omit`/`NonNullable`) |
 | `interface X extends HTMLAttributes<…>` | `type … = { ...JsxDOM.domProps, <own fields> }` |
 | nested record `interface ItemData extends <HTML attrs> { id: string \| number; size?: … }` | first-party fields whose names collide with DOM attrs (`id`, `size`, …) are KEPT with their real types — `{ id: CommonTypes.stringOrNumber, size?: …, … }`. `...JsxDOM.domProps` is all-or-nothing (can't omit a field like the component path's HtmlAttrs variants), and ReScript rejects a field overlapping a spread, so on collision the named fields win and the spread is dropped (rather than silently dropping the fields). Fixture: [`record-html-collision`](../test/golden/cases/record-html-collision). (#63 C3) |
@@ -677,6 +684,12 @@ zero-cost (value-through).
 
 ## Standalone function exports (non-React)
 Fixture: [`fn-exports`](../test/golden/cases/fn-exports)
+
+An **ambient-module-only** `.d.ts` (`declare module "pkg" { … }` with no top-level exports — common
+in older `@types/*`) has no source module symbol and previously **crashed** "No module symbol",
+producing nothing. It now falls back to the ambient module declared in the file (matched to the
+`--from` package name) and binds its exports normally. Fixture:
+[`ambient-module-only`](../test/golden/cases/ambient-module-only). (#109.1)
 
 Beyond React components, a package's plain **function exports** (and `const`s whose type has a call
 signature) are bound too — this is what lets the generator target non-React TS libraries (Hono,
