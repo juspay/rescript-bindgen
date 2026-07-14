@@ -1638,11 +1638,17 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
             const prev = ctx.produced
             ctx.produced = false
             const ty = classify(pt, ctx, pname, 0)
-            getters.push({ jsName: pname, type: ty })
+            const decls = p.declarations || []
             // #109.4: a `set value(v)` accessor (or a writable data property with a matching setter)
             // was silently absent — emit `@set external value: (t, V) => unit`. Detected off the
             // declarations so a get-only accessor / readonly field stays @get-only.
-            if ((p.declarations || []).some((d) => ts.isSetAccessor(d))) setters.push({ jsName: pname, type: ty })
+            const hasSetter = decls.some((d) => ts.isSetAccessor(d))
+            // A WRITE-ONLY accessor (a `set token(v)` with no getter) has NO reader at runtime, so it
+            // must NOT emit a `@get` (reading returns `undefined`). Skip the getter only when every
+            // declaration is a set-accessor; a data property or a get/set pair still reads.
+            const writeOnly = hasSetter && decls.length > 0 && decls.every((d) => ts.isSetAccessor(d))
+            if (!writeOnly) getters.push({ jsName: pname, type: ty })
+            if (hasSetter) setters.push({ jsName: pname, type: ty })
             ctx.produced = prev
         }
     }

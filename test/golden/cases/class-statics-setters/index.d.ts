@@ -10,6 +10,12 @@ export declare class Widget {
   set value(v: number)
   // a get-only accessor stays @get-only (no setter emitted)
   get id(): string
+  // a WRITE-ONLY accessor: no getter exists at runtime, so it must NOT emit a spurious @get —
+  // only `@set external tokenSet`.
+  set token(v: string)
+  // an instance `reset()` that COLLIDES with the static `reset()` below — the static's ReScript id
+  // must be disambiguated (resetStatic) so it can't shadow the @send instance binding.
+  reset(): void
   // STATICS
   static create(id: string): Widget
   static readonly VERSION: string

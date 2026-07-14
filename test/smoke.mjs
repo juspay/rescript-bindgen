@@ -235,6 +235,8 @@ const checks = [
     return [
       ['#109.4: static method + static value bind (via @scope)', !!widget && (widget.ir.staticMethods || []).some((m) => m.jsName === 'create') && (widget.ir.staticValues || []).some((v) => v.jsName === 'VERSION')],
       ['#109.4: read-write accessor emits a setter; get-only does not', !!widget && (widget.ir.setters || []).some((s) => s.jsName === 'value') && !(widget.ir.setters || []).some((s) => s.jsName === 'id')],
+      ['#109.4: write-only accessor emits a setter but NO getter', !!widget && (widget.ir.setters || []).some((s) => s.jsName === 'token') && !(widget.ir.getters || []).some((g) => g.jsName === 'token')],
+      ['#109.4: static id disambiguated from a colliding instance method', !!widget && emitClass(widget.ir).includes('external resetStatic:') && emitClass(widget.ir).includes('@send external reset:')],
       ['#109.8: both overloads bind, sharing one JS name', names('parse').length === 2 && names('parse').includes('parse') && names('parse').includes('parseWithRadix')],
       ['#109.8: same-arity-different-type overloads stay distinct', names('wrap').length === 2],
     ]

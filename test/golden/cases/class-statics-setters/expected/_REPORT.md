@@ -19,7 +19,7 @@ Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new
 
 | Class | Constructor | Methods | Properties |
 |-------|-------------|---------|------------|
-| `Widget` | ✓ | 1 | 2 |
+| `Widget` | ✓ | 2 | 2 |
 
 ## ✅ Usable
 

@@ -777,7 +777,12 @@ constructor/static type and were silently dropped; they now bind THROUGH the cla
 `@scope("ClassName")` — a static method as `@module @scope external create`, a static value as a
 plain `@module @scope external`. A `set value(v)` accessor (previously absent) emits `@set external
 valueSet: (t, V) => unit` — the `Set` suffix keeps the id off the `@get`. A get-only accessor / readonly
-field stays `@get`-only. Fixture: [`class-statics-setters`](../test/golden/cases/class-statics-setters).
+field stays `@get`-only; a **write-only** accessor (`set token(v)` with no getter) emits *only* the
+`@set` — no `@get`, since there is nothing to read at runtime. When a static and an instance member
+share a name (`static create()` alongside instance `create()`), the static's ReScript id is
+disambiguated with a `Static` suffix (`createStatic`) so the two `external`s can't shadow each other
+— the JS name and `@scope` are unchanged, so the runtime call is identical.
+Fixture: [`class-statics-setters`](../test/golden/cases/class-statics-setters).
 
 **React CLASS components are the exception (#101).** A `class Slider extends React.Component<Props>`
 has *construct* signatures, not *call* signatures, so `isReactComponent` (call-sig based) missed it

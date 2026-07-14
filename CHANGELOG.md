@@ -10,8 +10,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   - **#109.4** class **statics** (`static create()`, `static readonly VERSION`) and **setters**
     (`set value(v)`) were silently dropped. Statics now bind through the class object with
     `@scope("ClassName")`; a read-write accessor emits `@set external <name>Set: (t, V) => unit`
-    (get-only accessors / readonly fields stay `@get`-only). Recovers hono's `Context.res` `res`
-    setter.
+    (get-only accessors / readonly fields stay `@get`-only). A **write-only** accessor emits only the
+    `@set` (no spurious `@get` — nothing to read at runtime), and a static whose name **collides** with
+    an instance member gets a disambiguated id (`createStatic`) so the two `external`s can't shadow
+    each other. Recovers hono's `Context.res` `res` setter.
   - **#109.8** a function with multiple **overload signatures** bound only the first. Every overload
     now binds — first keeps the bare name, others get a deterministic param-derived suffix, all
     sharing one JS name — with overloads that collapse to an identical ReScript signature deduped
