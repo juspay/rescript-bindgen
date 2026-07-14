@@ -3,6 +3,12 @@
 @module("@base-ui-components/react") external useMenuSubmenuRootContext: unit => SubmenuRootTypes.menuSubmenuRootContext = "useMenuSubmenuRootContext"
 // ⚠️ REVIEW: `mergeProps` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
 @module("@base-ui-components/react") external mergeProps: (string, string) => Dict.t<string> = "mergeProps"
+// ⚠️ REVIEW: `mergePropsWithC` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
+@module("@base-ui-components/react") external mergePropsWithC: (string, string, string) => Dict.t<string> = "mergeProps"
+// ⚠️ REVIEW: `mergePropsWithCAndD` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
+@module("@base-ui-components/react") external mergePropsWithCAndD: (string, string, string, string) => Dict.t<string> = "mergeProps"
+// ⚠️ REVIEW: `mergePropsWithCAndDAndE` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
+@module("@base-ui-components/react") external mergePropsWithCAndDAndE: (string, string, string, string, string) => Dict.t<string> = "mergeProps"
 // ⚠️ REVIEW: `mergePropsN` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
 @module("@base-ui-components/react") external mergePropsN: (array<string>) => Dict.t<string> = "mergePropsN"
 @module("@base-ui-components/react") external makeEventPreventable: (PositionerSharedTypes.baseUIEvent) => PositionerSharedTypes.baseUIEvent = "makeEventPreventable"

@@ -226,6 +226,19 @@ const checks = [
       ['#109.3: symbol-keyed prop skipped + noted, real props kept', !!widget && (widget.ir.symbolProps || []).length === 1 && widget.ir.props.some((p) => p.name === 'visible') && !widget.ir.props.some((p) => /^__@/.test(p.name))],
     ]
   })(),
+  ...(() => {
+    // #109 batch 2: class statics/setters (#4), top-level overloads (#8).
+    const cs = extractModule(join(here, 'golden', 'cases', 'class-statics-setters', 'index.d.ts'), { from: 'demo' })
+    const widget = cs.classes.find((c) => c.name === 'Widget')
+    const ov = extractModule(join(here, 'golden', 'cases', 'top-level-overloads', 'index.d.ts'), { from: 'demo' })
+    const names = (n) => ov.functions.filter((f) => f.ir.import.jsName === n).map((f) => f.name)
+    return [
+      ['#109.4: static method + static value bind (via @scope)', !!widget && (widget.ir.staticMethods || []).some((m) => m.jsName === 'create') && (widget.ir.staticValues || []).some((v) => v.jsName === 'VERSION')],
+      ['#109.4: read-write accessor emits a setter; get-only does not', !!widget && (widget.ir.setters || []).some((s) => s.jsName === 'value') && !(widget.ir.setters || []).some((s) => s.jsName === 'id')],
+      ['#109.8: both overloads bind, sharing one JS name', names('parse').length === 2 && names('parse').includes('parse') && names('parse').includes('parseWithRadix')],
+      ['#109.8: same-arity-different-type overloads stay distinct', names('wrap').length === 2],
+    ]
+  })(),
 ]
 
 let ok = true

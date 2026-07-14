@@ -691,6 +691,14 @@ producing nothing. It now falls back to the ambient module declared in the file 
 `--from` package name) and binds its exports normally. Fixture:
 [`ambient-module-only`](../test/golden/cases/ambient-module-only). (#109.1)
 
+A function with **multiple overload signatures** (`parse(input)` / `parse(input, radix)`) bound only
+the first, silently dropping the rest. Every overload now binds — the first keeps the bare name, each
+other gets a deterministic param-derived suffix (`parseWithRadix`; a same-arity type-only overload →
+`wrapForCount`), and **all share the one JS name** (`= "parse"`), the hand-written N-externals idiom.
+Overloads that collapse to an identical ReScript signature (e.g. generic params flattened to `string`,
+base-ui's `mergeProps`) are deduped so only the distinct arities emit. Fixture:
+[`top-level-overloads`](../test/golden/cases/top-level-overloads). (#109.8)
+
 Beyond React components, a package's plain **function exports** (and `const`s whose type has a call
 signature) are bound too — this is what lets the generator target non-React TS libraries (Hono,
 date-fns, …). Each becomes a `@module external` in one bundled `<Pkg>Bindings.res` file. **Required
@@ -763,6 +771,13 @@ A `class` export binds to its **own `<ClassName>.res` file** (a file *is* a ReSc
 the canonical abstract-`type t` pattern: constructor → `@new`, instance methods → `@send` (the
 instance is the first arg), data properties / getters → `@get`. Member param/return types reuse the
 same `classify` pipeline, so records/enums/unions land in the shared `*Types.res`.
+
+**Static members and setters (#109.4).** `static create()` / `static readonly VERSION` live on the
+constructor/static type and were silently dropped; they now bind THROUGH the class object with
+`@scope("ClassName")` — a static method as `@module @scope external create`, a static value as a
+plain `@module @scope external`. A `set value(v)` accessor (previously absent) emits `@set external
+valueSet: (t, V) => unit` — the `Set` suffix keeps the id off the `@get`. A get-only accessor / readonly
+field stays `@get`-only. Fixture: [`class-statics-setters`](../test/golden/cases/class-statics-setters).
 
 **React CLASS components are the exception (#101).** A `class Slider extends React.Component<Props>`
 has *construct* signatures, not *call* signatures, so `isReactComponent` (call-sig based) missed it

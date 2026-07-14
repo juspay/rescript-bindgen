@@ -6,6 +6,19 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- **Coverage papercuts (batch 2)** (#109) — two more from the audit:
+  - **#109.4** class **statics** (`static create()`, `static readonly VERSION`) and **setters**
+    (`set value(v)`) were silently dropped. Statics now bind through the class object with
+    `@scope("ClassName")`; a read-write accessor emits `@set external <name>Set: (t, V) => unit`
+    (get-only accessors / readonly fields stay `@get`-only). Recovers hono's `Context.res` `res`
+    setter.
+  - **#109.8** a function with multiple **overload signatures** bound only the first. Every overload
+    now binds — first keeps the bare name, others get a deterministic param-derived suffix, all
+    sharing one JS name — with overloads that collapse to an identical ReScript signature deduped
+    (base-ui's `mergeProps` now exposes all 4 distinct arities instead of 1).
+
+    Additions only — no existing binding changed; metrics equal-or-better on all 9 packages.
+    Fixtures: `class-statics-setters`, `top-level-overloads`.
 - **Coverage papercuts (batch 1)** (#109) — four independent gaps from the coverage audit:
   - **#109.1** an ambient-module-only `.d.ts` (`declare module "pkg" { … }`, no top-level exports —
     older `@types/*`) **crashed** "No module symbol" and produced nothing; now falls back to the

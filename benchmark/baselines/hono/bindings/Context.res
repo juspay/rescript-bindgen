@@ -33,3 +33,4 @@ type t = InstanceTypes.context
 @get external executionCtx: t => TypesTypes.executionContext = "executionCtx"
 @get external res: t => WebTypes.response = "res"
 @get external var: t => JSON.t = "var"
+@set external resSet: (t, WebTypes.response) => unit = "res"
