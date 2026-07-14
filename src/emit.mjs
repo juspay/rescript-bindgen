@@ -590,6 +590,43 @@ export function emitClass(ir, options = {}) {
         if (c) lines.push(c)
         lines.push(`@get external ${label(g.jsName).id}: t => ${renderType(g.type, '', cfg)} = ${JSON.stringify(g.jsName)}`)
     }
+    // #109.4: a `set value(v)` accessor → `@set external`. The setter shares the JS name; the
+    // ReScript id gets a `Set` suffix so it can't collide with the `@get`.
+    for (const s of ir.setters || []) {
+        const c = flag(s.jsName + 'Set', [s.type])
+        if (c) lines.push(c)
+        lines.push(`@set external ${label(s.jsName).id}Set: (t, ${renderType(s.type, '', cfg)}) => unit = ${JSON.stringify(s.jsName)}`)
+    }
+    // #109.4: STATIC members bind THROUGH the class object via `@scope("ClassName")` — a static
+    // method as a function-shaped external, a static value as a plain external.
+    const scope = ` @scope(${JSON.stringify(ir.import.jsName || ir.import.name)})`
+    // A static and an instance member can share a name (`static create()` alongside instance
+    // `create()`). Both would emit the same ReScript id — and the later `external` silently SHADOWS
+    // the earlier one, dropping the instance binding and giving `Widget.create` the static's type.
+    // Disambiguate a colliding static id with a `Static` suffix (JS name + @scope stay put, so the
+    // runtime call is unchanged).
+    const instanceIds = new Set()
+    for (const m of ir.methods) instanceIds.add(label(m.jsName).id)
+    for (const g of ir.getters) instanceIds.add(label(g.jsName).id)
+    for (const s of ir.setters || []) instanceIds.add(label(s.jsName).id + 'Set')
+    const staticId = (jsName) => {
+        let id = label(jsName).id
+        while (instanceIds.has(id)) id += 'Static'
+        instanceIds.add(id)
+        return id
+    }
+    for (const m of ir.staticMethods || []) {
+        const c = flag(m.jsName, [m.ret, ...m.params.map((p) => p.type)])
+        if (c) lines.push(c)
+        const segs = argSegs(m.params)
+        const paramStr = segs.length ? `(${segs.join(', ')})` : 'unit'
+        lines.push(`@module(${JSON.stringify(cfg.from)})${scope} external ${staticId(m.jsName)}: ${paramStr} => ${renderType(m.ret, '', cfg)} = ${JSON.stringify(m.jsName)}`)
+    }
+    for (const v of ir.staticValues || []) {
+        const c = flag(v.jsName, [v.type])
+        if (c) lines.push(c)
+        lines.push(`@module(${JSON.stringify(cfg.from)})${scope} external ${staticId(v.jsName)}: ${renderType(v.type, '', cfg)} = ${JSON.stringify(v.jsName)}`)
+    }
 
     return lines.join('\n')
 }

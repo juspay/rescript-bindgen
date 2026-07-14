@@ -1299,11 +1299,23 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
  * @param {object} opts         { shared?, webapi?, … } — same shape buildComponentIR takes
  * @returns {import('../types').FunctionIR}
  */
+/** A deterministic, readable ReScript-name suffix distinguishing a function overload from the first
+ *  (#109.8). Params BEYOND the base overload's arity → `WithRadixAndBase`; a same-/lower-arity
+ *  overload (differs by type) → `ForInput`; empty names → `Alt`. Stable — derived from param names,
+ *  never encounter order. Collisions are counter-suffixed by the caller. */
+function overloadSuffix(sig, baseSig) {
+    const params = sig.getParameters()
+    const extra = params.slice(baseSig.getParameters().length).map((p) => pascal(p.getName())).filter(Boolean)
+    if (extra.length) return 'With' + extra.join('And')
+    const names = params.map((p) => pascal(p.getName())).filter(Boolean)
+    return names.length ? 'For' + names.join('') : 'Alt'
+}
+
 function buildFunctionIR(checker, sym, source, importName, from, opts) {
     if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
     const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0]) || source
     const fnType = checker.getTypeOfSymbolAtLocation(sym, decl)
-    const sig = fnType.getCallSignatures()[0]
+    const sig = opts.sig || fnType.getCallSignatures()[0] // #109.8: caller may pass a specific overload
     if (!sig) throw new Error('no call signature')
 
     // Generic function (`function map<T, U>(…)`): map each signature type parameter to a
@@ -1604,6 +1616,7 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
     }
     const methods = []
     const getters = []
+    const setters = [] // #109.4: `set value(v)` accessors -> `@set external`
     for (const p of instanceType.getProperties()) {
         const pname = p.getName()
         if (pname === 'constructor' || pname === 'prototype') continue
@@ -1624,7 +1637,47 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
             // free `'a`. (#50 review)
             const prev = ctx.produced
             ctx.produced = false
-            getters.push({ jsName: pname, type: classify(pt, ctx, pname, 0) })
+            const ty = classify(pt, ctx, pname, 0)
+            const decls = p.declarations || []
+            // #109.4: a `set value(v)` accessor (or a writable data property with a matching setter)
+            // was silently absent — emit `@set external value: (t, V) => unit`. Detected off the
+            // declarations so a get-only accessor / readonly field stays @get-only.
+            const hasSetter = decls.some((d) => ts.isSetAccessor(d))
+            // A WRITE-ONLY accessor (a `set token(v)` with no getter) has NO reader at runtime, so it
+            // must NOT emit a `@get` (reading returns `undefined`). Skip the getter only when every
+            // declaration is a set-accessor; a data property or a get/set pair still reads.
+            const writeOnly = hasSetter && decls.length > 0 && decls.every((d) => ts.isSetAccessor(d))
+            if (!writeOnly) getters.push({ jsName: pname, type: ty })
+            if (hasSetter) setters.push({ jsName: pname, type: ty })
+            ctx.produced = prev
+        }
+    }
+
+    // Static members (#109.4): `static create()` / `static readonly VERSION` live on the
+    // constructor/static type and were silently dropped. Bind them THROUGH the class object with
+    // `@scope("ClassName")` (the namespace-export mechanism): a static method -> `@module @scope
+    // external create`, a static value -> `@module @scope @get`/`external`. Filter to OWN `static`
+    // members — Function.prototype members (`call`/`apply`/`bind`/`length`/`name`) are lib-inherited.
+    const staticMethods = []
+    const staticValues = []
+    for (const p of staticType.getProperties()) {
+        const pname = p.getName()
+        if (pname === 'prototype') continue
+        const d = p.declarations && p.declarations[0]
+        if (!d || !(ts.getCombinedModifierFlags(d) & ts.ModifierFlags.Static) || isHidden(p)) continue
+        const pt = checker.getTypeOfSymbolAtLocation(p, decl)
+        if (pt.getCallSignatures().length) {
+            try {
+                const { params, ret } = sigToMembers(pt.getCallSignatures()[0], ctx, 0)
+                staticMethods.push({ jsName: pname, params, ret })
+            } catch (error) {
+                if (!isUnsupportedRestError(error)) throw error
+                skippedMembers.push({ name: pname, reason: error.message })
+            }
+        } else {
+            const prev = ctx.produced
+            ctx.produced = false
+            staticValues.push({ jsName: pname, type: classify(pt, ctx, pname, 0) })
             ctx.produced = prev
         }
     }
@@ -1636,7 +1689,7 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
         enums, records, unboxed,
         // The class's own abstract type in the sink — emit aliases `type t = InstanceTypes.<sinkName>`.
         sinkName: (opts.classSink && opts.classSink.get(importName)) || lower(importName),
-        ctor, methods, getters, skippedMembers,
+        ctor, methods, getters, setters, staticMethods, staticValues, skippedMembers,
     }
 }
 
@@ -1923,11 +1976,27 @@ export function extractModule(entryFile, opts = {}) {
                 // shape, #102), whose "properties" are the namespace's own members: those emit
                 // separately, and the root must stay a plain positional function binding.
                 try {
-                    const ir = buildFunctionIR(checker, sym, source, name, from, { ...opts, shared })
-                    ir.import.jsName = jsName
-                    ir.import.isDefault = isDefault
-                    seen.add(name)
-                    functions.push({ name, ir })
+                    // #109.8: a function with MULTIPLE call signatures (top-level overloads) bound
+                    // only signature[0], silently dropping the rest. Bind EACH overload: the first
+                    // keeps the bare name, the others get a deterministic suffix from their params;
+                    // all share the one JS name (`= "parse"`), the hand-written N-externals idiom.
+                    const sigs = type.getCallSignatures()
+                    let bound = false
+                    const emittedSigs = new Set() // dedup overloads that COLLAPSE to the same ReScript
+                    for (let i = 0; i < sigs.length; i++) {                    // signature (e.g. generic params flattened to `string`)
+                        let oname = i === 0 ? name : name + overloadSuffix(sigs[i], sigs[0])
+                        for (let n = 2; seen.has(oname); n++) oname = name + overloadSuffix(sigs[i], sigs[0]) + n
+                        const ir = buildFunctionIR(checker, sym, source, oname, from, { ...opts, shared, sig: sigs[i] })
+                        const sigKey = (ir.sig.params || []).map((p) => typeSig(p.type)).join(',') + '=>' + typeSig(ir.sig.ret)
+                        if (emittedSigs.has(sigKey)) continue // identical binding — the base overload already covers it
+                        emittedSigs.add(sigKey)
+                        ir.import.jsName = jsName
+                        ir.import.isDefault = isDefault
+                        seen.add(oname)
+                        functions.push({ name: oname, ir })
+                        bound = true
+                    }
+                    if (!bound) skipped.push({ name, reason: 'no-call-signature' })
                 } catch (e) {
                     skipped.push({ name, reason: 'fn-extract-error: ' + e.message.split('\n')[0].slice(0, 50) })
                 }

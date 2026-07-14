@@ -2,7 +2,7 @@
 
 **195** components · ✅ **174** usable · 🔍 **21** need review · 🛑 **0** broken
 
-**10** function binding(s) → `ReactBindings.res`.
+**13** function binding(s) → `ReactBindings.res`.
 
 **545** shared types deduplicated into **58** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
@@ -21,6 +21,9 @@ Standalone function exports, emitted as positional `@module external` bindings i
 - `useDirection`
 - `useMenuSubmenuRootContext`
 - `mergeProps`
+- `mergePropsWithC`
+- `mergePropsWithCAndD`
+- `mergePropsWithCAndDAndE`
 - `mergePropsN`
 - `makeEventPreventable`
 - `mergeClassNames`
