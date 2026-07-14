@@ -6,6 +6,19 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- **Coverage papercuts (batch 1)** (#109) — four independent gaps from the coverage audit:
+  - **#109.1** an ambient-module-only `.d.ts` (`declare module "pkg" { … }`, no top-level exports —
+    older `@types/*`) **crashed** "No module symbol" and produced nothing; now falls back to the
+    ambient module declared in the file and binds its exports.
+  - **#109.2** `interface X extends Array<T> {}` (classnames' `ArgumentArray`) was silently a bogus
+    `{ ...JsxDOM.domProps }` record; now `array<T>`. A hybrid (`extends Array<T>` + own fields) keeps
+    its record so those fields aren't lost.
+  - **#109.3** a symbol-keyed prop emitted TS's mangled `@as("__@sym@N")` (an impossible JSX
+    attribute); now skipped with an ⓘ note, real props unaffected.
+  - **#109.6** a numeric index signature `{ [n: number]: V }` was an opaque `JSON.t`; now `Dict.t<V>`
+    (JS object keys are strings at runtime).
+
+    Byte-identical on all 9 benchmark packages. Fixtures: `ambient-module-only`, `coverage-papercuts`.
 - **React class components bound as unusable `@new` class modules** (#101) — `class Slider extends
   React.Component<Props>` has construct (not call) signatures, so `isReactComponent` missed it and it
   emitted `@new external make: unit => t` + `@send render` — wrong ctor arity, unusable in JSX, and
