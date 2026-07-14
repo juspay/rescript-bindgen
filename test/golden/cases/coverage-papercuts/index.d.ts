@@ -7,6 +7,13 @@ type Argument = string | number
 interface ArgumentArray extends Array<Argument> {}
 export declare const List: (props: { items: ArgumentArray }) => JsxElement
 
+// #109.2 (rev): a DECLARATION-MERGED Array-extender adds `extra` in a SECOND declaration. The
+// "no own members" check reads the resolved property SET (not the first declaration), so `extra`
+// is seen and the type keeps its record — the array-flatten must NOT silently drop it.
+interface MergedList extends Array<string> {}
+interface MergedList { extra: number }
+export declare const Merged: (props: { m: MergedList }) => JsxElement
+
 // #109.6: a NUMERIC index signature `{ [n: number]: V }` was an opaque `JSON.t` — but JS object keys
 // are strings at runtime, so it's a `Dict.t<V>` (same as a string index).
 interface NumMap { [n: number]: string }

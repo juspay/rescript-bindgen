@@ -221,6 +221,7 @@ const checks = [
     return [
       ['#109.1: ambient-module-only .d.ts binds (no crash)', amb.functions.some((f) => f.name === 'doThing')],
       ['#109.2: interface extends Array<T> → array', !!list && t(list.ir.props.find((p) => p.name === 'items'))?.kind === 'array'],
+      ['#109.2 rev: declaration-merged Array-extender keeps its merged field (no array-flatten)', (() => { const m = cp.components.find((c) => c.name === 'Merged'); return !!m && t(m.ir.props.find((p) => p.name === 'm'))?.kind !== 'array' })()],
       ['#109.6: numeric index signature → dict', !!grid && t(grid.ir.props.find((p) => p.name === 'cells'))?.kind === 'dict'],
       ['#109.3: symbol-keyed prop skipped + noted, real props kept', !!widget && (widget.ir.symbolProps || []).length === 1 && widget.ir.props.some((p) => p.name === 'visible') && !widget.ir.props.some((p) => /^__@/.test(p.name))],
     ]

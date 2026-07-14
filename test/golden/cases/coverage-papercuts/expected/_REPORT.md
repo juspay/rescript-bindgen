@@ -1,8 +1,8 @@
 # Binding report — `demo`
 
-**3** components · ✅ **3** usable · 🔍 **0** need review · 🛑 **0** broken
+**4** components · ✅ **4** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**1** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**2** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -18,6 +18,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 
 - Grid
 - List
+- Merged
 - Widget
 
 ## ⚪ Loosely typed (widened to `string`)

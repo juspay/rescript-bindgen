@@ -3078,9 +3078,13 @@ function classify(type, ctx, propName = '', depth = 0) {
     // fields (dropping array-indexing) rather than dropping the fields.
     if ((flags & ts.TypeFlags.Object) && type.isClassOrInterface?.() && !checker.isArrayType?.(type)) {
         const arrBase = (checker.getBaseTypes?.(type) || []).find((b) => checker.isArrayType?.(b))
-        const idecl = arrBase && (type.symbol?.declarations || []).find((d) => ts.isInterfaceDeclaration(d))
-        const ownMembers = idecl ? (idecl.members || []).length : 1
-        const elem = arrBase && ownMembers === 0 && (checker.getTypeArguments?.(arrBase) || [])[0]
+        // "No own members" is measured against the resolved property SET, not the first declaration's
+        // syntax — so DECLARATION MERGING (`interface M extends Array<T> {}` + `interface M { extra }`)
+        // is handled: `extra` is in `getProperties()` (which merges all declarations) but not in the
+        // Array base, so the delta is non-empty and M keeps its record (no silent field drop). (#109.2 rev)
+        const baseProps = arrBase && new Set((arrBase.getProperties?.() || []).map((p) => p.getName()))
+        const ownProps = arrBase && (type.getProperties?.() || []).filter((p) => !baseProps.has(p.getName()))
+        const elem = arrBase && ownProps.length === 0 && (checker.getTypeArguments?.(arrBase) || [])[0]
         if (elem) return { kind: 'array', of: classify(elem, ctx, propName, depth + 1) }
     }
 
