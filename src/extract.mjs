@@ -4385,6 +4385,13 @@ function memberOf(t, ctx, propName, depth) {
     if (t.flags & (ts.TypeFlags.Number | ts.TypeFlags.NumberLiteral)) return { ctor: 'Num', rt: 'number', type: { kind: 'number', _float: true } }
     if (t.flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) return { ctor: 'Bool', rt: 'boolean', type: { kind: 'boolean' } }
     if (t.flags & (ts.TypeFlags.BigInt | ts.TypeFlags.BigIntLiteral)) return { ctor: 'Big', rt: 'bigint', type: { kind: 'bigint' } }
+    // The bare `object` keyword (`NonPrimitive`) as an @unboxed arm — e.g. `string | object`. It's a
+    // runtime `typeof "object"`, DISJOINT from the primitive arms, so it CAN be discriminated. Typed
+    // `Dict.t<JSON.t>` (a recognized untagged-variant object shape) — NOT `JSON.t`, which is an
+    // ambiguous shape the compiler rejects as a co-payload with `string`. Its `rt:'object'` also makes
+    // `object | Config` (two object arms) fail the @unboxed `claim('object')` and fall to the opaque
+    // module, exactly as #149 intends. (#149 follow-up)
+    if (t.flags & ts.TypeFlags.NonPrimitive) return { ctor: 'Obj', rt: 'object', type: { kind: 'dict', of: { kind: 'raw', res: 'JSON.t' } } }
     const elem = asArray(t, c)
     if (elem) {
         // inArrayElem: an element record's field-`any` may become a generic (`item<'a>`) —

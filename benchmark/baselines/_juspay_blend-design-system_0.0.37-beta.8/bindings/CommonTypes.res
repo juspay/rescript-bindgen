@@ -57,11 +57,4 @@ type truncatedTextWithTooltipV2Props = {
   @as("data-id") dataId?: string,
 }
 @unboxed type stringOrNumberOrStringOrNumberArray = Str(string) | Num(float) | Arr(array<stringOrNumber>)
-module ChartsNavigatorSeriesOptionsData = {
-  type t
-  external fromNumber: float => t = "%identity"
-  external fromJSON: JSON.t => t = "%identity"
-  external asJSON: t => (JSON.t) = "%identity"
-  external fromStringOrNumbers: array<stringOrNumber> => t = "%identity"
-  external asStringOrNumbers: t => (array<stringOrNumber>) = "%identity"
-}
+@unboxed type numberOrValueOrStringOrNumberArray = Num(float) | Obj(Dict.t<JSON.t>) | Arr(array<stringOrNumber>)

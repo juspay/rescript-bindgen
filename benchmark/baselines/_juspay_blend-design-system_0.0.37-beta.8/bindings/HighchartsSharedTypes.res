@@ -395,6 +395,11 @@ type optionsDropdownValue =
   | @as("always") Always
   | @as("never") Never
   | @as("responsive") Responsive
+type mapGeometryTypeValue =
+  | @as("LineString") LineString
+  | @as("MultiLineString") MultiLineString
+  | @as("MultiPolygon") MultiPolygon
+  | @as("Polygon") Polygon
 type synthPatchOscillatorType =
   | @as("square") Square
   | @as("triangle") Triangle
@@ -7434,7 +7439,7 @@ type mapViewInsetsOptions = {
   relativeTo?: mapViewInsetOptionsRelativeToValue,
   units?: optionsUnitsValue,
 }
-@unboxed type mapViewInsetsOptionsOrValueArray = MapViewInsetsOptions(mapViewInsetsOptions) | Arr(array<JSON.t>)
+@unboxed type mapViewInsetsOptionsOrValueArray = MapViewInsetsOptions(mapViewInsetsOptions) | ObjArr(array<Dict.t<JSON.t>>)
 module ChartsMapViewOptionsProjection = {
   type t
   external fromJSON: JSON.t => t = "%identity"
@@ -17041,7 +17046,7 @@ and navigatorSeriesDataLabelsOptions<'a, 'b, 'c> = {
 and navigatorSeriesOptions<'a, 'b, 'c> = {
   className?: string,
   color?: ColorType.t,
-  data?: array<CommonTypes.ChartsNavigatorSeriesOptionsData.t>,
+  data?: array<CommonTypes.numberOrValueOrStringOrNumberArray>,
   dataGrouping?: dataGroupingOptionsObject,
   dataLabels?: navigatorSeriesDataLabelsOptionsOrNavigatorSeriesDataLabelsOptionsArray<'a, 'b, 'c>,
   fillOpacity?: float,
@@ -17070,15 +17075,15 @@ and navigatorOptions<'a, 'b, 'c> = {
   xAxis?: navigatorXAxisOptionsOrNavigatorXAxisOptionsArray<'a, 'b, 'c>,
   yAxis?: navigatorYAxisOptionsOrNavigatorYAxisOptionsArray<'a, 'b, 'c>,
 }
-and navigationAnnotationsShapesOptions<'e, 'f> = {
+and navigationAnnotationsShapesOptions<'f, 't6> = {
   controlPoints?: annotationControlPointOptionsObjectOrAnnotationControlPointOptionsObjectArray,
   dashStyle?: dashStyleValue,
   fill?: ColorType.t,
   height?: float,
   markerEnd?: string,
   markerStart?: string,
-  point?: highchartsNavigationAnnotationsShapesOptionsPoint<'e>,
-  points?: array<highchartsNavigationAnnotationsShapesOptionsPoints<'f>>,
+  point?: highchartsNavigationAnnotationsShapesOptionsPoint<'f>,
+  points?: array<highchartsNavigationAnnotationsShapesOptionsPoints<'t6>>,
   r?: float,
   ry?: float,
   snap?: float,
@@ -17090,7 +17095,7 @@ and navigationAnnotationsShapesOptions<'e, 'f> = {
   xAxis?: float,
   yAxis?: float,
 }
-and navigationAnnotationsLabelsOptions<'a, 'b, 'c, 'd> = {
+and navigationAnnotationsLabelsOptions<'a, 'b, 'c, 'e> = {
   accessibility?: annotationLabelAccessibilityOptionsObject,
   align?: alignValue,
   allowOverlap?: bool,
@@ -17107,7 +17112,7 @@ and navigationAnnotationsLabelsOptions<'a, 'b, 'c, 'd> = {
   includeInDataExport?: bool,
   overflow?: optionsOverflowValue,
   padding?: float,
-  point?: highchartsNavigationAnnotationsLabelsOptionsPoint<'d>,
+  point?: highchartsNavigationAnnotationsLabelsOptionsPoint<'e>,
   shadow?: boolOrShadowOptionsObject,
   shape?: string,
   style?: cssObjectHighcharts,
@@ -17117,7 +17122,7 @@ and navigationAnnotationsLabelsOptions<'a, 'b, 'c, 'd> = {
   x?: float,
   y?: float,
 }
-and navigationAnnotationsOptions<'a, 'b, 'c, 'd, 'e, 'f> = {
+and navigationAnnotationsOptions<'a, 'b, 'c, 'e, 'f, 't6> = {
   animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | NavigationAnnotationsAnimationOptions` — match the real type by hand
   className?: string,
   controlPointOptions?: annotationControlPointOptionsObject,
@@ -17126,9 +17131,9 @@ and navigationAnnotationsOptions<'a, 'b, 'c, 'd, 'e, 'f> = {
   events?: annotationsEventsOptions,
   id?: CommonTypes.stringOrNumber,
   labelOptions?: annotationsLabelOptions<'a, 'b, 'c>,
-  labels?: array<navigationAnnotationsLabelsOptions<'a, 'b, 'c, 'd>>,
+  labels?: array<navigationAnnotationsLabelsOptions<'a, 'b, 'c, 'e>>,
   shapeOptions?: annotationsShapeOptions,
-  shapes?: array<navigationAnnotationsShapesOptions<'e, 'f>>,
+  shapes?: array<navigationAnnotationsShapesOptions<'f, 't6>>,
   @as("type") type_?: string,
   typeOptions?: annotationsTypeOptions,
   types?: string,  // ⚪ loose — was `NavigationAnnotationsTypesOptions`
@@ -29815,9 +29820,9 @@ and chart<'a, 'b, 'c> = {
 @unboxed and navigatorYAxisOptionsOrNavigatorYAxisOptionsArray<'a, 'b, 'c> = NavigatorYAxisOptions(navigatorYAxisOptions<'a, 'b, 'c>) | NavigatorYAxisOptionsArr(array<navigatorYAxisOptions<'a, 'b, 'c>>)
 @unboxed and navigatorXAxisOptionsOrNavigatorXAxisOptionsArray<'a, 'b, 'c> = NavigatorXAxisOptions(navigatorXAxisOptions<'a, 'b, 'c>) | NavigatorXAxisOptionsArr(array<navigatorXAxisOptions<'a, 'b, 'c>>)
 @unboxed and navigatorSeriesDataLabelsOptionsOrNavigatorSeriesDataLabelsOptionsArray<'a, 'b, 'c> = NavigatorSeriesDataLabelsOptions(navigatorSeriesDataLabelsOptions<'a, 'b, 'c>) | NavigatorSeriesDataLabelsOptionsArr(array<navigatorSeriesDataLabelsOptions<'a, 'b, 'c>>)
-@unboxed and highchartsNavigationAnnotationsShapesOptionsPoints<'f> = Str(string) | Fn('f => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
-@unboxed and highchartsNavigationAnnotationsShapesOptionsPoint<'e> = Str(string) | Fn('e => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
-@unboxed and highchartsNavigationAnnotationsLabelsOptionsPoint<'d> = Str(string) | Fn('d => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
+@unboxed and highchartsNavigationAnnotationsShapesOptionsPoints<'t6> = Str(string) | Fn('t6 => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
+@unboxed and highchartsNavigationAnnotationsShapesOptionsPoint<'f> = Str(string) | Fn('f => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
+@unboxed and highchartsNavigationAnnotationsLabelsOptionsPoint<'e> = Str(string) | Fn('e => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
 @unboxed and plotXrangeDataLabelsOptionsOrPlotXrangeDataLabelsOptionsArray<'a, 'b, 'c> = PlotXrangeDataLabelsOptions(plotXrangeDataLabelsOptions<'a, 'b, 'c>) | PlotXrangeDataLabelsOptionsArr(array<plotXrangeDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotTreemapLevelsDataLabelsOptionsOrPlotTreemapLevelsDataLabelsOptionsArray<'a, 'b, 'c> = PlotTreemapLevelsDataLabelsOptions(plotTreemapLevelsDataLabelsOptions<'a, 'b, 'c>) | PlotTreemapLevelsDataLabelsOptionsArr(array<plotTreemapLevelsDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotTreemapDataLabelsOptionsOrPlotTreemapDataLabelsOptionsArray<'a, 'b, 'c> = PlotTreemapDataLabelsOptions(plotTreemapDataLabelsOptions<'a, 'b, 'c>) | PlotTreemapDataLabelsOptionsArr(array<plotTreemapDataLabelsOptions<'a, 'b, 'c>>)
@@ -30358,8 +30363,8 @@ module ChartsNavigationOptionsAnnotationsOptions = {
   type t = chartsNavigationOptionsAnnotationsOptions_t
   external fromAnnotationsOptions: annotationsOptions<'a, 'b, 'c> => t = "%identity"
   external asAnnotationsOptions: t => (annotationsOptions<'a, 'b, 'c>) = "%identity"
-  external fromNavigationAnnotationsOptions: navigationAnnotationsOptions<'a, 'b, 'c, 'd, 'e, 'f> => t = "%identity"
-  external asNavigationAnnotationsOptions: t => (navigationAnnotationsOptions<'a, 'b, 'c, 'd, 'e, 'f>) = "%identity"
+  external fromNavigationAnnotationsOptions: navigationAnnotationsOptions<'a, 'b, 'c, 'e, 'f, 't6> => t = "%identity"
+  external asNavigationAnnotationsOptions: t => (navigationAnnotationsOptions<'a, 'b, 'c, 'e, 'f, 't6>) = "%identity"
 }
 module ChartsSeriesSankeyNodesOptionsObjectDataLabels = {
   type t = chartsSeriesSankeyNodesOptionsObjectDataLabels_t
@@ -31031,6 +31036,38 @@ type exportingMenuObject<'a, 'b, 'c> = {
   separator?: bool,
   text?: string,
   textKey?: string,
+}
+module ChartsSeriesMapDataGeometryOptionsCoordinates = {
+  type t
+  external fromArray: array<float> => t = "%identity"
+  external fromLonLatArrays: array<array<float>> => t = "%identity"
+  external asLonLatArrays: t => (array<array<float>>) = "%identity"
+}
+type seriesMapDataGeometryOptions = {
+  coordinates?: array<ChartsSeriesMapDataGeometryOptionsCoordinates.t>,
+  @as("type") type_?: mapGeometryTypeValue,
+}
+module ChartsSeriesMapDataOptionsGeometry = {
+  type t
+  external fromJSON: JSON.t => t = "%identity"
+  external asJSON: t => (JSON.t) = "%identity"
+  external fromSeriesMapDataGeometryOptions: seriesMapDataGeometryOptions => t = "%identity"
+  external asSeriesMapDataGeometryOptions: t => (seriesMapDataGeometryOptions) = "%identity"
+}
+type seriesMapDataOptions<'a, 'b, 'c> = {
+  color?: ColorType.t,
+  dataLabels?: dataLabelsOptions,
+  drilldown?: string,
+  events?: pointEventsOptionsObject<'a, 'b, 'c>,
+  geometry?: ChartsSeriesMapDataOptionsGeometry.t,
+  id?: string,
+  labelrank?: float,
+  middleX?: float,
+  middleY?: float,
+  name?: string,
+  path?: string,
+  states?: seriesStatesOptionsObject,
+  value?: float,
 }
 type blendChartProps<'a, 'b, 'c> = {
   allowChartUpdate?: bool,

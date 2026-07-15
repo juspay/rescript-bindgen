@@ -300,6 +300,14 @@ const checks = [
       ['#149: solo bare `object` keyword → JSON.t (was string)', raw(solo?.type)],
       ['#149: object|Config → opaque module (typeRef to .t)', !!onp && onp.type?.kind === 'typeRef' && /OnPoint\.t$/.test(onp.type.to)],
       ['#149: opaque module has a JSON arm + the named Config arm', !!opq && (opq.members || []).some((x) => x.name === 'JSON') && (opq.members || []).some((x) => x.name === 'OnPointOptions')],
+      // string|object is runtime-DISJOINT -> @unboxed with the object arm as Dict.t<JSON.t> (a
+      // recognized untagged-variant shape), unlike object|Config which needs the opaque module.
+      ['#149: string|object → @unboxed Str(string) | Obj(Dict.t<JSON.t>)', (() => {
+        const label = series && series.ir.props.find((p) => p.name === 'label')
+        const u = m.shared.entries.find((e) => e.kind === 'unboxed' && e.name === (label && label.type.to))
+        return !!u && (u.members || []).some((x) => x.ctor === 'Str') &&
+          (u.members || []).some((x) => x.ctor === 'Obj' && x.type?.kind === 'dict' && x.type.of?.res === 'JSON.t')
+      })()],
     ]
   })(),
 ]

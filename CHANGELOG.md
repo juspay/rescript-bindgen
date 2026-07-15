@@ -13,7 +13,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   union arm it counts as *structured* — so `object | Config` reaches the opaque-module path:
   `module …OnPoint = { type t; external fromJSON: JSON.t => t = "%identity"; external
   fromPlotXrangeOnPointOptions: … = "%identity"; + as* readers }` (the two arms are both `typeof
-  "object"`, so an `@unboxed` can't discriminate them — per-arm `%identity` views can). On the
+  "object"`, so an `@unboxed` can't discriminate them — per-arm `%identity` views can). When the other
+  arm IS runtime-disjoint — `string | object` — it instead binds `@unboxed Str(string) |
+  Obj(Dict.t<JSON.t>)` (the object arm typed `Dict.t<JSON.t>`, a recognized untagged-variant shape,
+  since a bare `JSON.t` can't be an `@unboxed` co-payload with `string`). On the
   `@juspay/blend-design-system` Highcharts surface this creates **115 `onPoint` opaque modules**
   (0 remain `string`) and drops **~360 more `string` placeholders** — additions only, all compiling,
   metrics equal-or-better. Fixture: `object-config-union`.

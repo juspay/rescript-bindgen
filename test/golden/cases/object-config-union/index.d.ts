@@ -14,4 +14,8 @@ interface OnPointOptions {
 export declare const Series: (props: {
   onPoint?: object | OnPointOptions
   solo?: object
+  // #149 follow-up: `string | object` — the arms are runtime-DISJOINT (typeof string vs object), so
+  // unlike `object | Config` this can `@unboxed`. The object arm is `Dict.t<JSON.t>` (a recognized
+  // object shape) — not `JSON.t`, which the untagged-variant compiler rejects as a co-payload.
+  label?: string | object
 }) => JsxElement
