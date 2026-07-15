@@ -133,7 +133,7 @@ type navigationMenuPositionerState = {
 }
 type timeout = {
   currentId: float,
-  start: (float, string) => unit,  // ⚪ loose — was `Function`
+  start: (float, JsFn.t) => unit,
   isStarted: unit => bool,
   clear: unit => unit,
   disposeEffect: unit => unit => unit,

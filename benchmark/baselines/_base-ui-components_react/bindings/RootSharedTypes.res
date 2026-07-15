@@ -963,7 +963,7 @@ type rootPopoverStoreSetOpenConfig = {
   isPropagationAllowed: bool,
   trigger?: Dom.element,
 }
-type contextUiixk = {
+type contextJ6vpd = {
   triggerElements: PopupsTypes.popupTriggerMap,
   popupRef: React.ref<Nullable.t<Dom.element>>,
   onOpenChange?: (bool, popoverRootChangeEventDetails) => unit,
@@ -1026,10 +1026,10 @@ type storePopoverStoreSetStateConfig<'a> = {
   openOnHover: bool,
   closeDelay: float,
 }
-type popoverStoreHwjc8<'a> = {
+type popoverStoreHtnqz<'a> = {
   setOpen: (bool, rootPopoverStoreSetOpenConfig) => unit,
   disposeEffect: string,  // 🛑 BROKEN — contains `any`
-  context: contextUiixk,
+  context: contextJ6vpd,
   controlledValues: string,  // 🛑 BROKEN — contains `any`
   selectors: string,  // 🛑 BROKEN — contains `any`
   useSyncedValue: (rootPopoverStoreUseSyncedValue, string) => unit,  // 🛑 BROKEN — contains `unknown`
@@ -1051,16 +1051,16 @@ type popoverStoreHwjc8<'a> = {
   getSnapshot: unit => storePopoverStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
-type popoverHandleJ4ei5<'a> = {
-  store: popoverStoreHwjc8<'a>,
+type popoverHandleAxlr9<'a> = {
+  store: popoverStoreHtnqz<'a>,
   @as("open") open_: string => unit,
   close: unit => unit,
   isOpen: bool,
 }
-type popoverStoreM8ie2<'a> = {
+type popoverStoreGz1y8<'a> = {
   setOpen: (bool, rootPopoverStoreSetOpenConfig) => unit,
   disposeEffect: string,  // 🛑 BROKEN — contains `any`
-  context: contextUiixk,
+  context: contextJ6vpd,
   controlledValues: string,  // 🛑 BROKEN — contains `any`
   selectors: string,  // 🛑 BROKEN — contains `any`
   useSyncedValue: (TriggerTypes.triggerPopoverStoreUseSyncedValue, string) => unit,  // 🛑 BROKEN — contains `unknown`
@@ -1082,8 +1082,8 @@ type popoverStoreM8ie2<'a> = {
   getSnapshot: unit => storePopoverStoreSetStateConfig<'a>,
   notifyAll: unit => unit,
 }
-type popoverHandleV211ha<'a> = {
-  store: popoverStoreM8ie2<'a>,
+type popoverHandleV1jjkq<'a> = {
+  store: popoverStoreGz1y8<'a>,
   @as("open") open_: string => unit,
   close: unit => unit,
   isOpen: bool,

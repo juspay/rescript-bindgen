@@ -11,6 +11,6 @@ external make: (
   ~modal: CommonTypes.boolOrTrapFocus=?,
   ~triggerId: Nullable.t<string>=?,
   ~defaultTriggerId: Nullable.t<string>=?,
-  ~handle: RootSharedTypes.popoverHandleJ4ei5<'a>=?,
+  ~handle: RootSharedTypes.popoverHandleAxlr9<'a>=?,
   ~children: React.element=?,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
 ) => React.element = "Root"

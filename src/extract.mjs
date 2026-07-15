@@ -2618,6 +2618,21 @@ function webSink(ctx, tsName) {
  *  every field is bounded at budget-1 (cycle-guarded via `seen`). Anything else → conservatively
  *  unbounded, so the caller truncates, keeping the unbounded Highcharts graph bounded. Gate for the
  *  named-bounded-record escape (recovers `XAxisLabelsOptions` and co.). (#115 item 1) */
+/** The bare, untyped global `Function` (lib.es5) — `Object`-flagged, ZERO call signatures, symbol
+ *  name `Function`, from a lib/@types declaration, carrying the `apply`/`call`/`bind` prototype. A
+ *  TYPED function (`() => void`, a callback alias) has ≥1 call signature and never matches. It has no
+ *  signature to model, but IS a callable runtime leaf → bound to the shared `JsFn` opaque module
+ *  (`fromFnN`/`asFnN`) instead of a flagged `string`. The `isLibraryType` guard + prototype
+ *  fingerprint keep a first-party `interface Function {}` from matching. (#120) */
+function isBareFunction(type) {
+    if (!type || !(type.flags & ts.TypeFlags.Object)) return false
+    if (type.getCallSignatures?.().length) return false
+    const sym = (type.getSymbol && type.getSymbol()) || type.symbol
+    if (!sym || sym.getName?.() !== 'Function' || !isLibraryType(type)) return false
+    const props = new Set((type.getProperties?.() || []).map((p) => p.getName()))
+    return ['apply', 'call', 'bind'].every((n) => props.has(n))
+}
+
 function boundedPastDepth(t, ctx, checker, budget, seen) {
     if (!t) return false
     const f = t.flags
@@ -2629,6 +2644,7 @@ function boundedPastDepth(t, ctx, checker, budget, seen) {
     if (t.id != null && ctx.shared && ctx.shared.byKey.has('id:' + t.id)) return true // registered → link
     if (checker.isArrayType?.(t) || checker.isTupleType?.(t)) return true
     if (t.getCallSignatures?.().length === 1 && !(t.getProperties?.().length)) return true
+    if (isBareFunction(t)) return true // a bare `Function` → the fixed `JsFn` module: zero registry growth (#120)
     if (t.isUnion && t.isUnion()) return t.types.every((a) => boundedPastDepth(a, ctx, checker, budget, seen))
     if (f & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) {
         if (checker.getIndexInfoOfType?.(t, ts.IndexKind.String) && !(t.getProperties?.().length)) return true
@@ -2720,6 +2736,14 @@ function classify(type, ctx, propName = '', depth = 0) {
                 try { return functionNode(dSigs[0], ctx, propName, depth) }
                 finally { ctx.pastDepthFn = prevPDF; if (type.id != null) ctx.visiting.delete(type.id) }
             }
+        }
+        // A bare `Function` past the bound is a callable runtime leaf → the shared `JsFn` module,
+        // same as below the bound. MUST precede the named-bounded-record escape (which now sees
+        // `Function` as bounded, #120) — else a past-depth `Function` would be sent to `recordNode`
+        // and build a junk record from `apply`/`call`/`bind`. (#120)
+        if (ctx.shared && isBareFunction(type)) {
+            ctx.shared.usesJsFn = true
+            return { kind: 'raw', res: 'JsFn.t', note: 'was `Function` — build with JsFn.fromFn0/1/2/3, read with JsFn.asFn0/1/2/3' }
         }
         // Zero-cost leaves resolve even past the bound — a primitive CANNOT expand the graph, so
         // truncating `enabled?: boolean` to an opaque `string` was pure loss. Without this, every
@@ -3317,6 +3341,16 @@ function classify(type, ctx, propName = '', depth = 0) {
     // @unboxed variants (`Fn(string => string)` — the #41 fake). (#41)
     if (isObjectish && type.getProperties().length === 0 && !type.getCallSignatures().length) {
         return { kind: 'raw', res: 'JSON.t' }
+    }
+
+    // A bare untyped global `Function` (Highcharts `proj4`, `pointDescriptionFormatter?: Function`,
+    // records' `complete?/step?: Function`) has no signature to type but IS a callable runtime leaf.
+    // Bind it to the shared hand-authored `JsFn` opaque module — honest, non-imperfect, zero-cost,
+    // consumer-usable — instead of a flagged `string`. Module mode only (like the other %identity
+    // strategies; --stdout has no shared file to write). (#120)
+    if (ctx.shared && isBareFunction(type)) {
+        ctx.shared.usesJsFn = true
+        return { kind: 'raw', res: 'JsFn.t', note: 'was `Function` — build with JsFn.fromFn0/1/2/3, read with JsFn.asFn0/1/2/3' }
     }
 
     // give up -> opaque, flagged for review
@@ -4385,6 +4419,10 @@ function memberOf(t, ctx, propName, depth) {
         }
         return { ctor: 'Fn', rt: 'function', type: fn }
     }
+    // NB: a bare untyped `Function` arm (`easing?: string | Function`) is deliberately NOT given an
+    // `@unboxed` member — its `JsFn.t` payload is an ABSTRACT type, so ReScript can't statically know
+    // its runtime tag to discriminate the untagged variant (same limit as `React.element`, #46). Such
+    // a union falls back to the honest loose `string` rather than an uncompilable `@unboxed`. (#120)
     // NOTE: an INTERSECTION arm with a call signature (`CSSProperties & ((state) =>
     // CSSProperties)`, base-ui's resolved style shape) is caught by the branch above —
     // the checker surfaces constituents' call signatures on the intersection, and at
