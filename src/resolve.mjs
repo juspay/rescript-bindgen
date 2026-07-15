@@ -94,7 +94,7 @@ function typesVersionsRemap(tv, rel) {
                 const pre = pattern.slice(0, star), post = pattern.slice(star + 1)
                 if (rel.startsWith(pre) && rel.endsWith(post) && rel.length >= pre.length + post.length) {
                     const mid = rel.slice(pre.length, rel.length - post.length)
-                    for (const t of targets) out.push(t.replace('*', mid))
+                    for (const t of targets) out.push(t.replace(/\*/g, mid))
                 }
             } else if (pattern === rel) {
                 out.push(...targets)
