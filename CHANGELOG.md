@@ -6,6 +6,20 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **`object | Config` chart unions bind to an opaque module** (#120 Part B / #149) — the bare `object`
+  keyword (TS `NonPrimitive` — "any non-primitive", no shape) was dropped to a flagged `string`, which
+  also collapsed `object | Config` unions (Highcharts `onPoint?: object | PlotXrangeOnPointOptions`).
+  The `object` keyword now maps to `JSON.t` (the same opaque-value mapping as `unknown`/`{}`), and as a
+  union arm it counts as *structured* — so `object | Config` reaches the opaque-module path:
+  `module …OnPoint = { type t; external fromJSON: JSON.t => t = "%identity"; external
+  fromPlotXrangeOnPointOptions: … = "%identity"; + as* readers }` (the two arms are both `typeof
+  "object"`, so an `@unboxed` can't discriminate them — per-arm `%identity` views can). When the other
+  arm IS runtime-disjoint — `string | object` — it instead binds `@unboxed Str(string) |
+  Obj(Dict.t<JSON.t>)` (the object arm typed `Dict.t<JSON.t>`, a recognized untagged-variant shape,
+  since a bare `JSON.t` can't be an `@unboxed` co-payload with `string`). On the
+  `@juspay/blend-design-system` Highcharts surface this creates **115 `onPoint` opaque modules**
+  (0 remain `string`) and drops **~360 more `string` placeholders** — additions only, all compiling,
+  metrics equal-or-better. Fixture: `object-config-union`.
 - **Bare `Function` fields bind to a `JsFn` opaque module — and unblock `boolean|Config` unions**
   (#120, Part A) — a bare untyped global `Function` (Highcharts `proj4`, `pointDescriptionFormatter`,
   record `complete`/`step`) has no call signature to type and was dropped to a flagged `string`. It's

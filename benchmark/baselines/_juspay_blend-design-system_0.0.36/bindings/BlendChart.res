@@ -3,7 +3,7 @@ external make: (
   ~ref: React.ref<Nullable.t<DistTypes.highchartsReactRefObject<'a, 'b, 'c>>>=?,
   ~allowChartUpdate: bool=?,
   ~constructorType: HighchartsSharedTypes.chartsBlendChartPropsConstructorType=?,
-  ~containerProps: Dict.t<'t6>=?,
+  ~containerProps: Dict.t<'t7>=?,
   ~highcharts: InstanceTypes.highchartsModule=?,
   ~immutable: bool=?,
   ~options: HighchartsSharedTypes.options<'a, 'b, 'c>=?,
