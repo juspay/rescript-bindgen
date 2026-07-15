@@ -24,6 +24,26 @@ import { writeFileSync, mkdirSync, existsSync, readFileSync, readdirSync, unlink
 import { join, resolve as pathResolve, basename, dirname, relative } from 'path'
 import { createInterface } from 'readline'
 
+// The shared `JsFn.res` module (#120): the honest, zero-cost handle for a bare untyped global
+// `Function` (no call signature to model). A `.res` file IS its module, so the body is top-level —
+// references qualify as `JsFn.t` / `JsFn.fromFn1`. Arity 0–3 covers observed bare-`Function`
+// callbacks (Highcharts `complete`/`step`/formatters are 0–2 args); each external is independently
+// generalized, so reused `'a`/`'b` names are fine. `from*`/`as*` %identity views satisfy the
+// no-unsafe-cast contract (an opaque-module constructor/accessor, the value passes through unchanged).
+const JS_FN_SOURCE = `// The bare, untyped JS \`Function\` (#120) — a callable runtime leaf with no typed signature.
+// Construct with the arity matching your callback, read back with the matching \`asFnN\`.
+// Zero-cost: the function passes through unchanged.
+type t
+external fromFn0: (unit => 'a) => t = "%identity"
+external fromFn1: ('a => 'b) => t = "%identity"
+external fromFn2: (('a, 'b) => 'c) => t = "%identity"
+external fromFn3: (('a, 'b, 'c) => 'd) => t = "%identity"
+external asFn0: t => (unit => 'a) = "%identity"
+external asFn1: t => ('a => 'b) = "%identity"
+external asFn2: t => (('a, 'b) => 'c) = "%identity"
+external asFn3: t => (('a, 'b, 'c) => 'd) = "%identity"
+`
+
 /**
  * Walk up from `startDir` to find the nearest package.json and return its
  * combined dependency names (deps + devDeps). Empty set if none found.
@@ -335,6 +355,16 @@ async function main() {
         writeFileSync(p, attrsPlan.render())
         written.add(relative(outDir, p))
         console.error(`[bindgen] wrote HtmlAttrs.res (${attrsPlan.groupCount} attribute group(s), ${attrsPlan.variantCount} narrowed variant(s)) — ${HTML_ATTRS_PIN} surface`)
+    }
+
+    // The shared `JsFn.res` module — the honest, zero-cost handle for a bare untyped `Function`
+    // (#120). Emitted once, only when some binding referenced `JsFn.t` (`shared.usesJsFn`), same
+    // standalone-file mechanism as `HtmlAttrs.res`.
+    if (plan && shared.usesJsFn) {
+        const p = join(typesDir, 'JsFn.res')
+        writeFileSync(p, JS_FN_SOURCE)
+        written.add(relative(outDir, p))
+        console.error('[bindgen] wrote JsFn.res (bare-Function opaque module)')
     }
 
     let totalDefects = 0

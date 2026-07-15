@@ -308,13 +308,13 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `handle` | `handle?: PopoverHandle<Payload>;` — binds, but references shared field(s) `popoverStoreHwjc8.disposeEffect` (`any`), `popoverStoreHwjc8.controlledValues` (`any`), `popoverStoreHwjc8.selectors` (`any`), `popoverStoreHwjc8.useSyncedValue` (`unknown`) emitted as `string` |
+| `handle` | `handle?: PopoverHandle<Payload>;` — binds, but references shared field(s) `popoverStoreHtnqz.disposeEffect` (`any`), `popoverStoreHtnqz.controlledValues` (`any`), `popoverStoreHtnqz.selectors` (`any`), `popoverStoreHtnqz.useSyncedValue` (`unknown`) emitted as `string` |
 
 ### PopoverTrigger
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `handle` | `handle?: PopoverHandle<Payload>;` — binds, but references shared field(s) `popoverStoreM8ie2.disposeEffect` (`any`), `popoverStoreM8ie2.controlledValues` (`any`), `popoverStoreM8ie2.selectors` (`any`), `popoverStoreM8ie2.useSyncedValue` (`unknown`) emitted as `string` |
+| `handle` | `handle?: PopoverHandle<Payload>;` — binds, but references shared field(s) `popoverStoreGz1y8.disposeEffect` (`any`), `popoverStoreGz1y8.controlledValues` (`any`), `popoverStoreGz1y8.selectors` (`any`), `popoverStoreGz1y8.useSyncedValue` (`unknown`) emitted as `string` |
 
 ### SelectTrigger
 

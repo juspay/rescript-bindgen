@@ -272,6 +272,22 @@ const checks = [
       ['#104: main .mjs swapped to .d.ts (no other entry)', resolvePkg({ main: './dist/index.mjs' }, ['dist/index.d.ts']) === 'dist/index.d.ts'],
     ]
   })(),
+  ...(() => {
+    // #120: bare `Function` → JsFn.t; that unblocks the `boolean|Config` union.
+    const raw = (n) => !!n && n.kind === 'raw' && n.res === 'JsFn.t'
+    const bf = extractModule(join(here, 'golden', 'cases', 'bare-function', 'index.d.ts'), { from: 'demo' })
+    const step = bf.shared.entries.find((e) => e.name === 'stepOptions')
+    const chart = bf.components.find((c) => c.name === 'Chart')
+    const bc = extractModule(join(here, 'golden', 'cases', 'bool-config-union', 'index.d.ts'), { from: 'demo' })
+    const aoo = bc.shared.entries.find((e) => e.name === 'animationOptionsObject')
+    const uni = bc.shared.entries.find((e) => e.kind === 'unboxed' && e.name === 'boolOrAnimationOptionsObject')
+    return [
+      ['#120: bare Function record fields → JsFn.t (raw, perfect)', !!step && raw(step.fields.find((f) => f.name === 'complete')?.type) && raw(step.fields.find((f) => f.name === 'step')?.type)],
+      ['#120: top-level bare Function prop → JsFn.t, sets usesJsFn', !!chart && raw(chart.ir.props.find((p) => p.name === 'proj4')?.type) && bf.shared.usesJsFn === true],
+      ['#120: Config record with Function fields materializes past-depth', !!aoo && raw(aoo.fields.find((f) => f.name === 'step')?.type)],
+      ['#120: boolean|Config union → @unboxed Bool(bool) | Options', !!uni && (uni.members || []).some((m) => m.ctor === 'Bool')],
+    ]
+  })(),
 ]
 
 let ok = true

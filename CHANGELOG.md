@@ -6,6 +6,21 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Bare `Function` fields bind to a `JsFn` opaque module — and unblock `boolean|Config` unions**
+  (#120, Part A) — a bare untyped global `Function` (Highcharts `proj4`, `pointDescriptionFormatter`,
+  record `complete`/`step`) has no call signature to type and was dropped to a flagged `string`. It's
+  now bound to a shared hand-authored **`JsFn.res`** opaque module — `type t` with `%identity`
+  `fromFn0..3` constructors and `asFn0..3` readers — so the consumer can wrap/read a real function at
+  the matching arity (honest, zero-cost, non-imperfect). Because `JsFn.t` is a bounded, non-imperfect
+  leaf, records that transitively contain a `Function` now **materialize past `MAX_DEPTH`** instead of
+  collapsing: e.g. `animation?: boolean | AnimationOptionsObject` becomes
+  `@unboxed Bool(bool) | Options(animationOptionsObject)`. On the Highcharts surface in
+  `@juspay/blend-design-system` this recovers **~930 fewer `string` placeholders** and materializes
+  many previously-collapsed option records (typed `@this` formatters `20 → 45`) — additions/
+  refinements only, all compiling, metrics equal-or-better. A `string | Function` arm stays a loose
+  `string` (an abstract `JsFn.t` can't be an `@unboxed` member, same limit as `React.element`).
+  Per-subpath `object | Config` unions (`onPoint`) are a tracked follow-up (Part B). Fixtures:
+  `bare-function`, `bool-config-union`.
 - **Entry resolution honours the `exports` map and `typesVersions`** (#104) — `typesEntry` previously
   read only `types`/`typings`, a few hard-coded conventions (`index.d.ts`, `dist/`, `lib/`), and the
   `main`-with-`.js`→`.d.ts` swap. A modern package whose types are reachable *only* through the

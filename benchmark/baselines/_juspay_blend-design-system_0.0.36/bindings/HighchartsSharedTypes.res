@@ -209,6 +209,18 @@ type optionsBoostBlendingValue =
   | @as("add") Add
   | @as("darken") Darken
   | @as("multiply") Multiply
+type optionsOperatorValue =
+  | @as("!=") Value
+  | @as("!==") Value2
+  | @as("==") Value3
+  | @as("===") Value4
+  | @as(">") Value5
+  | @as(">=") Value6
+  | @as("<") Value7
+  | @as("<=") Value8
+type dataLabelsOverflowValue =
+  | @as("justify") Justify
+  | @as("allow") Allow
 type optionsFindNearestPointByValue =
   | @as("x") X
   | @as("xy") Xy
@@ -274,6 +286,12 @@ type optionsHLCPointValKeyValue =
   | @as("high") High
   | @as("low") Low
   | @as("close") Close
+type optionsApproximationValue =
+  | @as("none") None
+  | @as("barnes-hut") BarnesHut
+type optionsIntegrationValue =
+  | @as("euler") Euler
+  | @as("verlet") Verlet
 type organizationHangingIndentTranslationValue =
   | @as("inherit") Inherit
   | @as("cumulative") Cumulative
@@ -286,9 +304,17 @@ type chartsSeriesOrganizationOptionsNodeAlignment =
   | @as("center") Center
   | @as("bottom") Bottom
   | @as("top") Top
+type seriesOrganizationNodesLayoutValue =
+  | @as("normal") Normal
+  | @as("hanging") Hanging
 type optionsLinecapValue =
   | @as("round") Round
   | @as("square") Square
+type optionsRotationModeValue =
+  | @as("auto") Auto
+  | @as("circular") Circular
+  | @as("parallel") Parallel
+  | @as("perpendicular") Perpendicular
 type optionsUnitValue =
   | @as("weight") Weight
   | @as("percentage") Percentage
@@ -298,9 +324,6 @@ type tilemapShapeValue =
   | @as("square") Square
   | @as("diamond") Diamond
   | @as("hexagon") Hexagon
-type optionsNodeSizeByValue =
-  | @as("group") Group
-  | @as("leaf") Leaf
 type optionsLayoutAlgorithmValue =
   | @as("squarified") Squarified
   | @as("strip") Strip
@@ -309,6 +332,9 @@ type optionsLayoutAlgorithmValue =
 type optionsLayoutStartingDirectionValue =
   | @as("horizontal") Horizontal
   | @as("vertical") Vertical
+type optionsNodeSizeByValue =
+  | @as("group") Group
+  | @as("leaf") Leaf
 type variablePieSizeByValue =
   | @as("radius") Radius
   | @as("area") Area
@@ -338,18 +364,15 @@ type paneBackgroundShapeValue =
   | @as("solid") Solid
   | @as("circle") Circle
   | @as("arc") Arc
+type sonifcationTypeValue =
+  | @as("instrument") Instrument
+  | @as("speech") Speech
 type optionsAlgorithmValue =
   | @as("middle") Middle
   | @as("first") First
   | @as("firstlast") Firstlast
   | @as("last") Last
   | @as("minmax") Minmax
-type optionsApproximationValue =
-  | @as("none") None
-  | @as("barnes-hut") BarnesHut
-type optionsIntegrationValue =
-  | @as("euler") Euler
-  | @as("verlet") Verlet
 type rangeSelectorButtonTypeValue =
   | @as("all") All
   | @as("year") Year
@@ -372,9 +395,14 @@ type synthPatchOscillatorType =
   | @as("sawtooth") Sawtooth
   | @as("sine") Sine
   | @as("whitenoise") Whitenoise
-type sonifcationTypeValue =
-  | @as("instrument") Instrument
-  | @as("speech") Speech
+type optionsMapFunctionValue =
+  | @as("linear") Linear
+  | @as("logarithmic") Logarithmic
+type optionsWithinValue =
+  | @as("chart") Chart
+  | @as("series") Series
+  | @as("xAxis") XAxis
+  | @as("yAxis") YAxis
 type optionsValueMapFunctionValue =
   | @as("linear") Linear
   | @as("logarithmic") Logarithmic
@@ -1315,6 +1343,44 @@ module ChartsColorAxisLabelsOptionsStyle = {
   external fromColorAxisLabelsStyleOptions: chartParallelAxesLabelsStyleOptions => t = "%identity"
   external asColorAxisLabelsStyleOptions: t => (chartParallelAxesLabelsStyleOptions) = "%identity"
 }
+type pointStatesHoverOptionsObject = {
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAbandsMarkerStatesHoverAnimationOptions | ... 97 more ... | Se` — match the real type by hand
+  enabled?: bool,
+  fillColor?: ColorType.t,
+  height?: float,
+  heightPlus?: float,
+  lineColor?: ColorType.t,
+  lineWidth?: float,
+  lineWidthPlus?: float,
+  radius?: float,
+  radiusPlus?: float,
+  width?: float,
+  widthPlus?: float,
+}
+type pointStatesInactiveOptionsObject = {
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  opacity?: float,
+}
+type pointStatesNormalOptionsObject = {
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+}
+type pointStatesSelectOptionsObject = {
+  enabled?: bool,
+  fillColor?: ColorType.t,
+  height?: float,
+  heightPlus?: float,
+  lineColor?: ColorType.t,
+  lineWidth?: float,
+  radius?: float,
+  width?: float,
+  widthPlus?: float,
+}
+type pointStatesOptionsObject = {
+  hover?: pointStatesHoverOptionsObject,
+  inactive?: pointStatesInactiveOptionsObject,
+  normal?: pointStatesNormalOptionsObject,
+  select?: pointStatesSelectOptionsObject,
+}
 type pointMarkerOptionsObject = {
   animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
   color?: ColorType.t,
@@ -1326,7 +1392,7 @@ type pointMarkerOptionsObject = {
   lineColor?: ColorType.t,
   lineWidth?: float,
   radius?: float,
-  states?: string,  // ⚪ loose — was `PointStatesOptionsObject`
+  states?: pointStatesOptionsObject,
   symbol?: string,
   width?: float,
 }
@@ -1429,6 +1495,14 @@ module ChartsDrilldownOptionsActiveDataLabelStyle = {
   external fromDrilldownActiveDataLabelStyleOptions: drilldownActiveDataLabelStyleOptions => t = "%identity"
   external asDrilldownActiveDataLabelStyleOptions: t => (drilldownActiveDataLabelStyleOptions) = "%identity"
 }
+type animationOptionsObject = {
+  complete?: JsFn.t,
+  defer?: float,
+  duration?: float,
+  easing?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
+  step?: JsFn.t,
+}
+@unboxed type boolOrAnimationOptionsObject = Bool(bool) | AnimationOptionsObject(animationOptionsObject)
 type drilldownBreadcrumbsEventsOptions = {
   click?: (LibTypes.dateTimeFormatOptionsLib, string) => unit,  // ⚪ loose — was `BreadcrumbOptions`
 }
@@ -1495,6 +1569,73 @@ type plotAbandsBottomLineStylesOptions = {
 }
 type plotAbandsBottomLineOptions = {
   styles?: plotAbandsBottomLineStylesOptions,
+}
+type dataLabelsFilterOptionsObject = {
+  operator?: optionsOperatorValue,
+  property?: string,
+  value?: float,
+}
+type plotDependencywheelDataLabelsTextPathAttributesOptions = {
+  dy?: svgAttributes,
+}
+type plotTreegraphDataLabelsLinkTextPathAttributesOptions = {
+  startOffset?: float,
+}
+type plotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions = {
+  startOffset?: float,
+}
+module ChartsDataLabelsTextPathOptionsObjectAttributes = {
+  type t
+  external fromSVGAttributes: svgAttributes => t = "%identity"
+  external asSVGAttributes: t => (svgAttributes) = "%identity"
+  external fromPlotDependencywheelDataLabelsTextPathAttributesOptions: plotDependencywheelDataLabelsTextPathAttributesOptions => t = "%identity"
+  external asPlotDependencywheelDataLabelsTextPathAttributesOptions: t => (plotDependencywheelDataLabelsTextPathAttributesOptions) = "%identity"
+  external fromPlotTreegraphDataLabelsLinkTextPathAttributesOptions: plotTreegraphDataLabelsLinkTextPathAttributesOptions => t = "%identity"
+  external asPlotTreegraphDataLabelsLinkTextPathAttributesOptions: t => (plotTreegraphDataLabelsLinkTextPathAttributesOptions) = "%identity"
+  external fromPlotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions: plotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions => t = "%identity"
+  external asPlotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions: t => (plotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions) = "%identity"
+}
+type dataLabelsTextPathOptionsObject = {
+  attributes?: ChartsDataLabelsTextPathOptionsObjectAttributes.t,
+  enabled?: bool,
+}
+type dataLabelsOptions = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | SeriesArcdiagramDataDataLabelsAnimationOptions | ... 55 more ... |` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: string,  // ⚪ loose — was `DataLabelsFormatterCallbackFunction`
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: string,  // ⚪ loose — was `DataLabelsFormatterCallbackFunction`
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  x?: float,
+  xHigh?: float,
+  xLow?: float,
+  y?: float,
+  yHigh?: float,
+  yLow?: float,
 }
 type dataSortingOptionsObject = {
   enabled?: bool,
@@ -1987,13 +2128,6 @@ module ChartsSeriesTooltipOptionsObjectPosition = {
   external fromPlotZigzagTooltipPositionOptions: plotAdTooltipPositionOptions => t = "%identity"
   external asPlotZigzagTooltipPositionOptions: t => (plotAdTooltipPositionOptions) = "%identity"
 }
-type highchartsTooltipOptionsAnimationConfig = {
-  complete?: string,  // ⚪ loose — was `Function`
-  defer?: float,
-  duration?: float,
-  easing?: string,  // ⚪ loose — was `string | Function`
-  step?: string,  // ⚪ loose — was `Function`
-}
 type tooltipAnimationOptions = {
   duration?: float,
 }
@@ -2001,8 +2135,8 @@ module ChartsTooltipOptionsAnimation = {
   type t
   external fromBool: bool => t = "%identity"
   external asBool: t => (bool) = "%identity"
-  external fromPartial: highchartsTooltipOptionsAnimationConfig => t = "%identity"
-  external asPartial: t => (highchartsTooltipOptionsAnimationConfig) = "%identity"
+  external fromPartial: animationOptionsObject => t = "%identity"
+  external asPartial: t => (animationOptionsObject) = "%identity"
   external fromTooltipAnimationOptions: tooltipAnimationOptions => t = "%identity"
   external asTooltipAnimationOptions: t => (tooltipAnimationOptions) = "%identity"
 }
@@ -2014,14 +2148,14 @@ module ChartsTooltipOptionsStyle = {
   external asTooltipStyleOptions: t => (chartParallelAxesLabelsStyleOptions) = "%identity"
 }
 type symbolDictionary = {
-  arc?: string,  // ⚪ loose — was `Function`
-  callout?: string,  // ⚪ loose — was `Function`
-  circle?: string,  // ⚪ loose — was `Function`
-  diamond?: string,  // ⚪ loose — was `Function`
-  square?: string,  // ⚪ loose — was `Function`
-  triangle?: string,  // ⚪ loose — was `Function`
+  arc?: JsFn.t,
+  callout?: JsFn.t,
+  circle?: JsFn.t,
+  diamond?: JsFn.t,
+  square?: JsFn.t,
+  triangle?: JsFn.t,
 }
-@set_index external symbolDictionarySet: (symbolDictionary, string, JSON.t) => unit = ""
+@set_index external symbolDictionarySet: (symbolDictionary, string, JsFn.t) => unit = ""
 module Arc = {
   type t
   external asAttribs: t => (svgAttributes => Dom.element) = "%identity"
@@ -2082,7 +2216,7 @@ type svgRenderer = {
   fontMetrics: string => fontMetricsObject,  // ⚠️ REVIEW — was `number | SVGElement | Highcharts.SVGElement` — match the real type by hand
   g: option<string> => Dom.element,
   getContrast: string => string,
-  image: (string, option<float>, option<float>, option<float>, option<float>, option<string>) => Dom.element,  // ⚪ loose — was `Function`
+  image: (string, option<float>, option<float>, option<float>, option<float>, option<JsFn.t>) => Dom.element,
   init: (Dom.element, float, float, option<cssObject>, option<bool>, option<bool>, option<bool>) => unit,
   isHidden: unit => bool,
   label: (string, float, option<float>, option<string>, option<float>, option<float>, option<bool>, option<bool>, option<string>) => Dom.element,
@@ -2096,7 +2230,7 @@ type svgRenderer = {
 }
 type dataGroupingOptionsObject = {
   anchor?: string,
-  approximation?: string,  // ⚪ loose — was `string | Function`
+  approximation?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
   dateTimeLabelFormats?: string,  // ⚪ loose — was `object`
   enabled?: bool,
   firstAnchor?: string,
@@ -2113,6 +2247,95 @@ type rec color = {
   setOpacity: float => color,
   tweenTo: (color, float) => ColorType.t,
 }
+type sonificationInstrumentActiveWhenOptions = {
+  crossingDown?: float,
+  crossingUp?: float,
+  max?: float,
+  min?: float,
+  prop?: string,
+}
+module ChartsSeriesSonificationSpeechOptionsActiveWhen = {
+  type t
+  external fromFunction: JsFn.t => t = "%identity"
+  external asFunction: t => (JsFn.t) = "%identity"
+  external fromSonificationInstrumentActiveWhenOptions: sonificationInstrumentActiveWhenOptions => t = "%identity"
+  external asSonificationInstrumentActiveWhenOptions: t => (sonificationInstrumentActiveWhenOptions) = "%identity"
+}
+type sonificationSpeechPitchOptions = {
+  mapFunction?: string,  // ⚪ loose — was `OptionsMapFunctionValue`
+  mapTo?: string,
+  max?: string,
+  min?: string,
+  value?: float,
+  within?: string,
+}
+module ChartsSonificationSpeechMappingOptionsPitch = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromNumber: float => t = "%identity"
+  external fromFunction: JsFn.t => t = "%identity"
+  external asFunction: t => (JsFn.t) = "%identity"
+  external fromSonificationSpeechPitchOptions: sonificationSpeechPitchOptions => t = "%identity"
+  external asSonificationSpeechPitchOptions: t => (sonificationSpeechPitchOptions) = "%identity"
+}
+type sonificationSpeechPlayDelayOptions = {
+  mapFunction?: string,  // ⚪ loose — was `OptionsMapFunctionValue`
+  mapTo?: string,
+  max?: float,
+  min?: float,
+  value?: float,
+  within?: string,  // ⚪ loose — was `OptionsWithinValue`
+}
+module ChartsSonificationSpeechMappingOptionsPlayDelay = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromNumber: float => t = "%identity"
+  external fromFunction: JsFn.t => t = "%identity"
+  external asFunction: t => (JsFn.t) = "%identity"
+  external fromSonificationSpeechPlayDelayOptions: sonificationSpeechPlayDelayOptions => t = "%identity"
+  external asSonificationSpeechPlayDelayOptions: t => (sonificationSpeechPlayDelayOptions) = "%identity"
+}
+module ChartsSonificationSpeechMappingOptionsRate = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromNumber: float => t = "%identity"
+  external fromFunction: JsFn.t => t = "%identity"
+  external asFunction: t => (JsFn.t) = "%identity"
+  external fromSonificationInstrumentTimeOptions: sonificationSpeechPlayDelayOptions => t = "%identity"
+  external asSonificationInstrumentTimeOptions: t => (sonificationSpeechPlayDelayOptions) = "%identity"
+}
+module ChartsSonificationSpeechMappingOptionsVolume = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromNumber: float => t = "%identity"
+  external fromFunction: JsFn.t => t = "%identity"
+  external asFunction: t => (JsFn.t) = "%identity"
+  external fromSonificationInstrumentVolumeOptions: sonificationSpeechPlayDelayOptions => t = "%identity"
+  external asSonificationInstrumentVolumeOptions: t => (sonificationSpeechPlayDelayOptions) = "%identity"
+}
+type sonificationSpeechMappingOptions = {
+  pitch?: ChartsSonificationSpeechMappingOptionsPitch.t,
+  playDelay?: ChartsSonificationSpeechMappingOptionsPlayDelay.t,
+  rate?: ChartsSonificationSpeechMappingOptionsRate.t,
+  text?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
+  time?: ChartsSonificationSpeechMappingOptionsRate.t,
+  volume?: ChartsSonificationSpeechMappingOptionsVolume.t,
+}
+type sonificationInstrumentPointGroupingOptions = {
+  algorithm?: string,
+  enabled?: bool,
+  groupTimespan?: float,
+  prop?: string,
+}
+type seriesSonificationSpeechOptions = {
+  activeWhen?: ChartsSeriesSonificationSpeechOptionsActiveWhen.t,
+  language?: string,
+  mapping?: sonificationSpeechMappingOptions,
+  pointGrouping?: sonificationInstrumentPointGroupingOptions,
+  preferredVoice?: string,
+  showPlayMarker?: bool,
+  @as("type") type_?: sonifcationTypeValue,
+}
 type seriesSonificationPointGroupingOptions = {
   algorithm?: optionsAlgorithmValue,
   enabled?: bool,
@@ -2122,16 +2345,68 @@ type seriesSonificationPointGroupingOptions = {
 type seriesSonificationOptions = {
   contextTracks?: array<JSON.t>,
   defaultInstrumentOptions?: string,  // ⚪ loose — was `SeriesSonificationInstrumentOptions`
-  defaultSpeechOptions?: string,  // ⚪ loose — was `SeriesSonificationSpeechOptions`
+  defaultSpeechOptions?: seriesSonificationSpeechOptions,
   enabled?: bool,
   pointGrouping?: seriesSonificationPointGroupingOptions,
   tracks?: array<JSON.t>,
 }
+type plotTilemapStatesHoverHaloAttributesOptions = {
+  zIndex?: int,
+}
+module ChartsSeriesStatesHoverHaloOptionsObjectAttributes = {
+  type t
+  external fromSVGAttributes: svgAttributes => t = "%identity"
+  external asSVGAttributes: t => (svgAttributes) = "%identity"
+  external fromPlotTilemapStatesHoverHaloAttributesOptions: plotTilemapStatesHoverHaloAttributesOptions => t = "%identity"
+  external asPlotTilemapStatesHoverHaloAttributesOptions: t => (plotTilemapStatesHoverHaloAttributesOptions) = "%identity"
+}
+type seriesStatesHoverHaloOptionsObject = {
+  attributes?: ChartsSeriesStatesHoverHaloOptionsObjectAttributes.t,
+  enabled?: bool,
+  opacity?: float,
+  size?: float,
+}
+type seriesStatesHoverOptionsObject = {
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAbandsStatesHoverAnimationOptions | PlotAdStatesHoverAnimation` — match the real type by hand
+  borderColor?: ColorType.t,
+  borderWidth?: float,
+  brightness?: float,
+  color?: ColorType.t,
+  connectorWidthPlus?: float,
+  enabled?: bool,
+  fillColor?: ColorType.t,
+  halo?: seriesStatesHoverHaloOptionsObject,
+  lineColor?: ColorType.t,
+  lineWidth?: float,
+  lineWidthPlus?: float,
+  linkOpacity?: float,
+  marker?: pointMarkerOptionsObject,
+  opacity?: float,
+  shadow?: bool,
+}
+@unboxed type numberOrSeriesStatesHoverOptionsObject = Num(float) | SeriesStatesHoverOptionsObject(seriesStatesHoverOptionsObject)
+type seriesStatesInactiveOptionsObject = {
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAbandsStatesInactiveAnimationOptions | PlotAdStatesInactiveAni` — match the real type by hand
+  enabled?: bool,
+  linkOpacity?: float,
+  opacity?: float,
+}
+type seriesStatesSelectOptionsObject = {
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAbandsStatesSelectAnimationOptions | PlotAdStatesSelectAnimati` — match the real type by hand
+  borderColor?: ColorType.t,
+  borderWidth?: float,
+  color?: ColorType.t,
+  enabled?: bool,
+  halo?: seriesStatesHoverHaloOptionsObject,
+  lineWidth?: float,
+  lineWidthPlus?: float,
+  marker?: pointMarkerOptionsObject,
+}
 type seriesStatesOptionsObject = {
-  hover?: string,  // ⚪ loose — was `number | SeriesStatesHoverOptionsObject`
-  inactive?: string,  // ⚪ loose — was `SeriesStatesInactiveOptionsObject`
-  normal?: string,  // ⚪ loose — was `SeriesStatesNormalOptionsObject`
-  select?: string,  // ⚪ loose — was `SeriesStatesSelectOptionsObject`
+  hover?: numberOrSeriesStatesHoverOptionsObject,
+  inactive?: seriesStatesInactiveOptionsObject,
+  normal?: pointStatesNormalOptionsObject,
+  select?: seriesStatesSelectOptionsObject,
 }
 type plotAdDataSortingOptions = {
   enabled?: bool,
@@ -2180,6 +2455,15 @@ module ChartsSeriesAreaOptionsDataSorting = {
   external fromPlotAreaDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
   external asPlotAreaDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
+type dragDropHandleOptionsObject = {
+  className?: string,
+  color?: ColorType.t,
+  cursor?: string,
+  lineColor?: string,
+  lineWidth?: float,
+  pathFormatter?: JsFn.t,
+  zIndex?: int,
+}
 type seriesDragDropOptionsObject = {
   draggableClose?: bool,
   draggableEnd?: bool,
@@ -2194,7 +2478,7 @@ type seriesDragDropOptionsObject = {
   draggableX1?: bool,
   draggableX2?: bool,
   draggableY?: bool,
-  dragHandle?: string,  // ⚪ loose — was `DragDropHandleOptionsObject`
+  dragHandle?: dragDropHandleOptionsObject,
   dragMaxX?: CommonTypes.stringOrNumber,
   dragMaxY?: float,
   dragMinX?: CommonTypes.stringOrNumber,
@@ -2508,6 +2792,16 @@ type seriesFlowMapSeriesOptionsObject = {
   markerType?: string,
   width?: CommonTypes.stringOrNumber,
 }
+type plotGanttDataLabelsStyleOptions = {
+  whiteSpace?: string,
+}
+module ChartsPlotGanttDataLabelsOptionsStyle = {
+  type t
+  external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
+  external fromPlotGanttDataLabelsStyleOptions: plotGanttDataLabelsStyleOptions => t = "%identity"
+  external asPlotGanttDataLabelsStyleOptions: t => (plotGanttDataLabelsStyleOptions) = "%identity"
+}
 type plotGanttPartialFillOptions = {
   fill?: ColorType.t,
 }
@@ -2687,6 +2981,35 @@ type plotMacdParamsOptions = {
   shortPeriod?: float,
   signalPeriod?: float,
 }
+type plotMappointClusterDataLabelsOptions = {
+  style?: string,  // ⚪ loose — was `any`
+}
+module ChartsPlotMappointClusterOptionsDataLabels = {
+  type t
+  external fromDataLabelsOptions: dataLabelsOptions => t = "%identity"
+  external asDataLabelsOptions: t => (dataLabelsOptions) = "%identity"
+  external fromPlotMappointClusterDataLabelsOptions: plotMappointClusterDataLabelsOptions => t = "%identity"
+  external asPlotMappointClusterDataLabelsOptions: t => (plotMappointClusterDataLabelsOptions) = "%identity"
+}
+type plotMappointClusterLayoutAlgorithmOptions = {
+  distance?: CommonTypes.stringOrNumber,
+  gridSize?: CommonTypes.stringOrNumber,
+  iterations?: float,
+  kmeansThreshold?: float,
+  @as("type") type_?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
+}
+type plotMappointClusterStatesHoverOptions = {
+  fillColor?: ColorType.t,
+}
+type plotMappointClusterStatesOptions = {
+  hover?: plotMappointClusterStatesHoverOptions,
+}
+type plotMappointClusterZonesOptions = {
+  className?: string,
+  from?: float,
+  marker?: pointMarkerOptionsObject,
+  @as("to") to_?: float,
+}
 module ChartsSeriesMfiOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
@@ -2714,27 +3037,27 @@ module ChartsSeriesNatrOptionsDataSorting = {
   external fromPlotNatrDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
   external asPlotNatrDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
+type plotNetworkgraphLayoutAlgorithmOptions = {
+  approximation?: optionsApproximationValue,
+  attractiveForce?: JsFn.t,
+  enableSimulation?: bool,
+  friction?: float,
+  gravitationalConstant?: float,
+  initialPositionRadius?: float,
+  initialPositions?: string,  // ⚠️ REVIEW — was `Function | "circle" | "random"` — match the real type by hand
+  integration?: optionsIntegrationValue,
+  linkLength?: float,
+  maxIterations?: float,
+  maxSpeed?: float,
+  repulsiveForce?: JsFn.t,
+  theta?: float,
+  @as("type") type_?: string,
+}
 type plotNetworkgraphLinkOptions = {
   color?: string,
   dashStyle?: string,
   opacity?: float,
   width?: float,
-}
-type plotNetworkgraphLayoutAlgorithmOptions = {
-  approximation?: optionsApproximationValue,
-  attractiveForce?: string,  // ⚪ loose — was `Function`
-  enableSimulation?: bool,
-  friction?: float,
-  gravitationalConstant?: float,
-  initialPositionRadius?: float,
-  initialPositions?: string,  // ⚪ loose — was `Function | "circle" | "random"`
-  integration?: optionsIntegrationValue,
-  linkLength?: float,
-  maxIterations?: float,
-  maxSpeed?: float,
-  repulsiveForce?: string,  // ⚪ loose — was `Function`
-  theta?: float,
-  @as("type") type_?: string,
 }
 module ChartsSeriesObvOptionsDataSorting = {
   type t
@@ -2755,14 +3078,31 @@ module ChartsSeriesOhlcOptionsDataSorting = {
   external fromPlotOhlcDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
   external asPlotOhlcDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
 }
+type plotOrganizationDataLabelsLinkTextPathAttributesOptions = {
+  startOffset?: float,
+  textAnchor?: string,
+}
+type plotOrganizationDataLabelsLinkTextPathOptions = {
+  attributes?: plotOrganizationDataLabelsLinkTextPathAttributesOptions,
+}
 type plotOrganizationLinkOptions = {
   color?: string,
   lineWidth?: float,
   radius?: float,
   @as("type") type_?: chartsPlotOrganizationLinkOptionsType,
 }
-type plotPackedbubbleParentNodeOptions = {
-  allowPointSelect?: bool,
+type plotPackedbubbleLayoutAlgorithmParentNodeOptions = {
+  friction?: float,
+  gravitationalConstant?: float,
+  initialPositionRadius?: float,
+  initialPositions?: string,  // ⚠️ REVIEW — was `Function | "circle" | "random"` — match the real type by hand
+  integration?: optionsIntegrationValue,
+  linkLength?: float,
+  marker?: pointMarkerOptionsObject,
+  maxIterations?: float,
+  maxSpeed?: float,
+  seriesInteraction?: bool,
+  @as("type") type_?: string,
 }
 type plotPackedbubbleLayoutAlgorithmOptions = {
   bubblePadding?: float,
@@ -2771,16 +3111,19 @@ type plotPackedbubbleLayoutAlgorithmOptions = {
   friction?: float,
   gravitationalConstant?: float,
   initialPositionRadius?: float,
-  initialPositions?: string,  // ⚪ loose — was `Function | "circle" | "random"`
+  initialPositions?: string,  // ⚠️ REVIEW — was `Function | "circle" | "random"` — match the real type by hand
   integration?: optionsIntegrationValue,
   linkLength?: float,
   maxIterations?: float,
   maxSpeed?: float,
   parentNodeLimit?: bool,
-  parentNodeOptions?: string,  // ⚪ loose — was `PlotPackedbubbleLayoutAlgorithmParentNodeOptions`
+  parentNodeOptions?: plotPackedbubbleLayoutAlgorithmParentNodeOptions,
   seriesInteraction?: bool,
   splitSeries?: bool,
   @as("type") type_?: string,
+}
+type plotPackedbubbleParentNodeOptions = {
+  allowPointSelect?: bool,
 }
 module ChartsSeriesParetoOptionsDataSorting = {
   type t
@@ -2903,12 +3246,22 @@ module ChartsSeriesScatter3dOptionsDataSorting = {
   external fromPlotScatter3dDataSortingOptions: dataSortingOptionsObject => t = "%identity"
   external asPlotScatter3dDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
-module ChartsSeriesScatterOptionsDataSorting = {
+type plotScatterClusterDataLabelsOptions = {
+  style?: string,  // ⚪ loose — was `any`
+}
+module ChartsPlotScatterClusterOptionsDataLabels = {
   type t
-  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
-  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
-  external fromPlotScatterDataSortingOptions: dataSortingOptionsObject => t = "%identity"
-  external asPlotScatterDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+  external fromDataLabelsOptions: dataLabelsOptions => t = "%identity"
+  external asDataLabelsOptions: t => (dataLabelsOptions) = "%identity"
+  external fromPlotScatterClusterDataLabelsOptions: plotScatterClusterDataLabelsOptions => t = "%identity"
+  external asPlotScatterClusterDataLabelsOptions: t => (plotScatterClusterDataLabelsOptions) = "%identity"
+}
+type plotScatterClusterLayoutAlgorithmOptions = {
+  distance?: CommonTypes.stringOrNumber,
+  gridSize?: CommonTypes.stringOrNumber,
+  iterations?: float,
+  kmeansThreshold?: float,
+  @as("type") type_?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
 }
 type plotScatterClusterStatesHoverOptions = {
   fillColor?: ColorType.t,
@@ -2921,6 +3274,13 @@ type plotScatterClusterZonesOptions = {
   from?: float,
   marker?: pointMarkerOptionsObject,
   @as("to") to_?: float,
+}
+module ChartsSeriesScatterOptionsDataSorting = {
+  type t
+  external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
+  external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
+  external fromPlotScatterDataSortingOptions: dataSortingOptionsObject => t = "%identity"
+  external asPlotScatterDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
 }
 module ChartsSeriesSlowstochasticOptionsDataSorting = {
   type t
@@ -3068,6 +3428,25 @@ type plotTreegraphCollapseButtonOptions = {
   x?: float,
   y?: float,
 }
+type plotTreegraphDataLabelsStyleOptions = {
+  textOverflow?: string,
+}
+type plotTreegraphLevelsDataLabelsStyleOptions = {
+  textOverflow?: string,
+}
+module ChartsSeriesTreegraphDataLabelsOptionsObjectStyle = {
+  type t
+  external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
+  external fromPlotTreegraphDataLabelsStyleOptions: plotTreegraphDataLabelsStyleOptions => t = "%identity"
+  external asPlotTreegraphDataLabelsStyleOptions: t => (plotTreegraphDataLabelsStyleOptions) = "%identity"
+  external fromPlotTreegraphLevelsDataLabelsStyleOptions: plotTreegraphLevelsDataLabelsStyleOptions => t = "%identity"
+  external asPlotTreegraphLevelsDataLabelsStyleOptions: t => (plotTreegraphLevelsDataLabelsStyleOptions) = "%identity"
+}
+type plotTreegraphLevelsColorVariationOptions = {
+  key?: string,
+  @as("to") to_?: float,
+}
 type plotTreegraphLinkOptions = {
   bendAt?: CommonTypes.stringOrNumber,
   color?: string,
@@ -3139,6 +3518,20 @@ type plotTreemapClusterOptions = {
   pixelWidth?: float,
   reductionFactor?: float,
 }
+module ChartsPlotTreemapDataLabelsOptionsStyle = {
+  type t
+  external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
+  external fromPlotTreemapDataLabelsStyleOptions: plotTreegraphDataLabelsStyleOptions => t = "%identity"
+  external asPlotTreemapDataLabelsStyleOptions: t => (plotTreegraphDataLabelsStyleOptions) = "%identity"
+}
+module ChartsPlotTreemapLevelsDataLabelsOptionsStyle = {
+  type t
+  external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
+  external fromPlotTreemapLevelsDataLabelsStyleOptions: plotTreegraphLevelsDataLabelsStyleOptions => t = "%identity"
+  external asPlotTreemapLevelsDataLabelsStyleOptions: t => (plotTreegraphLevelsDataLabelsStyleOptions) = "%identity"
+}
 module ChartsSeriesTrendlineOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
@@ -3189,12 +3582,26 @@ type plotVbpZoneLinesOptions = {
   enabled?: bool,
   styles?: cssObject,
 }
+module ChartsPlotVectorClusterOptionsDataLabels = {
+  type t
+  external fromDataLabelsOptions: dataLabelsOptions => t = "%identity"
+  external asDataLabelsOptions: t => (dataLabelsOptions) = "%identity"
+  external fromPlotVectorClusterDataLabelsOptions: plotScatterClusterDataLabelsOptions => t = "%identity"
+  external asPlotVectorClusterDataLabelsOptions: t => (plotScatterClusterDataLabelsOptions) = "%identity"
+}
 module ChartsSeriesVectorOptionsDataSorting = {
   type t
   external fromDataSortingOptionsObject: dataSortingOptionsObject => t = "%identity"
   external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotVectorDataSortingOptions: dataSortingOptionsObject => t = "%identity"
   external asPlotVectorDataSortingOptions: t => (dataSortingOptionsObject) = "%identity"
+}
+module ChartsPlotVennClusterOptionsDataLabels = {
+  type t
+  external fromDataLabelsOptions: dataLabelsOptions => t = "%identity"
+  external asDataLabelsOptions: t => (dataLabelsOptions) = "%identity"
+  external fromPlotVennClusterDataLabelsOptions: plotScatterClusterDataLabelsOptions => t = "%identity"
+  external asPlotVennClusterDataLabelsOptions: t => (plotScatterClusterDataLabelsOptions) = "%identity"
 }
 module ChartsSeriesVwapOptionsDataSorting = {
   type t
@@ -3236,6 +3643,16 @@ type plotWordcloudRotationOptions = {
   orientations?: float,
   @as("to") to_?: float,
 }
+type plotXrangeDataLabelsStyleOptions = {
+  whiteSpace?: string,
+}
+module ChartsPlotXrangeDataLabelsOptionsStyle = {
+  type t
+  external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
+  external fromPlotXrangeDataLabelsStyleOptions: plotXrangeDataLabelsStyleOptions => t = "%identity"
+  external asPlotXrangeDataLabelsStyleOptions: t => (plotXrangeDataLabelsStyleOptions) = "%identity"
+}
 type plotXrangePartialFillOptions = {
   fill?: ColorType.t,
 }
@@ -3259,7 +3676,7 @@ type exportingCsvAnnotationsOptions = {
 }
 type exportingCsvOptions = {
   annotations?: exportingCsvAnnotationsOptions,
-  columnHeaderFormatter?: string,  // ⚪ loose — was `Function`
+  columnHeaderFormatter?: JsFn.t,
   dateFormat?: string,
   decimalPoint?: string,
   itemDelimiter?: string,
@@ -3769,7 +4186,7 @@ type mapNavigationButtonsZoomInOptions = {
   align?: alignValue,
   alignTo?: buttonRelativeToValue,
   height?: float,
-  onclick?: string,  // ⚪ loose — was `Function`
+  onclick?: JsFn.t,
   padding?: float,
   style?: cssObject,
   text?: string,
@@ -3852,7 +4269,7 @@ type navigationBreadcrumbsOptions = {
   useHTML?: bool,
   zIndex?: int,
 }
-type navigationButtonThemeOptions = {
+type exportingButtonsContextButtonThemeOptions = {
   fill?: ColorType.t,
   padding?: float,
   stroke?: string,
@@ -3870,17 +4287,17 @@ type navigationButtonOptions = {
   symbolX?: float,
   symbolY?: float,
   text?: string,
-  theme?: navigationButtonThemeOptions,
+  theme?: exportingButtonsContextButtonThemeOptions,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
   width?: float,
   y?: float,
 }
 type navigationEventsOptions = {
-  closePopup?: string,  // ⚪ loose — was `Function`
-  deselectButton?: string,  // ⚪ loose — was `Function`
-  selectButton?: string,  // ⚪ loose — was `Function`
-  showPopup?: string,  // ⚪ loose — was `Function`
+  closePopup?: JsFn.t,
+  deselectButton?: JsFn.t,
+  selectButton?: JsFn.t,
+  showPopup?: JsFn.t,
 }
 type navigatorHandlesOptions = {
   backgroundColor?: ColorType.t,
@@ -3891,21 +4308,6 @@ type navigatorHandlesOptions = {
   lineWidth?: float,
   symbols?: array<string>,
   width?: float,
-}
-type navigatorSeriesOptions = {
-  className?: string,
-  color?: ColorType.t,
-  data?: array<JSON.t>,
-  dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `NavigatorSeriesDataLabelsOptions | NavigatorSeriesDataLabelsOptions[]`
-  fillOpacity?: float,
-  id?: string,
-  lineColor?: string,
-  lineWidth?: float,
-  marker?: legendAccessibilityKeyboardNavigationOptions,
-  pointRange?: float,
-  threshold?: float,
-  @as("type") type_?: string,
 }
 module ChartsNavigatorXAxisLabelsOptionsStyle = {
   type t
@@ -4117,29 +4519,122 @@ type synthPatchOptionsObject = {
   oscillators?: array<synthPatchOscillatorOptionsObject>,
 }
 @unboxed type stringOrSynthPatchOptionsObject = Str(string) | SynthPatchOptionsObject(synthPatchOptionsObject)
-type sonificationInstrumentMappingOptions = {
-  frequency?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentFrequencyOptions`
-  gapBetweenNotes?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentTimeOptions`
-  highpass?: string,  // ⚪ loose — was `SonificationInstrumentHighpassOptions`
-  lowpass?: string,  // ⚪ loose — was `SonificationInstrumentLowpassOptions`
-  noteDuration?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentTimeOptions`
-  pan?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentTimeOptions`
-  pitch?: string,  // ⚪ loose — was `string | number | Function | (string | number)[] | SonificationInstrumentPitchOptions`
-  playDelay?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentPlayDelayOptions`
-  rate?: string,  // ⚪ loose — was `string | number | Function | SonificationTracksRateOptions`
-  text?: string,  // ⚪ loose — was `string | Function`
-  time?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentTimeOptions`
-  tremolo?: string,  // ⚪ loose — was `SonificationInstrumentTremoloOptions`
-  volume?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentVolumeOptions`
+type sonificationInstrumentFrequencyOptions = {
+  mapFunction?: optionsMapFunctionValue,
+  mapTo?: string,
+  max?: float,
+  min?: float,
+  value?: float,
+  within?: optionsWithinValue,
 }
-type sonificationInstrumentPointGroupingOptions = {
-  algorithm?: string,
-  enabled?: bool,
-  groupTimespan?: float,
-  prop?: string,
+module ChartsSonificationInstrumentMappingOptionsFrequency = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromNumber: float => t = "%identity"
+  external fromFunction: JsFn.t => t = "%identity"
+  external asFunction: t => (JsFn.t) = "%identity"
+  external fromSonificationInstrumentFrequencyOptions: sonificationInstrumentFrequencyOptions => t = "%identity"
+  external asSonificationInstrumentFrequencyOptions: t => (sonificationInstrumentFrequencyOptions) = "%identity"
+}
+module ChartsSonificationInstrumentHighpassOptionsFrequency = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromNumber: float => t = "%identity"
+  external fromFunction: JsFn.t => t = "%identity"
+  external asFunction: t => (JsFn.t) = "%identity"
+  external fromSonificationInstrumentLowpassFrequencyOptions: sonificationInstrumentFrequencyOptions => t = "%identity"
+  external asSonificationInstrumentLowpassFrequencyOptions: t => (sonificationInstrumentFrequencyOptions) = "%identity"
+}
+module ChartsSonificationInstrumentHighpassOptionsResonance = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromNumber: float => t = "%identity"
+  external fromFunction: JsFn.t => t = "%identity"
+  external asFunction: t => (JsFn.t) = "%identity"
+  external fromSonificationInstrumentLowpassResonanceOptions: sonificationInstrumentFrequencyOptions => t = "%identity"
+  external asSonificationInstrumentLowpassResonanceOptions: t => (sonificationInstrumentFrequencyOptions) = "%identity"
+}
+type sonificationInstrumentHighpassOptions = {
+  frequency?: ChartsSonificationInstrumentHighpassOptionsFrequency.t,
+  resonance?: ChartsSonificationInstrumentHighpassOptionsResonance.t,
+}
+type sonificationInstrumentPitchOptions = {
+  mapFunction?: optionsMapFunctionValue,
+  mapTo?: string,
+  max?: string,
+  min?: string,
+  scale?: array<float>,
+  value?: float,
+  within?: string,
+}
+module ChartsSonificationInstrumentMappingOptionsPitch = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromNumber: float => t = "%identity"
+  external fromFunction: JsFn.t => t = "%identity"
+  external asFunction: t => (JsFn.t) = "%identity"
+  external fromStringOrNumbers: array<CommonTypes.stringOrNumber> => t = "%identity"
+  external asStringOrNumbers: t => (array<CommonTypes.stringOrNumber>) = "%identity"
+  external fromSonificationInstrumentPitchOptions: sonificationInstrumentPitchOptions => t = "%identity"
+  external asSonificationInstrumentPitchOptions: t => (sonificationInstrumentPitchOptions) = "%identity"
+}
+module ChartsSonificationInstrumentMappingOptionsPlayDelay = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromNumber: float => t = "%identity"
+  external fromFunction: JsFn.t => t = "%identity"
+  external asFunction: t => (JsFn.t) = "%identity"
+  external fromSonificationInstrumentPlayDelayOptions: sonificationInstrumentFrequencyOptions => t = "%identity"
+  external asSonificationInstrumentPlayDelayOptions: t => (sonificationInstrumentFrequencyOptions) = "%identity"
+}
+module ChartsSonificationInstrumentMappingOptionsRate = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromNumber: float => t = "%identity"
+  external fromFunction: JsFn.t => t = "%identity"
+  external asFunction: t => (JsFn.t) = "%identity"
+  external fromSonificationTracksRateOptions: sonificationInstrumentFrequencyOptions => t = "%identity"
+  external asSonificationTracksRateOptions: t => (sonificationInstrumentFrequencyOptions) = "%identity"
+}
+module ChartsSonificationInstrumentTremoloOptionsDepth = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromNumber: float => t = "%identity"
+  external fromFunction: JsFn.t => t = "%identity"
+  external asFunction: t => (JsFn.t) = "%identity"
+  external fromSonificationInstrumentTremoloDepthOptions: sonificationInstrumentFrequencyOptions => t = "%identity"
+  external asSonificationInstrumentTremoloDepthOptions: t => (sonificationInstrumentFrequencyOptions) = "%identity"
+}
+module ChartsSonificationInstrumentTremoloOptionsSpeed = {
+  type t
+  external fromString: string => t = "%identity"
+  external fromNumber: float => t = "%identity"
+  external fromFunction: JsFn.t => t = "%identity"
+  external asFunction: t => (JsFn.t) = "%identity"
+  external fromSonificationInstrumentTremoloSpeedOptions: sonificationInstrumentFrequencyOptions => t = "%identity"
+  external asSonificationInstrumentTremoloSpeedOptions: t => (sonificationInstrumentFrequencyOptions) = "%identity"
+}
+type sonificationInstrumentTremoloOptions = {
+  depth?: ChartsSonificationInstrumentTremoloOptionsDepth.t,
+  speed?: ChartsSonificationInstrumentTremoloOptionsSpeed.t,
+}
+type sonificationInstrumentMappingOptions = {
+  frequency?: ChartsSonificationInstrumentMappingOptionsFrequency.t,
+  gapBetweenNotes?: ChartsSonificationSpeechMappingOptionsRate.t,
+  highpass?: sonificationInstrumentHighpassOptions,
+  lowpass?: sonificationInstrumentHighpassOptions,
+  noteDuration?: ChartsSonificationSpeechMappingOptionsRate.t,
+  pan?: ChartsSonificationSpeechMappingOptionsRate.t,
+  pitch?: ChartsSonificationInstrumentMappingOptionsPitch.t,
+  playDelay?: ChartsSonificationInstrumentMappingOptionsPlayDelay.t,
+  rate?: ChartsSonificationInstrumentMappingOptionsRate.t,
+  text?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
+  time?: ChartsSonificationSpeechMappingOptionsRate.t,
+  tremolo?: sonificationInstrumentTremoloOptions,
+  volume?: ChartsSonificationSpeechMappingOptionsVolume.t,
 }
 type sonificationInstrumentOptions = {
-  activeWhen?: string,  // ⚠️ REVIEW — was `Function | SonificationInstrumentActiveWhenOptions` — match the real type by hand
+  activeWhen?: ChartsSeriesSonificationSpeechOptionsActiveWhen.t,
   instrument?: stringOrSynthPatchOptionsObject,
   mapping?: sonificationInstrumentMappingOptions,
   midiName?: string,
@@ -4148,36 +4643,19 @@ type sonificationInstrumentOptions = {
   showPlayMarker?: bool,
   @as("type") type_?: sonifcationTypeValue,
 }
-type sonificationSpeechMappingOptions = {
-  pitch?: string,  // ⚪ loose — was `string | number | Function | SonificationSpeechPitchOptions`
-  playDelay?: string,  // ⚪ loose — was `string | number | Function | SonificationSpeechPlayDelayOptions`
-  rate?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentTimeOptions`
-  text?: string,  // ⚪ loose — was `string | Function`
-  time?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentTimeOptions`
-  volume?: string,  // ⚪ loose — was `string | number | Function | SonificationInstrumentVolumeOptions`
-}
-type sonificationSpeechOptions = {
-  activeWhen?: string,  // ⚠️ REVIEW — was `Function | SonificationInstrumentActiveWhenOptions` — match the real type by hand
-  language?: string,
-  mapping?: sonificationSpeechMappingOptions,
-  pointGrouping?: sonificationInstrumentPointGroupingOptions,
-  preferredVoice?: string,
-  showPlayMarker?: bool,
-  @as("type") type_?: sonifcationTypeValue,
-}
 type sonificationEventsOptions = {
-  afterUpdate?: string,  // ⚪ loose — was `Function`
-  beforePlay?: string,  // ⚪ loose — was `Function`
-  beforeUpdate?: string,  // ⚪ loose — was `Function`
-  onBoundaryHit?: string,  // ⚪ loose — was `Function`
-  onEnd?: string,  // ⚪ loose — was `Function`
-  onPlay?: string,  // ⚪ loose — was `Function`
-  onSeriesEnd?: string,  // ⚪ loose — was `Function`
-  onSeriesStart?: string,  // ⚪ loose — was `Function`
-  onStop?: string,  // ⚪ loose — was `Function`
+  afterUpdate?: JsFn.t,
+  beforePlay?: JsFn.t,
+  beforeUpdate?: JsFn.t,
+  onBoundaryHit?: JsFn.t,
+  onEnd?: JsFn.t,
+  onPlay?: JsFn.t,
+  onSeriesEnd?: JsFn.t,
+  onSeriesStart?: JsFn.t,
+  onStop?: JsFn.t,
 }
 type sonificationContextTracksOptions = {
-  activeWhen?: string,  // ⚪ loose — was `Function | SonificationInstrumentActiveWhenOptions`
+  activeWhen?: ChartsSeriesSonificationSpeechOptionsActiveWhen.t,
   instrument?: stringOrSynthPatchOptionsObject,
   mapping?: sonificationInstrumentMappingOptions,
   midiName?: string,
@@ -4193,7 +4671,7 @@ type sonificationContextTracksOptions = {
 type sonificationOptions = {
   afterSeriesWait?: float,
   defaultInstrumentOptions?: sonificationInstrumentOptions,
-  defaultSpeechOptions?: sonificationSpeechOptions,
+  defaultSpeechOptions?: seriesSonificationSpeechOptions,
   duration?: float,
   enabled?: bool,
   events?: sonificationEventsOptions,
@@ -4366,6 +4844,13 @@ type bBoxObject = {
   y: float,
 }
 @unboxed type stringOrBBoxObject = Str(string) | BBoxObject(bBoxObject)
+@unboxed type stringOrSvgAttributes = Str(string) | SvgAttributes(svgAttributes)
+@unboxed type stringOrNumberOrGetLinePathTargetTArray = Str(string) | Num(float) | Arr(array<GetLinePathTarget.t>)
+module Attr = {
+  type t
+  external asKey: t => (string => CommonTypes.stringOrNumber) = "%identity"
+  external asHash: t => ((option<stringOrSvgAttributes>, option<stringOrNumberOrGetLinePathTargetTArray>, option<JsFn.t>, option<bool>) => Dom.element) = "%identity"
+}
 type subtitleObject = {
   update: (subtitleOptions, option<bool>) => unit,
   element: Dom.element,
@@ -4373,8 +4858,8 @@ type subtitleObject = {
   add: option<Dom.element> => Dom.element,
   addClass: (string, option<bool>) => Dom.element,
   align: (option<alignObject>, option<bool>, option<stringOrBBoxObject>, option<bool>) => Dom.element,
-  animate: (svgAttributes, option<string>, option<string>) => Dom.element,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  attr: string,  // ⚠️ REVIEW — match the real type by hand
+  animate: (svgAttributes, option<string>, option<JsFn.t>) => Dom.element,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  attr: Attr.t,
   clip: option<Dom.element> => Dom.element,
   crisp: (bBoxObject, option<float>) => bBoxObject,
   css: cssObject => Dom.element,
@@ -4385,7 +4870,7 @@ type subtitleObject = {
   hasClass: string => bool,
   hide: unit => Dom.element,
   init: (svgRenderer, string) => unit,
-  on: (string, string) => Dom.element,  // ⚪ loose — was `Function`
+  on: (string, JsFn.t) => Dom.element,
   removeClass: string => Dom.element,  // ⚠️ REVIEW — was `string | RegExp` — match the real type by hand
   setRadialReference: array<float> => Dom.element,
   shadow: option<boolOrShadowOptionsObject> => Dom.element,
@@ -4413,8 +4898,8 @@ type titleObject = {
   add: option<Dom.element> => Dom.element,
   addClass: (string, option<bool>) => Dom.element,
   align: (option<alignObject>, option<bool>, option<stringOrBBoxObject>, option<bool>) => Dom.element,
-  animate: (svgAttributes, option<string>, option<string>) => Dom.element,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  attr: string,  // ⚠️ REVIEW — match the real type by hand
+  animate: (svgAttributes, option<string>, option<JsFn.t>) => Dom.element,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  attr: Attr.t,
   clip: option<Dom.element> => Dom.element,
   crisp: (bBoxObject, option<float>) => bBoxObject,
   css: cssObject => Dom.element,
@@ -4425,7 +4910,7 @@ type titleObject = {
   hasClass: string => bool,
   hide: unit => Dom.element,
   init: (svgRenderer, string) => unit,
-  on: (string, string) => Dom.element,  // ⚪ loose — was `Function`
+  on: (string, JsFn.t) => Dom.element,
   removeClass: string => Dom.element,  // ⚠️ REVIEW — was `string | RegExp` — match the real type by hand
   setRadialReference: array<float> => Dom.element,
   shadow: option<boolOrShadowOptionsObject> => Dom.element,
@@ -4439,6 +4924,7 @@ type chartsOptionsSeries_t<'a, 'b, 'c>
 type chartsPlotRenkoOptionsNavigatorOptions_t
 type chartsNavigatorOptionsSeries_t<'a, 'b, 'c>
 type chartsNavigationOptionsAnnotationsOptions_t
+type chartsSeriesSankeyNodesOptionsObjectDataLabels_t
 type chartsSeriesAccessibilityOptionsObjectPoint_t
 type seriesOptionsType_t<'a, 'b, 'c>
 type chartsOptionsColorAxis_t
@@ -4494,7 +4980,7 @@ and unknownSeriesOptions<'a, 'b, 'c> = {
   inactiveOtherPoints?: bool,
   includeInDataExport?: bool,
   legendSymbol?: optionsLegendSymbolValue,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
   skipKeyboardNavigation?: bool,
   legendIndex?: float,
   mapData?: string,  // ⚠️ REVIEW — was `object | GeoJSON | SeriesMapDataOptions[]` — match the real type by hand
@@ -4517,7 +5003,7 @@ and responsiveOptions<'a, 'b, 'c> = {
 and plotZigzagOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -4539,7 +5025,7 @@ and plotZigzagOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotZigzagDataLabelsOptions | PlotZigzagDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesZigzagOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -4566,8 +5052,8 @@ and plotZigzagOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotZigzagParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -4590,7 +5076,7 @@ and plotZigzagOptions<'a, 'b, 'c> = {
 and plotXrangeOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: float,
@@ -4614,7 +5100,7 @@ and plotXrangeOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotXrangeDataLabelsOptions | PlotXrangeDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotXrangeDataLabelsOptionsOrPlotXrangeDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
@@ -4639,8 +5125,8 @@ and plotXrangeOptions<'a, 'b, 'c> = {
   opacity?: float,
   partialFill?: plotXrangePartialFillOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   pointRange?: float,
   pointWidth?: float,
@@ -4664,7 +5150,7 @@ and plotXrangeOptions<'a, 'b, 'c> = {
 and plotWordcloudOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
@@ -4697,8 +5183,8 @@ and plotWordcloudOptions<'a, 'b, 'c> = {
   opacity?: float,
   placementStrategy?: optionsPlacementStrategyValue,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   rotation?: plotWordcloudRotationOptions,
   selected?: bool,
@@ -4717,7 +5203,7 @@ and plotWordcloudOptions<'a, 'b, 'c> = {
 and plotWmaOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -4739,7 +5225,7 @@ and plotWmaOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotWmaDataLabelsOptions | PlotWmaDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesWmaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -4766,8 +5252,8 @@ and plotWmaOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotDemaParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -4790,7 +5276,7 @@ and plotWmaOptions<'a, 'b, 'c> = {
 and plotWindbarbOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
@@ -4813,7 +5299,7 @@ and plotWindbarbOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotWindbarbDataLabelsOptions | PlotWindbarbDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesWindbarbOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -4845,8 +5331,8 @@ and plotWindbarbOptions<'a, 'b, 'c> = {
   onSeries?: string,
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -4878,7 +5364,7 @@ and plotWindbarbOptions<'a, 'b, 'c> = {
 and plotWilliamsrOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -4900,7 +5386,7 @@ and plotWilliamsrOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotWilliamsrDataLabelsOptions | PlotWilliamsrDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesWilliamsrOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -4927,8 +5413,8 @@ and plotWilliamsrOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAroonoscillatorParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -4951,7 +5437,7 @@ and plotWilliamsrOptions<'a, 'b, 'c> = {
 and plotWaterfallOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
@@ -4970,7 +5456,7 @@ and plotWaterfallOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotWaterfallDataLabelsOptions | PlotWaterfallDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesWaterfallOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -5000,8 +5486,8 @@ and plotWaterfallOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotWaterfallOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -5032,7 +5518,7 @@ and plotWaterfallOptions<'a, 'b, 'c> = {
 and plotVwapOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -5054,7 +5540,7 @@ and plotVwapOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotVwapDataLabelsOptions | PlotVwapDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesVwapOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -5081,8 +5567,8 @@ and plotVwapOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAdParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -5105,13 +5591,13 @@ and plotVwapOptions<'a, 'b, 'c> = {
 and plotVennOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderDashStyle?: string,
   brighten?: float,
   className?: string,
   clip?: bool,
-  cluster?: plotScatterClusterOptions<'a, 'b, 'c>,
+  cluster?: plotVennClusterOptions<'a, 'b, 'c>,
   color?: ColorType.t,
   colorAxis?: CommonTypes.boolOrStringOrNumber,
   colorByPoint?: bool,
@@ -5121,7 +5607,7 @@ and plotVennOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotVennDataLabelsOptions | PlotVennDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBubbleDataLabelsOptionsOrPlotBubbleDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -5135,8 +5621,8 @@ and plotVennOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotVennOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   showCheckbox?: bool,
@@ -5154,11 +5640,11 @@ and plotVennOptions<'a, 'b, 'c> = {
 and plotVectorOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
-  cluster?: plotScatterClusterOptions<'a, 'b, 'c>,
+  cluster?: plotVectorClusterOptions<'a, 'b, 'c>,
   color?: ColorType.t,
   colorAxis?: CommonTypes.boolOrStringOrNumber,
   colorIndex?: float,
@@ -5171,7 +5657,7 @@ and plotVectorOptions<'a, 'b, 'c> = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotVectorDataLabelsOptions | PlotVectorDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesVectorOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -5194,8 +5680,8 @@ and plotVectorOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotVectorOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointRange?: float,
@@ -5223,7 +5709,7 @@ and plotVectorOptions<'a, 'b, 'c> = {
 and plotVbpOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -5245,7 +5731,7 @@ and plotVbpOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotVbpDataLabelsOptions | PlotVbpDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesVbpOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -5272,8 +5758,8 @@ and plotVbpOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotVbpParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   relativeXValue?: bool,
   selected?: bool,
@@ -5299,7 +5785,7 @@ and plotVbpOptions<'a, 'b, 'c> = {
 and plotVariwideOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
@@ -5317,7 +5803,7 @@ and plotVariwideOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotVariwideDataLabelsOptions | PlotVariwideDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesVariwideOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -5341,8 +5827,8 @@ and plotVariwideOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotVariwideOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -5372,7 +5858,7 @@ and plotVariwideOptions<'a, 'b, 'c> = {
 and plotVariablepieOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
   borderWidth?: float,
@@ -5387,7 +5873,7 @@ and plotVariablepieOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesPieDataLabelsOptionsObject | SeriesPieDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -5411,8 +5897,8 @@ and plotVariablepieOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotVariablepieOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -5436,7 +5922,7 @@ and plotVariablepieOptions<'a, 'b, 'c> = {
 and plotTrixOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -5456,7 +5942,7 @@ and plotTrixOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotTrixDataLabelsOptions | PlotTrixDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesTrixOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -5483,8 +5969,8 @@ and plotTrixOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotDemaParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -5507,7 +5993,7 @@ and plotTrixOptions<'a, 'b, 'c> = {
 and plotTrendlineOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -5529,7 +6015,7 @@ and plotTrendlineOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotTrendlineDataLabelsOptions | PlotTrendlineDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesTrendlineOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -5556,8 +6042,8 @@ and plotTrendlineOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotTrendlineParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -5582,7 +6068,7 @@ and plotTreemapOptions<'a, 'b, 'c> = {
   allowPointSelect?: bool,
   allowTraversingTree?: bool,
   alternateStartingDirection?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -5602,7 +6088,7 @@ and plotTreemapOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotTreemapDataLabelsOptions | PlotTreemapDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotTreemapDataLabelsOptionsOrPlotTreemapDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -5621,7 +6107,7 @@ and plotTreemapOptions<'a, 'b, 'c> = {
   layoutStartingDirection?: optionsLayoutStartingDirectionValue,
   legendSymbol?: optionsLegendSymbolValue,
   levelIsConstant?: bool,
-  levels?: array<string>,  // ⚪ loose — was `PlotTreemapLevelsOptions`
+  levels?: array<plotTreemapLevelsOptions<'a, 'b, 'c>>,
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
@@ -5631,8 +6117,8 @@ and plotTreemapOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotTreemapOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointStart?: CommonTypes.stringOrNumber,
@@ -5660,7 +6146,7 @@ and plotTreemapOptions<'a, 'b, 'c> = {
 and plotTreegraphOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -5675,7 +6161,7 @@ and plotTreegraphOptions<'a, 'b, 'c> = {
   cropThreshold?: float,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesTreegraphDataLabelsOptionsObject | SeriesTreegraphDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesTreegraphDataLabelsOptionsObjectOrSeriesTreegraphDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -5688,7 +6174,7 @@ and plotTreegraphOptions<'a, 'b, 'c> = {
   keys?: array<string>,
   label?: seriesLabelOptionsObject<'a, 'b, 'c>,
   legendSymbol?: optionsLegendSymbolValue,
-  levels?: array<string>,  // ⚪ loose — was `PlotTreegraphLevelsOptions`
+  levels?: array<plotTreegraphLevelsOptions<'a, 'b, 'c>>,
   link?: plotTreegraphLinkOptions,
   linkedTo?: string,
   marker?: pointMarkerOptionsObject,
@@ -5699,8 +6185,8 @@ and plotTreegraphOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotTreegraphOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointStart?: CommonTypes.stringOrNumber,
@@ -5725,7 +6211,7 @@ and plotTreegraphOptions<'a, 'b, 'c> = {
 and plotTimelineOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   className?: string,
   clip?: bool,
   color?: ColorType.t,
@@ -5736,7 +6222,7 @@ and plotTimelineOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `TimelineDataLabelsOptionsObject | TimelineDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: timelineDataLabelsOptionsObjectOrTimelineDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
@@ -5758,8 +6244,8 @@ and plotTimelineOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotTimelineOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -5790,7 +6276,7 @@ and plotTilemapOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotTilemapDataLabelsOptions | PlotTilemapDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotMapbubbleDataLabelsOptionsOrPlotMapbubbleDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -5810,8 +6296,8 @@ and plotTilemapOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotTilemapOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   relativeXValue?: bool,
   rowsize?: float,
@@ -5842,7 +6328,7 @@ and plotTiledwebmapOptions<'a, 'b, 'c> = {
   legendSymbol?: optionsLegendSymbolValue,
   linecap?: string,
   opacity?: float,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
   provider?: plotTiledwebmapProviderOptions,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
@@ -5854,7 +6340,7 @@ and plotTiledwebmapOptions<'a, 'b, 'c> = {
 and plotTemaOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -5874,7 +6360,7 @@ and plotTemaOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotTemaDataLabelsOptions | PlotTemaDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesTemaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -5901,8 +6387,8 @@ and plotTemaOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAbandsParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -5925,7 +6411,7 @@ and plotTemaOptions<'a, 'b, 'c> = {
 and plotSupertrendOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -5947,7 +6433,7 @@ and plotSupertrendOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotSupertrendDataLabelsOptions | PlotSupertrendDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesSupertrendOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -5974,8 +6460,8 @@ and plotSupertrendOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotSupertrendParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   risingTrendColor?: ColorType.t,
   selected?: bool,
@@ -5999,7 +6485,7 @@ and plotSunburstOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   allowTraversingTree?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
   borderWidth?: float,
@@ -6014,7 +6500,7 @@ and plotSunburstOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesSunburstDataLabelsOptionsObject | SeriesSunburstDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesSunburstDataLabelsOptionsObjectOrSeriesSunburstDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -6031,8 +6517,8 @@ and plotSunburstOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotSunburstOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   rootId?: string,
   selected?: bool,
@@ -6054,7 +6540,7 @@ and plotSunburstOptions<'a, 'b, 'c> = {
 and plotStreamgraphOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -6075,7 +6561,7 @@ and plotStreamgraphOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotStreamgraphDataLabelsOptions | PlotStreamgraphDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesStreamgraphOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -6107,8 +6593,8 @@ and plotStreamgraphOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotStreamgraphOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -6138,7 +6624,7 @@ and plotStreamgraphOptions<'a, 'b, 'c> = {
 and plotStochasticOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -6160,7 +6646,7 @@ and plotStochasticOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotStochasticDataLabelsOptions | PlotStochasticDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesStochasticOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -6187,8 +6673,8 @@ and plotStochasticOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotStochasticParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -6212,7 +6698,7 @@ and plotStochasticOptions<'a, 'b, 'c> = {
 and plotSplineOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -6233,7 +6719,7 @@ and plotSplineOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotSplineDataLabelsOptions | PlotSplineDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesSplineOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -6261,8 +6747,8 @@ and plotSplineOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotSplineOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -6291,7 +6777,7 @@ and plotSplineOptions<'a, 'b, 'c> = {
 and plotSolidgaugeOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   borderRadius?: CommonTypes.stringOrNumber,
   className?: string,
   clip?: bool,
@@ -6301,7 +6787,7 @@ and plotSolidgaugeOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotSolidgaugeDataLabelsOptions | PlotSolidgaugeDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotGaugeDataLabelsOptionsOrPlotGaugeDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -6322,8 +6808,8 @@ and plotSolidgaugeOptions<'a, 'b, 'c> = {
   opacity?: float,
   overshoot?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointStart?: CommonTypes.stringOrNumber,
@@ -6344,7 +6830,7 @@ and plotSolidgaugeOptions<'a, 'b, 'c> = {
 and plotSmaOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -6366,7 +6852,7 @@ and plotSmaOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotSmaDataLabelsOptions | PlotSmaDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesSmaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -6393,8 +6879,8 @@ and plotSmaOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotDemaParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -6417,7 +6903,7 @@ and plotSmaOptions<'a, 'b, 'c> = {
 and plotSlowstochasticOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -6439,7 +6925,7 @@ and plotSlowstochasticOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotSlowstochasticDataLabelsOptions | PlotSlowstochasticDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesSlowstochasticOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -6466,8 +6952,8 @@ and plotSlowstochasticOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotSlowstochasticParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -6491,7 +6977,7 @@ and plotSlowstochasticOptions<'a, 'b, 'c> = {
 and plotScatter3dOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -6505,7 +6991,7 @@ and plotScatter3dOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotScatter3dDataLabelsOptions | PlotScatter3dDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesScatter3dOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -6529,8 +7015,8 @@ and plotScatter3dOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotScatter3dOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointStart?: CommonTypes.stringOrNumber,
@@ -6556,7 +7042,7 @@ and plotScatter3dOptions<'a, 'b, 'c> = {
 and plotScatterOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -6579,7 +7065,7 @@ and plotScatterOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotScatterDataLabelsOptions | PlotScatterDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesScatterOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -6607,8 +7093,8 @@ and plotScatterOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotScatterOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointRange?: float,
@@ -6636,7 +7122,7 @@ and plotScatterOptions<'a, 'b, 'c> = {
 and plotSankeyOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   borderColor?: ColorType.t,
   borderWidth?: float,
   centerInCategory?: bool,
@@ -6650,7 +7136,7 @@ and plotSankeyOptions<'a, 'b, 'c> = {
   curveFactor?: float,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesSankeyDataLabelsOptionsObject | SeriesSankeyDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -6660,7 +7146,7 @@ and plotSankeyOptions<'a, 'b, 'c> = {
   keys?: array<string>,
   label?: seriesLabelOptionsObject<'a, 'b, 'c>,
   legendSymbol?: optionsLegendSymbolValue,
-  levels?: array<string>,  // ⚪ loose — was `PlotSankeyLevelsOptions`
+  levels?: array<plotArcdiagramLevelsOptions<'a, 'b, 'c>>,
   linkColorMode?: chartsSeriesArcdiagramOptionsLinkColorMode,
   linkedTo?: string,
   linkOpacity?: float,
@@ -6673,8 +7159,8 @@ and plotSankeyOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotSankeyOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   showCheckbox?: bool,
@@ -6691,7 +7177,7 @@ and plotSankeyOptions<'a, 'b, 'c> = {
 and plotRsiOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -6713,7 +7199,7 @@ and plotRsiOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotRsiDataLabelsOptions | PlotRsiDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesRsiOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -6740,8 +7226,8 @@ and plotRsiOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotRsiParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -6764,7 +7250,7 @@ and plotRsiOptions<'a, 'b, 'c> = {
 and plotRocOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -6786,7 +7272,7 @@ and plotRocOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotRocDataLabelsOptions | PlotRocDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesRocOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -6813,8 +7299,8 @@ and plotRocOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAbandsParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -6837,7 +7323,7 @@ and plotRocOptions<'a, 'b, 'c> = {
 and plotRenkoOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: ChartsSeriesRenkoOptionsBorderRadius.t,
@@ -6853,7 +7339,7 @@ and plotRenkoOptions<'a, 'b, 'c> = {
   cropThreshold?: float,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotRenkoDataLabelsOptions | PlotRenkoDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   downColor?: string,
   enableMouseTracking?: bool,
@@ -6879,8 +7365,8 @@ and plotRenkoOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotRenkoOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -6923,7 +7409,7 @@ and plotPyramid3dOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotPyramid3dDataLabelsOptions | PlotPyramid3dDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotFunnel3dDataLabelsOptionsOrPlotFunnel3dDataLabelsOptionsArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -6953,8 +7439,8 @@ and plotPyramid3dOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotPyramid3dOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -6986,7 +7472,7 @@ and plotPyramid3dOptions<'a, 'b, 'c> = {
 and plotPsarOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -7008,7 +7494,7 @@ and plotPsarOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotPsarDataLabelsOptions | PlotPsarDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesPsarOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -7035,8 +7521,8 @@ and plotPsarOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotPsarParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -7059,7 +7545,7 @@ and plotPsarOptions<'a, 'b, 'c> = {
 and plotPriceenvelopesOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -7082,7 +7568,7 @@ and plotPriceenvelopesOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotPriceenvelopesDataLabelsOptions | PlotPriceenvelopesDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesPriceenvelopesOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -7109,8 +7595,8 @@ and plotPriceenvelopesOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotPriceenvelopesParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -7134,7 +7620,7 @@ and plotPriceenvelopesOptions<'a, 'b, 'c> = {
 and plotPpoOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -7156,7 +7642,7 @@ and plotPpoOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotPpoDataLabelsOptions | PlotPpoDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesPpoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -7183,8 +7669,8 @@ and plotPpoOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotApoParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -7207,7 +7693,7 @@ and plotPpoOptions<'a, 'b, 'c> = {
 and plotPolygonOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -7227,7 +7713,7 @@ and plotPolygonOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotPolygonDataLabelsOptions | PlotPolygonDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesPolygonOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -7254,8 +7740,8 @@ and plotPolygonOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotPolygonOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointRange?: float,
@@ -7282,7 +7768,7 @@ and plotPolygonOptions<'a, 'b, 'c> = {
 and plotPointandfigureOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boxSize?: CommonTypes.stringOrNumber,
   className?: string,
@@ -7297,7 +7783,7 @@ and plotPointandfigureOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: legendAccessibilityKeyboardNavigationOptions,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotPointandfigureDataLabelsOptions | PlotPointandfigureDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesPointandfigureOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -7326,8 +7812,8 @@ and plotPointandfigureOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotPointandfigureOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -7357,7 +7843,7 @@ and plotPointandfigureOptions<'a, 'b, 'c> = {
 and plotPivotpointsOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -7379,7 +7865,7 @@ and plotPivotpointsOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotPivotpointsDataLabelsOptions | PlotPivotpointsDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesPivotpointsOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -7406,8 +7892,8 @@ and plotPivotpointsOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotPivotpointsParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -7430,7 +7916,7 @@ and plotPivotpointsOptions<'a, 'b, 'c> = {
 and plotPieOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
   borderWidth?: float,
@@ -7445,7 +7931,7 @@ and plotPieOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesPieDataLabelsOptionsObject | SeriesPieDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -7468,8 +7954,8 @@ and plotPieOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotPieOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -7491,7 +7977,7 @@ and plotPieOptions<'a, 'b, 'c> = {
 and plotPictorialOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -7506,7 +7992,7 @@ and plotPictorialOptions<'a, 'b, 'c> = {
   cropThreshold?: float,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotPictorialDataLabelsOptions | PlotPictorialDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -7532,8 +8018,8 @@ and plotPictorialOptions<'a, 'b, 'c> = {
   nullInteraction?: bool,
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -7562,7 +8048,7 @@ and plotPictorialOptions<'a, 'b, 'c> = {
 and plotPcOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -7583,7 +8069,7 @@ and plotPcOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotPcDataLabelsOptions | PlotPcDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesPcOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -7611,8 +8097,8 @@ and plotPcOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAroonoscillatorParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -7636,7 +8122,7 @@ and plotPcOptions<'a, 'b, 'c> = {
 and plotParetoOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -7649,7 +8135,7 @@ and plotParetoOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotParetoDataLabelsOptions | PlotParetoDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesParetoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -7668,8 +8154,8 @@ and plotParetoOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotParetoOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   showCheckbox?: bool,
@@ -7686,7 +8172,7 @@ and plotParetoOptions<'a, 'b, 'c> = {
 and plotPackedbubbleOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -7725,8 +8211,8 @@ and plotPackedbubbleOptions<'a, 'b, 'c> = {
   opacity?: float,
   parentNode?: plotPackedbubbleParentNodeOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointStart?: CommonTypes.stringOrNumber,
@@ -7755,7 +8241,7 @@ and plotPackedbubbleOptions<'a, 'b, 'c> = {
 }
 and plotOrganizationOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   borderColor?: string,
   borderRadius?: float,
   borderWidth?: float,
@@ -7769,7 +8255,7 @@ and plotOrganizationOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesOrganizationDataLabelsOptionsObject | SeriesOrganizationDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesOrganizationDataLabelsOptionsObjectOrSeriesOrganizationDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -7782,7 +8268,7 @@ and plotOrganizationOptions<'a, 'b, 'c> = {
   keys?: array<string>,
   label?: seriesLabelOptionsObject<'a, 'b, 'c>,
   legendSymbol?: optionsLegendSymbolValue,
-  levels?: array<string>,  // ⚪ loose — was `PlotOrganizationLevelsOptions`
+  levels?: array<plotArcdiagramLevelsOptions<'a, 'b, 'c>>,
   link?: plotOrganizationLinkOptions,
   linkColorMode?: chartsSeriesArcdiagramOptionsLinkColorMode,
   linkedTo?: string,
@@ -7797,8 +8283,8 @@ and plotOrganizationOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotOrganizationOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   showCheckbox?: bool,
@@ -7815,7 +8301,7 @@ and plotOrganizationOptions<'a, 'b, 'c> = {
 and plotOhlcOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -7838,7 +8324,7 @@ and plotOhlcOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotOhlcDataLabelsOptions | PlotOhlcDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesOhlcOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -7866,8 +8352,8 @@ and plotOhlcOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotOhlcOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -7898,7 +8384,7 @@ and plotOhlcOptions<'a, 'b, 'c> = {
 and plotObvOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -7920,7 +8406,7 @@ and plotObvOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotObvDataLabelsOptions | PlotObvDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesObvOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -7947,8 +8433,8 @@ and plotObvOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotObvParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -8001,8 +8487,8 @@ and plotNetworkgraphOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotNetworkgraphOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -8021,7 +8507,7 @@ and plotNetworkgraphOptions<'a, 'b, 'c> = {
 and plotNatrOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -8043,7 +8529,7 @@ and plotNatrOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotNatrDataLabelsOptions | PlotNatrDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesNatrOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -8070,8 +8556,8 @@ and plotNatrOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAroonoscillatorParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -8094,7 +8580,7 @@ and plotNatrOptions<'a, 'b, 'c> = {
 and plotMomentumOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -8116,7 +8602,7 @@ and plotMomentumOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotMomentumDataLabelsOptions | PlotMomentumDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesMomentumOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -8143,8 +8629,8 @@ and plotMomentumOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAbandsParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -8167,7 +8653,7 @@ and plotMomentumOptions<'a, 'b, 'c> = {
 and plotMfiOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -8189,7 +8675,7 @@ and plotMfiOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotMfiDataLabelsOptions | PlotMfiDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesMfiOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -8216,8 +8702,8 @@ and plotMfiOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotMfiParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -8257,7 +8743,7 @@ and plotMaplineOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotMaplineDataLabelsOptions | PlotMaplineDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotGeoheatmapDataLabelsOptionsOrPlotGeoheatmapDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -8275,8 +8761,8 @@ and plotMaplineOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotMaplineOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   selected?: bool,
   showCheckbox?: bool,
   showInLegend?: bool,
@@ -8292,7 +8778,7 @@ and plotMaplineOptions<'a, 'b, 'c> = {
 and plotMapbubbleOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -8307,7 +8793,7 @@ and plotMapbubbleOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotMapbubbleDataLabelsOptions | PlotMapbubbleDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotMapbubbleDataLabelsOptionsOrPlotMapbubbleDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   displayNegative?: bool,
   dragDrop?: seriesDragDropOptionsObject,
@@ -8328,8 +8814,8 @@ and plotMapbubbleOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotMapbubbleOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   selected?: bool,
   showCheckbox?: bool,
   showInLegend?: bool,
@@ -8363,7 +8849,7 @@ and plotMapOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotMapDataLabelsOptions | PlotMapDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotMapDataLabelsOptionsOrPlotMapDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -8379,8 +8865,8 @@ and plotMapOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotMapOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   selected?: bool,
   showCheckbox?: bool,
   showInLegend?: bool,
@@ -8396,7 +8882,7 @@ and plotMapOptions<'a, 'b, 'c> = {
 and plotMacdOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -8418,7 +8904,7 @@ and plotMacdOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotMacdDataLabelsOptions | PlotMacdDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesMacdOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -8448,8 +8934,8 @@ and plotMacdOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotMacdParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   relativeXValue?: bool,
   selected?: bool,
@@ -8474,7 +8960,7 @@ and plotMacdOptions<'a, 'b, 'c> = {
 and plotLollipopOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   className?: string,
@@ -8498,7 +8984,7 @@ and plotLollipopOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesLollipopOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -8529,8 +9015,8 @@ and plotLollipopOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotLollipopOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -8559,7 +9045,7 @@ and plotLollipopOptions<'a, 'b, 'c> = {
 and plotLinearregressionslopeOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -8581,7 +9067,7 @@ and plotLinearregressionslopeOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotLinearregressionslopeDataLabelsOptions | PlotLinearregressionslopeDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesLinearregressionslopeOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -8608,8 +9094,8 @@ and plotLinearregressionslopeOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotLinearregressionangleParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -8632,7 +9118,7 @@ and plotLinearregressionslopeOptions<'a, 'b, 'c> = {
 and plotLinearregressioninterceptOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -8654,7 +9140,7 @@ and plotLinearregressioninterceptOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotLinearregressioninterceptDataLabelsOptions | PlotLinearregressioninterceptDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesLinearregressioninterceptOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -8681,8 +9167,8 @@ and plotLinearregressioninterceptOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotLinearregressionangleParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -8705,7 +9191,7 @@ and plotLinearregressioninterceptOptions<'a, 'b, 'c> = {
 and plotLinearregressionangleOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -8727,7 +9213,7 @@ and plotLinearregressionangleOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotLinearregressionangleDataLabelsOptions | PlotLinearregressionangleDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesLinearregressionangleOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -8754,8 +9240,8 @@ and plotLinearregressionangleOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotLinearregressionangleParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -8778,7 +9264,7 @@ and plotLinearregressionangleOptions<'a, 'b, 'c> = {
 and plotLinearregressionOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -8800,7 +9286,7 @@ and plotLinearregressionOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotLinearregressionDataLabelsOptions | PlotLinearregressionDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesLinearregressionOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -8827,8 +9313,8 @@ and plotLinearregressionOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotLinearregressionParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -8851,7 +9337,7 @@ and plotLinearregressionOptions<'a, 'b, 'c> = {
 and plotLineOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -8874,7 +9360,7 @@ and plotLineOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotLineDataLabelsOptions | PlotLineDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesLineOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -8902,8 +9388,8 @@ and plotLineOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotLineOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -8934,7 +9420,7 @@ and plotLineOptions<'a, 'b, 'c> = {
 and plotKlingerOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -8956,7 +9442,7 @@ and plotKlingerOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotKlingerDataLabelsOptions | PlotKlingerDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesKlingerOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -8983,8 +9469,8 @@ and plotKlingerOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotKlingerParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -9008,7 +9494,7 @@ and plotKlingerOptions<'a, 'b, 'c> = {
 and plotKeltnerchannelsOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -9029,7 +9515,7 @@ and plotKeltnerchannelsOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotKeltnerchannelsDataLabelsOptions | PlotKeltnerchannelsDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesKeltnerchannelsOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -9057,8 +9543,8 @@ and plotKeltnerchannelsOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotDemaParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -9082,7 +9568,7 @@ and plotKeltnerchannelsOptions<'a, 'b, 'c> = {
 and plotItemOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
   center?: (CommonTypes.stringOrNumber, CommonTypes.stringOrNumber),
   className?: string,
@@ -9095,7 +9581,7 @@ and plotItemOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesPieDataLabelsOptionsObject | SeriesPieDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   endAngle?: float,
@@ -9118,8 +9604,8 @@ and plotItemOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotItemOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   rows?: int,
   selected?: bool,
@@ -9139,7 +9625,7 @@ and plotItemOptions<'a, 'b, 'c> = {
 and plotIkhOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -9160,7 +9646,7 @@ and plotIkhOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotIkhDataLabelsOptions | PlotIkhDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesIkhOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -9188,8 +9674,8 @@ and plotIkhOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotIkhParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   senkouSpan?: plotIkhSenkouSpanOptions,
@@ -9216,7 +9702,7 @@ and plotIkhOptions<'a, 'b, 'c> = {
 and plotHollowcandlestickOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -9239,7 +9725,7 @@ and plotHollowcandlestickOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotHollowcandlestickDataLabelsOptions | PlotHollowcandlestickDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesHollowcandlestickOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -9268,8 +9754,8 @@ and plotHollowcandlestickOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotHollowcandlestickOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -9302,7 +9788,7 @@ and plotHollowcandlestickOptions<'a, 'b, 'c> = {
 and plotHlcOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -9325,7 +9811,7 @@ and plotHlcOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotHlcDataLabelsOptions | PlotHlcDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesHlcOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -9353,8 +9839,8 @@ and plotHlcOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotHlcOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -9384,7 +9870,7 @@ and plotHlcOptions<'a, 'b, 'c> = {
 and plotHistogramOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   binsNumber?: string,  // ⚠️ REVIEW — was `number | Function | "rice" | "square-root" | "sturges"` — match the real type by hand
   binWidth?: float,
@@ -9405,7 +9891,7 @@ and plotHistogramOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotHistogramDataLabelsOptions | PlotHistogramDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesHistogramOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -9432,8 +9918,8 @@ and plotHistogramOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotHistogramOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   pointPlacement?: string,
   pointRange?: float,
@@ -9460,7 +9946,7 @@ and plotHistogramOptions<'a, 'b, 'c> = {
 and plotHeikinashiOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -9483,7 +9969,7 @@ and plotHeikinashiOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotHeikinashiDataLabelsOptions | PlotHeikinashiDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesHeikinashiOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -9512,8 +9998,8 @@ and plotHeikinashiOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotHeikinashiOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -9562,7 +10048,7 @@ and plotHeatmapOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotHeatmapDataLabelsOptions | PlotHeatmapDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBubbleDataLabelsOptionsOrPlotBubbleDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesHeatmapOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -9584,8 +10070,8 @@ and plotHeatmapOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotHeatmapOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   relativeXValue?: bool,
   rowsize?: float,
@@ -9624,7 +10110,7 @@ and plotGeoheatmapOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotGeoheatmapDataLabelsOptions | PlotGeoheatmapDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotGeoheatmapDataLabelsOptionsOrPlotGeoheatmapDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -9637,8 +10123,8 @@ and plotGeoheatmapOptions<'a, 'b, 'c> = {
   nullColor?: string,
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   rowsize?: float,
   selected?: bool,
   showCheckbox?: bool,
@@ -9655,7 +10141,7 @@ and plotGeoheatmapOptions<'a, 'b, 'c> = {
 and plotGaugeOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   className?: string,
   clip?: bool,
   color?: ColorType.t,
@@ -9663,7 +10149,7 @@ and plotGaugeOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotGaugeDataLabelsOptions | PlotGaugeDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotGaugeDataLabelsOptionsOrPlotGaugeDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   dial?: plotGaugeDialOptions,
   enableMouseTracking?: bool,
@@ -9685,8 +10171,8 @@ and plotGaugeOptions<'a, 'b, 'c> = {
   overshoot?: float,
   pivot?: plotGaugePivotOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointStart?: CommonTypes.stringOrNumber,
@@ -9705,7 +10191,7 @@ and plotGaugeOptions<'a, 'b, 'c> = {
 and plotGanttOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: float,
@@ -9721,7 +10207,7 @@ and plotGanttOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotGanttDataLabelsOptions | PlotGanttDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotGanttDataLabelsOptionsOrPlotGanttDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
@@ -9740,8 +10226,8 @@ and plotGanttOptions<'a, 'b, 'c> = {
   opacity?: float,
   partialFill?: plotGanttPartialFillOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   pointRange?: float,
   pointWidth?: float,
@@ -9779,7 +10265,7 @@ and plotFunnel3dOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotFunnel3dDataLabelsOptions | PlotFunnel3dDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotFunnel3dDataLabelsOptionsOrPlotFunnel3dDataLabelsOptionsArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -9810,8 +10296,8 @@ and plotFunnel3dOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotFunnel3dOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -9858,7 +10344,7 @@ and plotFunnelOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesPieDataLabelsOptionsObject | SeriesPieDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -9882,8 +10368,8 @@ and plotFunnelOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotFunnelOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   reversed?: bool,
   selected?: bool,
@@ -9935,8 +10421,8 @@ and plotFlowmapOptions<'a, 'b, 'c> = {
   nullColor?: ColorType.t,
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   selected?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
@@ -9975,7 +10461,7 @@ and plotFlagsOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotFlagsDataLabelsOptions | PlotFlagsDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesFlagsOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -10008,8 +10494,8 @@ and plotFlagsOptions<'a, 'b, 'c> = {
   onSeries?: string,
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -10044,7 +10530,7 @@ and plotFlagsOptions<'a, 'b, 'c> = {
 and plotErrorbarOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boxDashStyle?: dashStyleValue,
   centerInCategory?: bool,
@@ -10061,7 +10547,7 @@ and plotErrorbarOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotErrorbarDataLabelsOptions | PlotErrorbarDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesErrorbarOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -10093,8 +10579,8 @@ and plotErrorbarOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotErrorbarOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -10130,7 +10616,7 @@ and plotErrorbarOptions<'a, 'b, 'c> = {
 and plotEmaOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -10152,7 +10638,7 @@ and plotEmaOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotEmaDataLabelsOptions | PlotEmaDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesEmaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -10179,8 +10665,8 @@ and plotEmaOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAbandsParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -10203,7 +10689,7 @@ and plotEmaOptions<'a, 'b, 'c> = {
 and plotDumbbellOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   className?: string,
@@ -10227,7 +10713,7 @@ and plotDumbbellOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesDumbbellOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -10259,8 +10745,8 @@ and plotDumbbellOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotDumbbellOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -10289,7 +10775,7 @@ and plotDumbbellOptions<'a, 'b, 'c> = {
 and plotDpoOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -10309,7 +10795,7 @@ and plotDpoOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotDpoDataLabelsOptions | PlotDpoDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesDpoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -10336,8 +10822,8 @@ and plotDpoOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotDemaParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -10360,7 +10846,7 @@ and plotDpoOptions<'a, 'b, 'c> = {
 and plotDmiOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -10382,7 +10868,7 @@ and plotDmiOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotDmiDataLabelsOptions | PlotDmiDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesDmiOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -10411,8 +10897,8 @@ and plotDmiOptions<'a, 'b, 'c> = {
   params?: plotAroonParamsOptions,
   plusDILine?: plotDmiPlusDILineOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -10435,7 +10921,7 @@ and plotDmiOptions<'a, 'b, 'c> = {
 and plotDisparityindexOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -10457,7 +10943,7 @@ and plotDisparityindexOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotDisparityindexDataLabelsOptions | PlotDisparityindexDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesDisparityindexOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -10484,8 +10970,8 @@ and plotDisparityindexOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotDisparityindexParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -10505,10 +10991,20 @@ and plotDisparityindexOptions<'a, 'b, 'c> = {
   zones?: array<seriesZonesOptionsObject>,
   zoomEnabled?: bool,
 }
+and plotDependencywheelLevelsOptions<'a, 'b, 'c> = {
+  borderColor?: string,
+  borderWidth?: float,
+  color?: ColorType.t,
+  colorByPoint?: bool,
+  dataLabels?: seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  level?: int,
+  linkOpacity?: float,
+  states?: seriesStatesOptionsObject,
+}
 and plotDependencywheelOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
   borderWidth?: float,
@@ -10524,7 +11020,7 @@ and plotDependencywheelOptions<'a, 'b, 'c> = {
   curveFactor?: float,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesSankeyDataLabelsOptionsObject | SeriesSankeyDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -10534,7 +11030,7 @@ and plotDependencywheelOptions<'a, 'b, 'c> = {
   keys?: array<string>,
   label?: seriesLabelOptionsObject<'a, 'b, 'c>,
   legendSymbol?: optionsLegendSymbolValue,
-  levels?: array<string>,  // ⚪ loose — was `PlotDependencywheelLevelsOptions`
+  levels?: array<plotDependencywheelLevelsOptions<'a, 'b, 'c>>,
   linkColorMode?: chartsSeriesArcdiagramOptionsLinkColorMode,
   linkedTo?: string,
   linkOpacity?: float,
@@ -10545,8 +11041,8 @@ and plotDependencywheelOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotDependencywheelOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   showCheckbox?: bool,
@@ -10565,7 +11061,7 @@ and plotDependencywheelOptions<'a, 'b, 'c> = {
 and plotDemaOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -10585,7 +11081,7 @@ and plotDemaOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotDemaDataLabelsOptions | PlotDemaDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesDemaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -10612,8 +11108,8 @@ and plotDemaOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotDemaParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -10636,7 +11132,7 @@ and plotDemaOptions<'a, 'b, 'c> = {
 and plotCylinderOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
@@ -10654,7 +11150,7 @@ and plotCylinderOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotCylinderDataLabelsOptions | PlotCylinderDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesCylinderOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -10681,8 +11177,8 @@ and plotCylinderOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotCylinderOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -10712,7 +11208,7 @@ and plotCylinderOptions<'a, 'b, 'c> = {
 and plotContourOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
   borderColor?: ColorType.t,
@@ -10728,7 +11224,7 @@ and plotContourOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotContourDataLabelsOptions | PlotContourDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesContourOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -10750,8 +11246,8 @@ and plotContourOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotContourOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   showCheckbox?: bool,
@@ -10772,7 +11268,7 @@ and plotContourOptions<'a, 'b, 'c> = {
 and plotColumnrangeOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -10799,7 +11295,7 @@ and plotColumnrangeOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesColumnrangeOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -10829,8 +11325,8 @@ and plotColumnrangeOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotColumnrangeOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -10858,7 +11354,7 @@ and plotColumnrangeOptions<'a, 'b, 'c> = {
 and plotColumnpyramidOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderWidth?: float,
@@ -10881,7 +11377,7 @@ and plotColumnpyramidOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotColumnpyramidDataLabelsOptions | PlotColumnpyramidDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesColumnpyramidOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -10907,8 +11403,8 @@ and plotColumnpyramidOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotColumnpyramidOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -10935,7 +11431,7 @@ and plotColumnpyramidOptions<'a, 'b, 'c> = {
 and plotColumnOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -10962,7 +11458,7 @@ and plotColumnOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotColumnDataLabelsOptions | PlotColumnDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesColumnOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -10993,8 +11489,8 @@ and plotColumnOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotColumnOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -11025,7 +11521,7 @@ and plotColumnOptions<'a, 'b, 'c> = {
 and plotCmoOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -11047,7 +11543,7 @@ and plotCmoOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotCmoDataLabelsOptions | PlotCmoDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesCmoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -11074,8 +11570,8 @@ and plotCmoOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAbandsParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -11098,7 +11594,7 @@ and plotCmoOptions<'a, 'b, 'c> = {
 and plotCmfOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
   className?: string,
@@ -11119,7 +11615,7 @@ and plotCmfOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotCmfDataLabelsOptions | PlotCmfDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesCmfOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -11146,8 +11642,8 @@ and plotCmfOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAdParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -11170,7 +11666,7 @@ and plotCmfOptions<'a, 'b, 'c> = {
 and plotChaikinOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -11192,7 +11688,7 @@ and plotChaikinOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotChaikinDataLabelsOptions | PlotChaikinDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesChaikinOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -11219,8 +11715,8 @@ and plotChaikinOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotChaikinParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -11243,7 +11739,7 @@ and plotChaikinOptions<'a, 'b, 'c> = {
 and plotCciOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -11265,7 +11761,7 @@ and plotCciOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotCciDataLabelsOptions | PlotCciDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesCciOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -11292,8 +11788,8 @@ and plotCciOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAroonoscillatorParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -11316,7 +11812,7 @@ and plotCciOptions<'a, 'b, 'c> = {
 and plotCandlestickOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -11339,7 +11835,7 @@ and plotCandlestickOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotCandlestickDataLabelsOptions | PlotCandlestickDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesCandlestickOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -11368,8 +11864,8 @@ and plotCandlestickOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotCandlestickOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -11402,7 +11898,7 @@ and plotCandlestickOptions<'a, 'b, 'c> = {
 and plotBulletOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
@@ -11420,7 +11916,7 @@ and plotBulletOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotBulletDataLabelsOptions | PlotBulletDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -11447,8 +11943,8 @@ and plotBulletOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotBulletOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -11479,7 +11975,7 @@ and plotBulletOptions<'a, 'b, 'c> = {
 and plotBubbleOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -11501,7 +11997,7 @@ and plotBubbleOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotBubbleDataLabelsOptions | PlotBubbleDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBubbleDataLabelsOptionsOrPlotBubbleDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesBubbleOptionsDataSorting.t,
   description?: string,
   displayNegative?: bool,
@@ -11532,8 +12028,8 @@ and plotBubbleOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotBubbleOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointRange?: float,
@@ -11566,7 +12062,7 @@ and plotBubbleOptions<'a, 'b, 'c> = {
 and plotBoxplotOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boxDashStyle?: dashStyleValue,
   centerInCategory?: bool,
@@ -11583,7 +12079,7 @@ and plotBoxplotOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotBoxplotDataLabelsOptions | PlotBoxplotDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesBoxplotOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -11615,8 +12111,8 @@ and plotBoxplotOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotBoxplotOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -11652,7 +12148,7 @@ and plotBoxplotOptions<'a, 'b, 'c> = {
 and plotBellcurveOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -11666,7 +12162,7 @@ and plotBellcurveOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotBellcurveDataLabelsOptions | PlotBellcurveDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesBellcurveOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -11695,8 +12191,8 @@ and plotBellcurveOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotBellcurveOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPlacement?: CommonTypes.stringOrNumber,
   pointsInInterval?: float,
   pointStart?: CommonTypes.stringOrNumber,
@@ -11722,7 +12218,7 @@ and plotBellcurveOptions<'a, 'b, 'c> = {
 and plotBbOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -11745,7 +12241,7 @@ and plotBbOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotBbDataLabelsOptions | PlotBbDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesBbOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -11773,8 +12269,8 @@ and plotBbOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotBbParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -11798,7 +12294,7 @@ and plotBbOptions<'a, 'b, 'c> = {
 and plotBarOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -11819,7 +12315,7 @@ and plotBarOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotBarDataLabelsOptions | PlotBarDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesBarOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -11847,8 +12343,8 @@ and plotBarOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotBarOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -11878,7 +12374,7 @@ and plotBarOptions<'a, 'b, 'c> = {
 and plotAtrOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -11900,7 +12396,7 @@ and plotAtrOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotAtrDataLabelsOptions | PlotAtrDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAtrOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -11927,8 +12423,8 @@ and plotAtrOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAroonoscillatorParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -11951,7 +12447,7 @@ and plotAtrOptions<'a, 'b, 'c> = {
 and plotAroonoscillatorOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -11971,7 +12467,7 @@ and plotAroonoscillatorOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotAroonoscillatorDataLabelsOptions | PlotAroonoscillatorDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAroonoscillatorOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -11998,8 +12494,8 @@ and plotAroonoscillatorOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAroonoscillatorParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -12022,7 +12518,7 @@ and plotAroonoscillatorOptions<'a, 'b, 'c> = {
 and plotAroonOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   aroonDown?: plotAroonAroonDownOptions,
   boostBlending?: optionsBoostBlendingValue,
@@ -12043,7 +12539,7 @@ and plotAroonOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotAroonDataLabelsOptions | PlotAroonDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAroonOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -12070,8 +12566,8 @@ and plotAroonOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAroonParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -12094,7 +12590,7 @@ and plotAroonOptions<'a, 'b, 'c> = {
 and plotAreasplinerangeOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -12115,7 +12611,7 @@ and plotAreasplinerangeOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAreasplinerangeOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -12148,8 +12644,8 @@ and plotAreasplinerangeOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotAreasplinerangeOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -12178,7 +12674,7 @@ and plotAreasplinerangeOptions<'a, 'b, 'c> = {
 and plotAreasplineOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -12199,7 +12695,7 @@ and plotAreasplineOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotAreasplineDataLabelsOptions | PlotAreasplineDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAreasplineOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -12231,8 +12727,8 @@ and plotAreasplineOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotAreasplineOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -12262,7 +12758,7 @@ and plotAreasplineOptions<'a, 'b, 'c> = {
 and plotArearangeOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -12285,7 +12781,7 @@ and plotArearangeOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesArearangeOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -12318,8 +12814,8 @@ and plotArearangeOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotArearangeOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -12349,7 +12845,7 @@ and plotArearangeOptions<'a, 'b, 'c> = {
 and plotAreaOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -12372,7 +12868,7 @@ and plotAreaOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotAreaDataLabelsOptions | PlotAreaDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAreaOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -12404,8 +12900,8 @@ and plotAreaOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotAreaOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -12433,10 +12929,20 @@ and plotAreaOptions<'a, 'b, 'c> = {
   zones?: array<seriesZonesOptionsObject>,
   zoomEnabled?: bool,
 }
+and plotArcdiagramLevelsOptions<'a, 'b, 'c> = {
+  borderColor?: string,
+  borderWidth?: float,
+  color?: ColorType.t,
+  colorByPoint?: bool,
+  dataLabels?: seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  level?: int,
+  linkOpacity?: float,
+  states?: seriesStatesOptionsObject,
+}
 and plotArcdiagramOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   borderColor?: ColorType.t,
   borderWidth?: float,
   centeredLinks?: bool,
@@ -12449,7 +12955,7 @@ and plotArcdiagramOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚠️ REVIEW — was `SeriesArcDiagramDataLabelsOptionsObject | SeriesArcDiagramDataLabelsOptionsObject[]` — match the real type by hand
+  dataLabels?: seriesArcDiagramDataLabelsOptionsObjectOrSeriesArcDiagramDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   equalNodes?: bool,
@@ -12459,7 +12965,7 @@ and plotArcdiagramOptions<'a, 'b, 'c> = {
   keys?: array<string>,
   label?: seriesLabelOptionsObject<'a, 'b, 'c>,
   legendSymbol?: optionsLegendSymbolValue,
-  levels?: array<string>,  // ⚪ loose — was `PlotArcdiagramLevelsOptions`
+  levels?: array<plotArcdiagramLevelsOptions<'a, 'b, 'c>>,
   linkColorMode?: chartsSeriesArcdiagramOptionsLinkColorMode,
   linkedTo?: string,
   linkOpacity?: float,
@@ -12471,8 +12977,8 @@ and plotArcdiagramOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚠️ REVIEW — was `object | PlotArcdiagramOnPointOptions` — match the real type by hand
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   reversed?: bool,
   selected?: bool,
   showCheckbox?: bool,
@@ -12489,7 +12995,7 @@ and plotArcdiagramOptions<'a, 'b, 'c> = {
 and plotApoOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -12511,7 +13017,7 @@ and plotApoOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotApoDataLabelsOptions | PlotApoDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesApoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -12538,8 +13044,8 @@ and plotApoOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotApoParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -12562,7 +13068,7 @@ and plotApoOptions<'a, 'b, 'c> = {
 and plotAoOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -12584,7 +13090,7 @@ and plotAoOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotAoDataLabelsOptions | PlotAoDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -12614,8 +13120,8 @@ and plotAoOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAoParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   relativeXValue?: bool,
   selected?: bool,
@@ -12639,7 +13145,7 @@ and plotAoOptions<'a, 'b, 'c> = {
 and plotAdOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -12661,7 +13167,7 @@ and plotAdOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotAdDataLabelsOptions | PlotAdDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAdOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -12688,8 +13194,8 @@ and plotAdOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAdParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -12712,7 +13218,7 @@ and plotAdOptions<'a, 'b, 'c> = {
 and plotAbandsOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -12733,7 +13239,7 @@ and plotAbandsOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚠️ REVIEW — was `PlotAbandsDataLabelsOptions | PlotAbandsDataLabelsOptions[]` — match the real type by hand
+  dataLabels?: plotAbandsDataLabelsOptionsOrPlotAbandsDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAbandsOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -12761,8 +13267,8 @@ and plotAbandsOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAbandsParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -13162,6 +13668,56 @@ and navigatorXAxisOptions<'a, 'b, 'c> = {
   zIndex?: int,
   zoomEnabled?: bool,
 }
+and navigatorSeriesDataLabelsOptions<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | NavigatorSeriesDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  x?: float,
+  y?: float,
+  zIndex?: int,
+}
+and navigatorSeriesOptions<'a, 'b, 'c> = {
+  className?: string,
+  color?: ColorType.t,
+  data?: array<JSON.t>,
+  dataGrouping?: dataGroupingOptionsObject,
+  dataLabels?: navigatorSeriesDataLabelsOptionsOrNavigatorSeriesDataLabelsOptionsArray<'a, 'b, 'c>,
+  fillOpacity?: float,
+  id?: string,
+  lineColor?: string,
+  lineWidth?: float,
+  marker?: legendAccessibilityKeyboardNavigationOptions,
+  pointRange?: float,
+  threshold?: float,
+  @as("type") type_?: string,
+}
 and navigatorOptions<'a, 'b, 'c> = {
   accessibility?: legendAccessibilityKeyboardNavigationOptions,
   adaptToUpdatedData?: bool,
@@ -13227,7 +13783,7 @@ and navigationAnnotationsLabelsOptions<'a, 'b, 'c, 'd> = {
   y?: float,
 }
 and navigationAnnotationsOptions<'a, 'b, 'c, 'd, 'e, 'f> = {
-  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject> | NavigationAnnotationsAnimationOptions`
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | NavigationAnnotationsAnimationOptions` — match the real type by hand
   className?: string,
   controlPointOptions?: annotationControlPointOptionsObject,
   crop?: bool,
@@ -13292,7 +13848,7 @@ and seriesZigzagOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -13314,7 +13870,7 @@ and seriesZigzagOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotZigzagDataLabelsOptions | PlotZigzagDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesZigzagOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -13341,8 +13897,8 @@ and seriesZigzagOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotZigzagParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -13370,6 +13926,40 @@ and seriesZigzagOptions<'a, 'b, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and plotXrangeDataLabelsOptions<'a, 'b, 'c> = {
+  align?: string,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotXrangeDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: ChartsPlotXrangeDataLabelsOptionsStyle.t,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
 and seriesXrangeOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   depth?: string,  // ⚪ loose — was `undefined`
@@ -13378,7 +13968,7 @@ and seriesXrangeOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: float,
@@ -13402,7 +13992,7 @@ and seriesXrangeOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotXrangeDataLabelsOptions | PlotXrangeDataLabelsOptions[]`
+  dataLabels?: plotXrangeDataLabelsOptionsOrPlotXrangeDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
@@ -13427,8 +14017,8 @@ and seriesXrangeOptions<'b, 'a, 'c> = {
   opacity?: float,
   partialFill?: plotXrangePartialFillOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   pointRange?: float,
   pointWidth?: float,
@@ -13463,7 +14053,7 @@ and seriesWordcloudOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
@@ -13496,8 +14086,8 @@ and seriesWordcloudOptions<'b, 'a, 'c> = {
   opacity?: float,
   placementStrategy?: optionsPlacementStrategyValue,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   rotation?: plotWordcloudRotationOptions,
   selected?: bool,
@@ -13528,7 +14118,7 @@ and seriesWmaOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -13550,7 +14140,7 @@ and seriesWmaOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotWmaDataLabelsOptions | PlotWmaDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesWmaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -13577,8 +14167,8 @@ and seriesWmaOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotDemaParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -13613,7 +14203,7 @@ and seriesWindbarbOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
@@ -13636,7 +14226,7 @@ and seriesWindbarbOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotWindbarbDataLabelsOptions | PlotWindbarbDataLabelsOptions[]`
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesWindbarbOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -13668,8 +14258,8 @@ and seriesWindbarbOptions<'b, 'a, 'c> = {
   onSeries?: string,
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -13714,7 +14304,7 @@ and seriesWilliamsrOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -13736,7 +14326,7 @@ and seriesWilliamsrOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotWilliamsrDataLabelsOptions | PlotWilliamsrDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesWilliamsrOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -13763,8 +14353,8 @@ and seriesWilliamsrOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAroonoscillatorParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -13799,7 +14389,7 @@ and seriesWaterfallOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
@@ -13818,7 +14408,7 @@ and seriesWaterfallOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotWaterfallDataLabelsOptions | PlotWaterfallDataLabelsOptions[]`
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesWaterfallOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -13848,8 +14438,8 @@ and seriesWaterfallOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotWaterfallOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -13892,7 +14482,7 @@ and seriesVwapOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -13914,7 +14504,7 @@ and seriesVwapOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotVwapDataLabelsOptions | PlotVwapDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesVwapOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -13941,8 +14531,8 @@ and seriesVwapOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAdParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -13970,6 +14560,19 @@ and seriesVwapOptions<'a, 'b, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and plotVennClusterOptions<'a, 'b, 'c> = {
+  allowOverlap?: bool,
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  dataLabels?: ChartsPlotVennClusterOptionsDataLabels.t,
+  drillToCluster?: bool,
+  enabled?: bool,
+  events?: plotScatterClusterEventsOptions<'a, 'b, 'c>,
+  layoutAlgorithm?: plotScatterClusterLayoutAlgorithmOptions,
+  marker?: pointMarkerOptionsObject,
+  minimumClusterSize?: float,
+  states?: plotScatterClusterStatesOptions,
+  zones?: array<plotScatterClusterZonesOptions>,
+}
 and seriesVennOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
@@ -13981,13 +14584,13 @@ and seriesVennOptions<'b, 'a, 'c> = {
   yAxis?: string,  // ⚪ loose — was `undefined`
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderDashStyle?: string,
   brighten?: float,
   className?: string,
   clip?: bool,
-  cluster?: plotScatterClusterOptions<'a, 'b, 'c>,
+  cluster?: plotVennClusterOptions<'a, 'b, 'c>,
   color?: ColorType.t,
   colorAxis?: CommonTypes.boolOrStringOrNumber,
   colorByPoint?: bool,
@@ -13997,7 +14600,7 @@ and seriesVennOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotVennDataLabelsOptions | PlotVennDataLabelsOptions[]`
+  dataLabels?: plotBubbleDataLabelsOptionsOrPlotBubbleDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -14011,8 +14614,8 @@ and seriesVennOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotVennOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   showCheckbox?: bool,
@@ -14033,6 +14636,19 @@ and seriesVennOptions<'b, 'a, 'c> = {
   name?: string,
   zIndex?: int,
 }
+and plotVectorClusterOptions<'a, 'b, 'c> = {
+  allowOverlap?: bool,
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  dataLabels?: ChartsPlotVectorClusterOptionsDataLabels.t,
+  drillToCluster?: bool,
+  enabled?: bool,
+  events?: plotScatterClusterEventsOptions<'a, 'b, 'c>,
+  layoutAlgorithm?: plotScatterClusterLayoutAlgorithmOptions,
+  marker?: pointMarkerOptionsObject,
+  minimumClusterSize?: float,
+  states?: plotScatterClusterStatesOptions,
+  zones?: array<plotScatterClusterZonesOptions>,
+}
 and seriesVectorOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
@@ -14040,11 +14656,11 @@ and seriesVectorOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
-  cluster?: plotScatterClusterOptions<'a, 'b, 'c>,
+  cluster?: plotVectorClusterOptions<'a, 'b, 'c>,
   color?: ColorType.t,
   colorAxis?: CommonTypes.boolOrStringOrNumber,
   colorIndex?: float,
@@ -14057,7 +14673,7 @@ and seriesVectorOptions<'b, 'a, 'c> = {
   cumulativeStart?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `PlotVectorDataLabelsOptions | PlotVectorDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesVectorOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -14080,8 +14696,8 @@ and seriesVectorOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotVectorOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointRange?: float,
@@ -14121,7 +14737,7 @@ and seriesVbpOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -14143,7 +14759,7 @@ and seriesVbpOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotVbpDataLabelsOptions | PlotVbpDataLabelsOptions[]`
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesVbpOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -14170,8 +14786,8 @@ and seriesVbpOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotVbpParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   relativeXValue?: bool,
   selected?: bool,
@@ -14207,7 +14823,7 @@ and seriesVariwideOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
@@ -14225,7 +14841,7 @@ and seriesVariwideOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotVariwideDataLabelsOptions | PlotVariwideDataLabelsOptions[]`
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesVariwideOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -14249,8 +14865,8 @@ and seriesVariwideOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotVariwideOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -14296,7 +14912,7 @@ and seriesVariablepieOptions<'b, 'a, 'c> = {
   yAxis?: string,  // ⚪ loose — was `undefined`
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
   borderWidth?: float,
@@ -14311,7 +14927,7 @@ and seriesVariablepieOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `SeriesPieDataLabelsOptionsObject | SeriesPieDataLabelsOptionsObject[]`
+  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -14335,8 +14951,8 @@ and seriesVariablepieOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotVariablepieOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -14370,7 +14986,7 @@ and seriesTrixOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -14390,7 +15006,7 @@ and seriesTrixOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotTrixDataLabelsOptions | PlotTrixDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesTrixOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -14417,8 +15033,8 @@ and seriesTrixOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotDemaParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -14452,7 +15068,7 @@ and seriesTrendlineOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -14474,7 +15090,7 @@ and seriesTrendlineOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotTrendlineDataLabelsOptions | PlotTrendlineDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesTrendlineOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -14501,8 +15117,8 @@ and seriesTrendlineOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotTrendlineParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -14530,6 +15146,87 @@ and seriesTrendlineOptions<'a, 'b, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and plotTreemapLevelsDataLabelsOptions<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotTreemapLevelsDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  headers?: bool,
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: ChartsPlotTreemapLevelsDataLabelsOptionsStyle.t,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
+and plotTreemapLevelsOptions<'a, 'b, 'c> = {
+  borderColor?: string,
+  borderDashStyle?: dashStyleValue,
+  borderWidth?: float,
+  color?: ColorType.t,
+  colorVariation?: plotTreegraphLevelsColorVariationOptions,
+  dataLabels?: plotTreemapLevelsDataLabelsOptionsOrPlotTreemapLevelsDataLabelsOptionsArray<'a, 'b, 'c>,
+  layoutAlgorithm?: optionsLayoutAlgorithmValue,
+  layoutStartingDirection?: optionsLayoutStartingDirectionValue,
+  level?: int,
+}
+and plotTreemapDataLabelsOptions<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotTreemapDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  headers?: bool,
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: ChartsPlotTreemapDataLabelsOptionsStyle.t,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
 and seriesTreemapOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
@@ -14540,7 +15237,7 @@ and seriesTreemapOptions<'b, 'a, 'c> = {
   allowPointSelect?: bool,
   allowTraversingTree?: bool,
   alternateStartingDirection?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -14560,7 +15257,7 @@ and seriesTreemapOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotTreemapDataLabelsOptions | PlotTreemapDataLabelsOptions[]`
+  dataLabels?: plotTreemapDataLabelsOptionsOrPlotTreemapDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -14579,7 +15276,7 @@ and seriesTreemapOptions<'b, 'a, 'c> = {
   layoutStartingDirection?: optionsLayoutStartingDirectionValue,
   legendSymbol?: optionsLegendSymbolValue,
   levelIsConstant?: bool,
-  levels?: array<JSON.t>,
+  levels?: array<plotTreemapLevelsOptions<'a, 'b, 'c>>,
   linecap?: string,
   lineWidth?: float,
   linkedTo?: string,
@@ -14589,8 +15286,8 @@ and seriesTreemapOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotTreemapOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointStart?: CommonTypes.stringOrNumber,
@@ -14623,6 +15320,54 @@ and seriesTreemapOptions<'b, 'a, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and plotTreegraphLevelsOptions<'a, 'b, 'c> = {
+  borderColor?: string,
+  borderDashStyle?: dashStyleValue,
+  borderWidth?: float,
+  color?: ColorType.t,
+  colorVariation?: plotTreegraphLevelsColorVariationOptions,
+  dataLabels?: seriesTreegraphDataLabelsOptionsObjectOrSeriesTreegraphDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  layoutAlgorithm?: optionsLayoutAlgorithmValue,
+  layoutStartingDirection?: optionsLayoutStartingDirectionValue,
+  level?: int,
+}
+and seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotTreegraphDataLabelsAnimationOptions | PlotTreegraphLevelsDataL` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  headers?: bool,
+  inside?: bool,
+  labelrank?: float,
+  linkTextPath?: dataLabelsTextPathOptionsObject,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  pointFormat?: string,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: ChartsSeriesTreegraphDataLabelsOptionsObjectStyle.t,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
 and seriesTreegraphOptions<'b, 'a, 'c> = {
   allowDrillToNode?: string,  // ⚪ loose — was `undefined`
   centerInCategory?: string,  // ⚪ loose — was `undefined`
@@ -14638,7 +15383,7 @@ and seriesTreegraphOptions<'b, 'a, 'c> = {
   yAxis?: string,  // ⚪ loose — was `undefined`
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -14653,7 +15398,7 @@ and seriesTreegraphOptions<'b, 'a, 'c> = {
   cropThreshold?: float,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `SeriesTreegraphDataLabelsOptionsObject | SeriesTreegraphDataLabelsOptionsObject[]`
+  dataLabels?: seriesTreegraphDataLabelsOptionsObjectOrSeriesTreegraphDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -14666,7 +15411,7 @@ and seriesTreegraphOptions<'b, 'a, 'c> = {
   keys?: array<string>,
   label?: seriesLabelOptionsObject<'a, 'b, 'c>,
   legendSymbol?: optionsLegendSymbolValue,
-  levels?: array<JSON.t>,
+  levels?: array<plotTreegraphLevelsOptions<'a, 'b, 'c>>,
   link?: plotTreegraphLinkOptions,
   linkedTo?: string,
   marker?: pointMarkerOptionsObject,
@@ -14677,8 +15422,8 @@ and seriesTreegraphOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotTreegraphOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointStart?: CommonTypes.stringOrNumber,
@@ -14706,6 +15451,45 @@ and seriesTreegraphOptions<'b, 'a, 'c> = {
   name?: string,
   zIndex?: int,
 }
+and timelineDataLabelsOptionsObject<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  alternate?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotTimelineDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: string,
+  borderColor?: string,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: string,
+  connectorColor?: ColorType.t,
+  connectorWidth?: float,
+  crop?: bool,
+  defer?: bool,
+  distance?: string,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrCssObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  width?: float,
+  x?: float,
+  y?: float,
+}
 and seriesTimelineOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
@@ -14714,7 +15498,7 @@ and seriesTimelineOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   className?: string,
   clip?: bool,
   color?: ColorType.t,
@@ -14725,7 +15509,7 @@ and seriesTimelineOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `TimelineDataLabelsOptionsObject | TimelineDataLabelsOptionsObject[]`
+  dataLabels?: timelineDataLabelsOptionsObjectOrTimelineDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
@@ -14747,8 +15531,8 @@ and seriesTimelineOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotTimelineOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -14794,7 +15578,7 @@ and seriesTilemapOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `PlotTilemapDataLabelsOptions | PlotTilemapDataLabelsOptions[]`
+  dataLabels?: plotMapbubbleDataLabelsOptionsOrPlotMapbubbleDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -14814,8 +15598,8 @@ and seriesTilemapOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotTilemapOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   relativeXValue?: bool,
   rowsize?: float,
@@ -14860,7 +15644,7 @@ and seriesTiledwebmapOptions<'a, 'b, 'c> = {
   legendSymbol?: optionsLegendSymbolValue,
   linecap?: string,
   opacity?: float,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
   provider?: plotTiledwebmapProviderOptions,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
@@ -14884,7 +15668,7 @@ and seriesTemaOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -14904,7 +15688,7 @@ and seriesTemaOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotTemaDataLabelsOptions | PlotTemaDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesTemaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -14931,8 +15715,8 @@ and seriesTemaOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAbandsParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -14968,7 +15752,7 @@ and seriesSupertrendOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -14990,7 +15774,7 @@ and seriesSupertrendOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotSupertrendDataLabelsOptions | PlotSupertrendDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesSupertrendOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -15017,8 +15801,8 @@ and seriesSupertrendOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotSupertrendParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   risingTrendColor?: ColorType.t,
   selected?: bool,
@@ -15046,6 +15830,46 @@ and seriesSupertrendOptions<'a, 'b, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c> = {
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotSunburstDataLabelsAnimationOptions | PlotSunburstLevelsDataLab` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  connectorColor?: ColorType.t,
+  connectorPadding?: float,
+  connectorShape?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
+  connectorWidth?: float,
+  crookDistance?: string,
+  crop?: bool,
+  defer?: bool,
+  distance?: CommonTypes.stringOrNumber,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  rotationMode?: optionsRotationModeValue,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  softConnector?: bool,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  x?: float,
+  y?: float,
+}
 and seriesSunburstOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
@@ -15055,7 +15879,7 @@ and seriesSunburstOptions<'b, 'a, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   allowTraversingTree?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
   borderWidth?: float,
@@ -15070,7 +15894,7 @@ and seriesSunburstOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `SeriesSunburstDataLabelsOptionsObject | SeriesSunburstDataLabelsOptionsObject[]`
+  dataLabels?: seriesSunburstDataLabelsOptionsObjectOrSeriesSunburstDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -15087,8 +15911,8 @@ and seriesSunburstOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotSunburstOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   rootId?: string,
   selected?: bool,
@@ -15122,7 +15946,7 @@ and seriesStreamgraphOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -15143,7 +15967,7 @@ and seriesStreamgraphOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotStreamgraphDataLabelsOptions | PlotStreamgraphDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesStreamgraphOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -15175,8 +15999,8 @@ and seriesStreamgraphOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotStreamgraphOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -15219,7 +16043,7 @@ and seriesStochasticOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -15241,7 +16065,7 @@ and seriesStochasticOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotStochasticDataLabelsOptions | PlotStochasticDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesStochasticOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -15268,8 +16092,8 @@ and seriesStochasticOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotStochasticParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -15305,7 +16129,7 @@ and seriesSplineOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -15326,7 +16150,7 @@ and seriesSplineOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotSplineDataLabelsOptions | PlotSplineDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesSplineOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -15354,8 +16178,8 @@ and seriesSplineOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotSplineOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -15401,7 +16225,7 @@ and seriesSolidgaugeOptions<'b, 'a, 'c> = {
   wrap?: string,  // ⚪ loose — was `undefined`
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   borderRadius?: CommonTypes.stringOrNumber,
   className?: string,
   clip?: bool,
@@ -15411,7 +16235,7 @@ and seriesSolidgaugeOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `PlotSolidgaugeDataLabelsOptions | PlotSolidgaugeDataLabelsOptions[]`
+  dataLabels?: plotGaugeDataLabelsOptionsOrPlotGaugeDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -15432,8 +16256,8 @@ and seriesSolidgaugeOptions<'b, 'a, 'c> = {
   opacity?: float,
   overshoot?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointStart?: CommonTypes.stringOrNumber,
@@ -15466,7 +16290,7 @@ and seriesSmaOptions<'a, 'b, 'c> = {
   useOhlcData?: string,  // ⚪ loose — was `undefined`
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -15488,7 +16312,7 @@ and seriesSmaOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotSmaDataLabelsOptions | PlotSmaDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesSmaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -15515,8 +16339,8 @@ and seriesSmaOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotDemaParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -15549,7 +16373,7 @@ and seriesSlowstochasticOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -15571,7 +16395,7 @@ and seriesSlowstochasticOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotSlowstochasticDataLabelsOptions | PlotSlowstochasticDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesSlowstochasticOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -15598,8 +16422,8 @@ and seriesSlowstochasticOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotSlowstochasticParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -15634,11 +16458,11 @@ and plotScatterClusterEventsOptions<'a, 'b, 'c> = {
 and plotScatterClusterOptions<'a, 'b, 'c> = {
   allowOverlap?: bool,
   animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  dataLabels?: string,  // ⚪ loose — was `DataLabelsOptions | PlotScatterClusterDataLabelsOptions`
+  dataLabels?: ChartsPlotScatterClusterOptionsDataLabels.t,
   drillToCluster?: bool,
   enabled?: bool,
   events?: plotScatterClusterEventsOptions<'a, 'b, 'c>,
-  layoutAlgorithm?: string,  // ⚪ loose — was `PlotScatterClusterLayoutAlgorithmOptions`
+  layoutAlgorithm?: plotScatterClusterLayoutAlgorithmOptions,
   marker?: pointMarkerOptionsObject,
   minimumClusterSize?: float,
   states?: plotScatterClusterStatesOptions,
@@ -15652,7 +16476,7 @@ and seriesScatterOptions<'b, 'a, 'c> = {
   useOhlcData?: string,  // ⚪ loose — was `undefined`
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -15675,7 +16499,7 @@ and seriesScatterOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotScatterDataLabelsOptions | PlotScatterDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesScatterOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -15703,8 +16527,8 @@ and seriesScatterOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotScatterOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointRange?: float,
@@ -15743,7 +16567,7 @@ and seriesScatter3dOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -15757,7 +16581,7 @@ and seriesScatter3dOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotScatter3dDataLabelsOptions | PlotScatter3dDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesScatter3dOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -15781,8 +16605,8 @@ and seriesScatter3dOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotScatter3dOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointStart?: CommonTypes.stringOrNumber,
@@ -15814,6 +16638,22 @@ and seriesScatter3dOptions<'b, 'a, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and seriesSankeyNodesOptionsObject = {
+  color?: ColorType.t,
+  colorIndex?: float,
+  column?: float,
+  dataLabels?: chartsSeriesSankeyNodesOptionsObjectDataLabels_t,
+  description?: string,
+  height?: float,
+  id?: string,
+  image?: string,
+  layout?: seriesOrganizationNodesLayoutValue,
+  level?: int,
+  name?: string,
+  offsetHorizontal?: CommonTypes.stringOrNumber,
+  offsetVertical?: CommonTypes.stringOrNumber,
+  title?: string,
+}
 and seriesSankeyOptions<'b, 'a, 'c> = {
   borderRadius?: string,  // ⚪ loose — was `undefined`
   data?: array<'b>,
@@ -15826,13 +16666,13 @@ and seriesSankeyOptions<'b, 'a, 'c> = {
   groupPadding?: string,  // ⚪ loose — was `undefined`
   groupZPadding?: string,  // ⚪ loose — was `undefined`
   maxPointWidth?: string,  // ⚪ loose — was `undefined`
-  nodes?: array<JSON.t>,
+  nodes?: array<seriesSankeyNodesOptionsObject>,
   pointPadding?: string,  // ⚪ loose — was `undefined`
   pointWidth?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   borderColor?: ColorType.t,
   borderWidth?: float,
   centerInCategory?: bool,
@@ -15846,7 +16686,7 @@ and seriesSankeyOptions<'b, 'a, 'c> = {
   curveFactor?: float,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `SeriesSankeyDataLabelsOptionsObject | SeriesSankeyDataLabelsOptionsObject[]`
+  dataLabels?: seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -15869,8 +16709,8 @@ and seriesSankeyOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotSankeyOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   showCheckbox?: bool,
@@ -15899,7 +16739,7 @@ and seriesRsiOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -15921,7 +16761,7 @@ and seriesRsiOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotRsiDataLabelsOptions | PlotRsiDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesRsiOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -15948,8 +16788,8 @@ and seriesRsiOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotRsiParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -15983,7 +16823,7 @@ and seriesRocOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -16005,7 +16845,7 @@ and seriesRocOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotRocDataLabelsOptions | PlotRocDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesRocOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -16032,8 +16872,8 @@ and seriesRocOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAbandsParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -16069,7 +16909,7 @@ and seriesRenkoOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: ChartsSeriesRenkoOptionsBorderRadius.t,
@@ -16085,7 +16925,7 @@ and seriesRenkoOptions<'b, 'a, 'c> = {
   cropThreshold?: float,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `PlotRenkoDataLabelsOptions | PlotRenkoDataLabelsOptions[]`
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   downColor?: string,
   enableMouseTracking?: bool,
@@ -16111,8 +16951,8 @@ and seriesRenkoOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotRenkoOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -16168,7 +17008,7 @@ and seriesPyramidOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `SeriesPieDataLabelsOptionsObject | SeriesPieDataLabelsOptionsObject[]`
+  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -16192,8 +17032,8 @@ and seriesPyramidOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotPyramidOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   reversed?: bool,
   selected?: bool,
@@ -16242,7 +17082,7 @@ and seriesPyramid3dOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotPyramid3dDataLabelsOptions | PlotPyramid3dDataLabelsOptions[]`
+  dataLabels?: plotFunnel3dDataLabelsOptionsOrPlotFunnel3dDataLabelsOptionsArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -16272,8 +17112,8 @@ and seriesPyramid3dOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotPyramid3dOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -16317,7 +17157,7 @@ and seriesPsarOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -16339,7 +17179,7 @@ and seriesPsarOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotPsarDataLabelsOptions | PlotPsarDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesPsarOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -16366,8 +17206,8 @@ and seriesPsarOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotPsarParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -16401,7 +17241,7 @@ and seriesPriceenvelopesOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -16424,7 +17264,7 @@ and seriesPriceenvelopesOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotPriceenvelopesDataLabelsOptions | PlotPriceenvelopesDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesPriceenvelopesOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -16451,8 +17291,8 @@ and seriesPriceenvelopesOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotPriceenvelopesParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -16488,7 +17328,7 @@ and seriesPpoOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -16510,7 +17350,7 @@ and seriesPpoOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotPpoDataLabelsOptions | PlotPpoDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesPpoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -16537,8 +17377,8 @@ and seriesPpoOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotApoParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -16574,7 +17414,7 @@ and seriesPolygonOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -16594,7 +17434,7 @@ and seriesPolygonOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotPolygonDataLabelsOptions | PlotPolygonDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesPolygonOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -16621,8 +17461,8 @@ and seriesPolygonOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotPolygonOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointRange?: float,
@@ -16659,7 +17499,7 @@ and seriesPointandfigureOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boxSize?: CommonTypes.stringOrNumber,
   className?: string,
@@ -16674,7 +17514,7 @@ and seriesPointandfigureOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: legendAccessibilityKeyboardNavigationOptions,
-  dataLabels?: string,  // ⚪ loose — was `PlotPointandfigureDataLabelsOptions | PlotPointandfigureDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesPointandfigureOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -16703,8 +17543,8 @@ and seriesPointandfigureOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotPointandfigureOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -16746,7 +17586,7 @@ and seriesPivotpointsOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -16768,7 +17608,7 @@ and seriesPivotpointsOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotPivotpointsDataLabelsOptions | PlotPivotpointsDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesPivotpointsOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -16795,8 +17635,8 @@ and seriesPivotpointsOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotPivotpointsParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -16834,7 +17674,7 @@ and seriesPieOptions<'b, 'a, 'c> = {
   yAxis?: string,  // ⚪ loose — was `undefined`
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
   borderWidth?: float,
@@ -16849,7 +17689,7 @@ and seriesPieOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `SeriesPieDataLabelsOptionsObject | SeriesPieDataLabelsOptionsObject[]`
+  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -16872,8 +17712,8 @@ and seriesPieOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotPieOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -16908,7 +17748,7 @@ and seriesPictorialOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -16923,7 +17763,7 @@ and seriesPictorialOptions<'b, 'a, 'c> = {
   cropThreshold?: float,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `PlotPictorialDataLabelsOptions | PlotPictorialDataLabelsOptions[]`
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -16949,8 +17789,8 @@ and seriesPictorialOptions<'b, 'a, 'c> = {
   nullInteraction?: bool,
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -16992,7 +17832,7 @@ and seriesPcOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -17013,7 +17853,7 @@ and seriesPcOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotPcDataLabelsOptions | PlotPcDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesPcOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -17041,8 +17881,8 @@ and seriesPcOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAroonoscillatorParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -17079,7 +17919,7 @@ and seriesParetoOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -17092,7 +17932,7 @@ and seriesParetoOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotParetoDataLabelsOptions | PlotParetoDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesParetoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -17111,8 +17951,8 @@ and seriesParetoOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotParetoOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   showCheckbox?: bool,
@@ -17143,7 +17983,7 @@ and seriesPackedbubbleOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -17182,8 +18022,8 @@ and seriesPackedbubbleOptions<'b, 'a, 'c> = {
   opacity?: float,
   parentNode?: plotPackedbubbleParentNodeOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointStart?: CommonTypes.stringOrNumber,
@@ -17218,12 +18058,49 @@ and seriesPackedbubbleOptions<'b, 'a, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c> = {
+  align?: string,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotOrganizationDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: string,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>) => string),
+  inside?: bool,
+  labelrank?: float,
+  linkTextPath?: plotOrganizationDataLabelsLinkTextPathOptions,
+  nodeFormat?: string,
+  nodeFormatter?: @this ((point<'a, 'b, 'c>) => string),
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
 and seriesOrganizationOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   nodes?: array<JSON.t>,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   borderColor?: string,
   borderRadius?: float,
   borderWidth?: float,
@@ -17237,7 +18114,7 @@ and seriesOrganizationOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `SeriesOrganizationDataLabelsOptionsObject | SeriesOrganizationDataLabelsOptionsObject[]`
+  dataLabels?: seriesOrganizationDataLabelsOptionsObjectOrSeriesOrganizationDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -17265,8 +18142,8 @@ and seriesOrganizationOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotOrganizationOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   showCheckbox?: bool,
@@ -17296,7 +18173,7 @@ and seriesOhlcOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -17319,7 +18196,7 @@ and seriesOhlcOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotOhlcDataLabelsOptions | PlotOhlcDataLabelsOptions[]`
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesOhlcOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -17347,8 +18224,8 @@ and seriesOhlcOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotOhlcOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -17391,7 +18268,7 @@ and seriesObvOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -17413,7 +18290,7 @@ and seriesObvOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotObvDataLabelsOptions | PlotObvDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesObvOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -17440,8 +18317,8 @@ and seriesObvOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotObvParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -17508,8 +18385,8 @@ and seriesNetworkgraphOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotNetworkgraphOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -17537,7 +18414,7 @@ and seriesNatrOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -17559,7 +18436,7 @@ and seriesNatrOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotNatrDataLabelsOptions | PlotNatrDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesNatrOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -17586,8 +18463,8 @@ and seriesNatrOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAroonoscillatorParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -17621,7 +18498,7 @@ and seriesMomentumOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -17643,7 +18520,7 @@ and seriesMomentumOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotMomentumDataLabelsOptions | PlotMomentumDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesMomentumOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -17670,8 +18547,8 @@ and seriesMomentumOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAbandsParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -17705,7 +18582,7 @@ and seriesMfiOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -17727,7 +18604,7 @@ and seriesMfiOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotMfiDataLabelsOptions | PlotMfiDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesMfiOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -17754,8 +18631,8 @@ and seriesMfiOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotMfiParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -17783,6 +18660,56 @@ and seriesMfiOptions<'a, 'b, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and plotMappointDataLabelsOptions<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotMappointDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: bool,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  x?: float,
+  y?: float,
+}
+and plotMappointClusterEventsOptions<'a, 'b, 'c> = {
+  drillToCluster?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointClickEventObject`
+}
+and plotMappointClusterOptions<'a, 'b, 'c> = {
+  allowOverlap?: bool,
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  dataLabels?: ChartsPlotMappointClusterOptionsDataLabels.t,
+  drillToCluster?: bool,
+  enabled?: bool,
+  events?: plotMappointClusterEventsOptions<'a, 'b, 'c>,
+  layoutAlgorithm?: plotMappointClusterLayoutAlgorithmOptions,
+  marker?: pointMarkerOptionsObject,
+  minimumClusterSize?: float,
+  states?: plotMappointClusterStatesOptions,
+  zones?: array<plotMappointClusterZonesOptions>,
+}
 and seriesMappointOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
@@ -17790,13 +18717,13 @@ and seriesMappointOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
   className?: string,
   clip?: bool,
-  cluster?: string,  // ⚪ loose — was `PlotMappointClusterOptions`
+  cluster?: plotMappointClusterOptions<'a, 'b, 'c>,
   color?: ColorType.t,
   colorAxis?: CommonTypes.boolOrStringOrNumber,
   colorIndex?: float,
@@ -17804,7 +18731,7 @@ and seriesMappointOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotMappointDataLabelsOptions | PlotMappointDataLabelsOptions[]`
+  dataLabels?: plotMappointDataLabelsOptionsOrPlotMappointDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
@@ -17821,8 +18748,8 @@ and seriesMappointOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotMappointOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   selected?: bool,
   showCheckbox?: bool,
   showInLegend?: bool,
@@ -17842,6 +18769,40 @@ and seriesMappointOptions<'b, 'a, 'c> = {
   stack?: CommonTypes.stringOrNumber,
   xAxis?: CommonTypes.stringOrNumber,
   yAxis?: CommonTypes.stringOrNumber,
+}
+and plotMapDataLabelsOptions<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotMapDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: bool,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
 }
 and seriesMapOptions<'b, 'a, 'c> = {
   data?: array<'b>,
@@ -17867,7 +18828,7 @@ and seriesMapOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotMapDataLabelsOptions | PlotMapDataLabelsOptions[]`
+  dataLabels?: plotMapDataLabelsOptionsOrPlotMapDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -17883,8 +18844,8 @@ and seriesMapOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotMapOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   selected?: bool,
   showCheckbox?: bool,
   showInLegend?: bool,
@@ -17929,7 +18890,7 @@ and seriesMaplineOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotMaplineDataLabelsOptions | PlotMaplineDataLabelsOptions[]`
+  dataLabels?: plotGeoheatmapDataLabelsOptionsOrPlotGeoheatmapDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -17947,8 +18908,8 @@ and seriesMaplineOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotMaplineOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   selected?: bool,
   showCheckbox?: bool,
   showInLegend?: bool,
@@ -17969,6 +18930,40 @@ and seriesMaplineOptions<'b, 'a, 'c> = {
   xAxis?: CommonTypes.stringOrNumber,
   yAxis?: CommonTypes.stringOrNumber,
 }
+and plotMapbubbleDataLabelsOptions<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotMapbubbleDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
 and seriesMapbubbleOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
@@ -17976,7 +18971,7 @@ and seriesMapbubbleOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -17991,7 +18986,7 @@ and seriesMapbubbleOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotMapbubbleDataLabelsOptions | PlotMapbubbleDataLabelsOptions[]`
+  dataLabels?: plotMapbubbleDataLabelsOptionsOrPlotMapbubbleDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   displayNegative?: bool,
   dragDrop?: seriesDragDropOptionsObject,
@@ -18012,8 +19007,8 @@ and seriesMapbubbleOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotMapbubbleOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   selected?: bool,
   showCheckbox?: bool,
   showInLegend?: bool,
@@ -18041,7 +19036,7 @@ and seriesMacdOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -18063,7 +19058,7 @@ and seriesMacdOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotMacdDataLabelsOptions | PlotMacdDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesMacdOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -18093,8 +19088,8 @@ and seriesMacdOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotMacdParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   relativeXValue?: bool,
   selected?: bool,
@@ -18129,7 +19124,7 @@ and seriesLollipopOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   className?: string,
@@ -18153,7 +19148,7 @@ and seriesLollipopOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]`
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesLollipopOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -18184,8 +19179,8 @@ and seriesLollipopOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotLollipopOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -18227,7 +19222,7 @@ and seriesLineOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -18250,7 +19245,7 @@ and seriesLineOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotLineDataLabelsOptions | PlotLineDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesLineOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -18278,8 +19273,8 @@ and seriesLineOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotLineOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -18322,7 +19317,7 @@ and seriesLinearregressionslopeOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -18344,7 +19339,7 @@ and seriesLinearregressionslopeOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotLinearregressionslopeDataLabelsOptions | PlotLinearregressionslopeDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesLinearregressionslopeOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -18371,8 +19366,8 @@ and seriesLinearregressionslopeOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotLinearregressionangleParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -18406,7 +19401,7 @@ and seriesLinearregressionOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -18428,7 +19423,7 @@ and seriesLinearregressionOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotLinearregressionDataLabelsOptions | PlotLinearregressionDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesLinearregressionOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -18455,8 +19450,8 @@ and seriesLinearregressionOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotLinearregressionParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -18490,7 +19485,7 @@ and seriesLinearregressioninterceptOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -18512,7 +19507,7 @@ and seriesLinearregressioninterceptOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotLinearregressioninterceptDataLabelsOptions | PlotLinearregressioninterceptDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesLinearregressioninterceptOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -18539,8 +19534,8 @@ and seriesLinearregressioninterceptOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotLinearregressionangleParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -18574,7 +19569,7 @@ and seriesLinearregressionangleOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -18596,7 +19591,7 @@ and seriesLinearregressionangleOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotLinearregressionangleDataLabelsOptions | PlotLinearregressionangleDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesLinearregressionangleOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -18623,8 +19618,8 @@ and seriesLinearregressionangleOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotLinearregressionangleParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -18658,7 +19653,7 @@ and seriesKlingerOptions<'a, 'b, 'c> = {
   useOhlcData?: string,  // ⚪ loose — was `undefined`
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -18680,7 +19675,7 @@ and seriesKlingerOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotKlingerDataLabelsOptions | PlotKlingerDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesKlingerOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -18707,8 +19702,8 @@ and seriesKlingerOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotKlingerParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -18744,7 +19739,7 @@ and seriesKeltnerchannelsOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -18765,7 +19760,7 @@ and seriesKeltnerchannelsOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotKeltnerchannelsDataLabelsOptions | PlotKeltnerchannelsDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesKeltnerchannelsOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -18793,8 +19788,8 @@ and seriesKeltnerchannelsOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotDemaParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -18833,7 +19828,7 @@ and seriesItemOptions<'b, 'a, 'c> = {
   yAxis?: string,  // ⚪ loose — was `undefined`
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
   center?: array<CommonTypes.stringOrNumber>,
   className?: string,
@@ -18846,7 +19841,7 @@ and seriesItemOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `SeriesPieDataLabelsOptionsObject | SeriesPieDataLabelsOptionsObject[]`
+  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   endAngle?: float,
@@ -18869,8 +19864,8 @@ and seriesItemOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotItemOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   rows?: int,
   selected?: bool,
@@ -18899,7 +19894,7 @@ and seriesIkhOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -18920,7 +19915,7 @@ and seriesIkhOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotIkhDataLabelsOptions | PlotIkhDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesIkhOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -18948,8 +19943,8 @@ and seriesIkhOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotIkhParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   senkouSpan?: plotIkhSenkouSpanOptions,
@@ -18988,7 +19983,7 @@ and seriesHollowcandlestickOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -19011,7 +20006,7 @@ and seriesHollowcandlestickOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotHollowcandlestickDataLabelsOptions | PlotHollowcandlestickDataLabelsOptions[]`
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesHollowcandlestickOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -19040,8 +20035,8 @@ and seriesHollowcandlestickOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotHollowcandlestickOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -19087,7 +20082,7 @@ and seriesHlcOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -19110,7 +20105,7 @@ and seriesHlcOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotHlcDataLabelsOptions | PlotHlcDataLabelsOptions[]`
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesHlcOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -19138,8 +20133,8 @@ and seriesHlcOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotHlcOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -19183,9 +20178,9 @@ and seriesHistogramOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
-  binsNumber?: string,  // ⚪ loose — was `number | Function | "rice" | "square-root" | "sturges"`
+  binsNumber?: string,  // ⚠️ REVIEW — was `number | Function | "rice" | "square-root" | "sturges"` — match the real type by hand
   binWidth?: float,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
@@ -19204,7 +20199,7 @@ and seriesHistogramOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotHistogramDataLabelsOptions | PlotHistogramDataLabelsOptions[]`
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesHistogramOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -19231,8 +20226,8 @@ and seriesHistogramOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotHistogramOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   pointPlacement?: string,
   pointRange?: float,
@@ -19272,7 +20267,7 @@ and seriesHeikinashiOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -19295,7 +20290,7 @@ and seriesHeikinashiOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotHeikinashiDataLabelsOptions | PlotHeikinashiDataLabelsOptions[]`
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesHeikinashiOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -19324,8 +20319,8 @@ and seriesHeikinashiOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotHeikinashiOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -19388,7 +20383,7 @@ and seriesHeatmapOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `PlotHeatmapDataLabelsOptions | PlotHeatmapDataLabelsOptions[]`
+  dataLabels?: plotBubbleDataLabelsOptionsOrPlotBubbleDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesHeatmapOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -19410,8 +20405,8 @@ and seriesHeatmapOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotHeatmapOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   relativeXValue?: bool,
   rowsize?: float,
@@ -19436,6 +20431,40 @@ and seriesHeatmapOptions<'b, 'a, 'c> = {
   name?: string,
   xAxis?: CommonTypes.stringOrNumber,
   yAxis?: CommonTypes.stringOrNumber,
+}
+and plotGeoheatmapDataLabelsOptions<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotGeoheatmapDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: bool,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
 }
 and seriesGeoheatmapOptions<'b, 'a, 'c> = {
   allAreas?: string,  // ⚪ loose — was `undefined`
@@ -19463,7 +20492,7 @@ and seriesGeoheatmapOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotGeoheatmapDataLabelsOptions | PlotGeoheatmapDataLabelsOptions[]`
+  dataLabels?: plotGeoheatmapDataLabelsOptionsOrPlotGeoheatmapDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -19476,8 +20505,8 @@ and seriesGeoheatmapOptions<'b, 'a, 'c> = {
   nullColor?: string,
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   rowsize?: float,
   selected?: bool,
   showCheckbox?: bool,
@@ -19498,6 +20527,41 @@ and seriesGeoheatmapOptions<'b, 'a, 'c> = {
   xAxis?: CommonTypes.stringOrNumber,
   yAxis?: CommonTypes.stringOrNumber,
 }
+and plotGaugeDataLabelsOptions<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotGaugeDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: string,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+  zIndex?: int,
+}
 and seriesGaugeOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
@@ -19506,7 +20570,7 @@ and seriesGaugeOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   className?: string,
   clip?: bool,
   color?: ColorType.t,
@@ -19514,7 +20578,7 @@ and seriesGaugeOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `PlotGaugeDataLabelsOptions | PlotGaugeDataLabelsOptions[]`
+  dataLabels?: plotGaugeDataLabelsOptionsOrPlotGaugeDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   dial?: plotGaugeDialOptions,
   enableMouseTracking?: bool,
@@ -19536,8 +20600,8 @@ and seriesGaugeOptions<'b, 'a, 'c> = {
   overshoot?: float,
   pivot?: plotGaugePivotOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointStart?: CommonTypes.stringOrNumber,
@@ -19561,12 +20625,46 @@ and seriesGaugeOptions<'b, 'a, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and plotGanttDataLabelsOptions<'a, 'b, 'c> = {
+  align?: string,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotGanttDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: ChartsPlotGanttDataLabelsOptionsStyle.t,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
 and seriesGanttOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: float,
@@ -19582,7 +20680,7 @@ and seriesGanttOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotGanttDataLabelsOptions | PlotGanttDataLabelsOptions[]`
+  dataLabels?: plotGanttDataLabelsOptionsOrPlotGanttDataLabelsOptionsArray<'a, 'b, 'c>,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
@@ -19601,8 +20699,8 @@ and seriesGanttOptions<'b, 'a, 'c> = {
   opacity?: float,
   partialFill?: plotGanttPartialFillOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   pointRange?: float,
   pointWidth?: float,
@@ -19627,6 +20725,44 @@ and seriesGanttOptions<'b, 'a, 'c> = {
   xAxis?: CommonTypes.stringOrNumber,
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
+}
+and seriesPieDataLabelsOptionsObject<'a, 'b, 'c> = {
+  alignTo?: string,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotFunnelDataLabelsAnimationOptions | PlotItemDataLabelsAnimation` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  connectorColor?: ColorType.t,
+  connectorPadding?: float,
+  connectorShape?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
+  connectorWidth?: float,
+  crookDistance?: string,
+  crop?: bool,
+  defer?: bool,
+  distance?: CommonTypes.stringOrNumber,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  softConnector?: bool,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
 }
 and seriesFunnelOptions<'b, 'a, 'c> = {
   data?: array<'b>,
@@ -19653,7 +20789,7 @@ and seriesFunnelOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `SeriesPieDataLabelsOptionsObject | SeriesPieDataLabelsOptionsObject[]`
+  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -19677,8 +20813,8 @@ and seriesFunnelOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotFunnelOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   reversed?: bool,
   selected?: bool,
@@ -19702,6 +20838,40 @@ and seriesFunnelOptions<'b, 'a, 'c> = {
   mapData?: string,  // ⚪ loose — was `object | GeoJSON | SeriesMapDataOptions[]`
   name?: string,
   zIndex?: int,
+}
+and plotFunnel3dDataLabelsOptions<'a, 'b, 'c> = {
+  align?: string,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotFunnel3dDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: string,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
 }
 and seriesFunnel3dOptions<'b, 'a, 'c> = {
   allAreas?: string,  // ⚪ loose — was `undefined`
@@ -19727,7 +20897,7 @@ and seriesFunnel3dOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotFunnel3dDataLabelsOptions | PlotFunnel3dDataLabelsOptions[]`
+  dataLabels?: plotFunnel3dDataLabelsOptionsOrPlotFunnel3dDataLabelsOptionsArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -19758,8 +20928,8 @@ and seriesFunnel3dOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotFunnel3dOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -19835,8 +21005,8 @@ and seriesFlowmapOptions<'b, 'a, 'c> = {
   nullColor?: ColorType.t,
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   selected?: bool,
   showInLegend?: bool,
   skipKeyboardNavigation?: bool,
@@ -19890,7 +21060,7 @@ and seriesFlagsOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotFlagsDataLabelsOptions | PlotFlagsDataLabelsOptions[]`
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesFlagsOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -19923,8 +21093,8 @@ and seriesFlagsOptions<'b, 'a, 'c> = {
   onSeries?: string,
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -19973,7 +21143,7 @@ and seriesErrorbarOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boxDashStyle?: dashStyleValue,
   centerInCategory?: bool,
@@ -19990,7 +21160,7 @@ and seriesErrorbarOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotErrorbarDataLabelsOptions | PlotErrorbarDataLabelsOptions[]`
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesErrorbarOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -20022,8 +21192,8 @@ and seriesErrorbarOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotErrorbarOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -20070,7 +21240,7 @@ and seriesEmaOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -20092,7 +21262,7 @@ and seriesEmaOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotEmaDataLabelsOptions | PlotEmaDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesEmaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -20119,8 +21289,8 @@ and seriesEmaOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAbandsParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -20153,7 +21323,7 @@ and seriesDumbbellOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   className?: string,
@@ -20177,7 +21347,7 @@ and seriesDumbbellOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]`
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesDumbbellOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -20209,8 +21379,8 @@ and seriesDumbbellOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotDumbbellOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -20252,7 +21422,7 @@ and seriesDpoOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -20272,7 +21442,7 @@ and seriesDpoOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotDpoDataLabelsOptions | PlotDpoDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesDpoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -20299,8 +21469,8 @@ and seriesDpoOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotDemaParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -20335,7 +21505,7 @@ and seriesDmiOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -20357,7 +21527,7 @@ and seriesDmiOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotDmiDataLabelsOptions | PlotDmiDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesDmiOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -20386,8 +21556,8 @@ and seriesDmiOptions<'a, 'b, 'c> = {
   params?: plotAroonParamsOptions,
   plusDILine?: plotDmiPlusDILineOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -20422,7 +21592,7 @@ and seriesDisparityindexOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -20444,7 +21614,7 @@ and seriesDisparityindexOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotDisparityindexDataLabelsOptions | PlotDisparityindexDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesDisparityindexOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -20471,8 +21641,8 @@ and seriesDisparityindexOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotDisparityindexParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -20500,13 +21670,50 @@ and seriesDisparityindexOptions<'a, 'b, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and seriesSankeyDataLabelsOptionsObject<'a, 'b, 'c> = {
+  align?: string,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotArcdiagramLevelsDataLabelsAnimationOptions | ... 8 more ... | ` — match the real type by hand
+  backgroundColor?: string,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  distance?: float,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>) => string),
+  inside?: bool,
+  labelrank?: float,
+  nodeFormat?: string,
+  nodeFormatter?: @this ((point<'a, 'b, 'c>) => string),
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
 and seriesDependencywheelOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   nodes?: array<JSON.t>,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
   borderWidth?: float,
@@ -20522,7 +21729,7 @@ and seriesDependencywheelOptions<'b, 'a, 'c> = {
   curveFactor?: float,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `SeriesSankeyDataLabelsOptionsObject | SeriesSankeyDataLabelsOptionsObject[]`
+  dataLabels?: seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -20543,8 +21750,8 @@ and seriesDependencywheelOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotDependencywheelOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   showCheckbox?: bool,
@@ -20576,7 +21783,7 @@ and seriesDemaOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -20596,7 +21803,7 @@ and seriesDemaOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotDemaDataLabelsOptions | PlotDemaDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesDemaOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -20623,8 +21830,8 @@ and seriesDemaOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotDemaParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -20658,7 +21865,7 @@ and seriesCylinderOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
@@ -20676,7 +21883,7 @@ and seriesCylinderOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotCylinderDataLabelsOptions | PlotCylinderDataLabelsOptions[]`
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesCylinderOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -20703,8 +21910,8 @@ and seriesCylinderOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotCylinderOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -20752,7 +21959,7 @@ and seriesContourOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
   borderColor?: ColorType.t,
@@ -20768,7 +21975,7 @@ and seriesContourOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: string,  // ⚪ loose — was `PlotContourDataLabelsOptions | PlotContourDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesContourOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -20790,8 +21997,8 @@ and seriesContourOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotContourOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   showCheckbox?: bool,
@@ -20824,7 +22031,7 @@ and seriesColumnrangeOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -20851,7 +22058,7 @@ and seriesColumnrangeOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]`
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesColumnrangeOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -20881,8 +22088,8 @@ and seriesColumnrangeOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotColumnrangeOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -20922,7 +22129,7 @@ and seriesColumnpyramidOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderWidth?: float,
@@ -20945,7 +22152,7 @@ and seriesColumnpyramidOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotColumnpyramidDataLabelsOptions | PlotColumnpyramidDataLabelsOptions[]`
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesColumnpyramidOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -20971,8 +22178,8 @@ and seriesColumnpyramidOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotColumnpyramidOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -21012,7 +22219,7 @@ and seriesColumnOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -21039,7 +22246,7 @@ and seriesColumnOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotColumnDataLabelsOptions | PlotColumnDataLabelsOptions[]`
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesColumnOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -21070,8 +22277,8 @@ and seriesColumnOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotColumnOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -21114,7 +22321,7 @@ and seriesCmoOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -21136,7 +22343,7 @@ and seriesCmoOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotCmoDataLabelsOptions | PlotCmoDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesCmoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -21163,8 +22370,8 @@ and seriesCmoOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAbandsParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -21198,7 +22405,7 @@ and seriesCmfOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
   className?: string,
@@ -21219,7 +22426,7 @@ and seriesCmfOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotCmfDataLabelsOptions | PlotCmfDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesCmfOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -21246,8 +22453,8 @@ and seriesCmfOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAdParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -21282,7 +22489,7 @@ and seriesChaikinOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -21304,7 +22511,7 @@ and seriesChaikinOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotChaikinDataLabelsOptions | PlotChaikinDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesChaikinOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -21331,8 +22538,8 @@ and seriesChaikinOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotChaikinParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -21366,7 +22573,7 @@ and seriesCciOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -21388,7 +22595,7 @@ and seriesCciOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotCciDataLabelsOptions | PlotCciDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesCciOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -21415,8 +22622,8 @@ and seriesCciOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAroonoscillatorParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -21451,7 +22658,7 @@ and seriesCandlestickOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -21474,7 +22681,7 @@ and seriesCandlestickOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotCandlestickDataLabelsOptions | PlotCandlestickDataLabelsOptions[]`
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesCandlestickOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -21503,8 +22710,8 @@ and seriesCandlestickOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotCandlestickOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -21543,6 +22750,40 @@ and seriesCandlestickOptions<'b, 'a, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and plotBulletDataLabelsOptions<'a, 'b, 'c> = {
+  align?: string,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotBulletDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
 and seriesBulletOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
@@ -21550,7 +22791,7 @@ and seriesBulletOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   borderColor?: ColorType.t,
   borderRadius?: stringOrNumberOrBorderRadiusOptionsObject,
@@ -21568,7 +22809,7 @@ and seriesBulletOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotBulletDataLabelsOptions | PlotBulletDataLabelsOptions[]`
+  dataLabels?: plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -21595,8 +22836,8 @@ and seriesBulletOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotBulletOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -21633,6 +22874,40 @@ and seriesBulletOptions<'b, 'a, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and plotBubbleDataLabelsOptions<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotBubbleDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
 and seriesBubbleOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
@@ -21641,7 +22916,7 @@ and seriesBubbleOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -21663,7 +22938,7 @@ and seriesBubbleOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotBubbleDataLabelsOptions | PlotBubbleDataLabelsOptions[]`
+  dataLabels?: plotBubbleDataLabelsOptionsOrPlotBubbleDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesBubbleOptionsDataSorting.t,
   description?: string,
   displayNegative?: bool,
@@ -21694,8 +22969,8 @@ and seriesBubbleOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotBubbleOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointRange?: float,
@@ -21741,7 +23016,7 @@ and seriesBoxplotOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boxDashStyle?: dashStyleValue,
   centerInCategory?: bool,
@@ -21758,7 +23033,7 @@ and seriesBoxplotOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotBoxplotDataLabelsOptions | PlotBoxplotDataLabelsOptions[]`
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesBoxplotOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -21790,8 +23065,8 @@ and seriesBoxplotOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotBoxplotOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -21840,7 +23115,7 @@ and seriesBellcurveOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -21854,7 +23129,7 @@ and seriesBellcurveOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotBellcurveDataLabelsOptions | PlotBellcurveDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesBellcurveOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -21883,8 +23158,8 @@ and seriesBellcurveOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotBellcurveOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPlacement?: CommonTypes.stringOrNumber,
   pointsInInterval?: float,
   pointStart?: CommonTypes.stringOrNumber,
@@ -21922,7 +23197,7 @@ and seriesBbOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -21945,7 +23220,7 @@ and seriesBbOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotBbDataLabelsOptions | PlotBbDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesBbOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -21973,8 +23248,8 @@ and seriesBbOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotBbParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -22003,6 +23278,40 @@ and seriesBbOptions<'a, 'b, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and plotBarDataLabelsOptions<'a, 'b, 'c> = {
+  align?: string,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotBarDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
 and seriesBarOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
@@ -22010,7 +23319,7 @@ and seriesBarOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -22031,7 +23340,7 @@ and seriesBarOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `PlotBarDataLabelsOptions | PlotBarDataLabelsOptions[]`
+  dataLabels?: plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesBarOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -22059,8 +23368,8 @@ and seriesBarOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotBarOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPadding?: float,
@@ -22102,7 +23411,7 @@ and seriesAtrOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -22124,7 +23433,7 @@ and seriesAtrOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotAtrDataLabelsOptions | PlotAtrDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAtrOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -22151,8 +23460,8 @@ and seriesAtrOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAroonoscillatorParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -22188,7 +23497,7 @@ and seriesAroonoscillatorOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -22208,7 +23517,7 @@ and seriesAroonoscillatorOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotAroonoscillatorDataLabelsOptions | PlotAroonoscillatorDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAroonoscillatorOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -22235,8 +23544,8 @@ and seriesAroonoscillatorOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAroonoscillatorParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -22271,7 +23580,7 @@ and seriesAroonOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   aroonDown?: plotAroonAroonDownOptions,
   boostBlending?: optionsBoostBlendingValue,
@@ -22292,7 +23601,7 @@ and seriesAroonOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotAroonDataLabelsOptions | PlotAroonDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAroonOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -22319,8 +23628,8 @@ and seriesAroonOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAroonParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -22356,7 +23665,7 @@ and seriesAreasplinerangeOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -22377,7 +23686,7 @@ and seriesAreasplinerangeOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]`
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAreasplinerangeOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -22410,8 +23719,8 @@ and seriesAreasplinerangeOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotAreasplinerangeOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -22452,7 +23761,7 @@ and seriesAreasplineOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   className?: string,
   clip?: bool,
@@ -22473,7 +23782,7 @@ and seriesAreasplineOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotAreasplineDataLabelsOptions | PlotAreasplineDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAreasplineOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -22505,8 +23814,8 @@ and seriesAreasplineOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotAreasplineOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -22542,6 +23851,44 @@ and seriesAreasplineOptions<'b, 'a, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and seriesAreaRangeDataLabelsOptionsObject<'a, 'b, 'c> = {
+  align?: string,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotArearangeDataLabelsAnimationOptions | PlotAreasplinerangeDataL` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  xHigh?: float,
+  xLow?: float,
+  y?: float,
+  yHigh?: float,
+  yLow?: float,
+}
 and seriesArearangeOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   dataParser?: string,  // ⚪ loose — was `undefined`
@@ -22550,7 +23897,7 @@ and seriesArearangeOptions<'b, 'a, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -22573,7 +23920,7 @@ and seriesArearangeOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `SeriesAreaRangeDataLabelsOptionsObject | SeriesAreaRangeDataLabelsOptionsObject[]`
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesArearangeOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -22606,8 +23953,8 @@ and seriesArearangeOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotArearangeOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -22645,7 +23992,7 @@ and seriesArearangeOptions<'b, 'a, 'c> = {
 and plotSeriesOptions<'a, 'b, 'c> = {
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -22671,7 +24018,7 @@ and plotSeriesOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotSeriesDataLabelsOptions | PlotSeriesDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsPlotSeriesOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -22700,8 +24047,8 @@ and plotSeriesOptions<'a, 'b, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotSeriesOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -22737,7 +24084,7 @@ and seriesAreaOptions<'b, 'a, 'c> = {
   useOhlcData?: string,  // ⚪ loose — was `undefined`
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -22760,7 +24107,7 @@ and seriesAreaOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotAreaDataLabelsOptions | PlotAreaDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAreaOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -22792,8 +24139,8 @@ and seriesAreaOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotAreaOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointInterval?: float,
   pointIntervalUnit?: optionsPointIntervalUnitValue,
   pointPlacement?: CommonTypes.stringOrNumber,
@@ -22830,6 +24177,43 @@ and seriesAreaOptions<'b, 'a, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c> = {
+  align?: string,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotArcdiagramDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: string,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>) => string),
+  inside?: bool,
+  labelrank?: float,
+  linkTextPath?: dataLabelsTextPathOptionsObject,
+  nodeFormat?: string,
+  nodeFormatter?: @this ((point<'a, 'b, 'c>) => string),
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
 and seriesArcdiagramOptions<'b, 'a, 'c> = {
   centerInCategory?: string,  // ⚪ loose — was `undefined`
   curveFactor?: string,  // ⚪ loose — was `undefined`
@@ -22845,7 +24229,7 @@ and seriesArcdiagramOptions<'b, 'a, 'c> = {
   yAxis?: string,  // ⚪ loose — was `undefined`
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   borderColor?: ColorType.t,
   borderWidth?: float,
   centeredLinks?: bool,
@@ -22858,7 +24242,7 @@ and seriesArcdiagramOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: string,  // ⚪ loose — was `SeriesArcDiagramDataLabelsOptionsObject | SeriesArcDiagramDataLabelsOptionsObject[]`
+  dataLabels?: seriesArcDiagramDataLabelsOptionsObjectOrSeriesArcDiagramDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   equalNodes?: bool,
@@ -22880,8 +24264,8 @@ and seriesArcdiagramOptions<'b, 'a, 'c> = {
   onPoint?: string,  // ⚪ loose — was `object | PlotArcdiagramOnPointOptions`
   opacity?: float,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   reversed?: bool,
   selected?: bool,
   showCheckbox?: bool,
@@ -22908,7 +24292,7 @@ and seriesApoOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -22930,7 +24314,7 @@ and seriesApoOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotApoDataLabelsOptions | PlotApoDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesApoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -22957,8 +24341,8 @@ and seriesApoOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotApoParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -22986,6 +24370,40 @@ and seriesApoOptions<'a, 'b, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and plotAoDataLabelsOptions<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAoDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  x?: float,
+  y?: float,
+}
 and seriesAoOptions<'a, 'b, 'c> = {
   allAreas?: string,  // ⚪ loose — was `undefined`
   dataParser?: string,  // ⚪ loose — was `undefined`
@@ -22993,7 +24411,7 @@ and seriesAoOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -23015,7 +24433,7 @@ and seriesAoOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotAoDataLabelsOptions | PlotAoDataLabelsOptions[]`
+  dataLabels?: plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAoOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -23045,8 +24463,8 @@ and seriesAoOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAoParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   pointPadding?: float,
   relativeXValue?: bool,
   selected?: bool,
@@ -23075,13 +24493,47 @@ and seriesAoOptions<'a, 'b, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
+and plotAdDataLabelsOptions<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAdDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  x?: float,
+  y?: float,
+}
 and seriesAdOptions<'a, 'b, 'c> = {
   dataParser?: string,  // ⚪ loose — was `undefined`
   dataURL?: string,  // ⚪ loose — was `undefined`
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -23103,7 +24555,7 @@ and seriesAdOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotAdDataLabelsOptions | PlotAdDataLabelsOptions[]`
+  dataLabels?: plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAdOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -23130,8 +24582,8 @@ and seriesAdOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAdParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -23158,25 +24610,6 @@ and seriesAdOptions<'a, 'b, 'c> = {
   xAxis?: CommonTypes.stringOrNumber,
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
-}
-and seriesClickEventObject<'a, 'b, 'c> = {
-  ...JsxDOM.domProps,
-  point: point<'a, 'b, 'c>,
-}
-and seriesAfterAnimateEventObject<'a, 'b, 'c> = {
-  target: series<'a, 'b, 'c>,
-  @as("type") type_: string,
-}
-and seriesEventsOptionsObject<'a, 'b, 'c> = {
-  afterAnimate?: @this ((series<'a, 'b, 'c>, seriesAfterAnimateEventObject<'a, 'b, 'c>) => unit),
-  checkboxClick?: string,  // ⚪ loose — was `Function | SeriesCheckboxClickCallbackFunction`
-  click?: @this ((series<'a, 'b, 'c>, seriesClickEventObject<'a, 'b, 'c>) => unit),
-  hide?: @this ((series<'a, 'b, 'c>, LibTypes.dateTimeFormatOptionsLib) => unit),
-  legendItemClick?: @this ((series<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `SeriesLegendItemClickEventObject`
-  mouseOut?: @this ((series<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointerEvent`
-  mouseOver?: @this ((series<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointerEvent`
-  setRootNode?: string,  // ⚪ loose — was `Function`
-  show?: @this ((series<'a, 'b, 'c>, LibTypes.dateTimeFormatOptionsLib) => unit),
 }
 and tooltipPositionerPointObject<'a, 'b, 'c> = {
   isHeader: bool,
@@ -23337,6 +24770,59 @@ and seriesLabelOptionsObject<'a, 'b, 'c> = {
   style?: ChartsSeriesLabelOptionsObjectStyle.t,
   useHTML?: bool,
 }
+and seriesClickEventObject<'a, 'b, 'c> = {
+  ...JsxDOM.domProps,
+  point: point<'a, 'b, 'c>,
+}
+and seriesAfterAnimateEventObject<'a, 'b, 'c> = {
+  target: series<'a, 'b, 'c>,
+  @as("type") type_: string,
+}
+and seriesEventsOptionsObject<'a, 'b, 'c> = {
+  afterAnimate?: @this ((series<'a, 'b, 'c>, seriesAfterAnimateEventObject<'a, 'b, 'c>) => unit),
+  checkboxClick?: string,  // ⚠️ REVIEW — was `Function | SeriesCheckboxClickCallbackFunction` — match the real type by hand
+  click?: @this ((series<'a, 'b, 'c>, seriesClickEventObject<'a, 'b, 'c>) => unit),
+  hide?: @this ((series<'a, 'b, 'c>, LibTypes.dateTimeFormatOptionsLib) => unit),
+  legendItemClick?: @this ((series<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `SeriesLegendItemClickEventObject`
+  mouseOut?: @this ((series<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointerEvent`
+  mouseOver?: @this ((series<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointerEvent`
+  setRootNode?: JsFn.t,
+  show?: @this ((series<'a, 'b, 'c>, LibTypes.dateTimeFormatOptionsLib) => unit),
+}
+and plotAbandsDataLabelsOptions<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAbandsDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  x?: float,
+  y?: float,
+}
 and plotAbandsAccessibilityPointOptions<'a, 'b, 'c> = {
   dateFormat?: string,
   dateFormatter?: (point<'a, 'b, 'c>, option<string>) => string,  // ⚪ loose — was `any`
@@ -23363,7 +24849,7 @@ and seriesAbandsOptions<'a, 'b, 'c> = {
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
-  animation?: string,  // ⚪ loose — was `boolean | AnimationOptionsObject`
+  animation?: boolOrAnimationOptionsObject,
   animationLimit?: float,
   boostBlending?: optionsBoostBlendingValue,
   boostThreshold?: float,
@@ -23384,7 +24870,7 @@ and seriesAbandsOptions<'a, 'b, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: string,  // ⚪ loose — was `PlotAbandsDataLabelsOptions | PlotAbandsDataLabelsOptions[]`
+  dataLabels?: plotAbandsDataLabelsOptionsOrPlotAbandsDataLabelsOptionsArray<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAbandsOptionsDataSorting.t,
   description?: string,
   enableMouseTracking?: bool,
@@ -23412,8 +24898,8 @@ and seriesAbandsOptions<'a, 'b, 'c> = {
   opacity?: float,
   params?: plotAbandsParamsOptions,
   point?: plotSeriesPointOptions<'a, 'b, 'c>,
-  pointDescriptionFormat?: string,  // ⚪ loose — was `Function`
-  pointDescriptionFormatter?: string,  // ⚪ loose — was `Function`
+  pointDescriptionFormat?: JsFn.t,
+  pointDescriptionFormatter?: JsFn.t,
   relativeXValue?: bool,
   selected?: bool,
   shadow?: boolOrShadowOptionsObject,
@@ -23446,7 +24932,7 @@ and drilldownOptions<'a, 'b, 'c> = {
   activeAxisLabelStyle?: cssObject,
   activeDataLabelStyle?: ChartsDrilldownOptionsActiveDataLabelStyle.t,
   allowPointDrilldown?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | AnimationOptionsObject` — match the real type by hand
+  animation?: boolOrAnimationOptionsObject,
   breadcrumbs?: drilldownBreadcrumbsOptions,
   drillUpButton?: drilldownDrillUpButtonOptions,
   mapZooming?: bool,
@@ -23507,7 +24993,7 @@ and colorAxisLabelsOptions<'a, 'b, 'c> = {
 }
 and colorAxisEventsOptions<'a, 'b, 'c> = {
   afterSetExtremes?: @this ((axis<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `AxisSetExtremesEventObject`
-  legendItemClick?: string,  // ⚪ loose — was `Function`
+  legendItemClick?: JsFn.t,
   setExtremes?: @this ((axis<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `AxisSetExtremesEventObject`
 }
 and colorAxisOptions<'a, 'b, 'c> = {
@@ -23699,6 +25185,23 @@ and chartParallelAxesOptions<'a, 'b, 'c> = {
   zIndex?: int,
   zoomEnabled?: bool,
 }
+and selectDataObject<'a, 'b, 'c> = {
+  axis: axis<'a, 'b, 'c>,
+  max: float,
+  min: float,
+}
+and selectEventObject<'a, 'b, 'c> = {
+  originalEvent: LibTypes.dateTimeFormatOptionsLib,
+  preventDefault: JsFn.t,
+  resetSelection?: bool,
+  xAxis: array<selectDataObject<'a, 'b, 'c>>,
+  yAxis: array<selectDataObject<'a, 'b, 'c>>,
+}
+and drillupAllEventObject<'a, 'b, 'c> = {
+  preventDefault: JsFn.t,
+  target: chart<'a, 'b, 'c>,
+  @as("type") type_: string,
+}
 and chartEventsOptions<'a, 'b, 'c> = {
   addSeries?: @this ((chart<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `ChartAddSeriesEventObject`
   afterPrint?: @this ((chart<'a, 'b, 'c>, LibTypes.dateTimeFormatOptionsLib) => unit),
@@ -23706,14 +25209,14 @@ and chartEventsOptions<'a, 'b, 'c> = {
   click?: @this ((chart<'a, 'b, 'c>, pointerEventObject) => unit),
   drilldown?: @this ((chart<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `DrilldownEventObject`
   drillup?: @this ((chart<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `DrillupEventObject`
-  drillupall?: @this ((chart<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `DrillupAllEventObject`
+  drillupall?: @this ((chart<'a, 'b, 'c>, drillupAllEventObject<'a, 'b, 'c>) => unit),
   exportData?: @this ((chart<'a, 'b, 'c>, exportDataEventObject) => unit),
   fullscreenClose?: (chart<'a, 'b, 'c>, LibTypes.dateTimeFormatOptionsLib) => unit,
   fullscreenOpen?: (chart<'a, 'b, 'c>, LibTypes.dateTimeFormatOptionsLib) => unit,
   load?: @this ((chart<'a, 'b, 'c>, LibTypes.dateTimeFormatOptionsLib) => unit),
   redraw?: @this ((chart<'a, 'b, 'c>, LibTypes.dateTimeFormatOptionsLib) => unit),
   render?: @this ((chart<'a, 'b, 'c>, LibTypes.dateTimeFormatOptionsLib) => unit),
-  selection?: @this ((chart<'a, 'b, 'c>, string) => bool),  // ⚪ loose — was `SelectEventObject`
+  selection?: @this ((chart<'a, 'b, 'c>, selectEventObject<'a, 'b, 'c>) => bool),
 }
 and chartOptions<'a, 'b, 'c> = {
   alignThresholds?: bool,
@@ -23751,7 +25254,7 @@ and chartOptions<'a, 'b, 'c> = {
   plotBorderWidth?: float,
   plotShadow?: boolOrShadowOptionsObject,
   polar?: bool,
-  proj4?: string,  // ⚪ loose — was `Function`
+  proj4?: JsFn.t,
   reflow?: bool,
   renderTo?: string,  // ⚠️ REVIEW — was `string | HTMLElement` — match the real type by hand
   resetZoomButton?: chartResetZoomButtonOptions,
@@ -24725,7 +26228,7 @@ and chart<'a, 'b, 'c> = {
   getSelectedPoints: unit => array<point<'a, 'b, 'c>>,
   getSelectedSeries: unit => array<series<'a, 'b, 'c>>,
   hideLoading: unit => unit,
-  init: (options<'a, 'b, 'c>, option<string>) => unit,  // ⚪ loose — was `Function`
+  init: (options<'a, 'b, 'c>, option<JsFn.t>) => unit,
   isInsidePlot: (float, float, option<chartIsInsideOptionsObject<'a, 'b, 'c>>) => bool,
   redraw: option<string> => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
   reflow: option<Dom.event> => unit,
@@ -24744,10 +26247,35 @@ and chart<'a, 'b, 'c> = {
 @unboxed and xAxisOptionsOrXAxisOptionsArray<'a, 'b, 'c> = XAxisOptions(xAxisOptions<'a, 'b, 'c>) | XAxisOptionsArr(array<xAxisOptions<'a, 'b, 'c>>)
 @unboxed and navigatorYAxisOptionsOrNavigatorYAxisOptionsArray<'a, 'b, 'c> = NavigatorYAxisOptions(navigatorYAxisOptions<'a, 'b, 'c>) | NavigatorYAxisOptionsArr(array<navigatorYAxisOptions<'a, 'b, 'c>>)
 @unboxed and navigatorXAxisOptionsOrNavigatorXAxisOptionsArray<'a, 'b, 'c> = NavigatorXAxisOptions(navigatorXAxisOptions<'a, 'b, 'c>) | NavigatorXAxisOptionsArr(array<navigatorXAxisOptions<'a, 'b, 'c>>)
+@unboxed and navigatorSeriesDataLabelsOptionsOrNavigatorSeriesDataLabelsOptionsArray<'a, 'b, 'c> = NavigatorSeriesDataLabelsOptions(navigatorSeriesDataLabelsOptions<'a, 'b, 'c>) | NavigatorSeriesDataLabelsOptionsArr(array<navigatorSeriesDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and highchartsNavigationAnnotationsShapesOptionsPoints<'f> = Str(string) | Fn('f => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
 @unboxed and highchartsNavigationAnnotationsShapesOptionsPoint<'e> = Str(string) | Fn('e => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
 @unboxed and highchartsNavigationAnnotationsLabelsOptionsPoint<'d> = Str(string) | Fn('d => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
+@unboxed and plotXrangeDataLabelsOptionsOrPlotXrangeDataLabelsOptionsArray<'a, 'b, 'c> = PlotXrangeDataLabelsOptions(plotXrangeDataLabelsOptions<'a, 'b, 'c>) | PlotXrangeDataLabelsOptionsArr(array<plotXrangeDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and plotTreemapLevelsDataLabelsOptionsOrPlotTreemapLevelsDataLabelsOptionsArray<'a, 'b, 'c> = PlotTreemapLevelsDataLabelsOptions(plotTreemapLevelsDataLabelsOptions<'a, 'b, 'c>) | PlotTreemapLevelsDataLabelsOptionsArr(array<plotTreemapLevelsDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and plotTreemapDataLabelsOptionsOrPlotTreemapDataLabelsOptionsArray<'a, 'b, 'c> = PlotTreemapDataLabelsOptions(plotTreemapDataLabelsOptions<'a, 'b, 'c>) | PlotTreemapDataLabelsOptionsArr(array<plotTreemapDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and seriesTreegraphDataLabelsOptionsObjectOrSeriesTreegraphDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesTreegraphDataLabelsOptionsObject(seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesTreegraphDataLabelsOptionsObjectArr(array<seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and timelineDataLabelsOptionsObjectOrTimelineDataLabelsOptionsObjectArray<'a, 'b, 'c> = TimelineDataLabelsOptionsObject(timelineDataLabelsOptionsObject<'a, 'b, 'c>) | TimelineDataLabelsOptionsObjectArr(array<timelineDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and seriesSunburstDataLabelsOptionsObjectOrSeriesSunburstDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesSunburstDataLabelsOptionsObject(seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesSunburstDataLabelsOptionsObjectArr(array<seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and seriesOrganizationDataLabelsOptionsObjectOrSeriesOrganizationDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesOrganizationDataLabelsOptionsObject(seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesOrganizationDataLabelsOptionsObjectArr(array<seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and plotMappointDataLabelsOptionsOrPlotMappointDataLabelsOptionsArray<'a, 'b, 'c> = PlotMappointDataLabelsOptions(plotMappointDataLabelsOptions<'a, 'b, 'c>) | PlotMappointDataLabelsOptionsArr(array<plotMappointDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and plotMapDataLabelsOptionsOrPlotMapDataLabelsOptionsArray<'a, 'b, 'c> = PlotMapDataLabelsOptions(plotMapDataLabelsOptions<'a, 'b, 'c>) | PlotMapDataLabelsOptionsArr(array<plotMapDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and plotMapbubbleDataLabelsOptionsOrPlotMapbubbleDataLabelsOptionsArray<'a, 'b, 'c> = PlotMapbubbleDataLabelsOptions(plotMapbubbleDataLabelsOptions<'a, 'b, 'c>) | PlotMapbubbleDataLabelsOptionsArr(array<plotMapbubbleDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and plotGeoheatmapDataLabelsOptionsOrPlotGeoheatmapDataLabelsOptionsArray<'a, 'b, 'c> = PlotGeoheatmapDataLabelsOptions(plotGeoheatmapDataLabelsOptions<'a, 'b, 'c>) | PlotGeoheatmapDataLabelsOptionsArr(array<plotGeoheatmapDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and plotGaugeDataLabelsOptionsOrPlotGaugeDataLabelsOptionsArray<'a, 'b, 'c> = PlotGaugeDataLabelsOptions(plotGaugeDataLabelsOptions<'a, 'b, 'c>) | PlotGaugeDataLabelsOptionsArr(array<plotGaugeDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and plotGanttDataLabelsOptionsOrPlotGanttDataLabelsOptionsArray<'a, 'b, 'c> = PlotGanttDataLabelsOptions(plotGanttDataLabelsOptions<'a, 'b, 'c>) | PlotGanttDataLabelsOptionsArr(array<plotGanttDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesPieDataLabelsOptionsObject(seriesPieDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesPieDataLabelsOptionsObjectArr(array<seriesPieDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and plotFunnel3dDataLabelsOptionsOrPlotFunnel3dDataLabelsOptionsArray<'a, 'b, 'c> = PlotFunnel3dDataLabelsOptions(plotFunnel3dDataLabelsOptions<'a, 'b, 'c>) | PlotFunnel3dDataLabelsOptionsArr(array<plotFunnel3dDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesSankeyDataLabelsOptionsObject(seriesSankeyDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesSankeyDataLabelsOptionsObjectArr(array<seriesSankeyDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c> = PlotBulletDataLabelsOptions(plotBulletDataLabelsOptions<'a, 'b, 'c>) | PlotBulletDataLabelsOptionsArr(array<plotBulletDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and plotBubbleDataLabelsOptionsOrPlotBubbleDataLabelsOptionsArray<'a, 'b, 'c> = PlotBubbleDataLabelsOptions(plotBubbleDataLabelsOptions<'a, 'b, 'c>) | PlotBubbleDataLabelsOptionsArr(array<plotBubbleDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c> = PlotBarDataLabelsOptions(plotBarDataLabelsOptions<'a, 'b, 'c>) | PlotBarDataLabelsOptionsArr(array<plotBarDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesAreaRangeDataLabelsOptionsObject(seriesAreaRangeDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesAreaRangeDataLabelsOptionsObjectArr(array<seriesAreaRangeDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and seriesArcDiagramDataLabelsOptionsObjectOrSeriesArcDiagramDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesArcDiagramDataLabelsOptionsObject(seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesArcDiagramDataLabelsOptionsObjectArr(array<seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c> = PlotAoDataLabelsOptions(plotAoDataLabelsOptions<'a, 'b, 'c>) | PlotAoDataLabelsOptionsArr(array<plotAoDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c> = PlotAdDataLabelsOptions(plotAdDataLabelsOptions<'a, 'b, 'c>) | PlotAdDataLabelsOptionsArr(array<plotAdDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and pointOrPointArray<'a, 'b, 'c> = Point(point<'a, 'b, 'c>) | PointArr(array<point<'a, 'b, 'c>>)
+@unboxed and plotAbandsDataLabelsOptionsOrPlotAbandsDataLabelsOptionsArray<'a, 'b, 'c> = PlotAbandsDataLabelsOptions(plotAbandsDataLabelsOptions<'a, 'b, 'c>) | PlotAbandsDataLabelsOptionsArr(array<plotAbandsDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and boolOrAxisCrosshairOptions<'a, 'b, 'c> = Bool(bool) | AxisCrosshairOptions(axisCrosshairOptions<'a, 'b, 'c>)
 @unboxed and chartParallelAxesOptionsOrChartParallelAxesOptionsArray<'a, 'b, 'c> = ChartParallelAxesOptions(chartParallelAxesOptions<'a, 'b, 'c>) | ChartParallelAxesOptionsArr(array<chartParallelAxesOptions<'a, 'b, 'c>>)
 @unboxed and highchartsAnnotationsShapesOptionsPoints<'c> = Str(string) | Fn('c => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
@@ -25251,10 +26779,10 @@ module ChartsNavigatorOptionsSeries = {
   external asSeriesZigzagOptions: t<'a, 'b, 'c> => (seriesZigzagOptions<'a, 'b, 'c>) = "%identity"
   external fromSeriesOptionsTypes: array<seriesOptionsType_t<'a, 'b, 'c>> => t<'a, 'b, 'c> = "%identity"
   external asSeriesOptionsTypes: t<'a, 'b, 'c> => (array<seriesOptionsType_t<'a, 'b, 'c>>) = "%identity"
-  external fromNavigatorSeriesOptions: navigatorSeriesOptions => t<'a, 'b, 'c> = "%identity"
-  external asNavigatorSeriesOptions: t<'a, 'b, 'c> => (navigatorSeriesOptions) = "%identity"
-  external fromNavigatorSeriesOptionss: array<navigatorSeriesOptions> => t<'a, 'b, 'c> = "%identity"
-  external asNavigatorSeriesOptionss: t<'a, 'b, 'c> => (array<navigatorSeriesOptions>) = "%identity"
+  external fromNavigatorSeriesOptions: navigatorSeriesOptions<'a, 'b, 'c> => t<'a, 'b, 'c> = "%identity"
+  external asNavigatorSeriesOptions: t<'a, 'b, 'c> => (navigatorSeriesOptions<'a, 'b, 'c>) = "%identity"
+  external fromNavigatorSeriesOptionss: array<navigatorSeriesOptions<'a, 'b, 'c>> => t<'a, 'b, 'c> = "%identity"
+  external asNavigatorSeriesOptionss: t<'a, 'b, 'c> => (array<navigatorSeriesOptions<'a, 'b, 'c>>) = "%identity"
 }
 module ChartsNavigationOptionsAnnotationsOptions = {
   type t = chartsNavigationOptionsAnnotationsOptions_t
@@ -25262,6 +26790,21 @@ module ChartsNavigationOptionsAnnotationsOptions = {
   external asAnnotationsOptions: t => (annotationsOptions<'a, 'b, 'c>) = "%identity"
   external fromNavigationAnnotationsOptions: navigationAnnotationsOptions<'a, 'b, 'c, 'd, 'e, 'f> => t = "%identity"
   external asNavigationAnnotationsOptions: t => (navigationAnnotationsOptions<'a, 'b, 'c, 'd, 'e, 'f>) = "%identity"
+}
+module ChartsSeriesSankeyNodesOptionsObjectDataLabels = {
+  type t = chartsSeriesSankeyNodesOptionsObjectDataLabels_t
+  external fromSeriesArcDiagramDataLabelsOptionsObject: seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c> => t = "%identity"
+  external asSeriesArcDiagramDataLabelsOptionsObject: t => (seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>) = "%identity"
+  external fromSeriesArcDiagramDataLabelsOptionsObjects: array<seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>> => t = "%identity"
+  external asSeriesArcDiagramDataLabelsOptionsObjects: t => (array<seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>>) = "%identity"
+  external fromSeriesSankeyDataLabelsOptionsObject: seriesSankeyDataLabelsOptionsObject<'a, 'b, 'c> => t = "%identity"
+  external asSeriesSankeyDataLabelsOptionsObject: t => (seriesSankeyDataLabelsOptionsObject<'a, 'b, 'c>) = "%identity"
+  external fromSeriesSankeyDataLabelsOptionsObjects: array<seriesSankeyDataLabelsOptionsObject<'a, 'b, 'c>> => t = "%identity"
+  external asSeriesSankeyDataLabelsOptionsObjects: t => (array<seriesSankeyDataLabelsOptionsObject<'a, 'b, 'c>>) = "%identity"
+  external fromSeriesOrganizationDataLabelsOptionsObject: seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c> => t = "%identity"
+  external asSeriesOrganizationDataLabelsOptionsObject: t => (seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c>) = "%identity"
+  external fromSeriesOrganizationDataLabelsOptionsObjects: array<seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c>> => t = "%identity"
+  external asSeriesOrganizationDataLabelsOptionsObjects: t => (array<seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c>>) = "%identity"
 }
 module ChartsSeriesAccessibilityOptionsObjectPoint = {
   type t = chartsSeriesAccessibilityOptionsObjectPoint_t
@@ -25831,6 +27374,45 @@ module ChartsDefsOptionsArrow = {
   external fromDefsArrowOptions: defsArrowOptions => t = "%identity"
   external asDefsArrowOptions: t => (defsArrowOptions) = "%identity"
 }
+type dragDropGuideBoxOptionsObject = {
+  className?: string,
+  color?: string,  // ⚪ loose — was `ColorType`
+  cursor?: string,
+  lineColor?: string,
+  lineWidth?: float,
+  zIndex?: int,
+}
+type plotOptionsSeriesDragDropGuideBoxOptions = {
+  default?: dragDropGuideBoxOptionsObject,
+}
+type exportingButtonsOptionsObject = {
+  align?: alignValue,
+  buttonSpacing?: float,
+  className?: string,
+  enabled?: bool,
+  height?: float,
+  menuClassName?: string,
+  menuItems?: array<string>,
+  onclick?: JsFn.t,
+  symbol?: string,
+  symbolFill?: ColorType.t,
+  symbolSize?: float,
+  symbolStroke?: string,
+  symbolStrokeWidth?: float,
+  symbolX?: float,
+  symbolY?: float,
+  text?: string,
+  theme?: exportingButtonsContextButtonThemeOptions,
+  titleKey?: string,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  width?: float,
+  x?: float,
+  y?: float,
+}
+type exportingButtonsOptions = {
+  contextButton?: exportingButtonsOptionsObject,
+}
 type exportingMenuItemDefinitionsDownloadCSVOptions = {
   textKey?: string,
 }
@@ -25866,17 +27448,6 @@ type mapViewInsetsOptions = {
   projection?: string,  // ⚪ loose — was `object | MapViewInsetsProjectionOptions`
   relativeTo?: mapViewInsetOptionsRelativeToValue,
   units?: optionsUnitsValue,
-}
-type dragDropGuideBoxOptionsObject = {
-  className?: string,
-  color?: ColorType.t,
-  cursor?: string,
-  lineColor?: string,
-  lineWidth?: float,
-  zIndex?: int,
-}
-type plotOptionsSeriesDragDropGuideBoxOptions = {
-  default?: dragDropGuideBoxOptionsObject,
 }
 type blendChartProps<'a, 'b, 'c> = {
   allowChartUpdate?: bool,
@@ -25946,8 +27517,6 @@ type responsiveChartTokens = {
   lg: chartTokensType,
 }
 @unboxed type stringOrChartsColorsConfig = Str(string) | ChartsColorsConfig(chartsColorsConfig)
-@unboxed type stringOrSvgAttributes = Str(string) | SvgAttributes(svgAttributes)
-@unboxed type stringOrNumberOrGetLinePathTargetTArray = Str(string) | Num(float) | Arr(array<GetLinePathTarget.t>)
 module ChartV2LegendItem = {
   type t
   external fromPoint: point<'a, 'b, 'c> => t = "%identity"
