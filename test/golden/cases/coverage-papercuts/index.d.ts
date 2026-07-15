@@ -14,6 +14,15 @@ interface MergedList extends Array<string> {}
 interface MergedList { extra: number }
 export declare const Merged: (props: { m: MergedList }) => JsxElement
 
+// #144: the hybrid record above must NOT pick up a spurious `...JsxDOM.domProps` — the Array
+// prototype methods (`length`/`push`/…) are lib-inherited and misfire the domProps-spread heuristic
+// (the same misfire Map/Set are guarded against). It's not a DOM element → record of own fields only.
+// And `extends ReadonlyArray<T>` must flatten like `Array<T>` (pure) / keep own fields (hybrid) —
+// `isArrayType` is FALSE for ReadonlyArray, so #109.2 missed it.
+interface RoList extends ReadonlyArray<string> {}
+interface RoHybrid extends ReadonlyArray<number> { label: string }
+export declare const Ro: (props: { pure: RoList; hybrid: RoHybrid }) => JsxElement
+
 // #109.6: a NUMERIC index signature `{ [n: number]: V }` was an opaque `JSON.t` — but JS object keys
 // are strings at runtime, so it's a `Dict.t<V>` (same as a string index).
 interface NumMap { [n: number]: string }

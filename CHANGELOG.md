@@ -6,6 +6,16 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Fixed
+- **Array-extending hybrid record: spurious `...JsxDOM.domProps`** (#144) — an `interface X extends
+  Array<T> { …own fields }` correctly keeps a record for its own fields (only *pure* array-extenders
+  flatten, #109.2), but that record wrongly spread `...JsxDOM.domProps`: the Array prototype methods
+  are lib-inherited and misfired the domProps heuristic (the same misfire `Map`/`Set` are guarded
+  against). The spread is now suppressed for any builtin-container base — the prototype methods were
+  already dropped as fields, so the record is just its own fields. Also: `extends ReadonlyArray<T>`
+  now behaves like `Array<T>` (pure → `array<T>`, hybrid → own-fields record); `isArrayType` is false
+  for `ReadonlyArray`, so it's matched by symbol name. Real-package impact: two `...JsxDOM.domProps`
+  lines removed from Highcharts' `timeTicksInfoObject` in `@juspay/blend-design-system` — nothing else
+  changed. Fixture: `coverage-papercuts`.
 - **Coverage papercuts (batch 2)** (#109) — two more from the audit:
   - **#109.4** class **statics** (`static create()`, `static readonly VERSION`) and **setters**
     (`set value(v)`) were silently dropped. Statics now bind through the class object with
