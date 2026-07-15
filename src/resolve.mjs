@@ -72,9 +72,12 @@ function exportsMainTargets(exp) {
 /**
  * Apply a `typesVersions` remap to one candidate path. Shape:
  * `{ "<semver-range>": { "<pattern>": ["<target>", …] } }` (e.g. `{ ">=4": { "*": ["ts4/*"] } }`).
- * We do NOT semver-match the range — every range's mapping is tried and `existsSync` (in the caller)
- * picks the one that exists, which stays deterministic. A `*` in the pattern is a single glob capture
- * spliced into each target's `*`; an exact pattern matches the whole path. (#104)
+ * We do NOT semver-match the range (we don't know the consumer's TS version) — every range's mapping
+ * is tried in declaration order and `existsSync` (in the caller) picks the first that exists, which
+ * stays deterministic. Correct for the common single-range shape; a package declaring MULTIPLE
+ * incompatible ranges could resolve to a valid-but-older types dir — an accepted tradeoff. A `*` in
+ * the pattern is a single glob capture spliced into each target's `*`; an exact pattern matches the
+ * whole path. (#104)
  * @returns {string[]}  remapped candidate paths (empty if nothing matched)
  */
 function typesVersionsRemap(tv, rel) {
@@ -122,8 +125,10 @@ export function typesEntry(pkgDir) {
     rels.push('index.d.ts', 'dist/index.d.ts', 'lib/index.d.ts')
     // main with a runtime extension swapped to `.d.ts`
     if (pj.main) rels.push(pj.main.replace(/\.[mc]?js$/, '.d.ts'))
-    // `typesVersions` can remap ANY of the above; try each remap FIRST (it's authoritative when it
-    // matches), then the original as fallback. `existsSync` decides.
+    // `typesVersions` can remap ANY of the above; try each remap FIRST (that's what typesVersions is
+    // FOR — it overrides the plain entry when it matches), then the original as fallback. `existsSync`
+    // decides. NB: a package shipping BOTH a `types` field and an applicable typesVersions therefore
+    // resolves to the remapped path (more correct, but not literally the raw `types` value).
     const expanded = rels.flatMap((r) => [...typesVersionsRemap(pj.typesVersions, r), r])
     return expanded.map((r) => join(pkgDir, r)).find(existsSync) || null
 }
