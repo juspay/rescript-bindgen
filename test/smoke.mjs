@@ -288,6 +288,20 @@ const checks = [
       ['#120: boolean|Config union → @unboxed Bool(bool) | Options', !!uni && (uni.members || []).some((m) => m.ctor === 'Bool')],
     ]
   })(),
+  ...(() => {
+    // #149 (#120 Part B): `object | Config` → opaque module; solo `object` → JSON.t.
+    const raw = (n) => !!n && n.kind === 'raw' && n.res === 'JSON.t'
+    const m = extractModule(join(here, 'golden', 'cases', 'object-config-union', 'index.d.ts'), { from: 'demo' })
+    const series = m.components.find((c) => c.name === 'Series')
+    const onp = series && series.ir.props.find((p) => p.name === 'onPoint')
+    const solo = series && series.ir.props.find((p) => p.name === 'solo')
+    const opq = m.shared.entries.find((e) => e.kind === 'opaque' && e.name === 'ObjectConfigUnionOnPoint')
+    return [
+      ['#149: solo bare `object` keyword → JSON.t (was string)', raw(solo?.type)],
+      ['#149: object|Config → opaque module (typeRef to .t)', !!onp && onp.type?.kind === 'typeRef' && /OnPoint\.t$/.test(onp.type.to)],
+      ['#149: opaque module has a JSON arm + the named Config arm', !!opq && (opq.members || []).some((x) => x.name === 'JSON') && (opq.members || []).some((x) => x.name === 'OnPointOptions')],
+    ]
+  })(),
 ]
 
 let ok = true

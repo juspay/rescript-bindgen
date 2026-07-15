@@ -2639,7 +2639,8 @@ function boundedPastDepth(t, ctx, checker, budget, seen) {
     if (f & (ts.TypeFlags.String | ts.TypeFlags.Number | ts.TypeFlags.Boolean | ts.TypeFlags.BigInt |
         ts.TypeFlags.StringLiteral | ts.TypeFlags.NumberLiteral | ts.TypeFlags.BooleanLiteral |
         ts.TypeFlags.BigIntLiteral | ts.TypeFlags.Unknown | ts.TypeFlags.Any | ts.TypeFlags.Index |
-        ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void | ts.TypeFlags.EnumLike)) return true
+        ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void | ts.TypeFlags.EnumLike |
+        ts.TypeFlags.NonPrimitive)) return true // the bare `object` keyword → a `JSON.t` leaf (#149)
     if (isCssType(t)) return true
     if (t.id != null && ctx.shared && ctx.shared.byKey.has('id:' + t.id)) return true // registered → link
     if (checker.isArrayType?.(t) || checker.isTupleType?.(t)) return true
@@ -2751,7 +2752,7 @@ function classify(type, ctx, propName = '', depth = 0) {
         // as `string`, primitives included. A literal folds to its base primitive here: past the
         // bound the alternative was an opaque `string` anyway, so `number` for `1000` is strictly
         // more faithful. (#98)
-        if (flags & ts.TypeFlags.Unknown) return { kind: 'raw', res: 'JSON.t' }
+        if (flags & (ts.TypeFlags.Unknown | ts.TypeFlags.NonPrimitive)) return { kind: 'raw', res: 'JSON.t' } // `unknown`/bare `object` (#149)
         if (flags & (ts.TypeFlags.String | ts.TypeFlags.StringLiteral)) return { kind: 'string' }
         if (flags & (ts.TypeFlags.Number | ts.TypeFlags.NumberLiteral)) return { kind: 'number' }
         if (flags & (ts.TypeFlags.Boolean | ts.TypeFlags.BooleanLiteral)) return { kind: 'boolean' }
@@ -2841,7 +2842,9 @@ function classify(type, ctx, propName = '', depth = 0) {
     // `unknown` -> `JSON.t`: an opaque value the consumer builds/decodes. This is the
     // honest mapping for a genuinely-unknown value (a callback-supplied id, an opaque
     // filter) — unlike a type variable, which would be unsound in callback position.
-    if (flags & ts.TypeFlags.Unknown) return { kind: 'raw', res: 'JSON.t' }
+    // The bare `object` KEYWORD (`ts.TypeFlags.NonPrimitive` — "any non-primitive", no shape)
+    // is the same honest opaque value, so it maps to `JSON.t` too (was a flagged `string`). (#149)
+    if (flags & (ts.TypeFlags.Unknown | ts.TypeFlags.NonPrimitive)) return { kind: 'raw', res: 'JSON.t' }
     // Prop-position `any` -> an implicit component generic, the same treatment an
     // EXPLICIT generic already gets (`SliderRoot<Value>` -> 'a). Keyed by the alias that
     // carried it (`AccordionValue = (any | null)[]`) so `value`/`defaultValue`/
@@ -3641,7 +3644,10 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
             : (raw && raw !== '__type' && isBuiltinContainer(mt, checker)) ? (raw + contArg(mt))
             : (raw && raw !== '__type') ? raw
             : (mt.getCallSignatures && mt.getCallSignatures().length) ? 'Fn'
-            : refName(node) || undefined
+            // A raw arm with NO TS type name — the bare `object` keyword → `JSON.t` (#149). Named from
+            // the rendered type (`fromJson`) so it doesn't fall to a bare `fromraw`. Placed LAST so a
+            // named raw arm (`HTMLElement` → `Dom.element`, `File` → `Webapi.File.t`) keeps its TS name.
+            : refName(node) || (node && node.kind === 'raw' ? pascal(node.res.replace(/\.t$/, '')) : undefined)
         members.push({ type: node, name })
     }
     // Fold the literal run into its reserved slot: collapse a large set to one `tagSet`
@@ -4259,6 +4265,7 @@ function unionNode(type, ctx, propName, depth = 0) {
         if (t.getCallSignatures && t.getCallSignatures().length) return true // function
         if (isTaggedTuple(t)) return true // tagged tuple (SVG path `[cmd, …number]` arms, #72)
         if (asArray(t, checker)) return true // array
+        if (t.flags & ts.TypeFlags.NonPrimitive) return true // the bare `object` keyword → a `JSON.t` arm (#149)
         const s = t.getSymbol && t.getSymbol()
         if ((t.flags & ts.TypeFlags.Object) && s && s.getName() !== '__type' && t.getProperties().length) return true // named object
         return false
@@ -4273,6 +4280,7 @@ function unionNode(type, ctx, propName, depth = 0) {
         const structuredParts = parts.filter((t) => {
             if (isTaggedTuple(t)) return true // tagged tuple arm (#72)
             if (asArray(t, checker)) return true
+            if (t.flags & ts.TypeFlags.NonPrimitive) return true // bare `object` keyword → `JSON.t` arm (#149)
             // An INTERSECTION object (`TextInputV2Dropdown = SingleSelectV2Props & { position }`) usually
             // has no `getSymbol()` of its own (only an aliasSymbol), so it was dropped here — leaving an
             // `Obj | Obj[]` union with just 1 structured part → `string`. Count it by its properties so
