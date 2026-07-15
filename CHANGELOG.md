@@ -5,6 +5,18 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **Entry resolution honours the `exports` map and `typesVersions`** (#104) — `typesEntry` previously
+  read only `types`/`typings`, a few hard-coded conventions (`index.d.ts`, `dist/`, `lib/`), and the
+  `main`-with-`.js`→`.d.ts` swap. A modern package whose types are reachable *only* through the
+  `exports` map (the `"types"` condition, `.d.mts` dual-emit) failed to resolve. Now `typesEntry` also
+  resolves the `.` entry of the `exports` map (preferring the `types` condition, recursing into
+  `import`/`require`/`default` which may nest their own `types`), handles both a subpath map and a bare
+  condition object, and expands every candidate through `typesVersions` (the `{ ">=4": { "*": [...] } }`
+  glob remap). The `main` swap also now covers `.mjs`/`.cjs`. Explicit `types`/`typings` stay
+  authoritative when present, so existing resolution is unchanged. Per-subpath binding
+  (`@module("pkg/sub")`) remains out of scope (tracked separately). Fixture: `exports-map-entry`.
+
 ### Fixed
 - **Array-extending hybrid record: spurious `...JsxDOM.domProps`** (#144) — an `interface X extends
   Array<T> { …own fields }` correctly keeps a record for its own fields (only *pure* array-extenders
