@@ -1,0 +1,12 @@
+{
+  "name": "exports-map-entry",
+  "version": "1.0.0",
+  "//": "#104: types reachable ONLY through the exports map (no `types` field, no index.d.ts). The `.` entry's `types` condition points at a non-conventional path; without exports-map resolution this package fails to resolve.",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": { "types": "./types/entry.d.ts", "default": "./dist/index.mjs" },
+      "require": { "types": "./types/entry.d.ts", "default": "./dist/index.cjs" }
+    }
+  }
+}

@@ -3,10 +3,26 @@
 // contains the expected ReScript constructs.
 import { extractComponent, extractModule, shapeHash, structuralSig } from '../src/extract.mjs'
 import { emit, emitClass, emitFunction, report } from '../src/emit.mjs'
-import { writeFileSync, mkdtempSync } from 'fs'
-import { dirname, join } from 'path'
+import { typesEntry } from '../src/resolve.mjs'
+import { writeFileSync, mkdtempSync, mkdirSync } from 'fs'
+import { dirname, join, relative } from 'path'
 import { tmpdir } from 'os'
 import { fileURLToPath } from 'url'
+
+// #104: build a throwaway package dir (package.json + the given `.d.ts` files) and return the entry
+// path `typesEntry` resolves, RELATIVE to the package dir — so the entry-resolution matrix (exports
+// map / typesVersions) is asserted offline without installs.
+function resolvePkg(pkgJson, dtsFiles) {
+    const d = mkdtempSync(join(tmpdir(), 'bindgen-resolve-'))
+    writeFileSync(join(d, 'package.json'), JSON.stringify(pkgJson))
+    for (const rel of dtsFiles) {
+        const p = join(d, rel)
+        mkdirSync(dirname(p), { recursive: true })
+        writeFileSync(p, 'export declare const x: number\n')
+    }
+    const entry = typesEntry(d)
+    return entry ? relative(d, entry).split('\\').join('/') : null
+}
 
 // Self-contained fixture — no external (react) imports, so it resolves anywhere.
 const dir = mkdtempSync(join(tmpdir(), 'bindgen-smoke-'))
@@ -242,6 +258,18 @@ const checks = [
       ['#109.4: static id disambiguated from a colliding instance method', !!widget && emitClass(widget.ir).includes('external resetStatic:') && emitClass(widget.ir).includes('@send external reset:')],
       ['#109.8: both overloads bind, sharing one JS name', names('parse').length === 2 && names('parse').includes('parse') && names('parse').includes('parseWithRadix')],
       ['#109.8: same-arity-different-type overloads stay distinct', names('wrap').length === 2],
+    ]
+  })(),
+  ...(() => {
+    // #104: entry resolution via the `exports` map and `typesVersions`.
+    return [
+      ['#104: `types` field still wins (regression)', resolvePkg({ types: './t/main.d.ts', exports: { '.': { types: './other.d.ts' } } }, ['t/main.d.ts', 'other.d.ts']) === 't/main.d.ts'],
+      ['#104: exports `.` subpath map, `types` condition', resolvePkg({ exports: { '.': { types: './types/api.d.ts', default: './index.mjs' }, './sub': { types: './sub.d.ts' } } }, ['types/api.d.ts']) === 'types/api.d.ts'],
+      ['#104: exports bare condition object (no `.` key)', resolvePkg({ exports: { types: './dist/index.d.ts', import: './dist/index.mjs' } }, ['dist/index.d.ts']) === 'dist/index.d.ts'],
+      ['#104: exports nested `import.types` (.d.mts dual-emit)', resolvePkg({ exports: { '.': { import: { types: './esm/index.d.mts', default: './esm/index.mjs' } } } }, ['esm/index.d.mts']) === 'esm/index.d.mts'],
+      ['#104: runtime-only exports falls through to conventions', resolvePkg({ exports: { '.': { default: './index.mjs' } } }, ['index.d.ts']) === 'index.d.ts'],
+      ['#104: typesVersions `*` glob remap', resolvePkg({ types: 'index.d.ts', typesVersions: { '>=4': { '*': ['ts4/*'] } } }, ['ts4/index.d.ts']) === 'ts4/index.d.ts'],
+      ['#104: main .mjs swapped to .d.ts (no other entry)', resolvePkg({ main: './dist/index.mjs' }, ['dist/index.d.ts']) === 'dist/index.d.ts'],
     ]
   })(),
 ]

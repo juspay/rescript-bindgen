@@ -29,25 +29,108 @@ function readJSON(p) {
     try { return JSON.parse(readFileSync(p, 'utf-8')) } catch { return null }
 }
 
+/** A declaration file path (the only thing we accept as a types entry). */
+const isDtsPath = (s) => typeof s === 'string' && /\.d\.[mc]?ts$/.test(s)
+
+/**
+ * Collect candidate `.d.ts` targets from an `exports`-map NODE (the value at a subpath, or the
+ * whole map when it's a bare condition object), preferring the `types`/`typings` condition and
+ * recursing into the runtime conditions (`import`/`require`/`node`/`default`/`browser`) — which in
+ * dual-emit packages nest their own `{ types, default }`. A plain runtime string (`./index.mjs`) is
+ * ignored: only a `.d.ts`/`.d.mts`/`.d.cts` is a types entry. Order = priority. (#104)
+ * @param {*} node  an `exports` condition value (string | object | array)
+ * @returns {string[]}  relative `.d.ts` targets, most-preferred first
+ */
+function exportsTypeTargets(node) {
+    if (!node) return []
+    if (typeof node === 'string') return isDtsPath(node) ? [node] : []
+    if (Array.isArray(node)) return node.flatMap(exportsTypeTargets)
+    if (typeof node === 'object') {
+        const out = []
+        // The `types`/`typings` conditions win — TS's own resolution order.
+        for (const k of ['types', 'typings']) if (node[k]) out.push(...exportsTypeTargets(node[k]))
+        // Then runtime conditions, which may nest a `types` or point straight at a `.d.ts`.
+        for (const k of ['import', 'require', 'node', 'default', 'browser']) if (node[k]) out.push(...exportsTypeTargets(node[k]))
+        return out
+    }
+    return []
+}
+
+/**
+ * Resolve the MAIN (`.`) types entry of a package's `exports` map. Handles both a subpath map
+ * (`{ ".": …, "./sub": … }` — use the `.` entry) and a bare condition object
+ * (`{ types, import, require }` — the whole thing IS the `.` entry). Subpath binding (per-subpath
+ * `@module("pkg/sub")`) is intentionally out of scope here. (#104)
+ */
+function exportsMainTargets(exp) {
+    if (!exp || typeof exp !== 'object' || Array.isArray(exp)) return exportsTypeTargets(exp)
+    const keys = Object.keys(exp)
+    // A subpath map has `.`-prefixed keys; otherwise the object is itself the `.` condition set.
+    return keys.some((k) => k.startsWith('.')) ? exportsTypeTargets(exp['.']) : exportsTypeTargets(exp)
+}
+
+/**
+ * Apply a `typesVersions` remap to one candidate path. Shape:
+ * `{ "<semver-range>": { "<pattern>": ["<target>", …] } }` (e.g. `{ ">=4": { "*": ["ts4/*"] } }`).
+ * We do NOT semver-match the range (we don't know the consumer's TS version) — every range's mapping
+ * is tried in declaration order and `existsSync` (in the caller) picks the first that exists, which
+ * stays deterministic. Correct for the common single-range shape; a package declaring MULTIPLE
+ * incompatible ranges could resolve to a valid-but-older types dir — an accepted tradeoff. A `*` in
+ * the pattern is a single glob capture spliced into each target's `*`; an exact pattern matches the
+ * whole path. (#104)
+ * @returns {string[]}  remapped candidate paths (empty if nothing matched)
+ */
+function typesVersionsRemap(tv, rel) {
+    if (!tv || typeof tv !== 'object') return []
+    const out = []
+    for (const range of Object.keys(tv)) {
+        const map = tv[range]
+        if (!map || typeof map !== 'object') continue
+        for (const pattern of Object.keys(map)) {
+            const targets = map[pattern]
+            if (!Array.isArray(targets)) continue
+            const star = pattern.indexOf('*')
+            if (star >= 0) {
+                const pre = pattern.slice(0, star), post = pattern.slice(star + 1)
+                if (rel.startsWith(pre) && rel.endsWith(post) && rel.length >= pre.length + post.length) {
+                    const mid = rel.slice(pre.length, rel.length - post.length)
+                    for (const t of targets) out.push(t.replace(/\*/g, mid))
+                }
+            } else if (pattern === rel) {
+                out.push(...targets)
+            }
+        }
+    }
+    return out
+}
+
 /**
  * Find a package's TypeScript declaration entry file. Tries `package.json`
- * `types`/`typings`, then common conventions (`index.d.ts`, `dist/`, `lib/`),
- * then the `main` field with `.js` swapped for `.d.ts`.
+ * `types`/`typings`, then the `exports` map (`types` condition — modern packaging), then common
+ * conventions (`index.d.ts`, `dist/`, `lib/`), then the `main` field with `.js` swapped for `.d.ts`
+ * — each candidate additionally expanded through `typesVersions` (a version-gated path remap). (#104)
  * @param {string} pkgDir  the package's root directory
  * @returns {string | null}  path to the entry `.d.ts`, or null if none found
  */
-function typesEntry(pkgDir) {
+export function typesEntry(pkgDir) {
     const pj = readJSON(join(pkgDir, 'package.json')) || {}
-    const cand = []
-    if (pj.types) cand.push(join(pkgDir, pj.types))
-    if (pj.typings) cand.push(join(pkgDir, pj.typings))
+    const rels = []
+    if (pj.types) rels.push(pj.types)
+    if (pj.typings) rels.push(pj.typings)
+    // `exports` map (modern packaging) — resolve the `.` entry's `types` condition. Placed BEFORE the
+    // conventions so a package whose types live only behind `exports` still resolves; AFTER the
+    // explicit `types`/`typings` fields, which remain authoritative when present.
+    rels.push(...exportsMainTargets(pj.exports))
     // common conventions
-    cand.push(join(pkgDir, 'index.d.ts'))
-    cand.push(join(pkgDir, 'dist', 'index.d.ts'))
-    cand.push(join(pkgDir, 'lib', 'index.d.ts'))
-    // main with .js swapped to .d.ts
-    if (pj.main) cand.push(join(pkgDir, pj.main.replace(/\.js$/, '.d.ts')))
-    return cand.find(existsSync) || null
+    rels.push('index.d.ts', 'dist/index.d.ts', 'lib/index.d.ts')
+    // main with a runtime extension swapped to `.d.ts`
+    if (pj.main) rels.push(pj.main.replace(/\.[mc]?js$/, '.d.ts'))
+    // `typesVersions` can remap ANY of the above; try each remap FIRST (that's what typesVersions is
+    // FOR — it overrides the plain entry when it matches), then the original as fallback. `existsSync`
+    // decides. NB: a package shipping BOTH a `types` field and an applicable typesVersions therefore
+    // resolves to the remapped path (more correct, but not literally the raw `types` value).
+    const expanded = rels.flatMap((r) => [...typesVersionsRemap(pj.typesVersions, r), r])
+    return expanded.map((r) => join(pkgDir, r)).find(existsSync) || null
 }
 
 /**
