@@ -3146,7 +3146,11 @@ function classify(type, ctx, propName = '', depth = 0) {
     // totalRange }`) can't be both an array and a record in ReScript, so it keeps the record of its own
     // fields (dropping array-indexing) rather than dropping the fields.
     if ((flags & ts.TypeFlags.Object) && type.isClassOrInterface?.() && !checker.isArrayType?.(type)) {
-        const arrBase = (checker.getBaseTypes?.(type) || []).find((b) => checker.isArrayType?.(b))
+        // Match a genuine `Array<T>` base (isArrayType) OR a `ReadonlyArray<T>` one — `isArrayType` is
+        // FALSE for ReadonlyArray, so catch it by symbol name + the library guard (else a first-party
+        // `ReadonlyArray` couldn't reach here anyway). Both flatten to `array<T>`. (#144)
+        const arrBase = (checker.getBaseTypes?.(type) || []).find((b) =>
+            checker.isArrayType?.(b) || (b.getSymbol?.()?.getName?.() === 'ReadonlyArray' && isLibraryType(b)))
         // "No own members" is measured against the resolved property SET, not the first declaration's
         // syntax — so DECLARATION MERGING (`interface M extends Array<T> {}` + `interface M { extra }`)
         // is handled: `extra` is in `getProperties()` (which merges all declarations) but not in the
@@ -4751,7 +4755,15 @@ function buildRecordFields(type, ctx, depth) {
     // than the generic inherited-attr bag, so on collision we keep ALL own fields and drop the
     // spread (the inherited HTML attrs go with it). (#63 C3)
     const ownCollides = hasHtml && props.some((p) => !isInherited(p) && DOM_PROPS_FIELDS.has(p.getName()))
-    const spread = (hasHtml && !ownCollides) ? 'JsxDOM.domProps' : undefined
+    // A HYBRID container-extender — `interface X extends Array<T> { …own }` (or ReadonlyArray/Map/Set)
+    // — keeps a record for its OWN fields (#109.2 only flattens PURE array-extenders). But its
+    // prototype methods (`length`/`push`/…) are lib-inherited, so `hasHtml` misfires and would emit a
+    // nonsensical `...JsxDOM.domProps` — it's not a DOM element. The prototype members are already
+    // dropped as fields (isInherited), so we just suppress the spurious spread. Same guard Map/Set get
+    // before recordNode (#68); Array-extending hybrids just didn't have it. (#144)
+    const containerBase = type.isClassOrInterface?.() &&
+        (checker.getBaseTypes?.(type) || []).some((b) => isBuiltinContainer(b, checker))
+    const spread = (hasHtml && !ownCollides && !containerBase) ? 'JsxDOM.domProps' : undefined
 
     // Record fields must not mint implicit component type variables for `any` — a SHARED
     // record can't be component-generic, so `any` stays a flagged defect there. (#31)

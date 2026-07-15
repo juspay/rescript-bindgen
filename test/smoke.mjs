@@ -224,6 +224,9 @@ const checks = [
       ['#109.2 rev: declaration-merged Array-extender keeps its merged field (no array-flatten)', (() => { const m = cp.components.find((c) => c.name === 'Merged'); return !!m && t(m.ir.props.find((p) => p.name === 'm'))?.kind !== 'array' })()],
       ['#109.6: numeric index signature → dict', !!grid && t(grid.ir.props.find((p) => p.name === 'cells'))?.kind === 'dict'],
       ['#109.3: symbol-keyed prop skipped + noted, real props kept', !!widget && (widget.ir.symbolProps || []).length === 1 && widget.ir.props.some((p) => p.name === 'visible') && !widget.ir.props.some((p) => /^__@/.test(p.name))],
+      ['#144: Array-extending hybrid record has NO spurious domProps spread', (() => { const e = cp.shared.entries.find((x) => x.name === 'mergedList'); return !!e && e.spread == null && e.fields.some((f) => f.name === 'extra') })()],
+      ['#144: ReadonlyArray-extending hybrid keeps own field, no spread', (() => { const e = cp.shared.entries.find((x) => x.name === 'roHybrid'); return !!e && e.spread == null && e.fields.some((f) => f.name === 'label') })()],
+      ['#144: pure ReadonlyArray extender → array', (() => { const ro = cp.components.find((c) => c.name === 'Ro'); return !!ro && t(ro.ir.props.find((p) => p.name === 'pure'))?.kind === 'array' })()],
     ]
   })(),
   ...(() => {

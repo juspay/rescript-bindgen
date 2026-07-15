@@ -1,4 +1,6 @@
 type mergedList = {
-  ...JsxDOM.domProps,
   extra: float,
+}
+type roHybrid = {
+  label: string,
 }
