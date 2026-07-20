@@ -932,6 +932,62 @@ function unwrapOmit(t, checker) {
     return { base, omit }
 }
 
+/**
+ * Detect a DISCRIMINATED-UNION props type with a CLEAN STRING DISCRIMINANT: a prop present in every
+ * union arm whose type is a single, DISTINCT string literal per arm (`mode: "single" | "multi"`,
+ * `variant: "aligned" | "custom"`). For such a union we can restore the per-branch requiredness the
+ * flattened all-optional form loses (#65) — as a `@tag(<field>)` ReScript variant, one constructor
+ * per arm (`@as(<literal>)`, inline-record payload of that arm's own fields with their REAL
+ * requiredness). Returns `{ tag, branches:[{literal, ctor, fields:[{name,optional,type}]}] }`, or null
+ * when there is no clean literal discriminant (a presence-based union like Badge's `children?:
+ * undefined` vs `children: ReactElement`, or a non-string discriminant) → caller keeps the flattened
+ * output. Correctness rests on `@as(<literal>)` carrying the REAL discriminant value, never the ctor
+ * name — verified against the ReScript compiler. (#65)
+ */
+function discriminatedProps(propsType, ctx, decl) {
+    const { checker } = ctx
+    if (!(propsType.isUnion && propsType.isUnion())) return null
+    const arms = propsType.types
+    if (arms.length < 2) return null
+    const litOf = (arm, name) => {
+        const p = arm.getProperties().find((s) => s.getName() === name)
+        if (!p) return null
+        let t; try { t = checker.getTypeOfSymbolAtLocation(p, decl) } catch { return null }
+        return (t.isStringLiteral && t.isStringLiteral()) ? String(t.value) : null
+    }
+    const isInherited = (p) => {
+        const d = p.declarations && p.declarations[0]
+        const f = (d && d.getSourceFile().fileName) || ''
+        return /node_modules\/(@types|typescript)\//.test(f) || /\/lib\.(dom|es|scripthost)/.test(f)
+    }
+    // The discriminant must be a single distinct string literal in EVERY arm. Scan the first arm's
+    // props as candidates (a discriminant is by definition present in all arms).
+    for (const cand of arms[0].getProperties().map((p) => p.getName())) {
+        const lits = arms.map((a) => litOf(a, cand))
+        if (lits.some((l) => l == null)) continue         // not a string literal in some arm
+        if (new Set(lits).size !== lits.length) continue  // literals not distinct across arms
+        const usedCtors = new Set()
+        const branches = arms.map((arm, i) => {
+            let ctor = pascal(lits[i]) || `Case${i}`
+            while (usedCtors.has(ctor)) ctor += '_'
+            usedCtors.add(ctor)
+            const fields = arm.getProperties()
+                .filter((p) => p.getName() !== cand && !['ref', 'key'].includes(p.getName()))
+                .filter((p) => !/^__@/.test(p.getName()) && !isInherited(p)) // drop symbol-keyed + DOM-inherited
+                .map((p) => {
+                    const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0
+                    let ty; try { ty = checker.getTypeOfSymbolAtLocation(p, decl) } catch { return null }
+                    const type = withPath(ctx, p.getName(), () => classify(ty, ctx, p.getName()))
+                    return { name: p.getName(), optional, type }
+                })
+                .filter(Boolean)
+            return { literal: lits[i], ctor, fields }
+        })
+        return { tag: cand, branches }
+    }
+    return null
+}
+
 function buildComponentIR(checker, sym, source, importName, from, opts) {
     if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
     const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0]) || source
@@ -1283,7 +1339,13 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
         }
     }
 
-    return { module: importName, import: { from, name: importName }, kind: 'react-component', enums, records, unboxed, props, attrsBase: attrsBaseInfo, baseSpreads, ...(symbolProps.length ? { symbolProps } : {}) }
+    // #65: with `--variant-props`, a discriminated-union props type with a clean string discriminant
+    // emits a `@tag` variant that RESTORES per-branch requiredness (see `discriminatedProps`), instead
+    // of the flattened all-optional signature. Attached to the IR; emit renders the variant form when
+    // present. Off by default / null for non-discriminated props → unchanged flattened output.
+    const variantProps = opts.variantProps ? discriminatedProps(propsType, ctx, decl) : null
+
+    return { module: importName, import: { from, name: importName }, kind: 'react-component', enums, records, unboxed, props, attrsBase: attrsBaseInfo, baseSpreads, ...(symbolProps.length ? { symbolProps } : {}), ...(variantProps ? { variantProps } : {}) }
 }
 
 /**

@@ -287,7 +287,28 @@ export function emit(ir, options = {}) {
     const scopeAttr = ir.import.scope
         ? ` @scope(${Array.isArray(ir.import.scope) ? `(${ir.import.scope.map((s) => JSON.stringify(s)).join(', ')})` : JSON.stringify(ir.import.scope)})`
         : ''
-    if (recordProps) {
+    if (ir.variantProps) {
+        // #65: a discriminated-union props type with a clean string discriminant -> a `@tag(<field>)`
+        // variant that RESTORES per-branch requiredness. Each constructor is `@as(<real literal>)`
+        // (never the ctor name — that would send the wrong runtime tag) with an inline-record payload
+        // of that branch's fields at their true optionality. The component binds `React.component<props>`
+        // and renders via `React.createElement(make, Single({…}))` — sound + enforced (verified). (#65)
+        const vp = ir.variantProps
+        lines.push('// #65: discriminated-union props — per-branch requiredness preserved. Render with')
+        lines.push(`//      React.createElement(make, ${vp.branches[0].ctor}({…})). \`${vp.tag}\` is auto-filled by @tag.`)
+        lines.push(`@tag(${JSON.stringify(vp.tag)})`)
+        lines.push('type props =')
+        for (const b of vp.branches) {
+            const fields = b.fields.map((f) => {
+                const { as, id } = label(f.name)
+                return `${as ? `@as(${JSON.stringify(as)}) ` : ''}${id}${f.optional ? '?' : ''}: ${renderType(f.type, f.name, cfg)}`
+            }).join(', ')
+            lines.push(`  | @as(${JSON.stringify(b.literal)}) ${b.ctor}${fields ? `({${fields}})` : ''}`)
+        }
+        lines.push('')
+        lines.push(`@module(${JSON.stringify(cfg.from)})${scopeAttr}`)
+        lines.push(`external make: props => React.element = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
+    } else if (recordProps) {
         // Type variables in props (explicit generics or implicit `any` vars, #31) make
         // the record parameterized: `type props<'a> = …`.
         const tvars = new Set()

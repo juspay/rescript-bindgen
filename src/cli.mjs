@@ -135,6 +135,7 @@ function parseArgs(argv) {
         else if (a === '--no-webapi') o.webapi = false
         else if (a === '--no-html-attrs') o.htmlAttrs = false
         else if (a === '--subpaths') o.subpaths = true
+        else if (a === '--variant-props') o.variantProps = true
         else if (a === '--yes' || a === '-y') o.yes = true
         else if (a === '--clean') o.clean = true
         else if (a === '--help' || a === '-h') o.help = true
@@ -164,6 +165,10 @@ Options:
   --subpaths    also bind every exports-map subpath (e.g. @mui/material/styles,
                 @radix-ui/react-*), each stamped @module("pkg/sub"); shared types
                 are emitted once. Off by default (#147)
+  --variant-props  a component whose props are a discriminated union with a clean
+                string discriminant (mode: "single" | "multi") binds a @tag variant
+                that keeps per-branch requiredness, instead of one all-optional
+                signature. Rendered via React.createElement. Off by default (#65)
   --node-modules <dir>  extra node_modules root to resolve --pkg from
   --project <dir>  target ReScript project whose package.json gates optional
                    deps (default: inferred from --out, then cwd)
@@ -248,7 +253,7 @@ async function main() {
         const ir = extractComponent(entry, { from, webapi, augment: opts.augment })
         units = [{ name: ir.import.name, ir }]
     } else {
-        const res = extractModule(entry, { from, entries, webapi, htmlAttrs: opts.htmlAttrs, augment: opts.augment })
+        const res = extractModule(entry, { from, entries, webapi, htmlAttrs: opts.htmlAttrs, augment: opts.augment, variantProps: opts.variantProps })
         units = res.components
         functions = res.functions || []
         classes = res.classes || []
