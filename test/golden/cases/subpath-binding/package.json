@@ -3,7 +3,14 @@
   "version": "1.0.0",
   "//": "#147: an exports map with a subpath. --subpaths binds BOTH the main `.` entry (@module demo) and `./styles` (@module demo/styles), sharing the Theme type (emitted once).",
   "exports": {
-    ".":       { "types": "./index.d.ts" },
-    "./styles": { "types": "./styles.d.ts" }
+    ".": {
+      "types": "./index.d.ts"
+    },
+    "./styles": {
+      "types": "./styles.d.ts"
+    },
+    "./button": {
+      "types": "./button.d.ts"
+    }
   }
 }

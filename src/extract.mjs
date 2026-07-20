@@ -1787,6 +1787,7 @@ export function extractModule(entryFile, opts = {}) {
     const classes = []
     const skipped = []
     const seen = new Set()
+    const firstSym = new Map() // export name -> the first resolved symbol bound under it (#147 shadow check)
     const componentBySym = new Map() // resolved symbol -> emitted module name (for NS alias files)
     const compounds = [] // component exports queued for the compound-statics pass below (#100)
 
@@ -1920,7 +1921,18 @@ export function extractModule(entryFile, opts = {}) {
                 : guessName(entryFile)
         }
         const jsName = isDefault ? 'default' : exportName
-        if (seen.has(name)) continue
+        if (seen.has(name)) {
+            // Name already bound. If it's the SAME resolved symbol, this is a benign re-export across
+            // subpaths (base-ui's `.` re-exporting `./accordion`'s `Accordion`) — keep the first/main
+            // binding silently. If it's a DIFFERENT symbol, a genuinely distinct export is being
+            // shadowed (clsx's `./lite` `clsx` vs the main `clsx`) — surface it instead of a silent
+            // drop (no silent caps). (#147)
+            if (firstSym.has(name) && firstSym.get(name) !== sym) {
+                skipped.push({ name, reason: `subpath-name-shadowed (a different '${name}' from another entry keeps the first/main binding)` })
+            }
+            continue
+        }
+        firstSym.set(name, sym)
         const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0])
         if (!decl) {
             // Distinguish a BROKEN RE-EXPORT from a plain declarationless symbol: the export
