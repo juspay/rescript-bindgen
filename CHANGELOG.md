@@ -6,6 +6,19 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Subpath binding via the `exports` map — `--subpaths`** (#147) — modern packages expose distinct
+  modules per subpath (`@mui/material/styles`, per-part Radix, base-ui's `./accordion`/`./button`,
+  clsx's `./lite`), each with its own `.d.ts` behind an `exports["./sub"]` condition. Previously only
+  the main `.` entry (#104) was bound. With `--subpaths`, every concrete subpath with a resolvable
+  `types` condition is now bound too, each stamped `@module("pkg/sub")` — while **shared types are
+  emitted once**: all subpaths are rooted in ONE TypeScript program and one shared registry, so a type
+  referenced from several subpaths (e.g. `Theme`) is deduped (keyed by `type.id`, homed by its
+  declaring file) and referenced from each binding. Wildcard (`"./*"`) and non-type (CSS,
+  `package.json`) subpaths are skipped. A symbol re-exported from multiple subpaths binds once, main
+  `.` first — so re-exports keep `@module("pkg")` and only subpath-*only* symbols get the subpath
+  specifier; a same-name *different* symbol across subpaths is reported (not dropped silently).
+  **Off by default** (opt-in via `--subpaths`), so existing single-entry output — and the
+  benchmark — is byte-identical. Fixture: `subpath-binding`.
 - **`object | Config` chart unions bind to an opaque module** (#120 Part B / #149) — the bare `object`
   keyword (TS `NonPrimitive` — "any non-primitive", no shape) was dropped to a flagged `string`, which
   also collapsed `object | Config` unions (Highcharts `onPoint?: object | PlotXrangeOnPointOptions`).

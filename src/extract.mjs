@@ -524,7 +524,11 @@ const DEFAULT_HTML_ALLOWLIST = [
  * @param {string} entryFile  absolute path to the `.d.ts`
  * @returns {ts.Program}
  */
-function makeProgram(entryFile, augment = []) {
+function makeProgram(entryFiles, augment = []) {
+    // Accept a single path or an array of entry roots (subpath binding roots them all in ONE program
+    // so their shared types dedup by `type.id` across subpaths, #147).
+    const files = Array.isArray(entryFiles) ? entryFiles : [entryFiles]
+    const entryFile = files[0]
     const options = {
         target: ts.ScriptTarget.ES2020,
         module: ts.ModuleKind.ESNext,
@@ -541,7 +545,7 @@ function makeProgram(entryFile, augment = []) {
     // interface. These files (e.g. `highcharts/modules/xrange` adding `Point.x2`) are opt-in
     // side-effect imports the entry `.d.ts` deliberately omits, so they're never in the import graph;
     // rooting them explicitly is the faithful equivalent of the app's `import "highcharts/modules/xrange"`.
-    const roots = [entryFile]
+    const roots = [...files]
     if (augment.length) {
         const host = ts.createCompilerHost(options)
         for (const spec of augment) {
@@ -1756,12 +1760,44 @@ export function extractComponent(entryFile, opts = {}) {
  *            skipped: Array<{name:string, reason:string}> }}
  */
 export function extractModule(entryFile, opts = {}) {
-    const program = makeProgram(entryFile, opts.augment || [])
+    // Multi-entry (subpath binding, #147): `opts.entries = [{from, entry}]` roots every subpath in ONE
+    // program + ONE shared registry, each binding stamped with its own `@module` (`from`). The default
+    // is the single `entryFile` with `opts.from` — so every existing single-package caller is unchanged
+    // (the loop runs exactly once, byte-identical output).
+    const entries = (opts.entries && opts.entries.length) ? opts.entries : [{ from: opts.from, entry: entryFile }]
+    const program = makeProgram(entries.map((e) => e.entry), opts.augment || [])
     const checker = program.getTypeChecker()
+
+    // Module-level registry: SHARED across all entries so a type referenced from several subpaths is
+    // emitted ONCE — deduped by `type.id` (same program → same ids) and homed by its DECLARING file,
+    // not by which subpath referenced it. emit.mjs groups these by home, SCC-merges cycles, writes one
+    // `*Types.res` each.
+    const shared = { byKey: new Map(), entries: [], names: new Set(), bySig: new Map() }
+
+    // Accumulators shared across entries. `seen`/`componentBySym` dedup a symbol re-exported from
+    // multiple subpaths — FIRST wins, and the main `.` entry is processed first, so a re-exported
+    // symbol keeps `@module("pkg")` and only subpath-ONLY symbols get `@module("pkg/sub")`.
+    // `classTypes`/`classSink` accumulate so a class referenced across subpaths still resolves to `t`.
+    const classTypes = new Map()
+    const classSink = new Map() // className -> sink type name (within `InstanceTypes`)
+    const scopeOf = new Map()   // resolved namespace-member symbol -> { ns, member }
+    const nsNames = []
+    const components = []
+    const functions = []
+    const classes = []
+    const skipped = []
+    const seen = new Set()
+    const firstSym = new Map() // export name -> the first resolved symbol bound under it (#147 shadow check)
+    const componentBySym = new Map() // resolved symbol -> emitted module name (for NS alias files)
+    const compounds = [] // component exports queued for the compound-statics pass below (#100)
+
+    for (const __entry of entries) {
+    const entryFile = __entry.entry
+    const from = __entry.from
     const source = program.getSourceFile(entryFile)
     if (!source) throw new Error(`Could not load source file: ${entryFile}`)
 
-    const moduleSymbol = entryModuleSymbol(checker, source, opts.from)
+    const moduleSymbol = entryModuleSymbol(checker, source, from)
     if (!moduleSymbol) throw new Error(`No module symbol for ${entryFile}`)
     const exports = checker.getExportsOfModule(moduleSymbol)
     // `export = value` describes `module.exports = value`: getExportsOfModule exposes the
@@ -1781,17 +1817,10 @@ export function extractModule(entryFile, opts = {}) {
         ...exports.map((exp) => ({ exp, exportName: exp.getName() })),
         ...(exportEqualsSymbol ? [{ exp: exportEqualsSymbol, exportName: 'export=' }] : []),
     ]
-    const from = opts.from
-
-    // Module-level registry: every generated type lives here ONCE, keyed by type.id
-    // (structural name for synthesized @unboxed), with a home module + reference edges.
-    // emit.mjs groups these by home, SCC-merges cycles, and writes one `*Types.res` each.
-    const shared = { byKey: new Map(), entries: [], names: new Set(), bySig: new Map() }
 
     // Pre-pass: map every exported CLASS's instance-type symbol -> its ReScript module
     // name, so a method/param/return typed as another exported class resolves to `Name.t`
     // (not a misclassified record). Built up front so cross-class refs work in any order.
-    const classTypes = new Map()
     for (const { exp, exportName } of exportEntries) {
         let s = exp
         if (s.flags & ts.SymbolFlags.Alias) s = checker.getAliasedSymbol(s)
@@ -1841,7 +1870,6 @@ export function extractModule(entryFile, opts = {}) {
     // instead of the class file, so a `*Types.res` that mentions a class can't form a cycle
     // back through the class file — and a reference to a class we never fully emit (e.g. a
     // generic one) still resolves to its abstract `type`, never a dangling `X.t`.
-    const classSink = new Map() // className -> sink type name (within `InstanceTypes`)
     for (const cn of new Set(classTypes.values())) {
         const key = 'class:' + cn
         let entry = shared.byKey.get(key)
@@ -1859,8 +1887,6 @@ export function extractModule(entryFile, opts = {}) {
     // so a binding `= "AccordionRoot"` is undefined at runtime. A component reachable as a
     // namespace member binds `@scope("Accordion") … = "Root"` instead (correct whether or
     // not a flat VALUE export also exists). (#25)
-    const scopeOf = new Map() // resolved member symbol -> { ns, member }
-    const nsNames = []
     for (const exp of exports) {
         let s = exp
         try { if (s.flags & ts.SymbolFlags.Alias) s = checker.getAliasedSymbol(s) } catch { continue }
@@ -1875,13 +1901,6 @@ export function extractModule(entryFile, opts = {}) {
         }
     }
 
-    const components = []
-    const functions = []
-    const classes = []
-    const skipped = []
-    const seen = new Set()
-    const componentBySym = new Map() // resolved symbol -> emitted module name (for NS alias files)
-    const compounds = [] // component exports queued for the compound-statics pass below (#100)
     for (const { exp, exportName } of exportEntries) {
         let sym = exp
         if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
@@ -1902,7 +1921,18 @@ export function extractModule(entryFile, opts = {}) {
                 : guessName(entryFile)
         }
         const jsName = isDefault ? 'default' : exportName
-        if (seen.has(name)) continue
+        if (seen.has(name)) {
+            // Name already bound. If it's the SAME resolved symbol, this is a benign re-export across
+            // subpaths (base-ui's `.` re-exporting `./accordion`'s `Accordion`) — keep the first/main
+            // binding silently. If it's a DIFFERENT symbol, a genuinely distinct export is being
+            // shadowed (clsx's `./lite` `clsx` vs the main `clsx`) — surface it instead of a silent
+            // drop (no silent caps). (#147)
+            if (firstSym.has(name) && firstSym.get(name) !== sym) {
+                skipped.push({ name, reason: `subpath-name-shadowed (a different '${name}' from another entry keeps the first/main binding)` })
+            }
+            continue
+        }
+        firstSym.set(name, sym)
         const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0])
         if (!decl) {
             // Distinguish a BROKEN RE-EXPORT from a plain declarationless symbol: the export
@@ -2112,6 +2142,8 @@ export function extractModule(entryFile, opts = {}) {
         }
         if (aliases.length) cc.parentIr.statics = aliases.sort((a, b) => a.member.localeCompare(b.member))
     }
+    } // end per-entry loop (#147) — all subpaths walked into the shared registry / accumulators above
+
     // Namespace alias modules: `Accordion.res` with `module Root = AccordionRoot` — the
     // package's documented idiom (`<Accordion.Root>`), zero-cost ReScript module aliases
     // over the (scope-bound) flat component files. Only namespaces with ≥1 extracted

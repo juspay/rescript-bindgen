@@ -3,7 +3,7 @@
 // contains the expected ReScript constructs.
 import { extractComponent, extractModule, shapeHash, structuralSig } from '../src/extract.mjs'
 import { emit, emitClass, emitFunction, report } from '../src/emit.mjs'
-import { typesEntry } from '../src/resolve.mjs'
+import { typesEntry, packageEntries } from '../src/resolve.mjs'
 import { writeFileSync, mkdtempSync, mkdirSync } from 'fs'
 import { dirname, join, relative } from 'path'
 import { tmpdir } from 'os'
@@ -289,6 +289,25 @@ const checks = [
     ]
   })(),
   ...(() => {
+    // #147: subpath binding — one program + one shared registry over multiple entries, each binding
+    // stamped with its own subpath `@module`; a type shared across subpaths is emitted ONCE.
+    const d = join(here, 'golden', 'cases', 'subpath-binding')
+    const res = extractModule(join(d, 'index.d.ts'), { from: 'demo', entries: [
+      { from: 'demo', entry: join(d, 'index.d.ts') },
+      { from: 'demo/styles', entry: join(d, 'styles.d.ts') },
+    ] })
+    const btn = res.components.find((c) => c.name === 'Button')
+    const ct = res.functions.find((f) => f.name === 'createTheme')
+    // the exports-subpath enumerator: `./styles`/`./button` -> suffixes, CSS/wildcard skipped
+    const subs = packageEntries(d).map((e) => e.suffix).sort()
+    // re-export: `.` + `./button` expose the SAME Button symbol -> bound ONCE, keeping @module("demo")
+    const re = extractModule(join(d, 'index.d.ts'), { from: 'demo', entries: [
+      { from: 'demo', entry: join(d, 'index.d.ts') }, { from: 'demo/button', entry: join(d, 'button.d.ts') },
+    ] })
+    // collision: `.` + `./alt` expose DIFFERENT Button symbols -> main wins, the other is REPORTED
+    const col = extractModule(join(d, 'index.d.ts'), { from: 'demo', entries: [
+      { from: 'demo', entry: join(d, 'index.d.ts') }, { from: 'demo/alt', entry: join(d, 'alt.d.ts') },
+    ] })
     // #149 (#120 Part B): `object | Config` → opaque module; solo `object` → JSON.t.
     const raw = (n) => !!n && n.kind === 'raw' && n.res === 'JSON.t'
     const m = extractModule(join(here, 'golden', 'cases', 'object-config-union', 'index.d.ts'), { from: 'demo' })
@@ -297,6 +316,12 @@ const checks = [
     const solo = series && series.ir.props.find((p) => p.name === 'solo')
     const opq = m.shared.entries.find((e) => e.kind === 'opaque' && e.name === 'ObjectConfigUnionOnPoint')
     return [
+      ['#147: main entry binding keeps @module("demo")', !!btn && btn.ir.import.from === 'demo'],
+      ['#147: subpath binding gets @module("demo/styles")', !!ct && ct.ir.import.from === 'demo/styles'],
+      ['#147: type shared across subpaths is emitted ONCE', res.shared.entries.filter((e) => e.name === 'theme').length === 1],
+      ['#147: enumerator returns main + concrete subpaths (CSS/wildcard skipped)', subs.length === 3 && subs.includes('') && subs.includes('/styles') && subs.includes('/button')],
+      ['#147: re-export across subpaths binds ONCE as the main entry, no skip', re.components.filter((c) => c.name === 'Button').length === 1 && re.components.find((c) => c.name === 'Button').ir.import.from === 'demo' && !re.skipped.some((s) => s.name === 'Button')],
+      ['#147: same-name DIFFERENT symbol across subpaths is reported, not silent', col.components.filter((c) => c.name === 'Button').length === 1 && col.skipped.some((s) => s.name === 'Button' && /shadowed/.test(s.reason))],
       ['#149: solo bare `object` keyword → JSON.t (was string)', raw(solo?.type)],
       ['#149: object|Config → opaque module (typeRef to .t)', !!onp && onp.type?.kind === 'typeRef' && /OnPoint\.t$/.test(onp.type.to)],
       ['#149: opaque module has a JSON arm + the named Config arm', !!opq && (opq.members || []).some((x) => x.name === 'JSON') && (opq.members || []).some((x) => x.name === 'OnPointOptions')],

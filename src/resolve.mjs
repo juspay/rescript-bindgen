@@ -10,7 +10,7 @@
 
 import { existsSync, readFileSync, mkdirSync, writeFileSync } from 'fs'
 import { join, isAbsolute, resolve as pathResolve } from 'path'
-import { execSync } from 'child_process'
+import { execFileSync } from 'child_process'
 
 /** Where packages fetched for generation are installed (kept out of the project). */
 const SCRATCH = pathResolve(new URL('../.bindgen-cache', import.meta.url).pathname)
@@ -18,7 +18,7 @@ const SCRATCH = pathResolve(new URL('../.bindgen-cache', import.meta.url).pathna
 // React type definitions co-installed with every scratch package so that `React.*` types
 // (ForwardRefExoticComponent, CSSProperties, ReactNode, MouseEvent, …) resolve instead of
 // collapsing to `any`/`unknown`. Without these, forwardRef components extract no props.
-const REACT_TYPE_DEPS = 'react react-dom @types/react @types/react-dom'
+const REACT_TYPE_DEPS = ['react', 'react-dom', '@types/react', '@types/react-dom']
 
 /**
  * Read and parse a JSON file, returning null on any error (missing/invalid).
@@ -134,6 +134,33 @@ export function typesEntry(pkgDir) {
 }
 
 /**
+ * Enumerate every bindable entry of a package: the MAIN entry (via `typesEntry` — `types` field,
+ * conventions, `exports` `.`) FIRST, then every concrete SUBPATH in the `exports` map that resolves
+ * to a `.d.ts`. Each entry carries a `suffix` — `''` for the main entry, `'/styles'` for a
+ * `"./styles"` subpath — which the caller appends to the base module name to stamp `@module`
+ * (`pkg` vs `pkg/styles`). Wildcard (`"./*"`) and non-type (`"./package.json"`, CSS) subpaths are
+ * skipped: only a resolvable `types` condition qualifies. Entries that resolve to the SAME file are
+ * deduped, main first — so a subpath re-pointing at the main `.d.ts` doesn't double-walk it. (#147)
+ * @param {string} pkgDir  the package's root directory
+ * @returns {Array<{ suffix: string, entry: string }>}  main first, then subpaths, deduped by file
+ */
+export function packageEntries(pkgDir) {
+    const out = []
+    const seen = new Set()
+    const push = (suffix, entry) => { if (entry && !seen.has(entry)) { seen.add(entry); out.push({ suffix, entry }) } }
+    push('', typesEntry(pkgDir)) // main (robust: types/typings/conventions/exports-`.`/typesVersions)
+    const exp = (readJSON(join(pkgDir, 'package.json')) || {}).exports
+    if (exp && typeof exp === 'object' && !Array.isArray(exp)) {
+        for (const key of Object.keys(exp)) {
+            if (!key.startsWith('./') || key.includes('*') || key === './package.json') continue
+            const entry = exportsTypeTargets(exp[key]).map((r) => join(pkgDir, r)).find(existsSync)
+            if (entry) push(key.slice(1), entry) // `"./styles"` -> suffix `/styles`
+        }
+    }
+    return out
+}
+
+/**
  * Find a package's directory by looking through several `node_modules` roots.
  * @param {string} name   package name (may be scoped, e.g. `@scope/pkg`)
  * @param {string[]} roots  node_modules directories to search, in order
@@ -157,27 +184,40 @@ function findPkgDir(name, roots) {
  * @param {string} [opts.pkg]   an npm spec, e.g. `react-day-picker` or `@mui/material@5.16.0`
  * @param {boolean} [opts.install=true]  auto-install a missing `pkg`
  * @param {string[]} [opts.nodeModulesRoots=[]]  extra node_modules roots to search first
- * @returns {{ entry: string, from?: string, untyped?: boolean }}
- *   entry — path to the `.d.ts`; from — the package name to stamp in `@module(...)`;
- *   untyped — true if types came from a `@types/*` package (the lib shipped none).
+ * @param {boolean} [opts.subpaths=false]  also enumerate `exports`-map subpaths (#147)
+ * @returns {{ entry: string, from?: string, untyped?: boolean,
+ *            subEntries: Array<{ suffix: string, entry: string }> }}
+ *   entry — path to the main `.d.ts`; from — the package name to stamp in `@module(...)`;
+ *   untyped — true if types came from a `@types/*` package (the lib shipped none);
+ *   subEntries — the main entry (suffix `''`) plus any subpaths when `subpaths` is set (else main only).
  * @throws if the input is missing or no types can be found
  */
-export function resolveInput({ file, dir, pkg, install = true, nodeModulesRoots = [] }) {
+export function resolveInput({ file, dir, pkg, install = true, nodeModulesRoots = [], subpaths = false }) {
     if (file) {
         const p = isAbsolute(file) ? file : pathResolve(file)
         if (!existsSync(p)) throw new Error(`File not found: ${p}`)
-        return { entry: p, from: undefined }
+        return { entry: p, from: undefined, subEntries: [{ suffix: '', entry: p }] }
     }
     if (dir) {
         const d = isAbsolute(dir) ? dir : pathResolve(dir)
         const entry = typesEntry(d)
         if (!entry) throw new Error(`No .d.ts entry found under ${d}`)
-        return { entry, from: undefined }
+        const subEntries = subpaths ? packageEntries(d) : [{ suffix: '', entry }]
+        return { entry, from: undefined, subEntries }
     }
     if (pkg) {
         // Strip the version from the spec to get the bare package name (keeping the scope @).
-        // e.g. `@mui/material@5.16.0` -> `@mui/material`, `react@18` -> `react`.
-        const name = pkg.startsWith('@') ? pkg.replace(/(@[^/]+\/[^@]+)@.*/, '$1') : pkg.split('@')[0]
+        // e.g. `@mui/material@5.16.0` -> `@mui/material`, `react@18` -> `react`. Parsed with linear
+        // string ops (not a regex) — a scoped `@a/b@c` pattern in a backtracking regex is a
+        // polynomial-ReDoS shape (CodeQL), and the version `@` is simply the first `@` AFTER the `/`.
+        let name
+        if (pkg.startsWith('@')) {
+            const slash = pkg.indexOf('/')
+            const at = slash >= 0 ? pkg.indexOf('@', slash) : -1 // the version @ follows the scope's `/`
+            name = at >= 0 ? pkg.slice(0, at) : pkg
+        } else {
+            name = pkg.split('@')[0]
+        }
 
         // 1. try existing node_modules roots (consumer project + scratch cache)
         const searchRoots = [...nodeModulesRoots, join(SCRATCH, 'node_modules')]
@@ -201,13 +241,15 @@ export function resolveInput({ file, dir, pkg, install = true, nodeModulesRoots 
             // `React.ReactNode`, … — without @types/react those all resolve to `any`/`unknown`, so a
             // forwardRef component yields ZERO props and CSSProperties/ReactNode widen to a placeholder.
             // (Installed in the SAME command so npm doesn't prune them as extraneous on a later install.)
-            execSync(`npm install --no-save --silent ${spec} ${REACT_TYPE_DEPS}`, { cwd: SCRATCH, stdio: 'inherit' })
+            // `execFileSync` (no shell) passes `spec` as a single argv entry — a package spec can't be
+            // interpreted as a shell command, closing the shell-injection surface (CodeQL). (#147 review)
+            execFileSync('npm', ['install', '--no-save', '--silent', spec, ...REACT_TYPE_DEPS], { cwd: SCRATCH, stdio: 'inherit' })
             // also try @types if the package ships no types (keep React types in the same command)
             pkgDir = findPkgDir(name, [join(SCRATCH, 'node_modules')])
             if (pkgDir && !typesEntry(pkgDir)) {
                 const typesPkg = '@types/' + (name.startsWith('@') ? name.slice(1).replace('/', '__') : name)
                 try {
-                    execSync(`npm install --no-save --silent ${typesPkg} ${REACT_TYPE_DEPS}`, { cwd: SCRATCH, stdio: 'inherit' })
+                    execFileSync('npm', ['install', '--no-save', '--silent', typesPkg, ...REACT_TYPE_DEPS], { cwd: SCRATCH, stdio: 'inherit' })
                 } catch { /* no @types available */ }
             }
             const roots = [join(SCRATCH, 'node_modules')]
@@ -219,7 +261,8 @@ export function resolveInput({ file, dir, pkg, install = true, nodeModulesRoots 
         if (!dir2) throw new Error(`Could not resolve types for package "${pkg}". It may ship no .d.ts and have no @types package.`)
         const entry = typesEntry(dir2)
         if (!entry) throw new Error(`No types entry in ${dir2}`)
-        return { entry, from: name, untyped: dir2 === typesDir }
+        const subEntries = subpaths ? packageEntries(dir2) : [{ suffix: '', entry }]
+        return { entry, from: name, untyped: dir2 === typesDir, subEntries }
     }
     throw new Error('Provide one of: --file, --dir, or --pkg')
 }

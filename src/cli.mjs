@@ -134,6 +134,7 @@ function parseArgs(argv) {
         else if (a === '--webapi') o.webapi = true
         else if (a === '--no-webapi') o.webapi = false
         else if (a === '--no-html-attrs') o.htmlAttrs = false
+        else if (a === '--subpaths') o.subpaths = true
         else if (a === '--yes' || a === '-y') o.yes = true
         else if (a === '--clean') o.clean = true
         else if (a === '--help' || a === '-h') o.help = true
@@ -160,6 +161,9 @@ Options:
   --json-summary <path>  write a machine-readable run summary (component buckets,
                  file count) as JSON — for CI / benchmark tooling
   --no-install  do not auto-install a missing --pkg
+  --subpaths    also bind every exports-map subpath (e.g. @mui/material/styles,
+                @radix-ui/react-*), each stamped @module("pkg/sub"); shared types
+                are emitted once. Off by default (#147)
   --node-modules <dir>  extra node_modules root to resolve --pkg from
   --project <dir>  target ReScript project whose package.json gates optional
                    deps (default: inferred from --out, then cwd)
@@ -206,13 +210,17 @@ async function main() {
     if (opts.nm) roots.push(pathResolve(opts.nm))
     roots.push(pathResolve('node_modules'))
 
-    const { entry, from: resolvedFrom, untyped } = resolveInput({
+    const { entry, from: resolvedFrom, untyped, subEntries } = resolveInput({
         file: opts.file, dir: opts.dir, pkg: opts.pkg,
-        install: opts.install, nodeModulesRoots: roots,
+        install: opts.install, nodeModulesRoots: roots, subpaths: opts.subpaths,
     })
     const from = opts.from || resolvedFrom || basename(entry).replace(/\.d\.ts$/, '')
+    // #147: one binding-entry per exports subpath, each stamped `@module("<from><suffix>")` — e.g.
+    // `@mui/material` for the main entry, `@mui/material/styles` for `"./styles"`. Without --subpaths
+    // this is just the single main entry, so behaviour is unchanged.
+    const entries = (subEntries || [{ suffix: '', entry }]).map((s) => ({ from: from + s.suffix, entry: s.entry }))
     console.error(`[bindgen] entry: ${entry}`)
-    console.error(`[bindgen] @module("${from}")`)
+    console.error(`[bindgen] @module("${from}")` + (entries.length > 1 ? ` + ${entries.length - 1} subpath(s): ${entries.slice(1).map((e) => e.from).join(', ')}` : ''))
     if (untyped) console.error('[bindgen] note: using @types/* — package shipped no own types')
 
     // ── Dependency-aware generation ────────────────────────────────────────────
@@ -240,7 +248,7 @@ async function main() {
         const ir = extractComponent(entry, { from, webapi, augment: opts.augment })
         units = [{ name: ir.import.name, ir }]
     } else {
-        const res = extractModule(entry, { from, webapi, htmlAttrs: opts.htmlAttrs, augment: opts.augment })
+        const res = extractModule(entry, { from, entries, webapi, htmlAttrs: opts.htmlAttrs, augment: opts.augment })
         units = res.components
         functions = res.functions || []
         classes = res.classes || []
