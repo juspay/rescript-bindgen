@@ -134,6 +134,33 @@ export function typesEntry(pkgDir) {
 }
 
 /**
+ * Enumerate every bindable entry of a package: the MAIN entry (via `typesEntry` — `types` field,
+ * conventions, `exports` `.`) FIRST, then every concrete SUBPATH in the `exports` map that resolves
+ * to a `.d.ts`. Each entry carries a `suffix` — `''` for the main entry, `'/styles'` for a
+ * `"./styles"` subpath — which the caller appends to the base module name to stamp `@module`
+ * (`pkg` vs `pkg/styles`). Wildcard (`"./*"`) and non-type (`"./package.json"`, CSS) subpaths are
+ * skipped: only a resolvable `types` condition qualifies. Entries that resolve to the SAME file are
+ * deduped, main first — so a subpath re-pointing at the main `.d.ts` doesn't double-walk it. (#147)
+ * @param {string} pkgDir  the package's root directory
+ * @returns {Array<{ suffix: string, entry: string }>}  main first, then subpaths, deduped by file
+ */
+export function packageEntries(pkgDir) {
+    const out = []
+    const seen = new Set()
+    const push = (suffix, entry) => { if (entry && !seen.has(entry)) { seen.add(entry); out.push({ suffix, entry }) } }
+    push('', typesEntry(pkgDir)) // main (robust: types/typings/conventions/exports-`.`/typesVersions)
+    const exp = (readJSON(join(pkgDir, 'package.json')) || {}).exports
+    if (exp && typeof exp === 'object' && !Array.isArray(exp)) {
+        for (const key of Object.keys(exp)) {
+            if (!key.startsWith('./') || key.includes('*') || key === './package.json') continue
+            const entry = exportsTypeTargets(exp[key]).map((r) => join(pkgDir, r)).find(existsSync)
+            if (entry) push(key.slice(1), entry) // `"./styles"` -> suffix `/styles`
+        }
+    }
+    return out
+}
+
+/**
  * Find a package's directory by looking through several `node_modules` roots.
  * @param {string} name   package name (may be scoped, e.g. `@scope/pkg`)
  * @param {string[]} roots  node_modules directories to search, in order
@@ -157,22 +184,26 @@ function findPkgDir(name, roots) {
  * @param {string} [opts.pkg]   an npm spec, e.g. `react-day-picker` or `@mui/material@5.16.0`
  * @param {boolean} [opts.install=true]  auto-install a missing `pkg`
  * @param {string[]} [opts.nodeModulesRoots=[]]  extra node_modules roots to search first
- * @returns {{ entry: string, from?: string, untyped?: boolean }}
- *   entry — path to the `.d.ts`; from — the package name to stamp in `@module(...)`;
- *   untyped — true if types came from a `@types/*` package (the lib shipped none).
+ * @param {boolean} [opts.subpaths=false]  also enumerate `exports`-map subpaths (#147)
+ * @returns {{ entry: string, from?: string, untyped?: boolean,
+ *            subEntries: Array<{ suffix: string, entry: string }> }}
+ *   entry — path to the main `.d.ts`; from — the package name to stamp in `@module(...)`;
+ *   untyped — true if types came from a `@types/*` package (the lib shipped none);
+ *   subEntries — the main entry (suffix `''`) plus any subpaths when `subpaths` is set (else main only).
  * @throws if the input is missing or no types can be found
  */
-export function resolveInput({ file, dir, pkg, install = true, nodeModulesRoots = [] }) {
+export function resolveInput({ file, dir, pkg, install = true, nodeModulesRoots = [], subpaths = false }) {
     if (file) {
         const p = isAbsolute(file) ? file : pathResolve(file)
         if (!existsSync(p)) throw new Error(`File not found: ${p}`)
-        return { entry: p, from: undefined }
+        return { entry: p, from: undefined, subEntries: [{ suffix: '', entry: p }] }
     }
     if (dir) {
         const d = isAbsolute(dir) ? dir : pathResolve(dir)
         const entry = typesEntry(d)
         if (!entry) throw new Error(`No .d.ts entry found under ${d}`)
-        return { entry, from: undefined }
+        const subEntries = subpaths ? packageEntries(d) : [{ suffix: '', entry }]
+        return { entry, from: undefined, subEntries }
     }
     if (pkg) {
         // Strip the version from the spec to get the bare package name (keeping the scope @).
@@ -219,7 +250,8 @@ export function resolveInput({ file, dir, pkg, install = true, nodeModulesRoots 
         if (!dir2) throw new Error(`Could not resolve types for package "${pkg}". It may ship no .d.ts and have no @types package.`)
         const entry = typesEntry(dir2)
         if (!entry) throw new Error(`No types entry in ${dir2}`)
-        return { entry, from: name, untyped: dir2 === typesDir }
+        const subEntries = subpaths ? packageEntries(dir2) : [{ suffix: '', entry }]
+        return { entry, from: name, untyped: dir2 === typesDir, subEntries }
     }
     throw new Error('Provide one of: --file, --dir, or --pkg')
 }

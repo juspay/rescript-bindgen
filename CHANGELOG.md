@@ -6,6 +6,18 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Subpath binding via the `exports` map — `--subpaths`** (#147) — modern packages expose distinct
+  modules per subpath (`@mui/material/styles`, per-part Radix, base-ui's `./accordion`/`./button`,
+  clsx's `./lite`), each with its own `.d.ts` behind an `exports["./sub"]` condition. Previously only
+  the main `.` entry (#104) was bound. With `--subpaths`, every concrete subpath with a resolvable
+  `types` condition is now bound too, each stamped `@module("pkg/sub")` — while **shared types are
+  emitted once**: all subpaths are rooted in ONE TypeScript program and one shared registry, so a type
+  referenced from several subpaths (e.g. `Theme`) is deduped (keyed by `type.id`, homed by its
+  declaring file) and referenced from each binding. Wildcard (`"./*"`) and non-type (CSS,
+  `package.json`) subpaths are skipped. A symbol re-exported from multiple subpaths binds once, main
+  `.` first — so re-exports keep `@module("pkg")` and only subpath-*only* symbols get the subpath
+  specifier. **Off by default** (opt-in via `--subpaths`), so existing single-entry output — and the
+  benchmark — is byte-identical. Fixture: `subpath-binding`.
 - **Bare `Function` fields bind to a `JsFn` opaque module — and unblock `boolean|Config` unions**
   (#120, Part A) — a bare untyped global `Function` (Highcharts `proj4`, `pointDescriptionFormatter`,
   record `complete`/`step`) has no call signature to type and was dropped to a flagged `string`. It's
