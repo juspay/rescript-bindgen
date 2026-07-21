@@ -330,7 +330,13 @@ and the compiler now **rejects** a branch missing its required fields. Each cons
 `@as(<the real literal>)` — never the constructor name, which would emit the wrong runtime tag
 (`{mode:"Single"}` vs the required `{mode:"single"}`) — so `@tag` auto-fills the correct discriminant.
 A **presence-based** discriminant (Badge's `children?: undefined` vs `children: ReactElement`) has no
-literal to tag, so it keeps the flattened form above. Off by default → default output unchanged.
+literal to tag, so it keeps the flattened form above. The variant also fires **only when every branch
+field is cleanly, concretely typed** — a branch with a **generic** field (`data: any` → a free type
+var an inline-record type can't declare) or an **imperfect/lossy** field (which would drop its
+`⚪`/`⚠️`/`🛑` flag in inline-record position) falls back to the flattened form, which handles both.
+Note: variant branches **drop DOM-inherited props** (`@types/react`/`lib.dom`) that the flattened form
+keeps via the `HtmlAttrs` spread — so a discriminated-union component that also extends `HTMLAttributes`
+loses that DOM surface under `--variant-props`. Off by default → default output unchanged.
 Fixture: [`discriminated-union-variant-props`](../test/golden/cases/discriminated-union-variant-props). (#65)
 
 ---

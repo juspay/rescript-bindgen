@@ -983,6 +983,17 @@ function discriminatedProps(propsType, ctx, decl) {
                 .filter(Boolean)
             return { literal: lits[i], ctor, fields }
         })
+        // ROBUSTNESS GATE (#65 review): an inline-record variant payload can't carry a FREE TYPE
+        // VARIABLE (a labelled-arg function auto-generalizes `any -> 'a`, but `type props` is not
+        // parameterized -> "Unbound type parameter" compile break), and a LOSSY field would drop its
+        // ⚪/⚠️/🛑 imperfection flag in inline-record position (the flag-don't-fake contract). So if ANY
+        // branch field is generic or imperfect, bail to null -> the caller keeps the flattened form,
+        // which handles both (type vars via the auto-generalizing signature, flags via `propLine`).
+        // The variant fires only when EVERY branch field is cleanly, concretely typed.
+        const tv = new Set()
+        for (const b of branches) for (const f of b.fields) collectTypeVars(f.type, tv)
+        if (tv.size) return null
+        if (branches.some((b) => b.fields.some((f) => irHasImperfection(f.type)))) return null
         return { tag: cand, branches }
     }
     return null
@@ -1067,6 +1078,23 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
         sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
     }
     const allow = new Set(opts.htmlAllowlist || DEFAULT_HTML_ALLOWLIST)
+
+    // #65: a discriminated-union props type with a clean string discriminant emits a `@tag` variant
+    // that RESTORES per-branch requiredness (see `discriminatedProps`). Computed EARLY and returned
+    // BEFORE the flattened props build, so (a) the discriminant isn't also classified into an orphan
+    // enum, and (b) `report` reads the SAME fields the variant emits — no report⇔code divergence (#65
+    // review). Off by default / null for non-discriminated (or imperfect-field) props -> the normal
+    // flattened build below runs unchanged.
+    const variantProps = opts.variantProps ? discriminatedProps(propsType, ctx, decl) : null
+    if (variantProps) {
+        const byName = new Map()
+        for (const b of variantProps.branches) for (const f of b.fields) {
+            const prev = byName.get(f.name)
+            byName.set(f.name, prev ? { ...prev, optional: prev.optional || f.optional }
+                : { name: f.name, optional: f.optional, type: f.type, inherited: false, tsType: '', declText: '' })
+        }
+        return { module: importName, import: { from, name: importName }, kind: 'react-component', enums, records, unboxed, props: [...byName.values()], variantProps }
+    }
 
     const isInherited = (p) => {
         const d = p.declarations && p.declarations[0]
@@ -1339,13 +1367,7 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
         }
     }
 
-    // #65: with `--variant-props`, a discriminated-union props type with a clean string discriminant
-    // emits a `@tag` variant that RESTORES per-branch requiredness (see `discriminatedProps`), instead
-    // of the flattened all-optional signature. Attached to the IR; emit renders the variant form when
-    // present. Off by default / null for non-discriminated props → unchanged flattened output.
-    const variantProps = opts.variantProps ? discriminatedProps(propsType, ctx, decl) : null
-
-    return { module: importName, import: { from, name: importName }, kind: 'react-component', enums, records, unboxed, props, attrsBase: attrsBaseInfo, baseSpreads, ...(symbolProps.length ? { symbolProps } : {}), ...(variantProps ? { variantProps } : {}) }
+    return { module: importName, import: { from, name: importName }, kind: 'react-component', enums, records, unboxed, props, attrsBase: attrsBaseInfo, baseSpreads, ...(symbolProps.length ? { symbolProps } : {}) }
 }
 
 /**

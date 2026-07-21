@@ -1,6 +1,6 @@
 # Binding report — `demo`
 
-**1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
+**2** components · ✅ **2** usable · 🔍 **0** need review · 🛑 **0** broken
 
 **1** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
@@ -17,6 +17,7 @@ These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
 - SelectItem
+- Widget
 
 ## ⚪ Loosely typed (widened to `string`)
 

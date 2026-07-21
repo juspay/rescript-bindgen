@@ -1,3 +1,3 @@
-type discriminatedUnionVariantPropsMode =
-  | @as("single") Single
-  | @as("multi") Multi
+type discriminatedUnionVariantPropsKind =
+  | @as("a") A
+  | @as("b") B
