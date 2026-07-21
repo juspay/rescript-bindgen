@@ -311,8 +311,33 @@ silently dropped — `Card` kept only `maxWidth`/`variant` and could render noth
 The binding gathers the arm-specific props too: the union's common props keep their correctly-merged
 types (e.g. the `variant` discriminant becomes one enum over all arms), and each prop that isn't in
 **every** arm is added as **optional** (it applies only to its variant; ReScript can't express the
-discriminated dependency, so flatten-optional is the faithful, compilable model — `~alignment` and
-`~children`, required within their arm, surface as optional). (#63 C2)
+discriminated dependency in one labelled-arg signature, so flatten-optional is the faithful,
+compilable default — `~alignment` and `~children`, required within their arm, surface as optional). (#63 C2)
+
+**`--variant-props` (opt-in, #65):** when the union has a **clean string discriminant** — a prop present
+in every arm whose type is a single *distinct string literal* per arm (`mode: "single" | "multi"`) —
+the component instead binds a `@tag(<field>)` ReScript variant that **restores per-branch
+requiredness**:
+```rescript
+@tag("mode")
+type props =
+  | @as("single") Single({selected: string, /* + shared fields */})   // Single FORCES `selected`
+  | @as("multi")  Multi({selectedValues: array<string>, /* … */})     // Multi FORCES `selectedValues`
+@module("pkg") external make: props => React.element = "SelectItem"
+```
+Render with `React.createElement(make, Single({selected: "…"}))` — sound (goes through `createElement`)
+and the compiler now **rejects** a branch missing its required fields. Each constructor is
+`@as(<the real literal>)` — never the constructor name, which would emit the wrong runtime tag
+(`{mode:"Single"}` vs the required `{mode:"single"}`) — so `@tag` auto-fills the correct discriminant.
+A **presence-based** discriminant (Badge's `children?: undefined` vs `children: ReactElement`) has no
+literal to tag, so it keeps the flattened form above. The variant also fires **only when every branch
+field is cleanly, concretely typed** — a branch with a **generic** field (`data: any` → a free type
+var an inline-record type can't declare) or an **imperfect/lossy** field (which would drop its
+`⚪`/`⚠️`/`🛑` flag in inline-record position) falls back to the flattened form, which handles both.
+Note: variant branches **drop DOM-inherited props** (`@types/react`/`lib.dom`) that the flattened form
+keeps via the `HtmlAttrs` spread — so a discriminated-union component that also extends `HTMLAttributes`
+loses that DOM surface under `--variant-props`. Off by default → default output unchanged.
+Fixture: [`discriminated-union-variant-props`](../test/golden/cases/discriminated-union-variant-props). (#65)
 
 ---
 

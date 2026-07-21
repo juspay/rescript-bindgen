@@ -6,6 +6,20 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Discriminated-union props keep per-branch requiredness — `--variant-props`** (#65) — a component
+  whose props are a discriminated union with a **clean string discriminant** (`mode: "single" |
+  "multi"`, `variant: "aligned" | …`) was flattened into one **all-optional** `@react.component`
+  signature, silently losing per-branch requiredness (e.g. that `selected` is required when
+  `mode="single"`). With `--variant-props` such a component now binds a ReScript `@tag(<field>)`
+  variant — one constructor per branch, `@as(<real literal>)`-tagged (the actual discriminant value,
+  never the constructor name — verified against the compiler so the runtime `{mode:"single", …}` is
+  correct), with an inline-record payload at each branch's true optionality — and `external make:
+  props => React.element`, rendered via `React.createElement(make, Single({…}))`. The compiler now
+  **rejects** a branch built without its required fields (*"required record fields are missing:
+  selected"*). Only fires when every arm has a single distinct string-literal discriminant; a
+  presence-based union (Badge's `children?: undefined` vs `children: ReactElement`) has no literal to
+  tag, so it keeps the flattened form. **Off by default**, so existing output and the benchmark are
+  byte-identical. Fixture: `discriminated-union-variant-props`.
 - **Subpath binding via the `exports` map — `--subpaths`** (#147) — modern packages expose distinct
   modules per subpath (`@mui/material/styles`, per-part Radix, base-ui's `./accordion`/`./button`,
   clsx's `./lite`), each with its own `.d.ts` behind an `exports["./sub"]` condition. Previously only

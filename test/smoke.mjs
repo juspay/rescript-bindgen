@@ -335,6 +335,29 @@ const checks = [
       })()],
     ]
   })(),
+  ...(() => {
+    // #65: discriminated-union props with a clean string discriminant -> @tag variant, per-branch
+    // requiredness restored. Off unless variantProps:true (flag), so default output is unchanged.
+    const dir = join(here, 'golden', 'cases', 'discriminated-union-variant-props', 'index.d.ts')
+    const off = extractModule(dir, { from: 'demo' }).components.find((c) => c.name === 'SelectItem')
+    const on = extractModule(dir, { from: 'demo', variantProps: true }).components.find((c) => c.name === 'SelectItem')
+    const vp = on && on.ir.variantProps
+    const single = vp && vp.branches.find((b) => b.literal === 'single')
+    const multi = vp && vp.branches.find((b) => b.literal === 'multi')
+    const req = (b, n) => !!b && b.fields.some((f) => f.name === n && f.optional === false)
+    // review: a branch with a GENERIC/IMPERFECT field (Widget's `payload: any`) must NOT emit the
+    // variant (would be an unbound type var / a dropped ⚪ flag) — it falls back to flattened.
+    const widget = extractModule(dir, { from: 'demo', variantProps: true }).components.find((c) => c.name === 'Widget')
+    return [
+      ['#65: flag OFF -> no variantProps (default unchanged)', !!off && !off.ir.variantProps],
+      ['#65: flag ON -> @tag variant with the `mode` discriminant', !!vp && vp.tag === 'mode' && vp.branches.length === 2],
+      ['#65: `single` branch REQUIRES `selected`', req(single, 'selected')],
+      ['#65: `multi` branch REQUIRES `selectedValues`, `placeholder` stays optional', req(multi, 'selectedValues') && multi.fields.some((f) => f.name === 'placeholder' && f.optional)],
+      ['#65: emits @tag("mode") + @as(real literal), not the ctor name', /@tag\("mode"\)/.test(emit(on.ir)) && /@as\("single"\) Single/.test(emit(on.ir))],
+      ['#65 review: a generic/imperfect branch field falls back to flattened (no unbound tyvar)', !!widget && !widget.ir.variantProps && /@react\.component/.test(emit(widget.ir))],
+      ['#65 review: variant component report reads the branch fields (no orphan enum / report divergence)', !!on && on.ir.props.some((p) => p.name === 'selected') && !/type \w+Mode/.test(emit(on.ir))],
+    ]
+  })(),
 ]
 
 let ok = true

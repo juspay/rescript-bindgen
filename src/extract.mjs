@@ -932,6 +932,73 @@ function unwrapOmit(t, checker) {
     return { base, omit }
 }
 
+/**
+ * Detect a DISCRIMINATED-UNION props type with a CLEAN STRING DISCRIMINANT: a prop present in every
+ * union arm whose type is a single, DISTINCT string literal per arm (`mode: "single" | "multi"`,
+ * `variant: "aligned" | "custom"`). For such a union we can restore the per-branch requiredness the
+ * flattened all-optional form loses (#65) — as a `@tag(<field>)` ReScript variant, one constructor
+ * per arm (`@as(<literal>)`, inline-record payload of that arm's own fields with their REAL
+ * requiredness). Returns `{ tag, branches:[{literal, ctor, fields:[{name,optional,type}]}] }`, or null
+ * when there is no clean literal discriminant (a presence-based union like Badge's `children?:
+ * undefined` vs `children: ReactElement`, or a non-string discriminant) → caller keeps the flattened
+ * output. Correctness rests on `@as(<literal>)` carrying the REAL discriminant value, never the ctor
+ * name — verified against the ReScript compiler. (#65)
+ */
+function discriminatedProps(propsType, ctx, decl) {
+    const { checker } = ctx
+    if (!(propsType.isUnion && propsType.isUnion())) return null
+    const arms = propsType.types
+    if (arms.length < 2) return null
+    const litOf = (arm, name) => {
+        const p = arm.getProperties().find((s) => s.getName() === name)
+        if (!p) return null
+        let t; try { t = checker.getTypeOfSymbolAtLocation(p, decl) } catch { return null }
+        return (t.isStringLiteral && t.isStringLiteral()) ? String(t.value) : null
+    }
+    const isInherited = (p) => {
+        const d = p.declarations && p.declarations[0]
+        const f = (d && d.getSourceFile().fileName) || ''
+        return /node_modules\/(@types|typescript)\//.test(f) || /\/lib\.(dom|es|scripthost)/.test(f)
+    }
+    // The discriminant must be a single distinct string literal in EVERY arm. Scan the first arm's
+    // props as candidates (a discriminant is by definition present in all arms).
+    for (const cand of arms[0].getProperties().map((p) => p.getName())) {
+        const lits = arms.map((a) => litOf(a, cand))
+        if (lits.some((l) => l == null)) continue         // not a string literal in some arm
+        if (new Set(lits).size !== lits.length) continue  // literals not distinct across arms
+        const usedCtors = new Set()
+        const branches = arms.map((arm, i) => {
+            let ctor = pascal(lits[i]) || `Case${i}`
+            while (usedCtors.has(ctor)) ctor += '_'
+            usedCtors.add(ctor)
+            const fields = arm.getProperties()
+                .filter((p) => p.getName() !== cand && !['ref', 'key'].includes(p.getName()))
+                .filter((p) => !/^__@/.test(p.getName()) && !isInherited(p)) // drop symbol-keyed + DOM-inherited
+                .map((p) => {
+                    const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0
+                    let ty; try { ty = checker.getTypeOfSymbolAtLocation(p, decl) } catch { return null }
+                    const type = withPath(ctx, p.getName(), () => classify(ty, ctx, p.getName()))
+                    return { name: p.getName(), optional, type }
+                })
+                .filter(Boolean)
+            return { literal: lits[i], ctor, fields }
+        })
+        // ROBUSTNESS GATE (#65 review): an inline-record variant payload can't carry a FREE TYPE
+        // VARIABLE (a labelled-arg function auto-generalizes `any -> 'a`, but `type props` is not
+        // parameterized -> "Unbound type parameter" compile break), and a LOSSY field would drop its
+        // ⚪/⚠️/🛑 imperfection flag in inline-record position (the flag-don't-fake contract). So if ANY
+        // branch field is generic or imperfect, bail to null -> the caller keeps the flattened form,
+        // which handles both (type vars via the auto-generalizing signature, flags via `propLine`).
+        // The variant fires only when EVERY branch field is cleanly, concretely typed.
+        const tv = new Set()
+        for (const b of branches) for (const f of b.fields) collectTypeVars(f.type, tv)
+        if (tv.size) return null
+        if (branches.some((b) => b.fields.some((f) => irHasImperfection(f.type)))) return null
+        return { tag: cand, branches }
+    }
+    return null
+}
+
 function buildComponentIR(checker, sym, source, importName, from, opts) {
     if (sym.flags & ts.SymbolFlags.Alias) sym = checker.getAliasedSymbol(sym)
     const decl = sym.valueDeclaration || (sym.declarations && sym.declarations[0]) || source
@@ -1011,6 +1078,23 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
         sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
     }
     const allow = new Set(opts.htmlAllowlist || DEFAULT_HTML_ALLOWLIST)
+
+    // #65: a discriminated-union props type with a clean string discriminant emits a `@tag` variant
+    // that RESTORES per-branch requiredness (see `discriminatedProps`). Computed EARLY and returned
+    // BEFORE the flattened props build, so (a) the discriminant isn't also classified into an orphan
+    // enum, and (b) `report` reads the SAME fields the variant emits — no report⇔code divergence (#65
+    // review). Off by default / null for non-discriminated (or imperfect-field) props -> the normal
+    // flattened build below runs unchanged.
+    const variantProps = opts.variantProps ? discriminatedProps(propsType, ctx, decl) : null
+    if (variantProps) {
+        const byName = new Map()
+        for (const b of variantProps.branches) for (const f of b.fields) {
+            const prev = byName.get(f.name)
+            byName.set(f.name, prev ? { ...prev, optional: prev.optional || f.optional }
+                : { name: f.name, optional: f.optional, type: f.type, inherited: false, tsType: '', declText: '' })
+        }
+        return { module: importName, import: { from, name: importName }, kind: 'react-component', enums, records, unboxed, props: [...byName.values()], variantProps }
+    }
 
     const isInherited = (p) => {
         const d = p.declarations && p.declarations[0]
