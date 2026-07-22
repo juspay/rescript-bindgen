@@ -40,7 +40,7 @@ const onlyIx = process.argv.indexOf('--only')
 const ONLY = onlyIx === -1 ? null : process.argv[onlyIx + 1]
 
 const YELLOW = (s) => `\x1b[33m${s}\x1b[0m`
-const slugOf = (name) => name.replace(/[@/]/g, '_').replace(/^_/, '_') // "@s/p" -> "_s_p"
+const slugOf = (name) => name.replace(/[@/]/g, '_') // "@s/p" -> "_s_p" (a leading @ already becomes _)
 const stripAnsi = (s) => s.replace(/\x1b\[\d+m/g, '')
 
 /** Run a shell command, returning { ok, out } instead of throwing. */
@@ -75,7 +75,11 @@ function setupSandbox(pkg, slug, sandbox) {
     // Skip `npm ci` when node_modules already matches this lockfile (CI cache hit).
     const stamp = createHash('sha256').update(readFileSync(committedLock)).digest('hex')
     const stampFile = join(sandbox, '.lock-stamp')
-    const fresh = existsSync(stampFile) && readFileSync(stampFile, 'utf-8') === stamp && existsSync(join(sandbox, 'node_modules', 'rescript'))
+    // Read the prior stamp directly (try/catch) rather than existsSync-then-read — the latter is a
+    // check-then-read TOCTOU race that CodeQL flags; a missing/unreadable stamp just means "not fresh".
+    let priorStamp = null
+    try { priorStamp = readFileSync(stampFile, 'utf-8') } catch { /* no prior stamp -> rebuild */ }
+    const fresh = priorStamp === stamp && existsSync(join(sandbox, 'node_modules', 'rescript'))
     if (!fresh) {
         const r = sh('npm ci --silent --no-audit --no-fund', sandbox)
         if (!r.ok) throw new Error(`npm ci failed (template/pin changed? run \`npm run bench:update\`):\n${r.out.slice(0, 2000)}`)
