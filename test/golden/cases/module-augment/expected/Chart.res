@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~point: ModuleAugmentTypes.point=?,
-) => React.element = "Chart"
+type props = {
+  point?: ModuleAugmentTypes.point,
+}
+
+@module("demo")
+external make: React.component<props> = "Chart"

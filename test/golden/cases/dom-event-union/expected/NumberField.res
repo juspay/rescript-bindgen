@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~onValueChange: (float, DomEventUnionTypes.fieldChangeDetails) => unit=?,
-) => React.element = "NumberField"
+type props = {
+  onValueChange?: (float, DomEventUnionTypes.fieldChangeDetails) => unit,
+}
+
+@module("demo")
+external make: React.component<props> = "NumberField"

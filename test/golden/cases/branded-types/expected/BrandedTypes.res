@@ -1,6 +1,8 @@
-@module("demo") @react.component
-external make: (
-  ~userId: BrandedTypesTypes.userId,
-  ~count: BrandedTypesTypes.count,
-  ~token: BrandedTypesTypes.token,
-) => React.element = "BrandedTypes"
+type props = {
+  userId: BrandedTypesTypes.userId,
+  count: BrandedTypesTypes.count,
+  token: BrandedTypesTypes.token,
+}
+
+@module("demo")
+external make: React.component<props> = "BrandedTypes"

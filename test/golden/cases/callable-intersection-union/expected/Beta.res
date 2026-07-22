@@ -1,5 +1,7 @@
-@module("demo") @react.component
-external make: (
-  ~className: CallableIntersectionUnionTypes.betaClassName=?,
-  ~style: CallableIntersectionUnionTypes.betaStyle=?,
-) => React.element = "Beta"
+type props = {
+  className?: CallableIntersectionUnionTypes.betaClassName,
+  style?: CallableIntersectionUnionTypes.betaStyle,
+}
+
+@module("demo")
+external make: React.component<props> = "Beta"

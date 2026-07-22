@@ -1,7 +1,9 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~primaryTag: TagsTypes.tagsPrimaryTagConfig,
-  ~secondaryTag: TagsTypes.tagsPrimaryTagConfig=?,
-  ~size: TagsTypes.tagSize=?,
-  ~shape: TagsTypes.tagShape=?,
-) => React.element = "SplitTag"
+type props = {
+  primaryTag: TagsTypes.tagsPrimaryTagConfig,
+  secondaryTag?: TagsTypes.tagsPrimaryTagConfig,
+  size?: TagsTypes.tagSize,
+  shape?: TagsTypes.tagShape,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "SplitTag"

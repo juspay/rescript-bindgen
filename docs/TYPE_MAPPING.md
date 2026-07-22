@@ -248,7 +248,20 @@ package-local bases (a `React.` qualifier on the heritage name is stripped):
 | `OwnProps & Omit<ButtonHTMLAttributes<…>, 'style' \| 'className'>` | spread of a **narrowed variant** `HtmlAttrs.buttonHTMLAttributesOmitClassNameStyle` — only the hierarchy slice containing the removed keys is re-materialized; aria + events stay shared. Variants are deduped by removed-set. |
 | own prop colliding with a chain field (e.g. own `onClick: (v, i) => void`) | the own prop WINS with its own mapping; the base spread is narrowed (`…OmitOnClick`) so a duplicate-field compile error is impossible |
 | `Base & Omit<BlockProps, 'children'>` — the attrs interface nested INSIDE `BlockProps`, behind a second `Omit` | the leaf is still found; the slice composes ALL layers' keys: `...HtmlAttrs.htmlAttributesOmitChildrenColor` (#130) |
-| `& SVGAttributes<…>` / `& AllHTMLAttributes<…>` / non-literal `Omit` keys / generic component / `--file`/`--stdout` mode | **legacy labeled-args output** (unchanged) |
+| `& SVGAttributes<…>` / `& AllHTMLAttributes<…>` / non-literal `Omit` keys / generic component / `--file`/`--stdout` mode | no shared `HtmlAttrs` spread — the record-props form with the fields **inline** (#155: record-props is the only output form; these cases just skip the spread) |
+
+**Record-props is THE output form (#155):** EVERY component with ≥1 prop emits
+`type props = { <fields> }` + `external make: React.component<props>` — not just HTML-attrs /
+shared-base ones, and with **no flag** (one output form only; a second mode would double the test
+surface and force every consumer script to carry an option). The two forms are behaviorally identical
+for JSX (v4 lowers to make/props either way); the nameable `props` type is what enables a thin
+**wrapper component** that spreads all props through and overrides one (`type props = Lib.Item.props`
+… `{...props, onClick: mine}` — the motivating pattern, verified to compile). Requiredness and the
+`⚪`/`⚠️`/`🛑` flags carry over unchanged (`propLine` renders both forms); reserved-word props keep
+their `@as("type") type_` mapping; a generic prop parameterizes the record (`type props<'a>`). A
+props-less component is already skipped as `no-props` upstream, so no empty record can emit.
+`--record-props` is still accepted as a no-op for scripts that adopted it during the preview.
+Fixture: [`record-props`](../test/golden/cases/record-props). (#155)
 
 **Shared-base props records (#82).** A PURE package-local NAMED intersection part — an
 alias/interface none of whose fields is vendor-declared (blend's `StyledBlockProps`, the

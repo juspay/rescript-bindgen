@@ -1,5 +1,7 @@
-@module("demo") @react.component
-external make: (
-  ~containerProps: Dict.t<'a>=?,
-  ~options: HighchartsSeriesDataPayloadTypes.options<'b>=?,
-) => React.element = "Chart"
+type props<'a, 'b> = {
+  containerProps?: Dict.t<'a>,
+  options?: HighchartsSeriesDataPayloadTypes.options<'b>,
+}
+
+@module("demo")
+external make: React.component<props<'a, 'b>> = "Chart"

@@ -1,5 +1,7 @@
-@module("demo") @react.component
-external make: (
-  ~children: CommonTypes.stringOrNumber,
-  ~label: string=?,
-) => React.element = "Tab"
+type props = {
+  children: CommonTypes.stringOrNumber,
+  label?: string,
+}
+
+@module("demo")
+external make: React.component<props> = "Tab"

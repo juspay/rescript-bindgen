@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~title: string,
-) => React.element = "Legacy"
+type props = {
+  title: string,
+}
+
+@module("demo")
+external make: React.component<props> = "Legacy"

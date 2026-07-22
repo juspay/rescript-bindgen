@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~value: string,
-) => React.element = "SelectOption"
+type props = {
+  value: string,
+}
+
+@module("demo")
+external make: React.component<props> = "SelectOption"

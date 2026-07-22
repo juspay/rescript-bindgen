@@ -1,7 +1,9 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~children: React.element,
-  ~className: string=?,
-  ~direction: DateRangePickerTypes.dateRangePickerDateRangePickerPopoverConfigSide=?,
-  ~ref: React.ref<Nullable.t<Dom.element>>=?,
-) => React.element = "DrawerFooter"
+type props = {
+  children: React.element,
+  className?: string,
+  direction?: DateRangePickerTypes.dateRangePickerDateRangePickerPopoverConfigSide,
+  ref?: React.ref<Nullable.t<Dom.element>>,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "DrawerFooter"

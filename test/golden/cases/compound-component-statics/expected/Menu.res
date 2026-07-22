@@ -1,7 +1,9 @@
-@module("demo") @react.component
-external make: (
-  @as("open") ~open_: bool=?,
-) => React.element = "Menu"
+type props = {
+  @as("open") open_?: bool,
+}
+
+@module("demo")
+external make: React.component<props> = "Menu"
 
 // Compound statics — zero-cost aliases; use <Menu.Divider />
 module Divider = MenuDivider

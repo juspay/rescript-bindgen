@@ -1,4 +1,6 @@
-@module("demo") @scope("Menu") @react.component
-external make: (
-  ~inset: bool=?,
-) => React.element = "Divider"
+type props = {
+  inset?: bool,
+}
+
+@module("demo") @scope("Menu")
+external make: React.component<props> = "Divider"

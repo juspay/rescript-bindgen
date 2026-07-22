@@ -1,9 +1,11 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~children: React.element=?,
-  ~items: array<BreadcrumbV2Types.breadcrumbV2ItemType>=?,
-  ~maxItems: float=?,
-) => React.element = "BreadcrumbV2"
+type props = {
+  children?: React.element,
+  items?: array<BreadcrumbV2Types.breadcrumbV2ItemType>,
+  maxItems?: float,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "BreadcrumbV2"
 
 // Compound statics — zero-cost aliases; use <BreadcrumbV2.Icon />
 module Icon = BreadcrumbV2Icon

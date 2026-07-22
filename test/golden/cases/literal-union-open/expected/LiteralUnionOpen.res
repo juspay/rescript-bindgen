@@ -1,5 +1,7 @@
-@module("demo") @react.component
-external make: (
-  ~position: CommonTypes.toastPositionOrString,
-  ~anchor: LiteralUnionOpenTypes.toastPosition,
-) => React.element = "LiteralUnionOpen"
+type props = {
+  position: CommonTypes.toastPositionOrString,
+  anchor: LiteralUnionOpenTypes.toastPosition,
+}
+
+@module("demo")
+external make: React.component<props> = "LiteralUnionOpen"

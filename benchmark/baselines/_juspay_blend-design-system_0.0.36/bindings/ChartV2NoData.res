@@ -1,7 +1,9 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~title: string=?,
-  ~subtitle: string=?,
-  ~slot: React.element=?,
-  ~button: ButtonTypes.buttonProps=?,
-) => React.element = "ChartV2NoData"
+type props = {
+  title?: string,
+  subtitle?: string,
+  slot?: React.element,
+  button?: ButtonTypes.buttonProps,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "ChartV2NoData"

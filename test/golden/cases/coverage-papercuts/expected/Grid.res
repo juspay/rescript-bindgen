@@ -1,5 +1,7 @@
-@module("demo") @react.component
-external make: (
-  ~cells: Dict.t<string>,
-  ~label: string=?,
-) => React.element = "Grid"
+type props = {
+  cells: Dict.t<string>,
+  label?: string,
+}
+
+@module("demo")
+external make: React.component<props> = "Grid"

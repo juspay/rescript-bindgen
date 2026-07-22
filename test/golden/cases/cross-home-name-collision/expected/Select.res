@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~group: SelectTypes.selectMenuGroup=?,
-) => React.element = "Select"
+type props = {
+  group?: SelectTypes.selectMenuGroup,
+}
+
+@module("demo")
+external make: React.component<props> = "Select"

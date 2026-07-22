@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~root: DeepGenericSelfrefTypes.l1=?,
-) => React.element = "Chart"
+type props = {
+  root?: DeepGenericSelfrefTypes.l1,
+}
+
+@module("demo")
+external make: React.component<props> = "Chart"

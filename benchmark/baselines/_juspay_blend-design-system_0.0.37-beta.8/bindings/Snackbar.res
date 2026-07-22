@@ -1,5 +1,7 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~position: SnackbarTypes.snackbarPosition=?,
-  ~dismissOnClickAway: bool=?,
-) => React.element = "Snackbar"
+type props = {
+  position?: SnackbarTypes.snackbarPosition,
+  dismissOnClickAway?: bool,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "Snackbar"

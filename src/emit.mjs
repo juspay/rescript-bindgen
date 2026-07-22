@@ -263,7 +263,16 @@ export function emit(ir, options = {}) {
     //      base is ONE spread; JSX call sites are unchanged (JSX v4 lowers to make/props).
     //    labeled args (default): the classic `@react.component external make: (~p: t=?, …)`.
     const baseSpreads = ir.baseSpreads || []
-    const recordProps = !!(ir.attrsBase && ir.attrsBase.ref) || baseSpreads.length > 0
+    // #155: EVERY component with ≥1 prop emits the nameable-props form — `type props = {…}` +
+    // `external make: React.component<props>` — not just HTML-attrs / shared-base ones. The two
+    // forms are behaviorally identical for JSX (v4 lowers to make/props either way); the nameable
+    // type is what enables consumer wrapper components (`type props = Lib.X.props` + `{...props}`
+    // with one field overridden). ONE output form only — no flag (a second mode would double the
+    // test surface and force every consumer script to carry an option, for zero benefit). A
+    // props-less component keeps labeled args (a ReScript record can't be empty; extraction skips
+    // those as `no-props` anyway).
+    const recordProps = !!(ir.attrsBase && ir.attrsBase.ref) || baseSpreads.length > 0 ||
+        ir.props.length > 0
     // Render-prop FUNCTION-form wrappers (#46): the prop itself binds as `React.element`
     // (an @unboxed `Element | Fn` cannot compile — React.element is abstract), so the
     // function form gets a zero-cost `<prop>Fn` %identity wrapper, typed with the EXACT

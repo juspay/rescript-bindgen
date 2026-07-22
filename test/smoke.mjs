@@ -87,12 +87,12 @@ const cwpClientEntry = cwp.shared && cwp.shared.entries.find((e) => e.variant ==
 
 const checks = [
   ['string-literal union -> variant', /@as\("sm"\) Sm/.test(code)],
-  ['count number -> int (name heuristic)', /~count: int=\?/.test(code)],
+  ['count number -> int (name heuristic)', /count\?: int,/.test(code)],
   ['string|number -> @unboxed (structural name)', /@unboxed type stringOrNumber = Str\(string\) \| Num\(float\)/.test(code)],
   ['string|string[] -> @unboxed (structural name)', /@unboxed type stringOrStringArray = Str\(string\) \| StrArr\(array<string>\)/.test(code)],
-  ['aria-checked -> JsxDOM poly variant', /~ariaChecked: \[#"true" \| #"false" \| #mixed\]=\?/.test(code)],
-  ['aria-disabled -> bool', /~ariaDisabled: bool=\?/.test(code)],
-  ['external make binding', /@module\("demo"\) @react\.component/.test(code)],
+  ['aria-checked -> JsxDOM poly variant', /@as\("aria-checked"\) ariaChecked\?: \[#"true" \| #"false" \| #mixed\],/.test(code)],
+  ['aria-disabled -> bool', /@as\("aria-disabled"\) ariaDisabled\?: bool,/.test(code)],
+  ['external make binding', /@module\("demo"\)\nexternal make: React\.component<props>/.test(code)],
   ['no %identity anywhere', !/%identity/.test(code)],
   ['no defects', rep.defects.length === 0],
   ['rest param is variadic, not optional', collect?.ir.sig.params[0]?.rest === true && collect.ir.sig.params[0].optional === false],
@@ -354,8 +354,20 @@ const checks = [
       ['#65: `single` branch REQUIRES `selected`', req(single, 'selected')],
       ['#65: `multi` branch REQUIRES `selectedValues`, `placeholder` stays optional', req(multi, 'selectedValues') && multi.fields.some((f) => f.name === 'placeholder' && f.optional)],
       ['#65: emits @tag("mode") + @as(real literal), not the ctor name', /@tag\("mode"\)/.test(emit(on.ir)) && /@as\("single"\) Single/.test(emit(on.ir))],
-      ['#65 review: a generic/imperfect branch field falls back to flattened (no unbound tyvar)', !!widget && !widget.ir.variantProps && /@react\.component/.test(emit(widget.ir))],
+      ['#65 review: a generic/imperfect branch field falls back to flattened (tyvar declared via type props<\'b>)', !!widget && !widget.ir.variantProps && /type props</.test(emit(widget.ir))],
       ['#65 review: variant component report reads the branch fields (no orphan enum / report divergence)', !!on && on.ir.props.some((p) => p.name === 'selected') && !/type \w+Mode/.test(emit(on.ir))],
+    ]
+  })(),
+  ...(() => {
+    // #155: record-props is the DEFAULT (and only) output form — every component with props gets a
+    // nameable `type props` + React.component<props> (enables the wrapper/override pattern). No flag.
+    const rp = join(here, 'golden', 'cases', 'record-props', 'index.d.ts')
+    const item = extractModule(rp, { from: 'demo' }).components.find((c) => c.name === 'AccordionItem')
+    const code = item ? emit(item.ir) : ''
+    return [
+      ['#155: plain component emits nameable `type props` + React.component<props> BY DEFAULT', /type props = \{/.test(code) && /external make: React\.component<props>/.test(code)],
+      ['#155: record form keeps requiredness + flags (value required, weird flagged loose)', /  value: string,/.test(code) && /⚪ loose/.test(code)],
+      ['#155: reserved-word prop keeps @as mapping in record form', /@as\("type"\) type_\?:/.test(code)],
     ]
   })(),
 ]

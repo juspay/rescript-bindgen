@@ -1,5 +1,7 @@
-@module("demo") @react.component
-external make: (
-  ~items: array<'a>,
-  ~renderItem: ('a, float) => React.element,
-) => React.element = "VirtualList"
+type props<'a> = {
+  items: array<'a>,
+  renderItem: ('a, float) => React.element,
+}
+
+@module("demo")
+external make: React.component<props<'a>> = "VirtualList"

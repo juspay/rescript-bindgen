@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~cmd: EnumCaseCollisionTypes.pathCmd=?,
-) => React.element = "Widget"
+type props = {
+  cmd?: EnumCaseCollisionTypes.pathCmd,
+}
+
+@module("demo")
+external make: React.component<props> = "Widget"
