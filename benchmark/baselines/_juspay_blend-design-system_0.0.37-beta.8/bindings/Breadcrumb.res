@@ -1,5 +1,7 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~items: Nullable.t<array<BreadcrumbTypes.breadcrumbItemType>>,
-  ~skeleton: BreadcrumbTypes.breadcrumbSkeletonProps=?,
-) => React.element = "Breadcrumb"
+type props = {
+  items: Nullable.t<array<BreadcrumbTypes.breadcrumbItemType>>,
+  skeleton?: BreadcrumbTypes.breadcrumbSkeletonProps,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "Breadcrumb"

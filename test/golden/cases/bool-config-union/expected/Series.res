@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~animation: BoolConfigUnionTypes.boolOrAnimationOptionsObject=?,
-) => React.element = "Series"
+type props = {
+  animation?: BoolConfigUnionTypes.boolOrAnimationOptionsObject,
+}
+
+@module("demo")
+external make: React.component<props> = "Series"

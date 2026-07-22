@@ -1,5 +1,7 @@
-@module("demo") @react.component
-external make: (
-  ~config: SharedDefectReportTypes.config=?,
-  ~label: string=?,
-) => React.element = "Panel"
+type props = {
+  config?: SharedDefectReportTypes.config,
+  label?: string,
+}
+
+@module("demo")
+external make: React.component<props> = "Panel"

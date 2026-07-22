@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~width: CommonTypes.stringOrNumber=?,
-) => React.element = "Panel"
+type props = {
+  width?: CommonTypes.stringOrNumber,
+}
+
+@module("demo")
+external make: React.component<props> = "Panel"

@@ -136,6 +136,10 @@ function parseArgs(argv) {
         else if (a === '--no-html-attrs') o.htmlAttrs = false
         else if (a === '--subpaths') o.subpaths = true
         else if (a === '--variant-props') o.variantProps = true
+        // #155: `--record-props` is ACCEPTED as a no-op — the record-props form is now the only
+        // output form (every component with props gets a nameable `type props`), so any script
+        // that adopted the flag during the preview keeps working.
+        else if (a === '--record-props') { /* default behaviour since #155 */ }
         else if (a === '--yes' || a === '-y') o.yes = true
         else if (a === '--clean') o.clean = true
         else if (a === '--help' || a === '-h') o.help = true

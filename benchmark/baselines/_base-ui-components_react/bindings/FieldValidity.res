@@ -1,4 +1,6 @@
-@module("@base-ui-components/react") @scope("Field") @react.component
-external make: (
-  ~children: ValidityTypes.fieldValidityState => React.element,
-) => React.element = "Validity"
+type props = {
+  children: ValidityTypes.fieldValidityState => React.element,
+}
+
+@module("@base-ui-components/react") @scope("Field")
+external make: React.component<props> = "Validity"

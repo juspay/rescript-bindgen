@@ -6,6 +6,20 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Every component now emits a nameable `props` type — record-props is THE output form** (#155,
+  **output-form change**) — whether a component binds as `type props = {…}` + `external make:
+  React.component<props>` or as labeled args was decided solely by "extends `*HTMLAttributes` /
+  shares a base": a plain-props component (blend's `AccordionItem`) never got a nameable `props`
+  type, blocking the wrapper/override pattern (`type props = Lib.Item.props` + `<Item {...props}
+  onClick=mine />`). Every component with ≥1 prop now emits the record form — **no flag, one output
+  form only** (a second mode would double the test surface and force every consumer script to carry
+  an option; `--record-props` is still accepted as a no-op for scripts that adopted it during the
+  preview). Verified: the wrapper pattern compiles against the output; JSX call sites unchanged (v4
+  lowers to make/props either way); requiredness + `⚪`/`⚠️` flags carry over (same `propLine`, flag
+  counts byte-equal on the benchmark corpus); reserved words keep `@as("type") type_`; a generic prop
+  parameterizes the record (`type props<'a>`). Consumers' generated files churn **once** (form-only;
+  all 9 benchmark packages compile with identical usable/review/broken metrics). Fixture:
+  `record-props`.
 - **Discriminated-union props keep per-branch requiredness — `--variant-props`** (#65) — a component
   whose props are a discriminated union with a **clean string discriminant** (`mode: "single" |
   "multi"`, `variant: "aligned" | …`) was flattened into one **all-optional** `@react.component`

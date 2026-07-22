@@ -1,5 +1,7 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~className: string=?,
-  ~ref: React.ref<Nullable.t<Dom.element>>=?,
-) => React.element = "DrawerOverlay"
+type props = {
+  className?: string,
+  ref?: React.ref<Nullable.t<Dom.element>>,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "DrawerOverlay"

@@ -1,5 +1,7 @@
-@module("demo") @react.component
-external make: (
-  ~options: ForwardrefRefPropTypes.forwardrefRefPropOptionsConfig=?,
-  ~ref: React.ref<Nullable.t<ForwardrefRefPropTypes.chartHandle>>=?,
-) => React.element = "Chart"
+type props = {
+  options?: ForwardrefRefPropTypes.forwardrefRefPropOptionsConfig,
+  ref?: React.ref<Nullable.t<ForwardrefRefPropTypes.chartHandle>>,
+}
+
+@module("demo")
+external make: React.component<props> = "Chart"

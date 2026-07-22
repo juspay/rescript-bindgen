@@ -1,6 +1,8 @@
-@module("demo") @react.component
-external make: (
-  ~name: string=?,
-  ~fill: string=?,
-  ~stroke: string=?,
-) => React.element = "Icon"
+type props = {
+  name?: string,
+  fill?: string,
+  stroke?: string,
+}
+
+@module("demo")
+external make: React.component<props> = "Icon"

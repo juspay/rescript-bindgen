@@ -1,5 +1,7 @@
-@module("demo") @react.component
-external make: (
-  ~theme: SubpathBindingTypes.theme=?,
-  ~label: string,
-) => React.element = "Button"
+type props = {
+  theme?: SubpathBindingTypes.theme,
+  label: string,
+}
+
+@module("demo")
+external make: React.component<props> = "Button"

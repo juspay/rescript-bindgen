@@ -1,7 +1,9 @@
-@module("demo") @react.component
-external make: (
-  ~one: EnumMemberLiteralTypes.sm,
-  ~two: EnumMemberLiteralTypes.a,
-  ~anySize: EnumMemberLiteralTypes.size,
-  ~anyMode: EnumMemberLiteralTypes.mode,
-) => React.element = "EnumMember"
+type props = {
+  one: EnumMemberLiteralTypes.sm,
+  two: EnumMemberLiteralTypes.a,
+  anySize: EnumMemberLiteralTypes.size,
+  anyMode: EnumMemberLiteralTypes.mode,
+}
+
+@module("demo")
+external make: React.component<props> = "EnumMember"

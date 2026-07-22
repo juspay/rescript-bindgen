@@ -1,21 +1,23 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~sidebarTopSlot: React.element=?,
-  ~merchantInfo: SidebarV2Types.sidebarV2MerchantInfoConfig=?,
-  ~isExpanded: bool,
-  ~isScrolled: bool,
-  ~sidebarCollapseKey: string,
-  ~onToggle: unit => unit,
-  ~sidebarNavId: string=?,
-  ~data: Nullable.t<array<DirectoryTypes.directoryData>>,
-  ~idPrefix: string,
-  ~activeItem: Nullable.t<string>=?,
-  ~onActiveItemChange: Nullable.t<string> => unit=?,
-  ~defaultActiveItem: Nullable.t<string>=?,
-  ~iconOnlyMode: bool=?,
-  ~hideToggleButton: bool=?,
-  ~footer: React.element=?,
-  ~setIsHovering: bool => unit=?,
-  ~sidebarState: SidebarV2Types.sidebarV2SidebarV2PropsOnSidebarStateChange=?,
-  ~tokens: SidebarV2Types.sidebarV2TokensType,
-) => React.element = "SidebarV2Panel"
+type props = {
+  sidebarTopSlot?: React.element,
+  merchantInfo?: SidebarV2Types.sidebarV2MerchantInfoConfig,
+  isExpanded: bool,
+  isScrolled: bool,
+  sidebarCollapseKey: string,
+  onToggle: unit => unit,
+  sidebarNavId?: string,
+  data: Nullable.t<array<DirectoryTypes.directoryData>>,
+  idPrefix: string,
+  activeItem?: Nullable.t<string>,
+  onActiveItemChange?: Nullable.t<string> => unit,
+  defaultActiveItem?: Nullable.t<string>,
+  iconOnlyMode?: bool,
+  hideToggleButton?: bool,
+  footer?: React.element,
+  setIsHovering?: bool => unit,
+  sidebarState?: SidebarV2Types.sidebarV2SidebarV2PropsOnSidebarStateChange,
+  tokens: SidebarV2Types.sidebarV2TokensType,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "SidebarV2Panel"

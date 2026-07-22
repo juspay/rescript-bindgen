@@ -1,5 +1,7 @@
-@module("demo") @react.component
-external make: (
-  ~locale: UnboxedInRecordCycleTypes.calLocale=?,
-  ~options: UnboxedInRecordCycleTypes.dateLibOptions=?,
-) => React.element = "Calendar"
+type props = {
+  locale?: UnboxedInRecordCycleTypes.calLocale,
+  options?: UnboxedInRecordCycleTypes.dateLibOptions,
+}
+
+@module("demo")
+external make: React.component<props> = "Calendar"

@@ -1,4 +1,6 @@
-@module("demo") @scope(("Table", "Summary")) @react.component
-external make: (
-  ~height: float,
-) => React.element = "Row"
+type props = {
+  height: float,
+}
+
+@module("demo") @scope(("Table", "Summary"))
+external make: React.component<props> = "Row"

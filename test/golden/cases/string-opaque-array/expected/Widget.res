@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~tokens: CommonTypes.stringOrValueArray=?,
-) => React.element = "Widget"
+type props = {
+  tokens?: CommonTypes.stringOrValueArray,
+}
+
+@module("demo")
+external make: React.component<props> = "Widget"

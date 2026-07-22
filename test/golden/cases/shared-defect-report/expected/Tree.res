@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~root: SharedDefectReportTypes.treeNode=?,
-) => React.element = "Tree"
+type props = {
+  root?: SharedDefectReportTypes.treeNode,
+}
+
+@module("demo")
+external make: React.component<props> = "Tree"

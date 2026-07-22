@@ -1,5 +1,7 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~stacked: bool=?,
-  ~children: React.element,
-) => React.element = "ButtonGroup"
+type props = {
+  stacked?: bool,
+  children: React.element,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "ButtonGroup"

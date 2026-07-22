@@ -1,8 +1,10 @@
-@module("react-day-picker") @react.component
-external make: (
-  ~className: string=?,
-  ~style: JsxDOM.style=?,
-  ~size: float=?,
-  ~disabled: bool=?,
-  ~orientation: ComponentsTypes.componentsOrientation=?,
-) => React.element = "Chevron"
+type props = {
+  className?: string,
+  style?: JsxDOM.style,
+  size?: float,
+  disabled?: bool,
+  orientation?: ComponentsTypes.componentsOrientation,
+}
+
+@module("react-day-picker")
+external make: React.component<props> = "Chevron"

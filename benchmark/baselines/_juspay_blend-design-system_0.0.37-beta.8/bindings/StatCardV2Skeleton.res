@@ -1,6 +1,8 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~skeleton: StatCardV2Types.statCardV2SkeletonProps,
-  ~maxWidth: CommonTypes.stringOrNumber,
-  ~minWidth: CommonTypes.stringOrNumber,
-) => React.element = "StatCardV2Skeleton"
+type props = {
+  skeleton: StatCardV2Types.statCardV2SkeletonProps,
+  maxWidth: CommonTypes.stringOrNumber,
+  minWidth: CommonTypes.stringOrNumber,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "StatCardV2Skeleton"

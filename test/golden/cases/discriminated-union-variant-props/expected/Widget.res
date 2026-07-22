@@ -1,6 +1,8 @@
-@module("demo") @react.component
-external make: (
-  ~kind: DiscriminatedUnionVariantPropsTypes.discriminatedUnionVariantPropsKind,
-  ~payload: 'b=?,
-  ~value: string=?,
-) => React.element = "Widget"
+type props<'b> = {
+  kind: DiscriminatedUnionVariantPropsTypes.discriminatedUnionVariantPropsKind,
+  payload?: 'b,
+  value?: string,
+}
+
+@module("demo")
+external make: React.component<props<'b>> = "Widget"

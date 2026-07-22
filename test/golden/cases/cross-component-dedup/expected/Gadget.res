@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~badge: GadgetTypes.gadgetBadgeConfig=?,
-) => React.element = "Gadget"
+type props = {
+  badge?: GadgetTypes.gadgetBadgeConfig,
+}
+
+@module("demo")
+external make: React.component<props> = "Gadget"

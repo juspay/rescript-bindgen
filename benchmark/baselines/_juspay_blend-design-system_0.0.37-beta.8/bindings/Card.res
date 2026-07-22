@@ -1,23 +1,25 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~maxWidth: string=?,
-  ~maxHeight: string=?,
-  ~minHeight: string=?,
-  ~skeleton: CardTypes.cardSkeletonProps=?,
-  ~variant: CardTypes.cardVariant=?,
-  ~headerSlot1: React.element=?,
-  ~headerTitle: string=?,
-  ~headerTag: React.element=?,
-  ~headerSlot2: React.element=?,
-  ~subHeader: string=?,
-  ~bodySlot1: React.element=?,
-  ~bodyTitle: string=?,
-  ~content: React.element=?,
-  ~bodySlot2: React.element=?,
-  ~actionButton: ButtonTypes.buttonProps=?,
-  ~alignment: CardTypes.cardAlignment=?,
-  ~centerAlign: bool=?,
-  ~cardSlot: React.element=?,
-  ~children: React.element=?,
-  ~ref: React.ref<Nullable.t<Dom.element>>=?,
-) => React.element = "Card"
+type props = {
+  maxWidth?: string,
+  maxHeight?: string,
+  minHeight?: string,
+  skeleton?: CardTypes.cardSkeletonProps,
+  variant?: CardTypes.cardVariant,
+  headerSlot1?: React.element,
+  headerTitle?: string,
+  headerTag?: React.element,
+  headerSlot2?: React.element,
+  subHeader?: string,
+  bodySlot1?: React.element,
+  bodyTitle?: string,
+  content?: React.element,
+  bodySlot2?: React.element,
+  actionButton?: ButtonTypes.buttonProps,
+  alignment?: CardTypes.cardAlignment,
+  centerAlign?: bool,
+  cardSlot?: React.element,
+  children?: React.element,
+  ref?: React.ref<Nullable.t<Dom.element>>,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "Card"

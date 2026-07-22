@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~items: array<RecordHtmlCollisionTypes.itemData>,
-) => React.element = "List"
+type props = {
+  items: array<RecordHtmlCollisionTypes.itemData>,
+}
+
+@module("demo")
+external make: React.component<props> = "List"

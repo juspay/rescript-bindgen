@@ -1,5 +1,7 @@
-@module("demo") @react.component
-external make: (
-  ~children: React.element=?,
-  ~title: string=?,
-) => React.element = "Panel"
+type props = {
+  children?: React.element,
+  title?: string,
+}
+
+@module("demo")
+external make: React.component<props> = "Panel"

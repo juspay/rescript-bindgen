@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~events: ComponentsTypes.eventsObj=?,
-) => React.element = "Shallow"
+type props = {
+  events?: ComponentsTypes.eventsObj,
+}
+
+@module("demo")
+external make: React.component<props> = "Shallow"

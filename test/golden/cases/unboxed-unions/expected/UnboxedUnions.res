@@ -1,7 +1,9 @@
-@module("demo") @react.component
-external make: (
-  ~width: CommonTypes.stringOrNumber=?,
-  ~tags: CommonTypes.stringOrStringArray=?,
-  ~checked: CommonTypes.boolOrIndeterminate=?,
-  ~itemHeight: CommonTypes.unboxedUnionsItemHeight=?,
-) => React.element = "UnboxedUnions"
+type props = {
+  width?: CommonTypes.stringOrNumber,
+  tags?: CommonTypes.stringOrStringArray,
+  checked?: CommonTypes.boolOrIndeterminate,
+  itemHeight?: CommonTypes.unboxedUnionsItemHeight,
+}
+
+@module("demo")
+external make: React.component<props> = "UnboxedUnions"

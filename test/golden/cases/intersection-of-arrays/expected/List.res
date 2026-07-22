@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~data: IntersectionOfArraysTypes.intersectionOfArraysDataConfig,
-) => React.element = "List"
+type props = {
+  data: IntersectionOfArraysTypes.intersectionOfArraysDataConfig,
+}
+
+@module("demo")
+external make: React.component<props> = "List"

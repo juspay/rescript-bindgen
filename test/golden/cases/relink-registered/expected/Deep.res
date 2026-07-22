@@ -1,4 +1,6 @@
-@module("demo") @react.component
-external make: (
-  ~root: DeepTypes.l1=?,
-) => React.element = "Deep"
+type props = {
+  root?: DeepTypes.l1,
+}
+
+@module("demo")
+external make: React.component<props> = "Deep"

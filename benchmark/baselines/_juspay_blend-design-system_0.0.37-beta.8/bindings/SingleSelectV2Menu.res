@@ -1,28 +1,30 @@
-@module("@juspay/blend-design-system") @react.component
-external make: (
-  ~items: array<EditorSharedTypes.singleSelectV2GroupType>,
-  ~selected: string,
-  ~onSelect: string => unit,
-  ~trigger: React.element,
-  ~menuDimensions: EditorSharedTypes.selectV2MenuDimensions=?,
-  ~search: EditorSharedTypes.selectV2SearchConfig=?,
-  ~disabled: bool=?,
-  ~menuPosition: EditorSharedTypes.selectV2MenuPosition=?,
-  ~collisionBoundary: ChatInputTypes.ChatInputOverflowMenuPropsCollisonBoundaryRef.t=?,  // ⓘ was `Element | Element[]` — opaque; build with ChatInputOverflowMenuPropsCollisonBoundaryRef.fromElement / ChatInputOverflowMenuPropsCollisonBoundaryRef.fromElements
-  @as("open") ~open_: bool,
-  ~onOpenChange: bool => unit,
-  ~size: SelectV2Types.selectV2Size=?,
-  ~variant: SelectV2Types.selectV2Variant=?,
-  ~enableVirtualization: bool=?,
-  ~virtualListItemHeight: float=?,
-  ~virtualListOverscan: float=?,
-  ~onEndReached: unit => unit=?,
-  ~endReachedThreshold: float=?,
-  ~hasMore: bool=?,
-  ~loadingComponent: React.element=?,
-  ~skeleton: SelectV2Types.selectV2SkeletonProps=?,
-  ~allowCustomValue: bool=?,
-  ~customValueLabel: string=?,
-  ~menuId: string=?,
-  ~menuFooter: React.element=?,
-) => React.element = "SingleSelectV2Menu"
+type props = {
+  items: array<EditorSharedTypes.singleSelectV2GroupType>,
+  selected: string,
+  onSelect: string => unit,
+  trigger: React.element,
+  menuDimensions?: EditorSharedTypes.selectV2MenuDimensions,
+  search?: EditorSharedTypes.selectV2SearchConfig,
+  disabled?: bool,
+  menuPosition?: EditorSharedTypes.selectV2MenuPosition,
+  collisionBoundary?: ChatInputTypes.ChatInputOverflowMenuPropsCollisonBoundaryRef.t,  // ⓘ was `Element | Element[]` — opaque; build with ChatInputOverflowMenuPropsCollisonBoundaryRef.fromElement / ChatInputOverflowMenuPropsCollisonBoundaryRef.fromElements
+  @as("open") open_: bool,
+  onOpenChange: bool => unit,
+  size?: SelectV2Types.selectV2Size,
+  variant?: SelectV2Types.selectV2Variant,
+  enableVirtualization?: bool,
+  virtualListItemHeight?: float,
+  virtualListOverscan?: float,
+  onEndReached?: unit => unit,
+  endReachedThreshold?: float,
+  hasMore?: bool,
+  loadingComponent?: React.element,
+  skeleton?: SelectV2Types.selectV2SkeletonProps,
+  allowCustomValue?: bool,
+  customValueLabel?: string,
+  menuId?: string,
+  menuFooter?: React.element,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "SingleSelectV2Menu"
