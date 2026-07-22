@@ -5,6 +5,14 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.3.0] — 2026-07-22
+
+> **Upgrading:** regenerate your bindings. **JSX call sites are unchanged** (`<Button label="x" />`
+> works exactly as before). The one output-form change to be aware of: every component now binds as
+> `type props = {…}` + `external make: React.component<props>` (record-props, #155) — so a *direct*
+> `Button.make(~label="x")` labeled-args call becomes `React.createElement(Button.make, {label: "x"})`.
+> If you only use components through JSX (the common case), nothing changes but the generated files.
+
 ### Added
 - **Every component now emits a nameable `props` type — record-props is THE output form** (#155,
   **output-form change**) — whether a component binds as `type props = {…}` + `external make:
