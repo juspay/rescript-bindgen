@@ -3,7 +3,7 @@
 // benchmark/run.mjs. No deps; flat-directory snapshots only (the generator
 // emits a flat tree).
 // ============================================================================
-import { readdirSync, readFileSync, existsSync, statSync } from 'fs'
+import { readdirSync, readFileSync, existsSync } from 'fs'
 import { join } from 'path'
 
 export const GREEN = (s) => `\x1b[32m${s}\x1b[0m`
@@ -14,10 +14,11 @@ export const DIM = (s) => `\x1b[2m${s}\x1b[0m`
 export function readDir(dir) {
     const out = new Map()
     if (!existsSync(dir)) return out
-    for (const name of readdirSync(dir)) {
-        if (name === '.bindgen-manifest.json') continue // generator bookkeeping, not part of the snapshot
-        const p = join(dir, name)
-        if (statSync(p).isFile()) out.set(name, readFileSync(p, 'utf-8'))
+    // `withFileTypes` reads the entry type from the single readdir syscall — no separate `statSync`
+    // (which is a check-then-read TOCTOU: the file could vanish between readdir and stat). (CodeQL)
+    for (const ent of readdirSync(dir, { withFileTypes: true })) {
+        if (ent.name === '.bindgen-manifest.json') continue // generator bookkeeping, not part of the snapshot
+        if (ent.isFile()) out.set(ent.name, readFileSync(join(dir, ent.name), 'utf-8'))
     }
     return out
 }

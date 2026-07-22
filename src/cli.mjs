@@ -435,7 +435,9 @@ async function main() {
             for (const rel of prior) {
                 if (!written.has(rel)) {
                     const p = join(outDir, rel)
-                    if (existsSync(p)) { try { unlinkSync(p); staleRemoved++ } catch { /* ignore */ } }
+                    // Unlink directly and swallow ENOENT — an existsSync-then-unlink check is a TOCTOU
+                    // race (the file could vanish in between); the try/catch already handles "gone". (CodeQL)
+                    try { unlinkSync(p); staleRemoved++ } catch { /* already gone / unreadable — ignore */ }
                 }
             }
         } catch { /* corrupt manifest — ignore, it'll be overwritten */ }

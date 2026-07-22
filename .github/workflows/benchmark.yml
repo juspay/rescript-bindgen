@@ -51,7 +51,7 @@ jobs:
 
       - name: Sticky PR comment
         if: always() && github.event_name == 'pull_request'
-        uses: marocchino/sticky-pull-request-comment@v3
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3
         continue-on-error: true # read-only token on fork PRs
         with:
           header: bindgen-benchmark
