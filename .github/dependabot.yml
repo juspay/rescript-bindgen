@@ -8,6 +8,14 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - dependencies
+    ignore:
+      # TypeScript 7 is the native Go rewrite — it removed the classic JS compiler API
+      # (ts.createProgram / TypeChecker / TypeFlags / forEachChild) that src/extract.mjs is built
+      # on, so a major bump can NOT be a drop-in (see #137, closed). Adopting TS 7 is a migration to
+      # the new typescript/unstable/sync API, tracked in #162. Block auto-proposals of the TS major
+      # until that lands (patches/minors on the 6.x line still flow). Remove this rule then.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: "/"
