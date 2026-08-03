@@ -82,7 +82,7 @@ jobs:
         continue-on-error: true
         # External consumer → published action. For strict supply-chain
         # immutability pin the full commit SHA behind this ref.
-        uses: juspay/yama@174944306d9bfaf256fe331e7df119f3bbd64a7c # v2.7.1
+        uses: juspay/yama@087e7c67952008da7f5f2fd8fd669fed68220b11 # v3.0.2
         with:
           github-token: ${{ secrets.YAMA_GITHUB_TOKEN }}
           ai-provider: litellm
