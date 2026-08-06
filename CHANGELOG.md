@@ -5,6 +5,45 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.0-beta.0] — 2026-08-06
+
+> **Upgrading:** regenerate your bindings. A nested discriminated union that previously emitted a
+> record (or an opaque views module, in array position) now emits a **`@tag` variant** — construct
+> with `Bezier({…})` instead of a bare record literal; pattern match instead of `as*` casts. The
+> runtime object is unchanged (flat, real tag included), so only ReScript call sites move, not
+> behavior. Everything else is byte-identical on the 9-package benchmark corpus.
+
+### Fixed
+- **`Base & (A | B)` silently dropped every arm-specific field** (#167, **hotfix**) — a union of
+  intersections sharing a base (blend's `DataTable.RowAnimationConfig`) collapsed to a record built
+  from `getProperties()` on the *union*, which returns only the props common to all arms.
+  `duration`/`bezier`/`stiffness`/`damping`/`mass` vanished with **no report entry and 0 broken** —
+  the first signal was a production crash (juspay/blend-rescript#134). Nested types now get the
+  lossless mapping below; the flatten-optional record (union-aware `buildRecordFields`, same model as
+  the props path's #63 C2) is the fallback and is itself no longer lossy.
+- **Flatten fallback: a field declared by several arms at different types** is typed as the **union
+  of its arm types**, never arm 1's alone (react-day-picker's `selected`: `Date`/`Date[]`/`DateRange`
+  — first-wins claimed `Date.t`, wrong for two of three arms). **Function-typed multi-arm fields are
+  flagged, not unioned** — TS intersects a signature union's parameters, fabricating a callback no
+  arm accepts; those emit a bucketed `⚠️ REVIEW` placeholder naming the clashing signatures.
+
+### Added
+- **Nested discriminated unions map to `@tag(<field>)` variants** (#167/#169) — one inline-record
+  branch per arm, each keeping its **own required fields**: `Bezier` cannot be constructed without
+  its curve, closing #167's defect at the type level. `@as(<real literal>)` on every constructor
+  drives the runtime tag (never the ctor name), so the emitted value is the same flat object the
+  library expects — zero cost, no coercion. Applies in **record-field / prop-type position** and in
+  **array-element position**, where it replaces the opaque views module and its unchecked `%identity`
+  reads with an exhaustively-matchable variant (blend's `MenuV2FlatRow`; also retires the per-arm
+  `⚪ loose` discriminant fields). Component **props** keep the flattened form unless
+  `--variant-props` (#65) — a props variant changes how the component is rendered. Gates (each falls
+  back to the flattened record): clean string discriminant read **syntactically** (checker resolution
+  in a gate measurably reorders unrelated output), arms with **differing member sets** (identical
+  sets — `BaseUIChangeEventDetails<R>`, #30 — keep the lossless record collapse), ≤ 12 arms
+  (Highcharts' `SeriesOptionsType` is 118), every branch field concretely typed, no inherited DOM
+  attrs. The speculative branch build is sandboxed (#39/#33 snapshot/rollback). Fixture:
+  `union-arm-record-fields`.
+
 ### Changed
 - **TypeScript compiler bumped `^5.6.0` → `^6.0.3`** — the last JS-compiler-API line (TS 7 is the
   native Go rewrite and removed the classic `ts.*` API entirely, so it isn't usable as a drop-in;
