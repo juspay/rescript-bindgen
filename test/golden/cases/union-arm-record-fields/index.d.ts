@@ -27,6 +27,24 @@ type ColumnConfig = ColumnBase & (
     | { kind: 'date'; format: string }
 )
 
+// An arm-specific name declared by SEVERAL arms at DIFFERENT types (react-day-picker's `selected`:
+// `Date` in the single arm, `Date[]` in the multi arm, absent when no mode is set) must NOT take arm
+// 1's type — that would emit a confident, plainly-wrong type for the other arms. Such a field is
+// typed as the UNION of its arm types and classified as such, so the normal union machinery decides
+// honestly (an exact variant when the arms are discriminable — here `string` vs `array` — else a
+// flagged placeholder). NB `selected` must be absent from at least one arm to be arm-specific at all:
+// a name present in EVERY arm is common, and the checker merges its type itself.
+type SelectBase = { autoFocus?: boolean }
+// `onSelect` is the harder half: arms that are FUNCTIONS. TS resolves a call on a union of signatures
+// by INTERSECTING their parameters, so unioning `(v: string) => void` with `(v: string[]) => void`
+// would synthesise `string & string[]` — a confident-looking signature NO arm accepts. Such a field is
+// therefore emitted as a bucketed `review` placeholder ("flag, don't fake"), not a fabricated callback.
+type SelectionConfig = SelectBase & (
+    | { mode: 'single'; selected?: string; onSelect?: (value: string) => void }
+    | { mode: 'multi'; selected?: string[]; onSelect?: (value: string[]) => void }
+    | { mode: 'none' }
+)
+
 // NB: this record collapse is the mapping for a union in RECORD-FIELD / PROP position. The same
 // union as an ARRAY ELEMENT (`ColumnConfig[]`) takes the opaque-views path instead (`from*`/`as*`
 // per arm — see `unboxed-unions` / `ref-union-views`), which keeps each arm's own requiredness and
@@ -35,5 +53,6 @@ export declare const DataTable: (props: {
     animation?: RowAnimationConfig
     settings?: TableSettings
     column?: ColumnConfig
+    selection?: SelectionConfig
     label?: string
 }) => JsxElement

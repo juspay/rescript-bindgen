@@ -4927,20 +4927,49 @@ function buildRecordFields(type, ctx, depth) {
     // lossy. Common props keep their correctly-merged types (the `transitionType` discriminant becomes
     // one enum over all arms). Arms with IDENTICAL key sets (`BaseUIChangeEventDetails<R>` #30, the
     // anonymous-literal collapse #83) have no arm-only props, so they are untouched by construction.
-    // First arm declaring a name wins, as in the props path. (#167)
+    //
+    // An arm-only name declared by SEVERAL arms at DIFFERENT types must not be first-wins: react-day-picker's
+    // `selected` is `Date` in the single arm, `Date[]` in the multi arm and `DateRange` in the range arm, so
+    // taking arm 1 would emit a confident `Date.t` that is plainly WRONG for the other two — a
+    // plausible-but-wrong type, which the contract forbids. Those names are re-typed as the UNION of their
+    // arm types and classified as such, so the normal union machinery decides honestly: an exact `@unboxed`
+    // variant / views module when the arms are discriminable, else a flagged placeholder the report buckets.
+    // (#167)
     const armOnly = new Set()
+    const armTypes = new Map() // arm-only name -> its distinct per-arm types
     let props = type.getProperties()
     if (type.isUnion && type.isUnion()) {
         const byName = new Map(props.map((p) => [p.getName(), p]))
         for (const arm of type.types) {
             for (const p of arm.getProperties()) {
                 const nm = p.getName()
-                if (byName.has(nm)) continue
-                byName.set(nm, p)
-                armOnly.add(nm)
+                if (byName.has(nm) && !armOnly.has(nm)) continue // common to every arm: the checker already merged it
+                if (!byName.has(nm)) { byName.set(nm, p); armOnly.add(nm) }
+                let t; try { t = checker.getTypeOfSymbolAtLocation(p, ctx.decl) } catch { t = null }
+                if (!t) continue
+                const seen = armTypes.get(nm) || []
+                if (!seen.some((x) => x.id === t.id)) seen.push(t)
+                armTypes.set(nm, seen)
             }
         }
         props = [...byName.values()]
+    }
+    // `getUnionType` is a checker internal, so degrade gracefully: without it a multi-arm field keeps the
+    // first arm's type (the pre-#167 flatten behaviour) rather than crashing the whole extraction.
+    const armUnion = (nm) => {
+        const ts_ = armTypes.get(nm)
+        return (ts_ && ts_.length > 1 && typeof checker.getUnionType === 'function') ? checker.getUnionType(ts_) : null
+    }
+    // …EXCEPT when the clashing arms are FUNCTIONS. TS resolves a call on a union of signatures by
+    // INTERSECTING their parameters, so unioning `(d: Date) => void` with `(d: Date[]) => void` and
+    // `(r: DateRange) => void` (react-day-picker's per-mode `onSelect`) yields a signature whose first
+    // param is `Date & Date[] & DateRange` — which classified into a confident-looking `{from?, to?}`
+    // callback that NO arm actually accepts. Fabricating a signature is exactly what "flag, don't fake"
+    // forbids, so such a field becomes a bucketed `review` placeholder instead: the consumer sees the
+    // field exists and that it needs hand-binding, rather than a wrong type with no marker. (#167)
+    const armSigClash = (nm) => {
+        const ts_ = armTypes.get(nm)
+        return !!(ts_ && ts_.length > 1 && ts_.some((x) => x.getCallSignatures && x.getCallSignatures().length))
     }
     const hasHtml = props.some(isInherited)
     // A FIRST-PARTY field whose name collides with a DOM attr (`id`, `size`, `shape`, …) can't
@@ -4975,7 +5004,8 @@ function buildRecordFields(type, ctx, depth) {
         // as real payload, so it must NOT be stripped here (#63 C1).
         .map((p) => {
             const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0
-            const t = checker.getTypeOfSymbolAtLocation(p, ctx.decl)
+            // A multi-arm field is typed as the UNION of its arm types, never arm 1's alone (#167).
+            const t = armUnion(p.getName()) || checker.getTypeOfSymbolAtLocation(p, ctx.decl)
             // Recover syntactic nullability — `data: DirectoryData[] | null` must stay
             // `Nullable.t<array<…>>`, not collapse to a required non-nullable array; a `| undefined`
             // makes the field optional. strictNullChecks is off, so it's gone from the resolved
@@ -4986,7 +5016,9 @@ function buildRecordFields(type, ctx, depth) {
             const ownSigs = propSigs.filter((dd) => !isVendorDecl(dd))
             const ownDecl = ownSigs.length === 1 ? ownSigs[0] : (propSigs.length === 1 ? propSigs[0] : null)
             const nb = ownDecl && ownDecl.type && syntacticNullability(ownDecl.type)
-            const fieldType = isHighchartsSeriesDataField(type, p.getName(), t, checker)
+            const fieldType = armSigClash(p.getName())
+                ? { kind: 'review', note: `declared with a different SIGNATURE in each union arm (${armTypes.get(p.getName()).map((x) => checker.typeToString(x)).join(' / ')}) — a function union intersects its parameters, so no single ReScript type is faithful` }
+                : isHighchartsSeriesDataField(type, p.getName(), t, checker)
                 ? { kind: 'array', of: highchartsSeriesDataNode(ctx) }
                 : withPath(ctx, p.getName(), () => classify(t, ctx, p.getName(), depth + 1))
             return {

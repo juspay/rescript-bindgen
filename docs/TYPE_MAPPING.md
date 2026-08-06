@@ -348,8 +348,20 @@ type rowAnimationConfig = {
 ```
 
 A field present in *some* arms but not all (a 3-arm union's shared-by-two field) is arm-specific too, so
-it is optional as well; the first arm declaring a name supplies its type. Arms with **identical key
-sets** — `BaseUIChangeEventDetails<R>` instantiations (#30), the anonymous-literal collapse (#83) — have
+it is optional as well — and when those arms declare it at **different types** it is typed as the
+**union of its arm types**, never the first arm's alone. Taking arm 1 would emit a confident,
+plainly-wrong type for the others: react-day-picker's `selected` is `Date` in the single arm, `Date[]` in
+the multi arm and `DateRange` in the range arm, so first-wins would claim `Date.t` for all three. Unioning
+hands it to the normal union machinery, which resolves it exactly (`@unboxed stringOrStringArray`, or the
+existing `CjsDayPickerContextSelect` views module) or flags it — never a plausible-but-wrong type.
+
+**Function arms are the exception — they are flagged, not unioned.** TS resolves a call on a union of
+signatures by *intersecting* their parameters, so unioning react-day-picker's per-mode `onSelect`
+(`(d: Date) => void` / `(d: Date[]) => void` / `(r: DateRange) => void`) synthesises a first parameter of
+`Date & Date[] & DateRange`, which classified into a confident-looking `{from?, to?}` callback that **no
+arm accepts**. Fabricating a signature is what *flag, don't fake* forbids, so a multi-arm field whose arms
+carry call signatures becomes a bucketed `review` placeholder (`onSelect?: string, // ⚠️ REVIEW`) with the
+per-arm signatures in its note. Arms with **identical key sets** — `BaseUIChangeEventDetails<R>` instantiations (#30), the anonymous-literal collapse (#83) — have
 no arm-specific props, so their output is unchanged by construction. This is *record-field / prop*
 position only: the same union as an **array element** takes the opaque-views path (`from*`/`as*` per arm),
 which keeps each arm's own requiredness.
