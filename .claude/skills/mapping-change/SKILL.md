@@ -92,6 +92,24 @@ entry kind that isn't walked is a zero-dep node: wrong ordering, forward referen
 single-file behaviour in `test/smoke.mjs`, which calls `extractComponent` (the `--file` path)
 directly.
 
+**Any registering builder MUST register before descending — and a bail must un-register.** The
+registry entry written *before* field/branch resolution is not bookkeeping, it is the **cycle guard**:
+a self-referential type (`MenuEntry = Item | Submenu({entries: MenuEntry[]})` — trees, menus, ASTs,
+comment threads) re-enters the builder from inside its own build, and the early entry is what the
+re-entry resolves to (→ `type rec`). `tagVariantNode` shipped build-before-register to keep its bail
+simple, and the result was #170: unbounded recursion, stack overflow, the component **silently
+dropped** from the output. The two patterns compose: register early *inside* the snapshot, so the
+rollback un-registers the entry along with everything else. Belt-and-braces: every speculative
+builder also gets a `depth > MAX_DEPTH → fall back` seatbelt, so no unimagined shape can recurse
+unboundedly again.
+
+**An acknowledged residual risk gets a fixture, not a paragraph.** #170 was flagged during review of
+#168 and answered with a written acknowledgment; the recursive fixture that would have falsified the
+"it terminates" reasoning was never written, and the bug shipped. If a review names a shape you
+believe is handled, *prove it with a fixture in the same PR* — reasoning about termination is
+exactly the kind of claim that must be executed, not argued. (Same spirit as "compile the ReScript,
+don't reason about it".)
+
 **A function union is not unionable.** TS resolves a call on a union of signatures by **intersecting**
 its parameters, so `(d: Date) => void | (d: Date[]) => void` yields a first param of `Date & Date[]` —
 a signature no arm accepts. Flag it, or give each arm its own variant branch.

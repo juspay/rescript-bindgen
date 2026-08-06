@@ -4890,6 +4890,11 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
         return null
     }
     if (parts.length > TAG_VARIANT_MAX_ARMS) return null // 118-arm Highcharts unions: see the constant
+    // Depth seatbelt (#170): the cycle guard above the branch build is the real fix for
+    // self-reference, but no path through this function may ever be UNBOUNDED again — a shape we
+    // haven't imagined (mutual recursion threading types the guard doesn't key on) must degrade to
+    // the record collapse, exactly as records themselves degrade past MAX_DEPTH.
+    if (depth > MAX_DEPTH) return null
     // GATE 1, and deliberately the cheapest one — it reads member NAMES only, never resolving a
     // property's type, so a union that will not become a variant is left in exactly the state the
     // collapse below expects. (Resolving types here perturbs the checker's member ordering, which
@@ -4918,15 +4923,23 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
     }
     if (!tag) return null
 
-    // Build every branch BEFORE registering: unlike a record this can still bail (a generic or lossy
-    // field), and a half-registered entry would leave a dangling name in the registry. A branch field
-    // therefore cannot reference this variant recursively — a self-referential discriminated union
-    // falls back to the record collapse, which registers early and handles cycles.
+    // REGISTER BEFORE BUILDING BRANCHES — the cycle guard (#170). A self-referential discriminated
+    // union (`MenuEntry = Item | Submenu({entries: MenuEntry[]})` — trees, menus, comment threads,
+    // ASTs) re-enters this function from inside its own branch build; the early registration below is
+    // what that re-entry finds, resolving the loop to a `typeRef` to the in-progress entry — the
+    // ReScript output is the faithful recursive variant (`type rec menuEntry = …`, self-reference via
+    // the emit-side SCC grouping). Building-before-registering (the first shipped version) had NO
+    // guard, so the re-entry restarted the branch build unboundedly: stack overflow, and the whole
+    // component silently dropped from the output — strictly worse than 1.3.0's flagged placeholder.
     //
     // SANDBOXED, because `classify` has REGISTRY side effects: a branch field mints records, enums and
     // opaque modules as it resolves. Bailing after that would strand every one of them — measured as
     // +50 orphan types (and new unreferenced Highcharts views modules) in blend. So snapshot the
-    // registry, and on any bail restore it exactly, minted names included — the #39/#33 trial pattern.
+    // registry FIRST, and on any bail restore it exactly — which now also un-registers the early entry
+    // itself (and any self-refs minted against it die with the rolled-back types that held them); the
+    // union then falls through to the record collapse, whose own early registration handles the cycle.
+    // Single-file mode gets the same snapshot over its LOCAL registries (records/enums/unboxed +
+    // seen* maps) — previously it had none, so a bailed build leaked orphan locals there too.
     const shared = ctx.shared
     const snap = shared ? {
         entriesLen: shared.entries.length,
@@ -4934,21 +4947,58 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
         sigs: new Set(shared.bySig.keys()),
         names: new Set(shared.names),
         typeVars: ctx.typeVars ? new Map(ctx.typeVars) : null,
-    } : null
+    } : {
+        recordsLen: ctx.records.length,
+        enumsLen: ctx.enums.length,
+        unboxedLen: ctx.unboxed.length,
+        seenRecords: new Set(ctx.seenRecords.keys()),
+        seenEnums: new Set(ctx.seenEnums.keys()),
+        seenUnboxed: new Set(ctx.seenUnboxed.keys()),
+        typeVars: ctx.typeVars ? new Map(ctx.typeVars) : null,
+    }
     const rollback = () => {
-        if (!snap) return null
-        shared.entries.length = snap.entriesLen
-        for (const k of [...shared.byKey.keys()]) if (!snap.keys.has(k)) shared.byKey.delete(k)
-        for (const s of [...shared.bySig.keys()]) if (!snap.sigs.has(s)) shared.bySig.delete(s)
-        for (const n of [...shared.names]) if (!snap.names.has(n)) shared.names.delete(n)
+        if (shared) {
+            shared.entries.length = snap.entriesLen
+            for (const k of [...shared.byKey.keys()]) if (!snap.keys.has(k)) shared.byKey.delete(k)
+            for (const s of [...shared.bySig.keys()]) if (!snap.sigs.has(s)) shared.bySig.delete(s)
+            for (const n of [...shared.names]) if (!snap.names.has(n)) shared.names.delete(n)
+        } else {
+            ctx.records.length = snap.recordsLen
+            ctx.enums.length = snap.enumsLen
+            ctx.unboxed.length = snap.unboxedLen
+            for (const k of [...ctx.seenRecords.keys()]) if (!snap.seenRecords.has(k)) ctx.seenRecords.delete(k)
+            for (const k of [...ctx.seenEnums.keys()]) if (!snap.seenEnums.has(k)) ctx.seenEnums.delete(k)
+            for (const k of [...ctx.seenUnboxed.keys()]) if (!snap.seenUnboxed.has(k)) ctx.seenUnboxed.delete(k)
+        }
         if (snap.typeVars && ctx.typeVars) { ctx.typeVars.clear(); for (const [k, v] of snap.typeVars) ctx.typeVars.set(k, v) }
         return null
     }
+
+    // Names are computable before the build (they depend only on the path/typeName), so the entry can
+    // register first. Named exactly as a record is (#90/#96): a NAMED union keeps the library's name;
+    // an anonymous one is anchored to its property PATH (home stem added only in shared mode).
+    const pathPascal = (ctx.path && ctx.path.length ? ctx.path : [propName]).map(pascal).join('')
+    const base = typeName ? lower(typeName) : lower(pathPascal) + 'Config'
+    let entry = null // shared-mode early entry; branches filled in place after the build
+    if (shared) {
+        const key = 'id:' + type.id
+        if (shared.byKey.has(key)) return refTo(shared.byKey.get(key)) // cycle re-entry or already built
+        const home = homeOf(type, ctx)
+        const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pathPascal + 'Config'
+        entry = { key, kind: 'tagVariant', name: uniqueName(sharedBase, shared), base: sharedBase, home, deps: new Set(), tag, branches: [] }
+        shared.byKey.set(key, entry)
+        shared.entries.push(entry)
+    } else {
+        if (ctx.seenRecords.has(base)) return { kind: 'typeRef', to: base } // cycle re-entry or already built
+        ctx.seenRecords.set(base, true)
+    }
+
     const usedCtors = new Set()
-    const branches = []
+    const branches = entry ? entry.branches : []
     const prevInRecord = ctx.inRecordField
     ctx.inRecordField = true // a shared type can't mint component type vars for `any` (#31)
     const prevPath = ctx.path
+    if (type.id != null) ctx.visiting?.add(type.id) // same in-progress marker records carry
     try {
         for (let i = 0; i < parts.length; i++) {
             let ctor = pascal(lits[i]) || `Case${i}`
@@ -4981,47 +5031,38 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
     } finally {
         ctx.inRecordField = prevInRecord
         ctx.path = prevPath
+        if (type.id != null) ctx.visiting?.delete(type.id)
     }
     // Robustness gate (#65): a free type var can't be declared by an inline-record payload, and a
-    // lossy field would lose its bucket flag there. Either way the flattened record serves better.
+    // lossy field would lose its bucket flag there. Either way the flattened record serves better —
+    // and `rollback()` un-registers the early entry, so the fallback starts from a clean registry.
     const tv = new Set()
     for (const b of branches) for (const f of b.fields) collectTypeVars(f.type, tv)
     if (tv.size) return rollback()
     if (branches.some((b) => b.fields.some((f) => irHasImperfection(f.type)))) return rollback()
     if (!branches.some((b) => b.fields.length)) return rollback() // every branch bare: the enum says it all
 
-    // Named exactly as a record is (#90/#96): a NAMED union keeps the library's name; an anonymous one
-    // is anchored to its property PATH, with the home stem added only in shared mode — `stableAnonBase`
-    // already folds the stem in, so composing it with another home prefix stutters
-    // (`stableStructuralNamesStableStructuralNamesItemsConfig`).
-    const pathPascal = (ctx.path && ctx.path.length ? ctx.path : [propName]).map(pascal).join('')
-    const base = typeName ? lower(typeName) : lower(pathPascal) + 'Config'
-    if (!ctx.shared) {
-        // Single-file mode: one local declaration list, deduped by name.
-        if (ctx.seenRecords.has(base)) return { kind: 'typeRef', to: base }
-        ctx.seenRecords.set(base, true)
+    if (!shared) {
+        // Single-file mode: the name was reserved up front; land the declaration now.
         ctx.records.push({ name: base, tag, branches })
         return { kind: 'typeRef', to: base }
     }
-    const key = 'id:' + type.id
-    if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
-    const home = homeOf(type, ctx)
-    const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pathPascal + 'Config'
-    const entry = { key, kind: 'tagVariant', name: uniqueName(sharedBase, ctx.shared), base: sharedBase, home, deps: new Set(), tag, branches }
-    for (const b of branches) for (const f of b.fields) collectRefKeys(f.type, entry.deps)
-    // Structural dedup, scoped per home module — same rule records use (#61 follow-up).
+    for (const b of branches) for (const f of b.fields) collectRefKeys(f.type, entry.deps) // incl. self-key -> `type rec`
+    // Structural dedup, scoped per home module — same rule records use (#61 follow-up). The entry is
+    // already registered (cycle guard), so a hit must also RETRACT it: drop it from entries, release
+    // its minted name, and redirect its key to the canonical — recordNode's exact dance. NB a
+    // SELF-referential variant can never falsely merge: its sig embeds its own anchor base via the
+    // self typeRef, so two distinct recursive variants with different names hash apart.
     const sig = entry.home + '|' + entrySig(entry)
-    const canon = ctx.shared.bySig.get(sig)
+    const canon = shared.bySig.get(sig)
     if (canon && canon !== entry) {
-        // Release the minted name (as recordNode's dedup does) — else a discarded duplicate keeps
-        // `foo` reserved forever and a later legitimate `foo` gets counter-suffixed to `foo2`.
-        ctx.shared.names.delete(entry.name)
-        ctx.shared.byKey.set(key, canon)
+        const i = shared.entries.indexOf(entry)
+        if (i >= 0) shared.entries.splice(i, 1)
+        shared.names.delete(entry.name)
+        shared.byKey.set(entry.key, canon)
         return refTo(canon)
     }
-    ctx.shared.byKey.set(key, entry)
-    ctx.shared.entries.push(entry)
-    ctx.shared.bySig.set(sig, entry)
+    shared.bySig.set(sig, entry)
     return refTo(entry)
 }
 

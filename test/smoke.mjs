@@ -390,9 +390,28 @@ export default Widget;
 `)
     const ir = extractComponent(f, { from: 'demo', importName: 'Widget' })
     const c = emit(ir)
+    // #170: a SELF-referential discriminated union (`MenuEntry = Item | Submenu({entries:
+    // MenuEntry[]})`) once recursed unboundedly in tagVariantNode — stack overflow, component
+    // silently DROPPED from the output (extract threw, cli skipped it). The early-registration
+    // cycle guard resolves the self-reference to the in-progress entry -> `type rec` variant.
+    const d2 = mkdtempSync(join(tmpdir(), 'bindgen-recursive-variant-'))
+    const f2 = join(d2, 'Menu.d.ts')
+    writeFileSync(f2, `
+type JsxElement = { __brand: 'element' };
+type MenuEntry =
+  | { type: 'item'; label: string }
+  | { type: 'submenu'; label: string; entries: MenuEntry[] };
+export declare const Menu: (props: { entries?: MenuEntry[] }) => JsxElement;
+export default Menu;
+`)
+    let recVariantCode = ''
+    let recVariantThrew = null
+    try { recVariantCode = emit(extractComponent(f2, { from: 'demo', importName: 'Menu' })) } catch (e) { recVariantThrew = e }
     return [
       ['#167 file mode: record<->variant cycle fuses into ONE `type rec … and …` group', /type rec holder = \{[\s\S]*?\n@tag\("kind"\)\nand tree =/.test(c)],
       ['#167 file mode: variant branches carry @as(real literal)', /@as\("leaf"\) Leaf\(\{value: string\}\)/.test(c) && /@as\("branch"\) Branch\(\{holder: holder\}\)/.test(c)],
+      ['#170: self-referential discriminated union does NOT crash extraction', recVariantThrew === null],
+      ['#170: … and emits the recursive `type rec` @tag variant', /@tag\("type"\)\ntype rec menuEntryConfig =|@tag\("type"\)\ntype rec menuEntry/.test(recVariantCode) && /entries: array<menuEntry/.test(recVariantCode)],
     ]
   })(),
 ]
