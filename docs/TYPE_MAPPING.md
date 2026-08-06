@@ -474,6 +474,40 @@ Fixture: [`discriminated-union-variant-props`](../test/golden/cases/discriminate
 
 ---
 
+## `void` / `undefined` → `unit`, in every position (#175)
+Fixture: [`void-undefined-unit`](../test/golden/cases/void-undefined-unit)
+
+`void` and `undefined` map to **`unit`**: its runtime value is literally `undefined`, the same identity
+the views-module `none` constant relies on. This was applied in **return** position and for a zero-arg
+signature, but nowhere else — so the same type elsewhere fell to the salvage/opaque path:
+
+| TypeScript | before | now |
+|---|---|---|
+| `(e: void) => number` (parameter) | `'a => float` + ⓘ "could not be modelled" — **and** a spurious `<'a>` on `type props` | `unit => float` |
+| `custom: undefined` (record field) | `string` + ⚪ loose | `unit` |
+| `(e: number) => void` (return) | `float => unit` | unchanged |
+| `() => number` (zero-arg) | `unit => float` | unchanged |
+
+The parameter case is monaco's event family, re-exported through blend's editor surface
+(`IEvent<void>` — a callable interface whose listener parameter is `void`); the field case is blend's
+token idiom, `[CardVariant.CUSTOM]: undefined` marking "this variant has no tokens". A `string` there
+is not merely loose but **misleading** — it invites a consumer to pass a string where the library
+requires the *absence* of a value.
+
+Handled **above the depth/object paths**, alongside `brandedPrimitiveNode` and for the same stated
+reason: a dependency-free runtime leaf can never expand the registry, so the depth bound is irrelevant
+to it and must not degrade it. That placement is what makes it reach the deep cases — 323 of blend's
+330 occurrences sit inside the Highcharts graph, past `MAX_DEPTH`, where the past-bound branch would
+otherwise answer first with `string`.
+
+`null` is deliberately **not** included: ReScript distinguishes it from `undefined`, and it is
+recovered separately as `Nullable.t` from the syntactic node.
+
+On blend 0.0.37 this removes **335** flags (⚪ loose 725 → 390, every `was undefined` gone) with the
+buckets unchanged at 219 usable / 7 review / 0 broken.
+
+---
+
 ## Records, recursion & utility unwrapping
 Fixture: [`records`](../test/golden/cases/records)
 

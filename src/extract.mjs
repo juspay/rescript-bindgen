@@ -2809,6 +2809,26 @@ function classify(type, ctx, propName = '', depth = 0) {
     const branded = brandedPrimitiveNode(type, ctx, propName)
     if (branded) return branded
 
+    // `void` / `undefined` IS ReScript's `unit` — its runtime value is literally `undefined`, the same
+    // identity the views-module `none` constant already relies on. That mapping was applied in RETURN
+    // position (`functionNode`) and for a zero-arg signature, but nowhere else — so the same type in
+    // any OTHER position fell through to the salvage/opaque path and came out WORSE than the exact
+    // answer sitting right here:
+    //   · a callback PARAM (`(e: void) => number` — monaco's `IEvent<void>`, 25 fields on blend's
+    //     editor surface) became a salvaged type VARIABLE, which also dragged a spurious `<'a>` onto
+    //     the enclosing `type props` and every consumer annotation, for a param carrying no data;
+    //   · a record FIELD declared exactly `undefined` (blend's `[CardVariant.CUSTOM]: undefined`
+    //     token slots — 330 fields, the largest single ⚪ group) became a `string` placeholder, which
+    //     is not merely loose but actively MISLEADING: it invites a consumer to pass a string where
+    //     the library requires the ABSENCE of a value.
+    // Placed with `brandedPrimitiveNode` ABOVE the depth/object paths for the reason stated there —
+    // a dependency-free runtime leaf can never expand the registry, so the depth bound is irrelevant
+    // to it and must not degrade it. That placement matters: 323 of blend's 330 cases are DEEP inside
+    // the Highcharts graph, where the past-bound branch would otherwise answer first with `string`.
+    // NB `null` is deliberately NOT included: ReScript distinguishes it from `undefined`, and it is
+    // recovered separately as `Nullable.t` from the syntactic node. (#175)
+    if (flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined)) return { kind: 'unit' }
+
     // depth / cycle guards — complex library types resolve to deep self-referential object graphs;
     // beyond a few levels we emit opaque + flag (truncates UNBOUNDED NEW expansion).
     if (depth > MAX_DEPTH) {

@@ -686,8 +686,8 @@ type rootMenuStoreUseSyncedValuesParentConfigV13bp7 = {
   context: contextMenuRootContext,
   menuContext: menuRootContext,
 }
-type rootMenuStoreUseSyncedValuesParentConfigV1oeh5 = {
-  @as("type") type_: string,  // ⚪ loose — was `undefined`
+type rootMenuStoreUseSyncedValuesParentConfigV104c1 = {
+  @as("type") type_: unit,
 }
 type dialogStoreV9pmvf2<'a> = {
   setOpen: (bool, rootDialogStoreSetOpenConfig) => unit,

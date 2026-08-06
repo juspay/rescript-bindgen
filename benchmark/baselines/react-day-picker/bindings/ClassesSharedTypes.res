@@ -809,14 +809,14 @@ type dayPickerContextV2cyrn = {
   formatters: formatters,
   dayPickerProps: dayPickerProps,
 }
-type dayPickerContextV15s1d = {
+type dayPickerContextV15rt8 = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,
   goToMonth: Date.t => unit,
   getModifiers: calendarDay2 => Dict.t<bool>,
-  selected?: string,  // ⚪ loose — was `undefined`
-  select?: string,  // ⚪ loose — was `undefined`
+  selected?: unit,
+  select?: unit,
   isSelected?: Date.t => bool,
   components: customComponents,
   classNames: classNames,

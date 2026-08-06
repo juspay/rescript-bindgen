@@ -6,7 +6,7 @@ type seriesLineOptions<'b> = {
 type seriesXrangeOptions<'b> = {
   @as("type") type_: string,  // ⚪ loose — was `"xrange"`
   data?: array<'b>,
-  depth?: string,  // ⚪ loose — was `undefined`
+  depth?: unit,
   name?: string,
 }
 module SeriesOptionsType = {
