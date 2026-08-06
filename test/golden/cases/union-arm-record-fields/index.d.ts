@@ -54,3 +54,17 @@ export declare const DataTable: (props: {
     selection?: SelectionConfig
     label?: string
 }) => JsxElement
+
+// ARRAY-ELEMENT position (#169). A multi-object element union goes straight to the opaque-views module
+// (`from*`/`as*` per arm) without passing through the union classifier, so it needs its own hook. The
+// views module does keep per-arm requiredness — but READING one is an unchecked `%identity` cast: the
+// consumer must already know which arm they hold, and calling the wrong `as*` is undefined behaviour.
+// A `@tag` variant is exhaustively matchable and compiler-verified — strictly stronger. Blend's
+// `MenuV2FlatRow` is this exact shape (and its three per-arm records each carried a ⚪ loose
+// discriminant field, which the tag makes unnecessary).
+type FlatRow =
+    | { type: 'label'; id: string; label: string }
+    | { type: 'separator'; id: string }
+    | { type: 'item'; id: string; itemIndex: number }
+
+export declare const flattenRows: (groups: string[]) => FlatRow[]

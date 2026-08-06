@@ -362,6 +362,30 @@ The branch build is **sandboxed** (the #39/#33 snapshot/rollback): `classify` mi
 opaque modules as it resolves, so a bail after that would strand them — measured as +50 orphan types in
 blend before the rollback was added.
 
+**Also in ARRAY-ELEMENT position (#169).** A multi-object element union (`FlatRow[]`) goes straight to the
+opaque-views module without passing through the union classifier, so it gets its own hook. The variant is
+strictly stronger there: the views module preserves per-arm requiredness, but **reading** one is an
+unchecked `%identity` cast — the consumer must already know which arm they hold, and calling the wrong
+`as*` is undefined behaviour with no runtime check. A `@tag` variant is exhaustively matchable and
+compiler-verified. On blend, `MenuV2FlatRow` went from 6 `%identity` externals to:
+
+```rescript
+@tag("type")
+type menuV2FlatRow =
+  | @as("label") Label({id: string, label: string})
+  | @as("separator") Separator({id: string})
+  | @as("item") Item({id: string, item: menuV2ItemType, groupId: float, itemIndex: float})
+```
+
+— which also retired three `⚪ loose` fields: each per-arm record had carried
+`@as("type") type_: string  // ⚪ loose — was "label"`, and as the tag it needs no field at all.
+
+**Still opt-in for a component's own props.** `CardProps` (14 arm-specific fields over 3 variants) and
+`SelectItemV2Props` keep the flattened form unless `--variant-props` is passed, because a props variant
+changes how the component is *rendered* (`React.createElement(make, Aligned({…}))` instead of JSX) — a
+much larger consumer change than constructing a value. Nested types and array elements have no such
+call-site implication, so they take the variant by default.
+
 **The flattened record is the fallback.** Fixture:
 [`union-arm-record-fields`](../test/golden/cases/union-arm-record-fields). `Base & (A | B)` at a
 record-field / prop *type* position (blend's `DataTable.RowAnimationConfig`) reaches the record builder

@@ -22,3 +22,10 @@ type selectionConfig =
   | @as("single") Single({autoFocus?: bool, selected?: string, onSelect?: string => unit})
   | @as("multi") Multi({autoFocus?: bool, selected?: array<string>, onSelect?: array<string> => unit})
   | @as("none") None({autoFocus?: bool})
+// #167: discriminated union — each branch keeps its OWN required fields.
+//       Build with Label({…}); `type` is auto-filled by @tag.
+@tag("type")
+type flatRow =
+  | @as("label") Label({id: string, label: string})
+  | @as("separator") Separator({id: string})
+  | @as("item") Item({id: string, itemIndex: float})

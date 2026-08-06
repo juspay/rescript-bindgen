@@ -3336,7 +3336,21 @@ function classify(type, ctx, propName = '', depth = 0) {
             const members = unionMembers(checker, elem)
             const objArms = members.filter((m) => asArray(m, checker) || checker.isTupleType?.(m) ||
                 ((m.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) && m.getProperties && m.getProperties().length))
+            // A DISCRIMINATED element union gets the `@tag` variant instead of the views module (#167/#169).
+            // Strictly stronger: the views module preserves per-arm requiredness, but READING one is an
+            // unchecked `%identity` cast — the consumer must already know which arm they hold, and calling
+            // the wrong `as*` is undefined behaviour with no runtime check. A `@tag` variant is
+            // exhaustively matchable and the compiler verifies the arm (blend's `MenuV2FlatRow`, tagged
+            // `type: label | separator | item`). Same gates as everywhere else, so anything that can't
+            // carry a faithful variant keeps the views module below.
             if (objArms.length >= 2) {
+                const elemName = (elem.aliasSymbol && /^[A-Z]/.test(elem.aliasSymbol.getName()) && elem.aliasSymbol.getName()) ||
+                    (type.aliasSymbol && /^[A-Z]/.test(typeName(type) || '') ? typeName(type) : null)
+                const v = members.every((m) => (m.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) &&
+                    m.getProperties && m.getProperties().length && !(m.getCallSignatures && m.getCallSignatures().length))
+                    ? tagVariantNode(elem, members, ctx, propName, depth, elemName)
+                    : null
+                if (v) return { kind: 'array', of: v }
                 const opaque = opaqueUnion(ctx, elem, members, propName, depth, type.aliasSymbol ? { nameHint: typeName(type) } : {})
                 if (opaque) return { kind: 'array', of: opaque }
             }
@@ -4976,7 +4990,12 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
     if (branches.some((b) => b.fields.some((f) => irHasImperfection(f.type)))) return rollback()
     if (!branches.some((b) => b.fields.length)) return rollback() // every branch bare: the enum says it all
 
-    const base = typeName ? lower(typeName) : stableAnonBase(ctx, type, propName) + 'Config'
+    // Named exactly as a record is (#90/#96): a NAMED union keeps the library's name; an anonymous one
+    // is anchored to its property PATH, with the home stem added only in shared mode — `stableAnonBase`
+    // already folds the stem in, so composing it with another home prefix stutters
+    // (`stableStructuralNamesStableStructuralNamesItemsConfig`).
+    const pathPascal = (ctx.path && ctx.path.length ? ctx.path : [propName]).map(pascal).join('')
+    const base = typeName ? lower(typeName) : lower(pathPascal) + 'Config'
     if (!ctx.shared) {
         // Single-file mode: one local declaration list, deduped by name.
         if (ctx.seenRecords.has(base)) return { kind: 'typeRef', to: base }
@@ -4987,7 +5006,7 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
     const key = 'id:' + type.id
     if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
     const home = homeOf(type, ctx)
-    const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pascal(base)
+    const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pathPascal + 'Config'
     const entry = { key, kind: 'tagVariant', name: uniqueName(sharedBase, ctx.shared), base: sharedBase, home, deps: new Set(), tag, branches }
     for (const b of branches) for (const f of b.fields) collectRefKeys(f.type, entry.deps)
     // Structural dedup, scoped per home module — same rule records use (#61 follow-up).
