@@ -3,7 +3,7 @@ type props<'a, 'b> = {
   ...DistTypes.readOnlyProps,
   ref?: React.ref<Nullable.t<Dom.element>>,
   onChange?: float => 'a,
-  onHoverChange?: float => unit => unit,
+  onHoverChange?: float => option<unit => unit>,
   onBlur?: option<'a> => unit,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   onFocus?: option<'b> => unit,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   isDisabled?: bool,

@@ -19,11 +19,11 @@ type scrollAreaViewportState = {
 type toastViewportState = {
   expanded: bool,
 }
-@unboxed type dialogViewportStyle = Style(JsxDOM.style) | Fn(dialogViewportState => JsxDOM.style)
-@unboxed type dialogViewportClassName = Str(string) | Fn(dialogViewportState => string)
-@unboxed type stateStyle = Style(JsxDOM.style) | Fn(state => JsxDOM.style)
-@unboxed type stateClassName = Str(string) | Fn(state => string)
-@unboxed type scrollAreaViewportStyle = Style(JsxDOM.style) | Fn(scrollAreaViewportState => JsxDOM.style)
-@unboxed type scrollAreaViewportClassName = Str(string) | Fn(scrollAreaViewportState => string)
-@unboxed type toastViewportStyle = Style(JsxDOM.style) | Fn(toastViewportState => JsxDOM.style)
-@unboxed type toastViewportClassName = Str(string) | Fn(toastViewportState => string)
+@unboxed type dialogViewportStyle = Style(JsxDOM.style) | Fn(dialogViewportState => option<JsxDOM.style>)
+@unboxed type dialogViewportClassName = Str(string) | Fn(dialogViewportState => option<string>)
+@unboxed type stateStyle = Style(JsxDOM.style) | Fn(state => option<JsxDOM.style>)
+@unboxed type stateClassName = Str(string) | Fn(state => option<string>)
+@unboxed type scrollAreaViewportStyle = Style(JsxDOM.style) | Fn(scrollAreaViewportState => option<JsxDOM.style>)
+@unboxed type scrollAreaViewportClassName = Str(string) | Fn(scrollAreaViewportState => option<string>)
+@unboxed type toastViewportStyle = Style(JsxDOM.style) | Fn(toastViewportState => option<JsxDOM.style>)
+@unboxed type toastViewportClassName = Str(string) | Fn(toastViewportState => option<string>)

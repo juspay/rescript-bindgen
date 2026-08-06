@@ -238,7 +238,7 @@ and dateLibOptions = {
 @unboxed and dateLibOptionsLabelWeekNumber = Str(string) | Fn((float, option<dateLibOptions>) => string)
 @unboxed and dateLibOptionsLabelWeekday = Str(string) | Fn((Date.t, option<dateLibOptions>, option<InstanceTypes.dateLib>) => string)
 @unboxed and dateLibOptionsLabelDayButton = Str(string) | Fn((Date.t, Dict.t<bool>, option<dateLibOptions>, option<InstanceTypes.dateLib>) => string)
-@unboxed and dateLibOptionsLabelNext = Str(string) | Fn((Date.t, option<dateLibOptions>) => string)
+@unboxed and dateLibOptionsLabelNext = Str(string) | Fn((option<Date.t>, option<dateLibOptions>) => string)
 @unboxed and dateLibOptionsLabelYearDropdown = Str(string) | Fn(option<dateLibOptions> => string)
 @unboxed and dateLibOptionsLabelMonthDropdown = Str(string) | Fn(option<dateLibOptions> => string)
 @unboxed and dateLibOptionsLabelGridcell = Str(string) | Fn((Date.t, option<Dict.t<bool>>, option<dateLibOptions>, option<InstanceTypes.dateLib>) => string)
@@ -545,8 +545,8 @@ type typesLabelsConfig = {
   labelGridcell?: (Date.t, option<Dict.t<bool>>, option<dateLibOptions>, option<dateLib2>) => string,
   labelMonthDropdown?: option<dateLibOptions> => string,
   labelYearDropdown?: option<dateLibOptions> => string,
-  labelNext?: (Date.t, option<dateLibOptions>) => string,
-  labelPrevious?: Date.t => string,
+  labelNext?: (option<Date.t>, option<dateLibOptions>) => string,
+  labelPrevious?: option<Date.t> => string,
   labelDayButton?: (Date.t, Dict.t<bool>, option<dateLibOptions>, option<dateLib2>) => string,
   labelWeekday?: (Date.t, option<dateLibOptions>, option<dateLib2>) => string,
   labelWeekNumber?: (float, option<dateLibOptions>) => string,
@@ -663,8 +663,8 @@ type labels = {
   labelGridcell: (Date.t, option<Dict.t<bool>>, option<dateLibOptions>, option<dateLib2>) => string,
   labelMonthDropdown: option<dateLibOptions> => string,
   labelYearDropdown: option<dateLibOptions> => string,
-  labelNext: (Date.t, option<dateLibOptions>) => string,
-  labelPrevious: Date.t => string,
+  labelNext: (option<Date.t>, option<dateLibOptions>) => string,
+  labelPrevious: option<Date.t> => string,
   labelDayButton: (Date.t, Dict.t<bool>, option<dateLibOptions>, option<dateLib2>) => string,
   labelWeekday: (Date.t, option<dateLibOptions>, option<dateLib2>) => string,
   labelWeekNumber: (float, option<dateLibOptions>) => string,
@@ -793,7 +793,7 @@ type dayPickerProps = {
   excludeDisabled?: bool,
   resetOnSelect?: bool,
 }
-type dayPickerContextV2cyrn = {
+type dayPickerContextFa9fr = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,
@@ -809,7 +809,7 @@ type dayPickerContextV2cyrn = {
   formatters: formatters,
   dayPickerProps: dayPickerProps,
 }
-type dayPickerContextV15rt8 = {
+type dayPickerContextLqhv7 = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,

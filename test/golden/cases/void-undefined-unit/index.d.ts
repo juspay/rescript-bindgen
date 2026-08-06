@@ -26,6 +26,15 @@ type PaddingTokens = {
 // 25 fields on blend (`onDidChangeAttached`, `onWillDispose`, `onDidLayout`, …).
 interface Event0 { (listener: (e: void) => number, thisArg?: string): Disposable }
 
+// PART C — `T | void` is not `T`: TypeScript accepts `undefined`, so a value-position union needs
+// an explicit option layer. A direct record/component property follows bindgen's existing
+// `T | undefined` convention and becomes optional; an alias remains a required `option<T>` value.
+type MaybeString = string | void
+type NestedMaybe = {
+    direct: string | void
+    aliased: MaybeString
+}
+
 // A void param that is NOT the only param must stay a real parameter — `(unit, float) => unit` —
 // and must NOT collapse into a zero-arg signature.
 export declare const Ed: (props: {
@@ -37,4 +46,17 @@ export declare const Ed: (props: {
     onAttach?: Event0
     tokens?: PaddingTokens
     voidArray?: undefined[]
+    directMaybe: string | void
+    aliasedMaybe: MaybeString
+    optionalAliasedMaybe?: MaybeString
+    maybeArray?: MaybeString[]
+    maybePromise?: Promise<MaybeString>
+    maybeDict?: { [key: string]: MaybeString }
+    maybeTuple?: [MaybeString, number]
+    nestedMaybe?: NestedMaybe
+    callbackMaybe?: (value: string | void) => string | void
+    callbackOptionalMaybe?: (value?: MaybeString) => void
+    callbackUndefined?: (value: string | undefined) => string | undefined
+    callbackNullish?: (value: string | null | void) => string | null | void
+    multiMaybe?: () => string | number | void
 }) => JsxElement

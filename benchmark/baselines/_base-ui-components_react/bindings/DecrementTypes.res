@@ -11,5 +11,5 @@ type numberFieldDecrementState = {
   filled: bool,
   focused: bool,
 }
-@unboxed type numberFieldDecrementStyle = Style(JsxDOM.style) | Fn(numberFieldDecrementState => JsxDOM.style)
-@unboxed type numberFieldDecrementClassName = Str(string) | Fn(numberFieldDecrementState => string)
+@unboxed type numberFieldDecrementStyle = Style(JsxDOM.style) | Fn(numberFieldDecrementState => option<JsxDOM.style>)
+@unboxed type numberFieldDecrementClassName = Str(string) | Fn(numberFieldDecrementState => option<string>)

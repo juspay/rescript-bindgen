@@ -11,5 +11,5 @@ type numberFieldIncrementState = {
   filled: bool,
   focused: bool,
 }
-@unboxed type numberFieldIncrementStyle = Style(JsxDOM.style) | Fn(numberFieldIncrementState => JsxDOM.style)
-@unboxed type numberFieldIncrementClassName = Str(string) | Fn(numberFieldIncrementState => string)
+@unboxed type numberFieldIncrementStyle = Style(JsxDOM.style) | Fn(numberFieldIncrementState => option<JsxDOM.style>)
+@unboxed type numberFieldIncrementClassName = Str(string) | Fn(numberFieldIncrementState => option<string>)

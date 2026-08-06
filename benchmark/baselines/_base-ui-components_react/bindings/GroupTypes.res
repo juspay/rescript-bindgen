@@ -11,5 +11,5 @@ type numberFieldGroupState = {
   filled: bool,
   focused: bool,
 }
-@unboxed type numberFieldGroupStyle = Style(JsxDOM.style) | Fn(numberFieldGroupState => JsxDOM.style)
-@unboxed type numberFieldGroupClassName = Str(string) | Fn(numberFieldGroupState => string)
+@unboxed type numberFieldGroupStyle = Style(JsxDOM.style) | Fn(numberFieldGroupState => option<JsxDOM.style>)
+@unboxed type numberFieldGroupClassName = Str(string) | Fn(numberFieldGroupState => option<string>)

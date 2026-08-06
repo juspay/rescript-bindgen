@@ -21,9 +21,9 @@ type tabsIndicatorState = {
   orientation: PositionerSharedTypes.orientation,
   tabActivationDirection: PositionerSharedTypes.tabsTabActivationDirection,
 }
-@unboxed type checkboxIndicatorStyle = Style(JsxDOM.style) | Fn(checkboxIndicatorState => JsxDOM.style)
-@unboxed type checkboxIndicatorClassName = Str(string) | Fn(checkboxIndicatorState => string)
-@unboxed type radioIndicatorStyle = Style(JsxDOM.style) | Fn(radioIndicatorState => JsxDOM.style)
-@unboxed type radioIndicatorClassName = Str(string) | Fn(radioIndicatorState => string)
-@unboxed type tabsIndicatorStyle = Style(JsxDOM.style) | Fn(tabsIndicatorState => JsxDOM.style)
-@unboxed type tabsIndicatorClassName = Str(string) | Fn(tabsIndicatorState => string)
+@unboxed type checkboxIndicatorStyle = Style(JsxDOM.style) | Fn(checkboxIndicatorState => option<JsxDOM.style>)
+@unboxed type checkboxIndicatorClassName = Str(string) | Fn(checkboxIndicatorState => option<string>)
+@unboxed type radioIndicatorStyle = Style(JsxDOM.style) | Fn(radioIndicatorState => option<JsxDOM.style>)
+@unboxed type radioIndicatorClassName = Str(string) | Fn(radioIndicatorState => option<string>)
+@unboxed type tabsIndicatorStyle = Style(JsxDOM.style) | Fn(tabsIndicatorState => option<JsxDOM.style>)
+@unboxed type tabsIndicatorClassName = Str(string) | Fn(tabsIndicatorState => option<string>)

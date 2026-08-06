@@ -4,7 +4,7 @@ type navigationMenuLinkState = {
 type toolbarLinkState = {
   orientation: PositionerSharedTypes.orientation,
 }
-@unboxed type navigationMenuLinkStyle = Style(JsxDOM.style) | Fn(navigationMenuLinkState => JsxDOM.style)
-@unboxed type navigationMenuLinkClassName = Str(string) | Fn(navigationMenuLinkState => string)
-@unboxed type toolbarLinkStyle = Style(JsxDOM.style) | Fn(toolbarLinkState => JsxDOM.style)
-@unboxed type toolbarLinkClassName = Str(string) | Fn(toolbarLinkState => string)
+@unboxed type navigationMenuLinkStyle = Style(JsxDOM.style) | Fn(navigationMenuLinkState => option<JsxDOM.style>)
+@unboxed type navigationMenuLinkClassName = Str(string) | Fn(navigationMenuLinkState => option<string>)
+@unboxed type toolbarLinkStyle = Style(JsxDOM.style) | Fn(toolbarLinkState => option<JsxDOM.style>)
+@unboxed type toolbarLinkClassName = Str(string) | Fn(toolbarLinkState => option<string>)

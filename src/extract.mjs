@@ -228,6 +228,7 @@ function structuralTypeSig(t, shared, seen) {
         case 'array': return 'A[' + structuralTypeSig(t.of, shared, seen) + ']'
         case 'tuple': return 'T[' + (t.params || []).map((x) => structuralTypeSig(x, shared, seen)).join(',') + ']'
         case 'nullable': return 'N[' + structuralTypeSig(t.of, shared, seen) + ']'
+        case 'option': return 'O[' + structuralTypeSig(t.of, shared, seen) + ']'
         case 'dict': return 'D[' + structuralTypeSig(t.of, shared, seen) + ']'
         case 'map': return 'M[' + structuralTypeSig(t.mapKey, shared, seen) + ',' + structuralTypeSig(t.mapVal, shared, seen) + ']'
         case 'set': return 'S[' + structuralTypeSig(t.of, shared, seen) + ']'
@@ -1283,13 +1284,13 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
             const baseType = withPath(ctx, name, () => salvageCallbackParams(
                 aria ? { kind: 'raw', res: aria }
                     : litOpen ? literalUnionOpenNode(litOpen, unionRefName(d.type), ctx, name)
-                    : classify(t, ctx, name),
+                    : classifyOptionalField(t, ctx, name, 0, nb, optional),
                 ctx))
             return {
                 name,
                 // a syntactic `| undefined` on a REQUIRED prop means it can be omitted -> optional
                 // (`=?`), distinct from `| null` (an explicit value -> Nullable.t). (#63 C5)
-                optional: optional || !!(nb && nb.hasUndef) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
+                optional: optional || !!(nb && (nb.hasUndef || nb.hasVoid)) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
                 inherited: isInherited(p),
                 type: applyNullable(baseType, nb),
                 // raw TS info, used by the report to describe unmapped props
@@ -3584,23 +3585,47 @@ function literalUnionOpen(typeNode, checker) {
     return [...new Set(literals)] // dedupe, preserve order
 }
 
-/** True when a syntactic type node is `<primitive> | null` (in any order, `| undefined`
+/** True when a syntactic type node is `<primitive> | null` (in any order, `| undefined`/`| void`
  *  allowed too) — exactly ONE primitive keyword (number/string/boolean) plus an explicit
  *  `null`, no other members. Used to recover the explicit-null arm that strictNullChecks-off
  *  resolution swallowed. (#34, I-5) */
 function syntacticNullability(typeNode) {
     if (!typeNode || !ts.isUnionTypeNode(typeNode)) return null
-    let hasNull = false, hasUndef = false, nonNull = 0
+    let hasNull = false, hasUndef = false, hasVoid = false, nonNull = 0
     for (const m of typeNode.types) {
         const isNull = m.kind === ts.SyntaxKind.NullKeyword ||
             (ts.isLiteralTypeNode(m) && m.literal.kind === ts.SyntaxKind.NullKeyword)
         if (isNull) hasNull = true
         else if (m.kind === ts.SyntaxKind.UndefinedKeyword) hasUndef = true
+        else if (m.kind === ts.SyntaxKind.VoidKeyword) hasVoid = true
         else nonNull++
     }
-    // `single`: exactly one non-null/undefined member, so `T | null` wraps cleanly as
+    // `single`: exactly one non-null/undefined/void member, so `T | null` wraps cleanly as
     // `Nullable.t<T>` (a multi-arm `A | B | null` is a real union, handled elsewhere).
-    return { hasNull, hasUndef, single: nonNull === 1 }
+    return { hasNull, hasUndef, hasVoid, single: nonNull === 1 }
+}
+
+/** Classify one record/component property (or optional callback parameter) while remembering that
+ *  its own optional marker, or a syntactic `| undefined`/`| void`, already represents the absent
+ *  value. The depth makes this a one-node hint: nested container elements and nested record fields
+ *  still classify their own unions normally. */
+function classifyOptionalField(type, ctx, propName, depth, nb, alreadyOptional = false) {
+    const prev = ctx.nullishAsOptionalDepth
+    if (alreadyOptional || (nb && (nb.hasUndef || nb.hasVoid))) ctx.nullishAsOptionalDepth = depth
+    try {
+        return classify(type, ctx, propName, depth)
+    } finally {
+        ctx.nullishAsOptionalDepth = prev
+    }
+}
+
+/** Recover a value-position `T | undefined`/`T | void` that strictNullChecks-off may have collapsed.
+ *  Exact `undefined`/`void` is already `unit`; an opaque return-views module may already carry its
+ *  own `none` constructor. */
+function applyOptionalValue(baseType, nb) {
+    if (!nb || !(nb.hasUndef || nb.hasVoid)) return baseType
+    if (baseType.kind === 'unit' || baseType.kind === 'option' || baseType._coversNullish) return baseType
+    return { kind: 'option', of: baseType }
 }
 
 /** A prop typed by indexed access into an OPTIONAL source prop — `value: StatCardV2Props["value"]`
@@ -3733,7 +3758,11 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     const key = 't:' + type.id
     // carry the entry's `note` (how to construct the opaque value) onto each ref so
     // emit can surface it inline on the prop — even on a memoized cache-hit.
-    const ref = (e) => ({ kind: 'typeRef', to: e.name + '.t', home: e.home, key: e.key, ...(e.note ? { note: e.note } : {}) })
+    const ref = (e) => ({
+        kind: 'typeRef', to: e.name + '.t', home: e.home, key: e.key,
+        ...(e.note ? { note: e.note } : {}),
+        ...(e._coversNullish ? { _coversNullish: true } : {}),
+    })
     // RECEIVE-position guard (#39 review): a views module is CONSTRUCT-only (`from*`, no
     // `as*` accessors). For a value the library PRODUCES (`ctx.produced === false`, e.g. a
     // callback param) that's an uninspectable black box — strictly worse than the honest
@@ -3853,7 +3882,11 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     const note = members.every((m) => m.name)
         ? `was \`${checker.typeToString(type).replace(/ \| (null|undefined)\b/g, '')}\` — opaque; build with ${members.map(ctorName).join(' / ')}`
         : undefined
-    const entry = { key, kind: 'opaque', name, home, members, deps, note, _construct: hasLiteralArm || !!opts.addNone }
+    const entry = {
+        key, kind: 'opaque', name, home, members, deps, note,
+        _construct: hasLiteralArm || !!opts.addNone,
+        _coversNullish: !!opts.addNone,
+    }
     if (members.some((m) => isHighchartsSeriesOptionsNode(m.type))) entry._highchartsSeriesUnion = true
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
@@ -4027,8 +4060,20 @@ function lower(s) {
  * @returns {object}  an IR type node
  */
 function unionNode(type, ctx, propName, depth = 0) {
+    const hasUndefinedValue = type.types.some((t) => t.flags & (ts.TypeFlags.Undefined | ts.TypeFlags.Void))
+    const node = unionNodeCore(type, ctx, propName, depth)
+    // A record/component property spells absence with its optional field marker; all other value
+    // positions need an explicit option layer. Construct-only return views already include a
+    // `none` constructor, and a pure void/undefined union is simply unit.
+    if (!hasUndefinedValue || ctx.nullishAsOptionalDepth === depth || node.kind === 'unit' || node._coversNullish) return node
+    return { kind: 'option', of: node }
+}
+
+function unionNodeCore(type, ctx, propName, depth = 0) {
     const { checker } = ctx
-    // strip null/undefined/void (null/undefined handled by optional). NOTE: the generator
+    // Separate null/undefined/void from the value arms. The wrapper above preserves a
+    // void/undefined arm as option except where a property/parameter optional marker already
+    // represents it. NOTE: the generator
     // runs with strictNullChecks OFF, so `null` is NOT a distinct union member here —
     // `T | null` already collapsed to `T`. The explicit-null case (#34, I-5) is recovered
     // syntactically at the component-prop level (see `syntacticNullable`). In a callback's
@@ -4042,6 +4087,7 @@ function unionNode(type, ctx, propName, depth = 0) {
     let parts = type.types.filter(
         (t) => !(t.flags & (ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void))
     )
+    if (parts.length === 0) return { kind: 'unit' }
     if (parts.length === 1) return classify(parts[0], ctx, propName, depth + 1)
 
     // Collapse `T | (T & X)` to `T`. e.g. blend declares `value: string`, but the
@@ -4747,7 +4793,8 @@ function functionNode(sig, ctx, propName, depth = 0) {
     const params = sig.getParameters().map((pp) => {
         // An optional param `reason?: T` (or one with a default) -> `option<T>` (emit wraps it).
         // Parameter symbols don't carry SymbolFlags.Optional reliably, so read the declaration's
-        // `?`/initializer. Strip any `| undefined` the checker folds in so the inner type stays exact.
+        // `?`/initializer. The optional marker is the one option layer even when an aliased inner
+        // type still exposes a checker-visible `| void`.
         const pdecl = pp.valueDeclaration
         const optional = (pp.getFlags() & ts.SymbolFlags.Optional) !== 0 ||
             !!(pdecl && ts.isParameter(pdecl) && (pdecl.questionToken || pdecl.initializer))
@@ -4758,13 +4805,16 @@ function functionNode(sig, ctx, propName, depth = 0) {
         // must not match an inherited Object.prototype member (which would be a native function).
         let node = (n && Object.prototype.hasOwnProperty.call(REACT_EVENTS, n))
             ? { kind: 'event', res: REACT_EVENTS[n] }
+            : optional
+            ? classifyOptionalField(pt, ctx, propName, depth + 1, null, true)
             : classify(pt, ctx, propName, depth + 1)
         // A callback PARAM typed `T | null` (e.g. `(item: string | null) => void`) is a value the
         // library PASSES to the consumer, so the consumer must handle null -> `Nullable.t<T>`.
         // strictNullChecks-off strips it from the resolved type; recover from the syntactic node,
         // mirroring the return path's `| null` recovery and top-level props. (#63 validation)
         if (!optional && node.kind !== 'event' && pdecl && ts.isParameter(pdecl) && pdecl.type) {
-            node = applyNullable(node, syntacticNullability(pdecl.type))
+            const nb = syntacticNullability(pdecl.type)
+            node = applyNullable(applyOptionalValue(node, nb), nb)
         }
         return optional ? { ...node, optional: true } : node
     })
@@ -4793,18 +4843,17 @@ function functionNode(sig, ctx, propName, depth = 0) {
             // able to produce, but strictNullChecks-off absorbs it from the resolved
             // type — recover it from the SYNTACTIC return node (the I-5 technique).
             const retNode = sig.declaration && sig.declaration.type
-            const synNull = !!(retNode && ts.isUnionTypeNode(retNode) && retNode.types.some((m) =>
-                m.kind === ts.SyntaxKind.NullKeyword || (ts.isLiteralTypeNode(m) && m.literal.kind === ts.SyntaxKind.NullKeyword)))
+            const retNb = syntacticNullability(retNode)
+            const synNull = !!(retNb && retNb.hasNull)
             const prev = ctx.inFnReturn, prevNull = ctx.retSynNull, prevProd = ctx.produced
             ctx.inFnReturn = true
             ctx.retSynNull = synNull
             ctx.produced = P
             ret = classify(retType, ctx, propName, depth + 1)
-            // A SINGLE-typed nullable return (`(file) => Errors | null`) collapses to `Errors`
-            // under strictNullChecks-off and isn't a union, so the union path's `| null` recovery
-            // never fires — wrap it in `Nullable.t` here (the consumer must be able to produce
-            // null). A union return keeps its own (views/none) handling. (#63 validation)
-            if (synNull && !(retType.isUnion && retType.isUnion())) ret = applyNullable(ret, { hasNull: true, single: true })
+            // Recover undefined/void even when strictNullChecks-off collapsed the resolved union,
+            // then preserve an independent null arm outside it (`Nullable.t<option<T>>`). A views
+            // module that already exposes `none` marks itself so neither wrapper is duplicated.
+            ret = applyNullable(applyOptionalValue(ret, retNb), retNb)
             ctx.inFnReturn = prev
             ctx.retSynNull = prevNull
             ctx.produced = prevProd
@@ -4830,6 +4879,7 @@ function typeSig(t) {
         case 'array': return 'A[' + typeSig(t.of) + ']'
         case 'tuple': return 'T[' + (t.params || []).map(typeSig).join(',') + ']'
         case 'nullable': return 'N[' + typeSig(t.of) + ']'
+        case 'option': return 'O[' + typeSig(t.of) + ']'
         case 'dict': return 'D[' + typeSig(t.of) + ']'
         case 'map': return 'M[' + typeSig(t.mapKey) + ',' + typeSig(t.mapVal) + ']'
         case 'set': return 'S[' + typeSig(t.of) + ']'
@@ -5038,10 +5088,10 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
                     const ownSigs = propSigs.filter((dd) => !isVendorDecl(dd))
                     const ownDecl = ownSigs.length === 1 ? ownSigs[0] : (propSigs.length === 1 ? propSigs[0] : null)
                     const nb = ownDecl && ownDecl.type && syntacticNullability(ownDecl.type)
-                    const node = withPath(ctx, p.getName(), () => classify(t, ctx, p.getName(), depth + 1))
+                    const node = withPath(ctx, p.getName(), () => classifyOptionalField(t, ctx, p.getName(), depth + 1, nb, optional))
                     return {
                         name: p.getName(),
-                        optional: optional || !!(nb && nb.hasUndef) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
+                        optional: optional || !!(nb && (nb.hasUndef || nb.hasVoid)) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
                         type: applyNullable(node, nb),
                     }
                 })
@@ -5346,12 +5396,12 @@ function buildRecordFields(type, ctx, depth) {
                 ? { kind: 'review', text: armText(p.getName()), note: `declared with a different type in each union arm — ${clash}` }
                 : isHighchartsSeriesDataField(type, p.getName(), t, checker)
                 ? { kind: 'array', of: highchartsSeriesDataNode(ctx) }
-                : withPath(ctx, p.getName(), () => classify(t, ctx, p.getName(), depth + 1))
+                : withPath(ctx, p.getName(), () => classifyOptionalField(t, ctx, p.getName(), depth + 1, nb, optional || armOnly.has(p.getName())))
             return {
                 name: p.getName(),
                 // `armOnly` — a field only some union arms declare; required WITHIN its arm, but
                 // optional on the flattened record (see the union gather above, #167).
-                optional: optional || armOnly.has(p.getName()) || !!(nb && nb.hasUndef) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
+                optional: optional || armOnly.has(p.getName()) || !!(nb && (nb.hasUndef || nb.hasVoid)) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
                 // push the field name so a nested anonymous `{…}` is path-anchored (#90)
                 type: applyNullable(fieldType, nb),
             }

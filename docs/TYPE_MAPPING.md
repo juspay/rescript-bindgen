@@ -474,12 +474,25 @@ Fixture: [`discriminated-union-variant-props`](../test/golden/cases/discriminate
 
 ---
 
-## `void` / `undefined` → `unit`, in every position (#175)
+## `void` / `undefined` values and unions (#175)
 Fixture: [`void-undefined-unit`](../test/golden/cases/void-undefined-unit)
 
-`void` and `undefined` map to **`unit`**: its runtime value is literally `undefined`, the same identity
-the views-module `none` constant relies on. This was applied in **return** position and for a zero-arg
-signature, but nowhere else — so the same type elsewhere fell to the salvage/opaque path:
+An exact `void` or `undefined` maps to **`unit`**: its runtime value is literally `undefined`, the same
+identity the views-module `none` constant relies on. A checker-visible value union `T | void` maps to
+**`option<T>`**, because TypeScript accepts both the ordinary value and `undefined`; erasing the void
+arm to a required `T` rejects a valid input. A directly written `T | undefined` on a callback boundary
+is recovered syntactically to the same mapping (the checker runs without strict null checks and may
+otherwise erase that arm). `None` has the required JS `undefined` identity.
+
+At a record/component property boundary, a directly declared `field: T | void` follows the existing
+`field: T | undefined` convention and emits an optional field (`field?: T` / `~field: T=?`). Inside
+callbacks and containers the union is a value, so the explicit `option` remains. An aliased union on
+a required property also stays `option<T>` because the declaration does not make the property itself
+optional. If that aliased property (or a callback parameter) is already marked optional, it emits
+only one option layer, never `option<option<T>>`.
+
+The exact leaf mapping was previously applied in **return** position and for a zero-arg signature,
+but nowhere else — so the same type elsewhere fell to the salvage/opaque path:
 
 | TypeScript | before | now |
 |---|---|---|
@@ -487,6 +500,10 @@ signature, but nowhere else — so the same type elsewhere fell to the salvage/o
 | `custom: undefined` (record field) | `string` + ⚪ loose | `unit` |
 | `(e: number) => void` (return) | `float => unit` | unchanged |
 | `() => number` (zero-arg) | `unit => float` | unchanged |
+| `label: string \| void` (direct property) | required `string` | optional `label?: string` |
+| `(label: string \| void) => string \| void` | `string => string` | `option<string> => option<string>` |
+| `Array<string \| void>` / `Promise<string \| void>` | `array<string>` / `promise<string>` | `array<option<string>>` / `promise<option<string>>` |
+| `string \| number \| void` (value position) | `stringOrNumber` | `option<stringOrNumber>` |
 
 The parameter case is monaco's event family, re-exported through blend's editor surface
 (`IEvent<void>` — a callable interface whose listener parameter is `void`); the field case is blend's

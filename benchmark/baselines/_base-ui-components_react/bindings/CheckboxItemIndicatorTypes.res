@@ -4,5 +4,5 @@ type menuCheckboxItemIndicatorState = {
   highlighted: bool,
   transitionStatus: PositionerSharedTypes.transitionStatus,
 }
-@unboxed type menuCheckboxItemIndicatorStyle = Style(JsxDOM.style) | Fn(menuCheckboxItemIndicatorState => JsxDOM.style)
-@unboxed type menuCheckboxItemIndicatorClassName = Str(string) | Fn(menuCheckboxItemIndicatorState => string)
+@unboxed type menuCheckboxItemIndicatorStyle = Style(JsxDOM.style) | Fn(menuCheckboxItemIndicatorState => option<JsxDOM.style>)
+@unboxed type menuCheckboxItemIndicatorClassName = Str(string) | Fn(menuCheckboxItemIndicatorState => option<string>)

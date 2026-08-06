@@ -76,7 +76,7 @@ type rec options = {
   footnoteLabelTagName?: Nullable.t<string>,
   handlers?: string,  // ⚪ loose — was `Partial<Record<"text" | "root" | "blockquote" | "code" | "html" | "link" | "strong" | "table" | "image" | "bre`
   passThrough?: Nullable.t<array<libMarkdownAsyncOptionsRemarkRehypeOptionsPassThrough>>,
-  unknownHandler?: Nullable.t<(state, string, MdastTypes.Parents.t) => string>,  // ⚪ loose — was `ElementContent | ElementContent[]`
+  unknownHandler?: Nullable.t<(state, string, option<MdastTypes.Parents.t>) => option<string>>,  // ⚪ loose — was `ElementContent | ElementContent[]`
 }
 and state = {
   all: MdastTypes.Nodes.t => array<string>,  // ⚪ loose — was `ElementContent`
@@ -86,7 +86,7 @@ and state = {
   footnoteCounts: Map.t<string, float>,
   footnoteOrder: array<string>,
   handlers: string,  // ⚪ loose — was `Partial<Record<"text" | "root" | "blockquote" | "code" | "html" | "link" | "strong" | "table" | "image" | "bre`
-  one: (MdastTypes.Nodes.t, MdastTypes.Parents.t) => string,  // ⚠️ REVIEW — was `ElementContent | ElementContent[]` — match the real type by hand
+  one: (MdastTypes.Nodes.t, option<MdastTypes.Parents.t>) => option<string>,  // ⚠️ REVIEW — was `ElementContent | ElementContent[]` — match the real type by hand
   options: options,
   patch: (MdastTypes.Nodes.t, string) => unit,  // ⚠️ REVIEW — was `Nodes` — match the real type by hand
   wrap: (array<string>, option<bool>) => array<string>,  // ⚪ loose — was `Text | Type`
@@ -101,10 +101,10 @@ type libMarkdownAsyncOptionsRemarkRehypeOptionsConfig = {
   footnoteLabelTagName?: Nullable.t<string>,
   handlers?: string,  // ⚪ loose — was `Partial<Record<"text" | "root" | "blockquote" | "code" | "html" | "link" | "strong" | "table" | "image" | "bre`
   passThrough?: Nullable.t<array<libMarkdownAsyncOptionsRemarkRehypeOptionsPassThrough>>,
-  unknownHandler?: Nullable.t<(state, string, MdastTypes.Parents.t) => string>,  // 🛑 BROKEN — contains `any` — was `ElementContent | ElementContent[]`
+  unknownHandler?: Nullable.t<(state, string, option<MdastTypes.Parents.t>) => option<string>>,  // 🛑 BROKEN — contains `any` — was `ElementContent | ElementContent[]`
 }
 type libMarkdownAsyncOptionsConfig = {
-  allowElement?: Nullable.t<(string, float, HastTypes.readonly) => bool>,  // ⚪ loose — was `Readonly<Element>`
+  allowElement?: Nullable.t<(string, float, option<HastTypes.readonly>) => Nullable.t<option<bool>>>,  // ⚪ loose — was `Readonly<Element>`
   allowedElements?: Nullable.t<array<string>>,
   children?: Nullable.t<string>,
   components?: Nullable.t<components>,
@@ -114,5 +114,5 @@ type libMarkdownAsyncOptionsConfig = {
   remarkRehypeOptions?: Nullable.t<libMarkdownAsyncOptionsRemarkRehypeOptionsConfig>,
   skipHtml?: Nullable.t<bool>,
   unwrapDisallowed?: Nullable.t<bool>,
-  urlTransform?: Nullable.t<(string, string, string) => Nullable.t<string>>,  // ⚪ loose — was `Readonly<Element>`
+  urlTransform?: Nullable.t<(string, string, string) => Nullable.t<option<string>>>,  // ⚪ loose — was `Readonly<Element>`
 }

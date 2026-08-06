@@ -28,9 +28,9 @@ type switchThumbState = {
   filled: bool,
   focused: bool,
 }
-@unboxed type scrollAreaThumbStyle = Style(JsxDOM.style) | Fn(scrollAreaThumbState => JsxDOM.style)
-@unboxed type scrollAreaThumbClassName = Str(string) | Fn(scrollAreaThumbState => string)
-@unboxed type sliderThumbClassName = Str(string) | Fn(sliderThumbState => string)
-@unboxed type sliderThumbStyle = Style(JsxDOM.style) | Fn(sliderThumbState => JsxDOM.style)
-@unboxed type switchThumbStyle = Style(JsxDOM.style) | Fn(switchThumbState => JsxDOM.style)
-@unboxed type switchThumbClassName = Str(string) | Fn(switchThumbState => string)
+@unboxed type scrollAreaThumbStyle = Style(JsxDOM.style) | Fn(scrollAreaThumbState => option<JsxDOM.style>)
+@unboxed type scrollAreaThumbClassName = Str(string) | Fn(scrollAreaThumbState => option<string>)
+@unboxed type sliderThumbClassName = Str(string) | Fn(sliderThumbState => option<string>)
+@unboxed type sliderThumbStyle = Style(JsxDOM.style) | Fn(sliderThumbState => option<JsxDOM.style>)
+@unboxed type switchThumbStyle = Style(JsxDOM.style) | Fn(switchThumbState => option<JsxDOM.style>)
+@unboxed type switchThumbClassName = Str(string) | Fn(switchThumbState => option<string>)

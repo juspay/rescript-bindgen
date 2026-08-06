@@ -1342,11 +1342,11 @@ type annotationControlPointOptionsObject = {
   width?: float,
 }
 type annotationsEventsOptions = {
-  add?: @this ((string, option<string>, option<string>) => bool),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
-  afterUpdate?: @this ((string, option<string>, option<string>) => bool),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
-  click?: @this ((string, option<string>, option<string>) => bool),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
-  drag?: @this ((string, option<string>, option<string>) => bool),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
-  remove?: @this ((string, option<string>, option<string>) => bool),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
+  add?: @this ((string, option<string>, option<string>) => option<bool>),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
+  afterUpdate?: @this ((string, option<string>, option<string>) => option<bool>),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
+  click?: @this ((string, option<string>, option<string>) => option<bool>),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
+  drag?: @this ((string, option<string>, option<string>) => option<bool>),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
+  remove?: @this ((string, option<string>, option<string>) => option<bool>),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
 }
 type annotationLabelAccessibilityOptionsObject = {
   description?: string,
@@ -2489,7 +2489,7 @@ type svgRenderer = {
   forExport?: bool,
   symbols: symbolDictionary,
   arc: Arc.t,
-  button: (string, float, float, @this ((Dom.element, option<string>, option<Dom.element>) => bool), option<svgAttributes>, option<svgAttributes>, option<svgAttributes>, option<svgAttributes>, option<symbolKeyValue>, option<bool>) => Dom.element,  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  button: (string, float, float, @this ((Dom.element, option<string>, option<Dom.element>) => option<bool>), option<svgAttributes>, option<svgAttributes>, option<svgAttributes>, option<svgAttributes>, option<symbolKeyValue>, option<bool>) => Dom.element,  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
   circle: Circle.t,
   clipRect: (option<float>, option<float>, option<float>, option<float>) => Dom.element,
   createElement: string => Dom.element,
@@ -8094,7 +8094,7 @@ type subtitleObject = {
   css: cssObjectHighcharts => Dom.element,
   destroy: unit => unit,
   getBBox: (option<bool>, option<float>) => bBoxObject,
-  getBBoxCacheKey: unit => string,
+  getBBoxCacheKey: unit => option<string>,
   getStyle: string => string,
   hasClass: string => bool,
   hide: unit => Dom.element,
@@ -8134,7 +8134,7 @@ type titleObject = {
   css: cssObjectHighcharts => Dom.element,
   destroy: unit => unit,
   getBBox: (option<bool>, option<float>) => bBoxObject,
-  getBBoxCacheKey: unit => string,
+  getBBoxCacheKey: unit => option<string>,
   getStyle: string => string,
   hasClass: string => bool,
   hide: unit => Dom.element,
@@ -16889,10 +16889,10 @@ and navigatorXAxisPlotLinesOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and navigatorXAxisPlotBandsEventsOptions<'a, 'b, 'c> = {
-  click?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  mousemove?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  mouseout?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  mouseover?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  click?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  mousemove?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  mouseout?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  mouseover?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
 }
 and navigatorXAxisPlotBandsOptions<'a, 'b, 'c> = {
   acrossPanes?: bool,
@@ -29597,10 +29597,10 @@ and plotLineOrBand<'a, 'b, 'c> = {
   destroy: unit => unit,
 }
 and navigatorXAxisCurrentDateIndicatorEventsOptions<'a, 'b, 'c> = {
-  click?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  mousemove?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  mouseout?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  mouseover?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  click?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  mousemove?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  mouseout?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  mouseover?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
 }
 and currentDateIndicatorOptions = {
   className?: string,
@@ -31032,7 +31032,7 @@ type exportingMenuItemDefinitionsOptions = {
   viewFullscreen?: exportingMenuItemDefinitionsDownloadCSVOptions,
 }
 type exportingMenuObject<'a, 'b, 'c> = {
-  onclick?: @this ((chart<'a, 'b, 'c>, option<string>, option<chart<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  onclick?: @this ((chart<'a, 'b, 'c>, option<string>, option<chart<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
   separator?: bool,
   text?: string,
   textKey?: string,
