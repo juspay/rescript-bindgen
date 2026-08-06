@@ -4941,6 +4941,15 @@ function buildRecordFields(type, ctx, depth) {
     if (type.isUnion && type.isUnion()) {
         const byName = new Map(props.map((p) => [p.getName(), p]))
         for (const arm of type.types) {
+            // Only OBJECT-ish arms carry harvestable members. `getProperties()` on a PRIMITIVE arm goes
+            // through `getApparentType` and hands back the whole prototype (`string` -> 52 members:
+            // toString/charAt/concat/…), all declared in lib.es*. They'd be dropped as fields by the
+            // `isInherited` filter below, but `hasHtml` is computed BEFORE it — so one primitive arm
+            // would flip it and staple a spurious `...JsxDOM.domProps` onto a record that has no DOM
+            // surface at all. Today's two collapse branches admit only Object|Intersection arms, but
+            // this builder is meant to hold for every path that hands it a union, so guard here rather
+            // than rely on the callers. Same class of trap `isBuiltinContainer` closes upstream (#68).
+            if (!(arm.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection))) continue
             for (const p of arm.getProperties()) {
                 const nm = p.getName()
                 if (byName.has(nm) && !armOnly.has(nm)) continue // common to every arm: the checker already merged it
@@ -4954,23 +4963,32 @@ function buildRecordFields(type, ctx, depth) {
         }
         props = [...byName.values()]
     }
-    // `getUnionType` is a checker internal, so degrade gracefully: without it a multi-arm field keeps the
-    // first arm's type (the pre-#167 flatten behaviour) rather than crashing the whole extraction.
+    // Two ways a multi-arm field CANNOT be unioned. Both take the same exit — a bucketed `review`
+    // placeholder — because the alternative is arm 1's type, i.e. the confident-but-wrong mapping this
+    // whole gather exists to avoid. Returns the reason (for the field's note) or null. (#167)
+    //   ① FUNCTION arms. TS resolves a call on a union of signatures by INTERSECTING its parameters, so
+    //      unioning `(d: Date) => void` with `(d: Date[]) => void` and `(r: DateRange) => void`
+    //      (react-day-picker's per-mode `onSelect`) yields a first param of `Date & Date[] & DateRange`,
+    //      which classified into a confident-looking `{from?, to?}` callback NO arm accepts.
+    //   ② `getUnionType` missing. It is a checker INTERNAL, absent from the public `TypeChecker` typings
+    //      and so a realistic casualty of the #162 API port. Falling back to arm 1 there would silently
+    //      restore the pre-#167 fake on exactly the fields most likely to be wrong, with no marker — so
+    //      an unavailable internal flags the field instead.
+    const armClash = (nm) => {
+        const list = armTypes.get(nm)
+        if (!list || list.length < 2) return null
+        if (list.some((x) => x.getCallSignatures && x.getCallSignatures().length))
+            return 'a function union intersects its parameters, so no single ReScript type is faithful'
+        if (typeof checker.getUnionType !== 'function')
+            return 'the arm types could not be unioned here, and one arm\'s type would be wrong for the others'
+        return null
+    }
     const armUnion = (nm) => {
-        const ts_ = armTypes.get(nm)
-        return (ts_ && ts_.length > 1 && typeof checker.getUnionType === 'function') ? checker.getUnionType(ts_) : null
+        const list = armTypes.get(nm)
+        return (list && list.length > 1 && !armClash(nm)) ? checker.getUnionType(list) : null
     }
-    // …EXCEPT when the clashing arms are FUNCTIONS. TS resolves a call on a union of signatures by
-    // INTERSECTING their parameters, so unioning `(d: Date) => void` with `(d: Date[]) => void` and
-    // `(r: DateRange) => void` (react-day-picker's per-mode `onSelect`) yields a signature whose first
-    // param is `Date & Date[] & DateRange` — which classified into a confident-looking `{from?, to?}`
-    // callback that NO arm actually accepts. Fabricating a signature is exactly what "flag, don't fake"
-    // forbids, so such a field becomes a bucketed `review` placeholder instead: the consumer sees the
-    // field exists and that it needs hand-binding, rather than a wrong type with no marker. (#167)
-    const armSigClash = (nm) => {
-        const ts_ = armTypes.get(nm)
-        return !!(ts_ && ts_.length > 1 && ts_.some((x) => x.getCallSignatures && x.getCallSignatures().length))
-    }
+    /** The clashing arms' TS text — `text` (not `note`) is what `looseMark` renders on a record FIELD. */
+    const armText = (nm) => (armTypes.get(nm) || []).map((x) => checker.typeToString(x)).join(' | ')
     const hasHtml = props.some(isInherited)
     // A FIRST-PARTY field whose name collides with a DOM attr (`id`, `size`, `shape`, …) can't
     // co-exist with the all-or-nothing `...JsxDOM.domProps` spread (ReScript rejects an explicit
@@ -5016,8 +5034,13 @@ function buildRecordFields(type, ctx, depth) {
             const ownSigs = propSigs.filter((dd) => !isVendorDecl(dd))
             const ownDecl = ownSigs.length === 1 ? ownSigs[0] : (propSigs.length === 1 ? propSigs[0] : null)
             const nb = ownDecl && ownDecl.type && syntacticNullability(ownDecl.type)
-            const fieldType = armSigClash(p.getName())
-                ? { kind: 'review', note: `declared with a different SIGNATURE in each union arm (${armTypes.get(p.getName()).map((x) => checker.typeToString(x)).join(' / ')}) — a function union intersects its parameters, so no single ReScript type is faithful` }
+            // `text` carries the per-arm TS types into the emitted `// ⚠️ REVIEW — was \`…\`` comment
+            // (record fields render via `looseMark`/`findLooseText`, which read `text`; `note` is the
+            // component-props channel and would be silently dropped here). `note` is kept for the
+            // report's cause line. (#167)
+            const clash = armClash(p.getName())
+            const fieldType = clash
+                ? { kind: 'review', text: armText(p.getName()), note: `declared with a different type in each union arm — ${clash}` }
                 : isHighchartsSeriesDataField(type, p.getName(), t, checker)
                 ? { kind: 'array', of: highchartsSeriesDataNode(ctx) }
                 : withPath(ctx, p.getName(), () => classify(t, ctx, p.getName(), depth + 1))

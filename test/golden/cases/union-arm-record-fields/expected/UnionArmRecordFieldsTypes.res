@@ -35,5 +35,5 @@ type selectionConfig = {
   autoFocus?: bool,
   mode: unionArmRecordFieldsSelectionConfigMode,
   selected?: CommonTypes.stringOrStringArray,
-  onSelect?: string,  // ⚠️ REVIEW — match the real type by hand
+  onSelect?: string,  // ⚠️ REVIEW — was `(value: string) => void | (value: string[]) => void` — match the real type by hand
 }
