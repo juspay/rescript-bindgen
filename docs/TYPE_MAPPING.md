@@ -360,7 +360,29 @@ requiredness) rather than emitting something wrong:
 
 The branch build is **sandboxed** (the #39/#33 snapshot/rollback): `classify` mints records, enums and
 opaque modules as it resolves, so a bail after that would strand them — measured as +50 orphan types in
-blend before the rollback was added.
+blend before the rollback was added. The sandbox covers **both** modes — shared registry and the
+single-file (`--file`) local registries.
+
+**Self-referential unions emit the recursive variant (#170).** The ordinary tree/menu/AST shape —
+`MenuEntry = Item | Submenu({entries: MenuEntry[]})` — registers its entry **before** building
+branches (the same in-progress guard records carry), so the self-reference resolves to the entry and
+the output is the faithful `type rec`:
+
+```rescript
+@tag("type")
+type rec menuEntry =
+  | @as("item") Item({label: string})
+  | @as("submenu") Submenu({label: string, entries: array<menuEntry>})
+```
+
+In `1.4.0-beta.0` this shape instead recursed unboundedly (build-before-register had no guard):
+stack overflow, and the component was **silently dropped** from the output — strictly worse than
+1.3.0's flagged placeholder. A bail after early registration un-registers the entry via the same
+rollback, and the union falls to the record collapse, whose own early registration handles the cycle.
+A depth seatbelt (`depth > MAX_DEPTH` → record collapse) guarantees no path through the variant
+builder can ever be unbounded again. Fixture: `TreeNode` in
+[`union-arm-record-fields`](../test/golden/cases/union-arm-record-fields); the single-file path is
+locked in `test/smoke.mjs`.
 
 **Also in ARRAY-ELEMENT position (#169).** A multi-object element union (`FlatRow[]`) goes straight to the
 opaque-views module without passing through the union classifier, so it gets its own hook. The variant is

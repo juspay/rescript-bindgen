@@ -67,3 +67,15 @@ type FlatRow =
     | { type: 'item'; id: string; itemIndex: number }
 
 export declare const flattenRows: (groups: string[]) => FlatRow[]
+
+// SELF-REFERENTIAL discriminated union (#170) — the ordinary tree/menu/AST shape. The variant
+// builder registers its entry BEFORE building branches (the same in-progress note records carry),
+// so the self-reference resolves to the entry instead of restarting the build unboundedly (the
+// 1.4.0-beta.0 regression: stack overflow -> the whole component silently dropped from the output).
+// Emits the faithful recursive variant: @tag("kind") type rec treeNode = … | Branch({children:
+// array<treeNode>, …}).
+export type TreeNode =
+    | { kind: 'leaf'; value: string }
+    | { kind: 'branch'; children: TreeNode[]; label: string }
+
+export declare const Tree: (props: { root?: TreeNode; nodes?: TreeNode[] }) => JsxElement

@@ -29,3 +29,9 @@ type flatRow =
   | @as("label") Label({id: string, label: string})
   | @as("separator") Separator({id: string})
   | @as("item") Item({id: string, itemIndex: float})
+// #167: discriminated union — each branch keeps its OWN required fields.
+//       Build with Leaf({…}); `kind` is auto-filled by @tag.
+@tag("kind")
+type rec treeNode =
+  | @as("leaf") Leaf({value: string})
+  | @as("branch") Branch({children: array<treeNode>, label: string})
