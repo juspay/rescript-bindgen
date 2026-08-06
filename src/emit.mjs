@@ -251,6 +251,10 @@ export function emit(ir, options = {}) {
         const out = new Set()
         ;(n.fields || []).forEach((f) => collectRefNames(f.type, out))
         ;(n.members || []).forEach((m) => collectRefNames(m.type, out))
+        // a `@tag` variant's deps live in its BRANCH fields (#167) — without this a variant was a
+        // zero-dep node here: emitted before a record its branch references (forward-reference
+        // compile error), and a record<->variant cycle never fused into one `type rec` group.
+        ;(n.branches || []).forEach((b) => b.fields.forEach((f) => collectRefNames(f.type, out)))
         return out
     }
     if (hasRecGroupLabelCollision(ir.records || [], obj, [], idOf, depsOf)) lines.push('@@warning("-30")', '') // silence duplicate-label noise
@@ -449,6 +453,10 @@ export function emitFunction(ir, options = {}) {
         const out = new Set()
         ;(n.fields || []).forEach((f) => collectRefNames(f.type, out))
         ;(n.members || []).forEach((m) => collectRefNames(m.type, out))
+        // a `@tag` variant's deps live in its BRANCH fields (#167) — without this a variant was a
+        // zero-dep node here: emitted before a record its branch references (forward-reference
+        // compile error), and a record<->variant cycle never fused into one `type rec` group.
+        ;(n.branches || []).forEach((b) => b.fields.forEach((f) => collectRefNames(f.type, out)))
         return out
     }
     if (hasRecGroupLabelCollision(ir.records || [], obj, [], idOf, depsOf)) lines.push('@@warning("-30")', '')
@@ -564,6 +572,10 @@ export function emitClass(ir, options = {}) {
         const out = new Set()
         ;(n.fields || []).forEach((f) => collectRefNames(f.type, out))
         ;(n.members || []).forEach((m) => collectRefNames(m.type, out))
+        // a `@tag` variant's deps live in its BRANCH fields (#167) — without this a variant was a
+        // zero-dep node here: emitted before a record its branch references (forward-reference
+        // compile error), and a record<->variant cycle never fused into one `type rec` group.
+        ;(n.branches || []).forEach((b) => b.fields.forEach((f) => collectRefNames(f.type, out)))
         return out
     }
     if (hasRecGroupLabelCollision(ir.records || [], obj, [], idOf, depsOf)) lines.push('@@warning("-30")', '')

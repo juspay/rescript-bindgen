@@ -43,10 +43,9 @@ type SelectionConfig = SelectBase & (
     | { mode: 'none' }
 )
 
-// NB: this record collapse is the mapping for a union in RECORD-FIELD / PROP position. The same
-// union as an ARRAY ELEMENT (`ColumnConfig[]`) takes the opaque-views path instead (`from*`/`as*`
-// per arm — see `unboxed-unions` / `ref-union-views`), which keeps each arm's own requiredness and
-// is unaffected by this fixture.
+// NB: ARRAY-ELEMENT position gets the same `@tag` variant when the gates pass (see `FlatRow[]`
+// below); the opaque-views module (`from*`/`as*` per arm — see `unboxed-unions` / `ref-union-views`)
+// is the FALLBACK there when they fail — e.g. no clean discriminant, or a generic/lossy branch field.
 export declare const DataTable: (props: {
     animation?: RowAnimationConfig
     settings?: TableSettings

@@ -5012,7 +5012,13 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
     // Structural dedup, scoped per home module — same rule records use (#61 follow-up).
     const sig = entry.home + '|' + entrySig(entry)
     const canon = ctx.shared.bySig.get(sig)
-    if (canon && canon !== entry) { ctx.shared.byKey.set(key, canon); return refTo(canon) }
+    if (canon && canon !== entry) {
+        // Release the minted name (as recordNode's dedup does) — else a discarded duplicate keeps
+        // `foo` reserved forever and a later legitimate `foo` gets counter-suffixed to `foo2`.
+        ctx.shared.names.delete(entry.name)
+        ctx.shared.byKey.set(key, canon)
+        return refTo(canon)
+    }
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
     ctx.shared.bySig.set(sig, entry)
