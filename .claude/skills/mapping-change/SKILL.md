@@ -96,12 +96,24 @@ directly.
 registry entry written *before* field/branch resolution is not bookkeeping, it is the **cycle guard**:
 a self-referential type (`MenuEntry = Item | Submenu({entries: MenuEntry[]})` — trees, menus, ASTs,
 comment threads) re-enters the builder from inside its own build, and the early entry is what the
-re-entry resolves to (→ `type rec`). `tagVariantNode` shipped build-before-register to keep its bail
-simple, and the result was #170: unbounded recursion, stack overflow, the component **silently
-dropped** from the output. The two patterns compose: register early *inside* the snapshot, so the
-rollback un-registers the entry along with everything else. Belt-and-braces: every speculative
-builder also gets a `depth > MAX_DEPTH → fall back` seatbelt, so no unimagined shape can recurse
-unboundedly again.
+re-entry resolves to (→ `type rec`). Use `registryTrial(ctx)`: snapshot, register early, `rollback()`
+on any bail (it restores entries, keys, sigs, minted **names** and type vars, in module *and*
+single-file mode). Belt-and-braces: a `depth > MAX_DEPTH → fall back` seatbelt, so no unimagined shape
+recurses unboundedly.
+
+Violating it has produced **both** failure modes in shipped code, so check every registering builder
+when you add one:
+
+- `tagVariantNode` (#170) — the re-entry restarted the build → unbounded recursion, stack overflow,
+  the component **silently absent** from the output.
+- `opaqueUnion` (#173) — the re-entry built a **duplicate entry** for the same `type.id`, minting a
+  second `uniqueName`; `byKey` kept the last writer and the earlier writer's refs dangled
+  (`array<Poisoned.t>` beside `module Poisoned2`) → **output that does not compile**. This one is
+  invisible to eyeballing the emitted text; only the compile gate catches it.
+
+Corollary for the *duplicate-entry* mode: whenever you see a `2` suffix on a generated name
+(`Foo2`, `poisoned2_t`) that you can't explain by two genuinely distinct shapes, suspect a
+double registration of one `type.id` rather than a naming-policy problem.
 
 **An acknowledged residual risk gets a fixture, not a paragraph.** #170 was flagged during review of
 #168 and answered with a written acknowledgment; the recursive fixture that would have falsified the

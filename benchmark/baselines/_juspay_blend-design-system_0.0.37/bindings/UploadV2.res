@@ -1,0 +1,30 @@
+type props = {
+  ...HtmlAttrs.inputHTMLAttributesOmitClassNameDisabledIdMultipleNameOnChangeRequiredSizeSlotStyle,
+  id?: string,
+  name?: string,
+  label?: string,
+  subLabel?: string,
+  description?: string,
+  size?: EditorSharedTypes.inputSizeV2,
+  helpIconText?: string,
+  required?: bool,
+  multiple?: bool,
+  acceptedFileTypes?: array<string>,
+  disabled?: bool,
+  slot?: React.element,
+  files?: array<EditorSharedTypes.uploadFileV2>,
+  onChange?: array<EditorSharedTypes.uploadFileV2> => unit,
+  state?: EditorSharedTypes.uploadStateInputsV2,
+  error?: EditorSharedTypes.inputsV2ErrorConfig,
+  errorText?: string,
+  hintText?: string,
+  maxSize?: float,
+  maxFiles?: float,
+  progressBarValue?: float,
+  progressBarMaxWidth?: string,
+  uploadHeaderText?: string,
+  ref?: React.ref<Nullable.t<Dom.element>>,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "UploadV2"
