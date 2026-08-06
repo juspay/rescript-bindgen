@@ -79,3 +79,34 @@ export type TreeNode =
     | { kind: 'branch'; children: TreeNode[]; label: string }
 
 export declare const Tree: (props: { root?: TreeNode; nodes?: TreeNode[] }) => JsxElement
+
+// MUTUAL recursion between two unions (#170 review) — neither type refers to itself; each reaches the
+// other through a branch payload. The cycle guard is keyed per TYPE, so it composes across the pair:
+// whichever is entered first registers, the second resolves its back-reference against that
+// in-progress entry, and emit's SCC pass fuses them into ONE `type rec … and …` group. Locked here
+// because this is a TERMINATION-class shape — the class that produced #170 — and the rule this PR
+// adds to the skill is that those get a fixture, not an argument.
+type NodeA =
+    | { kind: 'leafA'; value: string }
+    | { kind: 'wrapB'; inner: NodeB[] }
+type NodeB =
+    | { kind: 'leafB'; count: number }
+    | { kind: 'wrapA'; inner: NodeA[] }
+
+export declare const Graph: (props: { a?: NodeA; b?: NodeB }) => JsxElement
+
+// BAIL INSIDE A CYCLE (#170 review) — the nastiest ordering: the self-reference has already resolved
+// against the in-progress entry when a LATER branch field forces the bail (`any` → 🛑 BROKEN, which an
+// inline-record payload can't carry a flag for). The rollback must un-register the early entry so the
+// union falls through with no dangling self-reference pointing at a retracted name. Here the fallback
+// is the record collapse (the arms share a base), which re-resolves the cycle itself: `type rec
+// poisoned` with `children: array<poisoned>` and the `any` field honestly flagged.
+// NB it must be `any`, not `unknown`: `unknown` maps to the honest `JSON.t` and is NOT an
+// imperfection, so it would not trigger the gate at all.
+type PoisonBase = { id: string }
+type Poisoned = PoisonBase & (
+    | { kind: 'ok'; children: Poisoned[] }
+    | { kind: 'bad'; children: Poisoned[]; payload: any }
+)
+
+export declare const Poison: (props: { root?: Poisoned }) => JsxElement

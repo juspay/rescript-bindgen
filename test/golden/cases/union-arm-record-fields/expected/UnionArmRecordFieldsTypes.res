@@ -1,3 +1,8 @@
+@@warning("-30")
+
+type unionArmRecordFieldsPoisonedKind =
+  | @as("ok") Ok
+  | @as("bad") Bad
 // #167: discriminated union — each branch keeps its OWN required fields.
 //       Build with Bezier({…}); `transitionType` is auto-filled by @tag.
 @tag("transitionType")
@@ -35,3 +40,21 @@ type flatRow =
 type rec treeNode =
   | @as("leaf") Leaf({value: string})
   | @as("branch") Branch({children: array<treeNode>, label: string})
+// #167: discriminated union — each branch keeps its OWN required fields.
+//       Build with LeafB({…}); `kind` is auto-filled by @tag.
+@tag("kind")
+type rec nodeB =
+  | @as("leafB") LeafB({count: int})
+  | @as("wrapA") WrapA({inner: array<nodeA>})
+// #167: discriminated union — each branch keeps its OWN required fields.
+//       Build with LeafA({…}); `kind` is auto-filled by @tag.
+@tag("kind")
+and nodeA =
+  | @as("leafA") LeafA({value: string})
+  | @as("wrapB") WrapB({inner: array<nodeB>})
+type rec poisoned = {
+  id: string,
+  kind: unionArmRecordFieldsPoisonedKind,
+  children: array<poisoned>,
+  payload?: string,  // 🛑 BROKEN — contains `any`
+}
