@@ -5,6 +5,14 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- **TypeScript compiler bumped `^5.6.0` → `^6.0.3`** — the last JS-compiler-API line (TS 7 is the
+  native Go rewrite and removed the classic `ts.*` API entirely, so it isn't usable as a drop-in;
+  the TS-7 migration to the new `typescript/unstable/sync` API is tracked separately). Verified
+  **byte-identical**: all 105 goldens match + compile and all 9 benchmark packages are unchanged on
+  6.0.3 — the #90 structural-naming work (names no longer embed `type.id`) is what keeps output
+  stable across compiler versions.
+
 ## [1.3.0] — 2026-07-22
 
 > **Upgrading:** regenerate your bindings. **JSX call sites are unchanged** (`<Button label="x" />`
