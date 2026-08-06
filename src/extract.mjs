@@ -4914,7 +4914,34 @@ function buildRecordFields(type, ctx, depth) {
         const f = (d && d.getSourceFile().fileName) || ''
         return /node_modules\/(@types|typescript)\//.test(f) || /\/lib\.(dom|es|scripthost)/.test(f)
     }
-    const props = type.getProperties()
+    // A UNION reaching a record build — `Base & (A | B)` distributes to `(Base&A) | (Base&B)`, and the
+    // same-generic-record collapse hands THAT union to `recordNode` (its arms share the base's symbol).
+    // `getProperties()` on a union returns only the props common to EVERY arm, so each arm-SPECIFIC
+    // field was silently DROPPED: blend's `RowAnimationConfig` kept `enterDuration`/`enterOffset`/
+    // `transitionType` and lost `duration`/`bezier`/`stiffness`/`damping`/`mass`, so a consumer could
+    // build `{transitionType: "bezier"}` with no curve — a runtime crash inside the library, from a
+    // binding the report called clean (no bucket, no flag). Gather the arm-only props too and mark them
+    // OPTIONAL: each applies only to its own arm and ReScript can't express that discriminated
+    // dependency, so flatten-optional is the faithful, compilable model — the SAME one the component
+    // PROPS path has used since #63 C2; only `buildRecordFields` never got it, so a nested type stayed
+    // lossy. Common props keep their correctly-merged types (the `transitionType` discriminant becomes
+    // one enum over all arms). Arms with IDENTICAL key sets (`BaseUIChangeEventDetails<R>` #30, the
+    // anonymous-literal collapse #83) have no arm-only props, so they are untouched by construction.
+    // First arm declaring a name wins, as in the props path. (#167)
+    const armOnly = new Set()
+    let props = type.getProperties()
+    if (type.isUnion && type.isUnion()) {
+        const byName = new Map(props.map((p) => [p.getName(), p]))
+        for (const arm of type.types) {
+            for (const p of arm.getProperties()) {
+                const nm = p.getName()
+                if (byName.has(nm)) continue
+                byName.set(nm, p)
+                armOnly.add(nm)
+            }
+        }
+        props = [...byName.values()]
+    }
     const hasHtml = props.some(isInherited)
     // A FIRST-PARTY field whose name collides with a DOM attr (`id`, `size`, `shape`, …) can't
     // co-exist with the all-or-nothing `...JsxDOM.domProps` spread (ReScript rejects an explicit
@@ -4964,7 +4991,9 @@ function buildRecordFields(type, ctx, depth) {
                 : withPath(ctx, p.getName(), () => classify(t, ctx, p.getName(), depth + 1))
             return {
                 name: p.getName(),
-                optional: optional || !!(nb && nb.hasUndef) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
+                // `armOnly` — a field only some union arms declare; required WITHIN its arm, but
+                // optional on the flattened record (see the union gather above, #167).
+                optional: optional || armOnly.has(p.getName()) || !!(nb && nb.hasUndef) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
                 // push the field name so a nested anonymous `{…}` is path-anchored (#90)
                 type: applyNullable(fieldType, nb),
             }

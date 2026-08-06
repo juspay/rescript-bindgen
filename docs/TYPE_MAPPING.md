@@ -327,6 +327,33 @@ types (e.g. the `variant` discriminant becomes one enum over all arms), and each
 discriminated dependency in one labelled-arg signature, so flatten-optional is the faithful,
 compilable default — `~alignment` and `~children`, required within their arm, surface as optional). (#63 C2)
 
+**The same rule applies to a NESTED discriminated-union type (#167).** Fixture:
+[`union-arm-record-fields`](../test/golden/cases/union-arm-record-fields). `Base & (A | B)` at a
+record-field / prop *type* position (blend's `DataTable.RowAnimationConfig`) reaches the record builder
+as the distributed **union**, because the arms all share the base's symbol and the same-generic-record
+collapse (#30/#68) fires. `getProperties()` on a union yields only the common props, so until #167 the
+builder kept `enterDuration`/`enterOffset`/`transitionType` and **silently dropped**
+`duration`/`bezier`/`stiffness`/`damping`/`mass` — with no report bucket and no flag, letting a consumer
+construct `{transitionType: "bezier"}` with no curve and crash inside the library
+(juspay/blend-rescript#134). The record now carries every arm's fields, arm-specific ones **optional**:
+
+```rescript
+type rowAnimationConfig = {
+  enterDuration: float,
+  enterOffset: float,
+  transitionType: dataTableRowAnimationConfigTransitionType,  // common: merged into one enum
+  duration?: float, bezier?: (float, float, float, float),    // "bezier" arm only
+  stiffness?: float, damping?: float, mass?: float,           // "spring" arm only
+}
+```
+
+A field present in *some* arms but not all (a 3-arm union's shared-by-two field) is arm-specific too, so
+it is optional as well; the first arm declaring a name supplies its type. Arms with **identical key
+sets** — `BaseUIChangeEventDetails<R>` instantiations (#30), the anonymous-literal collapse (#83) — have
+no arm-specific props, so their output is unchanged by construction. This is *record-field / prop*
+position only: the same union as an **array element** takes the opaque-views path (`from*`/`as*` per arm),
+which keeps each arm's own requiredness.
+
 **`--variant-props` (opt-in, #65):** when the union has a **clean string discriminant** — a prop present
 in every arm whose type is a single *distinct string literal* per arm (`mode: "single" | "multi"`) —
 the component instead binds a `@tag(<field>)` ReScript variant that **restores per-branch
