@@ -75,6 +75,23 @@ with `arm.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)` before harv
 `hasHtml` is computed *before* the `isInherited` filter, so leaked prototype members can staple a
 spurious `...JsxDOM.domProps` onto a record.
 
+**Rollback restores the registry, not the checker.** The snapshot/rollback pattern undoes every
+registry side effect of a bailed speculative build — but `getTypeOfSymbolAtLocation` calls made while
+building it have already advanced the checker's internal resolution state, and *that* is the
+reordering mechanism. So a speculative path whose late gates (type-var / imperfection) bail after
+resolving branch fields can still, in principle, reorder unrelated output. Contain it the way
+`tagVariantNode` does: put every name-only gate first so most non-candidates never resolve anything,
+and cap the work (`TAG_VARIANT_MAX_ARMS`). The 9/9 byte-identical benchmark is the regression signal
+that this containment still holds.
+
+**In `--file` (single-file) mode, deps are recomputed in emit.mjs — new entry kinds must be added
+there too.** Module mode carries `entry.deps` from extract, but the three single-file `depsOf`
+closures in emit.mjs walk the entry's IR shape directly (`fields`, `members`, `branches`). A new
+entry kind that isn't walked is a zero-dep node: wrong ordering, forward references, and no
+`type rec` fusion for cycles. The goldens can never catch this — they all run module mode — so lock
+single-file behaviour in `test/smoke.mjs`, which calls `extractComponent` (the `--file` path)
+directly.
+
 **A function union is not unionable.** TS resolves a call on a union of signatures by **intersecting**
 its parameters, so `(d: Date) => void | (d: Date[]) => void` yields a first param of `Date & Date[]` —
 a signature no arm accepts. Flag it, or give each arm its own variant branch.
