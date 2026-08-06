@@ -1,39 +1,24 @@
-type unionArmRecordFieldsRowAnimationConfigTransitionType =
-  | @as("bezier") Bezier
-  | @as("spring") Spring
-type unionArmRecordFieldsColumnConfigKind =
-  | @as("number") Number
-  | @as("text") Text
-  | @as("date") Date
-type unionArmRecordFieldsSelectionConfigMode =
-  | @as("single") Single
-  | @as("multi") Multi
-  | @as("none") None
-type rowAnimationConfig = {
-  enterDuration: float,
-  enterOffset: float,
-  transitionType: unionArmRecordFieldsRowAnimationConfigTransitionType,
-  duration?: float,
-  bezier?: (float, float, float, float),
-  stiffness?: float,
-  damping?: float,
-  mass?: float,
-}
+// #167: discriminated union — each branch keeps its OWN required fields.
+//       Build with Bezier({…}); `transitionType` is auto-filled by @tag.
+@tag("transitionType")
+type rowAnimationConfig =
+  | @as("bezier") Bezier({enterDuration: float, enterOffset: float, duration: float, bezier: (float, float, float, float)})
+  | @as("spring") Spring({enterDuration: float, enterOffset: float, stiffness: float, damping: float, mass: float})
 type tableSettings = {
   rowAnimation?: rowAnimationConfig,
   sticky?: bool,
 }
-type columnConfig = {
-  field: string,
-  kind: unionArmRecordFieldsColumnConfigKind,
-  maxChars?: float,
-  stagger?: float,
-  precision?: float,
-  format?: string,
-}
-type selectionConfig = {
-  autoFocus?: bool,
-  mode: unionArmRecordFieldsSelectionConfigMode,
-  selected?: CommonTypes.stringOrStringArray,
-  onSelect?: string,  // ⚠️ REVIEW — was `(value: string) => void | (value: string[]) => void` — match the real type by hand
-}
+// #167: discriminated union — each branch keeps its OWN required fields.
+//       Build with Text({…}); `kind` is auto-filled by @tag.
+@tag("kind")
+type columnConfig =
+  | @as("text") Text({field: string, maxChars: float, stagger: float})
+  | @as("number") Number({field: string, precision: float, stagger: float})
+  | @as("date") Date({field: string, format: string})
+// #167: discriminated union — each branch keeps its OWN required fields.
+//       Build with Single({…}); `mode` is auto-filled by @tag.
+@tag("mode")
+type selectionConfig =
+  | @as("single") Single({autoFocus?: bool, selected?: string, onSelect?: string => unit})
+  | @as("multi") Multi({autoFocus?: bool, selected?: array<string>, onSelect?: array<string> => unit})
+  | @as("none") None({autoFocus?: bool})

@@ -327,7 +327,42 @@ types (e.g. the `variant` discriminant becomes one enum over all arms), and each
 discriminated dependency in one labelled-arg signature, so flatten-optional is the faithful,
 compilable default — `~alignment` and `~children`, required within their arm, surface as optional). (#63 C2)
 
-**The same rule applies to a NESTED discriminated-union type (#167).** Fixture:
+### A nested discriminated union is a `@tag` variant (#167)
+
+For a discriminated-union **type** (not a component's props) the binding is the **lossless** one — a
+`@tag(<field>)` variant with one inline-record branch per arm, so every branch keeps its **own required
+fields**. `Bezier` cannot be constructed without its curve, which is exactly what the flattened record
+below has to give up:
+
+```rescript
+@tag("transitionType")
+type rowAnimationConfig =
+  | @as("bezier") Bezier({enterDuration: float, enterOffset: float, duration: float, bezier: (float, float, float, float)})
+  | @as("spring") Spring({enterDuration: float, enterOffset: float, stiffness: float, damping: float, mass: float})
+```
+
+Build with `Bezier({…})`; `@tag` auto-fills the discriminant with the **real literal** (`@as("bezier")`,
+never the constructor name). The runtime value is a **flat object carrying the tag** —
+`{transitionType: "bezier", enterDuration: 300, …}` — so it is exactly what the library expects, at zero
+cost, and reads compile to `c.transitionType === "bezier"`. Verified against the compiler; the variant
+also works as a record **field** and inside a `type rec … and …` group.
+
+Requirements, all of which fall back to the flattened record below (complete, just without per-arm
+requiredness) rather than emitting something wrong:
+
+| Requirement | Why |
+|---|---|
+| a **clean string discriminant** — a prop in every arm, one *distinct* string literal each, read **syntactically** from the declaration | resolving it through the checker reorders unrelated output (bisected: it shifted record fields, enum members and polyvar tags across blend's 3300 shared types). A discriminant behind an alias (`type Kind = "bezier"`) is therefore not matched |
+| arms whose **member sets differ** (name + optionality) | identical-member-set arms — `BaseUIChangeEventDetails<R>` over a 10-literal `R`, base-ui's whole change-event family (#30) — already collapse **losslessly** into one record with an enum discriminant; 10 branches with identical payloads would be pure duplication and would force a pattern match to read an always-present field |
+| **≤ `TAG_VARIANT_MAX_ARMS` (12)** arms | Highcharts' `SeriesOptionsType` has **118**; that variant would be unreadable, and the speculative build alone reordered members across 5 blend files |
+| every branch field **concretely typed** — no free type var, no `⚪`/`⚠️`/`🛑` imperfection | an inline record can't declare a type parameter ("Unbound type parameter"), and a flag can't be rendered in inline-record position — dropping it would break *flag, don't fake* |
+| no arm carrying **inherited DOM attrs** | the flattened record spreads `...JsxDOM.domProps` for those; an inline record admits no spread |
+
+The branch build is **sandboxed** (the #39/#33 snapshot/rollback): `classify` mints records, enums and
+opaque modules as it resolves, so a bail after that would strand them — measured as +50 orphan types in
+blend before the rollback was added.
+
+**The flattened record is the fallback.** Fixture:
 [`union-arm-record-fields`](../test/golden/cases/union-arm-record-fields). `Base & (A | B)` at a
 record-field / prop *type* position (blend's `DataTable.RowAnimationConfig`) reaches the record builder
 as the distributed **union**, because the arms all share the base's symbol and the same-generic-record

@@ -1,12 +1,14 @@
 // #167: a NESTED discriminated-union TYPE — `Base & (A | B)` — distributes to a UNION of full
-// intersections, whose arms all share the base's symbol, so the same-generic-record collapse fires
-// and hands the UNION to the record builder. `getProperties()` on a union yields only the props
-// common to EVERY arm, so every arm-specific field used to be silently dropped: `rowAnimationConfig`
-// emitted just `enterDuration`/`enterOffset`/`transitionType`, letting a consumer construct
+// intersections. `getProperties()` on a union yields only the props common to EVERY arm, so every
+// arm-specific field used to be silently dropped: `rowAnimationConfig` emitted just
+// `enterDuration`/`enterOffset`/`transitionType`, letting a consumer construct
 // `{transitionType: "bezier"}` with no curve — a runtime crash inside the library, reported as clean.
-// The record now also carries each arm-specific field as OPTIONAL (required within its arm, but
-// ReScript can't express the discriminated dependency) — the same flatten-optional model the
-// component-PROPS path uses (see `discriminated-union-props`, #63 C2).
+//
+// The mapping is now a `@tag` VARIANT — one inline-record branch per arm, so each branch keeps its OWN
+// required fields (`Bezier` cannot be built without its curve). Runtime is a flat object carrying the
+// real tag, so the library sees exactly what it expects. Every case below exercises that; the
+// flatten-optional record (arm-specific fields optional) remains the FALLBACK for unions that can't
+// carry a faithful variant — see `docs/TYPE_MAPPING.md` for the requirement table.
 type JsxElement = { __brand: 'element' }
 
 type RowAnimationBase = { enterDuration: number; enterOffset: number }
@@ -18,8 +20,9 @@ export type RowAnimationConfig = RowAnimationBase & (
 // The same shape one level DEEPER — reached as a FIELD of a record, not as a prop's own type.
 type TableSettings = { rowAnimation?: RowAnimationConfig; sticky?: boolean }
 
-// A 3-arm union where a field is shared by SOME arms but not all (`stagger` in text+number, absent
-// in date): not common to every arm, so it too is arm-specific and lands optional.
+// A 3-arm union where a field is shared by SOME arms but not all (`stagger` in text+number, absent in
+// date). The variant keeps it REQUIRED in the two branches that declare it and absent from the third —
+// the flattened fallback could only offer `stagger?`, valid to omit even for a text column.
 type ColumnBase = { field: string }
 type ColumnConfig = ColumnBase & (
     | { kind: 'text'; maxChars: number; stagger: number }
@@ -27,18 +30,13 @@ type ColumnConfig = ColumnBase & (
     | { kind: 'date'; format: string }
 )
 
-// An arm-specific name declared by SEVERAL arms at DIFFERENT types (react-day-picker's `selected`:
-// `Date` in the single arm, `Date[]` in the multi arm, absent when no mode is set) must NOT take arm
-// 1's type — that would emit a confident, plainly-wrong type for the other arms. Such a field is
-// typed as the UNION of its arm types and classified as such, so the normal union machinery decides
-// honestly (an exact variant when the arms are discriminable — here `string` vs `array` — else a
-// flagged placeholder). NB `selected` must be absent from at least one arm to be arm-specific at all:
-// a name present in EVERY arm is common, and the checker merges its type itself.
+// A name declared by SEVERAL arms at DIFFERENT types — react-day-picker's `selected` (`Date` single /
+// `Date[]` multi / absent with no mode) and its per-mode `onSelect` handler. The variant types each
+// branch EXACTLY (`selected?: string` in Single, `array<string>` in Multi; `onSelect` keeps its own
+// signature per branch), which the flattened form cannot do: there it had to become an `@unboxed`
+// string-or-array, and `onSelect` had to be FLAGGED, because TS resolves a call on a union of
+// signatures by intersecting its parameters — fabricating a signature no arm accepts.
 type SelectBase = { autoFocus?: boolean }
-// `onSelect` is the harder half: arms that are FUNCTIONS. TS resolves a call on a union of signatures
-// by INTERSECTING their parameters, so unioning `(v: string) => void` with `(v: string[]) => void`
-// would synthesise `string & string[]` — a confident-looking signature NO arm accepts. Such a field is
-// therefore emitted as a bucketed `review` placeholder ("flag, don't fake"), not a fabricated callback.
 type SelectionConfig = SelectBase & (
     | { mode: 'single'; selected?: string; onSelect?: (value: string) => void }
     | { mode: 'multi'; selected?: string[]; onSelect?: (value: string[]) => void }

@@ -176,13 +176,20 @@ export function shapeHash(sig) {
 }
 
 /** Kinds whose names are stabilized (a shared base = a shape/name that must not renumber). */
-const STABILIZE_KINDS = new Set(['record', 'enum', 'unboxed', 'opaque'])
+const STABILIZE_KINDS = new Set(['record', 'enum', 'unboxed', 'opaque', 'tagVariant'])
 
 /** Canonical per-shape signature used both to detect a genuine collision and to seed the hash
  *  fallback — reuses `recordSig` for records (identical to the dedup key, so post-dedup distinct
  *  entries always differ) and the member set for enum/unboxed/opaque. */
+/** A `@tag` variant's shape: the discriminant + every branch's literal, ctor and fields. (#167) */
+function tagVariantSig(e, enc) {
+    return 'tagv:' + e.tag + '|' + (e.branches || []).map((b) =>
+        b.literal + '=' + b.ctor + '(' + b.fields.map((f) => f.name + (f.optional ? '?' : '') + ':' + enc(f.type)).join(';') + ')').join('|')
+}
+
 function entrySig(e) {
     if (e.kind === 'record') return recordSig(e)
+    if (e.kind === 'tagVariant') return tagVariantSig(e, typeSig)
     // tparams MUST be part of the signature: a generic `portalStyle<'a>` and a non-generic
     // `portalStyle` @unboxed are NOT the same shape — merging them applies `<'a>` to a
     // non-generic type (compile break).
@@ -245,6 +252,7 @@ export function structuralSig(e, shared, seen = new Set()) {
         return 'rec:sp' + (e.spread || '') + '|tp' + ((e.tparams || []).join(',')) + '|' +
             e.fields.map((f) => f.name + (f.optional ? '?' : '') + ':' + enc(f.type)).join(';')
     }
+    if (e.kind === 'tagVariant') return tagVariantSig(e, enc)
     if (e.members) return e.kind + ':tp' + ((e.tparams || []).join(',')) + '|' + e.members.map((m) => (m.ctor || '') + (m.as !== undefined ? '=' + m.as : '') + (m.type ? ':' + enc(m.type) : '')).join(',')
     return e.kind + ':' + (e.base || '')
 }
@@ -2419,6 +2427,7 @@ function healGhostsFromTwin(shared) {
  *  members' types. (enums have no nested types.) */
 function entryChildTypes(e) {
     if (e.kind === 'record') return e.fields.map((f) => f.type)
+    if (e.kind === 'tagVariant') return (e.branches || []).flatMap((b) => b.fields.map((f) => f.type)) // #167
     if (e.kind === 'unboxed') return e.members.map((m) => m.type)
     // opaque-views modules reference records through their `from*` externals (and overload /
     // callable modules through their signature views and property accessors) — those refs must
@@ -2553,6 +2562,14 @@ const VENDOR_TRIAL_ENTRY_CAP = 8
 // `fromTag: [#"…" | …]` polyvar constructor instead of one named constant each. Below it,
 // keep readable named constants (`Boundary.clippingAncestors`). (#53)
 const LITERAL_COLLAPSE_THRESHOLD = 4
+// Most arms a discriminated union may have before we stop trying to model it as a `@tag` variant
+// (#167). Real ones are 2–10 arms (`RowAnimationConfig`, `ColumnConfig`, blend's `ColumnDefinition`);
+// Highcharts' `SeriesOptionsType` is **118**, and a 118-branch inline-record variant would be
+// unreadable output even if every field were clean — it isn't, so the attempt bailed anyway after
+// speculatively classifying that entire subtree, which reordered unrelated members across 5 of blend's
+// files. Capping keeps the attempt cheap and the churn at zero. A union above the cap keeps the
+// flattened record — complete, just without per-arm requiredness (documented in docs/TYPE_MAPPING.md).
+const TAG_VARIANT_MAX_ARMS = 12
 function trialVendorRecord(type, ctx, propName, named) {
     const shared = ctx.shared
     if (!shared) return null
@@ -4105,6 +4122,28 @@ function unionNode(type, ctx, propName, depth = 0) {
     // legitimately collapse (regressed hono's `headerRecord` and react-markdown's `HastTypes.readonly`
     // to `string` in the bench). A first-party record like `@base-ui`'s `BaseUIChangeEventDetails<R>`
     // is no container, so the collapse this branch was built for still fires. (#68, was #65/#67)
+    // A DISCRIMINATED union of object arms gets the LOSSLESS mapping FIRST: a `@tag(<field>)` variant
+    // with one inline-record branch per arm, so each branch keeps its own fields at their REAL
+    // requiredness (`Bezier` can't be built without its curve) and the runtime object stays flat with
+    // the real tag. Tried BEFORE the same-generic-record collapse below, which is the fallback: it
+    // flattens every arm's fields into ONE record with the arm-specific ones optional — complete, but
+    // it cannot express "required only in this arm". `tagVariantNode` returns null (→ fall through)
+    // when there's no clean string discriminant, or a branch field is generic/lossy, or an arm carries
+    // inherited DOM attrs. Arms with IDENTICAL key sets (`BaseUIChangeEventDetails<R>` #30) have no
+    // literal discriminant either, so they keep collapsing to one record. (#167, generalizes #65)
+    if (parts.length >= 2 && parts.every((t) =>
+        !isBuiltinContainer(t, checker) &&
+        (t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) &&
+        t.getProperties().length > 0 &&
+        !(t.getCallSignatures && t.getCallSignatures().length) &&
+        !armHasTypeParam(t))) {
+        const aliasName = type.aliasSymbol && type.aliasSymbol.getName()
+        const symName = armSym(parts[0]) && armSym(parts[0]).getName()
+        const named = (aliasName && /^[A-Z]/.test(aliasName)) ? aliasName : (/^[A-Z]/.test(symName || '') ? symName : null)
+        const v = tagVariantNode(type, parts, ctx, propName, depth, named)
+        if (v) return v
+    }
+
     if (parts.length >= 2 && type.getProperties().length > 0 && parts.every((t) =>
         !isBuiltinContainer(t, checker) &&
         armSym(t) && armSym(t) === armSym(parts[0]) &&
@@ -4781,6 +4820,184 @@ function typeSig(t) {
 function recordSig(entry) {
     return 'sp:' + (entry.spread || '') + '|tp:' + ((entry.tparams || []).join(',')) + '|' +
         entry.fields.map((f) => f.name + (f.optional ? '?' : '') + ':' + typeSig(f.type)).join(';')
+}
+
+/**
+ * A DISCRIMINATED UNION type → a ReScript `@tag(<field>)` variant with one inline-record branch per
+ * arm. This is the LOSSLESS mapping for `Base & (A | B)` and friends: each branch carries its own
+ * fields at their REAL requiredness, so `Bezier` cannot be constructed without its curve — the
+ * guarantee the flatten-optional record (#63 C2 / #167) has to give up. Verified against the
+ * compiler: the runtime value is a FLAT object with the real tag (`{transitionType: "bezier",
+ * enterDuration: …, bezier: […]}`), exactly what the library expects, and reads compile to
+ * `c.transitionType === "bezier"` — so this is zero-cost, no coercion story needed.
+ *
+ *     @tag("transitionType")
+ *     type rowAnimationConfig =
+ *       | @as("bezier") Bezier({enterDuration: float, enterOffset: float, duration: float, …})
+ *       | @as("spring") Spring({enterDuration: float, enterOffset: float, stiffness: float, …})
+ *
+ * Same machinery `--variant-props` (#65) applies to a component's top-level props, now for a NESTED
+ * type. Returns null — caller falls back to the flatten-optional record — when the shape can't carry
+ * a faithful variant:
+ *   · no CLEAN string discriminant (a prop in every arm typed as one DISTINCT string literal per
+ *     arm). A presence-based discriminant (`mode?: undefined` vs `mode: "single"`) has no literal to
+ *     tag, and non-distinct literals can't address a branch.
+ *   · a branch field that is GENERIC (an inline-record payload can't declare a free type var →
+ *     "Unbound type parameter") or IMPERFECT (a `⚪`/`⚠️`/`🛑` flag can't be rendered in
+ *     inline-record position, and dropping it would break flag-don't-fake).
+ *   · an arm carrying INHERITED DOM attrs — the flattened record spreads `...JsxDOM.domProps` for
+ *     those, and an inline record admits no spread.
+ * Naming, dedup, deps, cycle-guarding and the #90 stable-name hash all work exactly as for a record
+ * (a variant is a plain type declaration, so it rides in the same `type rec … and …` groups). (#167)
+ * @returns {{kind:'typeRef', to:string}|null}
+ */
+function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
+    const { checker } = ctx
+    const isInherited = (p) => {
+        const d = p.declarations && p.declarations[0]
+        const f = (d && d.getSourceFile().fileName) || ''
+        return /node_modules\/(@types|typescript)\//.test(f) || /\/lib\.(dom|es|scripthost)/.test(f)
+    }
+    // The discriminant literal is read SYNTACTICALLY, from the property's declaration node. Resolving
+    // it through the checker (`getTypeOfSymbolAtLocation`) forces type resolution earlier than the rest
+    // of the pipeline expects, and that measurably REORDERS unrelated output — record fields, enum
+    // members and polyvar tag lists across blend's 3300 shared types shifted position — even for unions
+    // that never became a variant. Bisected: the member-name gates above are side-effect-free, this call
+    // was the whole cause. The declaration node needs no resolution at all.
+    // Trade-off: a discriminant written through an ALIAS (`type Kind = "bezier"; {kind: Kind}`) is not
+    // matched, so that union keeps the flattened record — complete, just less precise than a variant.
+    const litOf = (arm, name) => {
+        const p = arm.getProperties().find((s) => s.getName() === name)
+        for (const d of (p && p.declarations) || []) {
+            if (ts.isPropertySignature(d) && d.type && ts.isLiteralTypeNode(d.type) && ts.isStringLiteral(d.type.literal)) {
+                return d.type.literal.text
+            }
+        }
+        return null
+    }
+    if (parts.length > TAG_VARIANT_MAX_ARMS) return null // 118-arm Highcharts unions: see the constant
+    // GATE 1, and deliberately the cheapest one — it reads member NAMES only, never resolving a
+    // property's type, so a union that will not become a variant is left in exactly the state the
+    // collapse below expects. (Resolving types here perturbs the checker's member ordering, which
+    // showed up as pure reordering churn across blend/base-ui.)
+    //
+    // The variant only EARNS its verbosity when the flattened record would actually lose something.
+    // Arms with an IDENTICAL member set (name + optionality) — `BaseUIChangeEventDetails<R>` over a
+    // 10-literal `R`, base-ui's whole change/highlight-event family (#30) — collapse LOSSLESSLY into
+    // one record whose discriminant is an enum field; re-expressing that as 10 branches with identical
+    // payloads is pure duplication, and it would force a pattern match to read a field that is always
+    // present. So identical-member-set unions keep the record; the variant is for arms that genuinely
+    // differ, where only it can say "required in THIS arm". (#167)
+    const memberSig = (a) => a.getProperties().map((p) => p.getName() + ((p.getFlags() & ts.SymbolFlags.Optional) ? '?' : '')).sort().join(',')
+    const sig0 = memberSig(parts[0])
+    if (parts.every((a) => memberSig(a) === sig0)) return null
+    // GATE 2: no arm may carry inherited DOM attrs (an inline record can't spread `JsxDOM.domProps`).
+    if (parts.some((a) => a.getProperties().some(isInherited))) return null
+
+    // The discriminant: a prop of arm 0 that is a single DISTINCT string literal in EVERY arm.
+    let tag = null, lits = null
+    for (const cand of parts[0].getProperties().map((p) => p.getName())) {
+        const ls = parts.map((a) => litOf(a, cand))
+        if (ls.some((l) => l == null)) continue
+        if (new Set(ls).size !== ls.length) continue
+        tag = cand; lits = ls; break
+    }
+    if (!tag) return null
+
+    // Build every branch BEFORE registering: unlike a record this can still bail (a generic or lossy
+    // field), and a half-registered entry would leave a dangling name in the registry. A branch field
+    // therefore cannot reference this variant recursively — a self-referential discriminated union
+    // falls back to the record collapse, which registers early and handles cycles.
+    //
+    // SANDBOXED, because `classify` has REGISTRY side effects: a branch field mints records, enums and
+    // opaque modules as it resolves. Bailing after that would strand every one of them — measured as
+    // +50 orphan types (and new unreferenced Highcharts views modules) in blend. So snapshot the
+    // registry, and on any bail restore it exactly, minted names included — the #39/#33 trial pattern.
+    const shared = ctx.shared
+    const snap = shared ? {
+        entriesLen: shared.entries.length,
+        keys: new Set(shared.byKey.keys()),
+        sigs: new Set(shared.bySig.keys()),
+        names: new Set(shared.names),
+        typeVars: ctx.typeVars ? new Map(ctx.typeVars) : null,
+    } : null
+    const rollback = () => {
+        if (!snap) return null
+        shared.entries.length = snap.entriesLen
+        for (const k of [...shared.byKey.keys()]) if (!snap.keys.has(k)) shared.byKey.delete(k)
+        for (const s of [...shared.bySig.keys()]) if (!snap.sigs.has(s)) shared.bySig.delete(s)
+        for (const n of [...shared.names]) if (!snap.names.has(n)) shared.names.delete(n)
+        if (snap.typeVars && ctx.typeVars) { ctx.typeVars.clear(); for (const [k, v] of snap.typeVars) ctx.typeVars.set(k, v) }
+        return null
+    }
+    const usedCtors = new Set()
+    const branches = []
+    const prevInRecord = ctx.inRecordField
+    ctx.inRecordField = true // a shared type can't mint component type vars for `any` (#31)
+    const prevPath = ctx.path
+    try {
+        for (let i = 0; i < parts.length; i++) {
+            let ctor = pascal(lits[i]) || `Case${i}`
+            while (usedCtors.has(ctor)) ctor += '_'
+            usedCtors.add(ctor)
+            // Each branch is named relative to the variant (or its path) — the same anchor a record
+            // uses — so a nested anonymous `{…}` inside a branch gets a stable name (#90).
+            ctx.path = typeName ? [typeName] : (prevPath || [propName])
+            const fields = parts[i].getProperties()
+                .filter((p) => p.getName() !== tag && !/^__@/.test(p.getName()))
+                .map((p) => {
+                    const optional = (p.getFlags() & ts.SymbolFlags.Optional) !== 0
+                    let t; try { t = checker.getTypeOfSymbolAtLocation(p, ctx.decl) } catch { return null }
+                    // Same syntactic-nullability recovery record fields get: strictNullChecks is off,
+                    // so `| null` / `| undefined` live only on the declaration node. (#63 C5)
+                    const propSigs = (p.declarations || []).filter((dd) => ts.isPropertySignature(dd) && dd.type)
+                    const ownSigs = propSigs.filter((dd) => !isVendorDecl(dd))
+                    const ownDecl = ownSigs.length === 1 ? ownSigs[0] : (propSigs.length === 1 ? propSigs[0] : null)
+                    const nb = ownDecl && ownDecl.type && syntacticNullability(ownDecl.type)
+                    const node = withPath(ctx, p.getName(), () => classify(t, ctx, p.getName(), depth + 1))
+                    return {
+                        name: p.getName(),
+                        optional: optional || !!(nb && nb.hasUndef) || indexedAccessOptional(ownDecl && ownDecl.type, checker),
+                        type: applyNullable(node, nb),
+                    }
+                })
+            if (fields.some((f) => !f)) return rollback()
+            branches.push({ literal: lits[i], ctor, fields })
+        }
+    } finally {
+        ctx.inRecordField = prevInRecord
+        ctx.path = prevPath
+    }
+    // Robustness gate (#65): a free type var can't be declared by an inline-record payload, and a
+    // lossy field would lose its bucket flag there. Either way the flattened record serves better.
+    const tv = new Set()
+    for (const b of branches) for (const f of b.fields) collectTypeVars(f.type, tv)
+    if (tv.size) return rollback()
+    if (branches.some((b) => b.fields.some((f) => irHasImperfection(f.type)))) return rollback()
+    if (!branches.some((b) => b.fields.length)) return rollback() // every branch bare: the enum says it all
+
+    const base = typeName ? lower(typeName) : stableAnonBase(ctx, type, propName) + 'Config'
+    if (!ctx.shared) {
+        // Single-file mode: one local declaration list, deduped by name.
+        if (ctx.seenRecords.has(base)) return { kind: 'typeRef', to: base }
+        ctx.seenRecords.set(base, true)
+        ctx.records.push({ name: base, tag, branches })
+        return { kind: 'typeRef', to: base }
+    }
+    const key = 'id:' + type.id
+    if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
+    const home = homeOf(type, ctx)
+    const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pascal(base)
+    const entry = { key, kind: 'tagVariant', name: uniqueName(sharedBase, ctx.shared), base: sharedBase, home, deps: new Set(), tag, branches }
+    for (const b of branches) for (const f of b.fields) collectRefKeys(f.type, entry.deps)
+    // Structural dedup, scoped per home module — same rule records use (#61 follow-up).
+    const sig = entry.home + '|' + entrySig(entry)
+    const canon = ctx.shared.bySig.get(sig)
+    if (canon && canon !== entry) { ctx.shared.byKey.set(key, canon); return refTo(canon) }
+    ctx.shared.byKey.set(key, entry)
+    ctx.shared.entries.push(entry)
+    ctx.shared.bySig.set(sig, entry)
+    return refTo(entry)
 }
 
 /**
