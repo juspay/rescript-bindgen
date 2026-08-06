@@ -370,6 +370,31 @@ const checks = [
       ['#155: reserved-word prop keeps @as mapping in record form', /@as\("type"\) type_\?:/.test(code)],
     ]
   })(),
+  ...(() => {
+    // #167/#169 file-mode ordering: the goldens all run MODULE mode (shared registry, entry.deps),
+    // so they can never catch a single-file (--file) dep bug. A `@tag` variant's deps live in its
+    // BRANCH fields; the single-file depsOf closures once walked only fields/members, so a variant
+    // was a zero-dep node — a record<->variant cycle (record field references the variant, a branch
+    // references the record back) never fused into one `type rec … and …` group and emitted a
+    // forward reference. Locks: the cycle fuses, and the group compiles define-before-use.
+    const d = mkdtempSync(join(tmpdir(), 'bindgen-tagvariant-file-'))
+    const f = join(d, 'Widget.d.ts')
+    writeFileSync(f, `
+type JsxElement = { __brand: 'element' };
+interface Holder { label: string; child?: Tree }
+type Tree =
+  | { kind: 'leaf'; value: string }
+  | { kind: 'branch'; holder: Holder };
+export declare const Widget: (props: { root?: Holder }) => JsxElement;
+export default Widget;
+`)
+    const ir = extractComponent(f, { from: 'demo', importName: 'Widget' })
+    const c = emit(ir)
+    return [
+      ['#167 file mode: record<->variant cycle fuses into ONE `type rec … and …` group', /type rec holder = \{[\s\S]*?\n@tag\("kind"\)\nand tree =/.test(c)],
+      ['#167 file mode: variant branches carry @as(real literal)', /@as\("leaf"\) Leaf\(\{value: string\}\)/.test(c) && /@as\("branch"\) Branch\(\{holder: holder\}\)/.test(c)],
+    ]
+  })(),
 ]
 
 let ok = true

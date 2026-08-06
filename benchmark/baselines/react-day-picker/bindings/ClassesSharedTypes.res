@@ -786,8 +786,14 @@ type dayPickerProps = {
   onDayMouseEnter?: (Date.t, Dict.t<bool>, ReactEvent.Mouse.t) => unit,
   onDayMouseLeave?: (Date.t, Dict.t<bool>, ReactEvent.Mouse.t) => unit,
   dateLib?: classesOverridesConfig,
+  selected?: CjsDayPickerContextSelect.t,
+  onSelect?: string,  // ⚠️ REVIEW — was `OnSelectHandler<Date> | OnSelectHandler<Date[]> | OnSelectHandler<DateRange>` — match the real type by hand
+  min?: float,
+  max?: float,
+  excludeDisabled?: bool,
+  resetOnSelect?: bool,
 }
-type dayPickerContextV1tj1m = {
+type dayPickerContextV2cyrn = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,
@@ -803,7 +809,7 @@ type dayPickerContextV1tj1m = {
   formatters: formatters,
   dayPickerProps: dayPickerProps,
 }
-type dayPickerContextP17u5 = {
+type dayPickerContextV15s1d = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,

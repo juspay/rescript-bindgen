@@ -27,6 +27,11 @@ in CI — treat it as a contract, not just docs.
 - **`unknown` → `JSON.t`** (opaque value), never a type variable. `'a` is only for a genuine generic
   that round-trips (input ↔ callback).
 
+**Skill:** `.claude/skills/mapping-change/SKILL.md` carries the union/variant decision table, the
+position matrix (props / record field / array element are three different code paths) and the traps
+that have actually caused regressions — registry side effects in `classify`, checker-resolution
+reordering, `@as` tags, `text` vs `note` on flag comments. Read it before touching `src/*.mjs`.
+
 ## Maintenance loop (required for every mapping change)
 
 A new or changed mapping is not done until all three are updated together:

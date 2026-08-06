@@ -327,6 +327,104 @@ types (e.g. the `variant` discriminant becomes one enum over all arms), and each
 discriminated dependency in one labelled-arg signature, so flatten-optional is the faithful,
 compilable default — `~alignment` and `~children`, required within their arm, surface as optional). (#63 C2)
 
+### A nested discriminated union is a `@tag` variant (#167)
+
+For a discriminated-union **type** (not a component's props) the binding is the **lossless** one — a
+`@tag(<field>)` variant with one inline-record branch per arm, so every branch keeps its **own required
+fields**. `Bezier` cannot be constructed without its curve, which is exactly what the flattened record
+below has to give up:
+
+```rescript
+@tag("transitionType")
+type rowAnimationConfig =
+  | @as("bezier") Bezier({enterDuration: float, enterOffset: float, duration: float, bezier: (float, float, float, float)})
+  | @as("spring") Spring({enterDuration: float, enterOffset: float, stiffness: float, damping: float, mass: float})
+```
+
+Build with `Bezier({…})`; `@tag` auto-fills the discriminant with the **real literal** (`@as("bezier")`,
+never the constructor name). The runtime value is a **flat object carrying the tag** —
+`{transitionType: "bezier", enterDuration: 300, …}` — so it is exactly what the library expects, at zero
+cost, and reads compile to `c.transitionType === "bezier"`. Verified against the compiler; the variant
+also works as a record **field** and inside a `type rec … and …` group.
+
+Requirements, all of which fall back to the flattened record below (complete, just without per-arm
+requiredness) rather than emitting something wrong:
+
+| Requirement | Why |
+|---|---|
+| a **clean string discriminant** — a prop in every arm, one *distinct* string literal each, read **syntactically** from the declaration | resolving it through the checker reorders unrelated output (bisected: it shifted record fields, enum members and polyvar tags across blend's 3300 shared types). A discriminant behind an alias (`type Kind = "bezier"`) is therefore not matched |
+| arms whose **member sets differ** (name + optionality) | identical-member-set arms — `BaseUIChangeEventDetails<R>` over a 10-literal `R`, base-ui's whole change-event family (#30) — already collapse **losslessly** into one record with an enum discriminant; 10 branches with identical payloads would be pure duplication and would force a pattern match to read an always-present field |
+| **≤ `TAG_VARIANT_MAX_ARMS` (12)** arms | Highcharts' `SeriesOptionsType` has **118**; that variant would be unreadable, and the speculative build alone reordered members across 5 blend files |
+| every branch field **concretely typed** — no free type var, no `⚪`/`⚠️`/`🛑` imperfection | an inline record can't declare a type parameter ("Unbound type parameter"), and a flag can't be rendered in inline-record position — dropping it would break *flag, don't fake* |
+| no arm carrying **inherited DOM attrs** | the flattened record spreads `...JsxDOM.domProps` for those; an inline record admits no spread |
+
+The branch build is **sandboxed** (the #39/#33 snapshot/rollback): `classify` mints records, enums and
+opaque modules as it resolves, so a bail after that would strand them — measured as +50 orphan types in
+blend before the rollback was added.
+
+**Also in ARRAY-ELEMENT position (#169).** A multi-object element union (`FlatRow[]`) goes straight to the
+opaque-views module without passing through the union classifier, so it gets its own hook. The variant is
+strictly stronger there: the views module preserves per-arm requiredness, but **reading** one is an
+unchecked `%identity` cast — the consumer must already know which arm they hold, and calling the wrong
+`as*` is undefined behaviour with no runtime check. A `@tag` variant is exhaustively matchable and
+compiler-verified. On blend, `MenuV2FlatRow` went from 6 `%identity` externals to:
+
+```rescript
+@tag("type")
+type menuV2FlatRow =
+  | @as("label") Label({id: string, label: string})
+  | @as("separator") Separator({id: string})
+  | @as("item") Item({id: string, item: menuV2ItemType, groupId: float, itemIndex: float})
+```
+
+— which also retired three `⚪ loose` fields: each per-arm record had carried
+`@as("type") type_: string  // ⚪ loose — was "label"`, and as the tag it needs no field at all.
+
+**Still opt-in for a component's own props.** `CardProps` (14 arm-specific fields over 3 variants) and
+`SelectItemV2Props` keep the flattened form unless `--variant-props` is passed, because a props variant
+changes how the component is *rendered* (`React.createElement(make, Aligned({…}))` instead of JSX) — a
+much larger consumer change than constructing a value. Nested types and array elements have no such
+call-site implication, so they take the variant by default.
+
+**The flattened record is the fallback.** Fixture:
+[`union-arm-record-fields`](../test/golden/cases/union-arm-record-fields). `Base & (A | B)` at a
+record-field / prop *type* position (blend's `DataTable.RowAnimationConfig`) reaches the record builder
+as the distributed **union**, because the arms all share the base's symbol and the same-generic-record
+collapse (#30/#68) fires. `getProperties()` on a union yields only the common props, so until #167 the
+builder kept `enterDuration`/`enterOffset`/`transitionType` and **silently dropped**
+`duration`/`bezier`/`stiffness`/`damping`/`mass` — with no report bucket and no flag, letting a consumer
+construct `{transitionType: "bezier"}` with no curve and crash inside the library
+(juspay/blend-rescript#134). The record now carries every arm's fields, arm-specific ones **optional**:
+
+```rescript
+type rowAnimationConfig = {
+  enterDuration: float,
+  enterOffset: float,
+  transitionType: dataTableRowAnimationConfigTransitionType,  // common: merged into one enum
+  duration?: float, bezier?: (float, float, float, float),    // "bezier" arm only
+  stiffness?: float, damping?: float, mass?: float,           // "spring" arm only
+}
+```
+
+A field present in *some* arms but not all (a 3-arm union's shared-by-two field) is arm-specific too, so
+it is optional as well — and when those arms declare it at **different types** it is typed as the
+**union of its arm types**, never the first arm's alone. Taking arm 1 would emit a confident,
+plainly-wrong type for the others: react-day-picker's `selected` is `Date` in the single arm, `Date[]` in
+the multi arm and `DateRange` in the range arm, so first-wins would claim `Date.t` for all three. Unioning
+hands it to the normal union machinery, which resolves it exactly (`@unboxed stringOrStringArray`, or the
+existing `CjsDayPickerContextSelect` views module) or flags it — never a plausible-but-wrong type.
+
+**Function arms are the exception — they are flagged, not unioned.** TS resolves a call on a union of
+signatures by *intersecting* their parameters, so unioning react-day-picker's per-mode `onSelect`
+(`(d: Date) => void` / `(d: Date[]) => void` / `(r: DateRange) => void`) synthesises a first parameter of
+`Date & Date[] & DateRange`, which classified into a confident-looking `{from?, to?}` callback that **no
+arm accepts**. Fabricating a signature is what *flag, don't fake* forbids, so a multi-arm field whose arms
+carry call signatures becomes a bucketed `review` placeholder (`onSelect?: string, // ⚠️ REVIEW`) with the
+per-arm signatures in its note. Arms with **identical key sets** — `BaseUIChangeEventDetails<R>` instantiations (#30), the anonymous-literal collapse (#83) — have
+no arm-specific props, so their output is unchanged by construction. This is *record-field / prop*
+position only: the same union as an **array element** takes the opaque-views path (`from*`/`as*` per arm),
+which keeps each arm's own requiredness.
+
 **`--variant-props` (opt-in, #65):** when the union has a **clean string discriminant** — a prop present
 in every arm whose type is a single *distinct string literal* per arm (`mode: "single" | "multi"`) —
 the component instead binds a `@tag(<field>)` ReScript variant that **restores per-branch

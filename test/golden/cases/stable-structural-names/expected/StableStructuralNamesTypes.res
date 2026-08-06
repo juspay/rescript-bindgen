@@ -38,18 +38,9 @@ type stableStructuralNamesDateColumnCellConfig = {
 type dateColumn = {
   cell: stableStructuralNamesDateColumnCellConfig,
 }
-type stableStructuralNamesItemsTextConfig = {
-  kind: string,  // ⚪ loose — was `"text"`
-  label: string,
-}
-type stableStructuralNamesItemsIconConfig = {
-  kind: string,  // ⚪ loose — was `"icon"`
-  glyph: string,
-}
-module StableStructuralNamesItems = {
-  type t
-  external fromStableStructuralNamesItemsTextConfig: stableStructuralNamesItemsTextConfig => t = "%identity"
-  external asStableStructuralNamesItemsTextConfig: t => (stableStructuralNamesItemsTextConfig) = "%identity"
-  external fromStableStructuralNamesItemsIconConfig: stableStructuralNamesItemsIconConfig => t = "%identity"
-  external asStableStructuralNamesItemsIconConfig: t => (stableStructuralNamesItemsIconConfig) = "%identity"
-}
+// #167: discriminated union — each branch keeps its OWN required fields.
+//       Build with Text({…}); `kind` is auto-filled by @tag.
+@tag("kind")
+type stableStructuralNamesItemsConfig =
+  | @as("text") Text({label: string})
+  | @as("icon") Icon({glyph: string})

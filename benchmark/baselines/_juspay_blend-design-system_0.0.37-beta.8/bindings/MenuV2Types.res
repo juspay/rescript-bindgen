@@ -222,28 +222,10 @@ type menuV2ItemProps = {
   index: int,
   itemTokens: menuV2MenuV2TokensTypeGroupItemConfig,
 }
-type menuV2FlattenMenuV2GroupsLabelConfig = {
-  @as("type") type_: string,  // ⚪ loose — was `"label"`
-  id: string,
-  label: string,
-}
-type menuV2FlattenMenuV2GroupsSeparatorConfig = {
-  @as("type") type_: string,  // ⚪ loose — was `"separator"`
-  id: string,
-}
-type menuV2FlattenMenuV2GroupsItemConfig = {
-  @as("type") type_: string,  // ⚪ loose — was `"item"`
-  id: string,
-  item: menuV2ItemType,
-  groupId: float,
-  itemIndex: float,
-}
-module MenuV2FlatRow = {
-  type t
-  external fromMenuV2FlattenMenuV2GroupsLabelConfig: menuV2FlattenMenuV2GroupsLabelConfig => t = "%identity"
-  external asMenuV2FlattenMenuV2GroupsLabelConfig: t => (menuV2FlattenMenuV2GroupsLabelConfig) = "%identity"
-  external fromMenuV2FlattenMenuV2GroupsSeparatorConfig: menuV2FlattenMenuV2GroupsSeparatorConfig => t = "%identity"
-  external asMenuV2FlattenMenuV2GroupsSeparatorConfig: t => (menuV2FlattenMenuV2GroupsSeparatorConfig) = "%identity"
-  external fromMenuV2FlattenMenuV2GroupsItemConfig: menuV2FlattenMenuV2GroupsItemConfig => t = "%identity"
-  external asMenuV2FlattenMenuV2GroupsItemConfig: t => (menuV2FlattenMenuV2GroupsItemConfig) = "%identity"
-}
+// #167: discriminated union — each branch keeps its OWN required fields.
+//       Build with Label({…}); `type` is auto-filled by @tag.
+@tag("type")
+type menuV2FlatRow =
+  | @as("label") Label({id: string, label: string})
+  | @as("separator") Separator({id: string})
+  | @as("item") Item({id: string, item: menuV2ItemType, groupId: float, itemIndex: float})

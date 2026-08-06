@@ -75,7 +75,11 @@ function hasRecGroupLabelCollision(records, objUnboxed, opaque, idOf, depsOf) {
         const ubs = members.filter((m) => m.kind === 'unboxed').map((m) => m.node)
         // Names per type that share ONE rec group: record field ids always; `@unboxed` constructors
         // only when those unboxed are folded into the group (records AND unboxed in the same SCC).
-        const perType = recs.map((r) => new Set((r.fields || []).map((f) => label(f.name).id)))
+        // A `@tag` variant contributes its CONSTRUCTOR names plus each inline record's field ids —
+        // both can collide with a sibling in the same rec group and trigger warning 30. (#167)
+        const perType = recs.map((r) => new Set(r.branches
+            ? [...r.branches.map((b) => b.ctor), ...r.branches.flatMap((b) => b.fields.map((f) => label(f.name).id))]
+            : (r.fields || []).map((f) => label(f.name).id)))
         if (recs.length && ubs.length) {
             for (const u of ubs) perType.push(new Set((u.members || []).map((m) => m.ctor).filter(Boolean)))
         }
@@ -247,6 +251,10 @@ export function emit(ir, options = {}) {
         const out = new Set()
         ;(n.fields || []).forEach((f) => collectRefNames(f.type, out))
         ;(n.members || []).forEach((m) => collectRefNames(m.type, out))
+        // a `@tag` variant's deps live in its BRANCH fields (#167) — without this a variant was a
+        // zero-dep node here: emitted before a record its branch references (forward-reference
+        // compile error), and a record<->variant cycle never fused into one `type rec` group.
+        ;(n.branches || []).forEach((b) => b.fields.forEach((f) => collectRefNames(f.type, out)))
         return out
     }
     if (hasRecGroupLabelCollision(ir.records || [], obj, [], idOf, depsOf)) lines.push('@@warning("-30")', '') // silence duplicate-label noise
@@ -445,6 +453,10 @@ export function emitFunction(ir, options = {}) {
         const out = new Set()
         ;(n.fields || []).forEach((f) => collectRefNames(f.type, out))
         ;(n.members || []).forEach((m) => collectRefNames(m.type, out))
+        // a `@tag` variant's deps live in its BRANCH fields (#167) — without this a variant was a
+        // zero-dep node here: emitted before a record its branch references (forward-reference
+        // compile error), and a record<->variant cycle never fused into one `type rec` group.
+        ;(n.branches || []).forEach((b) => b.fields.forEach((f) => collectRefNames(f.type, out)))
         return out
     }
     if (hasRecGroupLabelCollision(ir.records || [], obj, [], idOf, depsOf)) lines.push('@@warning("-30")', '')
@@ -560,6 +572,10 @@ export function emitClass(ir, options = {}) {
         const out = new Set()
         ;(n.fields || []).forEach((f) => collectRefNames(f.type, out))
         ;(n.members || []).forEach((m) => collectRefNames(m.type, out))
+        // a `@tag` variant's deps live in its BRANCH fields (#167) — without this a variant was a
+        // zero-dep node here: emitted before a record its branch references (forward-reference
+        // compile error), and a record<->variant cycle never fused into one `type rec` group.
+        ;(n.branches || []).forEach((b) => b.fields.forEach((f) => collectRefNames(f.type, out)))
         return out
     }
     if (hasRecGroupLabelCollision(ir.records || [], obj, [], idOf, depsOf)) lines.push('@@warning("-30")', '')
@@ -926,10 +942,30 @@ function renderOpaque(t, lines, cfg, tAlias) {
 
 /** Append a record group. `isRec` (self- or mutually-recursive group) selects `type rec`;
  *  a plain non-recursive record is just `type x = {…}` (no needless `rec`). */
+/** One `@tag` variant declaration — the lossless mapping for a discriminated union (#167). Rendered
+ *  inside the record group (a variant is a plain type declaration, so it joins `type rec … and …`
+ *  and the dependency ordering exactly as a record does). `@as(<real literal>)` on every constructor
+ *  is what makes it sound: `@tag` then auto-fills the discriminant with the literal the library
+ *  checks, never the constructor name. */
+function renderTagVariant(v, lines, cfg, kw) {
+    lines.push(`// #167: discriminated union — each branch keeps its OWN required fields.`)
+    lines.push(`//       Build with ${v.branches[0].ctor}({…}); \`${v.tag}\` is auto-filled by @tag.`)
+    lines.push(`@tag(${JSON.stringify(v.tag)})`)
+    lines.push(`${kw} ${v.name} =`)
+    for (const b of v.branches) {
+        const fields = b.fields.map((f) => {
+            const { as, id } = label(f.name)
+            return `${as ? `@as(${JSON.stringify(as)}) ` : ''}${id}${f.optional ? '?' : ''}: ${renderType(f.type, f.name, cfg)}`
+        }).join(', ')
+        lines.push(`  | @as(${JSON.stringify(b.literal)}) ${b.ctor}${fields ? `({${fields}})` : ''}`)
+    }
+}
+
 function renderRecordGroup(records, lines, cfg, isRec) {
     ;(records || []).forEach((r, i) => {
         const tp = r.tparams && r.tparams.length ? `<${r.tparams.join(', ')}>` : '' // generic: foo<'a>
         const kw = i === 0 ? (isRec ? 'type rec' : 'type') : 'and'
+        if (r.branches) return renderTagVariant(r, lines, cfg, kw) // #167 `@tag` variant
         lines.push(`${kw} ${r.name}${tp} = {`)
         if (r.spread) lines.push(`  ...${r.spread},`) // e.g. ...JsxDOM.domProps (the HTML attrs)
         const seenIds = new Set()
@@ -1035,6 +1071,8 @@ const DEEP_RANK = { unknown: 3, any: 3, review: 2 }
  *  opaque-module views), each paired with a field label for cause reporting. */
 function deepEntryChildren(e) {
     if (e.kind === 'record') return (e.fields || []).map((f) => ({ field: f.name, type: f.type }))
+    // #167: a `@tag` variant's branch fields, labelled `Ctor.field` so a report cause says which arm.
+    if (e.kind === 'tagVariant') return (e.branches || []).flatMap((b) => b.fields.map((f) => ({ field: `${b.ctor}.${f.name}`, type: f.type })))
     if (e.kind === 'unboxed') return (e.members || []).map((m) => ({ field: m.ctor || '(member)', type: m.type }))
     if (e.kind === 'opaque') return [
         ...(e.members || []).map((m) => ({ field: m.name || '(arm)', type: m.type })),
@@ -1308,7 +1346,8 @@ export function emitSharedModule(mod, entries, finalOf, options = {}) {
     }
     const lines = []
     const unboxed = entries.filter((e) => e.kind === 'unboxed')
-    const records = entries.filter((e) => e.kind === 'record')
+    // A `@tag` variant (#167) is a plain type declaration like a record — same group, same ordering.
+    const records = entries.filter((e) => e.kind === 'record' || e.kind === 'tagVariant')
     const objUnboxed = unboxed.filter(isObjectUnboxed)
     const opaque = entries.filter((e) => e.kind === 'opaque')
     const idOf = (e) => e.key
