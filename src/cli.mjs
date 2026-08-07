@@ -367,20 +367,21 @@ async function main() {
         }
         console.error(`[bindgen] wrote ${plan.byModule.size} shared type module(s) (${shared.entries.length} unique types) to ${typesDir}`)
         // #171: a module can define one constructor name twice — ReScript then binds the LAST
-        // definition wherever the expected type isn't known from context. Conflicting `@as` values
-        // make that a wire-value bug, so those are renamed; same-value collisions are left alone
-        // (renaming them would churn consumers for an ambiguity that resolves correctly anyway) but
-        // must not pass silently.
+        // definition wherever the expected type isn't known from context. Two definitions with
+        // different RUNTIME REPRESENTATIONS make that a real bug — a bare constant, an identity
+        // payload and a `@tag`-injected object are all different shapes on the wire — so those are
+        // renamed. Collisions that share one representation are left alone (renaming them would churn
+        // consumers for an ambiguity that resolves correctly anyway) but must not pass silently.
         const renamedTotal = collisions.reduce((n, c) => n + c.classA.reduce((m, a) => m + a.renamed.length, 0), 0)
         const sameValTotal = collisions.reduce((n, c) => n + c.classB.length, 0)
         if (renamedTotal) {
-            console.error(`[bindgen] ⚠ ${renamedTotal} constructor definition(s) renamed — one name carried DIFFERENT @as values in one module (an unannotated use would have emitted the wrong runtime string):`)
+            console.error(`[bindgen] ⚠ ${renamedTotal} constructor definition(s) renamed — one name carried DIFFERENT runtime representations in one module (an unannotated use would have emitted the wrong runtime value):`)
             for (const c of collisions) for (const a of c.classA) {
-                console.error(`             ${c.module}: ${a.ctor} (${a.values.map((v) => JSON.stringify(v)).join(' / ')}) -> ${a.renamed.map((r) => r.to).join(', ')}`)
+                console.error(`             ${c.module}: ${a.ctor} (${a.values.join(' / ')}) -> ${a.renamed.map((r) => r.to).join(', ')}`)
             }
         }
         if (sameValTotal) {
-            console.error(`[bindgen] ⚠ ${sameValTotal} constructor name(s) defined more than once with the SAME @as value — left as-is (resolves correctly), but ambiguous to read:`)
+            console.error(`[bindgen] ⚠ ${sameValTotal} constructor name(s) defined more than once with the SAME runtime representation — left as-is (resolves correctly), but ambiguous to read:`)
             for (const c of collisions) {
                 const names = c.classB.slice(0, 8).map((b) => b.ctor)
                 if (names.length) console.error(`             ${c.module}: ${names.join(', ')}${c.classB.length > 8 ? ` … +${c.classB.length - 8} more` : ''}`)

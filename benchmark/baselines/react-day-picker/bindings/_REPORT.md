@@ -12,9 +12,9 @@
 
 ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
 
-### Left as-is — same name, same runtime value (14)
+### Left as-is — same name, same runtime representation (14)
 
-These resolve to the right value whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
+These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
 
 - `ClassesSharedTypes`: `Any`, `Fn`, `Short`, `Str`
 - `CommonTypes`: `Fn`, `N0`, `N1`, `N2`, `N3`, `N4`, `N5`, `N6`, `Num`, `Str`

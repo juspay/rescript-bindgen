@@ -8,11 +8,11 @@
 
 ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
 
-### Renamed — the same name carried DIFFERENT runtime values
+### Renamed — the same name carried DIFFERENT runtime representations
 
-Left alone, an unannotated use would have compiled cleanly and sent the **wrong string**. Each colliding definition is suffixed with the tail of its owning type's name.
+A bare constant, an identity payload and a `@tag`-injected object are different shapes at runtime. Left alone, an unannotated use would have compiled cleanly and produced the **wrong one**. Each colliding definition is suffixed with the tail of its owning type's name.
 
-| Module | Constructor | Conflicting `@as` values | Renamed to |
+| Module | Constructor | Conflicting runtime representations | Renamed to |
 |---|---|---|---|
 | `CtorNameCollisionsTypes` | `Marker` | `(payload, passed through)` / `{kind: "marker", …}` | `MarkerMixedOr`, `MarkerWidget` |
 | `CtorNameCollisionsTypes` | `Mixed` | `"mixed"` / `"Mixed"` | `MixedCasing`, `MixedOrMarker` |
@@ -21,9 +21,9 @@ Left alone, an unannotated use would have compiled cleanly and sent the **wrong 
 | `CtorNameCollisionsTypes` | `V1` | `1` / `"1"` | `V1Digit`, `V1Level` |
 | `CtorNameCollisionsTypes` | `Value` | `"!="` / `"value"` | `ValueGapUnit`, `ValueOperator2` |
 
-### Left as-is — same name, same runtime value (1)
+### Left as-is — same name, same runtime representation (1)
 
-These resolve to the right value whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
+These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
 
 - `CtorNameCollisionsTypes`: `Dotted`
 

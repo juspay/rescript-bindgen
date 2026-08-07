@@ -414,6 +414,31 @@ export default Menu;
       ['#170: … and emits the recursive `type rec` @tag variant', /@tag\("type"\)\ntype rec menuEntryConfig =|@tag\("type"\)\ntype rec menuEntry/.test(recVariantCode) && /entries: array<menuEntry/.test(recVariantCode)],
     ]
   })(),
+  ...(() => {
+    // #171/#184: constructor collisions must be resolved for EVERY declaring site, including
+    // `--variant-props`' own `@tag` props variant — which only exists on the single-file path, so no
+    // golden can reach it. Here a props branch `Foo({x})` (TAGGED representation) sits beside a local
+    // `@unboxed … | Foo(foo)` (IDENTITY). ReScript compiles that without a warning and an unannotated
+    // `Foo({…})` silently takes the tagged shape, i.e. gains a `kind` field the other form must not
+    // have. Both must therefore be renamed.
+    const d3 = mkdtempSync(join(tmpdir(), 'bindgen-vp-collide-'))
+    const f3 = join(d3, 'W.d.ts')
+    writeFileSync(f3, `
+type JsxElement = { __brand: 'element' };
+type Foo = { x: string };
+type Props =
+  | { kind: 'foo'; x: string }
+  | { kind: 'other'; value: Foo | string };
+export declare const W: (props: Props) => JsxElement;
+export default W;
+`)
+    const vpCode = emit(extractComponent(f3, { from: 'demo', importName: 'W', variantProps: true }))
+    const bareFoo = /\| Foo\(foo\)/.test(vpCode) || /@as\("foo"\) Foo\(/.test(vpCode)
+    return [
+      ['#184: --variant-props ctors join collision resolution (no bare `Foo` on both sides)', !bareFoo],
+      ['#184: … both sides renamed by representation (identity vs tagged)', /Foo\w+\(foo\)/.test(vpCode) && /@as\("foo"\) Foo\w+\(/.test(vpCode)],
+    ]
+  })(),
 ]
 
 let ok = true

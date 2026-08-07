@@ -1489,6 +1489,12 @@ function localCtorEntries(ir) {
     for (const e of ir.enums || []) out.push({ kind: 'enum', name: e.name, members: e.members })
     for (const u of ir.unboxed || []) out.push({ kind: 'unboxed', name: u.name, members: u.members })
     for (const r of ir.records || []) if (r.branches) out.push({ kind: 'tagVariant', name: r.name, tag: r.tag, branches: r.branches })
+    // `--variant-props` (#65) emits the component's OWN props as a `@tag` variant — a FOURTH site that
+    // declares constructors into the file, and one that only exists in this local path. Missing it left
+    // the original hazard reachable: a props branch `Foo({x: string})` (tagged) beside a local
+    // `@unboxed … | Foo(foo)` (identity) compiles clean, and an unannotated `Foo({…})` silently takes
+    // the tagged shape. Named `props` because that is the type it renders as. (#184 review)
+    if (ir.variantProps) out.push({ kind: 'tagVariant', name: 'props', tag: ir.variantProps.tag, branches: ir.variantProps.branches })
     return out
 }
 

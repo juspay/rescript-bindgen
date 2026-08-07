@@ -10,11 +10,11 @@
 
 ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
 
-### Renamed — the same name carried DIFFERENT runtime values
+### Renamed — the same name carried DIFFERENT runtime representations
 
-Left alone, an unannotated use would have compiled cleanly and sent the **wrong string**. Each colliding definition is suffixed with the tail of its owning type's name.
+A bare constant, an identity payload and a `@tag`-injected object are different shapes at runtime. Left alone, an unannotated use would have compiled cleanly and produced the **wrong one**. Each colliding definition is suffixed with the tail of its owning type's name.
 
-| Module | Constructor | Conflicting `@as` values | Renamed to |
+| Module | Constructor | Conflicting runtime representations | Renamed to |
 |---|---|---|---|
 | `EditorSharedTypes` | `Alt` | `6` / `"alt"` | `AltCursorModifier`, `AltKeyCode` |
 | `EditorSharedTypes` | `CRLF` | `2` / `1` | `CRLFOfLine`, `CRLFLinePreference`, `CRLFLineSequence` |
@@ -37,9 +37,9 @@ Left alone, an unannotated use would have compiled cleanly and sent the **wrong 
 | `HighchartsSharedTypes` | `TriangleDown` | `"triangle-down"` / `"triangleDown"` | `TriangleDownConstructorType`, `TriangleDownKeyValue` |
 | `HighchartsSharedTypes` | `Value` | `""` / `"!="` / `"value"` | `ValueAnnotationDraggable`, `ValuePointSetState`, `ValueSeriesSetState`, `ValueOptionsCompare`, `ValueOptionsGapUnit`, `ValueOptionsOperator` |
 
-### Left as-is — same name, same runtime value (145)
+### Left as-is — same name, same runtime representation (145)
 
-These resolve to the right value whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
+These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
 
 - `EditorSharedTypes`: `Advanced`, `All`, `Always`, `Auto`, `Bool`, `Brackets`, `Default`, `Disabled`, `Error`, `Fn`, `Full`, `LanguageDefined`, `Line`, `Mouseover`, `Never`, `Off`, `On`, `Selection`, `SelectionArr`, `Str`
 - `TagsTypes`: `Lg`, `Md`, `Sm`, `Xs`

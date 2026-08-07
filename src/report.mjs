@@ -60,11 +60,11 @@ export function writeReport(path, label, rows, reports, deps, shared, fnInfo, cl
         L.push(`ReScript scopes variant constructors to the **module**, not to their type, so one \`*Types.res\` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.`)
         L.push(``)
         if (renamedAll.length) {
-            L.push(`### Renamed — the same name carried DIFFERENT runtime values`)
+            L.push(`### Renamed — the same name carried DIFFERENT runtime representations`)
             L.push(``)
-            L.push(`Left alone, an unannotated use would have compiled cleanly and sent the **wrong string**. Each colliding definition is suffixed with the tail of its owning type's name.`)
+            L.push(`A bare constant, an identity payload and a \`@tag\`-injected object are different shapes at runtime. Left alone, an unannotated use would have compiled cleanly and produced the **wrong one**. Each colliding definition is suffixed with the tail of its owning type's name.`)
             L.push(``)
-            L.push(`| Module | Constructor | Conflicting \`@as\` values | Renamed to |`)
+            L.push(`| Module | Constructor | Conflicting runtime representations | Renamed to |`)
             L.push(`|---|---|---|---|`)
             for (const a of renamedAll) {
                 L.push(`| \`${mdCell(a.mod)}\` | \`${mdCell(a.ctor)}\` | ${a.values.map((v) => '`' + mdCell(String(v)) + '`').join(' / ')} | ${a.renamed.map((r) => '`' + mdCell(r.to) + '`').join(', ')} |`)
@@ -72,9 +72,9 @@ export function writeReport(path, label, rows, reports, deps, shared, fnInfo, cl
             L.push(``)
         }
         if (sameValAll.length) {
-            L.push(`### Left as-is — same name, same runtime value (${sameValAll.length})`)
+            L.push(`### Left as-is — same name, same runtime representation (${sameValAll.length})`)
             L.push(``)
-            L.push(`These resolve to the right value whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.`)
+            L.push(`These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.`)
             L.push(``)
             const byMod = new Map()
             for (const b of sameValAll) { if (!byMod.has(b.mod)) byMod.set(b.mod, []); byMod.get(b.mod).push(b.ctor) }
