@@ -6,6 +6,59 @@
 
 **545** shared types deduplicated into **58** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
+## 🔤 Constructor name collisions
+
+ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
+
+### Left as-is — same name, same runtime representation (173)
+
+These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
+
+- `RootSharedTypes`: `ActiveTriggerElement`, `ActiveTriggerId`, `ActiveTriggerProps`, `Both`, `CancelOpen`, `Click`, `CloseDelay`, `ClosePress`, `DecrementPress`, `DescriptionElementId`, `Disabled`, `Dismiss`, `EscapeKey`, `FloatingRootContext`, `Fn`, `FocusOut`, `Horizontal`, `ImperativeAction`, `InactiveTriggerProps`, `IncrementPress`, `InputBlur`, `InputChange`, `InputClear`, `InstantType`, `ItemPress`, `Keyboard`, `ListNavigation`, `Modal`, `Mounted`, `Nested` … +22 more
+- `PositionerSharedTypes`: `Bottom`, `End`, `Flip`, `Fn`, `InlineEnd`, `InlineStart`, `Left`, `None`, `Num`, `Right`, `Shift`, `Start`, `Str`, `Style`, `Top`
+- `ItemTypes`: `Fn`, `Str`, `Style`
+- `TriggerTypes`: `ActiveTriggerElement`, `ActiveTriggerId`, `ActiveTriggerProps`, `CloseDelay`, `DescriptionElementId`, `Disabled`, `FloatingRootContext`, `Fn`, `InactiveTriggerProps`, `InstantType`, `Modal`, `Mounted`, `Nested`, `Open`, `OpenChangeReason`, `OpenMethod`, `Payload`, `PopupElement`, `PopupProps`, `PositionerElement`, `PreventUnmountingOnClose`, `StickIfOpen`, `Str`, `Style`, `TitleElementId`, `TransitionStatus`
+- `CommonTypes`: `Bool`, `Fn`, `Num`, `Str`, `StrArr`, `Style`
+- `PanelTypes`: `Fn`, `Str`, `Style`
+- `ButtonTypes`: `Fn`, `Str`, `Style`
+- `IndicatorTypes`: `Fn`, `Str`, `Style`
+- `CheckboxGroupTypes`: `Fn`
+- `InputTypes`: `Fn`, `Str`, `Style`
+- `PopupTypes`: `Bool`, `Fn`, `Ref`, `Str`, `Style`
+- `ListTypes`: `Fn`, `Str`, `Style`
+- `ItemIndicatorTypes`: `Fn`
+- `ArrowTypes`: `Fn`, `Str`, `Style`
+- `BackdropTypes`: `Fn`
+- `ChipTypes`: `Fn`
+- `ChipRemoveTypes`: `Fn`
+- `ClearTypes`: `Fn`
+- `CloseTypes`: `Fn`, `Str`, `Style`
+- `ViewportTypes`: `Fn`, `Str`, `Style`
+- `LegendTypes`: `Fn`
+- `CheckboxItemTypes`: `Fn`
+- `CheckboxItemIndicatorTypes`: `Fn`
+- `RadioGroupTypes`: `Fn`, `Str`, `Style`
+- `RadioItemTypes`: `Fn`
+- `RadioItemIndicatorTypes`: `Fn`
+- `SubmenuTriggerTypes`: `Fn`
+- `ContentTypes`: `Down`, `Fn`, `Left`, `Right`, `Str`, `Style`, `Up`
+- `LinkTypes`: `Fn`, `Str`, `Style`
+- `IconTypes`: `Fn`
+- `GroupTypes`: `Fn`
+- `IncrementTypes`: `Fn`
+- `DecrementTypes`: `Fn`
+- `ScrubAreaTypes`: `Fn`
+- `ScrubAreaCursorTypes`: `Fn`
+- `ScrollbarTypes`: `Fn`
+- `ThumbTypes`: `Fn`, `Str`, `Style`
+- `ValueTypes`: `Fn`
+- `SeparatorTypes`: `Fn`
+- `DescriptionTypes`: `Fn`
+- `TitleTypes`: `Fn`
+- `ActionTypes`: `Fn`
+- `ToggleTypes`: `Fn`
+- `ToggleGroupTypes`: `Fn`
+
 ## 📦 Dependencies
 
 | Kind | Package | Provides | Status |

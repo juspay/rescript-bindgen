@@ -44,8 +44,45 @@ export function writeReport(path, label, rows, reports, deps, shared, fnInfo, cl
     L.push(`**${rows.length}** components · ✅ **${ready.length}** usable · 🔍 **${review.length}** need review · 🛑 **${broken.length}** broken`)
     if (fnInfo && fnInfo.names.length) L.push(`\n**${fnInfo.names.length}** function binding(s) → \`${fnInfo.file}\`.`)
     if (classInfo && classInfo.length) L.push(`\n**${classInfo.length}** class module(s) → \`@new\`/\`@send\`/\`@get\` bindings.`)
-    if (shared) L.push(`\n**${shared.types}** shared types deduplicated into **${shared.modules}** \`*Types.res\` modules (referenced qualified — no per-file redeclaration).`)
+    // `shared` may be collisions-only on the single-file path (no shared registry, so no counts).
+    if (shared && shared.types !== undefined) L.push(`\n**${shared.types}** shared types deduplicated into **${shared.modules}** \`*Types.res\` modules (referenced qualified — no per-file redeclaration).`)
     L.push(``)
+
+    // ── 🔤 CONSTRUCTOR COLLISIONS (#171) ───────────────────────
+    // ReScript scopes constructors to the MODULE, not the type, so one `*Types.res` can define a name
+    // twice. Where the expected type isn't known from context ReScript binds the LAST definition —
+    // silently. A module with 64 such names used to report perfectly clean; now it can't.
+    const cols = (shared && shared.collisions) || []
+    const renamedAll = cols.flatMap((c) => c.classA.map((a) => ({ mod: c.module, ...a })))
+    const sameValAll = cols.flatMap((c) => c.classB.map((b) => ({ mod: c.module, ...b })))
+    if (renamedAll.length || sameValAll.length) {
+        L.push(`## 🔤 Constructor name collisions`)
+        L.push(``)
+        L.push(`ReScript scopes variant constructors to the **module**, not to their type, so one \`*Types.res\` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.`)
+        L.push(``)
+        if (renamedAll.length) {
+            L.push(`### Renamed — the same name carried DIFFERENT runtime representations`)
+            L.push(``)
+            L.push(`A bare constant, an identity payload and a \`@tag\`-injected object are different shapes at runtime. Left alone, an unannotated use would have compiled cleanly and produced the **wrong one**. Each colliding definition is suffixed with the tail of its owning type's name.`)
+            L.push(``)
+            L.push(`| Module | Constructor | Conflicting runtime representations | Renamed to |`)
+            L.push(`|---|---|---|---|`)
+            for (const a of renamedAll) {
+                L.push(`| \`${mdCell(a.mod)}\` | \`${mdCell(a.ctor)}\` | ${a.values.map((v) => '`' + mdCell(String(v)) + '`').join(' / ')} | ${a.renamed.map((r) => '`' + mdCell(r.to) + '`').join(', ')} |`)
+            }
+            L.push(``)
+        }
+        if (sameValAll.length) {
+            L.push(`### Left as-is — same name, same runtime representation (${sameValAll.length})`)
+            L.push(``)
+            L.push(`These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.`)
+            L.push(``)
+            const byMod = new Map()
+            for (const b of sameValAll) { if (!byMod.has(b.mod)) byMod.set(b.mod, []); byMod.get(b.mod).push(b.ctor) }
+            for (const [m, names] of byMod) L.push(`- \`${mdCell(m)}\`: ${names.slice(0, 30).map((n) => '`' + mdCell(n) + '`').join(', ')}${names.length > 30 ? ` … +${names.length - 30} more` : ''}`)
+            L.push(``)
+        }
+    }
 
     // ── 📦 DEPENDENCIES ────────────────────────────────────────
     // Which ReScript packages the generated bindings rely on, split into the

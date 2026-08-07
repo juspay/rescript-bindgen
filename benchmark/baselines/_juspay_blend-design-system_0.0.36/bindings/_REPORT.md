@@ -6,6 +6,43 @@
 
 **2658** shared types deduplicated into **63** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
+## 🔤 Constructor name collisions
+
+ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
+
+### Renamed — the same name carried DIFFERENT runtime representations
+
+A bare constant, an identity payload and a `@tag`-injected object are different shapes at runtime. Left alone, an unannotated use would have compiled cleanly and produced the **wrong one**. Each colliding definition is suffixed with the tail of its owning type's name.
+
+| Module | Constructor | Conflicting runtime representations | Renamed to |
+|---|---|---|---|
+| `HighchartsSharedTypes` | `Point` | `"point"` / `(payload, passed through)` / `"Point"` | `PointConstructorType`, `PointObjectScope`, `PointPointArray` |
+| `HighchartsSharedTypes` | `Pointer` | `"pointer"` / `"Pointer"` | `PointerConstructorType`, `PointerCursorValue` |
+| `HighchartsSharedTypes` | `Polygon` | `"polygon"` / `"Polygon"` | `PolygonTypeValue`, `PolygonInterpolationValue` |
+| `HighchartsSharedTypes` | `Series` | `"series"` / `"Series"` | `SeriesConstructorType`, `SeriesWithinValue` |
+| `HighchartsSharedTypes` | `Solid` | `"Solid"` / `"solid"` | `SolidStyleValue`, `SolidShapeValue` |
+| `HighchartsSharedTypes` | `TriangleDown` | `"triangle-down"` / `"triangleDown"` | `TriangleDownConstructorType`, `TriangleDownKeyValue` |
+| `HighchartsSharedTypes` | `Value` | `""` / `"!="` / `"value"` | `ValueAnnotationDraggable`, `ValuePointSetState`, `ValueSeriesSetState`, `ValueOptionsCompare`, `ValueOptionsGapUnit`, `ValueOptionsOperator` |
+| `DataTableTypes` | `DateRange` | `"date_range"` / `"dateRange"` | `DateRangeColumnType`, `DateRangeTypeType`, `DateRangeFilterComponent` |
+
+### Left as-is — same name, same runtime representation (113)
+
+These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
+
+- `ButtonTypes`: `Default`
+- `SkeletonTypes`: `Circle`
+- `CommonTypes`: `Arr`, `Auto`, `Bool`, `Fn`, `Num`, `Str`, `StrArr`
+- `TagsTypes`: `Lg`, `Md`, `Sm`, `Xs`
+- `TooltipTypes`: `Left`, `Right`
+- `HighchartsSharedTypes`: `All`, `Allow`, `Alt`, `AnnotationMockPointOptionsObject`, `Arc`, `Area`, `Arr`, `Auto`, `Bool`, `Bottom`, `Callout`, `Category`, `Center`, `Chart`, `Circle`, `Close`, `CssObject`, `Ctrl`, `Day`, `Diamond`, `End`, `Flap`, `Fn`, `High`, `Horizontal`, `Hover`, `Inactive`, `Inside`, `Justify`, `Left` … +35 more
+- `DateRangePickerTypes`: `Custom`
+- `InputsTypes`: `Left`, `Lg`, `Md`, `Right`, `Sm`
+- `DataTableTypes`: `Avatar`, `Custom`, `Date`, `Decimal`, `Dropdown`, `Error`, `Multiselect`, `Number`, `Percentage`, `Primary`, `Progress`, `ReactElement`, `Secondary`, `Select`, `Slider`, `Success`, `Tag`, `Text`, `Warning`
+- `SliderTypes`: `Bottom`, `Inline`, `Top`
+- `ProgressBarTypes`: `Segmented`, `Solid`
+- `UploadTypes`: `Error`, `Success`
+- `ButtonV2Types`: `Default`
+
 ## 📦 Dependencies
 
 | Kind | Package | Provides | Status |

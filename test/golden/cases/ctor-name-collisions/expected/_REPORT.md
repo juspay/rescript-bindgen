@@ -2,17 +2,30 @@
 
 **1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**4** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**13** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 🔤 Constructor name collisions
 
 ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
 
-### Left as-is — same name, same runtime representation (3)
+### Renamed — the same name carried DIFFERENT runtime representations
+
+A bare constant, an identity payload and a `@tag`-injected object are different shapes at runtime. Left alone, an unannotated use would have compiled cleanly and produced the **wrong one**. Each colliding definition is suffixed with the tail of its owning type's name.
+
+| Module | Constructor | Conflicting runtime representations | Renamed to |
+|---|---|---|---|
+| `CtorNameCollisionsTypes` | `Marker` | `(payload, passed through)` / `{kind: "marker", …}` | `MarkerMixedOr`, `MarkerWidget` |
+| `CtorNameCollisionsTypes` | `Mixed` | `"mixed"` / `"Mixed"` | `MixedCasing`, `MixedOrMarker` |
+| `CtorNameCollisionsTypes` | `Solid` | `"Solid"` / `"solid"` | `SolidFillCase`, `SolidLineCase` |
+| `CtorNameCollisionsTypes` | `V0` | `0` / `"0"` | `V0Digit`, `V0Level` |
+| `CtorNameCollisionsTypes` | `V1` | `1` / `"1"` | `V1Digit`, `V1Level` |
+| `CtorNameCollisionsTypes` | `Value` | `"!="` / `"value"` | `ValueGapUnit`, `ValueOperator2` |
+
+### Left as-is — same name, same runtime representation (1)
 
 These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
 
-- `CommonTypes`: `Big`, `Num`, `Str`
+- `CtorNameCollisionsTypes`: `Dotted`
 
 ## 📦 Dependencies
 
@@ -26,7 +39,7 @@ These produce the same runtime shape whichever definition wins, so renaming them
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- Widget
+- Chart
 
 ## ⚪ Loosely typed (widened to `string`)
 

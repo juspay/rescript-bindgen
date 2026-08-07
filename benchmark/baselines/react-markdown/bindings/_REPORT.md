@@ -6,6 +6,16 @@
 
 **19** shared types deduplicated into **6** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
+## 🔤 Constructor name collisions
+
+ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
+
+### Left as-is — same name, same runtime representation (3)
+
+These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
+
+- `CommonTypes`: `Fn`, `Num`, `Str`
+
 ## 📦 Dependencies
 
 | Kind | Package | Provides | Status |

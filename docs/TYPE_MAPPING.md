@@ -474,6 +474,63 @@ Fixture: [`discriminated-union-variant-props`](../test/golden/cases/discriminate
 
 ---
 
+## Constructor-name collisions within a module (#171)
+Fixture: [`ctor-name-collisions`](../test/golden/cases/ctor-name-collisions)
+
+ReScript scopes variant constructors to the **module**, not to their type, so two enums in one
+`*Types.res` can both define `Value`. Where the expected type is known from context, type-directed
+disambiguation resolves it. Where it **isn't**, ReScript silently binds the **last** definition in the
+file — verified against the compiler:
+
+```rescript
+type operator = | @as("!=") Value | @as(">") Gt
+type gapUnit  = | @as("value") Value | @as("percent") Percent
+
+let annotated: operator = Value   // "!="     ✅
+let unannotated         = Value   // "value"  ❌  no error, no warning
+```
+
+blend's `HighchartsSharedTypes.res` has **462 constructor definitions over 334 names**; 64 collide.
+Split by consequence:
+
+Constructors are compared by **runtime representation**, not by "the `@as` value" — three shapes exist
+and they are not interchangeable:
+
+| Representation | Emitted as | Declared by |
+|---|---|---|
+| constant | the bare value (`"alt"`, `6`) | an enum member, or an `@unboxed` `@as` arm |
+| identity | the payload, unchanged | an `@unboxed` payload arm (`Foo(foo)`) |
+| tagged | `{<tag>: <literal>, …fields}` | a `@tag` branch — it **injects** the discriminant |
+
+A constant-only model missed two hazards, both compiled and confirmed: an `@unboxed` payload arm and a
+`@tag` branch of the same name and arity differ silently (`{x: 1}` vs `{kind: "tagged", x: 1}`), and the
+numeric flag differs by kind (`num` on enum members, `_num` on `@unboxed`), which made an `@as(0)` pair
+look like `0` vs `"0"`.
+
+| Class | Condition | Treatment |
+|---|---|---|
+| **A** | one name, **different** representations | **renamed** — an unannotated use would emit the wrong runtime value |
+| **B** | one name, same representation everywhere | **left alone, reported** — it resolves correctly whichever definition wins; renaming would churn every consumer for no correctness gain |
+
+Class A renaming suffixes each colliding definition with the **tail** of its owning type's name —
+the shortest camel-word suffix that separates the colliders (`AltKeyCode`, `LeftDropdownPosition`,
+`NoneSnippetSuggestions`). The whole stem would be unusable
+(`NoneCodeEditorV2IEditorOptionsSnippetSuggestions`). Every collider is suffixed, including the
+first: leaving one bare would make "who keeps the short name" depend on emission order, the churn
+#90 exists to prevent — and it means a name that *was* ambiguous can't silently keep working with
+one of its meanings.
+
+Resolution runs before **every** complete module is rendered — the shared `*Types.res` modules and the
+single-file path alike (`emit`/`emitFunction`/`emitClass`), including `--variant-props`' own `@tag`
+props variant, which only exists there. A post-condition re-derives the namespace from the mutated
+entries and **throws** if any name still carries two representations, rather than reporting it and
+writing the module anyway.
+
+Both classes are surfaced in `_REPORT.md` and as a CLI `⚠` line, so a module with 64 colliding
+constructors can no longer report clean.
+
+---
+
 ## The register-early invariant (cycle guards) — #170, #173
 Fixtures: [`recursive-opaque-views`](../test/golden/cases/recursive-opaque-views),
 [`union-arm-record-fields`](../test/golden/cases/union-arm-record-fields)

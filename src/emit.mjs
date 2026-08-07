@@ -232,6 +232,16 @@ function renderType(t, propName, cfg) {
  * @returns {string}  the ReScript source for one `.res` file
  */
 export function emit(ir, options = {}) {
+    // Single-file mode declares its types LOCALLY, so it needs the same module-wide collision
+    // resolution the shared modules get — otherwise the documented public API (and `--file`
+    // generation) still emits two `Value` constructors with different runtime values. Resolution must
+    // run before ANY complete module is rendered, not only for `*Types.res`. Findings go to
+    // `options.collisions` when the caller supplies it, so a local rename is reported like a shared
+    // one — a silent rename is consumer-breaking and contradicts the reporting contract. (#184 review)
+    const localCollisions = resolveCtorCollisions(localCtorEntries(ir))
+    if (options.collisions && (localCollisions.classA.length || localCollisions.classB.length)) {
+        options.collisions.push({ module: ir.import?.name || 'local', ...localCollisions })
+    }
     const cfg = {
         from: ir.import.from,
         refType: options.refType || 'React.ref<Nullable.t<Dom.element>>',
@@ -439,6 +449,16 @@ function propLine(p, cfg, form) {
  * @returns {string}  ReScript source for one function binding (no trailing blank line)
  */
 export function emitFunction(ir, options = {}) {
+    // Single-file mode declares its types LOCALLY, so it needs the same module-wide collision
+    // resolution the shared modules get — otherwise the documented public API (and `--file`
+    // generation) still emits two `Value` constructors with different runtime values. Resolution must
+    // run before ANY complete module is rendered, not only for `*Types.res`. Findings go to
+    // `options.collisions` when the caller supplies it, so a local rename is reported like a shared
+    // one — a silent rename is consumer-breaking and contradicts the reporting contract. (#184 review)
+    const localCollisions = resolveCtorCollisions(localCtorEntries(ir))
+    if (options.collisions && (localCollisions.classA.length || localCollisions.classB.length)) {
+        options.collisions.push({ module: ir.import?.name || 'local', ...localCollisions })
+    }
     const cfg = {
         from: ir.import.from,
         refType: options.refType || 'React.ref<Nullable.t<Dom.element>>',
@@ -558,6 +578,16 @@ function defaultExportNote(name) {
  * @returns {string}  ReScript source for one class module (no trailing blank line)
  */
 export function emitClass(ir, options = {}) {
+    // Single-file mode declares its types LOCALLY, so it needs the same module-wide collision
+    // resolution the shared modules get — otherwise the documented public API (and `--file`
+    // generation) still emits two `Value` constructors with different runtime values. Resolution must
+    // run before ANY complete module is rendered, not only for `*Types.res`. Findings go to
+    // `options.collisions` when the caller supplies it, so a local rename is reported like a shared
+    // one — a silent rename is consumer-breaking and contradicts the reporting contract. (#184 review)
+    const localCollisions = resolveCtorCollisions(localCtorEntries(ir))
+    if (options.collisions && (localCollisions.classA.length || localCollisions.classB.length)) {
+        options.collisions.push({ module: ir.import?.name || 'local', ...localCollisions })
+    }
     const cfg = {
         from: ir.import.from,
         refType: options.refType || 'React.ref<Nullable.t<Dom.element>>',
@@ -1333,6 +1363,157 @@ export function planSharedModules(shared) {
 }
 
 /**
+ * CONSTRUCTOR COLLISIONS within one emitted module (#171).
+ *
+ * ReScript constructors are scoped to the MODULE, not to their type — so two enums in one
+ * `*Types.res` may both define `Value`. Where the expected type is known, type-directed
+ * disambiguation resolves it; where it ISN'T, ReScript silently binds the LAST definition in the
+ * file. Verified against the compiler:
+ *
+ *     type operator = | @as("!=") Value | @as(">") Gt
+ *     type gapUnit  = | @as("value") Value | @as("percent") Percent
+ *     let annotated: operator = Value   ->  "!="      (correct)
+ *     let unannotated         = Value   ->  "value"   (WRONG, no warning)
+ *
+ * So a name defined twice with DIFFERENT `@as` values is a wire-value hazard, not an ergonomics
+ * problem: an unannotated use compiles clean and sends the wrong string. blend's Highcharts module
+ * has 462 constructor definitions over 334 names — 64 collide, and 7 of those carry conflicting
+ * values (`Value` = `""`/`"!="`/`"value"`; `Point` = `"point"`/`"Point"`, which Highcharts treats as
+ * case-sensitive). It broke the portal dashboard migration (juspay/blend-rescript#133).
+ *
+ * Split by consequence:
+ *   · CLASS A (conflicting values) — RENAMED, because it cannot be allowed to compile. Every
+ *     colliding definition takes an owner-derived suffix, including the first: leaving one bare
+ *     would make which-one-keeps-it depend on emission order, the churn #90 exists to prevent.
+ *   · CLASS B (same value everywhere) — left alone and REPORTED. Renaming 57 names would churn
+ *     every consumer to fix an ambiguity that resolves to the right runtime value either way.
+ *
+ * Mutates `e.members[].ctor` on the entries it renames, and returns both classes for the report.
+ */
+function resolveCtorCollisions(entries) {
+    // emit.mjs has no `pascal` (that lives in extract.mjs) — same recipe as `pascalName` below.
+    const pas = (x) => String(x || '').replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(/\s+/)
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('')
+
+    // Every constructor in the module shares ONE namespace, so all three declaring kinds take part:
+    // enum members, `@unboxed` members and `@tag` variant branches. (Polyvariant `#tags` are a
+    // separate namespace and cannot collide.)
+    //
+    // Constructors are compared by RUNTIME REPRESENTATION, not by "the constant value" — the earlier
+    // constant-only model had two blind spots, both compiled and confirmed:
+    //   · a PAYLOAD constructor is not "no value". `@tag`'s payload ctor INJECTS the discriminant
+    //     while `@unboxed`'s is identity, so with equal arity they differ silently:
+    //         @tag("kind") type tagged = | @as("tagged") Choice({x: int})
+    //         @unboxed type raw = Choice(payload)
+    //         let ambiguous = Choice({x: 1})   ->  {x: 1}                  (NOT {kind:"tagged",x:1})
+    //   · the numeric flag differs by kind — enum members carry `num`, `@unboxed` members `_num` — so
+    //     reading only one made an `@as(0)` pair look like `0` vs `"0"` and forced needless renames.
+    // Representation folds both in: same repr = interchangeable, different repr = a real hazard.
+    const numericOf = (e, m) => (e.kind === 'unboxed' ? !!m._num : !!m.num)
+    const reprOf = (e, m) => {
+        if (e.kind === 'tagVariant') return JSON.stringify(['tagged', e.tag, String(m.literal)])
+        if (m.as !== undefined) return JSON.stringify(['const', numericOf(e, m), String(m.as)])
+        return JSON.stringify(['identity'])           // an @unboxed payload arm: the value passes through
+    }
+    const reprShow = (e, m) => {
+        if (e.kind === 'tagVariant') return `{${e.tag}: ${JSON.stringify(String(m.literal))}, …}`
+        if (m.as !== undefined) return numericOf(e, m) ? String(m.as) : JSON.stringify(String(m.as))
+        return '(payload, passed through)'
+    }
+    const defs = new Map() // ctor -> [{ entry, member, repr, show }]
+    for (const e of entries) {
+        const members = e.kind === 'tagVariant' ? (e.branches || [])
+            : (e.kind === 'enum' || e.kind === 'unboxed') ? (e.members || []) : null
+        if (!members) continue
+        for (const m of members) {
+            if (!m.ctor) continue
+            if (!defs.has(m.ctor)) defs.set(m.ctor, [])
+            defs.get(m.ctor).push({ entry: e, member: m, repr: reprOf(e, m), show: reprShow(e, m) })
+        }
+    }
+
+    // Reserve every existing name so a generated replacement can never land on one.
+    const taken = new Set(defs.keys())
+    const classA = [], classB = []
+    for (const [ctor, uses] of [...defs].sort((a, b) => a[0].localeCompare(b[0]))) {
+        if (uses.length < 2) continue
+        if (new Set(uses.map((u) => u.repr)).size === 1) {
+            classB.push({ ctor, value: uses[0].show, owners: uses.map((u) => u.entry.name) })
+            continue
+        }
+        // CLASS A: suffix by the TAIL of the owner's name — the shortest camel-word suffix that tells
+        // the colliding owners apart. The whole stem is unusable
+        // (`NoneCodeEditorV2IEditorOptionsSnippetSuggestions`); the tail reads like the thing it
+        // belongs to (`AltKeyCode`, `LeftDropdownPosition`). `e.base` is #90's stable anchor, so the
+        // suffix is a pure function of shape identity. Every collider is suffixed, including the
+        // first: leaving one bare would make "who keeps the short name" order-dependent, and would let
+        // a formerly-ambiguous name silently keep working with one of its meanings.
+        const words = (e) => pas(String(e.base || e.name || '').replace(new RegExp(ctor + '$', 'i'), ''))
+            .replace(/([a-z0-9])([A-Z])/g, '$1 $2').split(/\s+/).filter(Boolean)
+        let suffixes = uses.map(() => '')
+        for (let k = 2; k <= 8; k++) {
+            suffixes = uses.map((u) => words(u.entry).slice(-k).join(''))
+            if (new Set(suffixes).size === uses.length) break
+        }
+        // Allocate against the LIVE namespace: the computed name may already be taken, and two
+        // entries can share a stable `base` so their suffixes may not separate them. Deterministic
+        // fallback (full owner name, then a counter) in sorted-by-owner order, so the result never
+        // depends on emission order.
+        const renamed = []
+        const order = uses.map((u, i) => ({ u, i })).sort((a, b) =>
+            String(a.u.entry.name || '').localeCompare(String(b.u.entry.name || '')) || a.i - b.i)
+        for (const { u, i } of order) {
+            let next = ctor + (suffixes[i] || pas(u.entry.name || ''))
+            if (taken.has(next)) next = ctor + pas(u.entry.name || '')
+            for (let n = 2; taken.has(next); n++) next = ctor + pas(u.entry.name || '') + n
+            taken.add(next)
+            renamed.push({ from: ctor, to: next, value: u.show, owner: u.entry.name })
+            u.member.ctor = next
+        }
+        taken.delete(ctor) // the bare name is free again
+        classA.push({ ctor, values: [...new Set(uses.map((u) => u.show))], renamed })
+    }
+
+    // POST-CONDITION, ENFORCED. This is the property the whole pass exists to guarantee, so a failure
+    // must stop generation rather than be filed in a report nobody reads while the unsafe module is
+    // written anyway. Re-derive the namespace from the MUTATED entries and throw if any name still
+    // carries two representations.
+    const after = new Map()
+    for (const e of entries) {
+        const members = e.kind === 'tagVariant' ? (e.branches || [])
+            : (e.kind === 'enum' || e.kind === 'unboxed') ? (e.members || []) : null
+        if (!members) continue
+        for (const m of members) {
+            if (!m.ctor) continue
+            if (!after.has(m.ctor)) after.set(m.ctor, new Map())
+            after.get(m.ctor).set(reprOf(e, m), reprShow(e, m))
+        }
+    }
+    const unresolved = [...after].filter(([, reprs]) => reprs.size > 1)
+    if (unresolved.length) {
+        throw new Error(`constructor collision unresolved after renaming — ${unresolved.map(([c, r]) => `${c} (${[...r.values()].join(' / ')})`).join('; ')}`)
+    }
+    return { classA, classB }
+}
+
+/** The module-local declarations of a single-file emit, shaped like registry entries so the ONE
+ *  collision resolver can run over them too. `members`/`branches` are shared by reference, so the
+ *  resolver's renames land on the same objects the renderers read. (#184 review) */
+function localCtorEntries(ir) {
+    const out = []
+    for (const e of ir.enums || []) out.push({ kind: 'enum', name: e.name, members: e.members })
+    for (const u of ir.unboxed || []) out.push({ kind: 'unboxed', name: u.name, members: u.members })
+    for (const r of ir.records || []) if (r.branches) out.push({ kind: 'tagVariant', name: r.name, tag: r.tag, branches: r.branches })
+    // `--variant-props` (#65) emits the component's OWN props as a `@tag` variant — a FOURTH site that
+    // declares constructors into the file, and one that only exists in this local path. Missing it left
+    // the original hazard reachable: a props branch `Foo({x: string})` (tagged) beside a local
+    // `@unboxed … | Foo(foo)` (identity) compiles clean, and an unannotated `Foo({…})` silently takes
+    // the tagged shape. Named `props` because that is the type it renders as. (#184 review)
+    if (ir.variantProps) out.push({ kind: 'tagVariant', name: 'props', tag: ir.variantProps.tag, branches: ir.variantProps.branches })
+    return out
+}
+
+/**
  * Render one shared `*Types.res` module: its enums, then `@unboxed` variants, then
  * records (one `type rec … and …` group). Cross-module references are qualified.
  * @param {string} mod         the final module name (e.g. `MenuTypes`)
@@ -1358,6 +1539,11 @@ export function emitSharedModule(mod, entries, finalOf, options = {}) {
     if (hasRecGroupLabelCollision(records, objUnboxed, opaque, idOf, depsOf)) lines.push('@@warning("-30")', '') // silence duplicate-label noise
     // Abstract instance types for class exports — `type counter` (no deps; the dependency sink).
     for (const n of entries.filter((e) => e.kind === 'nominal')) lines.push(`type ${n.name}`)
+    // #171: resolve constructor collisions BEFORE anything renders — Class A is renamed in place.
+    const ctorCollisions = resolveCtorCollisions(entries)
+    if (options.collisions && (ctorCollisions.classA.length || ctorCollisions.classB.length)) {
+        options.collisions.push({ module: mod, ...ctorCollisions })
+    }
     renderEnums(entries.filter((e) => e.kind === 'enum'), lines)
     renderPolyvariants(entries.filter((e) => e.kind === 'polyvariant'), lines) // leaf types, before referrers
     renderUnboxed(unboxed.filter((u) => !isObjectUnboxed(u)), lines, cfg) // primitive: before records

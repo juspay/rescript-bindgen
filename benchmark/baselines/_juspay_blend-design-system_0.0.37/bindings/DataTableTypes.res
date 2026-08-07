@@ -68,7 +68,7 @@ type rEACT_ELEMENT =
 type dataTableColumnsFilterTypeType =
   | @as("select") Select
   | @as("multiselect") Multiselect
-  | @as("date_range") DateRange
+  | @as("date_range") DateRangeTypeType
   | @as("custom") Custom
 type sortDirection =
   | @as("none") None
@@ -103,7 +103,7 @@ type columnType =
   | @as("select") Select
   | @as("multiselect") Multiselect
   | @as("date") Date
-  | @as("date_range") DateRange
+  | @as("date_range") DateRangeColumnType
   | @as("slider") Slider
   | @as("custom") Custom
 type dataTableColumnTypeConfigFilterComponent =
@@ -111,7 +111,7 @@ type dataTableColumnTypeConfigFilterComponent =
   | @as("slider") Slider
   | @as("select") Select
   | @as("multiselect") Multiselect
-  | @as("dateRange") DateRange
+  | @as("dateRange") DateRangeFilterComponent
   | @as("numberRange") NumberRange
 type dataTablePivotPreviewRowPivotRowType =
   | @as("data") Data

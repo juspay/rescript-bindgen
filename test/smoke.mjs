@@ -4,7 +4,8 @@
 import { extractComponent, extractModule, shapeHash, structuralSig } from '../src/extract.mjs'
 import { emit, emitClass, emitFunction, report } from '../src/emit.mjs'
 import { typesEntry, packageEntries } from '../src/resolve.mjs'
-import { writeFileSync, mkdtempSync, mkdirSync } from 'fs'
+import { writeFileSync, readFileSync, mkdtempSync, mkdirSync } from 'fs'
+import { spawnSync } from 'child_process'
 import { dirname, join, relative } from 'path'
 import { tmpdir } from 'os'
 import { fileURLToPath } from 'url'
@@ -412,6 +413,51 @@ export default Menu;
       ['#167 file mode: variant branches carry @as(real literal)', /@as\("leaf"\) Leaf\(\{value: string\}\)/.test(c) && /@as\("branch"\) Branch\(\{holder: holder\}\)/.test(c)],
       ['#170: self-referential discriminated union does NOT crash extraction', recVariantThrew === null],
       ['#170: … and emits the recursive `type rec` @tag variant', /@tag\("type"\)\ntype rec menuEntryConfig =|@tag\("type"\)\ntype rec menuEntry/.test(recVariantCode) && /entries: array<menuEntry/.test(recVariantCode)],
+    ]
+  })(),
+  ...(() => {
+    // #171/#184: constructor collisions must be resolved for EVERY declaring site, including
+    // `--variant-props`' own `@tag` props variant — which only exists on the single-file path, so no
+    // golden can reach it. Here a props branch `Foo({x})` (TAGGED representation) sits beside a local
+    // `@unboxed … | Foo(foo)` (IDENTITY). ReScript compiles that without a warning and an unannotated
+    // `Foo({…})` silently takes the tagged shape, i.e. gains a `kind` field the other form must not
+    // have. Both must therefore be renamed.
+    const d3 = mkdtempSync(join(tmpdir(), 'bindgen-vp-collide-'))
+    const f3 = join(d3, 'W.d.ts')
+    writeFileSync(f3, `
+type JsxElement = { __brand: 'element' };
+type Foo = { x: string };
+type Props =
+  | { kind: 'foo'; x: string }
+  | { kind: 'other'; value: Foo | string };
+export declare const W: (props: Props) => JsxElement;
+export default W;
+`)
+    // Drive the REAL CLI, not the API: the earlier version of this check passed an option directly to
+    // `extractComponent`, which the `--file` branch never forwarded — so it green-lit a path the CLI
+    // could not reach. `--file --variant-props --report` exercises the flag, the local collision
+    // resolution, the stderr warning and the report section together. (#184 review)
+    const outDir = join(d3, 'out')
+    // spawnSync, not execFileSync: the warning goes to STDERR and execFileSync returns only stdout.
+    const run = spawnSync('node', [join(here, '..', 'src', 'cli.mjs'), '--file', f3,
+      '--out', outDir, '--from', 'demo', '--report', '--variant-props', '--no-install'],
+      { encoding: 'utf-8' })
+    const stderr = run.stderr || ''
+    const vpCode = readFileSync(join(outDir, 'W.res'), 'utf-8')
+    const vpReport = readFileSync(join(outDir, '_REPORT.md'), 'utf-8')
+    const stdoutRun = spawnSync('node', [join(here, '..', 'src', 'cli.mjs'), '--file', f3,
+      '--from', 'demo', '--variant-props', '--stdout', '--no-install'], { encoding: 'utf-8' })
+    const bareFoo = /\| Foo\(foo\)/.test(vpCode) || /@as\("foo"\) Foo\(/.test(vpCode)
+    return [
+      ['#184: --file forwards --variant-props (emits the @tag props variant, not a flat record)', /@tag\("kind"\)/.test(vpCode)],
+      ['#184: --variant-props ctors join collision resolution (no bare `Foo` on either side)', !bareFoo],
+      ['#184: … both sides renamed by representation (identity vs tagged)', /Foo\w+\(foo\)/.test(vpCode) && /@as\("foo"\) Foo\w+\(/.test(vpCode)],
+      ['#184: a single-file rename is REPORTED on stderr, not applied silently', /constructor definition\(s\) renamed/.test(stderr)],
+      ['#184: … and in _REPORT.md', /Constructor name collisions/.test(vpReport) && /`FooProps`/.test(vpReport)],
+      // `--stdout` returns early, so it needs its own assertion: it emits the renamed code and must
+      // still say so. Missed twice before — a reporting path is only covered if it is exercised.
+      ['#184: --stdout reports the rename too (early return, separate exit path)',
+        /constructor definition\(s\) renamed/.test(stdoutRun.stderr || '') && /FooProps/.test(stdoutRun.stdout || '')],
     ]
   })(),
 ]

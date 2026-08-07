@@ -16,17 +16,17 @@ type contextCodeEditorV2TokensTheme =
   | @as("dark") Dark
   | @as("light") Light
 type textInputV2DropdownPosition =
-  | @as("left") Left
-  | @as("right") Right
+  | @as("left") LeftDropdownPosition
+  | @as("right") RightDropdownPosition
 type inputStateV2 =
   | @as("default") Default
-  | @as("hover") Hover
+  | @as("hover") HoverStateV2
   | @as("focus") Focus
   | @as("error") Error
   | @as("disabled") Disabled
 type numberInputV2Direction =
-  | @as("left") Left
-  | @as("right") Right
+  | @as("left") LeftV2Direction
+  | @as("right") RightV2Direction
 type codeEditorV2Variant =
   | @as("default") Default
   | @as("no-gutter") NoGutter
@@ -130,7 +130,7 @@ type editorOption =
   | @as(66) GlyphMargin
   | @as(67) GotoLocation
   | @as(68) HideCursorInOverviewRuler
-  | @as(69) Hover
+  | @as(69) HoverEditorOption
   | @as(70) InDiffEditor
   | @as(71) InlineSuggest
   | @as(72) LetterSpacing
@@ -213,7 +213,7 @@ type editorOption =
   | @as(149) WordWrap
   | @as(150) WordWrapBreakAfterCharacters
   | @as(151) WordWrapBreakBeforeCharacters
-  | @as(152) WordWrapColumn
+  | @as(152) WordWrapColumnEditorOption
   | @as(153) WordWrapOverride1
   | @as(154) WordWrapOverride2
   | @as(155) WrappingIndent
@@ -238,13 +238,13 @@ type cursorChangeReason =
   | @as(0) NotSet
   | @as(1) ContentFlush
   | @as(2) RecoverFromMarkers
-  | @as(3) Explicit
+  | @as(3) ExplicitChangeReason
   | @as(4) Paste
   | @as(5) Undo
   | @as(6) Redo
 type codeEditorV2IMouseTargetOutsideEditorOutsidePosition =
-  | @as("left") Left
-  | @as("right") Right
+  | @as("left") LeftOutsidePosition
+  | @as("right") RightOutsidePosition
   | @as("above") Above
   | @as("below") Below
 type keyCode =
@@ -255,7 +255,7 @@ type keyCode =
   | @as(3) Enter
   | @as(4) Shift
   | @as(5) Ctrl
-  | @as(6) Alt
+  | @as(6) AltKeyCode
   | @as(7) PauseBreak
   | @as(8) CapsLock
   | @as(9) Escape
@@ -268,7 +268,7 @@ type keyCode =
   | @as(16) UpArrow
   | @as(17) RightArrow
   | @as(18) DownArrow
-  | @as(19) Insert
+  | @as(19) InsertKeyCode
   | @as(20) Delete
   | @as(21) Digit0
   | @as(22) Digit1
@@ -383,19 +383,19 @@ type keyCode =
   | @as(131) Clear
   | @as(132) MAXVALUE
 type renderMinimap =
-  | @as(0) None
-  | @as(1) Text
+  | @as(0) NoneRenderMinimap
+  | @as(1) TextRenderMinimap
   | @as(2) Blocks
 type defaultEndOfLine =
-  | @as(1) LF
-  | @as(2) CRLF
+  | @as(1) LFOfLine
+  | @as(2) CRLFOfLine
 type endOfLinePreference =
   | @as(0) TextDefined
-  | @as(1) LF
-  | @as(2) CRLF
+  | @as(1) LFLinePreference
+  | @as(2) CRLFLinePreference
 type endOfLineSequence =
-  | @as(0) LF
-  | @as(1) CRLF
+  | @as(0) LFLineSequence
+  | @as(1) CRLFLineSequence
 type codeEditorV2IEditorOptionsCursorSurroundingLinesStyle =
   | @as("all") All
   | @as("default") Default
@@ -420,7 +420,7 @@ type codeEditorV2IEditorStickyScrollOptionsDefaultModel =
   | @as("foldingProviderModel") FoldingProviderModel
   | @as("indentationModel") IndentationModel
 type codeEditorV2IEditorMinimapOptionsAutohide =
-  | @as("none") None
+  | @as("none") NoneOptionsAutohide
   | @as("scroll") Scroll
   | @as("mouseover") Mouseover
 type codeEditorV2IEditorMinimapOptionsSize =
@@ -441,17 +441,17 @@ type codeEditorV2IEditorFindOptionsAutoFindInSelection =
 type codeEditorV2IEditorOptionsCursorBlinking =
   | @as("solid") Solid
   | @as("blink") Blink
-  | @as("smooth") Smooth
+  | @as("smooth") SmoothCursorBlinking
   | @as("phase") Phase
   | @as("expand") Expand
 type codeEditorV2IEditorOptionsMouseStyle =
-  | @as("text") Text
+  | @as("text") TextMouseStyle
   | @as("default") Default
   | @as("copy") Copy
 type codeEditorV2IEditorOptionsCursorSmoothCaretAnimation =
   | @as("off") Off
   | @as("on") On
-  | @as("explicit") Explicit
+  | @as("explicit") ExplicitCaretAnimation
 type codeEditorV2IEditorOptionsCursorStyle =
   | @as("block") Block
   | @as("underline") Underline
@@ -466,14 +466,14 @@ type codeEditorV2IEditorOptionsDefaultColorDecorators =
 type codeEditorV2IEditorOptionsWordWrap =
   | @as("off") Off
   | @as("on") On
-  | @as("wordWrapColumn") WordWrapColumn
+  | @as("wordWrapColumn") WordWrapColumnWordWrap
   | @as("bounded") Bounded
 type codeEditorV2IEditorOptionsWordWrapOverride1 =
   | @as("inherit") Inherit
   | @as("off") Off
   | @as("on") On
 type codeEditorV2IEditorOptionsWrappingIndent =
-  | @as("none") None
+  | @as("none") NoneWrappingIndent
   | @as("same") Same
   | @as("indent") Indent
   | @as("deepIndent") DeepIndent
@@ -484,11 +484,11 @@ type codeEditorV2IEditorOptionsWordBreak =
   | @as("normal") Normal
   | @as("keepAll") KeepAll
 type codeEditorV2IEditorOptionsColorDecoratorsActivatedOn =
-  | @as("hover") Hover
+  | @as("hover") HoverActivatedOn
   | @as("click") Click
   | @as("clickAndHover") ClickAndHover
 type codeEditorV2IEditorOptionsMultiCursorModifier =
-  | @as("alt") Alt
+  | @as("alt") AltCursorModifier
   | @as("ctrlCmd") CtrlCmd
 type codeEditorV2IEditorOptionsMultiCursorPaste =
   | @as("full") Full
@@ -503,7 +503,7 @@ type codeEditorV2IEditorOptionsAccessibilitySupport =
   | @as("on") On
 type codeEditorV2ISuggestOptionsInsertMode =
   | @as("replace") Replace
-  | @as("insert") Insert
+  | @as("insert") InsertInsertMode
 type codeEditorV2ISuggestOptionsSelectionMode =
   | @as("always") Always
   | @as("never") Never
@@ -536,7 +536,7 @@ type editorAutoSurroundStrategy =
   | @as("quotes") Quotes
   | @as("brackets") Brackets
 type codeEditorV2IEditorOptionsAutoIndent =
-  | @as("none") None
+  | @as("none") NoneAutoIndent
   | @as("full") Full
   | @as("brackets") Brackets
   | @as("advanced") Advanced
@@ -546,7 +546,7 @@ type codeEditorV2IEditorOptionsAcceptSuggestionOnEnter =
   | @as("on") On
   | @as("smart") Smart
 type codeEditorV2IEditorOptionsSnippetSuggestions =
-  | @as("none") None
+  | @as("none") NoneSnippetSuggestions
   | @as("top") Top
   | @as("bottom") Bottom
   | @as("inline") Inline
@@ -585,13 +585,13 @@ type codeEditorV2IEditorOptionsExperimentalWhitespaceRendering =
   | @as("svg") Svg
   | @as("font") Font
 type codeEditorV2IEditorOptionsRenderWhitespace =
-  | @as("none") None
+  | @as("none") NoneRenderWhitespace
   | @as("all") All
   | @as("boundary") Boundary
   | @as("selection") Selection
   | @as("trailing") Trailing
 type codeEditorV2IEditorOptionsRenderLineHighlight =
-  | @as("none") None
+  | @as("none") NoneLineHighlight
   | @as("all") All
   | @as("line") Line
   | @as("gutter") Gutter
@@ -610,12 +610,12 @@ type codeEditorV2IPasteAsOptionsShowPasteSelector =
   | @as("never") Never
   | @as("afterPaste") AfterPaste
 type scrollType =
-  | @as(0) Smooth
+  | @as(0) SmoothScrollType
   | @as(1) Immediate
 type positionAffinity =
-  | @as(0) Left
-  | @as(1) Right
-  | @as(2) None
+  | @as(0) LeftPositionAffinity
+  | @as(1) RightPositionAffinity
+  | @as(2) NonePositionAffinity
   | @as(3) LeftOfInjectedText
   | @as(4) RightOfInjectedText
 type contentWidgetPositionPreference =
@@ -623,9 +623,9 @@ type contentWidgetPositionPreference =
   | @as(1) ABOVE
   | @as(2) BELOW
 type glyphMarginLane =
-  | @as(1) Left
+  | @as(1) LeftMarginLane
   | @as(2) Center
-  | @as(3) Right
+  | @as(3) RightMarginLane
 type codeEditorV2IStandaloneCodeEditorUpdateOptionsWordBasedSuggestions =
   | @as("off") Off
   | @as("currentDocument") CurrentDocument
@@ -639,7 +639,7 @@ type codeEditorV2IStandaloneDiffEditorGoToDiff =
   | @as("previous") Previous
 type multiSelectV2SelectionTagType =
   | @as("count") Count
-  | @as("text") Text
+  | @as("text") TextTagType
 type multiSelectV2FlattenedMultiSelectV2ItemType =
   | @as("separator") Separator
   | @as("item") Item
