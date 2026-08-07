@@ -2,7 +2,7 @@
 
 **1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**3** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**4** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -16,15 +16,13 @@
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- AccordionItem  _(1 loose)_
+- AccordionItem
 
 ## ⚪ Loosely typed (widened to `string`)
 
 These resolved to a real but complex type and were widened to `string` (they compile and work). Grouped by type so you can review each pattern once — confirm `string` is acceptable, or it may deserve a tighter mapping.
 
-| Resolved TypeScript type | → emitted | count | example props |
-|--------------------------|-----------|-------|---------------|
-| `string \| { a: 1; } \| { b: 2; }` | `string` | 1 | weird |
+_(none)_
 
 ## 🔍 Needs review
 

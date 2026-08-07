@@ -16,26 +16,24 @@
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- Shapes  _(1 loose)_
-- ShapesToo  _(1 loose)_
+- Shapes
+- ShapesToo
 
 ## ⚪ Loosely typed (widened to `string`)
 
 These resolved to a real but complex type and were widened to `string` (they compile and work). Grouped by type so you can review each pattern once — confirm `string` is acceptable, or it may deserve a tighter mapping.
 
-| Resolved TypeScript type | → emitted | count | example props |
-|--------------------------|-----------|-------|---------------|
-| `Shape` | `string` | 2 | shape, other |
-| `Poisoned` | `string` | 1 | root |
+_(none)_
 
 ## 🔍 Needs review
 
 A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object shapes), so an `@unboxed` variant won't work and we **refuse to use `%identity`/unsafe casts**. The prop is emitted as a `string` placeholder with an inline `// ⚠️ REVIEW` comment — bind it by hand or fix the type upstream.
 
-### Poison  _(1 loose)_
+### Poison
 
 | Prop | Real TypeScript |
 |------|-----------------|
+| `root` | `root?: Poisoned;` — binds, but references shared field(s) `recursiveOpaqueViewsRootChildrenBadConfig.payload` (`any`) emitted as `string` |
 | `roots` | `roots?: Poisoned[]` — binds, but references shared field(s) `recursiveOpaqueViewsRootChildrenBadConfig.payload` (`any`) emitted as `string` |
 
 ## 🛑 Broken — needs serious component change
