@@ -235,8 +235,13 @@ export function emit(ir, options = {}) {
     // Single-file mode declares its types LOCALLY, so it needs the same module-wide collision
     // resolution the shared modules get — otherwise the documented public API (and `--file`
     // generation) still emits two `Value` constructors with different runtime values. Resolution must
-    // run before ANY complete module is rendered, not only for `*Types.res`. (#184 review)
-    resolveCtorCollisions(localCtorEntries(ir))
+    // run before ANY complete module is rendered, not only for `*Types.res`. Findings go to
+    // `options.collisions` when the caller supplies it, so a local rename is reported like a shared
+    // one — a silent rename is consumer-breaking and contradicts the reporting contract. (#184 review)
+    const localCollisions = resolveCtorCollisions(localCtorEntries(ir))
+    if (options.collisions && (localCollisions.classA.length || localCollisions.classB.length)) {
+        options.collisions.push({ module: ir.import?.name || 'local', ...localCollisions })
+    }
     const cfg = {
         from: ir.import.from,
         refType: options.refType || 'React.ref<Nullable.t<Dom.element>>',
@@ -447,8 +452,13 @@ export function emitFunction(ir, options = {}) {
     // Single-file mode declares its types LOCALLY, so it needs the same module-wide collision
     // resolution the shared modules get — otherwise the documented public API (and `--file`
     // generation) still emits two `Value` constructors with different runtime values. Resolution must
-    // run before ANY complete module is rendered, not only for `*Types.res`. (#184 review)
-    resolveCtorCollisions(localCtorEntries(ir))
+    // run before ANY complete module is rendered, not only for `*Types.res`. Findings go to
+    // `options.collisions` when the caller supplies it, so a local rename is reported like a shared
+    // one — a silent rename is consumer-breaking and contradicts the reporting contract. (#184 review)
+    const localCollisions = resolveCtorCollisions(localCtorEntries(ir))
+    if (options.collisions && (localCollisions.classA.length || localCollisions.classB.length)) {
+        options.collisions.push({ module: ir.import?.name || 'local', ...localCollisions })
+    }
     const cfg = {
         from: ir.import.from,
         refType: options.refType || 'React.ref<Nullable.t<Dom.element>>',
@@ -571,8 +581,13 @@ export function emitClass(ir, options = {}) {
     // Single-file mode declares its types LOCALLY, so it needs the same module-wide collision
     // resolution the shared modules get — otherwise the documented public API (and `--file`
     // generation) still emits two `Value` constructors with different runtime values. Resolution must
-    // run before ANY complete module is rendered, not only for `*Types.res`. (#184 review)
-    resolveCtorCollisions(localCtorEntries(ir))
+    // run before ANY complete module is rendered, not only for `*Types.res`. Findings go to
+    // `options.collisions` when the caller supplies it, so a local rename is reported like a shared
+    // one — a silent rename is consumer-breaking and contradicts the reporting contract. (#184 review)
+    const localCollisions = resolveCtorCollisions(localCtorEntries(ir))
+    if (options.collisions && (localCollisions.classA.length || localCollisions.classB.length)) {
+        options.collisions.push({ module: ir.import?.name || 'local', ...localCollisions })
+    }
     const cfg = {
         from: ir.import.from,
         refType: options.refType || 'React.ref<Nullable.t<Dom.element>>',

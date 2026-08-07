@@ -120,6 +120,22 @@ export interface ExtractOptions {
   importName?: string
   /** Inherited HTML/ARIA props to keep (default: a common allowlist). */
   htmlAllowlist?: string[]
+  /**
+   * Bind a props type that is a discriminated union with a clean string discriminant as a
+   * `@tag` variant, preserving per-branch requiredness, instead of one all-optional record.
+   * The `--variant-props` CLI flag sets this. Off by default. (#65)
+   */
+  variantProps?: boolean
+}
+
+/** One module's constructor-name collisions, as found while rendering it. (#171) */
+export interface CtorCollisions {
+  /** The module the collisions were found in. */
+  module: string
+  /** Renamed: one name carried DIFFERENT runtime representations. */
+  classA: { ctor: string; values: string[]; renamed: { from: string; to: string; value: string; owner: string }[] }[]
+  /** Left as-is: one name, same runtime representation in every definition. */
+  classB: { ctor: string; value: string; owners: string[] }[]
 }
 
 export interface EmitOptions {
@@ -127,6 +143,11 @@ export interface EmitOptions {
   refType?: string
   /** Fallback type for opaque/review props (default `'string'`). */
   opaqueFallback?: string
+  /**
+   * Collector for constructor-name collisions (#171). When supplied, each emitter pushes what it
+   * found in the module it rendered — so a caller can report a rename rather than apply it silently.
+   */
+  collisions?: CtorCollisions[]
 }
 
 export interface ReportItem {

@@ -4,7 +4,8 @@
 import { extractComponent, extractModule, shapeHash, structuralSig } from '../src/extract.mjs'
 import { emit, emitClass, emitFunction, report } from '../src/emit.mjs'
 import { typesEntry, packageEntries } from '../src/resolve.mjs'
-import { writeFileSync, mkdtempSync, mkdirSync } from 'fs'
+import { writeFileSync, readFileSync, mkdtempSync, mkdirSync } from 'fs'
+import { spawnSync } from 'child_process'
 import { dirname, join, relative } from 'path'
 import { tmpdir } from 'os'
 import { fileURLToPath } from 'url'
@@ -432,11 +433,25 @@ type Props =
 export declare const W: (props: Props) => JsxElement;
 export default W;
 `)
-    const vpCode = emit(extractComponent(f3, { from: 'demo', importName: 'W', variantProps: true }))
+    // Drive the REAL CLI, not the API: the earlier version of this check passed an option directly to
+    // `extractComponent`, which the `--file` branch never forwarded — so it green-lit a path the CLI
+    // could not reach. `--file --variant-props --report` exercises the flag, the local collision
+    // resolution, the stderr warning and the report section together. (#184 review)
+    const outDir = join(d3, 'out')
+    // spawnSync, not execFileSync: the warning goes to STDERR and execFileSync returns only stdout.
+    const run = spawnSync('node', [join(here, '..', 'src', 'cli.mjs'), '--file', f3,
+      '--out', outDir, '--from', 'demo', '--report', '--variant-props', '--no-install'],
+      { encoding: 'utf-8' })
+    const stderr = run.stderr || ''
+    const vpCode = readFileSync(join(outDir, 'W.res'), 'utf-8')
+    const vpReport = readFileSync(join(outDir, '_REPORT.md'), 'utf-8')
     const bareFoo = /\| Foo\(foo\)/.test(vpCode) || /@as\("foo"\) Foo\(/.test(vpCode)
     return [
-      ['#184: --variant-props ctors join collision resolution (no bare `Foo` on both sides)', !bareFoo],
+      ['#184: --file forwards --variant-props (emits the @tag props variant, not a flat record)', /@tag\("kind"\)/.test(vpCode)],
+      ['#184: --variant-props ctors join collision resolution (no bare `Foo` on either side)', !bareFoo],
       ['#184: … both sides renamed by representation (identity vs tagged)', /Foo\w+\(foo\)/.test(vpCode) && /@as\("foo"\) Foo\w+\(/.test(vpCode)],
+      ['#184: a single-file rename is REPORTED on stderr, not applied silently', /constructor definition\(s\) renamed/.test(stderr)],
+      ['#184: … and in _REPORT.md', /Constructor name collisions/.test(vpReport) && /`FooProps`/.test(vpReport)],
     ]
   })(),
 ]

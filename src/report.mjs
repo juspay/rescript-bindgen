@@ -44,7 +44,8 @@ export function writeReport(path, label, rows, reports, deps, shared, fnInfo, cl
     L.push(`**${rows.length}** components · ✅ **${ready.length}** usable · 🔍 **${review.length}** need review · 🛑 **${broken.length}** broken`)
     if (fnInfo && fnInfo.names.length) L.push(`\n**${fnInfo.names.length}** function binding(s) → \`${fnInfo.file}\`.`)
     if (classInfo && classInfo.length) L.push(`\n**${classInfo.length}** class module(s) → \`@new\`/\`@send\`/\`@get\` bindings.`)
-    if (shared) L.push(`\n**${shared.types}** shared types deduplicated into **${shared.modules}** \`*Types.res\` modules (referenced qualified — no per-file redeclaration).`)
+    // `shared` may be collisions-only on the single-file path (no shared registry, so no counts).
+    if (shared && shared.types !== undefined) L.push(`\n**${shared.types}** shared types deduplicated into **${shared.modules}** \`*Types.res\` modules (referenced qualified — no per-file redeclaration).`)
     L.push(``)
 
     // ── 🔤 CONSTRUCTOR COLLISIONS (#171) ───────────────────────
