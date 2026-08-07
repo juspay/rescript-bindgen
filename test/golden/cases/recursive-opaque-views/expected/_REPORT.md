@@ -1,6 +1,6 @@
 # Binding report — `demo`
 
-**2** components · ✅ **2** usable · 🔍 **0** need review · 🛑 **0** broken
+**3** components · ✅ **3** usable · 🔍 **0** need review · 🛑 **0** broken
 
 **6** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
@@ -18,6 +18,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 
 - Poison  _(1 loose)_
 - Shapes  _(1 loose)_
+- ShapesToo  _(1 loose)_
 
 ## ⚪ Loosely typed (widened to `string`)
 
@@ -25,8 +26,8 @@ These resolved to a real but complex type and were widened to `string` (they com
 
 | Resolved TypeScript type | → emitted | count | example props |
 |--------------------------|-----------|-------|---------------|
+| `Shape` | `string` | 2 | shape, other |
 | `Poisoned` | `string` | 1 | root |
-| `Shape` | `string` | 1 | shape |
 
 ## 🔍 Needs review
 

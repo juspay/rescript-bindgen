@@ -2358,23 +2358,20 @@ function healGhostRecords(shared) {
         const bad = fallbacks(e.fields)
         if (!bad || bad < e.fields.length * 0.8) continue
         const { type, ctx } = e._heal
-        // snapshot for rollback
+        // Sandboxed rebuild via the SHARED trial (#174 review): this call site predates
+        // `registryTrial` and hand-rolled a partial snapshot — entries/byKey/bySig only. It missed
+        // `shared.names` and `ctx.typeVars`, so a rebuild that registered successfully and was then
+        // REJECTED still leaked its minted names (the `Rect` -> `Rect2` failure mode #39 closed for
+        // the vendor trial) and any type vars it minted. One helper, one behaviour.
         const entriesLen = shared.entries.length
-        const keysBefore = new Set(shared.byKey.keys())
-        const sigsBefore = new Set(shared.bySig.keys())
+        const trial = registryTrial(ctx)
         let rebuilt
         try { rebuilt = buildRecordFields(type, { ...ctx, visiting: new Set() }, 0) } catch { rebuilt = null }
         const newEntries = shared.entries.length - entriesLen
         // Accept only a self-contained improvement: strictly fewer fallbacks AND zero new
         // entries (no fresh library graph, so no possibility of a dangling module ref).
         const accept = rebuilt && fallbacks(rebuilt.fields) < bad && newEntries === 0
-        if (!accept) {
-            // roll back every registration the (rejected) rebuild performed
-            shared.entries.length = entriesLen
-            for (const k of [...shared.byKey.keys()]) if (!keysBefore.has(k)) shared.byKey.delete(k)
-            for (const s of [...shared.bySig.keys()]) if (!sigsBefore.has(s)) shared.bySig.delete(s)
-            continue
-        }
+        if (!accept) { trial.rollback(); continue }
         e.fields = rebuilt.fields
         e.spread = rebuilt.spread
         e.deps = new Set()
@@ -2553,7 +2550,9 @@ const REF_NAMES = /^(Ref|RefObject|MutableRefObject|LegacyRef)$/
  * THE REGISTER-EARLY INVARIANT, and the one snapshot that makes it safe. (#173)
  *
  * Every builder that registers a shared entry keyed by `type.id` — `recordNode`, `tagVariantNode`,
- * `opaqueUnion` — MUST register its entry BEFORE recursing into its members, because that entry is
+ * `opaqueUnion` (and `overloadModule`, which shares the `t:` keyspace and does NOT yet follow this —
+ * its re-entry is real but every cyclic path currently bails to `review` before registering, so it is
+ * latent; tracked separately) — MUST register its entry BEFORE recursing into its members, because that entry is
  * the CYCLE GUARD: a self-referential type re-enters the builder from inside its own build, and the
  * early entry is what the re-entry resolves to. A builder that registers last has no guard, and the
  * re-entry either recurses forever (`tagVariantNode`, #170) or silently builds a DUPLICATE entry for
@@ -3805,6 +3804,13 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     const entry = { key, kind: 'opaque', name, home: homeOf(type, ctx), members: [], deps: new Set(), _construct: hasLiteralArm || !!opts.addNone }
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
+    // Registering early means an EXCEPTION mid-build is now a visible failure mode, not just a bail:
+    // `classify` can throw (a checker edge, a depth blow-up), and the half-built entry would survive
+    // to emit as an uninhabitable `module X = { type t }` — no `from*`, no `as*`, nothing that can
+    // construct or read it. Before early registration a throw simply left nothing behind. So the
+    // build is wrapped: roll back, then RETHROW, preserving the caller's existing behaviour (the CLI
+    // catches per-component and reports `extract-error`). (#174 review)
+    try {
     const { checker } = ctx
     const members = []
     let sawBool = false
@@ -3917,6 +3923,7 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     entry.note = note
     if (members.some((m) => isHighchartsSeriesOptionsNode(m.type))) entry._highchartsSeriesUnion = true
     return ref(entry)
+    } catch (e) { trial.rollback(); throw e } // never leave a half-built entry behind (#174 review)
 }
 
 /** True if a callback/type node tree contains anything we won't fake (unknown/any/review/opaque). */
@@ -5073,6 +5080,12 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
             if (fields.some((f) => !f)) return rollback()
             branches.push({ literal: lits[i], ctor, fields })
         }
+    } catch (e) {
+        // Same exposure the early registration creates in `opaqueUnion` (#174 review): `classify` can
+        // THROW mid-build, and the entry registered as the cycle guard would survive half-built —
+        // a variant with no branches. Roll back, then rethrow so the caller sees what it always saw.
+        rollback()
+        throw e
     } finally {
         ctx.inRecordField = prevInRecord
         ctx.path = prevPath

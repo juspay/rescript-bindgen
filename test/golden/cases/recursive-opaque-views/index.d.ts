@@ -32,3 +32,10 @@ type Shape =
 
 export declare const Poison: (props: { root?: Poisoned }) => JsxElement
 export declare const Shapes: (props: { shape?: Shape }) => JsxElement
+
+// CROSS-COMPONENT re-entry (#174 review, the reviewer's P4 probe): the SAME self-referential union
+// consumed by TWO components. Registering last produced `nested: array<Shape2.t>` beside only
+// `module Shape22` — a second duplicate on top of the first, and again non-compiling. Included
+// because one component alone does not exercise a second consumer arriving after the first
+// registration, and the golden suite is the only place that would catch it.
+export declare const ShapesToo: (props: { other?: Shape }) => JsxElement
