@@ -445,6 +445,8 @@ export default W;
     const stderr = run.stderr || ''
     const vpCode = readFileSync(join(outDir, 'W.res'), 'utf-8')
     const vpReport = readFileSync(join(outDir, '_REPORT.md'), 'utf-8')
+    const stdoutRun = spawnSync('node', [join(here, '..', 'src', 'cli.mjs'), '--file', f3,
+      '--from', 'demo', '--variant-props', '--stdout', '--no-install'], { encoding: 'utf-8' })
     const bareFoo = /\| Foo\(foo\)/.test(vpCode) || /@as\("foo"\) Foo\(/.test(vpCode)
     return [
       ['#184: --file forwards --variant-props (emits the @tag props variant, not a flat record)', /@tag\("kind"\)/.test(vpCode)],
@@ -452,6 +454,10 @@ export default W;
       ['#184: … both sides renamed by representation (identity vs tagged)', /Foo\w+\(foo\)/.test(vpCode) && /@as\("foo"\) Foo\w+\(/.test(vpCode)],
       ['#184: a single-file rename is REPORTED on stderr, not applied silently', /constructor definition\(s\) renamed/.test(stderr)],
       ['#184: … and in _REPORT.md', /Constructor name collisions/.test(vpReport) && /`FooProps`/.test(vpReport)],
+      // `--stdout` returns early, so it needs its own assertion: it emits the renamed code and must
+      // still say so. Missed twice before — a reporting path is only covered if it is exercised.
+      ['#184: --stdout reports the rename too (early return, separate exit path)',
+        /constructor definition\(s\) renamed/.test(stdoutRun.stderr || '') && /FooProps/.test(stdoutRun.stdout || '')],
     ]
   })(),
 ]

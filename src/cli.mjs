@@ -325,8 +325,46 @@ async function main() {
         ? { resolveRef: makeResolveRef(plan.finalOf, null, shared.renames, shared.byKey), collisions }
         : { collisions }
 
+    // #171: every exit path that EMITS must report what it renamed — a silent rename is
+    // consumer-breaking. Factored into a helper because there are three such paths (`--stdout`, the
+    // normal write, and the shared-module write) and the first was missed twice: once by living
+    // inside `if (plan)`, once by running before the emitters had populated the collector. Call it
+    // after emitting and before returning. Guarded so a second call is a no-op — the data itself must
+    // survive, because `--report` renders the same findings into _REPORT.md. (#184 review)
+    let collisionsReported = false
+    const reportCollisions = () => {
+        if (collisionsReported) return
+        collisionsReported = true
+    // #171: reported for the shared modules AND for every single-file emit. This sits OUTSIDE the
+    // `if (plan)` block on purpose — a `--file` run has no plan, and its renames are just as
+    // consumer-breaking, so reporting them only for shared modules would have hidden exactly the
+    // renames a single-file consumer has to act on. A module can define one constructor name twice;
+    // ReScript then binds the LAST definition wherever the expected type isn't known from context.
+    // Different RUNTIME REPRESENTATIONS (a bare constant, an identity payload, a `@tag`-injected
+    // object) make that a real bug, so those are renamed. Collisions sharing one representation are
+    // left alone (renaming would churn consumers for an ambiguity that resolves correctly) but must
+    // not pass silently. (#184 review)
+    const renamedTotal = collisions.reduce((n, c) => n + c.classA.reduce((m, a) => m + a.renamed.length, 0), 0)
+    const sameValTotal = collisions.reduce((n, c) => n + c.classB.length, 0)
+    if (renamedTotal) {
+        console.error(`[bindgen] ⚠ ${renamedTotal} constructor definition(s) renamed — one name carried DIFFERENT runtime representations in one module (an unannotated use would have emitted the wrong runtime value):`)
+        for (const c of collisions) for (const a of c.classA) {
+            console.error(`             ${c.module}: ${a.ctor} (${a.values.join(' / ')}) -> ${a.renamed.map((r) => r.to).join(', ')}`)
+        }
+    }
+    if (sameValTotal) {
+        console.error(`[bindgen] ⚠ ${sameValTotal} constructor name(s) defined more than once with the SAME runtime representation — left as-is (resolves correctly), but ambiguous to read:`)
+        for (const c of collisions) {
+            const names = c.classB.slice(0, 8).map((b) => b.ctor)
+            if (names.length) console.error(`             ${c.module}: ${names.join(', ')}${c.classB.length > 8 ? ` … +${c.classB.length - 8} more` : ''}`)
+        }
+    }
+    }
+
     if (opts.stdout && units.length === 1) {
-        process.stdout.write(emit(units[0].ir, compRef))
+        const out = emit(units[0].ir, compRef)
+        reportCollisions() // before the early return — `--stdout` renames just as much as a write does
+        process.stdout.write(out)
         return
     }
 
@@ -481,30 +519,7 @@ async function main() {
         console.error(`  optional  ${d.pkg.padEnd(24)} ${status}  (${d.provides})`)
     }
 
-    // #171: reported for the shared modules AND for every single-file emit. This sits OUTSIDE the
-    // `if (plan)` block on purpose — a `--file` run has no plan, and its renames are just as
-    // consumer-breaking, so reporting them only for shared modules would have hidden exactly the
-    // renames a single-file consumer has to act on. A module can define one constructor name twice;
-    // ReScript then binds the LAST definition wherever the expected type isn't known from context.
-    // Different RUNTIME REPRESENTATIONS (a bare constant, an identity payload, a `@tag`-injected
-    // object) make that a real bug, so those are renamed. Collisions sharing one representation are
-    // left alone (renaming would churn consumers for an ambiguity that resolves correctly) but must
-    // not pass silently. (#184 review)
-    const renamedTotal = collisions.reduce((n, c) => n + c.classA.reduce((m, a) => m + a.renamed.length, 0), 0)
-    const sameValTotal = collisions.reduce((n, c) => n + c.classB.length, 0)
-    if (renamedTotal) {
-        console.error(`[bindgen] ⚠ ${renamedTotal} constructor definition(s) renamed — one name carried DIFFERENT runtime representations in one module (an unannotated use would have emitted the wrong runtime value):`)
-        for (const c of collisions) for (const a of c.classA) {
-            console.error(`             ${c.module}: ${a.ctor} (${a.values.join(' / ')}) -> ${a.renamed.map((r) => r.to).join(', ')}`)
-        }
-    }
-    if (sameValTotal) {
-        console.error(`[bindgen] ⚠ ${sameValTotal} constructor name(s) defined more than once with the SAME runtime representation — left as-is (resolves correctly), but ambiguous to read:`)
-        for (const c of collisions) {
-            const names = c.classB.slice(0, 8).map((b) => b.ctor)
-            if (names.length) console.error(`             ${c.module}: ${names.join(', ')}${c.classB.length > 8 ? ` … +${c.classB.length - 8} more` : ''}`)
-        }
-    }
+    reportCollisions()
 
     if (opts.report) {
         const reportPath = join(outDir, '_REPORT.md')
