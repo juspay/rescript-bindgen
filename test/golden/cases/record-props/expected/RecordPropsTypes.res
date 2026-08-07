@@ -10,6 +10,7 @@ type recordPropsWeirdConfigWcv1r = {
 module RecordPropsWeird = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromRecordPropsWeirdConfig: recordPropsWeirdConfigV3w34y => t = "%identity"
   external asRecordPropsWeirdConfig: t => (recordPropsWeirdConfigV3w34y) = "%identity"
   external fromRecordPropsWeirdConfig2: recordPropsWeirdConfigWcv1r => t = "%identity"

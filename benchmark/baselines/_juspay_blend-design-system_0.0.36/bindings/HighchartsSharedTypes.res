@@ -858,6 +858,7 @@ type patternObject = {
 module ColorType = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromGradientColorObject: gradientColorObject => t = "%identity"
   external asGradientColorObject: t => (gradientColorObject) = "%identity"
   external fromPatternObject: patternObject => t = "%identity"
@@ -2517,7 +2518,9 @@ type sonificationSpeechPitchOptions = {
 module ChartsSonificationSpeechMappingOptionsPitch = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromNumber: float => t = "%identity"
+  external asNumber: t => (float) = "%identity"
   external fromFunction: JsFn.t => t = "%identity"
   external asFunction: t => (JsFn.t) = "%identity"
   external fromSonificationSpeechPitchOptions: sonificationSpeechPitchOptions => t = "%identity"
@@ -2534,7 +2537,9 @@ type sonificationSpeechPlayDelayOptions = {
 module ChartsSonificationSpeechMappingOptionsPlayDelay = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromNumber: float => t = "%identity"
+  external asNumber: t => (float) = "%identity"
   external fromFunction: JsFn.t => t = "%identity"
   external asFunction: t => (JsFn.t) = "%identity"
   external fromSonificationSpeechPlayDelayOptions: sonificationSpeechPlayDelayOptions => t = "%identity"
@@ -2543,7 +2548,9 @@ module ChartsSonificationSpeechMappingOptionsPlayDelay = {
 module ChartsSonificationSpeechMappingOptionsRate = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromNumber: float => t = "%identity"
+  external asNumber: t => (float) = "%identity"
   external fromFunction: JsFn.t => t = "%identity"
   external asFunction: t => (JsFn.t) = "%identity"
   external fromSonificationInstrumentTimeOptions: sonificationSpeechPlayDelayOptions => t = "%identity"
@@ -2552,7 +2559,9 @@ module ChartsSonificationSpeechMappingOptionsRate = {
 module ChartsSonificationSpeechMappingOptionsVolume = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromNumber: float => t = "%identity"
+  external asNumber: t => (float) = "%identity"
   external fromFunction: JsFn.t => t = "%identity"
   external asFunction: t => (JsFn.t) = "%identity"
   external fromSonificationInstrumentVolumeOptions: sonificationSpeechPlayDelayOptions => t = "%identity"
@@ -3526,7 +3535,9 @@ type plotColumnrangeBorderRadiusOptions = {
 module ChartsSeriesColumnrangeOptionsBorderRadius = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromNumber: float => t = "%identity"
+  external asNumber: t => (float) = "%identity"
   external fromBorderRadiusOptionsObject: borderRadiusOptionsObject => t = "%identity"
   external asBorderRadiusOptionsObject: t => (borderRadiusOptionsObject) = "%identity"
   external fromPlotColumnrangeBorderRadiusOptions: plotColumnrangeBorderRadiusOptions => t = "%identity"
@@ -5483,7 +5494,9 @@ type plotRenkoBorderRadiusOptions = {
 module ChartsSeriesRenkoOptionsBorderRadius = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromNumber: float => t = "%identity"
+  external asNumber: t => (float) = "%identity"
   external fromBorderRadiusOptionsObject: borderRadiusOptionsObject => t = "%identity"
   external asBorderRadiusOptionsObject: t => (borderRadiusOptionsObject) = "%identity"
   external fromPlotRenkoBorderRadiusOptions: plotRenkoBorderRadiusOptions => t = "%identity"
@@ -7700,7 +7713,9 @@ type sonificationInstrumentFrequencyOptions = {
 module ChartsSonificationInstrumentMappingOptionsFrequency = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromNumber: float => t = "%identity"
+  external asNumber: t => (float) = "%identity"
   external fromFunction: JsFn.t => t = "%identity"
   external asFunction: t => (JsFn.t) = "%identity"
   external fromSonificationInstrumentFrequencyOptions: sonificationInstrumentFrequencyOptions => t = "%identity"
@@ -7709,7 +7724,9 @@ module ChartsSonificationInstrumentMappingOptionsFrequency = {
 module ChartsSonificationInstrumentHighpassOptionsFrequency = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromNumber: float => t = "%identity"
+  external asNumber: t => (float) = "%identity"
   external fromFunction: JsFn.t => t = "%identity"
   external asFunction: t => (JsFn.t) = "%identity"
   external fromSonificationInstrumentLowpassFrequencyOptions: sonificationInstrumentFrequencyOptions => t = "%identity"
@@ -7718,7 +7735,9 @@ module ChartsSonificationInstrumentHighpassOptionsFrequency = {
 module ChartsSonificationInstrumentHighpassOptionsResonance = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromNumber: float => t = "%identity"
+  external asNumber: t => (float) = "%identity"
   external fromFunction: JsFn.t => t = "%identity"
   external asFunction: t => (JsFn.t) = "%identity"
   external fromSonificationInstrumentLowpassResonanceOptions: sonificationInstrumentFrequencyOptions => t = "%identity"
@@ -7740,7 +7759,9 @@ type sonificationInstrumentPitchOptions = {
 module ChartsSonificationInstrumentMappingOptionsPitch = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromNumber: float => t = "%identity"
+  external asNumber: t => (float) = "%identity"
   external fromFunction: JsFn.t => t = "%identity"
   external asFunction: t => (JsFn.t) = "%identity"
   external fromStringOrNumbers: array<CommonTypes.stringOrNumber> => t = "%identity"
@@ -7751,7 +7772,9 @@ module ChartsSonificationInstrumentMappingOptionsPitch = {
 module ChartsSonificationInstrumentMappingOptionsPlayDelay = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromNumber: float => t = "%identity"
+  external asNumber: t => (float) = "%identity"
   external fromFunction: JsFn.t => t = "%identity"
   external asFunction: t => (JsFn.t) = "%identity"
   external fromSonificationInstrumentPlayDelayOptions: sonificationInstrumentFrequencyOptions => t = "%identity"
@@ -7760,7 +7783,9 @@ module ChartsSonificationInstrumentMappingOptionsPlayDelay = {
 module ChartsSonificationInstrumentMappingOptionsRate = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromNumber: float => t = "%identity"
+  external asNumber: t => (float) = "%identity"
   external fromFunction: JsFn.t => t = "%identity"
   external asFunction: t => (JsFn.t) = "%identity"
   external fromSonificationTracksRateOptions: sonificationInstrumentFrequencyOptions => t = "%identity"
@@ -7769,7 +7794,9 @@ module ChartsSonificationInstrumentMappingOptionsRate = {
 module ChartsSonificationInstrumentTremoloOptionsDepth = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromNumber: float => t = "%identity"
+  external asNumber: t => (float) = "%identity"
   external fromFunction: JsFn.t => t = "%identity"
   external asFunction: t => (JsFn.t) = "%identity"
   external fromSonificationInstrumentTremoloDepthOptions: sonificationInstrumentFrequencyOptions => t = "%identity"
@@ -7778,7 +7805,9 @@ module ChartsSonificationInstrumentTremoloOptionsDepth = {
 module ChartsSonificationInstrumentTremoloOptionsSpeed = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromNumber: float => t = "%identity"
+  external asNumber: t => (float) = "%identity"
   external fromFunction: JsFn.t => t = "%identity"
   external asFunction: t => (JsFn.t) = "%identity"
   external fromSonificationInstrumentTremoloSpeedOptions: sonificationInstrumentFrequencyOptions => t = "%identity"
@@ -30981,6 +31010,7 @@ type exportingMenuObject<'a, 'b, 'c> = {
 module ChartsSeriesMapDataGeometryOptionsCoordinates = {
   type t
   external fromArray: array<float> => t = "%identity"
+  external asArray: t => (array<float>) = "%identity"
   external fromLonLatArrays: array<array<float>> => t = "%identity"
   external asLonLatArrays: t => (array<array<float>>) = "%identity"
 }

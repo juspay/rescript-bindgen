@@ -70,7 +70,9 @@
 module ValidateTarget = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromArray: array<string> => t = "%identity"
+  external asArray: t => (array<string>) = "%identity"
   external fromPromise: promise<stringOrStringArray> => t = "%identity"
   external asPromise: t => (promise<stringOrStringArray>) = "%identity"
   external fromUnit: unit => t = "%identity"

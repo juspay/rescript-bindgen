@@ -108,6 +108,7 @@ type directoryVirtualizationConfig = {
 module DirectoryExpandedItems = {
   type t
   external fromArray: array<string> => t = "%identity"
+  external asArray: t => (array<string>) = "%identity"
   external fromSet: Set.t<string> => t = "%identity"
   external asSet: t => (Set.t<string>) = "%identity"
 }
