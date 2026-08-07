@@ -16,13 +16,15 @@
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- AccordionItem
+- AccordionItem  _(1 loose)_
 
 ## ⚪ Loosely typed (widened to `string`)
 
 These resolved to a real but complex type and were widened to `string` (they compile and work). Grouped by type so you can review each pattern once — confirm `string` is acceptable, or it may deserve a tighter mapping.
 
-_(none)_
+| Resolved TypeScript type | → emitted | count | example props |
+|--------------------------|-----------|-------|---------------|
+| ``prefix-${string}`` | `string` | 1 | pattern |
 
 ## 🔍 Needs review
 

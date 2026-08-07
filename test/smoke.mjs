@@ -367,7 +367,10 @@ const checks = [
     const code = item ? emit(item.ir) : ''
     return [
       ['#155: plain component emits nameable `type props` + React.component<props> BY DEFAULT', /type props = \{/.test(code) && /external make: React\.component<props>/.test(code)],
-      ['#155: record form keeps requiredness + flags (value required, weird flagged loose)', /  value: string,/.test(code) && /⚪ loose/.test(code)],
+      // The ⚪ witness is `pattern` (a template-literal type), NOT `weird`: since #181 an anonymous-arm
+      // union binds to a views module, so `weird` no longer carries a flag. A template literal is the
+      // sturdier witness — it does not depend on union mapping, so this can't lose its premise again.
+      ['#155: record form keeps requiredness + flags (value required, pattern flagged loose)', /  value: string,/.test(code) && /⚪ loose/.test(code)],
       ['#155: reserved-word prop keeps @as mapping in record form', /@as\("type"\) type_\?:/.test(code)],
     ]
   })(),
