@@ -64,7 +64,7 @@ type props<'a> = {
   value?: CommonTypes.stringOrNumberOrStringArray,
   className?: TriggerTypes.dialogTriggerClassName,
   render?: React.element,  // ⓘ function form: wrap with `renderFn` (zero-cost)
-  handle?: RootSharedTypes.popoverHandleV19d3c<'a>,
+  handle?: RootSharedTypes.popoverHandleE6qej<'a>,
   payload?: 'a,
   openOnHover?: bool,
   delay?: float,

@@ -183,19 +183,29 @@ const STABILIZE_KINDS = new Set(['record', 'enum', 'unboxed', 'opaque', 'tagVari
  *  entries always differ) and the member set for enum/unboxed/opaque. */
 /** A `@tag` variant's shape: the discriminant + every branch's literal, ctor and fields. (#167) */
 function tagVariantSig(e, enc) {
-    return 'tagv:' + e.tag + '|' + (e.branches || []).map((b) =>
-        b.literal + '=' + b.ctor + '(' + b.fields.map((f) => f.name + (f.optional ? '?' : '') + ':' + enc(f.type)).join(';') + ')').join('|')
+    return 'tagv:' + JSON.stringify([e.tag, (e.branches || []).map((b) =>
+        [b.literal, b.ctor, b.fields.map((f) => [f.name, !!f.optional, enc(f.type)])])])
 }
 
+/**
+ * Values that come from the SOURCE — string literals, `@as` payloads, polyvar tag sets — can contain
+ * the very characters a hand-rolled `join`/`+` encoding uses as separators, which makes the encoding
+ * AMBIGUOUS: `['a|b','c','d','e'].join('|')` and `['a','b|c','d','e'].join('|')` are both
+ * `"a|b|c|d|e"`. Since these signatures are DEDUP KEYS, an ambiguity means two genuinely different
+ * shapes can collapse onto one entry — the second redirected to constructors accepting the wrong
+ * literals. `JSON.stringify` over structured arrays is unambiguous by construction (it escapes the
+ * separators), so no source value can ever forge a boundary. (#183 review)
+ */
 function entrySig(e) {
     if (e.kind === 'record') return recordSig(e)
     if (e.kind === 'tagVariant') return tagVariantSig(e, typeSig)
     // tparams MUST be part of the signature: a generic `portalStyle<'a>` and a non-generic
     // `portalStyle` @unboxed are NOT the same shape — merging them applies `<'a>` to a
     // non-generic type (compile break).
-    const tp = 'tp:' + ((e.tparams || []).join(',')) + '|'
-    if (e.members) return e.kind + ':' + tp + e.members.map((m) => (m.ctor || m.name || '') + (m.as !== undefined ? '=' + m.as : '') + (m.tagSet ? '#' + m.tagSet.join('|') : '') + (m.none ? '!none' : '') + (m.type ? ':' + typeSig(m.type) : '')).join(',')
-    return e.kind + ':' + tp + (e.name || '')
+    const tp = e.tparams || []
+    if (e.members) return e.kind + ':' + JSON.stringify([tp, e.members.map((m) =>
+        [m.ctor || m.name || '', m.as, m.tagSet || null, !!m.none, m.type ? typeSig(m.type) : null])])
+    return e.kind + ':' + JSON.stringify([tp, e.name || ''])
 }
 
 /**
@@ -233,7 +243,13 @@ function structuralTypeSig(t, shared, seen) {
         case 'map': return 'M[' + structuralTypeSig(t.mapKey, shared, seen) + ',' + structuralTypeSig(t.mapVal, shared, seen) + ']'
         case 'set': return 'S[' + structuralTypeSig(t.of, shared, seen) + ']'
         case 'promise': return 'P[' + structuralTypeSig(t.of, shared, seen) + ']'
-        case 'callback': return 'F(' + (t.params || []).map((x) => structuralTypeSig(x, shared, seen)).join(',') + ')=>' + structuralTypeSig(t.ret || { kind: 'unit' }, shared, seen)
+        // Param OPTIONALITY and `thisArg` change what renderType emits, so they belong here for the
+        // same reason `typeSig` needed them (#183 review) — but for a different consequence: this is
+        // the #90 STABLE-NAME hash, so two shapes that hash alike don't merge, they collide onto an
+        // order-dependent numeric suffix, which is exactly the churn #90 exists to prevent.
+        case 'callback': return 'F(' + (t.thisArg ? '@this' + structuralTypeSig(t.thisArg, shared, seen) + ';' : '') +
+            (t.params || []).map((x) => (x && x.optional ? '?' : '') + structuralTypeSig(x, shared, seen)).join(',') +
+            ')=>' + structuralTypeSig(t.ret || { kind: 'unit' }, shared, seen)
         // Broken/opaque fields all EMIT `string`, but two records distinguishable ONLY through them
         // must still hash apart (else collision → order-dependent counter). The original TS type
         // text is stable (source-declared, not id/order-based), so a bounded slice discriminates
@@ -2110,7 +2126,11 @@ export function extractModule(entryFile, opts = {}) {
                         let oname = i === 0 ? name : name + overloadSuffix(sigs[i], sigs[0])
                         for (let n = 2; seen.has(oname); n++) oname = name + overloadSuffix(sigs[i], sigs[0]) + n
                         const ir = buildFunctionIR(checker, sym, source, oname, from, { ...opts, shared, sig: sigs[i] })
-                        const sigKey = (ir.sig.params || []).map((p) => typeSig(p.type)).join(',') + '=>' + typeSig(ir.sig.ret)
+                        // `optional`/`rest` change the EMITTED signature (`~a: string=?`, `@variadic`),
+                        // so two overloads differing only there are NOT the same binding and must not
+                        // dedup onto one. (#183 review follow-up)
+                        const sigKey = JSON.stringify([(ir.sig.params || []).map((p) =>
+                            [typeSig(p.type), !!p.optional, !!p.rest]), typeSig(ir.sig.ret)])
                         if (emittedSigs.has(sigKey)) continue // identical binding — the base overload already covers it
                         emittedSigs.add(sigKey)
                         ir.import.jsName = jsName
