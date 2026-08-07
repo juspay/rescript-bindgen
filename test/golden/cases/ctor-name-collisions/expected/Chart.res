@@ -7,6 +7,7 @@ type props = {
   digit?: CtorNameCollisionsTypes.digit,
   squatter?: CtorNameCollisionsTypes.squatter,
   tri?: CtorNameCollisionsTypes.mixedOrMarker,
+  widget?: CtorNameCollisionsTypes.widget,
   casing?: CtorNameCollisionsTypes.casing,
   stroke?: CtorNameCollisionsTypes.strokeStyle,
   border?: CtorNameCollisionsTypes.borderStyle,

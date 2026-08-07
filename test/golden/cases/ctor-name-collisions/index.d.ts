@@ -54,6 +54,13 @@ type Casing = 'Mixed' | 'Upper'
 // overwritten. (#184 review)
 type Squatter = 'value operator' | 'other'
 
+// CLASS A, PAYLOAD REPRESENTATION — a payload constructor is NOT "no value". `Marker` exists twice
+// here: as the `@unboxed` arm above (identity — the record passes through unchanged) and as a `@tag`
+// branch below (which INJECTS the discriminant). Same name, same arity, silently different runtime
+// shape — compiled and confirmed: an unannotated use emitted `{x: 1}` where the tagged form needs
+// `{kind: "marker", x: 1}`. Treating payload arms as "no value" classified this as safe. (#184 review)
+type Widget = { kind: 'marker'; size: number } | { kind: 'plain'; label: string }
+
 // CLASS B — `Dotted` is "dotted" in BOTH, with no third definition dragging in another value, so it
 // keeps its name and is only reported. This is what the previous version of the fixture failed to
 // prove: an uppercase sibling made every `Solid` definition Class A, so no "left as-is" row existed.
@@ -69,6 +76,7 @@ export declare const Chart: (props: {
     digit?: Digit
     squatter?: Squatter
     tri?: Tri
+    widget?: Widget
     casing?: Casing
     stroke?: StrokeStyle
     border?: BorderStyle

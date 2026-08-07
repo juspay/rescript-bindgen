@@ -31,4 +31,10 @@ type borderStyle =
 type marker = {
   id: string,
 }
-@unboxed type mixedOrMarker = @as("mixed") MixedOrMarker | Marker(marker)
+// #167: discriminated union — each branch keeps its OWN required fields.
+//       Build with MarkerWidget({…}); `kind` is auto-filled by @tag.
+@tag("kind")
+type widget =
+  | @as("marker") MarkerWidget({size: float})
+  | @as("plain") Plain({label: string})
+@unboxed type mixedOrMarker = @as("mixed") MixedOrMarker | MarkerMixedOr(marker)

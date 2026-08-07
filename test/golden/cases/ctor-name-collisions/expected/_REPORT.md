@@ -2,7 +2,7 @@
 
 **1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**12** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**13** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 🔤 Constructor name collisions
 
@@ -14,6 +14,7 @@ Left alone, an unannotated use would have compiled cleanly and sent the **wrong 
 
 | Module | Constructor | Conflicting `@as` values | Renamed to |
 |---|---|---|---|
+| `CtorNameCollisionsTypes` | `Marker` | `(payload, passed through)` / `{kind: "marker", …}` | `MarkerMixedOr`, `MarkerWidget` |
 | `CtorNameCollisionsTypes` | `Mixed` | `"mixed"` / `"Mixed"` | `MixedCasing`, `MixedOrMarker` |
 | `CtorNameCollisionsTypes` | `Solid` | `"Solid"` / `"solid"` | `SolidFillCase`, `SolidLineCase` |
 | `CtorNameCollisionsTypes` | `V0` | `0` / `"0"` | `V0Digit`, `V0Level` |
