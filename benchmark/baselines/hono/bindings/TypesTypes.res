@@ -132,6 +132,7 @@ module MatchTarget = {
   external fromTuple2: ((array<array<JSON.t>>, array<string>)) => t = "%identity"
   external asTuple2: t => ((array<array<JSON.t>>, array<string>)) = "%identity"
   external fromArray: array<array<array<JSON.t>>> => t = "%identity"
+  external asArray: t => (array<array<array<JSON.t>>>) = "%identity"
 }
 type router = {
   name: string,
@@ -165,6 +166,7 @@ module TypesHandler = {
 module TypesInput = {
   type t
   external fromString: string => t = "%identity"
+  external asString: t => (string) = "%identity"
   external fromRequest: WebTypes.request => t = "%identity"
   external asRequest: t => (WebTypes.request) = "%identity"
   external fromURL: WebTypes.url => t = "%identity"

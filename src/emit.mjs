@@ -964,9 +964,30 @@ function renderOpaque(t, lines, cfg, tAlias) {
         // build one. Symmetric to `from<X>` and equally leak-free at the binding layer (the value
         // passes through unchanged). The caller discriminates on the union's runtime tag for
         // arm-SPECIFIC fields; fields common to every arm (`name`, `data`) are always safe to read.
-        // An allowed `as*` opaque-module accessor (CLAUDE.md). Emitted only for STRUCTURED arms
-        // (record/callback/tuple/named) — literal/tag/unit arms above are their own runtime value.
-        if (m.type.kind === 'typeRef' || m.type.kind === 'callback' || m.type.kind === 'tuple' || m.type.kind === 'record' || m.name) {
+        // An allowed `as*` opaque-module accessor (CLAUDE.md).
+        //
+        // The gate MIRRORS `fromName` rather than re-deriving the arm's identity: every arm reaching
+        // this generic branch gets BOTH doors. The arms that legitimately need no reader — `tagSet`,
+        // literal, `none` — each ARE their own runtime value and already `continue` above.
+        //
+        // It used to require a structured KIND or an explicit `m.name`, while `fromName` (above) falls
+        // back to `m.type.kind`. So an arm with a constructor but no derivable name hint — a
+        // primitive-element array, a bare `number` — got a one-way door: `fromArray` with no `asArray`.
+        // That split tracked NAMING, not soundness, and it showed: `string[]` had no reader while
+        // `string[][]` did (TS names the inner element `Array`, so a hint existed), and `boolean` did
+        // only because `opaqueUnion` hard-codes `name: 'Bool'` on the collapsed arm.
+        //
+        // Highcharts' `ColorType` (`ColorString | GradientColorObject | PatternObject`) is the
+        // consumer-visible cost: `color(…).get()` RETURNS one, it almost always holds the plain string,
+        // and the only reader that compiled was `asGradientColorObject` — reading a string as a record,
+        // silently, since these views are unchecked. `asString` is exactly as safe as the
+        // `asGradientColorObject` beside it: both are zero-cost views whose arm the caller must
+        // establish first, which is this module's contract either way.
+        //
+        // A TYPE-VARIABLE arm stays excluded, and that exclusion is principled where the old one was
+        // incidental: `as…: t => 'a` unifies with ANY type at the call site, so it is a universal
+        // unsafe cast rather than a view of one specific arm. (#186)
+        if (m.type.kind !== 'typeVar') {
             lines.push(`  external as${fn.slice(4)}: ${rt} => (${rendered}) = "%identity"`)
         }
     }

@@ -965,15 +965,31 @@ When a union can't be an `@unboxed` variant — **multiple object shapes**, or *
 (abstract members that `typeof`/`Array.isArray` can't split into a recognized variant shape) — it
 becomes an opaque-type module: an abstract `t` plus zero-cost `%identity` `from*` constructors.
 
-**Every structured arm also gets its inverse `as*` READER (#122).** A module that only had `from*`
+**Every arm also gets its inverse `as*` READER (#122).** A module that only had `from*`
 writers was write-only — you could put a `seriesLineOptions` into `options.series` but never read one
 back (`chartsOptionsSeries_t` is abstract), blocking consumers that inspect/transform existing options
-(the portal's `mapOutages` reads `.name`/`.data` off each series). So each record/callback/tuple/named
-arm now emits a symmetric `external as<X>: t => armType = "%identity"` alongside its `from<X>`. It's the
+(the portal's `mapOutages` reads `.name`/`.data` off each series). So each arm emits a symmetric
+`external as<X>: t => armType = "%identity"` alongside its `from<X>`. It's the
 zero-cost reverse view (value passes through unchanged), an **allowed `as*` form**; the caller
 discriminates on the union's runtime tag for arm-SPECIFIC fields, while fields common to every arm are
 always safe. Literal/tag/`unit` arms get no reader (the value IS its own runtime tag). Symmetric with
 the overloaded-function module, which was already reader-based.
+
+The reader gate **mirrors the constructor's naming fallback** rather than re-deriving the arm's
+identity — one arm, both doors. It previously required a structured *kind* (record/callback/tuple/named)
+or an explicit name hint, while the `from*` name falls back to the arm's kind, so an arm with no
+derivable hint got a one-way door: `fromArray: array<string> => t` with **no `asArray`**. That tracked
+naming, not soundness, and the tell was `string[]` having no reader while `string[][]` had one (TS names
+the inner element `Array`, so a hint existed) — as did `boolean`, only because the collapsed bool arm
+hard-codes its name. `asString: t => string` is exactly as unchecked as the `asRecord` beside it; both
+require the caller to establish the arm first, which is the module's contract either way. The
+consumer-visible cost was Highcharts `ColorType = ColorString | GradientColorObject | PatternObject`,
+**returned** by `color(…).get()` and almost always holding the plain string: the only reader that
+compiled was `asGradientColorObject`, silently reading a string as a record. 53 of 1624 views modules
+across the benchmark baselines had a reader-less arm; 42 were the `string | number | record` shape.
+A **type-variable** arm is the one deliberate exclusion — `as<X>: t => 'a` unifies with any type at the
+call site, making it a universal unsafe cast rather than a view of one arm.
+Fixture: [`views-module-readers`](../test/golden/cases/views-module-readers). (#186)
 
 Three member forms beyond plain `from*` constructors (#39):
 
