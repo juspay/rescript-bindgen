@@ -6,6 +6,56 @@
 
 **3354** shared types deduplicated into **76** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
+## 🔤 Constructor name collisions
+
+ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
+
+### Renamed — the same name carried DIFFERENT runtime values
+
+Left alone, an unannotated use would have compiled cleanly and sent the **wrong string**. Each colliding definition is suffixed with the tail of its owning type's name.
+
+| Module | Constructor | Conflicting `@as` values | Renamed to |
+|---|---|---|---|
+| `EditorSharedTypes` | `Alt` | `"6"` / `"alt"` | `AltKeyCode`, `AltCursorModifier` |
+| `EditorSharedTypes` | `CRLF` | `"2"` / `"1"` | `CRLFOfLine`, `CRLFLinePreference`, `CRLFLineSequence` |
+| `EditorSharedTypes` | `Explicit` | `"3"` / `"explicit"` | `ExplicitChangeReason`, `ExplicitCaretAnimation` |
+| `EditorSharedTypes` | `Hover` | `"hover"` / `"69"` | `HoverStateV2`, `HoverEditorOption`, `HoverActivatedOn` |
+| `EditorSharedTypes` | `Insert` | `"19"` / `"insert"` | `InsertKeyCode`, `InsertInsertMode` |
+| `EditorSharedTypes` | `Left` | `"left"` / `"0"` / `"1"` | `LeftDropdownPosition`, `LeftV2Direction`, `LeftOutsidePosition`, `LeftPositionAffinity`, `LeftMarginLane` |
+| `EditorSharedTypes` | `LF` | `"1"` / `"0"` | `LFOfLine`, `LFLinePreference`, `LFLineSequence` |
+| `EditorSharedTypes` | `None` | `"0"` / `"none"` / `"2"` | `NoneRenderMinimap`, `NoneOptionsAutohide`, `NoneWrappingIndent`, `NoneAutoIndent`, `NoneSnippetSuggestions`, `NoneRenderWhitespace`, `NoneLineHighlight`, `NonePositionAffinity` |
+| `EditorSharedTypes` | `Right` | `"right"` / `"1"` / `"3"` | `RightDropdownPosition`, `RightV2Direction`, `RightOutsidePosition`, `RightPositionAffinity`, `RightMarginLane` |
+| `EditorSharedTypes` | `Smooth` | `"smooth"` / `"0"` | `SmoothCursorBlinking`, `SmoothScrollType` |
+| `EditorSharedTypes` | `Text` | `"1"` / `"text"` | `TextRenderMinimap`, `TextMouseStyle`, `TextTagType` |
+| `EditorSharedTypes` | `WordWrapColumn` | `"152"` / `"wordWrapColumn"` | `WordWrapColumnEditorOption`, `WordWrapColumnWordWrap` |
+| `DataTableTypes` | `DateRange` | `"date_range"` / `"dateRange"` | `DateRangeTypeType`, `DateRangeColumnType`, `DateRangeFilterComponent` |
+| `HighchartsSharedTypes` | `Point` | `"point"` / `"Point"` | `PointObjectScope`, `PointConstructorType` |
+| `HighchartsSharedTypes` | `Pointer` | `"pointer"` / `"Pointer"` | `PointerCursorValue`, `PointerConstructorType` |
+| `HighchartsSharedTypes` | `Polygon` | `"polygon"` / `"Polygon"` | `PolygonInterpolationValue`, `PolygonTypeValue` |
+| `HighchartsSharedTypes` | `Series` | `"series"` / `"Series"` | `SeriesWithinValue`, `SeriesConstructorType` |
+| `HighchartsSharedTypes` | `Solid` | `"Solid"` / `"solid"` | `SolidStyleValue`, `SolidShapeValue` |
+| `HighchartsSharedTypes` | `TriangleDown` | `"triangle-down"` / `"triangleDown"` | `TriangleDownKeyValue`, `TriangleDownConstructorType` |
+| `HighchartsSharedTypes` | `Value` | `""` / `"!="` / `"value"` | `ValueSeriesSetState`, `ValuePointSetState`, `ValueAnnotationDraggable`, `ValueOptionsOperator`, `ValueOptionsGapUnit`, `ValueOptionsCompare` |
+
+### Left as-is — same name, same runtime value (117)
+
+These resolve to the right value whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
+
+- `EditorSharedTypes`: `Advanced`, `All`, `Always`, `Auto`, `Brackets`, `Default`, `Disabled`, `Error`, `Full`, `LanguageDefined`, `Line`, `Mouseover`, `Never`, `Off`, `On`, `Selection`
+- `TagsTypes`: `Lg`, `Md`, `Sm`, `Xs`
+- `InputsTypes`: `Left`, `Lg`, `Md`, `Right`, `Sm`
+- `TooltipTypes`: `Left`, `Right`
+- `ButtonTypes`: `Default`
+- `DataTableTypes`: `Avatar`, `Custom`, `Date`, `Decimal`, `Dropdown`, `Error`, `Multiselect`, `Number`, `Percentage`, `Primary`, `Progress`, `ReactElement`, `Secondary`, `Select`, `Slider`, `Success`, `Tag`, `Text`, `Warning`
+- `DateRangePickerTypes`: `Custom`
+- `ProgressBarTypes`: `Segmented`, `Solid`
+- `HighchartsSharedTypes`: `All`, `Allow`, `Alt`, `Arc`, `Area`, `Auto`, `Bottom`, `Callout`, `Category`, `Center`, `Chart`, `Circle`, `Close`, `Ctrl`, `Day`, `Diamond`, `End`, `Flap`, `High`, `Horizontal`, `Hover`, `Inactive`, `Inside`, `Justify`, `Left`, `Linear`, `Logarithmic`, `Low`, `Meta`, `Middle` … +27 more
+- `SkeletonTypes`: `Circle`
+- `UploadTypes`: `Error`, `Success`
+- `ButtonV2Types`: `Default`, `Disabled`
+- `TooltipV2Types`: `Left`, `Right`
+- `SliderTypes`: `Bottom`, `Inline`, `Top`
+
 ## 📦 Dependencies
 
 | Kind | Package | Provides | Status |

@@ -1333,6 +1333,77 @@ export function planSharedModules(shared) {
 }
 
 /**
+ * CONSTRUCTOR COLLISIONS within one emitted module (#171).
+ *
+ * ReScript constructors are scoped to the MODULE, not to their type — so two enums in one
+ * `*Types.res` may both define `Value`. Where the expected type is known, type-directed
+ * disambiguation resolves it; where it ISN'T, ReScript silently binds the LAST definition in the
+ * file. Verified against the compiler:
+ *
+ *     type operator = | @as("!=") Value | @as(">") Gt
+ *     type gapUnit  = | @as("value") Value | @as("percent") Percent
+ *     let annotated: operator = Value   ->  "!="      (correct)
+ *     let unannotated         = Value   ->  "value"   (WRONG, no warning)
+ *
+ * So a name defined twice with DIFFERENT `@as` values is a wire-value hazard, not an ergonomics
+ * problem: an unannotated use compiles clean and sends the wrong string. blend's Highcharts module
+ * has 462 constructor definitions over 334 names — 64 collide, and 7 of those carry conflicting
+ * values (`Value` = `""`/`"!="`/`"value"`; `Point` = `"point"`/`"Point"`, which Highcharts treats as
+ * case-sensitive). It broke the portal dashboard migration (juspay/blend-rescript#133).
+ *
+ * Split by consequence:
+ *   · CLASS A (conflicting values) — RENAMED, because it cannot be allowed to compile. Every
+ *     colliding definition takes an owner-derived suffix, including the first: leaving one bare
+ *     would make which-one-keeps-it depend on emission order, the churn #90 exists to prevent.
+ *   · CLASS B (same value everywhere) — left alone and REPORTED. Renaming 57 names would churn
+ *     every consumer to fix an ambiguity that resolves to the right runtime value either way.
+ *
+ * Mutates `e.members[].ctor` on the entries it renames, and returns both classes for the report.
+ */
+function resolveCtorCollisions(entries) {
+    // emit.mjs has no `pascal` (that lives in extract.mjs) — same recipe as `pascalName` below.
+    const pas = (x) => String(x || '').replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(/\s+/)
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('')
+    const defs = new Map() // ctor name -> [{ entry, member }]
+    for (const e of entries) {
+        if (e.kind !== 'enum') continue // polyvariant tags are a separate namespace; @unboxed/@tag handled below
+        for (const m of e.members || []) {
+            if (!m.ctor) continue
+            if (!defs.has(m.ctor)) defs.set(m.ctor, [])
+            defs.get(m.ctor).push({ entry: e, member: m })
+        }
+    }
+    const classA = [], classB = []
+    for (const [ctor, uses] of [...defs].sort((a, b) => a[0].localeCompare(b[0]))) {
+        if (uses.length < 2) continue
+        const values = new Set(uses.map((u) => String(u.member.as)))
+        if (values.size === 1) { classB.push({ ctor, value: [...values][0], owners: uses.map((u) => u.entry.name) }); continue }
+        // Class A: suffix by the TAIL of the owner's name — the shortest camel-word suffix that tells
+        // the colliding owners apart. The whole stem would be unusable
+        // (`NoneCodeEditorV2IEditorOptionsSnippetSuggestions`); the tail reads like the thing it
+        // belongs to (`NoneSnippetSuggestions`, `AltKeyCode`, `LeftDropdownPosition`). `e.base` is
+        // #90's stable anchor, so the suffix is a pure function of shape identity — no counters, no
+        // dependence on emission order, and every collider is suffixed (leaving one bare would make
+        // "who keeps the short name" order-dependent).
+        const words = (e) => pas(String(e.base || e.name || '').replace(new RegExp(ctor + '$', 'i'), ''))
+            .replace(/([a-z0-9])([A-Z])/g, '$1 $2').split(/\s+/).filter(Boolean)
+        let k = 2, suffixes
+        for (; k <= 8; k++) {
+            suffixes = uses.map((u) => words(u.entry).slice(-k).join(''))
+            if (new Set(suffixes).size === uses.length) break // this depth distinguishes them all
+        }
+        const renamed = []
+        uses.forEach((u, i) => {
+            const next = ctor + (suffixes[i] || pas(u.entry.name || ''))
+            renamed.push({ from: ctor, to: next, value: String(u.member.as), owner: u.entry.name })
+            u.member.ctor = next
+        })
+        classA.push({ ctor, values: [...values], renamed })
+    }
+    return { classA, classB }
+}
+
+/**
  * Render one shared `*Types.res` module: its enums, then `@unboxed` variants, then
  * records (one `type rec … and …` group). Cross-module references are qualified.
  * @param {string} mod         the final module name (e.g. `MenuTypes`)
@@ -1358,6 +1429,11 @@ export function emitSharedModule(mod, entries, finalOf, options = {}) {
     if (hasRecGroupLabelCollision(records, objUnboxed, opaque, idOf, depsOf)) lines.push('@@warning("-30")', '') // silence duplicate-label noise
     // Abstract instance types for class exports — `type counter` (no deps; the dependency sink).
     for (const n of entries.filter((e) => e.kind === 'nominal')) lines.push(`type ${n.name}`)
+    // #171: resolve constructor collisions BEFORE anything renders — Class A is renamed in place.
+    const ctorCollisions = resolveCtorCollisions(entries)
+    if (options.collisions && (ctorCollisions.classA.length || ctorCollisions.classB.length)) {
+        options.collisions.push({ module: mod, ...ctorCollisions })
+    }
     renderEnums(entries.filter((e) => e.kind === 'enum'), lines)
     renderPolyvariants(entries.filter((e) => e.kind === 'polyvariant'), lines) // leaf types, before referrers
     renderUnboxed(unboxed.filter((u) => !isObjectUnboxed(u)), lines, cfg) // primitive: before records

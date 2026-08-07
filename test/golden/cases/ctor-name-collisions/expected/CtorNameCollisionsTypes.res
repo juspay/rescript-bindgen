@@ -1,0 +1,15 @@
+type operator =
+  | @as("!=") ValueOperator
+  | @as(">") Value2
+type gapUnit =
+  | @as("value") ValueGapUnit
+  | @as("percent") Percent
+type lineCase =
+  | @as("Solid") SolidLineCase
+  | @as("Dashed") Dashed
+type strokeStyle =
+  | @as("solid") SolidStrokeStyle
+  | @as("dotted") Dotted
+type borderStyle =
+  | @as("solid") SolidBorderStyle
+  | @as("double") Double

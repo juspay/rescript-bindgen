@@ -358,13 +358,34 @@ async function main() {
     const written = new Set()
 
     // Write the shared `*Types.res` modules once.
+    const collisions = [] // #171: constructor-name collisions found per module (also feeds the report)
     if (plan) {
         for (const [mod, entries] of plan.byModule) {
             const p = join(typesDir, `${mod}.res`)
-            writeFileSync(p, emitSharedModule(mod, entries, plan.finalOf, { renames: shared.renames, byKey: shared.byKey }))
+            writeFileSync(p, emitSharedModule(mod, entries, plan.finalOf, { renames: shared.renames, byKey: shared.byKey, collisions }))
             written.add(relative(outDir, p))
         }
         console.error(`[bindgen] wrote ${plan.byModule.size} shared type module(s) (${shared.entries.length} unique types) to ${typesDir}`)
+        // #171: a module can define one constructor name twice — ReScript then binds the LAST
+        // definition wherever the expected type isn't known from context. Conflicting `@as` values
+        // make that a wire-value bug, so those are renamed; same-value collisions are left alone
+        // (renaming them would churn consumers for an ambiguity that resolves correctly anyway) but
+        // must not pass silently.
+        const renamedTotal = collisions.reduce((n, c) => n + c.classA.reduce((m, a) => m + a.renamed.length, 0), 0)
+        const sameValTotal = collisions.reduce((n, c) => n + c.classB.length, 0)
+        if (renamedTotal) {
+            console.error(`[bindgen] ⚠ ${renamedTotal} constructor definition(s) renamed — one name carried DIFFERENT @as values in one module (an unannotated use would have emitted the wrong runtime string):`)
+            for (const c of collisions) for (const a of c.classA) {
+                console.error(`             ${c.module}: ${a.ctor} (${a.values.map((v) => JSON.stringify(v)).join(' / ')}) -> ${a.renamed.map((r) => r.to).join(', ')}`)
+            }
+        }
+        if (sameValTotal) {
+            console.error(`[bindgen] ⚠ ${sameValTotal} constructor name(s) defined more than once with the SAME @as value — left as-is (resolves correctly), but ambiguous to read:`)
+            for (const c of collisions) {
+                const names = c.classB.slice(0, 8).map((b) => b.ctor)
+                if (names.length) console.error(`             ${c.module}: ${names.join(', ')}${c.classB.length > 8 ? ` … +${c.classB.length - 8} more` : ''}`)
+            }
+        }
     }
 
     if (attrsPlan) {
@@ -478,7 +499,7 @@ async function main() {
 
     if (opts.report) {
         const reportPath = join(outDir, '_REPORT.md')
-        const sharedInfo = plan ? { modules: plan.byModule.size, types: shared.entries.length } : null
+        const sharedInfo = plan ? { modules: plan.byModule.size, types: shared.entries.length, collisions } : null
         const fnInfo = fnFile ? { file: fnFile, names: functions.map((f) => f.name) } : null
         const classInfo = classes.length ? classes.map((c) => ({ name: c.name, methods: c.ir.methods.length, getters: c.ir.getters.length, ctor: !!c.ir.ctor })) : null
         writeReport(reportPath, opts.pkg || from, rows, reports, depSummary, sharedInfo, fnInfo, classInfo)

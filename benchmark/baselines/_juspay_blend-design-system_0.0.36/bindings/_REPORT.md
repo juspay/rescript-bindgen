@@ -6,6 +6,42 @@
 
 **2658** shared types deduplicated into **63** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
+## 🔤 Constructor name collisions
+
+ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
+
+### Renamed — the same name carried DIFFERENT runtime values
+
+Left alone, an unannotated use would have compiled cleanly and sent the **wrong string**. Each colliding definition is suffixed with the tail of its owning type's name.
+
+| Module | Constructor | Conflicting `@as` values | Renamed to |
+|---|---|---|---|
+| `HighchartsSharedTypes` | `Point` | `"point"` / `"Point"` | `PointObjectScope`, `PointConstructorType` |
+| `HighchartsSharedTypes` | `Pointer` | `"pointer"` / `"Pointer"` | `PointerCursorValue`, `PointerConstructorType` |
+| `HighchartsSharedTypes` | `Polygon` | `"polygon"` / `"Polygon"` | `PolygonInterpolationValue`, `PolygonTypeValue` |
+| `HighchartsSharedTypes` | `Series` | `"series"` / `"Series"` | `SeriesWithinValue`, `SeriesConstructorType` |
+| `HighchartsSharedTypes` | `Solid` | `"Solid"` / `"solid"` | `SolidStyleValue`, `SolidShapeValue` |
+| `HighchartsSharedTypes` | `TriangleDown` | `"triangle-down"` / `"triangleDown"` | `TriangleDownKeyValue`, `TriangleDownConstructorType` |
+| `HighchartsSharedTypes` | `Value` | `""` / `"!="` / `"value"` | `ValueSeriesSetState`, `ValuePointSetState`, `ValueAnnotationDraggable`, `ValueOptionsOperator`, `ValueOptionsGapUnit`, `ValueOptionsCompare` |
+| `DataTableTypes` | `DateRange` | `"date_range"` / `"dateRange"` | `DateRangeTypeType`, `DateRangeColumnType`, `DateRangeFilterComponent` |
+
+### Left as-is — same name, same runtime value (98)
+
+These resolve to the right value whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
+
+- `ButtonTypes`: `Default`
+- `SkeletonTypes`: `Circle`
+- `TagsTypes`: `Lg`, `Md`, `Sm`, `Xs`
+- `TooltipTypes`: `Left`, `Right`
+- `HighchartsSharedTypes`: `All`, `Allow`, `Alt`, `Arc`, `Area`, `Auto`, `Bottom`, `Callout`, `Category`, `Center`, `Chart`, `Circle`, `Close`, `Ctrl`, `Day`, `Diamond`, `End`, `Flap`, `High`, `Horizontal`, `Hover`, `Inactive`, `Inside`, `Justify`, `Left`, `Linear`, `Logarithmic`, `Low`, `Meta`, `Middle` … +27 more
+- `DateRangePickerTypes`: `Custom`
+- `InputsTypes`: `Left`, `Lg`, `Md`, `Right`, `Sm`
+- `DataTableTypes`: `Avatar`, `Custom`, `Date`, `Decimal`, `Dropdown`, `Error`, `Multiselect`, `Number`, `Percentage`, `Primary`, `Progress`, `ReactElement`, `Secondary`, `Select`, `Slider`, `Success`, `Tag`, `Text`, `Warning`
+- `SliderTypes`: `Bottom`, `Inline`, `Top`
+- `ProgressBarTypes`: `Segmented`, `Solid`
+- `UploadTypes`: `Error`, `Success`
+- `ButtonV2Types`: `Default`
+
 ## 📦 Dependencies
 
 | Kind | Package | Provides | Status |

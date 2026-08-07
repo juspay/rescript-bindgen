@@ -474,6 +474,43 @@ Fixture: [`discriminated-union-variant-props`](../test/golden/cases/discriminate
 
 ---
 
+## Constructor-name collisions within a module (#171)
+Fixture: [`ctor-name-collisions`](../test/golden/cases/ctor-name-collisions)
+
+ReScript scopes variant constructors to the **module**, not to their type, so two enums in one
+`*Types.res` can both define `Value`. Where the expected type is known from context, type-directed
+disambiguation resolves it. Where it **isn't**, ReScript silently binds the **last** definition in the
+file — verified against the compiler:
+
+```rescript
+type operator = | @as("!=") Value | @as(">") Gt
+type gapUnit  = | @as("value") Value | @as("percent") Percent
+
+let annotated: operator = Value   // "!="     ✅
+let unannotated         = Value   // "value"  ❌  no error, no warning
+```
+
+blend's `HighchartsSharedTypes.res` has **462 constructor definitions over 334 names**; 64 collide.
+Split by consequence:
+
+| Class | Condition | Treatment |
+|---|---|---|
+| **A** | one name, **different** `@as` values | **renamed** — an unannotated use would send the wrong string over the wire |
+| **B** | one name, same `@as` value everywhere | **left alone, reported** — it resolves correctly whichever definition wins; renaming would churn every consumer for no correctness gain |
+
+Class A renaming suffixes each colliding definition with the **tail** of its owning type's name —
+the shortest camel-word suffix that separates the colliders (`AltKeyCode`, `LeftDropdownPosition`,
+`NoneSnippetSuggestions`). The whole stem would be unusable
+(`NoneCodeEditorV2IEditorOptionsSnippetSuggestions`). Every collider is suffixed, including the
+first: leaving one bare would make "who keeps the short name" depend on emission order, the churn
+#90 exists to prevent — and it means a name that *was* ambiguous can't silently keep working with
+one of its meanings.
+
+Both classes are surfaced in `_REPORT.md` and as a CLI `⚠` line, so a module with 64 colliding
+constructors can no longer report clean.
+
+---
+
 ## The register-early invariant (cycle guards) — #170, #173
 Fixtures: [`recursive-opaque-views`](../test/golden/cases/recursive-opaque-views),
 [`union-arm-record-fields`](../test/golden/cases/union-arm-record-fields)

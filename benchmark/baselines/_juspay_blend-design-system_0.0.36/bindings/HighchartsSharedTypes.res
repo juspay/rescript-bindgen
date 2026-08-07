@@ -30,7 +30,7 @@ type dashStyleValue =
   | @as("ShortDashDot") ShortDashDot
   | @as("ShortDashDotDot") ShortDashDotDot
   | @as("ShortDot") ShortDot
-  | @as("Solid") Solid
+  | @as("Solid") SolidStyleValue
 type alignValue =
   | @as("center") Center
   | @as("left") Left
@@ -41,7 +41,7 @@ type verticalAlignValue =
   | @as("middle") Middle
 type optionsGridLineInterpolationValue =
   | @as("circle") Circle
-  | @as("polygon") Polygon
+  | @as("polygon") PolygonInterpolationValue
 type optionsOverflowValue =
   | @as("justify") Justify
   | @as("allow") Allow
@@ -75,7 +75,7 @@ type axisTypeValue =
   | @as("datetime") Datetime
   | @as("logarithmic") Logarithmic
 type chartsSeriesSetState =
-  | @as("") Value
+  | @as("") ValueSeriesSetState
   | @as("normal") Normal
   | @as("select") Select
   | @as("hover") Hover
@@ -102,7 +102,7 @@ type svgPathCommand =
   | @as("V") V2
   | @as("Z") Z2
 type chartsPointSetState =
-  | @as("") Value
+  | @as("") ValuePointSetState
   | @as("normal") Normal
   | @as("select") Select
   | @as("hover") Hover
@@ -137,7 +137,7 @@ type cursorValue =
   | @as("ns-resize") NsResize
   | @as("nw-resize") NwResize
   | @as("nwse-resize") NwseResize
-  | @as("pointer") Pointer
+  | @as("pointer") PointerCursorValue
   | @as("row-resize") RowResize
   | @as("s-resize") SResize
   | @as("se-resize") SeResize
@@ -159,7 +159,7 @@ type optionsLandmarkVerbosityValue =
   | @as("all") All
   | @as("one") One
 type annotationDraggableValue =
-  | @as("") Value
+  | @as("") ValueAnnotationDraggable
   | @as("x") X
   | @as("xy") Xy
   | @as("y") Y
@@ -214,7 +214,7 @@ type optionsBoostBlendingValue =
   | @as("darken") Darken
   | @as("multiply") Multiply
 type optionsOperatorValue =
-  | @as("!=") Value
+  | @as("!=") ValueOptionsOperator
   | @as("!==") Value2
   | @as("==") Value3
   | @as("===") Value4
@@ -229,7 +229,7 @@ type optionsFindNearestPointByValue =
   | @as("x") X
   | @as("xy") Xy
 type optionsGapUnitValue =
-  | @as("value") Value
+  | @as("value") ValueOptionsGapUnit
   | @as("relative") Relative
 type optionsLegendSymbolValue =
   | @as("rectangle") Rectangle
@@ -245,7 +245,7 @@ type optionsRelativeToValue =
   | @as("plotBox") PlotBox
   | @as("spacingBox") SpacingBox
 type optionsCompareValue =
-  | @as("value") Value
+  | @as("value") ValueOptionsCompare
   | @as("percent") Percent
 type chartsSeriesArcdiagramOptionsLinkColorMode =
   | @as("from") From
@@ -262,7 +262,7 @@ type optionsStackingValue =
   | @as("overlap") Overlap
   | @as("stream") Stream
 type chartsBorderRadiusOptionsObjectScope =
-  | @as("point") Point
+  | @as("point") PointObjectScope
   | @as("stack") Stack
 type chartsBorderRadiusOptionsObjectWhere =
   | @as("end") End
@@ -365,7 +365,7 @@ type optionsUnitsValue =
   | @as("percent") Percent
   | @as("pixels") Pixels
 type paneBackgroundShapeValue =
-  | @as("solid") Solid
+  | @as("solid") SolidShapeValue
   | @as("circle") Circle
   | @as("arc") Arc
 type sonifcationTypeValue =
@@ -396,7 +396,7 @@ type mapGeometryTypeValue =
   | @as("LineString") LineString
   | @as("MultiLineString") MultiLineString
   | @as("MultiPolygon") MultiPolygon
-  | @as("Polygon") Polygon
+  | @as("Polygon") PolygonTypeValue
 type synthPatchOscillatorType =
   | @as("pulse") Pulse
   | @as("square") Square
@@ -409,7 +409,7 @@ type optionsMapFunctionValue =
   | @as("logarithmic") Logarithmic
 type optionsWithinValue =
   | @as("chart") Chart
-  | @as("series") Series
+  | @as("series") SeriesWithinValue
   | @as("xAxis") XAxis
   | @as("yAxis") YAxis
 type optionsValueMapFunctionValue =
@@ -432,7 +432,7 @@ type symbolKeyValue =
   | @as("callout") Callout
   | @as("diamond") Diamond
   | @as("triangle") Triangle
-  | @as("triangle-down") TriangleDown
+  | @as("triangle-down") TriangleDownKeyValue
 type chartsBlendChartPropsConstructorType =
   | @as("color") Color
   | @as("end") End
@@ -517,7 +517,7 @@ type chartsBlendChartPropsConstructorType =
   | @as("setColumns") SetColumns
   | @as("setRow") SetRow
   | @as("str2dtf") Str2dtf
-  | @as("triangleDown") TriangleDown
+  | @as("triangleDown") TriangleDownConstructorType
   | @as("unescapeEntities") UnescapeEntities
   | @as("Annotation") Annotation
   | @as("AnnotationControlPoint") AnnotationControlPoint
@@ -529,9 +529,9 @@ type chartsBlendChartPropsConstructorType =
   | @as("DataTableCore") DataTableCore
   | @as("Legend") Legend
   | @as("PlotLineOrBand") PlotLineOrBand
-  | @as("Point") Point
-  | @as("Pointer") Pointer
-  | @as("Series") Series
+  | @as("Point") PointConstructorType
+  | @as("Pointer") PointerConstructorType
+  | @as("Series") SeriesConstructorType
   | @as("StackItem") StackItem
   | @as("SVGElement") SVGElement
   | @as("SVGLabel") SVGLabel

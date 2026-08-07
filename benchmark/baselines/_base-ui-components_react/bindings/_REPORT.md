@@ -6,6 +6,18 @@
 
 **545** shared types deduplicated into **58** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
+## 🔤 Constructor name collisions
+
+ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
+
+### Left as-is — same name, same runtime value (83)
+
+These resolve to the right value whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
+
+- `RootSharedTypes`: `ActiveTriggerElement`, `ActiveTriggerId`, `ActiveTriggerProps`, `Both`, `CancelOpen`, `Click`, `CloseDelay`, `ClosePress`, `DecrementPress`, `DescriptionElementId`, `Disabled`, `Dismiss`, `EscapeKey`, `FloatingRootContext`, `FocusOut`, `Horizontal`, `ImperativeAction`, `InactiveTriggerProps`, `IncrementPress`, `InputBlur`, `InputChange`, `InputClear`, `InstantType`, `ItemPress`, `Keyboard`, `ListNavigation`, `Modal`, `Mounted`, `Nested`, `None` … +19 more
+- `PositionerSharedTypes`: `Bottom`, `End`, `Flip`, `InlineEnd`, `InlineStart`, `Left`, `None`, `Right`, `Shift`, `Start`, `Top`
+- `TriggerTypes`: `ActiveTriggerElement`, `ActiveTriggerId`, `ActiveTriggerProps`, `CloseDelay`, `DescriptionElementId`, `Disabled`, `FloatingRootContext`, `InactiveTriggerProps`, `InstantType`, `Modal`, `Mounted`, `Nested`, `Open`, `OpenChangeReason`, `OpenMethod`, `Payload`, `PopupElement`, `PopupProps`, `PositionerElement`, `PreventUnmountingOnClose`, `StickIfOpen`, `TitleElementId`, `TransitionStatus`
+
 ## 📦 Dependencies
 
 | Kind | Package | Provides | Status |

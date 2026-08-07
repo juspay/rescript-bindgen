@@ -2,17 +2,20 @@
 
 **1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**4** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**5** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 🔤 Constructor name collisions
 
 ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
 
-### Left as-is — same name, same runtime value (2)
+### Renamed — the same name carried DIFFERENT runtime values
 
-These resolve to the right value whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
+Left alone, an unannotated use would have compiled cleanly and sent the **wrong string**. Each colliding definition is suffixed with the tail of its owning type's name.
 
-- `EnumMemberLiteralTypes`: `A`, `Sm`
+| Module | Constructor | Conflicting `@as` values | Renamed to |
+|---|---|---|---|
+| `CtorNameCollisionsTypes` | `Solid` | `"Solid"` / `"solid"` | `SolidLineCase`, `SolidStrokeStyle`, `SolidBorderStyle` |
+| `CtorNameCollisionsTypes` | `Value` | `"!="` / `"value"` | `ValueOperator`, `ValueGapUnit` |
 
 ## 📦 Dependencies
 
@@ -26,7 +29,7 @@ These resolve to the right value whichever definition wins, so renaming them wou
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- EnumMember
+- Chart
 
 ## ⚪ Loosely typed (widened to `string`)
 
