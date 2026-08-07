@@ -4673,6 +4673,35 @@ function unionNodeCore(type, ctx, propName, depth = 0) {
         if ((t.flags & ts.TypeFlags.Object) && s && s.getName() !== '__type' && t.getProperties().length) return true // named object
         return false
     }
+    // The block below does TWO things, and only one of them should widen for anonymous arms:
+    // build a views module (≥2 structured arms), else FLAG FOR REVIEW. The review flag is calibrated
+    // for NAMED structured arms — "those need a real decision" — so `isStructured` above keeps its
+    // named-only criterion. Widening it wholesale sent single-object unions like base-ui's
+    // `Padding` (`number | {top?, …}`, one object arm, no module possible) from ⚪ loose to 🔍 review:
+    // the same emitted `string`, a worse bucket, 8 components off the usable list.
+    //
+    // What SHOULD widen is only the module attempt. `{a: string} | {b: number}` bound three different
+    // ways depending on position — a views module as an ARRAY element (that branch has its own check
+    // with no `__type` exclusion, added in #65 explicitly to route AROUND this gate) and a flagged
+    // `string` as a plain prop or record field, with the module built and unused in the same file:
+    //     type holder = { one: string /* ⚪ was `Anon` */, many: array<Anon.t> }
+    // Anonymous arms are exactly what a library writes inline (`{label, days} | {from, to}`), so the
+    // exclusion dropped the common case. Named arms, identical key sets (#30) and a clean string
+    // discriminant (#167) were already covered; this closes the gap between them. (#181)
+    // OBJECT arms only. Arrays, tuples and the bare `object` keyword are deliberately left to their
+    // existing behaviour — an UNTAGGED tuple union (hono's `(handler, route)`) is not meant to become
+    // a views module, and including them here turned `[string] | [string, number]` into one.
+    const moduleArms = parts.filter((t) => {
+        if (checker.isTupleType?.(t) || asArray(t, checker)) return false
+        if (t.flags & ts.TypeFlags.Intersection) return (t.getProperties && t.getProperties().length) > 0
+        return !!(t.flags & ts.TypeFlags.Object) && t.getProperties && t.getProperties().length > 0 // named OR anonymous
+    })
+    if (moduleArms.length >= 2 && !parts.some(isStructured)) {
+        // Anonymous-arm union that the named-only gate would have skipped entirely: try the module,
+        // and on failure fall through to the SAME loose/review handling as before — never worse.
+        const opaque = opaqueUnion(ctx, type, unionMembers(checker, type), propName, depth, retViewOpts(ctx, propName, hadNullish))
+        if (opaque) return opaque
+    }
     if (parts.some(isStructured)) {
         // ≥2 "structured" members that can't be discriminated by an @unboxed
         // variant (abstract objects / arrays) -> an opaque-type module with

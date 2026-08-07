@@ -474,6 +474,49 @@ Fixture: [`discriminated-union-variant-props`](../test/golden/cases/discriminate
 
 ---
 
+## One union, one binding — whatever the position (#181)
+Fixture: [`union-position-symmetry`](../test/golden/cases/union-position-symmetry)
+
+A union of **anonymous** object arms used to bind three different ways depending on where it appeared:
+
+```rescript
+type holder = {
+  one:  string,          // ⚪ loose — was `Anon`      ← the bug
+  many: array<Anon.t>,   // ✅ proper module
+}
+```
+
+The module it refused was **already built, in the same file**. The array branch has its own arm check
+— added in #65 explicitly to route *around* `unionNode`'s `isStructured` gate — while that gate
+excluded arms whose symbol is `__type`, i.e. exactly the inline `{…}` shapes a library writes for
+"pass either of these" props (`{label, days} | {from, to}`). Named arms, identical key sets (#30) and
+a clean string discriminant (#167) were already covered; anonymous differing-key-set arms fell through
+the gap.
+
+Now the module attempt runs for object arms **named or not**, so every position agrees:
+
+| Position | Before | Now |
+|---|---|---|
+| `Anon[]` (array element) | `array<Anon.t>` | unchanged |
+| `Anon` (prop) | `string` ⚪ | `Anon.t` |
+| `{one: Anon}` (record field) | `string` ⚪ | `Anon.t` |
+| `() => Anon` (return) | `Anon.t` | unchanged |
+| `(v: Anon) => void` (callback param) | `'a` | `Anon.t` **when the module is readable** |
+
+**The widening is deliberately narrow.** That gate feeds *two* decisions — build a module (≥2
+structured arms), else flag for **review** — and the review criterion is calibrated for *named* arms
+("those need a real decision"). Widening it wholesale sent single-object unions like base-ui's
+`Padding` (`number | Prettify<Partial<SideObject>>` — one object arm, no module possible) from ⚪ loose
+to 🔍 review: the same emitted `string`, a worse bucket, and 8 components off the usable list. Only the
+module attempt widens.
+
+**Polarity still decides receive positions.** A views module whose arms are all records carries `as*`
+readers (#122), so a callback parameter may use it — the consumer can open the value. One string-literal
+arm makes the module construct-only, and a receive position then keeps the honest `'a` salvage rather
+than handing back a box that cannot be opened.
+
+---
+
 ## Constructor-name collisions within a module (#171)
 Fixture: [`ctor-name-collisions`](../test/golden/cases/ctor-name-collisions)
 

@@ -2,7 +2,7 @@
 
 **1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**3** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**4** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -24,7 +24,7 @@ These resolved to a real but complex type and were widened to `string` (they com
 
 | Resolved TypeScript type | → emitted | count | example props |
 |--------------------------|-----------|-------|---------------|
-| `string \| { a: 1; } \| { b: 2; }` | `string` | 1 | weird |
+| ``prefix-${string}`` | `string` | 1 | pattern |
 
 ## 🔍 Needs review
 

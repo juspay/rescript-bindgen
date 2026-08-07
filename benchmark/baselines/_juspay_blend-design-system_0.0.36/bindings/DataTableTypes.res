@@ -1,3 +1,5 @@
+@@warning("-30")
+
 type filterType =
   | @as("text") Text
   | @as("number") Number
@@ -100,83 +102,12 @@ type filterOption = {
   label: string,
   value: string,
 }
-type dataTableColumnsTextConfig<'a> = {
-  field: string,
-  header: string,
-  headerSubtext?: string,
-  minWidth?: string,
-  maxWidth?: string,
-  width?: string,
-  isVisible?: bool,
-  isSortable?: bool,
-  isEditable?: bool,
-  filterOptions?: array<filterOption>,
-  canHide?: bool,
-  frozen?: bool,
-  className?: string,
-  filterType?: filterType,
-  showSkeleton?: bool,
-  skeletonVariant?: SkeletonTypes.skeletonVariant,
-  getSortField?: option<string> => string,
-  isDeltaSortable?: bool,
-  sortValueFormatter?: (JSON.t, 'a, string, option<string>) => JSON.t,  // ⚪ loose — was `ColumnDefinition<T>`
-  @as("type") type_: tEXT,
-  renderCell?: (string, 'a, float) => React.element,
-}
-type dataTableColumnsNumberConfig<'a> = {
-  field: string,
-  header: string,
-  headerSubtext?: string,
-  minWidth?: string,
-  maxWidth?: string,
-  width?: string,
-  isVisible?: bool,
-  isSortable?: bool,
-  isEditable?: bool,
-  filterOptions?: array<filterOption>,
-  canHide?: bool,
-  frozen?: bool,
-  className?: string,
-  filterType?: filterType,
-  showSkeleton?: bool,
-  skeletonVariant?: SkeletonTypes.skeletonVariant,
-  getSortField?: option<string> => string,
-  isDeltaSortable?: bool,
-  sortValueFormatter?: (JSON.t, 'a, string, option<string>) => JSON.t,  // ⚪ loose — was `ColumnDefinition<T>`
-  @as("type") type_: nUMBER,
-  renderCell?: (float, 'a, float) => React.element,
-  format?: dataTableColumnsNumberFormat,
-  precision?: float,
-}
 type avatarColumnProps = {
   src?: string,
   alt?: string,
   label: string,
   sublabel?: string,
   imageUrl?: string,
-}
-type dataTableColumnsAvatarConfig<'a> = {
-  field: string,
-  header: string,
-  headerSubtext?: string,
-  minWidth?: string,
-  maxWidth?: string,
-  width?: string,
-  isVisible?: bool,
-  isSortable?: bool,
-  isEditable?: bool,
-  filterOptions?: array<filterOption>,
-  canHide?: bool,
-  frozen?: bool,
-  className?: string,
-  filterType?: filterType,
-  showSkeleton?: bool,
-  skeletonVariant?: SkeletonTypes.skeletonVariant,
-  getSortField?: option<string> => string,
-  isDeltaSortable?: bool,
-  sortValueFormatter?: (JSON.t, 'a, string, option<string>) => JSON.t,  // ⚪ loose — was `ColumnDefinition<T>`
-  @as("type") type_: aVATAR,
-  renderCell?: (avatarColumnProps, 'a, float) => React.element,
 }
 type tagColumnProps = {
   text: string,
@@ -186,58 +117,12 @@ type tagColumnProps = {
   leftSlot?: React.element,
   rightSlot?: React.element,
 }
-type dataTableColumnsTagConfig<'a> = {
-  field: string,
-  header: string,
-  headerSubtext?: string,
-  minWidth?: string,
-  maxWidth?: string,
-  width?: string,
-  isVisible?: bool,
-  isSortable?: bool,
-  isEditable?: bool,
-  filterOptions?: array<filterOption>,
-  canHide?: bool,
-  frozen?: bool,
-  className?: string,
-  filterType?: filterType,
-  showSkeleton?: bool,
-  skeletonVariant?: SkeletonTypes.skeletonVariant,
-  getSortField?: option<string> => string,
-  isDeltaSortable?: bool,
-  sortValueFormatter?: (JSON.t, 'a, string, option<string>) => JSON.t,  // ⚪ loose — was `ColumnDefinition<T>`
-  @as("type") type_: tAG,
-  renderCell?: (tagColumnProps, 'a, float) => React.element,
-}
 type progressColumnProps = {
   value: float,
   max?: float,
   label?: string,
   showPercentage?: bool,
   color?: dataTableProgressColumnPropsColor,
-}
-type dataTableColumnsProgressConfig<'a> = {
-  field: string,
-  header: string,
-  headerSubtext?: string,
-  minWidth?: string,
-  maxWidth?: string,
-  width?: string,
-  isVisible?: bool,
-  isSortable?: bool,
-  isEditable?: bool,
-  filterOptions?: array<filterOption>,
-  canHide?: bool,
-  frozen?: bool,
-  className?: string,
-  filterType?: filterType,
-  showSkeleton?: bool,
-  skeletonVariant?: SkeletonTypes.skeletonVariant,
-  getSortField?: option<string> => string,
-  isDeltaSortable?: bool,
-  sortValueFormatter?: (JSON.t, 'a, string, option<string>) => JSON.t,  // ⚪ loose — was `ColumnDefinition<T>`
-  @as("type") type_: pROGRESS,
-  renderCell?: (progressColumnProps, 'a, float) => React.element,
 }
 type dataTableDropdownColumnPropsOptionsConfig = {
   id: string,
@@ -256,58 +141,9 @@ type dataTableColumnsDropdownDropdownOptionsConfig = {
   label: string,
   value: JSON.t,
 }
-type dataTableColumnsDropdownConfig<'a> = {
-  field: string,
-  header: string,
-  headerSubtext?: string,
-  minWidth?: string,
-  maxWidth?: string,
-  width?: string,
-  isVisible?: bool,
-  isSortable?: bool,
-  isEditable?: bool,
-  filterOptions?: array<filterOption>,
-  canHide?: bool,
-  frozen?: bool,
-  className?: string,
-  filterType?: filterType,
-  showSkeleton?: bool,
-  skeletonVariant?: SkeletonTypes.skeletonVariant,
-  getSortField?: option<string> => string,
-  isDeltaSortable?: bool,
-  sortValueFormatter?: (JSON.t, 'a, string, option<string>) => JSON.t,  // ⚪ loose — was `ColumnDefinition<T>`
-  @as("type") type_: dROPDOWN,
-  renderCell?: (dropdownColumnProps, 'a, float) => React.element,
-  dropdownOptions?: array<dataTableColumnsDropdownDropdownOptionsConfig>,
-}
 type dateColumnProps = {
   date: string,  // ⚠️ REVIEW — was `string | Date` — match the real type by hand
   format?: string,
-  showTime?: bool,
-}
-type dataTableColumnsDateConfig<'a> = {
-  field: string,
-  header: string,
-  headerSubtext?: string,
-  minWidth?: string,
-  maxWidth?: string,
-  width?: string,
-  isVisible?: bool,
-  isSortable?: bool,
-  isEditable?: bool,
-  filterOptions?: array<filterOption>,
-  canHide?: bool,
-  frozen?: bool,
-  className?: string,
-  filterType?: filterType,
-  showSkeleton?: bool,
-  skeletonVariant?: SkeletonTypes.skeletonVariant,
-  getSortField?: option<string> => string,
-  isDeltaSortable?: bool,
-  sortValueFormatter?: (JSON.t, 'a, string, option<string>) => JSON.t,  // ⚪ loose — was `ColumnDefinition<T>`
-  @as("type") type_: dATE,
-  renderCell?: (dateColumnProps, 'a, float) => React.element,
-  dateFormat?: string,
   showTime?: bool,
 }
 type sliderColumnProps = {
@@ -319,7 +155,8 @@ type sliderColumnProps = {
   prefix?: string,
   suffix?: string,
 }
-type dataTableColumnsSliderConfig<'a> = {
+type columnDefinition_t
+type rec dataTableColumnsFilterTypeConfig<'a> = {
   field: string,
   header: string,
   headerSubtext?: string,
@@ -338,12 +175,11 @@ type dataTableColumnsSliderConfig<'a> = {
   skeletonVariant?: SkeletonTypes.skeletonVariant,
   getSortField?: option<string> => string,
   isDeltaSortable?: bool,
-  sortValueFormatter?: (JSON.t, 'a, string, option<string>) => JSON.t,  // ⚪ loose — was `ColumnDefinition<T>`
-  @as("type") type_: sLIDER,
-  renderCell?: (float, 'a, float) => React.element,
-  sliderConfig: sliderColumnProps,
+  sortValueFormatter?: (JSON.t, 'a, columnDefinition_t, option<string>) => JSON.t,
+  @as("type") type_: dataTableColumnsFilterTypeType,
+  renderCell?: (JSON.t, 'a, option<float>) => React.element,
 }
-type dataTableColumnsReactElementConfig<'a> = {
+and dataTableColumnsReactElementConfig<'a> = {
   field: string,
   header: string,
   headerSubtext?: string,
@@ -362,11 +198,11 @@ type dataTableColumnsReactElementConfig<'a> = {
   skeletonVariant?: SkeletonTypes.skeletonVariant,
   getSortField?: option<string> => string,
   isDeltaSortable?: bool,
-  sortValueFormatter?: (JSON.t, 'a, string, option<string>) => JSON.t,  // ⚪ loose — was `ColumnDefinition<T>`
+  sortValueFormatter?: (JSON.t, 'a, columnDefinition_t, option<string>) => JSON.t,
   @as("type") type_: rEACT_ELEMENT,
   renderCell: (JSON.t, 'a, float) => React.element,
 }
-type dataTableColumnsFilterTypeConfig<'a> = {
+and dataTableColumnsSliderConfig<'a> = {
   field: string,
   header: string,
   headerSubtext?: string,
@@ -385,9 +221,199 @@ type dataTableColumnsFilterTypeConfig<'a> = {
   skeletonVariant?: SkeletonTypes.skeletonVariant,
   getSortField?: option<string> => string,
   isDeltaSortable?: bool,
-  sortValueFormatter?: (JSON.t, 'a, string, option<string>) => JSON.t,  // ⚪ loose — was `ColumnDefinition<T>`
-  @as("type") type_: dataTableColumnsFilterTypeType,
-  renderCell?: (JSON.t, 'a, option<float>) => React.element,
+  sortValueFormatter?: (JSON.t, 'a, columnDefinition_t, option<string>) => JSON.t,
+  @as("type") type_: sLIDER,
+  renderCell?: (float, 'a, float) => React.element,
+  sliderConfig: sliderColumnProps,
+}
+and dataTableColumnsDateConfig<'a> = {
+  field: string,
+  header: string,
+  headerSubtext?: string,
+  minWidth?: string,
+  maxWidth?: string,
+  width?: string,
+  isVisible?: bool,
+  isSortable?: bool,
+  isEditable?: bool,
+  filterOptions?: array<filterOption>,
+  canHide?: bool,
+  frozen?: bool,
+  className?: string,
+  filterType?: filterType,
+  showSkeleton?: bool,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
+  getSortField?: option<string> => string,
+  isDeltaSortable?: bool,
+  sortValueFormatter?: (JSON.t, 'a, columnDefinition_t, option<string>) => JSON.t,
+  @as("type") type_: dATE,
+  renderCell?: (dateColumnProps, 'a, float) => React.element,
+  dateFormat?: string,
+  showTime?: bool,
+}
+and dataTableColumnsDropdownConfig<'a> = {
+  field: string,
+  header: string,
+  headerSubtext?: string,
+  minWidth?: string,
+  maxWidth?: string,
+  width?: string,
+  isVisible?: bool,
+  isSortable?: bool,
+  isEditable?: bool,
+  filterOptions?: array<filterOption>,
+  canHide?: bool,
+  frozen?: bool,
+  className?: string,
+  filterType?: filterType,
+  showSkeleton?: bool,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
+  getSortField?: option<string> => string,
+  isDeltaSortable?: bool,
+  sortValueFormatter?: (JSON.t, 'a, columnDefinition_t, option<string>) => JSON.t,
+  @as("type") type_: dROPDOWN,
+  renderCell?: (dropdownColumnProps, 'a, float) => React.element,
+  dropdownOptions?: array<dataTableColumnsDropdownDropdownOptionsConfig>,
+}
+and dataTableColumnsProgressConfig<'a> = {
+  field: string,
+  header: string,
+  headerSubtext?: string,
+  minWidth?: string,
+  maxWidth?: string,
+  width?: string,
+  isVisible?: bool,
+  isSortable?: bool,
+  isEditable?: bool,
+  filterOptions?: array<filterOption>,
+  canHide?: bool,
+  frozen?: bool,
+  className?: string,
+  filterType?: filterType,
+  showSkeleton?: bool,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
+  getSortField?: option<string> => string,
+  isDeltaSortable?: bool,
+  sortValueFormatter?: (JSON.t, 'a, columnDefinition_t, option<string>) => JSON.t,
+  @as("type") type_: pROGRESS,
+  renderCell?: (progressColumnProps, 'a, float) => React.element,
+}
+and dataTableColumnsTagConfig<'a> = {
+  field: string,
+  header: string,
+  headerSubtext?: string,
+  minWidth?: string,
+  maxWidth?: string,
+  width?: string,
+  isVisible?: bool,
+  isSortable?: bool,
+  isEditable?: bool,
+  filterOptions?: array<filterOption>,
+  canHide?: bool,
+  frozen?: bool,
+  className?: string,
+  filterType?: filterType,
+  showSkeleton?: bool,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
+  getSortField?: option<string> => string,
+  isDeltaSortable?: bool,
+  sortValueFormatter?: (JSON.t, 'a, columnDefinition_t, option<string>) => JSON.t,
+  @as("type") type_: tAG,
+  renderCell?: (tagColumnProps, 'a, float) => React.element,
+}
+and dataTableColumnsAvatarConfig<'a> = {
+  field: string,
+  header: string,
+  headerSubtext?: string,
+  minWidth?: string,
+  maxWidth?: string,
+  width?: string,
+  isVisible?: bool,
+  isSortable?: bool,
+  isEditable?: bool,
+  filterOptions?: array<filterOption>,
+  canHide?: bool,
+  frozen?: bool,
+  className?: string,
+  filterType?: filterType,
+  showSkeleton?: bool,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
+  getSortField?: option<string> => string,
+  isDeltaSortable?: bool,
+  sortValueFormatter?: (JSON.t, 'a, columnDefinition_t, option<string>) => JSON.t,
+  @as("type") type_: aVATAR,
+  renderCell?: (avatarColumnProps, 'a, float) => React.element,
+}
+and dataTableColumnsNumberConfig<'a> = {
+  field: string,
+  header: string,
+  headerSubtext?: string,
+  minWidth?: string,
+  maxWidth?: string,
+  width?: string,
+  isVisible?: bool,
+  isSortable?: bool,
+  isEditable?: bool,
+  filterOptions?: array<filterOption>,
+  canHide?: bool,
+  frozen?: bool,
+  className?: string,
+  filterType?: filterType,
+  showSkeleton?: bool,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
+  getSortField?: option<string> => string,
+  isDeltaSortable?: bool,
+  sortValueFormatter?: (JSON.t, 'a, columnDefinition_t, option<string>) => JSON.t,
+  @as("type") type_: nUMBER,
+  renderCell?: (float, 'a, float) => React.element,
+  format?: dataTableColumnsNumberFormat,
+  precision?: float,
+}
+and dataTableColumnsTextConfig<'a> = {
+  field: string,
+  header: string,
+  headerSubtext?: string,
+  minWidth?: string,
+  maxWidth?: string,
+  width?: string,
+  isVisible?: bool,
+  isSortable?: bool,
+  isEditable?: bool,
+  filterOptions?: array<filterOption>,
+  canHide?: bool,
+  frozen?: bool,
+  className?: string,
+  filterType?: filterType,
+  showSkeleton?: bool,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
+  getSortField?: option<string> => string,
+  isDeltaSortable?: bool,
+  sortValueFormatter?: (JSON.t, 'a, columnDefinition_t, option<string>) => JSON.t,
+  @as("type") type_: tEXT,
+  renderCell?: (string, 'a, float) => React.element,
+}
+module ColumnDefinition = {
+  type t = columnDefinition_t
+  external fromDataTableColumnsTextConfig: dataTableColumnsTextConfig<'a> => t = "%identity"
+  external asDataTableColumnsTextConfig: t => (dataTableColumnsTextConfig<'a>) = "%identity"
+  external fromDataTableColumnsNumberConfig: dataTableColumnsNumberConfig<'a> => t = "%identity"
+  external asDataTableColumnsNumberConfig: t => (dataTableColumnsNumberConfig<'a>) = "%identity"
+  external fromDataTableColumnsAvatarConfig: dataTableColumnsAvatarConfig<'a> => t = "%identity"
+  external asDataTableColumnsAvatarConfig: t => (dataTableColumnsAvatarConfig<'a>) = "%identity"
+  external fromDataTableColumnsTagConfig: dataTableColumnsTagConfig<'a> => t = "%identity"
+  external asDataTableColumnsTagConfig: t => (dataTableColumnsTagConfig<'a>) = "%identity"
+  external fromDataTableColumnsProgressConfig: dataTableColumnsProgressConfig<'a> => t = "%identity"
+  external asDataTableColumnsProgressConfig: t => (dataTableColumnsProgressConfig<'a>) = "%identity"
+  external fromDataTableColumnsDropdownConfig: dataTableColumnsDropdownConfig<'a> => t = "%identity"
+  external asDataTableColumnsDropdownConfig: t => (dataTableColumnsDropdownConfig<'a>) = "%identity"
+  external fromDataTableColumnsDateConfig: dataTableColumnsDateConfig<'a> => t = "%identity"
+  external asDataTableColumnsDateConfig: t => (dataTableColumnsDateConfig<'a>) = "%identity"
+  external fromDataTableColumnsSliderConfig: dataTableColumnsSliderConfig<'a> => t = "%identity"
+  external asDataTableColumnsSliderConfig: t => (dataTableColumnsSliderConfig<'a>) = "%identity"
+  external fromDataTableColumnsReactElementConfig: dataTableColumnsReactElementConfig<'a> => t = "%identity"
+  external asDataTableColumnsReactElementConfig: t => (dataTableColumnsReactElementConfig<'a>) = "%identity"
+  external fromDataTableColumnsFilterTypeConfig: dataTableColumnsFilterTypeConfig<'a> => t = "%identity"
+  external asDataTableColumnsFilterTypeConfig: t => (dataTableColumnsFilterTypeConfig<'a>) = "%identity"
 }
 type dataTableDescriptionTooltipPropsConfig = {
   side?: TooltipTypes.tooltipSide,
@@ -715,27 +741,4 @@ type tableTokenType = {
 type responsiveTableTokens = {
   sm: tableTokenType,
   lg: tableTokenType,
-}
-module ColumnDefinition = {
-  type t
-  external fromDataTableColumnsTextConfig: dataTableColumnsTextConfig<'a> => t = "%identity"
-  external asDataTableColumnsTextConfig: t => (dataTableColumnsTextConfig<'a>) = "%identity"
-  external fromDataTableColumnsNumberConfig: dataTableColumnsNumberConfig<'a> => t = "%identity"
-  external asDataTableColumnsNumberConfig: t => (dataTableColumnsNumberConfig<'a>) = "%identity"
-  external fromDataTableColumnsAvatarConfig: dataTableColumnsAvatarConfig<'a> => t = "%identity"
-  external asDataTableColumnsAvatarConfig: t => (dataTableColumnsAvatarConfig<'a>) = "%identity"
-  external fromDataTableColumnsTagConfig: dataTableColumnsTagConfig<'a> => t = "%identity"
-  external asDataTableColumnsTagConfig: t => (dataTableColumnsTagConfig<'a>) = "%identity"
-  external fromDataTableColumnsProgressConfig: dataTableColumnsProgressConfig<'a> => t = "%identity"
-  external asDataTableColumnsProgressConfig: t => (dataTableColumnsProgressConfig<'a>) = "%identity"
-  external fromDataTableColumnsDropdownConfig: dataTableColumnsDropdownConfig<'a> => t = "%identity"
-  external asDataTableColumnsDropdownConfig: t => (dataTableColumnsDropdownConfig<'a>) = "%identity"
-  external fromDataTableColumnsDateConfig: dataTableColumnsDateConfig<'a> => t = "%identity"
-  external asDataTableColumnsDateConfig: t => (dataTableColumnsDateConfig<'a>) = "%identity"
-  external fromDataTableColumnsSliderConfig: dataTableColumnsSliderConfig<'a> => t = "%identity"
-  external asDataTableColumnsSliderConfig: t => (dataTableColumnsSliderConfig<'a>) = "%identity"
-  external fromDataTableColumnsReactElementConfig: dataTableColumnsReactElementConfig<'a> => t = "%identity"
-  external asDataTableColumnsReactElementConfig: t => (dataTableColumnsReactElementConfig<'a>) = "%identity"
-  external fromDataTableColumnsFilterTypeConfig: dataTableColumnsFilterTypeConfig<'a> => t = "%identity"
-  external asDataTableColumnsFilterTypeConfig: t => (dataTableColumnsFilterTypeConfig<'a>) = "%identity"
 }

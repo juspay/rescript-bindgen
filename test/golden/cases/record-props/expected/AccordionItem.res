@@ -3,7 +3,8 @@ type props = {
   title: string,
   subtext?: string,
   @as("type") type_?: RecordPropsTypes.recordPropsType,
-  weird?: string,  // ⚪ loose — was `string | { a: 1; } | { b: 2; }`
+  weird?: RecordPropsTypes.RecordPropsWeird.t,
+  pattern?: string,  // ⚪ loose — was ``prefix-${string}``
 }
 
 @module("demo")

@@ -1,5 +1,5 @@
 type props<'b, 'a> = {
-  bail?: string,  // ⚪ loose — was `Bail`
+  bail?: TrialRollbackHighchartsMemoTypes.Bail.t,  // ⓘ was `Bail` — opaque; build with Bail.fromTrialRollbackHighchartsMemoBailConfig / Bail.fromTrialRollbackHighchartsMemoBailConfig2
   later?: 'b,
   live?: TrialRollbackHighchartsMemoTypes.seriesLiveOptions<'a>,
 }

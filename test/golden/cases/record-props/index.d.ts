@@ -11,7 +11,8 @@ export declare const AccordionItem: (props: {
   title: string;
   subtext?: string;              // optional -> `subtext?: string`
   type?: "line" | "filled";      // reserved word -> @as("type") type_
-  weird?: string | { a: 1 } | { b: 2 };  // loose -> flagged placeholder (flags survive record mode)
+  weird?: string | { a: 1 } | { b: 2 };  // anonymous arms -> opaque views module (#181)
+  pattern?: `prefix-${string}`;   // loose -> flagged placeholder (flags survive record mode)
 }) => JsxElement
 
 // A props-LESS component is skipped as `no-props` by extraction (pre-existing, flag-independent) —

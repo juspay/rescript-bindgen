@@ -1,5 +1,5 @@
 type props = {
-  root?: string,  // ⚪ loose — was `Poisoned`
+  root?: RecursiveOpaqueViewsTypes.Poisoned.t,  // ⓘ was `Poisoned` — opaque; build with Poisoned.fromRecursiveOpaqueViewsRootConfig / Poisoned.fromRecursiveOpaqueViewsRootChildrenBadConfig
   roots?: array<RecursiveOpaqueViewsTypes.Poisoned.t>,  // ⓘ was `Poisoned` — opaque; build with Poisoned.fromRecursiveOpaqueViewsRootConfig / Poisoned.fromRecursiveOpaqueViewsRootChildrenBadConfig
 }
 

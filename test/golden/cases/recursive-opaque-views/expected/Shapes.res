@@ -1,5 +1,5 @@
 type props = {
-  shape?: string,  // ⚪ loose — was `Shape`
+  shape?: RecursiveOpaqueViewsTypes.Shape.t,  // ⓘ was `Shape` — opaque; build with Shape.fromRecursiveOpaqueViewsShapeConfig / Shape.fromRecursiveOpaqueViewsShapeNestedConfig
 }
 
 @module("demo")

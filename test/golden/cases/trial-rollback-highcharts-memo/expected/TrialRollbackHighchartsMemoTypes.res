@@ -14,3 +14,10 @@ type seriesLiveOptions<'a> = {
   data: array<'a>,
   label: string,
 }
+module Bail = {
+  type t
+  external fromTrialRollbackHighchartsMemoBailConfig: trialRollbackHighchartsMemoBailConfigV1qt8b<'a> => t = "%identity"
+  external asTrialRollbackHighchartsMemoBailConfig: t => (trialRollbackHighchartsMemoBailConfigV1qt8b<'a>) = "%identity"
+  external fromTrialRollbackHighchartsMemoBailConfig2: trialRollbackHighchartsMemoBailConfigRvfzs => t = "%identity"
+  external asTrialRollbackHighchartsMemoBailConfig2: t => (trialRollbackHighchartsMemoBailConfigRvfzs) = "%identity"
+}

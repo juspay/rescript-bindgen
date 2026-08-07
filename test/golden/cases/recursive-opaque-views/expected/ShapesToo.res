@@ -1,5 +1,5 @@
 type props = {
-  other?: string,  // ⚪ loose — was `Shape`
+  other?: RecursiveOpaqueViewsTypes.Shape.t,  // ⓘ was `Shape` — opaque; build with Shape.fromRecursiveOpaqueViewsShapeConfig / Shape.fromRecursiveOpaqueViewsShapeNestedConfig
   list?: array<RecursiveOpaqueViewsTypes.Shape.t>,  // ⓘ was `Shape` — opaque; build with Shape.fromRecursiveOpaqueViewsShapeConfig / Shape.fromRecursiveOpaqueViewsShapeNestedConfig
 }
 
