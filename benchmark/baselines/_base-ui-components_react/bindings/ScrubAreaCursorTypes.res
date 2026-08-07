@@ -11,5 +11,5 @@ type numberFieldScrubAreaCursorState = {
   filled: bool,
   focused: bool,
 }
-@unboxed type numberFieldScrubAreaCursorStyle = Style(JsxDOM.style) | Fn(numberFieldScrubAreaCursorState => JsxDOM.style)
-@unboxed type numberFieldScrubAreaCursorClassName = Str(string) | Fn(numberFieldScrubAreaCursorState => string)
+@unboxed type numberFieldScrubAreaCursorStyle = Style(JsxDOM.style) | Fn(numberFieldScrubAreaCursorState => option<JsxDOM.style>)
+@unboxed type numberFieldScrubAreaCursorClassName = Str(string) | Fn(numberFieldScrubAreaCursorState => option<string>)

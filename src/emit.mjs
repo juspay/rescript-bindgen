@@ -183,6 +183,9 @@ function renderType(t, propName, cfg) {
         case 'map': return `Map.t<${renderType(t.mapKey, propName, cfg)}, ${renderType(t.mapVal, propName, cfg)}>`
         case 'set': return `Set.t<${renderType(t.of, propName, cfg)}>`
         case 'promise': return `promise<${renderType(t.of, propName, cfg)}>`
+        // A value union `T | void` / `T | undefined`: None is JS `undefined`, while Some(x)
+        // carries the ordinary JS value. This is distinct from an optional labelled prop.
+        case 'option': return `option<${renderType(t.of, propName, cfg)}>`
         case 'nullable': return `Nullable.t<${renderType(t.of, propName, cfg)}>` // `T | null` value prop (#34)
         case 'callback': {
             // an optional param `reason?: T` -> `option<T>` (None = the arg omitted)

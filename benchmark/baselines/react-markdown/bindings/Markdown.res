@@ -1,6 +1,6 @@
 // ⚠️ `Markdown` is a DEFAULT export — bound as `= "default"`. If the package does `module.exports = Markdown` (CJS), this may need a hand-adjustment; verify the import at runtime.
 type props<'a, 'e> = {
-  allowElement?: Nullable.t<('a, float, HastTypes.readonly) => bool>,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
+  allowElement?: Nullable.t<('a, float, option<HastTypes.readonly>) => Nullable.t<bool>>,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   allowedElements?: Nullable.t<array<string>>,
   children?: Nullable.t<string>,
   components?: Nullable.t<LibTypes.components>,

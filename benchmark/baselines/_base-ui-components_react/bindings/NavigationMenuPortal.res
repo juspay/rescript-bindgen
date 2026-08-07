@@ -4,7 +4,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, JSON.t) => React.element) 
 type props = {
   keepMounted?: bool,
   container?: PortalTypes.PortalContainer.t,  // ⓘ was `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot>` — opaque; build with PortalContainer.fromHTMLElement / PortalContainer.fromShadowRoot / PortalContainer.fromRefObject
-  style?: CommonTypes.portalStyleV1dkur,
+  style?: CommonTypes.portalStyleH4ujp,
   title?: string,
   autoFocus?: bool,
   hidden?: bool,
@@ -53,7 +53,7 @@ type props = {
   onMouseUp?: PositionerSharedTypes.baseUIEvent => unit,
   onScroll?: PositionerSharedTypes.baseUIEvent => unit,
   onWheel?: PositionerSharedTypes.baseUIEvent => unit,
-  className?: CommonTypes.portalClassNameV1591y,
+  className?: CommonTypes.portalClassNameMym59,
   render?: React.element,  // ⓘ function form: wrap with `renderFn` (zero-cost)
   ref?: React.ref<Nullable.t<Dom.element>>,
 }

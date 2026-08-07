@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, 'a) => React.element) => R
 
 type props<'a> = {
   container?: PortalTypes.PortalContainer.t,  // ⓘ was `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot>` — opaque; build with PortalContainer.fromHTMLElement / PortalContainer.fromShadowRoot / PortalContainer.fromRefObject
-  style?: CommonTypes.portalStyleV1rapl<'a>,
+  style?: CommonTypes.portalStyleGhmtg<'a>,
   title?: string,
   autoFocus?: bool,
   hidden?: bool,
@@ -52,7 +52,7 @@ type props<'a> = {
   onMouseUp?: PositionerSharedTypes.baseUIEvent => unit,
   onScroll?: PositionerSharedTypes.baseUIEvent => unit,
   onWheel?: PositionerSharedTypes.baseUIEvent => unit,
-  className?: CommonTypes.portalClassNameV1izy0<'a>,
+  className?: CommonTypes.portalClassNameV1e3nz<'a>,
   render?: React.element,  // ⓘ function form: wrap with `renderFn` (zero-cost)
 }
 

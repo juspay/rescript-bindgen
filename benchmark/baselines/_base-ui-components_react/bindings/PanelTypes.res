@@ -16,9 +16,9 @@ type tabsPanelState = {
   orientation: PositionerSharedTypes.orientation,
   tabActivationDirection: PositionerSharedTypes.tabsTabActivationDirection,
 }
-@unboxed type accordionPanelStyle = Style(JsxDOM.style) | Fn(accordionPanelState => JsxDOM.style)
-@unboxed type accordionPanelClassName = Str(string) | Fn(accordionPanelState => string)
-@unboxed type collapsiblePanelStyle = Style(JsxDOM.style) | Fn(collapsiblePanelState => JsxDOM.style)
-@unboxed type collapsiblePanelClassName = Str(string) | Fn(collapsiblePanelState => string)
-@unboxed type tabsPanelStyle = Style(JsxDOM.style) | Fn(tabsPanelState => JsxDOM.style)
-@unboxed type tabsPanelClassName = Str(string) | Fn(tabsPanelState => string)
+@unboxed type accordionPanelStyle = Style(JsxDOM.style) | Fn(accordionPanelState => option<JsxDOM.style>)
+@unboxed type accordionPanelClassName = Str(string) | Fn(accordionPanelState => option<string>)
+@unboxed type collapsiblePanelStyle = Style(JsxDOM.style) | Fn(collapsiblePanelState => option<JsxDOM.style>)
+@unboxed type collapsiblePanelClassName = Str(string) | Fn(collapsiblePanelState => option<string>)
+@unboxed type tabsPanelStyle = Style(JsxDOM.style) | Fn(tabsPanelState => option<JsxDOM.style>)
+@unboxed type tabsPanelClassName = Str(string) | Fn(tabsPanelState => option<string>)

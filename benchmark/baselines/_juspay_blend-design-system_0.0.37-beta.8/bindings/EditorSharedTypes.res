@@ -2362,7 +2362,7 @@ type bracketPairColorizationOptions = {
   independentColorPoolPerBracketType: bool,
 }
 type textModelResolvedOptions = {
-  _textModelResolvedOptionsBrand: string,  // ⚪ loose — was `void`
+  _textModelResolvedOptionsBrand: unit,
   tabSize: float,
   indentSize: float,
   insertSpaces: bool,
@@ -2376,7 +2376,7 @@ type iTextSnapshot = {
 }
 @unboxed type stringOrITextSnapshot = Str(string) | ITextSnapshot(iTextSnapshot)
 type findMatch = {
-  _findMatchBrand: string,  // ⚪ loose — was `void`
+  _findMatchBrand: unit,
   range: range,
   matches: array<string>,
 }
@@ -2565,8 +2565,8 @@ type iTextModel<'a> = {
   onDidChangeOptions: (iModelOptionsChangedEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onDidChangeLanguage: (iModelLanguageChangedEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onDidChangeLanguageConfiguration: (JSON.t => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
-  onDidChangeAttached: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onWillDispose: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
+  onDidChangeAttached: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onWillDispose: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   dispose: unit => unit,
   isAttachedToEditor: unit => bool,
 }
@@ -2994,7 +2994,7 @@ type iOverlayWidgetPosition = {
   stackOridinal?: float,
 }
 type iOverlayWidget = {
-  onDidLayout?: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
+  onDidLayout?: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   allowEditorOverflow?: bool,
   getId: unit => string,
   getDomNode: unit => Dom.element,
@@ -3064,14 +3064,14 @@ type iCodeEditor<'a> = {
   onWillChangeModel: (iModelChangedEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onDidChangeModel: (iModelChangedEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onDidChangeModelDecorations: (iModelDecorationsChangedEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
-  onDidFocusEditorText: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onDidBlurEditorText: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onDidFocusEditorWidget: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onDidBlurEditorWidget: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
+  onDidFocusEditorText: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onDidBlurEditorText: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onDidFocusEditorWidget: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onDidBlurEditorWidget: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   inComposition: bool,
-  onDidCompositionStart: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onDidCompositionEnd: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onDidAttemptReadOnlyEdit: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
+  onDidCompositionStart: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onDidCompositionEnd: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onDidAttemptReadOnlyEdit: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onDidPaste: (iPasteEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onMouseUp: (iEditorMouseEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onMouseDown: (iEditorMouseEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
@@ -3083,9 +3083,9 @@ type iCodeEditor<'a> = {
   onDidLayoutChange: (editorLayoutInfo => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onDidContentSizeChange: (iContentSizeChangedEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onDidScrollChange: (iScrollEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
-  onDidChangeHiddenAreas: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onBeginUpdate: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onEndUpdate: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
+  onDidChangeHiddenAreas: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onBeginUpdate: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onEndUpdate: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   saveViewState: unit => Nullable.t<iCodeEditorViewState>,
   restoreViewState: Nullable.t<iCodeEditorViewState> => unit,
   hasWidgetFocus: unit => bool,
@@ -3353,7 +3353,7 @@ type editorGetMonacoViewModeOptionsConfig = {
 type iContextKey = {
   set: string => unit,  // 🛑 BROKEN — contains `unknown`
   reset: unit => unit,
-  get: unit => string,  // 🛑 BROKEN — contains `unknown`
+  get: unit => option<string>,  // 🛑 BROKEN — contains `unknown`
 }
 type iActionDescriptor<'a, 'b> = {
   id: string,
@@ -3562,14 +3562,14 @@ type iStandaloneCodeEditor<'a, 'b> = {
   onWillChangeModel: (iModelChangedEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onDidChangeModel: (iModelChangedEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onDidChangeModelDecorations: (iModelDecorationsChangedEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
-  onDidFocusEditorText: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onDidBlurEditorText: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onDidFocusEditorWidget: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onDidBlurEditorWidget: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
+  onDidFocusEditorText: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onDidBlurEditorText: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onDidFocusEditorWidget: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onDidBlurEditorWidget: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   inComposition: bool,
-  onDidCompositionStart: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onDidCompositionEnd: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onDidAttemptReadOnlyEdit: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
+  onDidCompositionStart: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onDidCompositionEnd: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onDidAttemptReadOnlyEdit: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onDidPaste: (iPasteEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onMouseUp: (iEditorMouseEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onMouseDown: (iEditorMouseEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
@@ -3581,9 +3581,9 @@ type iStandaloneCodeEditor<'a, 'b> = {
   onDidLayoutChange: (editorLayoutInfo => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onDidContentSizeChange: (iContentSizeChangedEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onDidScrollChange: (iScrollEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
-  onDidChangeHiddenAreas: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onBeginUpdate: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onEndUpdate: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
+  onDidChangeHiddenAreas: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onBeginUpdate: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onEndUpdate: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   saveViewState: unit => Nullable.t<iCodeEditorViewState>,
   restoreViewState: Nullable.t<iCodeEditorViewState> => unit,
   hasWidgetFocus: unit => bool,
@@ -3925,8 +3925,8 @@ type iStandaloneDiffEditor<'a, 'b> = {
   getOriginalEditor: unit => iStandaloneCodeEditor<'a, 'b>,
   getModifiedEditor: unit => iStandaloneCodeEditor<'a, 'b>,
   getContainerDomNode: unit => Dom.element,
-  onDidUpdateDiff: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
-  onDidChangeModel: (string => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any` — was `void`
+  onDidUpdateDiff: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
+  onDidChangeModel: (unit => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   saveViewState: unit => Nullable.t<iDiffEditorViewState>,
   restoreViewState: Nullable.t<iDiffEditorViewState> => unit,
   getModel: unit => Nullable.t<iDiffEditorModel<'a>>,

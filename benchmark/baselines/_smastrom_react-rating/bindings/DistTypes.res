@@ -56,7 +56,7 @@ type readOnlyProps = {
 }
 type inputProps<'a> = {
   onChange?: float => 'a,
-  onHoverChange?: float => unit => unit,
+  onHoverChange?: float => option<unit => unit>,
   onBlur?: option<option<option<option<option<option<option<string> => unit> => unit> => unit> => unit> => unit> => unit> => unit,  // ⚪ loose — was `FocusEvent_2`
   onFocus?: option<option<option<option<option<option<option<string> => unit> => unit> => unit> => unit> => unit> => unit> => unit,  // ⚪ loose — was `FocusEvent_2`
   isDisabled?: bool,

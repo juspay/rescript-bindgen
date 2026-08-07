@@ -110,7 +110,7 @@ type headerRecord = {
 }
 type typesValueConfig = {
   ...JsxDOM.domProps,
-  _data: string,  // 🛑 BROKEN — contains `unknown`
+  _data: unit,
   _status: string,  // 🛑 BROKEN — contains `unknown`
   _format: string,  // ⚪ loose — was `"body"`
 }

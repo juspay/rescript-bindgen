@@ -15,9 +15,9 @@ type toastArrowState = {
   align: PositionerSharedTypes.align,
   uncentered: bool,
 }
-@unboxed type comboboxArrowStyle = Style(JsxDOM.style) | Fn(comboboxArrowState => JsxDOM.style)
-@unboxed type comboboxArrowClassName = Str(string) | Fn(comboboxArrowState => string)
-@unboxed type selectArrowStyle = Style(JsxDOM.style) | Fn(selectArrowState => JsxDOM.style)
-@unboxed type selectArrowClassName = Str(string) | Fn(selectArrowState => string)
-@unboxed type toastArrowStyle = Style(JsxDOM.style) | Fn(toastArrowState => JsxDOM.style)
-@unboxed type toastArrowClassName = Str(string) | Fn(toastArrowState => string)
+@unboxed type comboboxArrowStyle = Style(JsxDOM.style) | Fn(comboboxArrowState => option<JsxDOM.style>)
+@unboxed type comboboxArrowClassName = Str(string) | Fn(comboboxArrowState => option<string>)
+@unboxed type selectArrowStyle = Style(JsxDOM.style) | Fn(selectArrowState => option<JsxDOM.style>)
+@unboxed type selectArrowClassName = Str(string) | Fn(selectArrowState => option<string>)
+@unboxed type toastArrowStyle = Style(JsxDOM.style) | Fn(toastArrowState => option<JsxDOM.style>)
+@unboxed type toastArrowClassName = Str(string) | Fn(toastArrowState => option<string>)

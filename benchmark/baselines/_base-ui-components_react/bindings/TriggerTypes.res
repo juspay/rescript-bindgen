@@ -128,11 +128,11 @@ type selectTriggerState = {
   filled: bool,
   focused: bool,
 }
-@unboxed type comboboxTriggerStyle = Style(JsxDOM.style) | Fn(comboboxTriggerState => JsxDOM.style)
-@unboxed type comboboxTriggerClassName = Str(string) | Fn(comboboxTriggerState => string)
-@unboxed type contextMenuTriggerStyle = Style(JsxDOM.style) | Fn(contextMenuTriggerState => JsxDOM.style)
-@unboxed type contextMenuTriggerClassName = Str(string) | Fn(contextMenuTriggerState => string)
-@unboxed type dialogTriggerStyle = Style(JsxDOM.style) | Fn(dialogTriggerState => JsxDOM.style)
-@unboxed type dialogTriggerClassName = Str(string) | Fn(dialogTriggerState => string)
-@unboxed type selectTriggerStyle = Style(JsxDOM.style) | Fn(selectTriggerState => JsxDOM.style)
-@unboxed type selectTriggerClassName = Str(string) | Fn(selectTriggerState => string)
+@unboxed type comboboxTriggerStyle = Style(JsxDOM.style) | Fn(comboboxTriggerState => option<JsxDOM.style>)
+@unboxed type comboboxTriggerClassName = Str(string) | Fn(comboboxTriggerState => option<string>)
+@unboxed type contextMenuTriggerStyle = Style(JsxDOM.style) | Fn(contextMenuTriggerState => option<JsxDOM.style>)
+@unboxed type contextMenuTriggerClassName = Str(string) | Fn(contextMenuTriggerState => option<string>)
+@unboxed type dialogTriggerStyle = Style(JsxDOM.style) | Fn(dialogTriggerState => option<JsxDOM.style>)
+@unboxed type dialogTriggerClassName = Str(string) | Fn(dialogTriggerState => option<string>)
+@unboxed type selectTriggerStyle = Style(JsxDOM.style) | Fn(selectTriggerState => option<JsxDOM.style>)
+@unboxed type selectTriggerClassName = Str(string) | Fn(selectTriggerState => option<string>)

@@ -1283,11 +1283,11 @@ type annotationControlPointOptionsObject = {
   width?: float,
 }
 type annotationsEventsOptions = {
-  add?: @this ((string, option<string>, option<string>) => bool),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
-  afterUpdate?: @this ((string, option<string>, option<string>) => bool),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
-  click?: @this ((string, option<string>, option<string>) => bool),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
-  drag?: @this ((string, option<string>, option<string>) => bool),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
-  remove?: @this ((string, option<string>, option<string>) => bool),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
+  add?: @this ((string, option<string>, option<string>) => option<bool>),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
+  afterUpdate?: @this ((string, option<string>, option<string>) => option<bool>),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
+  click?: @this ((string, option<string>, option<string>) => option<bool>),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
+  drag?: @this ((string, option<string>, option<string>) => option<bool>),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
+  remove?: @this ((string, option<string>, option<string>) => option<bool>),  // ⚠️ REVIEW — was `Annotation` — match the real type by hand
 }
 type annotationLabelAccessibilityOptionsObject = {
   description?: string,
@@ -2430,7 +2430,7 @@ type svgRenderer = {
   forExport?: bool,
   symbols: symbolDictionary,
   arc: Arc.t,
-  button: (string, float, float, @this ((Dom.element, option<string>, option<Dom.element>) => bool), option<svgAttributes>, option<svgAttributes>, option<svgAttributes>, option<svgAttributes>, option<symbolKeyValue>, option<bool>) => Dom.element,  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  button: (string, float, float, @this ((Dom.element, option<string>, option<Dom.element>) => option<bool>), option<svgAttributes>, option<svgAttributes>, option<svgAttributes>, option<svgAttributes>, option<symbolKeyValue>, option<bool>) => Dom.element,  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
   circle: Circle.t,
   clipRect: (option<float>, option<float>, option<float>, option<float>) => Dom.element,
   createElement: string => Dom.element,
@@ -8035,7 +8035,7 @@ type subtitleObject = {
   css: cssObject => Dom.element,
   destroy: unit => unit,
   getBBox: (option<bool>, option<float>) => bBoxObject,
-  getBBoxCacheKey: unit => string,
+  getBBoxCacheKey: unit => option<string>,
   getStyle: string => string,
   hasClass: string => bool,
   hide: unit => Dom.element,
@@ -8075,7 +8075,7 @@ type titleObject = {
   css: cssObject => Dom.element,
   destroy: unit => unit,
   getBBox: (option<bool>, option<float>) => bBoxObject,
-  getBBoxCacheKey: unit => string,
+  getBBoxCacheKey: unit => option<string>,
   getStyle: string => string,
   hasClass: string => bool,
   hide: unit => Dom.element,
@@ -16830,10 +16830,10 @@ and navigatorXAxisPlotLinesOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and navigatorXAxisPlotBandsEventsOptions<'a, 'b, 'c> = {
-  click?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  mousemove?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  mouseout?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  mouseover?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  click?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  mousemove?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  mouseout?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  mouseover?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
 }
 and navigatorXAxisPlotBandsOptions<'a, 'b, 'c> = {
   acrossPanes?: bool,
@@ -17124,8 +17124,8 @@ and exportingOptions<'a, 'b, 'c> = {
   width?: float,
 }
 and seriesZigzagOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -17243,9 +17243,9 @@ and plotXrangeDataLabelsOptions<'a, 'b, 'c> = {
 }
 and seriesXrangeOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  depth?: string,  // ⚪ loose — was `undefined`
-  edgeColor?: string,  // ⚪ loose — was `undefined`
-  edgeWidth?: string,  // ⚪ loose — was `undefined`
+  depth?: unit,
+  edgeColor?: unit,
+  edgeWidth?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -17394,8 +17394,8 @@ and seriesWordcloudOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesWmaOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -17479,8 +17479,8 @@ and seriesWmaOptions<'a, 'b, 'c> = {
 }
 and seriesWindbarbOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -17579,9 +17579,9 @@ and seriesWindbarbOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesWilliamsrOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -17665,8 +17665,8 @@ and seriesWilliamsrOptions<'a, 'b, 'c> = {
 }
 and seriesWaterfallOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -17758,8 +17758,8 @@ and seriesWaterfallOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesVwapOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -17856,13 +17856,13 @@ and plotVennClusterOptions<'a, 'b, 'c> = {
 }
 and seriesVennOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
-  steps?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
+  steps?: unit,
   @as("type") type_: string,
-  xAxis?: string,  // ⚪ loose — was `undefined`
-  yAxis?: string,  // ⚪ loose — was `undefined`
+  xAxis?: unit,
+  yAxis?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   animation?: boolOrAnimationOptionsObject,
@@ -17932,8 +17932,8 @@ and plotVectorClusterOptions<'a, 'b, 'c> = {
 }
 and seriesVectorOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -18013,8 +18013,8 @@ and seriesVectorOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesVbpOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -18185,12 +18185,12 @@ and seriesVariwideOptions<'b, 'a, 'c> = {
 }
 and seriesVariablepieOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
-  xAxis?: string,  // ⚪ loose — was `undefined`
-  yAxis?: string,  // ⚪ loose — was `undefined`
+  xAxis?: unit,
+  yAxis?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   animation?: boolOrAnimationOptionsObject,
@@ -18261,9 +18261,9 @@ and seriesVariablepieOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesTrixOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -18344,8 +18344,8 @@ and seriesTrixOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesTrendlineOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -18510,9 +18510,9 @@ and plotTreemapDataLabelsOptions<'a, 'b, 'c> = {
 }
 and seriesTreemapOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -18613,18 +18613,18 @@ and plotTreegraphLevelsOptions<'a, 'b, 'c> = {
   level?: int,
 }
 and seriesTreegraphOptions<'b, 'a, 'c> = {
-  allowDrillToNode?: string,  // ⚪ loose — was `undefined`
-  centerInCategory?: string,  // ⚪ loose — was `undefined`
-  curveFactor?: string,  // ⚪ loose — was `undefined`
+  allowDrillToNode?: unit,
+  centerInCategory?: unit,
+  curveFactor?: unit,
   data?: array<'b>,
-  headers?: string,  // ⚪ loose — was `undefined`
-  layout?: string,  // ⚪ loose — was `undefined`
-  nodePadding?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
-  traverseUpButton?: string,  // ⚪ loose — was `undefined`
+  headers?: unit,
+  layout?: unit,
+  nodePadding?: unit,
+  stack?: unit,
+  traverseUpButton?: unit,
   @as("type") type_: string,
-  xAxis?: string,  // ⚪ loose — was `undefined`
-  yAxis?: string,  // ⚪ loose — was `undefined`
+  xAxis?: unit,
+  yAxis?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   animation?: boolOrAnimationOptionsObject,
@@ -18736,9 +18736,9 @@ and timelineDataLabelsOptionsObject<'a, 'b, 'c> = {
 }
 and seriesTimelineOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -18799,12 +18799,12 @@ and seriesTimelineOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesTilemapOptions<'b, 'a, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  mapData?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  mapData?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -18870,13 +18870,13 @@ and seriesTilemapOptions<'b, 'a, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
 }
 and seriesTiledwebmapOptions<'a, 'b, 'c> = {
-  affectsMapView?: string,  // ⚪ loose — was `undefined`
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  colorByPoint?: string,  // ⚪ loose — was `undefined`
-  colors?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  nullColor?: string,  // ⚪ loose — was `undefined`
+  affectsMapView?: unit,
+  allAreas?: unit,
+  colorByPoint?: unit,
+  colors?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
+  nullColor?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   className?: string,
@@ -18906,9 +18906,9 @@ and seriesTiledwebmapOptions<'a, 'b, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
 }
 and seriesTemaOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -18989,10 +18989,10 @@ and seriesTemaOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesSupertrendOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  data?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  data?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -19087,9 +19087,9 @@ and plotSunburstLevelsOptions<'a, 'b, 'c> = {
 }
 and seriesSunburstOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -19156,8 +19156,8 @@ and seriesSunburstOptions<'b, 'a, 'c> = {
 }
 and seriesStreamgraphOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -19252,9 +19252,9 @@ and seriesStreamgraphOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesStochasticOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -19339,8 +19339,8 @@ and seriesStochasticOptions<'a, 'b, 'c> = {
 }
 and seriesSplineOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -19431,13 +19431,13 @@ and seriesSplineOptions<'b, 'a, 'c> = {
 }
 and seriesSolidgaugeOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  dial?: string,  // ⚪ loose — was `undefined`
-  pivot?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  dial?: unit,
+  pivot?: unit,
+  stack?: unit,
   @as("type") type_: string,
-  wrap?: string,  // ⚪ loose — was `undefined`
+  wrap?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   animation?: boolOrAnimationOptionsObject,
@@ -19499,10 +19499,10 @@ and seriesSolidgaugeOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesSmaOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
-  useOhlcData?: string,  // ⚪ loose — was `undefined`
+  useOhlcData?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   animation?: boolOrAnimationOptionsObject,
@@ -19584,7 +19584,7 @@ and seriesSmaOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesSlowstochasticOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -19685,10 +19685,10 @@ and plotScatterClusterOptions<'a, 'b, 'c> = {
 }
 and seriesScatterOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
-  useOhlcData?: string,  // ⚪ loose — was `undefined`
+  useOhlcData?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   animation?: boolOrAnimationOptionsObject,
@@ -19870,20 +19870,20 @@ and seriesSankeyNodesOptionsObject = {
   title?: string,
 }
 and seriesSankeyOptions<'b, 'a, 'c> = {
-  borderRadius?: string,  // ⚪ loose — was `undefined`
+  borderRadius?: unit,
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  depth?: string,  // ⚪ loose — was `undefined`
-  edgeColor?: string,  // ⚪ loose — was `undefined`
-  edgeWidth?: string,  // ⚪ loose — was `undefined`
-  grouping?: string,  // ⚪ loose — was `undefined`
-  groupPadding?: string,  // ⚪ loose — was `undefined`
-  groupZPadding?: string,  // ⚪ loose — was `undefined`
-  maxPointWidth?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  depth?: unit,
+  edgeColor?: unit,
+  edgeWidth?: unit,
+  grouping?: unit,
+  groupPadding?: unit,
+  groupZPadding?: unit,
+  maxPointWidth?: unit,
   nodes?: array<seriesSankeyNodesOptionsObject>,
-  pointPadding?: string,  // ⚪ loose — was `undefined`
-  pointWidth?: string,  // ⚪ loose — was `undefined`
+  pointPadding?: unit,
+  pointWidth?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -19949,8 +19949,8 @@ and seriesSankeyOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesRsiOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -20033,8 +20033,8 @@ and seriesRsiOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesRocOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -20117,10 +20117,10 @@ and seriesRocOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesRenkoOptions<'b, 'a, 'c> = {
-  boost?: string,  // ⚪ loose — was `undefined`
+  boost?: unit,
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -20200,12 +20200,12 @@ and seriesRenkoOptions<'b, 'a, 'c> = {
 }
 and seriesPyramidOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
-  xAxis?: string,  // ⚪ loose — was `undefined`
-  yAxis?: string,  // ⚪ loose — was `undefined`
+  xAxis?: unit,
+  yAxis?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   animation?: bool,
@@ -20274,7 +20274,7 @@ and seriesPyramidOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesPyramid3dOptions<'b, 'a, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
   data?: array<'b>,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
@@ -20367,8 +20367,8 @@ and seriesPyramid3dOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesPsarOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -20451,8 +20451,8 @@ and seriesPsarOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesPriceenvelopesOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -20537,9 +20537,9 @@ and seriesPriceenvelopesOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesPpoOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -20623,9 +20623,9 @@ and seriesPpoOptions<'a, 'b, 'c> = {
 }
 and seriesPolygonOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -20796,8 +20796,8 @@ and seriesPointandfigureOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesPivotpointsOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -20881,12 +20881,12 @@ and seriesPivotpointsOptions<'a, 'b, 'c> = {
 }
 and seriesPieOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
-  xAxis?: string,  // ⚪ loose — was `undefined`
-  yAxis?: string,  // ⚪ loose — was `undefined`
+  xAxis?: unit,
+  yAxis?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   animation?: boolOrAnimationOptionsObject,
@@ -20953,12 +20953,12 @@ and seriesPieOptions<'b, 'a, 'c> = {
   name?: string,
 }
 and seriesPictorialOptions<'b, 'a, 'c> = {
-  borderRadius?: string,  // ⚪ loose — was `undefined`
-  centerInCategory?: string,  // ⚪ loose — was `undefined`
+  borderRadius?: unit,
+  centerInCategory?: unit,
   data?: array<'b>,
-  dataAsColumns?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataAsColumns?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   paths?: array<seriesPictorialPathsOptionsObject>,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
@@ -21041,9 +21041,9 @@ and seriesPictorialOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesPcOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -21129,8 +21129,8 @@ and seriesPcOptions<'a, 'b, 'c> = {
 and seriesParetoOptions<'b, 'a, 'c> = {
   baseSeries?: CommonTypes.stringOrNumber,
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -21192,9 +21192,9 @@ and seriesParetoOptions<'b, 'a, 'c> = {
 }
 and seriesPackedbubbleOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -21383,8 +21383,8 @@ and seriesOrganizationOptions<'b, 'a, 'c> = {
 }
 and seriesOhlcOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -21478,8 +21478,8 @@ and seriesOhlcOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesObvOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -21573,10 +21573,10 @@ and seriesNetworkgraphNodesOptions<'a, 'b, 'c> = {
 and seriesNetworkgraphOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   nodes?: array<seriesNetworkgraphNodesOptions<'a, 'b, 'c>>,
-  stack?: string,  // ⚪ loose — was `undefined`
+  stack?: unit,
   @as("type") type_: string,
-  xAxis?: string,  // ⚪ loose — was `undefined`
-  yAxis?: string,  // ⚪ loose — was `undefined`
+  xAxis?: unit,
+  yAxis?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   className?: string,
@@ -21633,8 +21633,8 @@ and seriesNetworkgraphOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesNatrOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -21717,8 +21717,8 @@ and seriesNatrOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesMomentumOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -21801,8 +21801,8 @@ and seriesMomentumOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesMfiOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -21936,8 +21936,8 @@ and plotMappointClusterOptions<'a, 'b, 'c> = {
 }
 and seriesMappointOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -22030,8 +22030,8 @@ and plotMapDataLabelsOptions<'a, 'b, 'c> = {
 }
 and seriesMapOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   affectsMapView?: bool,
@@ -22092,8 +22092,8 @@ and seriesMapOptions<'b, 'a, 'c> = {
 }
 and seriesMaplineOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   affectsMapView?: bool,
@@ -22190,8 +22190,8 @@ and plotMapbubbleDataLabelsOptions<'a, 'b, 'c> = {
 }
 and seriesMapbubbleOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -22255,8 +22255,8 @@ and seriesMapbubbleOptions<'b, 'a, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
 }
 and seriesMacdOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -22441,8 +22441,8 @@ and seriesLollipopOptions<'b, 'a, 'c> = {
 }
 and seriesLineOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -22536,8 +22536,8 @@ and seriesLineOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesLinearregressionslopeOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -22620,8 +22620,8 @@ and seriesLinearregressionslopeOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesLinearregressionOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -22704,8 +22704,8 @@ and seriesLinearregressionOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesLinearregressioninterceptOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -22788,8 +22788,8 @@ and seriesLinearregressioninterceptOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesLinearregressionangleOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -22872,9 +22872,9 @@ and seriesLinearregressionangleOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesKlingerOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
   @as("type") type_: string,
-  useOhlcData?: string,  // ⚪ loose — was `undefined`
+  useOhlcData?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   animation?: boolOrAnimationOptionsObject,
@@ -22957,9 +22957,9 @@ and seriesKlingerOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesKeltnerchannelsOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -23044,12 +23044,12 @@ and seriesKeltnerchannelsOptions<'a, 'b, 'c> = {
 }
 and seriesItemOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
-  xAxis?: string,  // ⚪ loose — was `undefined`
-  yAxis?: string,  // ⚪ loose — was `undefined`
+  xAxis?: unit,
+  yAxis?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   animation?: boolOrAnimationOptionsObject,
@@ -23113,8 +23113,8 @@ and seriesItemOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesIkhOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -23202,8 +23202,8 @@ and seriesIkhOptions<'a, 'b, 'c> = {
 }
 and seriesHollowcandlestickOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -23301,8 +23301,8 @@ and seriesHollowcandlestickOptions<'b, 'a, 'c> = {
 }
 and seriesHlcOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -23396,9 +23396,9 @@ and seriesHlcOptions<'b, 'a, 'c> = {
 }
 and seriesHistogramOptions<'a, 'b, 'c> = {
   baseSeries?: CommonTypes.stringOrNumber,
-  data?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  data?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -23486,8 +23486,8 @@ and seriesHistogramOptions<'a, 'b, 'c> = {
 }
 and seriesHeikinashiOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -23585,9 +23585,9 @@ and seriesHeikinashiOptions<'b, 'a, 'c> = {
 }
 and seriesHeatmapOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -23691,11 +23691,11 @@ and plotGeoheatmapDataLabelsOptions<'a, 'b, 'c> = {
   y?: float,
 }
 and seriesGeoheatmapOptions<'b, 'a, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  mapData?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  mapData?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   affectsMapView?: bool,
@@ -23788,9 +23788,9 @@ and plotGaugeDataLabelsOptions<'a, 'b, 'c> = {
 }
 and seriesGaugeOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -23952,12 +23952,12 @@ and seriesGanttOptions<'b, 'a, 'c> = {
 }
 and seriesFunnelOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
-  xAxis?: string,  // ⚪ loose — was `undefined`
-  yAxis?: string,  // ⚪ loose — was `undefined`
+  xAxis?: unit,
+  yAxis?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   animation?: bool,
@@ -24060,7 +24060,7 @@ and plotFunnel3dDataLabelsOptions<'a, 'b, 'c> = {
   y?: float,
 }
 and seriesFunnel3dOptions<'b, 'a, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
   data?: array<'b>,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
@@ -24154,10 +24154,10 @@ and seriesFunnel3dOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesFlowmapOptions<'b, 'a, 'c> = {
-  affectsMapView?: string,  // ⚪ loose — was `undefined`
-  allAreas?: string,  // ⚪ loose — was `undefined`
+  affectsMapView?: unit,
+  allAreas?: unit,
   data?: array<'b>,
-  mapData?: string,  // ⚪ loose — was `undefined`
+  mapData?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   animation?: bool,
@@ -24214,14 +24214,14 @@ and seriesFlowmapOptions<'b, 'a, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
 }
 and seriesFlagsOptions<'b, 'a, 'c> = {
-  colorByPoint?: string,  // ⚪ loose — was `undefined`
+  colorByPoint?: unit,
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  pointPadding?: string,  // ⚪ loose — was `undefined`
-  pointWidth?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  pointPadding?: unit,
+  pointWidth?: unit,
   @as("type") type_: string,
-  useOhlcData?: string,  // ⚪ loose — was `undefined`
+  useOhlcData?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowOverlapX?: bool,
   allowPointSelect?: bool,
@@ -24323,9 +24323,9 @@ and seriesFlagsOptions<'b, 'a, 'c> = {
 }
 and seriesErrorbarOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -24421,8 +24421,8 @@ and seriesErrorbarOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesEmaOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -24602,9 +24602,9 @@ and seriesDumbbellOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesDpoOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -24685,9 +24685,9 @@ and seriesDpoOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesDmiOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -24772,9 +24772,9 @@ and seriesDmiOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesDisparityindexOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -24963,9 +24963,9 @@ and seriesDependencywheelOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesDemaOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -25046,7 +25046,7 @@ and seriesDemaOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesCylinderOptions<'b, 'a, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
   data?: array<'b>,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
@@ -25135,13 +25135,13 @@ and seriesCylinderOptions<'b, 'a, 'c> = {
 }
 and seriesContourOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  grouping?: string,  // ⚪ loose — was `undefined`
-  groupPadding?: string,  // ⚪ loose — was `undefined`
-  groupZPadding?: string,  // ⚪ loose — was `undefined`
-  jitter?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  grouping?: unit,
+  groupPadding?: unit,
+  groupZPadding?: unit,
+  jitter?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -25211,9 +25211,9 @@ and seriesContourOptions<'b, 'a, 'c> = {
 }
 and seriesColumnrangeOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -25310,8 +25310,8 @@ and seriesColumnrangeOptions<'b, 'a, 'c> = {
 }
 and seriesColumnpyramidOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -25400,8 +25400,8 @@ and seriesColumnpyramidOptions<'b, 'a, 'c> = {
 }
 and seriesColumnOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -25502,8 +25502,8 @@ and seriesColumnOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesCmoOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -25586,8 +25586,8 @@ and seriesCmoOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesCmfOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -25669,9 +25669,9 @@ and seriesCmfOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesChaikinOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -25754,8 +25754,8 @@ and seriesChaikinOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesCciOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -25839,8 +25839,8 @@ and seriesCciOptions<'a, 'b, 'c> = {
 }
 and seriesCandlestickOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -25972,8 +25972,8 @@ and plotBulletDataLabelsOptions<'a, 'b, 'c> = {
 }
 and seriesBulletOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -26096,9 +26096,9 @@ and plotBubbleDataLabelsOptions<'a, 'b, 'c> = {
 }
 and seriesBubbleOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -26196,9 +26196,9 @@ and seriesBubbleOptions<'b, 'a, 'c> = {
 }
 and seriesBoxplotOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -26295,9 +26295,9 @@ and seriesBoxplotOptions<'b, 'a, 'c> = {
 }
 and seriesBellcurveOptions<'a, 'b, 'c> = {
   baseSeries?: CommonTypes.stringOrNumber,
-  data?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  data?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -26378,8 +26378,8 @@ and seriesBellcurveOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesBbOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -26500,8 +26500,8 @@ and plotBarDataLabelsOptions<'a, 'b, 'c> = {
 }
 and seriesBarOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -26592,8 +26592,8 @@ and seriesBarOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesAtrOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -26676,10 +26676,10 @@ and seriesAtrOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesAroonoscillatorOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  aroonDown?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  aroonDown?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -26760,9 +26760,9 @@ and seriesAroonoscillatorOptions<'a, 'b, 'c> = {
   zIndex?: int,
 }
 and seriesAroonOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -26845,9 +26845,9 @@ and seriesAroonOptions<'a, 'b, 'c> = {
 }
 and seriesAreasplinerangeOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -26942,8 +26942,8 @@ and seriesAreasplinerangeOptions<'b, 'a, 'c> = {
 }
 and seriesAreasplineOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -27077,9 +27077,9 @@ and seriesAreaRangeDataLabelsOptionsObject<'a, 'b, 'c> = {
 }
 and seriesArearangeOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
-  stack?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
+  stack?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -27264,10 +27264,10 @@ and plotSeriesOptions<'a, 'b, 'c> = {
 }
 and seriesAreaOptions<'b, 'a, 'c> = {
   data?: array<'b>,
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
-  useOhlcData?: string,  // ⚪ loose — was `undefined`
+  useOhlcData?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   animation?: boolOrAnimationOptionsObject,
@@ -27401,18 +27401,18 @@ and seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c> = {
   y?: float,
 }
 and seriesArcdiagramOptions<'b, 'a, 'c> = {
-  centerInCategory?: string,  // ⚪ loose — was `undefined`
-  curveFactor?: string,  // ⚪ loose — was `undefined`
+  centerInCategory?: unit,
+  curveFactor?: unit,
   data?: array<'b>,
   linkRadius?: float,
   linkWeight?: float,
-  nodePadding?: string,  // ⚪ loose — was `undefined`
+  nodePadding?: unit,
   nodes?: array<JSON.t>,
   offset?: string,
-  stack?: string,  // ⚪ loose — was `undefined`
+  stack?: unit,
   @as("type") type_: string,
-  xAxis?: string,  // ⚪ loose — was `undefined`
-  yAxis?: string,  // ⚪ loose — was `undefined`
+  xAxis?: unit,
+  yAxis?: unit,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
   animation?: boolOrAnimationOptionsObject,
@@ -27472,9 +27472,9 @@ and seriesArcdiagramOptions<'b, 'a, 'c> = {
   zIndex?: int,
 }
 and seriesApoOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -27591,9 +27591,9 @@ and plotAoDataLabelsOptions<'a, 'b, 'c> = {
   y?: float,
 }
 and seriesAoOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -27714,8 +27714,8 @@ and plotAdDataLabelsOptions<'a, 'b, 'c> = {
   y?: float,
 }
 and seriesAdOptions<'a, 'b, 'c> = {
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -28016,9 +28016,9 @@ and seriesAccessibilityOptionsObject = {
   point?: chartsSeriesAccessibilityOptionsObjectPoint_t,
 }
 and seriesAbandsOptions<'a, 'b, 'c> = {
-  allAreas?: string,  // ⚪ loose — was `undefined`
-  dataParser?: string,  // ⚪ loose — was `undefined`
-  dataURL?: string,  // ⚪ loose — was `undefined`
+  allAreas?: unit,
+  dataParser?: unit,
+  dataURL?: unit,
   @as("type") type_: string,
   accessibility?: seriesAccessibilityOptionsObject,
   allowPointSelect?: bool,
@@ -29538,10 +29538,10 @@ and plotLineOrBand<'a, 'b, 'c> = {
   destroy: unit => unit,
 }
 and navigatorXAxisCurrentDateIndicatorEventsOptions<'a, 'b, 'c> = {
-  click?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  mousemove?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  mouseout?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  mouseover?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  click?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  mousemove?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  mouseout?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  mouseover?: @this ((plotLineOrBand<'a, 'b, 'c>, option<string>, option<plotLineOrBand<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
 }
 and currentDateIndicatorOptions = {
   className?: string,
@@ -30973,7 +30973,7 @@ type exportingMenuItemDefinitionsOptions = {
   viewFullscreen?: exportingMenuItemDefinitionsDownloadCSVOptions,
 }
 type exportingMenuObject<'a, 'b, 'c> = {
-  onclick?: @this ((chart<'a, 'b, 'c>, option<string>, option<chart<'a, 'b, 'c>>) => bool),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  onclick?: @this ((chart<'a, 'b, 'c>, option<string>, option<chart<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
   separator?: bool,
   text?: string,
   textKey?: string,

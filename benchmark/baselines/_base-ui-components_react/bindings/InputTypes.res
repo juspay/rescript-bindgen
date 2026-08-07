@@ -36,11 +36,11 @@ type toolbarInputState = {
   focusable: bool,
   orientation: PositionerSharedTypes.orientation,
 }
-@unboxed type comboboxInputStyle = Style(JsxDOM.style) | Fn(comboboxInputState => JsxDOM.style)
-@unboxed type comboboxInputClassName = Str(string) | Fn(comboboxInputState => string)
-@unboxed type inputStyle = Style(JsxDOM.style) | Fn(inputState => JsxDOM.style)
-@unboxed type inputClassName = Str(string) | Fn(inputState => string)
-@unboxed type numberFieldInputStyle = Style(JsxDOM.style) | Fn(numberFieldInputState => JsxDOM.style)
-@unboxed type numberFieldInputClassName = Str(string) | Fn(numberFieldInputState => string)
-@unboxed type toolbarInputStyle = Style(JsxDOM.style) | Fn(toolbarInputState => JsxDOM.style)
-@unboxed type toolbarInputClassName = Str(string) | Fn(toolbarInputState => string)
+@unboxed type comboboxInputStyle = Style(JsxDOM.style) | Fn(comboboxInputState => option<JsxDOM.style>)
+@unboxed type comboboxInputClassName = Str(string) | Fn(comboboxInputState => option<string>)
+@unboxed type inputStyle = Style(JsxDOM.style) | Fn(inputState => option<JsxDOM.style>)
+@unboxed type inputClassName = Str(string) | Fn(inputState => option<string>)
+@unboxed type numberFieldInputStyle = Style(JsxDOM.style) | Fn(numberFieldInputState => option<JsxDOM.style>)
+@unboxed type numberFieldInputClassName = Str(string) | Fn(numberFieldInputState => option<string>)
+@unboxed type toolbarInputStyle = Style(JsxDOM.style) | Fn(toolbarInputState => option<JsxDOM.style>)
+@unboxed type toolbarInputClassName = Str(string) | Fn(toolbarInputState => option<string>)

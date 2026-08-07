@@ -1,5 +1,5 @@
 # dependencies
-node_modules/
+node_modules
 # ...except golden-fixture vendor stubs (self-contained test inputs, not real deps)
 !test/golden/cases/*/node_modules/
 !test/golden/cases/*/node_modules/**
@@ -15,7 +15,7 @@ test/sandbox/lib/
 test/sandbox/.bsb.lock
 test/sandbox/src/*.res.mjs
 test/sandbox/src/*.res
-test/sandbox/node_modules/
+test/sandbox/node_modules
 
 # local scratch playground (generated bindings + ReScript build output)
 bindgen-playground/
@@ -32,4 +32,4 @@ test/binding-compare/Card.*.res
 test/sandbox/src/.bindgen-manifest.json
 
 # benchmark runtime scratch (sandboxes, logs, results) — baselines/ ARE committed
-benchmark/.work/
+benchmark/.work
