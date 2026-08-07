@@ -92,7 +92,7 @@ type chartV2CustomLegendItem = {
   value?: CommonTypes.stringOrNumber,
 }
 type chartsV2RenderItemConfig = {
-  item: HighchartsSharedTypes.ChartV2LegendItem.t,
+  item: HighchartsSharedTypes.ChartsLegendAllItems.t,
   name: string,
   visible: bool,
   color: string,

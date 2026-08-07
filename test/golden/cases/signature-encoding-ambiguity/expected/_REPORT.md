@@ -16,7 +16,7 @@
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- Picker
+- Probe
 
 ## ⚪ Loosely typed (widened to `string`)
 

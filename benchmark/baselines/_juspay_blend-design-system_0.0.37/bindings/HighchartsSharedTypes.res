@@ -31081,19 +31081,12 @@ type blendChartProps<'a, 'b, 'c> = {
 }
 @set_index external blendChartPropsSet: (blendChartProps<'a, 'b, 'c>, string, JSON.t) => unit = ""
 @unboxed type stringOrChartsColorsConfig = Str(string) | ChartsColorsConfig(chartsColorsConfig)
-module ChartV2LegendItem = {
-  type t
-  external fromPoint: point<'a, 'b, 'c> => t = "%identity"
-  external asPoint: t => (point<'a, 'b, 'c>) = "%identity"
-  external fromSeries: series<'a, 'b, 'c> => t = "%identity"
-  external asSeries: t => (series<'a, 'b, 'c>) = "%identity"
-}
 module SetStateAction = {
   type t
   external fromPoint: point<'a, 'b, 'c> => t = "%identity"
   external asPoint: t => (point<'a, 'b, 'c>) = "%identity"
   external fromSeries: series<'a, 'b, 'c> => t = "%identity"
   external asSeries: t => (series<'a, 'b, 'c>) = "%identity"
-  external fromFn: (ChartV2LegendItem.t => ChartV2LegendItem.t) => t = "%identity"
-  external asFn: t => (ChartV2LegendItem.t => ChartV2LegendItem.t) = "%identity"
+  external fromFn: (ChartsLegendAllItems.t => ChartsLegendAllItems.t) => t = "%identity"
+  external asFn: t => (ChartsLegendAllItems.t => ChartsLegendAllItems.t) = "%identity"
 }

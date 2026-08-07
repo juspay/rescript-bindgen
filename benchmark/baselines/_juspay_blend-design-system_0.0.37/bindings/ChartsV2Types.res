@@ -92,7 +92,7 @@ type chartV2CustomLegendItem = {
   value?: CommonTypes.stringOrNumber,
 }
 type chartsV2RenderItemConfig = {
-  item: HighchartsSharedTypes.ChartV2LegendItem.t,
+  item: HighchartsSharedTypes.ChartsLegendAllItems.t,
   name: string,
   visible: bool,
   color: string,
@@ -105,18 +105,18 @@ type chartV2FullscreenControls = {
   exitFullscreen: unit => unit,
 }
 type chartsV2UseChartLegendConfig<'a, 'b, 'c> = {
-  hoveredItem: HighchartsSharedTypes.ChartV2LegendItem.t,
+  hoveredItem: HighchartsSharedTypes.ChartsLegendAllItems.t,
   setHoveredItem: HighchartsSharedTypes.SetStateAction.t => unit,
-  allItems: array<HighchartsSharedTypes.ChartV2LegendItem.t>,
-  handleClick: (HighchartsSharedTypes.ChartV2LegendItem.t, float) => unit,
+  allItems: array<HighchartsSharedTypes.ChartsLegendAllItems.t>,
+  handleClick: (HighchartsSharedTypes.ChartsLegendAllItems.t, float) => unit,
   chart: HighchartsSharedTypes.chart<'a, 'b, 'c>,
   charts: array<HighchartsSharedTypes.chart<'a, 'b, 'c>>,
 }
 type chartsV2UseChartLegendHoverConfig = {
-  hoveredItem: HighchartsSharedTypes.ChartV2LegendItem.t,
+  hoveredItem: HighchartsSharedTypes.ChartsLegendAllItems.t,
   setHoveredItem: HighchartsSharedTypes.SetStateAction.t => unit,
-  allItems: array<HighchartsSharedTypes.ChartV2LegendItem.t>,
-  handleClick: (HighchartsSharedTypes.ChartV2LegendItem.t, float) => unit,
+  allItems: array<HighchartsSharedTypes.ChartsLegendAllItems.t>,
+  handleClick: (HighchartsSharedTypes.ChartsLegendAllItems.t, float) => unit,
 }
 type chartsV2UseChartRefsRefsConfig<'a, 'b, 'c> = {
   chart?: HighchartsSharedTypes.chart<'a, 'b, 'c>,

@@ -183,19 +183,29 @@ const STABILIZE_KINDS = new Set(['record', 'enum', 'unboxed', 'opaque', 'tagVari
  *  entries always differ) and the member set for enum/unboxed/opaque. */
 /** A `@tag` variant's shape: the discriminant + every branch's literal, ctor and fields. (#167) */
 function tagVariantSig(e, enc) {
-    return 'tagv:' + e.tag + '|' + (e.branches || []).map((b) =>
-        b.literal + '=' + b.ctor + '(' + b.fields.map((f) => f.name + (f.optional ? '?' : '') + ':' + enc(f.type)).join(';') + ')').join('|')
+    return 'tagv:' + JSON.stringify([e.tag, (e.branches || []).map((b) =>
+        [b.literal, b.ctor, b.fields.map((f) => [f.name, !!f.optional, enc(f.type)])])])
 }
 
+/**
+ * Values that come from the SOURCE — string literals, `@as` payloads, polyvar tag sets — can contain
+ * the very characters a hand-rolled `join`/`+` encoding uses as separators, which makes the encoding
+ * AMBIGUOUS: `['a|b','c','d','e'].join('|')` and `['a','b|c','d','e'].join('|')` are both
+ * `"a|b|c|d|e"`. Since these signatures are DEDUP KEYS, an ambiguity means two genuinely different
+ * shapes can collapse onto one entry — the second redirected to constructors accepting the wrong
+ * literals. `JSON.stringify` over structured arrays is unambiguous by construction (it escapes the
+ * separators), so no source value can ever forge a boundary. (#183 review)
+ */
 function entrySig(e) {
     if (e.kind === 'record') return recordSig(e)
     if (e.kind === 'tagVariant') return tagVariantSig(e, typeSig)
     // tparams MUST be part of the signature: a generic `portalStyle<'a>` and a non-generic
     // `portalStyle` @unboxed are NOT the same shape — merging them applies `<'a>` to a
     // non-generic type (compile break).
-    const tp = 'tp:' + ((e.tparams || []).join(',')) + '|'
-    if (e.members) return e.kind + ':' + tp + e.members.map((m) => (m.ctor || '') + (m.as !== undefined ? '=' + m.as : '') + (m.type ? ':' + typeSig(m.type) : '')).join(',')
-    return e.kind + ':' + tp + (e.name || '')
+    const tp = e.tparams || []
+    if (e.members) return e.kind + ':' + JSON.stringify([tp, e.members.map((m) =>
+        [m.ctor || m.name || '', m.as, m.tagSet || null, !!m.none, m.type ? typeSig(m.type) : null])])
+    return e.kind + ':' + JSON.stringify([tp, e.name || ''])
 }
 
 /**
@@ -233,7 +243,13 @@ function structuralTypeSig(t, shared, seen) {
         case 'map': return 'M[' + structuralTypeSig(t.mapKey, shared, seen) + ',' + structuralTypeSig(t.mapVal, shared, seen) + ']'
         case 'set': return 'S[' + structuralTypeSig(t.of, shared, seen) + ']'
         case 'promise': return 'P[' + structuralTypeSig(t.of, shared, seen) + ']'
-        case 'callback': return 'F(' + (t.params || []).map((x) => structuralTypeSig(x, shared, seen)).join(',') + ')=>' + structuralTypeSig(t.ret || { kind: 'unit' }, shared, seen)
+        // Param OPTIONALITY and `thisArg` change what renderType emits, so they belong here for the
+        // same reason `typeSig` needed them (#183 review) — but for a different consequence: this is
+        // the #90 STABLE-NAME hash, so two shapes that hash alike don't merge, they collide onto an
+        // order-dependent numeric suffix, which is exactly the churn #90 exists to prevent.
+        case 'callback': return 'F(' + (t.thisArg ? '@this' + structuralTypeSig(t.thisArg, shared, seen) + ';' : '') +
+            (t.params || []).map((x) => (x && x.optional ? '?' : '') + structuralTypeSig(x, shared, seen)).join(',') +
+            ')=>' + structuralTypeSig(t.ret || { kind: 'unit' }, shared, seen)
         // Broken/opaque fields all EMIT `string`, but two records distinguishable ONLY through them
         // must still hash apart (else collision → order-dependent counter). The original TS type
         // text is stable (source-declared, not id/order-based), so a bounded slice discriminates
@@ -2110,7 +2126,11 @@ export function extractModule(entryFile, opts = {}) {
                         let oname = i === 0 ? name : name + overloadSuffix(sigs[i], sigs[0])
                         for (let n = 2; seen.has(oname); n++) oname = name + overloadSuffix(sigs[i], sigs[0]) + n
                         const ir = buildFunctionIR(checker, sym, source, oname, from, { ...opts, shared, sig: sigs[i] })
-                        const sigKey = (ir.sig.params || []).map((p) => typeSig(p.type)).join(',') + '=>' + typeSig(ir.sig.ret)
+                        // `optional`/`rest` change the EMITTED signature (`~a: string=?`, `@variadic`),
+                        // so two overloads differing only there are NOT the same binding and must not
+                        // dedup onto one. (#183 review follow-up)
+                        const sigKey = JSON.stringify([(ir.sig.params || []).map((p) =>
+                            [typeSig(p.type), !!p.optional, !!p.rest]), typeSig(ir.sig.ret)])
                         if (emittedSigs.has(sigKey)) continue // identical binding — the base overload already covers it
                         emittedSigs.add(sigKey)
                         ir.import.jsName = jsName
@@ -2551,9 +2571,8 @@ const REF_NAMES = /^(Ref|RefObject|MutableRefObject|LegacyRef)$/
  * THE REGISTER-EARLY INVARIANT, and the one snapshot that makes it safe. (#173)
  *
  * Every builder that registers a shared entry keyed by `type.id` — `recordNode`, `tagVariantNode`,
- * `opaqueUnion` (and `overloadModule`, which shares the `t:` keyspace and does NOT yet follow this —
- * its re-entry is real but every cyclic path currently bails to `review` before registering, so it is
- * latent; tracked separately) — MUST register its entry BEFORE recursing into its members, because that entry is
+ * `opaqueUnion` and `overloadModule` (the last joined in #179; before that its signature loop ran
+ * before its registration) — MUST register its entry BEFORE recursing into its members, because that entry is
  * the CYCLE GUARD: a self-referential type re-enters the builder from inside its own build, and the
  * early entry is what the re-entry resolves to. A builder that registers last has no guard, and the
  * re-entry either recurses forever (`tagVariantNode`, #170) or silently builds a DUPLICATE entry for
@@ -2588,6 +2607,7 @@ function registryTrial(ctx) {
         names: new Set(shared.names),
         typeVars: ctx.typeVars ? new Map(ctx.typeVars) : null,
         hcDataVar: ctx.highchartsSeriesDataVar,
+        usesJsFn: shared.usesJsFn,
     } : {
         recordsLen: ctx.records.length,
         enumsLen: ctx.enums.length,
@@ -2606,6 +2626,9 @@ function registryTrial(ctx) {
                 for (const k of [...shared.byKey.keys()]) if (!snap.keys.has(k)) shared.byKey.delete(k)
                 for (const s of [...shared.bySig.keys()]) if (!snap.sigs.has(s)) shared.bySig.delete(s)
                 for (const n of [...shared.names]) if (!snap.names.has(n)) shared.names.delete(n)
+                // A rejected candidate that contained a bare `Function` would otherwise leave this
+                // set and emit an unreferenced `JsFn.res` — the same orphan class as a stray entry. (#178)
+                shared.usesJsFn = snap.usesJsFn
             } else {
                 ctx.records.length = snap.recordsLen
                 ctx.enums.length = snap.enumsLen
@@ -3999,6 +4022,24 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     entry.deps = deps
     entry.note = note
     if (members.some((m) => isHighchartsSeriesOptionsNode(m.type))) entry._highchartsSeriesUnion = true
+    // STRUCTURAL DEDUP, the last builder to get it (#180). Records and tag variants have always
+    // collapsed an identical shape into one entry; `opaqueUnion` registered unconditionally, so two
+    // distinct `type.id`s that widen to the same module each got their own — blend emitted
+    // `ColumnDefinition` and `ColumnDefinition2` with byte-identical bodies. That is not cosmetic:
+    // each `module` declares its own abstract `type t`, so a value built through one CANNOT be passed
+    // where the other is expected, and the consumer's only escape is a cast this project refuses to
+    // emit. Scoped per home, like the others. A SELF-referential module can't falsely merge: its
+    // members carry a ref keyed by its own `type.id`, so the signature differs from any other's.
+    const sig = entry.home + '|' + entrySig(entry)
+    const canon = ctx.shared.bySig.get(sig)
+    if (canon && canon !== entry) {
+        const i = ctx.shared.entries.indexOf(entry)
+        if (i >= 0) ctx.shared.entries.splice(i, 1)
+        ctx.shared.names.delete(entry.name)
+        ctx.shared.byKey.set(key, canon)
+        return ref(canon)
+    }
+    ctx.shared.bySig.set(sig, entry)
     return ref(entry)
     } catch (e) { trial.rollback(); throw e } // never leave a half-built entry behind (#174 review)
 }
@@ -4057,12 +4098,26 @@ function overloadModule(ctx, type, callSigs, propName, depth, props = null) {
     const key = 't:' + type.id
     const ref = (e) => ({ kind: 'typeRef', to: e.name + '.t', home: e.home, key: e.key, ...(e.note ? { note: e.note } : {}) })
     if (ctx.shared.byKey.has(key)) return ref(ctx.shared.byKey.get(key))
+    // REGISTER BEFORE BUILDING SIGNATURES — the fourth builder on this keyspace finally follows the
+    // register-early invariant (#179). It already registered before classifying carried PROPERTIES
+    // (a method returning the callable itself), but the SIGNATURE loop below ran first, so a
+    // self-returning or mutually-recursive overload re-entered with no entry to find: instrumented,
+    // one type re-enters four times at depths 2/4/6. It never broke in practice only because every
+    // cyclic path happens to bail to `review` before reaching the old registration point — correct by
+    // accident of the depth/imperfection gates, not by construction. Name and home are computable up
+    // front (home is refined below and again after props; emit late-binds it for keyed refs, #128).
+    const trial = registryTrial(ctx)
+    try {
+    const name = uniqueName(pascal(typeName(type) || stableAnonBase(ctx, type, propName)), ctx.shared) // a MODULE name; anonymous -> path-anchored (#96)
+    const entry = { key, kind: 'opaque', variant: (props && props.length) ? 'callable' : 'overload', name, home: homeOf(type, ctx), sigs: [], deps: new Set(), note: '' }
+    ctx.shared.byKey.set(key, entry)
+    ctx.shared.entries.push(entry)
     // Build a callback node per signature; bail (→ review) if any param/return can't be typed.
-    const sigs = []
+    const sigs = entry.sigs
     const used = new Set()
     for (const s of callSigs) {
         const fn = functionNode(s, ctx, propName, depth + 1)
-        if (nodeImperfect(fn)) return null
+        if (nodeImperfect(fn)) return trial.rollback()
         // accessor name: `as` + the first param's NAME when descriptive (reason -> asReason);
         // else the React-event type (e: MouseEvent -> asMouse); else a no-arg `asThunk`.
         const p0 = s.getParameters()[0]
@@ -4077,10 +4132,9 @@ function overloadModule(ctx, type, callSigs, propName, depth, props = null) {
         used.add(accessor)
         sigs.push({ accessor, fn })
     }
-    if (sigs.length < 2 && !(props && props.length)) return null
+    if (sigs.length < 2 && !(props && props.length)) return trial.rollback()
     if (sigs.length === 1) sigs[0].accessor = 'asFn' // one way to call it — the descriptive per-overload name adds nothing
-    const name = uniqueName(pascal(typeName(type) || stableAnonBase(ctx, type, propName)), ctx.shared) // a MODULE name; anonymous -> path-anchored (#96)
-    const deps = new Set()
+    const deps = entry.deps
     for (const s of sigs) collectRefKeys(s.fn, deps)
     // Home pick runs TWICE for a callable: this best-effort pass sees only sig-derived deps (props
     // aren't classified yet — nested entries built inside them read `entry.home` for their own
@@ -4094,12 +4148,7 @@ function overloadModule(ctx, type, callSigs, propName, depth, props = null) {
     const isCallable = !!(props && props.length)
     let home = homeOf(type, ctx)
     if (deps.size) home = depHome(deps, ctx.shared, home, isCallable) // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
-    const entry = { key, kind: 'opaque', variant: isCallable ? 'callable' : 'overload', name, home, sigs, deps, note: '' }
-    // Register BEFORE classifying carried properties: a method returning the callable itself
-    // (axios' `create(config): AxiosInstance`) must resolve to `<name>.t` via the cache, not
-    // recurse forever. Sig nodes are already built, so plain overloads are unaffected.
-    ctx.shared.byKey.set(key, entry)
-    ctx.shared.entries.push(entry)
+    entry.home = home // refine the registration made above (late-bound at emit for keyed refs, #128)
     const members = []
     const dropped = []
     if (props && props.length) {
@@ -4139,6 +4188,7 @@ function overloadModule(ctx, type, callSigs, propName, depth, props = null) {
         ? `was callable-with-properties \`${typeName(type) || 'function'}\` — opaque; call via ${viewList}${members.length ? `; props: ${members.map((m) => m.jsName).join(', ')}` : ''}${dropped.length ? `; ⚠️ propert${dropped.length === 1 ? 'y' : 'ies'} NOT bound (couldn't be typed): ${dropped.join(', ')}` : ''}`
         : `was overloaded \`${typeName(type) || 'function'}\` (${callSigs.length} call signatures) — opaque; view with ${viewList}`
     return ref(entry)
+    } catch (e) { trial.rollback(); throw e } // never leave a half-built entry behind (#179)
 }
 
 /**
@@ -4507,6 +4557,14 @@ function unionNodeCore(type, ctx, propName, depth = 0) {
     // number LITERALS may coexist as bare `@as("…")` constructors (distinct constant
     // values) — e.g. `boolean | "indeterminate"` -> Bool(bool) | @as("indeterminate") Indeterminate.
     // TS expands `boolean` into `true | false`, so collapse those into one `bool`.
+    // NB the candidate pass below is SPECULATIVE and its `memberOf` calls REGISTER records — which
+    // leaves orphans when the candidate is rejected (#178). It is deliberately NOT rolled back here:
+    // a speculative registration is load-bearing. `boundedPastDepth` treats an already-registered
+    // type as safe to link past MAX_DEPTH ("registered → link"), so un-registering at bail time
+    // silently degrades a LATER legitimate deep reference to a `string` placeholder — measured on
+    // blend, where `pointOptionsObject` vanished from `point.options` and `optionsToObject` fell to
+    // `string` while top-level bucket counts stayed put. Orphan removal has to be a reachability
+    // sweep AFTER traversal, not a rollback during it; tracked in #178.
     let hasBool = false, hasString = false, hasNumber = false, hasBigInt = false
     const strLits = [], numLits = [], others = []
     let buildable = true
@@ -4994,7 +5052,12 @@ function typeSig(t) {
         case 'map': return 'M[' + typeSig(t.mapKey) + ',' + typeSig(t.mapVal) + ']'
         case 'set': return 'S[' + typeSig(t.of) + ']'
         case 'promise': return 'P[' + typeSig(t.of) + ']'
-        case 'callback': return 'F(' + (t.params || []).map(typeSig).join(',') + ')=>' + typeSig(t.ret || { kind: 'unit' })
+        // Param OPTIONALITY and a `@this` arg both change what renderType emits (`option<string> => unit`
+        // vs `string => unit`; a leading bound `this`), so they must be in the signature — two shapes
+        // that render differently must never dedup onto one entry, or whichever registers first wins
+        // and the other binding silently becomes over-restrictive or unsound. (#183 review)
+        case 'callback': return 'F(' + (t.thisArg ? '@this' + typeSig(t.thisArg) + ';' : '') +
+            (t.params || []).map((x) => (x && x.optional ? '?' : '') + typeSig(x)).join(',') + ')=>' + typeSig(t.ret || { kind: 'unit' })
         case 'event': return 'E(' + t.res + ')'
         case 'raw': return 'raw(' + t.res + ')'
         case 'typeVar': return 'V(' + t.name + ')'
@@ -5005,6 +5068,11 @@ function typeSig(t) {
         case 'review':
         case 'unknown':
         case 'any': return 'opaque'
+        // Both render their PAYLOAD (`React.component<x>` / `React.ref<Nullable.t<x>>`), so the
+        // payload is part of the shape — the default branch below would have hashed every
+        // `React.component<…>` alike. (#183 review)
+        case 'reactComponent': return 'RC[' + typeSig(t.of) + ']'
+        case 'reactRef': return 'RR[' + typeSig(t.of) + ']'
         default: return t.kind
     }
 }
@@ -5245,6 +5313,7 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
     if (ctx.shared) {
         // Module mode: register the entry EARLY (with its final name) so self/mutual
         // references during field building resolve to its typeRef, then fill fields.
+        const recTrial = registryTrial(ctx) // throw guard only — this builder has no bail path (#182)
         const key = 'id:' + type.id
         if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
         const home = homeOf(type, ctx)
@@ -5277,10 +5346,19 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         // counter; the owner seed gives `inputsTextInputTokensInputContainerConfig` etc., stable &
         // hash-free. Anonymous shapes keep accumulating the path. (#90)
         const prevPath = ctx.path; if (typeName) ctx.path = [typeName]
-        const built = buildRecordFields(type, ctx, depth)
-        ctx.path = prevPath
-        ctx.selfId = prevSelfId
-        if (type.id != null) ctx.visiting?.delete(type.id)
+        // `recordNode` registers early (it is the ORIGIN of the register-early invariant) and never
+        // bails — so it needs no bail-rollback, only a THROW guard: `buildRecordFields` can throw, and
+        // the entry would survive with `fields: []`, emitting a dead `type x = {}`. ReScript accepts an
+        // empty record so it compiles, but it is an artefact of a failure, not a binding. Roll back and
+        // rethrow, matching the other three builders. (#182)
+        let built
+        try { built = buildRecordFields(type, ctx, depth) }
+        catch (e) { recTrial.rollback(); throw e }
+        finally {
+            ctx.path = prevPath
+            ctx.selfId = prevSelfId
+            if (type.id != null) ctx.visiting?.delete(type.id)
+        }
         entry.spread = built.spread
         entry.fields = built.fields
         entry.indexValue = built.indexValue // #119: `@set_index` setter value type (index-sig records)
@@ -5320,16 +5398,21 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
     }
 
     // Single-file mode: emit into the component's local record list, deduped by name.
+    const localTrial = registryTrial(ctx)
     const rname = base
     if (ctx.seenRecords.has(rname)) return { kind: 'typeRef', to: rname }
     ctx.seenRecords.set(rname, true)
     if (type.id != null) ctx.visiting?.add(type.id)
     const prevSelfId = ctx.selfId; ctx.selfId = type.id
     const prevPath = ctx.path; if (typeName) ctx.path = [typeName] // named type = anchor root seeded with its own name (#90)
-    const built = buildRecordFields(type, ctx, depth)
-    ctx.path = prevPath
-    ctx.selfId = prevSelfId
-    if (type.id != null) ctx.visiting?.delete(type.id)
+    let built // same throw guard as module mode, over the local registries (#182)
+    try { built = buildRecordFields(type, ctx, depth) }
+    catch (e) { localTrial.rollback(); throw e }
+    finally {
+        ctx.path = prevPath
+        ctx.selfId = prevSelfId
+        if (type.id != null) ctx.visiting?.delete(type.id)
+    }
     const tvars = new Set()
     for (const f of built.fields) collectTypeVars(f.type, tvars)
     const tparams = tvars.size ? [...tvars] : undefined

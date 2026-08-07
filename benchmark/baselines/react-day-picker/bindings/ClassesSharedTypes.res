@@ -793,7 +793,7 @@ type dayPickerProps = {
   excludeDisabled?: bool,
   resetOnSelect?: bool,
 }
-type dayPickerContextFa9fr = {
+type dayPickerContextV1ijk6 = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,
@@ -809,7 +809,7 @@ type dayPickerContextFa9fr = {
   formatters: formatters,
   dayPickerProps: dayPickerProps,
 }
-type dayPickerContextLqhv7 = {
+type dayPickerContextTp9tz = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,

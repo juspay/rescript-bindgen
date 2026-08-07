@@ -31078,10 +31078,3 @@ type responsiveChartTokens = {
   lg: chartTokensType,
 }
 @unboxed type stringOrChartsColorsConfig = Str(string) | ChartsColorsConfig(chartsColorsConfig)
-module ChartV2LegendItem = {
-  type t
-  external fromPoint: point<'a, 'b, 'c> => t = "%identity"
-  external asPoint: t => (point<'a, 'b, 'c>) = "%identity"
-  external fromSeries: series<'a, 'b, 'c> => t = "%identity"
-  external asSeries: t => (series<'a, 'b, 'c>) = "%identity"
-}

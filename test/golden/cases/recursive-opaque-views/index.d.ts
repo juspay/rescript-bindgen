@@ -30,7 +30,11 @@ type Shape =
     | { sides: 0; radius: number; nested: Shape[] }
     | { sides: 4; side: number; nested: Shape[] }
 
-export declare const Poison: (props: { root?: Poisoned }) => JsxElement
+// `roots` (ARRAY position) is what actually reaches `opaqueUnion`, and therefore what exercises #173.
+// `root` (PROP position) widens to a flagged `string` and never touches the module (#181), so it is
+// NOT the load-bearing half of this fixture — keep the array prop, or the case can stop testing the
+// cycle guard without any golden changing to say so.
+export declare const Poison: (props: { root?: Poisoned; roots?: Poisoned[] }) => JsxElement
 export declare const Shapes: (props: { shape?: Shape }) => JsxElement
 
 // CROSS-COMPONENT re-entry (#174 review, the reviewer's P4 probe): the SAME self-referential union
