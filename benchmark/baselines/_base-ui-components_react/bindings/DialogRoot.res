@@ -9,7 +9,7 @@ type props<'a> = {
   onOpenChangeComplete?: bool => unit,
   disablePointerDismissal?: bool,
   actionsRef?: React.ref<Nullable.t<RootSharedTypes.dialogRootActions>>,
-  handle?: RootSharedTypes.dialogHandleV1ctr52<'a>,
+  handle?: StoreTypes.dialogHandleV1ctr52<'a>,
   children?: React.element,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
   triggerId?: Nullable.t<string>,
   defaultTriggerId?: Nullable.t<string>,

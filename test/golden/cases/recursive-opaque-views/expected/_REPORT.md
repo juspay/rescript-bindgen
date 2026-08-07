@@ -1,6 +1,6 @@
 # Binding report — `demo`
 
-**3** components · ✅ **3** usable · 🔍 **0** need review · 🛑 **0** broken
+**3** components · ✅ **2** usable · 🔍 **1** need review · 🛑 **0** broken
 
 **6** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
@@ -16,7 +16,6 @@
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- Poison  _(1 loose)_
 - Shapes  _(1 loose)_
 - ShapesToo  _(1 loose)_
 
@@ -33,7 +32,11 @@ These resolved to a real but complex type and were widened to `string` (they com
 
 A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object shapes), so an `@unboxed` variant won't work and we **refuse to use `%identity`/unsafe casts**. The prop is emitted as a `string` placeholder with an inline `// ⚠️ REVIEW` comment — bind it by hand or fix the type upstream.
 
-_(none)_
+### Poison  _(1 loose)_
+
+| Prop | Real TypeScript |
+|------|-----------------|
+| `roots` | `roots?: Poisoned[]` — binds, but references shared field(s) `recursiveOpaqueViewsRootsBadConfig.payload` (`any`) emitted as `string` |
 
 ## 🛑 Broken — needs serious component change
 

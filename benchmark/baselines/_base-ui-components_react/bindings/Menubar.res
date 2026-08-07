@@ -1,12 +1,12 @@
 /** zero-cost wrapper: pass the FUNCTION form of `render` — `render={renderFn((…) => …)}` */
-external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.menubarState) => React.element) => React.element = "%identity"
+external renderFn: ((PositionerSharedTypes.htmlProps, MenubarTypes.menubarState) => React.element) => React.element = "%identity"
 
 type props = {
   modal?: bool,
   disabled?: bool,
   orientation?: RootSharedTypes.menuRootOrientation,
   loopFocus?: bool,
-  style?: RootSharedTypes.menubarStyle,
+  style?: MenubarTypes.menubarStyle,
   title?: string,
   autoFocus?: bool,
   hidden?: bool,
@@ -55,7 +55,7 @@ type props = {
   onMouseUp?: PositionerSharedTypes.baseUIEvent => unit,
   onScroll?: PositionerSharedTypes.baseUIEvent => unit,
   onWheel?: PositionerSharedTypes.baseUIEvent => unit,
-  className?: RootSharedTypes.menubarClassName,
+  className?: MenubarTypes.menubarClassName,
   render?: React.element,  // ⓘ function form: wrap with `renderFn` (zero-cost)
   ref?: React.ref<Nullable.t<Dom.element>>,
 }

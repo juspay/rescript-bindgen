@@ -1,8 +1,8 @@
-type props<'a, 'b, 'c, 't7> = {
+type props<'a, 'b, 'c, 't6> = {
   ref?: React.ref<Nullable.t<DistTypes.highchartsReactRefObject<'a, 'b, 'c>>>,
   allowChartUpdate?: bool,
   constructorType?: HighchartsSharedTypes.chartsBlendChartPropsConstructorType,
-  containerProps?: Dict.t<'t7>,
+  containerProps?: Dict.t<'t6>,
   highcharts?: InstanceTypes.highchartsModule,
   immutable?: bool,
   options?: HighchartsSharedTypes.options<'a, 'b, 'c>,
@@ -11,4 +11,4 @@ type props<'a, 'b, 'c, 't7> = {
 }
 
 @module("@juspay/blend-design-system")
-external make: React.component<props<'a, 'b, 'c, 't7>> = "BlendChart"
+external make: React.component<props<'a, 'b, 'c, 't6>> = "BlendChart"

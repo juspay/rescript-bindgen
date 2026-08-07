@@ -481,11 +481,23 @@ Fixtures: [`recursive-opaque-views`](../test/golden/cases/recursive-opaque-views
 **Every builder that registers a shared entry keyed by `type.id` must register BEFORE recursing into
 its members.** That entry *is* the cycle guard: a self-referential type re-enters the builder from
 inside its own build, and the early entry is what the re-entry resolves to. **Four** builders share the
-keyspace: `recordNode` (always did this), `tagVariantNode` (#170), `opaqueUnion` (#173) — and
-`overloadModule`, which does **not** follow the rule yet. Its re-entry is real (instrumented: four
-re-entries of one type at depths 2/4/6, and mutual re-entry across two) but every cyclic path bails to
-`review` before registering, so the duplicate is latent rather than live. Tracked in #179; treat it as
-an exception to be closed, not as a fourth pattern.
+keyspace, and all four now follow the rule: `recordNode` (always did), `tagVariantNode` (#170),
+`opaqueUnion` (#173) and `overloadModule` (#179 — it already registered before classifying carried
+*properties*, but its *signature* loop ran first, so a self-returning overload re-entered with no
+entry to find; instrumented at four re-entries of one type at depths 2/4/6).
+
+Every builder that can bail or throw pairs registration with `registryTrial(ctx)`, and the same helper
+now sandboxes two more speculative passes that had no rollback at all:
+
+| Pass | Was leaking |
+|---|---|
+| `unionNode`'s `@unboxed` candidate (#178) | `memberOf` registers records per arm; when two arms claim one JS `typeof` bucket the candidate is rejected, and those records survived as orphans — plus a stray `JsFn.res` via the `usesJsFn` flag |
+| `recordNode` (#182) | no bail path, but a **throw** inside `buildRecordFields` left an entry with `fields: []`, emitting a dead `type x = {}` |
+
+`opaqueUnion` also gained the **structural dedup** the other builders always had (#180): it registered
+unconditionally, so two `type.id`s widening to the same module each got their own — blend emitted
+`ColumnDefinition` and `ColumnDefinition2` with byte-identical bodies. Each `module` declares its own
+abstract `type t`, so a value built through one could not be passed where the other was expected.
 
 Registering last has produced both possible failure modes, in production:
 

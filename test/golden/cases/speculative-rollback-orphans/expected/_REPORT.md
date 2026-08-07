@@ -2,7 +2,7 @@
 
 **1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**1** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**0** shared types deduplicated into **0** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -16,7 +16,7 @@
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- AccordionItem  _(1 loose)_
+- LeakProbe  _(1 loose)_
 
 ## ⚪ Loosely typed (widened to `string`)
 
@@ -24,7 +24,7 @@ These resolved to a real but complex type and were widened to `string` (they com
 
 | Resolved TypeScript type | → emitted | count | example props |
 |--------------------------|-----------|-------|---------------|
-| `string \| { a: 1; } \| { b: 2; }` | `string` | 1 | weird |
+| `Leaked` | `string` | 1 | value |
 
 ## 🔍 Needs review
 
