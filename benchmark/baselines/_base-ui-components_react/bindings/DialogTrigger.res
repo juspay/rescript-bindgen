@@ -2,7 +2,7 @@
 external renderFn: ((PositionerSharedTypes.htmlProps, TriggerTypes.dialogTriggerState) => React.element) => React.element = "%identity"
 
 type props<'a> = {
-  handle?: StoreTypes.dialogHandleGnv26<'a>,
+  handle?: RootSharedTypes.dialogHandleGnv26<'a>,
   payload?: 'a,
   id?: string,
   nativeButton?: bool,

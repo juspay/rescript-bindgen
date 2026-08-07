@@ -1,37 +1,37 @@
 @@warning("-30")
 
 type poisoned_t
-type rec recursiveOpaqueViewsRootsBadConfig = {
+type rec recursiveOpaqueViewsRootChildrenBadConfig = {
   kind: string,  // ⚪ loose — was `"bad"`
   children: array<poisoned_t>,
   payload: string,  // 🛑 BROKEN — contains `any`
 }
-and recursiveOpaqueViewsRootsOkConfig = {
+and recursiveOpaqueViewsRootConfig = {
   kind: string,  // ⚪ loose — was `"ok"`
   children: array<poisoned_t>,
 }
 module Poisoned = {
   type t = poisoned_t
-  external fromRecursiveOpaqueViewsRootsOkConfig: recursiveOpaqueViewsRootsOkConfig => t = "%identity"
-  external asRecursiveOpaqueViewsRootsOkConfig: t => (recursiveOpaqueViewsRootsOkConfig) = "%identity"
-  external fromRecursiveOpaqueViewsRootsBadConfig: recursiveOpaqueViewsRootsBadConfig => t = "%identity"
-  external asRecursiveOpaqueViewsRootsBadConfig: t => (recursiveOpaqueViewsRootsBadConfig) = "%identity"
+  external fromRecursiveOpaqueViewsRootConfig: recursiveOpaqueViewsRootConfig => t = "%identity"
+  external asRecursiveOpaqueViewsRootConfig: t => (recursiveOpaqueViewsRootConfig) = "%identity"
+  external fromRecursiveOpaqueViewsRootChildrenBadConfig: recursiveOpaqueViewsRootChildrenBadConfig => t = "%identity"
+  external asRecursiveOpaqueViewsRootChildrenBadConfig: t => (recursiveOpaqueViewsRootChildrenBadConfig) = "%identity"
 }
 type shape_t
-type rec recursiveOpaqueViewsListConfigF3432 = {
+type rec recursiveOpaqueViewsShapeNestedConfig = {
   sides: string,  // ⚪ loose — was `4`
   side: float,
   nested: array<shape_t>,
 }
-and recursiveOpaqueViewsListConfigV1nk3d = {
+and recursiveOpaqueViewsShapeConfig = {
   sides: string,  // ⚪ loose — was `0`
   radius: float,
   nested: array<shape_t>,
 }
 module Shape = {
   type t = shape_t
-  external fromRecursiveOpaqueViewsListConfig: recursiveOpaqueViewsListConfigV1nk3d => t = "%identity"
-  external asRecursiveOpaqueViewsListConfig: t => (recursiveOpaqueViewsListConfigV1nk3d) = "%identity"
-  external fromRecursiveOpaqueViewsListConfig2: recursiveOpaqueViewsListConfigF3432 => t = "%identity"
-  external asRecursiveOpaqueViewsListConfig2: t => (recursiveOpaqueViewsListConfigF3432) = "%identity"
+  external fromRecursiveOpaqueViewsShapeConfig: recursiveOpaqueViewsShapeConfig => t = "%identity"
+  external asRecursiveOpaqueViewsShapeConfig: t => (recursiveOpaqueViewsShapeConfig) = "%identity"
+  external fromRecursiveOpaqueViewsShapeNestedConfig: recursiveOpaqueViewsShapeNestedConfig => t = "%identity"
+  external asRecursiveOpaqueViewsShapeNestedConfig: t => (recursiveOpaqueViewsShapeNestedConfig) = "%identity"
 }

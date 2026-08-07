@@ -26,6 +26,6 @@ type htmlAttributeAnchorTarget =
   | @as("_blank") Blank
   | @as("_parent") Parent
   | @as("_top") Top
-type htmlAttributes = {
+type refObject = {
   ...JsxDOM.domProps,
 }

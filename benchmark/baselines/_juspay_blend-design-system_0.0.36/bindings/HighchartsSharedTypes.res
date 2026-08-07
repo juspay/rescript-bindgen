@@ -80,12 +80,6 @@ type chartsSeriesSetState =
   | @as("select") Select
   | @as("hover") Hover
   | @as("inactive") Inactive
-type chartsPointSetState =
-  | @as("") Value
-  | @as("normal") Normal
-  | @as("select") Select
-  | @as("hover") Hover
-  | @as("inactive") Inactive
 type svgPathCommand =
   | @as("a") A
   | @as("q") Q
@@ -107,6 +101,12 @@ type svgPathCommand =
   | @as("T") T2
   | @as("V") V2
   | @as("Z") Z2
+type chartsPointSetState =
+  | @as("") Value
+  | @as("normal") Normal
+  | @as("select") Select
+  | @as("hover") Hover
+  | @as("inactive") Inactive
 type bubbleSizeByValue =
   | @as("width") Width
   | @as("area") Area
@@ -392,6 +392,11 @@ type optionsDropdownValue =
   | @as("always") Always
   | @as("never") Never
   | @as("responsive") Responsive
+type mapGeometryTypeValue =
+  | @as("LineString") LineString
+  | @as("MultiLineString") MultiLineString
+  | @as("MultiPolygon") MultiPolygon
+  | @as("Polygon") Polygon
 type synthPatchOscillatorType =
   | @as("pulse") Pulse
   | @as("square") Square
@@ -810,6 +815,10 @@ type pointerEventObject = {
   chartX: float,
   chartY: float,
 }
+type pointAccessibilityOptionsObject = {
+  description?: string,
+  enabled?: bool,
+}
 type linearGradientColorObject = {
   x1: float,
   x2: float,
@@ -854,13 +863,19 @@ module ColorType = {
   external fromPatternObject: patternObject => t = "%identity"
   external asPatternObject: t => (patternObject) = "%identity"
 }
-type seriesZonesOptionsObject = {
-  className?: string,
-  color?: ColorType.t,
-  dashStyle?: dashStyleValue,
-  fillColor?: ColorType.t,
+type dataLabelsFilterOptionsObject = {
+  operator?: optionsOperatorValue,
+  property?: string,
   value?: float,
 }
+type shadowOptionsObject = {
+  color?: string,
+  offsetX?: float,
+  offsetY?: float,
+  opacity?: float,
+  width?: float,
+}
+@unboxed type boolOrShadowOptionsObject = Bool(bool) | ShadowOptionsObject(shadowOptionsObject)
 module GetLinePathTarget = {
   type t
   external fromSVGPathCommands: array<svgPathCommand> => t = "%identity"
@@ -897,6 +912,256 @@ type svgAttributes = {
   zIndex?: int,
 }
 @set_index external svgAttributesSet: (svgAttributes, string, JSON.t) => unit = ""
+type plotDependencywheelDataLabelsTextPathAttributesOptions = {
+  dy?: svgAttributes,
+}
+type plotTreegraphDataLabelsLinkTextPathAttributesOptions = {
+  startOffset?: float,
+}
+type plotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions = {
+  startOffset?: float,
+}
+module ChartsDataLabelsTextPathOptionsObjectAttributes = {
+  type t
+  external fromSVGAttributes: svgAttributes => t = "%identity"
+  external asSVGAttributes: t => (svgAttributes) = "%identity"
+  external fromPlotDependencywheelDataLabelsTextPathAttributesOptions: plotDependencywheelDataLabelsTextPathAttributesOptions => t = "%identity"
+  external asPlotDependencywheelDataLabelsTextPathAttributesOptions: t => (plotDependencywheelDataLabelsTextPathAttributesOptions) = "%identity"
+  external fromPlotTreegraphDataLabelsLinkTextPathAttributesOptions: plotTreegraphDataLabelsLinkTextPathAttributesOptions => t = "%identity"
+  external asPlotTreegraphDataLabelsLinkTextPathAttributesOptions: t => (plotTreegraphDataLabelsLinkTextPathAttributesOptions) = "%identity"
+  external fromPlotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions: plotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions => t = "%identity"
+  external asPlotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions: t => (plotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions) = "%identity"
+}
+type dataLabelsTextPathOptionsObject = {
+  attributes?: ChartsDataLabelsTextPathOptionsObjectAttributes.t,
+  enabled?: bool,
+}
+type dataLabelsOptions = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | SeriesArcdiagramDataDataLabelsAnimationOptions | ... 55 more ... |` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: string,  // ⚪ loose — was `DataLabelsFormatterCallbackFunction`
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: string,  // ⚪ loose — was `DataLabelsFormatterCallbackFunction`
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  x?: float,
+  xHigh?: float,
+  xLow?: float,
+  y?: float,
+  yHigh?: float,
+  yLow?: float,
+}
+type plotNetworkgraphDataLabelsStyleOptions = {
+  transition?: string,
+}
+module ChartsSeriesNetworkgraphDataLabelsOptionsObjectStyle = {
+  type t
+  external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
+  external fromPlotNetworkgraphDataLabelsStyleOptions: plotNetworkgraphDataLabelsStyleOptions => t = "%identity"
+  external asPlotNetworkgraphDataLabelsStyleOptions: t => (plotNetworkgraphDataLabelsStyleOptions) = "%identity"
+}
+type legendAccessibilityKeyboardNavigationOptions = {
+  enabled?: bool,
+}
+type plotPackedbubbleDataLabelsStyleOptions = {
+  transition?: string,
+}
+module ChartsSeriesPackedBubbleDataLabelsOptionsObjectStyle = {
+  type t
+  external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
+  external fromPlotPackedbubbleDataLabelsStyleOptions: plotPackedbubbleDataLabelsStyleOptions => t = "%identity"
+  external asPlotPackedbubbleDataLabelsStyleOptions: t => (plotPackedbubbleDataLabelsStyleOptions) = "%identity"
+}
+type plotTreegraphDataLabelsStyleOptions = {
+  textOverflow?: string,
+}
+type plotTreegraphLevelsDataLabelsStyleOptions = {
+  textOverflow?: string,
+}
+module ChartsSeriesTreegraphDataLabelsOptionsObjectStyle = {
+  type t
+  external fromCSSObject: cssObject => t = "%identity"
+  external asCSSObject: t => (cssObject) = "%identity"
+  external fromPlotTreegraphDataLabelsStyleOptions: plotTreegraphDataLabelsStyleOptions => t = "%identity"
+  external asPlotTreegraphDataLabelsStyleOptions: t => (plotTreegraphDataLabelsStyleOptions) = "%identity"
+  external fromPlotTreegraphLevelsDataLabelsStyleOptions: plotTreegraphLevelsDataLabelsStyleOptions => t = "%identity"
+  external asPlotTreegraphLevelsDataLabelsStyleOptions: t => (plotTreegraphLevelsDataLabelsStyleOptions) = "%identity"
+}
+type dragDropHandleOptionsObject = {
+  className?: string,
+  color?: ColorType.t,
+  cursor?: string,
+  lineColor?: string,
+  lineWidth?: float,
+  pathFormatter?: JsFn.t,
+  zIndex?: int,
+}
+type seriesLineDataDragDropOptions = {
+  draggableX?: bool,
+  draggableY?: bool,
+  dragHandle?: dragDropHandleOptionsObject,
+  dragMaxX?: CommonTypes.stringOrNumber,
+  dragMaxY?: float,
+  dragMinX?: CommonTypes.stringOrNumber,
+  dragMinY?: float,
+  dragPrecisionX?: float,
+  dragPrecisionY?: float,
+  dragSensitivity?: float,
+  groupBy?: string,
+  guideBox?: string,  // ⚠️ REVIEW — was `PlotOptionsSeriesDragDropGuideBoxOptions | Dictionary<DragDropGuideBoxOptionsObject>` — match the real type by hand
+  liveRedraw?: bool,
+}
+type pointStatesHoverOptionsObject = {
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAbandsMarkerStatesHoverAnimationOptions | ... 97 more ... | Se` — match the real type by hand
+  enabled?: bool,
+  fillColor?: ColorType.t,
+  height?: float,
+  heightPlus?: float,
+  lineColor?: ColorType.t,
+  lineWidth?: float,
+  lineWidthPlus?: float,
+  radius?: float,
+  radiusPlus?: float,
+  width?: float,
+  widthPlus?: float,
+}
+type pointStatesInactiveOptionsObject = {
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  opacity?: float,
+}
+type pointStatesNormalOptionsObject = {
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+}
+type pointStatesSelectOptionsObject = {
+  enabled?: bool,
+  fillColor?: ColorType.t,
+  height?: float,
+  heightPlus?: float,
+  lineColor?: ColorType.t,
+  lineWidth?: float,
+  radius?: float,
+  width?: float,
+  widthPlus?: float,
+}
+type pointStatesOptionsObject = {
+  hover?: pointStatesHoverOptionsObject,
+  inactive?: pointStatesInactiveOptionsObject,
+  normal?: pointStatesNormalOptionsObject,
+  select?: pointStatesSelectOptionsObject,
+}
+type pointMarkerOptionsObject = {
+  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
+  color?: ColorType.t,
+  enabled?: bool,
+  enabledThreshold?: float,
+  fillColor?: ColorType.t,
+  fillOpacity?: float,
+  height?: float,
+  lineColor?: ColorType.t,
+  lineWidth?: float,
+  radius?: float,
+  states?: pointStatesOptionsObject,
+  symbol?: string,
+  width?: float,
+}
+type plotTilemapStatesHoverHaloAttributesOptions = {
+  zIndex?: int,
+}
+module ChartsSeriesStatesHoverHaloOptionsObjectAttributes = {
+  type t
+  external fromSVGAttributes: svgAttributes => t = "%identity"
+  external asSVGAttributes: t => (svgAttributes) = "%identity"
+  external fromPlotTilemapStatesHoverHaloAttributesOptions: plotTilemapStatesHoverHaloAttributesOptions => t = "%identity"
+  external asPlotTilemapStatesHoverHaloAttributesOptions: t => (plotTilemapStatesHoverHaloAttributesOptions) = "%identity"
+}
+type seriesStatesHoverHaloOptionsObject = {
+  attributes?: ChartsSeriesStatesHoverHaloOptionsObjectAttributes.t,
+  enabled?: bool,
+  opacity?: float,
+  size?: float,
+}
+type seriesStatesHoverOptionsObject = {
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAbandsStatesHoverAnimationOptions | PlotAdStatesHoverAnimation` — match the real type by hand
+  borderColor?: ColorType.t,
+  borderWidth?: float,
+  brightness?: float,
+  color?: ColorType.t,
+  connectorWidthPlus?: float,
+  enabled?: bool,
+  fillColor?: ColorType.t,
+  halo?: seriesStatesHoverHaloOptionsObject,
+  lineColor?: ColorType.t,
+  lineWidth?: float,
+  lineWidthPlus?: float,
+  linkOpacity?: float,
+  marker?: pointMarkerOptionsObject,
+  opacity?: float,
+  shadow?: bool,
+}
+@unboxed type numberOrSeriesStatesHoverOptionsObject = Num(float) | SeriesStatesHoverOptionsObject(seriesStatesHoverOptionsObject)
+type seriesStatesInactiveOptionsObject = {
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAbandsStatesInactiveAnimationOptions | PlotAdStatesInactiveAni` — match the real type by hand
+  enabled?: bool,
+  linkOpacity?: float,
+  opacity?: float,
+}
+type seriesStatesSelectOptionsObject = {
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAbandsStatesSelectAnimationOptions | PlotAdStatesSelectAnimati` — match the real type by hand
+  borderColor?: ColorType.t,
+  borderWidth?: float,
+  color?: ColorType.t,
+  enabled?: bool,
+  halo?: seriesStatesHoverHaloOptionsObject,
+  lineWidth?: float,
+  lineWidthPlus?: float,
+  marker?: pointMarkerOptionsObject,
+}
+type seriesStatesOptionsObject = {
+  hover?: numberOrSeriesStatesHoverOptionsObject,
+  inactive?: seriesStatesInactiveOptionsObject,
+  normal?: pointStatesNormalOptionsObject,
+  select?: seriesStatesSelectOptionsObject,
+}
+type seriesBulletDataTargetOptions = {
+  borderColor?: string,
+  borderRadius?: float,
+  borderWidth?: float,
+  color?: ColorType.t,
+  height?: float,
+  width?: CommonTypes.stringOrNumber,
+}
+type seriesZonesOptionsObject = {
+  className?: string,
+  color?: ColorType.t,
+  dashStyle?: dashStyleValue,
+  fillColor?: ColorType.t,
+  value?: float,
+}
 type extremesObject = {
   dataMax: float,
   dataMin: float,
@@ -922,9 +1187,6 @@ module AxisTitleOptions = {
   external asYAxisTitleOptions: t => (xAxisTitleOptions) = "%identity"
   external fromZAxisTitleOptions: xAxisTitleOptions => t = "%identity"
   external asZAxisTitleOptions: t => (xAxisTitleOptions) = "%identity"
-}
-type legendAccessibilityKeyboardNavigationOptions = {
-  enabled?: bool,
 }
 type legendAccessibilityOptions = {
   enabled?: bool,
@@ -1030,14 +1292,6 @@ type annotationsEventsOptions = {
 type annotationLabelAccessibilityOptionsObject = {
   description?: string,
 }
-type shadowOptionsObject = {
-  color?: string,
-  offsetX?: float,
-  offsetY?: float,
-  opacity?: float,
-  width?: float,
-}
-@unboxed type boolOrShadowOptionsObject = Bool(bool) | ShadowOptionsObject(shadowOptionsObject)
 @unboxed type annotationControlPointOptionsObjectOrAnnotationControlPointOptionsObjectArray = AnnotationControlPointOptionsObject(annotationControlPointOptionsObject) | AnnotationControlPointOptionsObjectArr(array<annotationControlPointOptionsObject>)
 type annotationMockPointOptionsObject = {
   x: float,
@@ -1385,59 +1639,6 @@ module ChartsColorAxisLabelsOptionsStyle = {
   external fromColorAxisLabelsStyleOptions: chartParallelAxesLabelsStyleOptions => t = "%identity"
   external asColorAxisLabelsStyleOptions: t => (chartParallelAxesLabelsStyleOptions) = "%identity"
 }
-type pointStatesHoverOptionsObject = {
-  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAbandsMarkerStatesHoverAnimationOptions | ... 97 more ... | Se` — match the real type by hand
-  enabled?: bool,
-  fillColor?: ColorType.t,
-  height?: float,
-  heightPlus?: float,
-  lineColor?: ColorType.t,
-  lineWidth?: float,
-  lineWidthPlus?: float,
-  radius?: float,
-  radiusPlus?: float,
-  width?: float,
-  widthPlus?: float,
-}
-type pointStatesInactiveOptionsObject = {
-  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  opacity?: float,
-}
-type pointStatesNormalOptionsObject = {
-  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-}
-type pointStatesSelectOptionsObject = {
-  enabled?: bool,
-  fillColor?: ColorType.t,
-  height?: float,
-  heightPlus?: float,
-  lineColor?: ColorType.t,
-  lineWidth?: float,
-  radius?: float,
-  width?: float,
-  widthPlus?: float,
-}
-type pointStatesOptionsObject = {
-  hover?: pointStatesHoverOptionsObject,
-  inactive?: pointStatesInactiveOptionsObject,
-  normal?: pointStatesNormalOptionsObject,
-  select?: pointStatesSelectOptionsObject,
-}
-type pointMarkerOptionsObject = {
-  animation?: string,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  color?: ColorType.t,
-  enabled?: bool,
-  enabledThreshold?: float,
-  fillColor?: ColorType.t,
-  fillOpacity?: float,
-  height?: float,
-  lineColor?: ColorType.t,
-  lineWidth?: float,
-  radius?: float,
-  states?: pointStatesOptionsObject,
-  symbol?: string,
-  width?: float,
-}
 module ChartsColorAxisTitleOptionsStyle = {
   type t
   external fromCSSObject: cssObject => t = "%identity"
@@ -1623,73 +1824,6 @@ type dataGroupingOptionsObject = {
   groupPixelWidth?: float,
   lastAnchor?: string,
   units?: array<array<JSON.t>>,
-}
-type dataLabelsFilterOptionsObject = {
-  operator?: optionsOperatorValue,
-  property?: string,
-  value?: float,
-}
-type plotDependencywheelDataLabelsTextPathAttributesOptions = {
-  dy?: svgAttributes,
-}
-type plotTreegraphDataLabelsLinkTextPathAttributesOptions = {
-  startOffset?: float,
-}
-type plotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions = {
-  startOffset?: float,
-}
-module ChartsDataLabelsTextPathOptionsObjectAttributes = {
-  type t
-  external fromSVGAttributes: svgAttributes => t = "%identity"
-  external asSVGAttributes: t => (svgAttributes) = "%identity"
-  external fromPlotDependencywheelDataLabelsTextPathAttributesOptions: plotDependencywheelDataLabelsTextPathAttributesOptions => t = "%identity"
-  external asPlotDependencywheelDataLabelsTextPathAttributesOptions: t => (plotDependencywheelDataLabelsTextPathAttributesOptions) = "%identity"
-  external fromPlotTreegraphDataLabelsLinkTextPathAttributesOptions: plotTreegraphDataLabelsLinkTextPathAttributesOptions => t = "%identity"
-  external asPlotTreegraphDataLabelsLinkTextPathAttributesOptions: t => (plotTreegraphDataLabelsLinkTextPathAttributesOptions) = "%identity"
-  external fromPlotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions: plotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions => t = "%identity"
-  external asPlotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions: t => (plotTreegraphLevelsDataLabelsLinkTextPathAttributesOptions) = "%identity"
-}
-type dataLabelsTextPathOptionsObject = {
-  attributes?: ChartsDataLabelsTextPathOptionsObjectAttributes.t,
-  enabled?: bool,
-}
-type dataLabelsOptions = {
-  align?: alignValue,
-  alignTo?: string,
-  allowOverlap?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | SeriesArcdiagramDataDataLabelsAnimationOptions | ... 55 more ... |` — match the real type by hand
-  backgroundColor?: ColorType.t,
-  borderColor?: ColorType.t,
-  borderRadius?: float,
-  borderWidth?: float,
-  className?: string,
-  color?: ColorType.t,
-  crop?: bool,
-  defer?: bool,
-  enabled?: bool,
-  filter?: dataLabelsFilterOptionsObject,
-  format?: string,
-  formatter?: string,  // ⚪ loose — was `DataLabelsFormatterCallbackFunction`
-  inside?: bool,
-  labelrank?: float,
-  nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: string,  // ⚪ loose — was `DataLabelsFormatterCallbackFunction`
-  overflow?: dataLabelsOverflowValue,
-  padding?: float,
-  position?: alignValue,
-  rotation?: float,
-  shadow?: boolOrShadowOptionsObject,
-  shape?: string,
-  style?: cssObject,
-  textPath?: dataLabelsTextPathOptionsObject,
-  useHTML?: bool,
-  verticalAlign?: verticalAlignValue,
-  x?: float,
-  xHigh?: float,
-  xLow?: float,
-  y?: float,
-  yHigh?: float,
-  yLow?: float,
 }
 type dataSortingOptionsObject = {
   enabled?: bool,
@@ -2461,64 +2595,6 @@ type seriesSonificationOptions = {
   pointGrouping?: seriesSonificationPointGroupingOptions,
   tracks?: array<JSON.t>,
 }
-type plotTilemapStatesHoverHaloAttributesOptions = {
-  zIndex?: int,
-}
-module ChartsSeriesStatesHoverHaloOptionsObjectAttributes = {
-  type t
-  external fromSVGAttributes: svgAttributes => t = "%identity"
-  external asSVGAttributes: t => (svgAttributes) = "%identity"
-  external fromPlotTilemapStatesHoverHaloAttributesOptions: plotTilemapStatesHoverHaloAttributesOptions => t = "%identity"
-  external asPlotTilemapStatesHoverHaloAttributesOptions: t => (plotTilemapStatesHoverHaloAttributesOptions) = "%identity"
-}
-type seriesStatesHoverHaloOptionsObject = {
-  attributes?: ChartsSeriesStatesHoverHaloOptionsObjectAttributes.t,
-  enabled?: bool,
-  opacity?: float,
-  size?: float,
-}
-type seriesStatesHoverOptionsObject = {
-  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAbandsStatesHoverAnimationOptions | PlotAdStatesHoverAnimation` — match the real type by hand
-  borderColor?: ColorType.t,
-  borderWidth?: float,
-  brightness?: float,
-  color?: ColorType.t,
-  connectorWidthPlus?: float,
-  enabled?: bool,
-  fillColor?: ColorType.t,
-  halo?: seriesStatesHoverHaloOptionsObject,
-  lineColor?: ColorType.t,
-  lineWidth?: float,
-  lineWidthPlus?: float,
-  linkOpacity?: float,
-  marker?: pointMarkerOptionsObject,
-  opacity?: float,
-  shadow?: bool,
-}
-@unboxed type numberOrSeriesStatesHoverOptionsObject = Num(float) | SeriesStatesHoverOptionsObject(seriesStatesHoverOptionsObject)
-type seriesStatesInactiveOptionsObject = {
-  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAbandsStatesInactiveAnimationOptions | PlotAdStatesInactiveAni` — match the real type by hand
-  enabled?: bool,
-  linkOpacity?: float,
-  opacity?: float,
-}
-type seriesStatesSelectOptionsObject = {
-  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotAbandsStatesSelectAnimationOptions | PlotAdStatesSelectAnimati` — match the real type by hand
-  borderColor?: ColorType.t,
-  borderWidth?: float,
-  color?: ColorType.t,
-  enabled?: bool,
-  halo?: seriesStatesHoverHaloOptionsObject,
-  lineWidth?: float,
-  lineWidthPlus?: float,
-  marker?: pointMarkerOptionsObject,
-}
-type seriesStatesOptionsObject = {
-  hover?: numberOrSeriesStatesHoverOptionsObject,
-  inactive?: seriesStatesInactiveOptionsObject,
-  normal?: pointStatesNormalOptionsObject,
-  select?: seriesStatesSelectOptionsObject,
-}
 type plotAdDataSortingOptions = {
   enabled?: bool,
   matchByName?: bool,
@@ -2680,15 +2756,6 @@ module ChartsSeriesAreaOptionsDataSorting = {
   external asDataSortingOptionsObject: t => (dataSortingOptionsObject) = "%identity"
   external fromPlotAreaDataSortingOptions: plotAdDataSortingOptions => t = "%identity"
   external asPlotAreaDataSortingOptions: t => (plotAdDataSortingOptions) = "%identity"
-}
-type dragDropHandleOptionsObject = {
-  className?: string,
-  color?: ColorType.t,
-  cursor?: string,
-  lineColor?: string,
-  lineWidth?: float,
-  pathFormatter?: JsFn.t,
-  zIndex?: int,
 }
 type seriesDragDropOptionsObject = {
   draggableClose?: bool,
@@ -4823,16 +4890,6 @@ module ChartsSeriesNatrOptionsOnPoint = {
   external fromPlotNatrOnPointOptions: plotNatrOnPointOptions => t = "%identity"
   external asPlotNatrOnPointOptions: t => (plotNatrOnPointOptions) = "%identity"
 }
-type plotNetworkgraphDataLabelsStyleOptions = {
-  transition?: string,
-}
-module ChartsSeriesNetworkgraphDataLabelsOptionsObjectStyle = {
-  type t
-  external fromCSSObject: cssObject => t = "%identity"
-  external asCSSObject: t => (cssObject) = "%identity"
-  external fromPlotNetworkgraphDataLabelsStyleOptions: plotNetworkgraphDataLabelsStyleOptions => t = "%identity"
-  external asPlotNetworkgraphDataLabelsStyleOptions: t => (plotNetworkgraphDataLabelsStyleOptions) = "%identity"
-}
 type plotNetworkgraphLayoutAlgorithmOptions = {
   approximation?: optionsApproximationValue,
   attractiveForce?: JsFn.t,
@@ -4990,16 +5047,6 @@ module ChartsSeriesOrganizationOptionsOnPoint = {
   external asJSON: t => (JSON.t) = "%identity"
   external fromPlotOrganizationOnPointOptions: plotOrganizationOnPointOptions => t = "%identity"
   external asPlotOrganizationOnPointOptions: t => (plotOrganizationOnPointOptions) = "%identity"
-}
-type plotPackedbubbleDataLabelsStyleOptions = {
-  transition?: string,
-}
-module ChartsSeriesPackedBubbleDataLabelsOptionsObjectStyle = {
-  type t
-  external fromCSSObject: cssObject => t = "%identity"
-  external asCSSObject: t => (cssObject) = "%identity"
-  external fromPlotPackedbubbleDataLabelsStyleOptions: plotPackedbubbleDataLabelsStyleOptions => t = "%identity"
-  external asPlotPackedbubbleDataLabelsStyleOptions: t => (plotPackedbubbleDataLabelsStyleOptions) = "%identity"
 }
 type plotPackedbubbleLayoutAlgorithmParentNodeOptions = {
   friction?: float,
@@ -6095,21 +6142,6 @@ type plotTreegraphCollapseButtonOptions = {
   width?: float,
   x?: float,
   y?: float,
-}
-type plotTreegraphDataLabelsStyleOptions = {
-  textOverflow?: string,
-}
-type plotTreegraphLevelsDataLabelsStyleOptions = {
-  textOverflow?: string,
-}
-module ChartsSeriesTreegraphDataLabelsOptionsObjectStyle = {
-  type t
-  external fromCSSObject: cssObject => t = "%identity"
-  external asCSSObject: t => (cssObject) = "%identity"
-  external fromPlotTreegraphDataLabelsStyleOptions: plotTreegraphDataLabelsStyleOptions => t = "%identity"
-  external asPlotTreegraphDataLabelsStyleOptions: t => (plotTreegraphDataLabelsStyleOptions) = "%identity"
-  external fromPlotTreegraphLevelsDataLabelsStyleOptions: plotTreegraphLevelsDataLabelsStyleOptions => t = "%identity"
-  external asPlotTreegraphLevelsDataLabelsStyleOptions: t => (plotTreegraphLevelsDataLabelsStyleOptions) = "%identity"
 }
 type plotTreegraphLinkOptions = {
   bendAt?: CommonTypes.stringOrNumber,
@@ -7407,7 +7439,7 @@ type navigationBreadcrumbsOptions = {
   useHTML?: bool,
   zIndex?: int,
 }
-type navigationButtonThemeOptions = {
+type exportingButtonsContextButtonThemeOptions = {
   fill?: ColorType.t,
   padding?: float,
   stroke?: string,
@@ -7425,7 +7457,7 @@ type navigationButtonOptions = {
   symbolX?: float,
   symbolY?: float,
   text?: string,
-  theme?: navigationButtonThemeOptions,
+  theme?: exportingButtonsContextButtonThemeOptions,
   useHTML?: bool,
   verticalAlign?: verticalAlignValue,
   width?: float,
@@ -8069,6 +8101,7 @@ type chartsOptionsColorAxis_t
 type pointTarget_t
 type chartsLegendAllItems_t
 type axisPlotLinesOptions_t
+type chartsPointOptionsObjectDataLabels_t
 type chartsCurrentDateIndicatorOptionsLabel_t
 type chartsCurrentDateIndicatorOptionsEvents_t
 type axisOptions_t
@@ -16983,15 +17016,15 @@ and navigatorOptions<'a, 'b, 'c> = {
   xAxis?: navigatorXAxisOptionsOrNavigatorXAxisOptionsArray<'a, 'b, 'c>,
   yAxis?: navigatorYAxisOptionsOrNavigatorYAxisOptionsArray<'a, 'b, 'c>,
 }
-and navigationAnnotationsShapesOptions<'e, 'f> = {
+and navigationAnnotationsShapesOptions<'f, 't6> = {
   controlPoints?: annotationControlPointOptionsObjectOrAnnotationControlPointOptionsObjectArray,
   dashStyle?: dashStyleValue,
   fill?: ColorType.t,
   height?: float,
   markerEnd?: string,
   markerStart?: string,
-  point?: highchartsNavigationAnnotationsShapesOptionsPoint<'e>,
-  points?: array<highchartsNavigationAnnotationsShapesOptionsPoints<'f>>,
+  point?: highchartsNavigationAnnotationsShapesOptionsPoint<'f>,
+  points?: array<highchartsNavigationAnnotationsShapesOptionsPoints<'t6>>,
   r?: float,
   ry?: float,
   snap?: float,
@@ -17003,7 +17036,7 @@ and navigationAnnotationsShapesOptions<'e, 'f> = {
   xAxis?: float,
   yAxis?: float,
 }
-and navigationAnnotationsLabelsOptions<'a, 'b, 'c, 'd> = {
+and navigationAnnotationsLabelsOptions<'a, 'b, 'c, 'e> = {
   accessibility?: annotationLabelAccessibilityOptionsObject,
   align?: alignValue,
   allowOverlap?: bool,
@@ -17020,7 +17053,7 @@ and navigationAnnotationsLabelsOptions<'a, 'b, 'c, 'd> = {
   includeInDataExport?: bool,
   overflow?: optionsOverflowValue,
   padding?: float,
-  point?: highchartsNavigationAnnotationsLabelsOptionsPoint<'d>,
+  point?: highchartsNavigationAnnotationsLabelsOptionsPoint<'e>,
   shadow?: boolOrShadowOptionsObject,
   shape?: string,
   style?: cssObject,
@@ -17030,7 +17063,7 @@ and navigationAnnotationsLabelsOptions<'a, 'b, 'c, 'd> = {
   x?: float,
   y?: float,
 }
-and navigationAnnotationsOptions<'a, 'b, 'c, 'd, 'e, 'f> = {
+and navigationAnnotationsOptions<'a, 'b, 'c, 'e, 'f, 't6> = {
   animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | NavigationAnnotationsAnimationOptions` — match the real type by hand
   className?: string,
   controlPointOptions?: annotationControlPointOptionsObject,
@@ -17039,9 +17072,9 @@ and navigationAnnotationsOptions<'a, 'b, 'c, 'd, 'e, 'f> = {
   events?: annotationsEventsOptions,
   id?: CommonTypes.stringOrNumber,
   labelOptions?: annotationsLabelOptions<'a, 'b, 'c>,
-  labels?: array<navigationAnnotationsLabelsOptions<'a, 'b, 'c, 'd>>,
+  labels?: array<navigationAnnotationsLabelsOptions<'a, 'b, 'c, 'e>>,
   shapeOptions?: annotationsShapeOptions,
-  shapes?: array<navigationAnnotationsShapesOptions<'e, 'f>>,
+  shapes?: array<navigationAnnotationsShapesOptions<'f, 't6>>,
   @as("type") type_?: string,
   typeOptions?: annotationsTypeOptions,
   types?: string,  // ⚪ loose — was `NavigationAnnotationsTypesOptions`
@@ -18579,43 +18612,6 @@ and plotTreegraphLevelsOptions<'a, 'b, 'c> = {
   layoutStartingDirection?: optionsLayoutStartingDirectionValue,
   level?: int,
 }
-and seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c> = {
-  align?: alignValue,
-  alignTo?: string,
-  allowOverlap?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotTreegraphDataLabelsAnimationOptions | PlotTreegraphLevelsDataL` — match the real type by hand
-  backgroundColor?: ColorType.t,
-  borderColor?: ColorType.t,
-  borderRadius?: float,
-  borderWidth?: float,
-  className?: string,
-  color?: ColorType.t,
-  crop?: bool,
-  defer?: bool,
-  enabled?: bool,
-  filter?: dataLabelsFilterOptionsObject,
-  format?: string,
-  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
-  headers?: bool,
-  inside?: bool,
-  labelrank?: float,
-  linkTextPath?: dataLabelsTextPathOptionsObject,
-  nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
-  overflow?: dataLabelsOverflowValue,
-  padding?: float,
-  pointFormat?: string,
-  position?: alignValue,
-  rotation?: float,
-  shadow?: boolOrShadowOptionsObject,
-  shape?: string,
-  style?: ChartsSeriesTreegraphDataLabelsOptionsObjectStyle.t,
-  textPath?: dataLabelsTextPathOptionsObject,
-  useHTML?: bool,
-  verticalAlign?: string,
-  x?: float,
-  y?: float,
-}
 and seriesTreegraphOptions<'b, 'a, 'c> = {
   allowDrillToNode?: unit,
   centerInCategory?: unit,
@@ -19088,46 +19084,6 @@ and plotSunburstLevelsOptions<'a, 'b, 'c> = {
   dataLabels?: seriesSunburstDataLabelsOptionsObjectOrSeriesSunburstDataLabelsOptionsObjectArray<'a, 'b, 'c>,
   level?: int,
   levelSize?: JSON.t,
-}
-and seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c> = {
-  alignTo?: string,
-  allowOverlap?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotSunburstDataLabelsAnimationOptions | PlotSunburstLevelsDataLab` — match the real type by hand
-  backgroundColor?: ColorType.t,
-  borderColor?: ColorType.t,
-  borderRadius?: float,
-  borderWidth?: float,
-  className?: string,
-  color?: ColorType.t,
-  connectorColor?: ColorType.t,
-  connectorPadding?: float,
-  connectorShape?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
-  connectorWidth?: float,
-  crookDistance?: string,
-  crop?: bool,
-  defer?: bool,
-  distance?: CommonTypes.stringOrNumber,
-  enabled?: bool,
-  filter?: dataLabelsFilterOptionsObject,
-  format?: string,
-  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
-  labelrank?: float,
-  nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
-  overflow?: dataLabelsOverflowValue,
-  padding?: float,
-  position?: alignValue,
-  rotation?: float,
-  rotationMode?: optionsRotationModeValue,
-  shadow?: boolOrShadowOptionsObject,
-  shape?: string,
-  softConnector?: bool,
-  style?: cssObject,
-  textPath?: dataLabelsTextPathOptionsObject,
-  useHTML?: bool,
-  verticalAlign?: verticalAlignValue,
-  x?: float,
-  y?: float,
 }
 and seriesSunburstOptions<'b, 'a, 'c> = {
   data?: array<'b>,
@@ -21234,44 +21190,6 @@ and seriesParetoOptions<'b, 'a, 'c> = {
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
 }
-and seriesPackedBubbleDataLabelsOptionsObject<'a, 'b, 'c> = {
-  align?: alignValue,
-  alignTo?: string,
-  allowOverlap?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotPackedbubbleDataLabelsAnimationOptions` — match the real type by hand
-  attributes?: svgAttributes,
-  backgroundColor?: ColorType.t,
-  borderColor?: ColorType.t,
-  borderRadius?: float,
-  borderWidth?: float,
-  className?: string,
-  color?: ColorType.t,
-  crop?: bool,
-  defer?: bool,
-  enabled?: bool,
-  filter?: dataLabelsFilterOptionsObject,
-  format?: string,
-  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
-  inside?: bool,
-  labelrank?: float,
-  nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
-  overflow?: dataLabelsOverflowValue,
-  padding?: float,
-  parentNodeFormat?: string,
-  parentNodeFormatter?: JSON.t,
-  parentNodeTextPath?: legendAccessibilityKeyboardNavigationOptions,
-  position?: alignValue,
-  rotation?: float,
-  shadow?: boolOrShadowOptionsObject,
-  shape?: string,
-  style?: ChartsSeriesPackedBubbleDataLabelsOptionsObjectStyle.t,
-  textPath?: dataLabelsTextPathOptionsObject,
-  useHTML?: bool,
-  verticalAlign?: string,
-  x?: float,
-  y?: float,
-}
 and seriesPackedbubbleOptions<'b, 'a, 'c> = {
   data?: array<'b>,
   dataParser?: unit,
@@ -21642,43 +21560,6 @@ and seriesObvOptions<'a, 'b, 'c> = {
   xAxis?: CommonTypes.stringOrNumber,
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
-}
-and seriesNetworkgraphDataLabelsOptionsObject<'a, 'b, 'c> = {
-  align?: alignValue,
-  alignTo?: string,
-  allowOverlap?: bool,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotNetworkgraphDataLabelsAnimationOptions` — match the real type by hand
-  backgroundColor?: ColorType.t,
-  borderColor?: ColorType.t,
-  borderRadius?: float,
-  borderWidth?: float,
-  className?: string,
-  color?: ColorType.t,
-  crop?: bool,
-  defer?: bool,
-  enabled?: bool,
-  filter?: dataLabelsFilterOptionsObject,
-  format?: string,
-  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
-  inside?: bool,
-  labelrank?: float,
-  linkFormat?: string,
-  linkFormatter?: JSON.t,
-  linkTextPath?: dataLabelsTextPathOptionsObject,
-  nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
-  overflow?: dataLabelsOverflowValue,
-  padding?: float,
-  position?: alignValue,
-  rotation?: float,
-  shadow?: boolOrShadowOptionsObject,
-  shape?: string,
-  style?: ChartsSeriesNetworkgraphDataLabelsOptionsObjectStyle.t,
-  textPath?: dataLabelsTextPathOptionsObject,
-  useHTML?: bool,
-  verticalAlign?: verticalAlignValue,
-  x?: float,
-  y?: float,
 }
 and seriesNetworkgraphNodesOptions<'a, 'b, 'c> = {
   color?: string,
@@ -24068,44 +23949,6 @@ and seriesGanttOptions<'b, 'a, 'c> = {
   xAxis?: CommonTypes.stringOrNumber,
   yAxis?: CommonTypes.stringOrNumber,
   zIndex?: int,
-}
-and seriesPieDataLabelsOptionsObject<'a, 'b, 'c> = {
-  alignTo?: string,
-  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotFunnelDataLabelsAnimationOptions | PlotItemDataLabelsAnimation` — match the real type by hand
-  backgroundColor?: ColorType.t,
-  borderColor?: ColorType.t,
-  borderRadius?: float,
-  borderWidth?: float,
-  className?: string,
-  color?: ColorType.t,
-  connectorColor?: ColorType.t,
-  connectorPadding?: float,
-  connectorShape?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
-  connectorWidth?: float,
-  crookDistance?: string,
-  crop?: bool,
-  defer?: bool,
-  distance?: CommonTypes.stringOrNumber,
-  enabled?: bool,
-  filter?: dataLabelsFilterOptionsObject,
-  format?: string,
-  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
-  labelrank?: float,
-  nullFormat?: CommonTypes.boolOrString,
-  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
-  overflow?: dataLabelsOverflowValue,
-  padding?: float,
-  position?: alignValue,
-  rotation?: float,
-  shadow?: boolOrShadowOptionsObject,
-  shape?: string,
-  softConnector?: bool,
-  style?: cssObject,
-  textPath?: dataLabelsTextPathOptionsObject,
-  useHTML?: bool,
-  verticalAlign?: string,
-  x?: float,
-  y?: float,
 }
 and seriesFunnelOptions<'b, 'a, 'c> = {
   data?: array<'b>,
@@ -27966,7 +27809,7 @@ and tooltipPositionerPointObject<'a, 'b, 'c> = {
   index: int,
   key: CommonTypes.stringOrNumber,
   name: string,
-  options: string,  // ⚪ loose — was `PointOptionsObject`
+  options: pointOptionsObject<'a, 'b, 'c>,
   percentage?: float,
   points?: array<point<'a, 'b, 'c>>,
   selected: bool,
@@ -27983,7 +27826,7 @@ and tooltipPositionerPointObject<'a, 'b, 'c> = {
   haloPath: float => array<GetLinePathTarget.t>,
   onMouseOut: unit => unit,
   onMouseOver: option<pointerEventObject> => unit,
-  optionsToObject: string => Dict.t<JSON.t>,  // ⚪ loose — was `PointOptionsType`
+  optionsToObject: stringOrNumberOrStringOrNumberArrayOrPointOptionsObject<'a, 'b, 'c> => Dict.t<JSON.t>,
   pos: (bool, float) => array<float>,
   remove: (option<bool>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
   select: (option<bool>, option<bool>) => unit,
@@ -27991,7 +27834,7 @@ and tooltipPositionerPointObject<'a, 'b, 'c> = {
   setState: (option<chartsPointSetState>, option<bool>) => unit,
   setVisible: (option<bool>, option<bool>) => unit,
   tooltipFormatter: string => string,
-  update: (string, option<bool>, option<string>) => unit,  // ⚪ loose — was `PointOptionsType`
+  update: (stringOrNumberOrStringOrNumberArrayOrPointOptionsObject<'a, 'b, 'c>, option<bool>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
 }
 and tooltipOptions<'a, 'b, 'c> = {
   animation?: ChartsTooltipOptionsAnimation.t,
@@ -28076,19 +27919,6 @@ and seriesTooltipOptionsObject<'a, 'b, 'c> = {
   valuePrefix?: string,
   valueSuffix?: string,
   xDateFormat?: stringOrDateTimeFormatOptions2,
-}
-and pointEventsOptionsObject<'a, 'b, 'c> = {
-  click?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointClickEventObject`
-  drag?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointDragEventObject`
-  dragStart?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointDragStartEventObject`
-  drop?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointDropEventObject`
-  legendItemClick?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointLegendItemClickEventObject`
-  mouseOut?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointerEvent`
-  mouseOver?: @this ((point<'a, 'b, 'c>, LibTypes.dateTimeFormatOptionsLib) => unit),
-  remove?: @this ((point<'a, 'b, 'c>, LibTypes.dateTimeFormatOptionsLib) => unit),
-  select?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointInteractionEventObject`
-  unselect?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointInteractionEventObject`
-  update?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointUpdateEventObject`
 }
 and plotSeriesPointOptions<'a, 'b, 'c> = {
   events?: pointEventsOptionsObject<'a, 'b, 'c>,
@@ -29045,6 +28875,273 @@ and legend<'a, 'b, 'c> = {
   setText: chartsLegendAllItems_t => unit,
   update: (legendOptions<'a, 'b, 'c>, option<bool>) => unit,
 }
+and pointEventsOptionsObject<'a, 'b, 'c> = {
+  click?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointClickEventObject`
+  drag?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointDragEventObject`
+  dragStart?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointDragStartEventObject`
+  drop?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointDropEventObject`
+  legendItemClick?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointLegendItemClickEventObject`
+  mouseOut?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointerEvent`
+  mouseOver?: @this ((point<'a, 'b, 'c>, LibTypes.dateTimeFormatOptionsLib) => unit),
+  remove?: @this ((point<'a, 'b, 'c>, LibTypes.dateTimeFormatOptionsLib) => unit),
+  select?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointInteractionEventObject`
+  unselect?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointInteractionEventObject`
+  update?: @this ((point<'a, 'b, 'c>, string) => unit),  // ⚪ loose — was `PointUpdateEventObject`
+}
+and seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotTreegraphDataLabelsAnimationOptions | PlotTreegraphLevelsDataL` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  headers?: bool,
+  inside?: bool,
+  labelrank?: float,
+  linkTextPath?: dataLabelsTextPathOptionsObject,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  pointFormat?: string,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: ChartsSeriesTreegraphDataLabelsOptionsObjectStyle.t,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
+and seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c> = {
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotSunburstDataLabelsAnimationOptions | PlotSunburstLevelsDataLab` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  connectorColor?: ColorType.t,
+  connectorPadding?: float,
+  connectorShape?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
+  connectorWidth?: float,
+  crookDistance?: string,
+  crop?: bool,
+  defer?: bool,
+  distance?: CommonTypes.stringOrNumber,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  rotationMode?: optionsRotationModeValue,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  softConnector?: bool,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  x?: float,
+  y?: float,
+}
+and seriesPackedBubbleDataLabelsOptionsObject<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotPackedbubbleDataLabelsAnimationOptions` — match the real type by hand
+  attributes?: svgAttributes,
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  parentNodeFormat?: string,
+  parentNodeFormatter?: JSON.t,
+  parentNodeTextPath?: legendAccessibilityKeyboardNavigationOptions,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: ChartsSeriesPackedBubbleDataLabelsOptionsObjectStyle.t,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
+and seriesNetworkgraphDataLabelsOptionsObject<'a, 'b, 'c> = {
+  align?: alignValue,
+  alignTo?: string,
+  allowOverlap?: bool,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotNetworkgraphDataLabelsAnimationOptions` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  crop?: bool,
+  defer?: bool,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  inside?: bool,
+  labelrank?: float,
+  linkFormat?: string,
+  linkFormatter?: JSON.t,
+  linkTextPath?: dataLabelsTextPathOptionsObject,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  style?: ChartsSeriesNetworkgraphDataLabelsOptionsObjectStyle.t,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  x?: float,
+  y?: float,
+}
+and seriesPieDataLabelsOptionsObject<'a, 'b, 'c> = {
+  alignTo?: string,
+  animation?: string,  // ⚠️ REVIEW — was `boolean | Partial<AnimationOptionsObject> | PlotFunnelDataLabelsAnimationOptions | PlotItemDataLabelsAnimation` — match the real type by hand
+  backgroundColor?: ColorType.t,
+  borderColor?: ColorType.t,
+  borderRadius?: float,
+  borderWidth?: float,
+  className?: string,
+  color?: ColorType.t,
+  connectorColor?: ColorType.t,
+  connectorPadding?: float,
+  connectorShape?: string,  // ⚠️ REVIEW — was `string | Function` — match the real type by hand
+  connectorWidth?: float,
+  crookDistance?: string,
+  crop?: bool,
+  defer?: bool,
+  distance?: CommonTypes.stringOrNumber,
+  enabled?: bool,
+  filter?: dataLabelsFilterOptionsObject,
+  format?: string,
+  formatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  labelrank?: float,
+  nullFormat?: CommonTypes.boolOrString,
+  nullFormatter?: @this ((point<'a, 'b, 'c>, dataLabelsOptions) => CommonTypes.stringOrNumber),
+  overflow?: dataLabelsOverflowValue,
+  padding?: float,
+  position?: alignValue,
+  rotation?: float,
+  shadow?: boolOrShadowOptionsObject,
+  shape?: string,
+  softConnector?: bool,
+  style?: cssObject,
+  textPath?: dataLabelsTextPathOptionsObject,
+  useHTML?: bool,
+  verticalAlign?: string,
+  x?: float,
+  y?: float,
+}
+and pointOptionsObject<'a, 'b, 'c> = {
+  accessibility?: pointAccessibilityOptionsObject,
+  borderColor?: ColorType.t,
+  borderWidth?: float,
+  boxDashStyle?: dashStyleValue,
+  className?: string,
+  close?: float,
+  collapseButton?: JSON.t,
+  collapsed?: bool,
+  color?: ColorType.t,
+  colorIndex?: float,
+  colorValue?: float,
+  connectorColor?: string,
+  connectorWidth?: float,
+  custom?: Dict.t<JSON.t>,
+  dashStyle?: dashStyleValue,
+  dataLabels?: chartsPointOptionsObjectDataLabels_t,
+  description?: string,
+  direction?: float,
+  dragDrop?: seriesLineDataDragDropOptions,
+  drilldown?: string,
+  events?: pointEventsOptionsObject<'a, 'b, 'c>,
+  fillColor?: ColorType.t,
+  from?: string,
+  gradientForSides?: bool,
+  high?: float,
+  id?: string,
+  innerRadius?: string,
+  isIntermediateSum?: bool,
+  isSum?: bool,
+  label?: string,
+  labelrank?: float,
+  legendIndex?: float,
+  length?: float,
+  low?: float,
+  lowColor?: ColorType.t,
+  marker?: pointMarkerOptionsObject,
+  median?: float,
+  medianDashStyle?: dashStyleValue,
+  name?: string,
+  @as("open") open_?: float,
+  parent?: string,
+  pointPadding?: float,
+  pointWidth?: float,
+  q1?: float,
+  q3?: float,
+  radius?: string,
+  selected?: bool,
+  sets?: array<string>,
+  sliced?: bool,
+  states?: seriesStatesOptionsObject,
+  stemDashStyle?: dashStyleValue,
+  target?: float,
+  targetOptions?: seriesBulletDataTargetOptions,
+  text?: string,
+  title?: string,
+  @as("to") to_?: string,
+  value?: float,
+  weight?: float,
+  whiskerDashStyle?: dashStyleValue,
+  x?: CommonTypes.stringOrNumber,
+  y?: float,
+  z?: float,
+}
 and point<'a, 'b, 'c> = {
   category: CommonTypes.stringOrNumber,
   color?: string,  // ⚪ loose — was `ColorType`
@@ -29054,7 +29151,7 @@ and point<'a, 'b, 'c> = {
   index: int,
   key: CommonTypes.stringOrNumber,
   name: string,
-  options: string,  // ⚪ loose — was `PointOptionsObject`
+  options: pointOptionsObject<'a, 'b, 'c>,
   percentage?: float,
   plotX?: float,
   plotY?: float,
@@ -29664,9 +29761,9 @@ and chart<'a, 'b, 'c> = {
 @unboxed and navigatorYAxisOptionsOrNavigatorYAxisOptionsArray<'a, 'b, 'c> = NavigatorYAxisOptions(navigatorYAxisOptions<'a, 'b, 'c>) | NavigatorYAxisOptionsArr(array<navigatorYAxisOptions<'a, 'b, 'c>>)
 @unboxed and navigatorXAxisOptionsOrNavigatorXAxisOptionsArray<'a, 'b, 'c> = NavigatorXAxisOptions(navigatorXAxisOptions<'a, 'b, 'c>) | NavigatorXAxisOptionsArr(array<navigatorXAxisOptions<'a, 'b, 'c>>)
 @unboxed and navigatorSeriesDataLabelsOptionsOrNavigatorSeriesDataLabelsOptionsArray<'a, 'b, 'c> = NavigatorSeriesDataLabelsOptions(navigatorSeriesDataLabelsOptions<'a, 'b, 'c>) | NavigatorSeriesDataLabelsOptionsArr(array<navigatorSeriesDataLabelsOptions<'a, 'b, 'c>>)
-@unboxed and highchartsNavigationAnnotationsShapesOptionsPoints<'f> = Str(string) | Fn('f => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
-@unboxed and highchartsNavigationAnnotationsShapesOptionsPoint<'e> = Str(string) | Fn('e => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
-@unboxed and highchartsNavigationAnnotationsLabelsOptionsPoint<'d> = Str(string) | Fn('d => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
+@unboxed and highchartsNavigationAnnotationsShapesOptionsPoints<'t6> = Str(string) | Fn('t6 => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
+@unboxed and highchartsNavigationAnnotationsShapesOptionsPoint<'f> = Str(string) | Fn('f => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
+@unboxed and highchartsNavigationAnnotationsLabelsOptionsPoint<'e> = Str(string) | Fn('e => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
 @unboxed and plotXrangeDataLabelsOptionsOrPlotXrangeDataLabelsOptionsArray<'a, 'b, 'c> = PlotXrangeDataLabelsOptions(plotXrangeDataLabelsOptions<'a, 'b, 'c>) | PlotXrangeDataLabelsOptionsArr(array<plotXrangeDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotTreemapLevelsDataLabelsOptionsOrPlotTreemapLevelsDataLabelsOptionsArray<'a, 'b, 'c> = PlotTreemapLevelsDataLabelsOptions(plotTreemapLevelsDataLabelsOptions<'a, 'b, 'c>) | PlotTreemapLevelsDataLabelsOptionsArr(array<plotTreemapLevelsDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotTreemapDataLabelsOptionsOrPlotTreemapDataLabelsOptionsArray<'a, 'b, 'c> = PlotTreemapDataLabelsOptions(plotTreemapDataLabelsOptions<'a, 'b, 'c>) | PlotTreemapDataLabelsOptionsArr(array<plotTreemapDataLabelsOptions<'a, 'b, 'c>>)
@@ -29693,6 +29790,7 @@ and chart<'a, 'b, 'c> = {
 @unboxed and plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c> = PlotAoDataLabelsOptions(plotAoDataLabelsOptions<'a, 'b, 'c>) | PlotAoDataLabelsOptionsArr(array<plotAoDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c> = PlotAdDataLabelsOptions(plotAdDataLabelsOptions<'a, 'b, 'c>) | PlotAdDataLabelsOptionsArr(array<plotAdDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and pointOrPointArray<'a, 'b, 'c> = Point(point<'a, 'b, 'c>) | PointArr(array<point<'a, 'b, 'c>>)
+@unboxed and stringOrNumberOrStringOrNumberArrayOrPointOptionsObject<'a, 'b, 'c> = Str(string) | Num(float) | Arr(array<CommonTypes.stringOrNumber>) | PointOptionsObject(pointOptionsObject<'a, 'b, 'c>)
 @unboxed and plotAbandsDataLabelsOptionsOrPlotAbandsDataLabelsOptionsArray<'a, 'b, 'c> = PlotAbandsDataLabelsOptions(plotAbandsDataLabelsOptions<'a, 'b, 'c>) | PlotAbandsDataLabelsOptionsArr(array<plotAbandsDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and boolOrAxisCrosshairOptions<'a, 'b, 'c> = Bool(bool) | AxisCrosshairOptions(axisCrosshairOptions<'a, 'b, 'c>)
 @unboxed and chartParallelAxesOptionsOrChartParallelAxesOptionsArray<'a, 'b, 'c> = ChartParallelAxesOptions(chartParallelAxesOptions<'a, 'b, 'c>) | ChartParallelAxesOptionsArr(array<chartParallelAxesOptions<'a, 'b, 'c>>)
@@ -30206,8 +30304,8 @@ module ChartsNavigationOptionsAnnotationsOptions = {
   type t = chartsNavigationOptionsAnnotationsOptions_t
   external fromAnnotationsOptions: annotationsOptions<'a, 'b, 'c> => t = "%identity"
   external asAnnotationsOptions: t => (annotationsOptions<'a, 'b, 'c>) = "%identity"
-  external fromNavigationAnnotationsOptions: navigationAnnotationsOptions<'a, 'b, 'c, 'd, 'e, 'f> => t = "%identity"
-  external asNavigationAnnotationsOptions: t => (navigationAnnotationsOptions<'a, 'b, 'c, 'd, 'e, 'f>) = "%identity"
+  external fromNavigationAnnotationsOptions: navigationAnnotationsOptions<'a, 'b, 'c, 'e, 'f, 't6> => t = "%identity"
+  external asNavigationAnnotationsOptions: t => (navigationAnnotationsOptions<'a, 'b, 'c, 'e, 'f, 't6>) = "%identity"
 }
 module ChartsSeriesSankeyNodesOptionsObjectDataLabels = {
   type t = chartsSeriesSankeyNodesOptionsObjectDataLabels_t
@@ -30734,6 +30832,31 @@ module AxisPlotLinesOptions = {
   external fromZAxisPlotLinesOptions: xAxisPlotLinesOptions<'a, 'b, 'c> => t = "%identity"
   external asZAxisPlotLinesOptions: t => (xAxisPlotLinesOptions<'a, 'b, 'c>) = "%identity"
 }
+module ChartsPointOptionsObjectDataLabels = {
+  type t = chartsPointOptionsObjectDataLabels_t
+  external fromSeriesPieDataLabelsOptionsObject: seriesPieDataLabelsOptionsObject<'a, 'b, 'c> => t = "%identity"
+  external asSeriesPieDataLabelsOptionsObject: t => (seriesPieDataLabelsOptionsObject<'a, 'b, 'c>) = "%identity"
+  external fromSeriesNetworkgraphDataLabelsOptionsObject: seriesNetworkgraphDataLabelsOptionsObject<'a, 'b, 'c> => t = "%identity"
+  external asSeriesNetworkgraphDataLabelsOptionsObject: t => (seriesNetworkgraphDataLabelsOptionsObject<'a, 'b, 'c>) = "%identity"
+  external fromSeriesNetworkgraphDataLabelsOptionsObjects: array<seriesNetworkgraphDataLabelsOptionsObject<'a, 'b, 'c>> => t = "%identity"
+  external asSeriesNetworkgraphDataLabelsOptionsObjects: t => (array<seriesNetworkgraphDataLabelsOptionsObject<'a, 'b, 'c>>) = "%identity"
+  external fromSeriesPackedBubbleDataLabelsOptionsObject: seriesPackedBubbleDataLabelsOptionsObject<'a, 'b, 'c> => t = "%identity"
+  external asSeriesPackedBubbleDataLabelsOptionsObject: t => (seriesPackedBubbleDataLabelsOptionsObject<'a, 'b, 'c>) = "%identity"
+  external fromSeriesPackedBubbleDataLabelsOptionsObjects: array<seriesPackedBubbleDataLabelsOptionsObject<'a, 'b, 'c>> => t = "%identity"
+  external asSeriesPackedBubbleDataLabelsOptionsObjects: t => (array<seriesPackedBubbleDataLabelsOptionsObject<'a, 'b, 'c>>) = "%identity"
+  external fromSeriesSunburstDataLabelsOptionsObject: seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c> => t = "%identity"
+  external asSeriesSunburstDataLabelsOptionsObject: t => (seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c>) = "%identity"
+  external fromSeriesSunburstDataLabelsOptionsObjects: array<seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c>> => t = "%identity"
+  external asSeriesSunburstDataLabelsOptionsObjects: t => (array<seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c>>) = "%identity"
+  external fromSeriesTreegraphDataLabelsOptionsObject: seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c> => t = "%identity"
+  external asSeriesTreegraphDataLabelsOptionsObject: t => (seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c>) = "%identity"
+  external fromSeriesTreegraphDataLabelsOptionsObjects: array<seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c>> => t = "%identity"
+  external asSeriesTreegraphDataLabelsOptionsObjects: t => (array<seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c>>) = "%identity"
+  external fromDataLabelsOptions: dataLabelsOptions => t = "%identity"
+  external asDataLabelsOptions: t => (dataLabelsOptions) = "%identity"
+  external fromDataLabelsOptionss: array<dataLabelsOptions> => t = "%identity"
+  external asDataLabelsOptionss: t => (array<dataLabelsOptions>) = "%identity"
+}
 module ChartsCurrentDateIndicatorOptionsLabel = {
   type t = chartsCurrentDateIndicatorOptionsLabel_t
   external fromNavigatorXAxisCurrentDateIndicatorLabelOptions: navigatorXAxisCurrentDateIndicatorLabelOptions<'a, 'b, 'c> => t = "%identity"
@@ -30756,6 +30879,136 @@ module AxisOptions = {
   external asYAxisOptions: t => (yAxisOptions<'a, 'b, 'c>) = "%identity"
   external fromZAxisOptions: zAxisOptions<'a, 'b, 'c> => t = "%identity"
   external asZAxisOptions: t => (zAxisOptions<'a, 'b, 'c>) = "%identity"
+}
+type defsArrowAttributesOptions = {
+  id?: string,
+  markerHeight?: float,
+  markerWidth?: float,
+  refX?: float,
+  refY?: float,
+}
+type defsReverseArrowOptions = {
+  attributes?: defsArrowAttributesOptions,
+  tagName?: string,
+}
+module ChartsDefsOptionsReverseArrow = {
+  type t
+  external fromASTNode: astNode => t = "%identity"
+  external asASTNode: t => (astNode) = "%identity"
+  external fromDefsReverseArrowOptions: defsReverseArrowOptions => t = "%identity"
+  external asDefsReverseArrowOptions: t => (defsReverseArrowOptions) = "%identity"
+}
+type chartsDefsOptionsArrow_t
+type rec defsArrowOptions = {
+  attributes?: defsArrowAttributesOptions,
+  children?: array<defsOptions>,
+  tagName?: string,
+}
+and defsOptions = {
+  arrow?: chartsDefsOptionsArrow_t,
+  @as("reverse-arrow") reverseArrow?: ChartsDefsOptionsReverseArrow.t,
+}
+module ChartsDefsOptionsArrow = {
+  type t = chartsDefsOptionsArrow_t
+  external fromASTNode: astNode => t = "%identity"
+  external asASTNode: t => (astNode) = "%identity"
+  external fromDefsArrowOptions: defsArrowOptions => t = "%identity"
+  external asDefsArrowOptions: t => (defsArrowOptions) = "%identity"
+}
+type dragDropGuideBoxOptionsObject = {
+  className?: string,
+  color?: string,  // ⚪ loose — was `ColorType`
+  cursor?: string,
+  lineColor?: string,
+  lineWidth?: float,
+  zIndex?: int,
+}
+type plotOptionsSeriesDragDropGuideBoxOptions = {
+  default?: dragDropGuideBoxOptionsObject,
+}
+type exportingButtonsOptionsObject = {
+  align?: alignValue,
+  buttonSpacing?: float,
+  className?: string,
+  enabled?: bool,
+  height?: float,
+  menuClassName?: string,
+  menuItems?: array<string>,
+  onclick?: JsFn.t,
+  symbol?: string,
+  symbolFill?: ColorType.t,
+  symbolSize?: float,
+  symbolStroke?: string,
+  symbolStrokeWidth?: float,
+  symbolX?: float,
+  symbolY?: float,
+  text?: string,
+  theme?: exportingButtonsContextButtonThemeOptions,
+  titleKey?: string,
+  useHTML?: bool,
+  verticalAlign?: verticalAlignValue,
+  width?: float,
+  x?: float,
+  y?: float,
+}
+type exportingButtonsOptions = {
+  contextButton?: exportingButtonsOptionsObject,
+}
+type exportingMenuItemDefinitionsDownloadCSVOptions = {
+  textKey?: string,
+}
+type exportingMenuItemDefinitionsSeparatorOptions = {
+  separator?: bool,
+}
+type exportingMenuItemDefinitionsOptions = {
+  downloadCSV?: exportingMenuItemDefinitionsDownloadCSVOptions,
+  downloadJPEG?: exportingMenuItemDefinitionsDownloadCSVOptions,
+  downloadPDF?: exportingMenuItemDefinitionsDownloadCSVOptions,
+  downloadPNG?: exportingMenuItemDefinitionsDownloadCSVOptions,
+  downloadSVG?: exportingMenuItemDefinitionsDownloadCSVOptions,
+  downloadXLS?: exportingMenuItemDefinitionsDownloadCSVOptions,
+  printChart?: exportingMenuItemDefinitionsDownloadCSVOptions,
+  separator?: exportingMenuItemDefinitionsSeparatorOptions,
+  viewData?: exportingMenuItemDefinitionsDownloadCSVOptions,
+  viewFullscreen?: exportingMenuItemDefinitionsDownloadCSVOptions,
+}
+type exportingMenuObject<'a, 'b, 'c> = {
+  onclick?: @this ((chart<'a, 'b, 'c>, option<string>, option<chart<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
+  separator?: bool,
+  text?: string,
+  textKey?: string,
+}
+module ChartsSeriesMapDataGeometryOptionsCoordinates = {
+  type t
+  external fromArray: array<float> => t = "%identity"
+  external fromLonLatArrays: array<array<float>> => t = "%identity"
+  external asLonLatArrays: t => (array<array<float>>) = "%identity"
+}
+type seriesMapDataGeometryOptions = {
+  coordinates?: array<ChartsSeriesMapDataGeometryOptionsCoordinates.t>,
+  @as("type") type_?: mapGeometryTypeValue,
+}
+module ChartsSeriesMapDataOptionsGeometry = {
+  type t
+  external fromJSON: JSON.t => t = "%identity"
+  external asJSON: t => (JSON.t) = "%identity"
+  external fromSeriesMapDataGeometryOptions: seriesMapDataGeometryOptions => t = "%identity"
+  external asSeriesMapDataGeometryOptions: t => (seriesMapDataGeometryOptions) = "%identity"
+}
+type seriesMapDataOptions<'a, 'b, 'c> = {
+  color?: ColorType.t,
+  dataLabels?: dataLabelsOptions,
+  drilldown?: string,
+  events?: pointEventsOptionsObject<'a, 'b, 'c>,
+  geometry?: ChartsSeriesMapDataOptionsGeometry.t,
+  id?: string,
+  labelrank?: float,
+  middleX?: float,
+  middleY?: float,
+  name?: string,
+  path?: string,
+  states?: seriesStatesOptionsObject,
+  value?: float,
 }
 type blendChartProps<'a, 'b, 'c> = {
   allowChartUpdate?: bool,

@@ -36,7 +36,7 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `roots` | `roots?: Poisoned[]` — binds, but references shared field(s) `recursiveOpaqueViewsRootsBadConfig.payload` (`any`) emitted as `string` |
+| `roots` | `roots?: Poisoned[]` — binds, but references shared field(s) `recursiveOpaqueViewsRootChildrenBadConfig.payload` (`any`) emitted as `string` |
 
 ## 🛑 Broken — needs serious component change
 

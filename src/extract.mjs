@@ -2551,9 +2551,8 @@ const REF_NAMES = /^(Ref|RefObject|MutableRefObject|LegacyRef)$/
  * THE REGISTER-EARLY INVARIANT, and the one snapshot that makes it safe. (#173)
  *
  * Every builder that registers a shared entry keyed by `type.id` — `recordNode`, `tagVariantNode`,
- * `opaqueUnion` (and `overloadModule`, which shares the `t:` keyspace and does NOT yet follow this —
- * its re-entry is real but every cyclic path currently bails to `review` before registering, so it is
- * latent; tracked separately) — MUST register its entry BEFORE recursing into its members, because that entry is
+ * `opaqueUnion` and `overloadModule` (the last joined in #179; before that its signature loop ran
+ * before its registration) — MUST register its entry BEFORE recursing into its members, because that entry is
  * the CYCLE GUARD: a self-referential type re-enters the builder from inside its own build, and the
  * early entry is what the re-entry resolves to. A builder that registers last has no guard, and the
  * re-entry either recurses forever (`tagVariantNode`, #170) or silently builds a DUPLICATE entry for
@@ -4088,11 +4087,11 @@ function overloadModule(ctx, type, callSigs, propName, depth, props = null) {
     // accident of the depth/imperfection gates, not by construction. Name and home are computable up
     // front (home is refined below and again after props; emit late-binds it for keyed refs, #128).
     const trial = registryTrial(ctx)
+    try {
     const name = uniqueName(pascal(typeName(type) || stableAnonBase(ctx, type, propName)), ctx.shared) // a MODULE name; anonymous -> path-anchored (#96)
     const entry = { key, kind: 'opaque', variant: (props && props.length) ? 'callable' : 'overload', name, home: homeOf(type, ctx), sigs: [], deps: new Set(), note: '' }
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
-    try {
     // Build a callback node per signature; bail (→ review) if any param/return can't be typed.
     const sigs = entry.sigs
     const used = new Set()
@@ -4538,14 +4537,14 @@ function unionNodeCore(type, ctx, propName, depth = 0) {
     // number LITERALS may coexist as bare `@as("…")` constructors (distinct constant
     // values) — e.g. `boolean | "indeterminate"` -> Bool(bool) | @as("indeterminate") Indeterminate.
     // TS expands `boolean` into `true | false`, so collapse those into one `bool`.
-    // SPECULATIVE, so sandboxed (#178). `memberOf` calls `classify` for object arms, which REGISTERS
-    // records/enums/modules — and the candidate can still be rejected afterwards, either because an
-    // arm isn't modellable (`!m`) or because two arms claim the same JS `typeof` bucket
-    // (`{left} | {right}` — both objects, so no untagged variant can discriminate them). Without a
-    // rollback those registrations survive as ORPHANS: the prop falls back to `string` while the
-    // output still carries records nothing references (and, for a bare-`Function` arm, an
-    // unreferenced `JsFn.res` via the `usesJsFn` flag the trial now restores too).
-    const unboxedTrial = registryTrial(ctx)
+    // NB the candidate pass below is SPECULATIVE and its `memberOf` calls REGISTER records — which
+    // leaves orphans when the candidate is rejected (#178). It is deliberately NOT rolled back here:
+    // a speculative registration is load-bearing. `boundedPastDepth` treats an already-registered
+    // type as safe to link past MAX_DEPTH ("registered → link"), so un-registering at bail time
+    // silently degrades a LATER legitimate deep reference to a `string` placeholder — measured on
+    // blend, where `pointOptionsObject` vanished from `point.options` and `optionsToObject` fell to
+    // `string` while top-level bucket counts stayed put. Orphan removal has to be a reachability
+    // sweep AFTER traversal, not a rollback during it; tracked in #178.
     let hasBool = false, hasString = false, hasNumber = false, hasBigInt = false
     const strLits = [], numLits = [], others = []
     let buildable = true
@@ -4629,9 +4628,6 @@ function unionNodeCore(type, ctx, propName, depth = 0) {
             return tparams ? { kind: 'typeRef', to: sname, _unboxed: true, tparams } : { kind: 'typeRef', to: sname, _unboxed: true }
         }
     }
-    // The candidate was rejected (unmodellable arm, duplicate runtime bucket, or <2 members) — undo
-    // everything it speculatively registered before falling through to review/opaque below. (#178)
-    unboxedTrial.rollback()
 
     // Not cleanly discriminable. Flag for human review ONLY if a member is
     // genuinely structured (function / array / named object) — those need a real
@@ -5036,7 +5032,12 @@ function typeSig(t) {
         case 'map': return 'M[' + typeSig(t.mapKey) + ',' + typeSig(t.mapVal) + ']'
         case 'set': return 'S[' + typeSig(t.of) + ']'
         case 'promise': return 'P[' + typeSig(t.of) + ']'
-        case 'callback': return 'F(' + (t.params || []).map(typeSig).join(',') + ')=>' + typeSig(t.ret || { kind: 'unit' })
+        // Param OPTIONALITY and a `@this` arg both change what renderType emits (`option<string> => unit`
+        // vs `string => unit`; a leading bound `this`), so they must be in the signature — two shapes
+        // that render differently must never dedup onto one entry, or whichever registers first wins
+        // and the other binding silently becomes over-restrictive or unsound. (#183 review)
+        case 'callback': return 'F(' + (t.thisArg ? '@this' + typeSig(t.thisArg) + ';' : '') +
+            (t.params || []).map((x) => (x && x.optional ? '?' : '') + typeSig(x)).join(',') + ')=>' + typeSig(t.ret || { kind: 'unit' })
         case 'event': return 'E(' + t.res + ')'
         case 'raw': return 'raw(' + t.res + ')'
         case 'typeVar': return 'V(' + t.name + ')'
@@ -5047,6 +5048,11 @@ function typeSig(t) {
         case 'review':
         case 'unknown':
         case 'any': return 'opaque'
+        // Both render their PAYLOAD (`React.component<x>` / `React.ref<Nullable.t<x>>`), so the
+        // payload is part of the shape — the default branch below would have hashed every
+        // `React.component<…>` alike. (#183 review)
+        case 'reactComponent': return 'RC[' + typeSig(t.of) + ']'
+        case 'reactRef': return 'RR[' + typeSig(t.of) + ']'
         default: return t.kind
     }
 }

@@ -1,8 +1,8 @@
-type props<'a, 'b> = {
+type props<'b, 'a> = {
   bail?: string,  // ⚪ loose — was `Bail`
-  later?: 'a,
-  live?: TrialRollbackHighchartsMemoTypes.seriesLiveOptions<'b>,
+  later?: 'b,
+  live?: TrialRollbackHighchartsMemoTypes.seriesLiveOptions<'a>,
 }
 
 @module("demo")
-external make: React.component<props<'a, 'b>> = "Chart"
+external make: React.component<props<'b, 'a>> = "Chart"

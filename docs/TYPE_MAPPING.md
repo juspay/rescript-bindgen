@@ -486,13 +486,18 @@ keyspace, and all four now follow the rule: `recordNode` (always did), `tagVaria
 *properties*, but its *signature* loop ran first, so a self-returning overload re-entered with no
 entry to find; instrumented at four re-entries of one type at depths 2/4/6).
 
-Every builder that can bail or throw pairs registration with `registryTrial(ctx)`, and the same helper
-now sandboxes two more speculative passes that had no rollback at all:
+Every builder that can bail or throw pairs registration with `registryTrial(ctx)`, which now also
+covers `recordNode` (#182): it has no bail path, but a **throw** inside `buildRecordFields` left an
+entry with `fields: []`, emitting a dead `type x = {}`.
 
-| Pass | Was leaking |
-|---|---|
-| `unionNode`'s `@unboxed` candidate (#178) | `memberOf` registers records per arm; when two arms claim one JS `typeof` bucket the candidate is rejected, and those records survived as orphans — plus a stray `JsFn.res` via the `usesJsFn` flag |
-| `recordNode` (#182) | no bail path, but a **throw** inside `buildRecordFields` left an entry with `fields: []`, emitting a dead `type x = {}` |
+**A speculative registration must NOT be rolled back at bail time (#178).** `unionNode`'s `@unboxed`
+candidate registers records through `memberOf`, and rejecting the candidate does leave orphans — but
+un-registering them is worse than keeping them. `boundedPastDepth` treats an already-registered type
+as safe to link past `MAX_DEPTH` ("registered → link"), so the speculative registration doubles as a
+**cache that later, legitimate deep references depend on**. Rolling it back measurably degraded
+blend's `point.options` (the `pointOptionsObject` field disappeared) and `optionsToObject` (fell to a
+`string` placeholder) — with top-level bucket counts unmoved, so the loss was invisible to the
+metrics. Orphan removal belongs in a reachability sweep **after** traversal, not a rollback during it.
 
 `opaqueUnion` also gained the **structural dedup** the other builders always had (#180): it registered
 unconditionally, so two `type.id`s widening to the same module each got their own — blend emitted
