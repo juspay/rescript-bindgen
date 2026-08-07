@@ -3726,6 +3726,18 @@ function indexedAccessOptional(typeNode, checker) {
  *  nullable bases (wrapping a flagged `string` in Nullable is noise). */
 function applyNullable(baseType, nb) {
     if (!nb || !nb.hasNull) return baseType
+    // `Nullable.t` admits BOTH `null` and `undefined`, so once we wrap, an inner `option` layer is a
+    // second spelling of a case `Nullable` already covers. Not merely redundant — `None` and
+    // `Nullable.undefined` compile to the SAME JS, so `Nullable.t<option<bool>>` gives one runtime
+    // value two type-level spellings that nothing can tell apart, and a consumer has to match two
+    // indistinguishable branches. Verified against the compiler:
+    //     Nullable.make(None) -> undefined        Nullable.undefined -> undefined
+    // Collapse to `Nullable.t<T>`. This is the ONE place the two layers meet: the option arrives from
+    // either `unionNode` (the RESOLVED type carries `| undefined`/`| void`) or `applyOptionalValue`
+    // (the SYNTACTIC node does), while `| null` is only ever syntactic — so normalising here catches
+    // both sources. A plain `T | undefined` never reaches this line and keeps its `option<T>`.
+    // (react-markdown's `allowElement`: `boolean | null | undefined`.)
+    if (baseType.kind === 'option') baseType = baseType.of
     // Wrap for `T | null` AND for a multi-type `(A | B) | null` (e.g. `number | string | null` ->
     // `Nullable.t<[#String|#Number]>`) — the latter previously dropped `| null` (Drawer snap-points).
     // Skip placeholders (wrapping a flagged `string` is noise), an already-nullable, and

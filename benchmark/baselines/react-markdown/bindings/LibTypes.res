@@ -104,7 +104,7 @@ type libMarkdownAsyncOptionsRemarkRehypeOptionsConfig = {
   unknownHandler?: Nullable.t<(state, string, option<MdastTypes.Parents.t>) => option<string>>,  // 🛑 BROKEN — contains `any` — was `ElementContent | ElementContent[]`
 }
 type libMarkdownAsyncOptionsConfig = {
-  allowElement?: Nullable.t<(string, float, option<HastTypes.readonly>) => Nullable.t<option<bool>>>,  // ⚪ loose — was `Readonly<Element>`
+  allowElement?: Nullable.t<(string, float, option<HastTypes.readonly>) => Nullable.t<bool>>,  // ⚪ loose — was `Readonly<Element>`
   allowedElements?: Nullable.t<array<string>>,
   children?: Nullable.t<string>,
   components?: Nullable.t<components>,
@@ -114,5 +114,5 @@ type libMarkdownAsyncOptionsConfig = {
   remarkRehypeOptions?: Nullable.t<libMarkdownAsyncOptionsRemarkRehypeOptionsConfig>,
   skipHtml?: Nullable.t<bool>,
   unwrapDisallowed?: Nullable.t<bool>,
-  urlTransform?: Nullable.t<(string, string, string) => Nullable.t<option<string>>>,  // ⚪ loose — was `Readonly<Element>`
+  urlTransform?: Nullable.t<(string, string, string) => Nullable.t<string>>,  // ⚪ loose — was `Readonly<Element>`
 }

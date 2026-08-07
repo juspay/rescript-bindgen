@@ -18,7 +18,7 @@ type props = {
   callbackMaybe?: option<string> => option<string>,
   callbackOptionalMaybe?: option<string> => unit,
   callbackUndefined?: option<string> => option<string>,
-  callbackNullish?: Nullable.t<option<string>> => Nullable.t<option<string>>,
+  callbackNullish?: Nullable.t<string> => Nullable.t<string>,
   multiMaybe?: unit => option<CommonTypes.stringOrNumber>,
 }
 

@@ -1,6 +1,6 @@
 // ⚠️ `Markdown` is a DEFAULT export — bound as `= "default"`. If the package does `module.exports = Markdown` (CJS), this may need a hand-adjustment; verify the import at runtime.
 type props<'a, 'e> = {
-  allowElement?: Nullable.t<('a, float, option<HastTypes.readonly>) => Nullable.t<option<bool>>>,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
+  allowElement?: Nullable.t<('a, float, option<HastTypes.readonly>) => Nullable.t<bool>>,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   allowedElements?: Nullable.t<array<string>>,
   children?: Nullable.t<string>,
   components?: Nullable.t<LibTypes.components>,
@@ -12,7 +12,7 @@ type props<'a, 'e> = {
   remarkRehypeOptions?: Nullable.t<LibTypes.libMarkdownAsyncOptionsRemarkRehypeOptionsConfig>,
   skipHtml?: Nullable.t<bool>,
   unwrapDisallowed?: Nullable.t<bool>,
-  urlTransform?: Nullable.t<(string, string, 'e) => Nullable.t<option<string>>>,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
+  urlTransform?: Nullable.t<(string, string, 'e) => Nullable.t<string>>,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
 }
 
 @module("react-markdown")
