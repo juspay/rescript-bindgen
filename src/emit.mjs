@@ -1364,42 +1364,97 @@ function resolveCtorCollisions(entries) {
     // emit.mjs has no `pascal` (that lives in extract.mjs) — same recipe as `pascalName` below.
     const pas = (x) => String(x || '').replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(/\s+/)
         .map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('')
-    const defs = new Map() // ctor name -> [{ entry, member }]
+
+    // EVERY constructor in the module shares one namespace, so all three kinds that declare one must
+    // participate: enum members, `@unboxed` members and `@tag` variant branches. Collecting only
+    // enums (the first cut) missed a demonstrated hazard — `type plain = | @as("plain") Choice`
+    // beside `@unboxed type boxed = @as("boxed") Choice` reported NO collision while an unannotated
+    // `Choice` compiled to `"boxed"`. (#184 review)
+    //
+    // The runtime value is kept TYPED, not stringified: `@as(0)` and `@as("0")` emit `0` and `"0"` —
+    // different values — and `String(...)` collapsed them into one "safe" same-value group. `valKey`
+    // encodes the type alongside the value; `valShow` renders it the way it is emitted.
+    const valKey = (v, num) => v === undefined ? null : JSON.stringify([num ? 'num' : 'str', v])
+    const valShow = (v, num) => (num ? String(v) : JSON.stringify(String(v)))
+    const defs = new Map() // ctor name -> [{ entry, member, vkey, value, num }]
+    const push = (ctor, rec) => { if (!defs.has(ctor)) defs.set(ctor, []); defs.get(ctor).push(rec) }
     for (const e of entries) {
-        if (e.kind !== 'enum') continue // polyvariant tags are a separate namespace; @unboxed/@tag handled below
-        for (const m of e.members || []) {
-            if (!m.ctor) continue
-            if (!defs.has(m.ctor)) defs.set(m.ctor, [])
-            defs.get(m.ctor).push({ entry: e, member: m })
+        if (e.kind === 'enum' || e.kind === 'unboxed') {
+            for (const m of e.members || []) {
+                if (!m.ctor) continue
+                push(m.ctor, { entry: e, member: m, vkey: valKey(m.as, m.num), value: m.as, num: !!m.num })
+            }
+        } else if (e.kind === 'tagVariant') {
+            for (const b of e.branches || []) {
+                if (!b.ctor) continue // a @tag branch's runtime value is its literal
+                push(b.ctor, { entry: e, member: b, vkey: valKey(b.literal, false), value: b.literal, num: false })
+            }
         }
+        // polyvariant tags (`#foo`) are a SEPARATE namespace — they cannot collide with constructors.
     }
+
+    // Reserve every name that already exists, so a generated replacement can never land on one.
+    const taken = new Set(defs.keys())
     const classA = [], classB = []
     for (const [ctor, uses] of [...defs].sort((a, b) => a[0].localeCompare(b[0]))) {
         if (uses.length < 2) continue
-        const values = new Set(uses.map((u) => String(u.member.as)))
-        if (values.size === 1) { classB.push({ ctor, value: [...values][0], owners: uses.map((u) => u.entry.name) }); continue }
-        // Class A: suffix by the TAIL of the owner's name — the shortest camel-word suffix that tells
-        // the colliding owners apart. The whole stem would be unusable
+        // A payload constructor (`Bool(bool)`, no `@as`) carries no wire value, so it can't be part of
+        // a value CONFLICT — but it still occupies the namespace, which `taken` above accounts for.
+        const vkeys = new Set(uses.map((u) => u.vkey).filter((k) => k !== null))
+        if (vkeys.size <= 1) {
+            classB.push({ ctor, value: uses[0].value === undefined ? '(payload)' : valShow(uses[0].value, uses[0].num), owners: uses.map((u) => u.entry.name) })
+            continue
+        }
+        // CLASS A: suffix by the TAIL of the owner's name — the shortest camel-word suffix that tells
+        // the colliding owners apart. The whole stem is unusable
         // (`NoneCodeEditorV2IEditorOptionsSnippetSuggestions`); the tail reads like the thing it
-        // belongs to (`NoneSnippetSuggestions`, `AltKeyCode`, `LeftDropdownPosition`). `e.base` is
-        // #90's stable anchor, so the suffix is a pure function of shape identity — no counters, no
-        // dependence on emission order, and every collider is suffixed (leaving one bare would make
-        // "who keeps the short name" order-dependent).
+        // belongs to (`AltKeyCode`, `LeftDropdownPosition`). `e.base` is #90's stable anchor, so the
+        // suffix is a pure function of shape identity — no counters, no dependence on emission order.
+        // Every collider is suffixed, including the first: leaving one bare would make "who keeps the
+        // short name" order-dependent, and would let a formerly-ambiguous name silently keep working
+        // with one of its meanings instead of failing loudly at the use site.
         const words = (e) => pas(String(e.base || e.name || '').replace(new RegExp(ctor + '$', 'i'), ''))
             .replace(/([a-z0-9])([A-Z])/g, '$1 $2').split(/\s+/).filter(Boolean)
-        let k = 2, suffixes
-        for (; k <= 8; k++) {
+        let suffixes = uses.map(() => '')
+        for (let k = 2; k <= 8; k++) {
             suffixes = uses.map((u) => words(u.entry).slice(-k).join(''))
-            if (new Set(suffixes).size === uses.length) break // this depth distinguishes them all
+            if (new Set(suffixes).size === uses.length) break // this depth separates them all
         }
+        // ALLOCATE against the live namespace. Two guards the first cut lacked, both reproduced by the
+        // review: (a) the computed name may already BE taken by an unrelated constructor; (b) two
+        // distinct entries can share a stable `base`, so their suffixes are equal and don't separate
+        // them. Deterministic fallback: append the owner's final name, then a counter — applied in the
+        // group's sorted-by-owner order so it never depends on emission order.
         const renamed = []
-        uses.forEach((u, i) => {
-            const next = ctor + (suffixes[i] || pas(u.entry.name || ''))
-            renamed.push({ from: ctor, to: next, value: String(u.member.as), owner: u.entry.name })
+        const order = uses.map((u, i) => ({ u, i })).sort((a, b) =>
+            String(a.u.entry.name || '').localeCompare(String(b.u.entry.name || '')) || a.i - b.i)
+        for (const { u, i } of order) {
+            let next = ctor + (suffixes[i] || pas(u.entry.name || ''))
+            if (taken.has(next)) next = ctor + pas(u.entry.name || '')          // (a)/(b): fall back to the FULL owner name
+            for (let n = 2; taken.has(next); n++) next = ctor + pas(u.entry.name || '') + n // last resort, deterministic
+            taken.add(next)
+            renamed.push({ from: ctor, to: next, value: valShow(u.value, u.num), owner: u.entry.name })
             u.member.ctor = next
-        })
-        classA.push({ ctor, values: [...values], renamed })
+        }
+        taken.delete(ctor) // the bare name is now unused — free it for a future allocation
+        classA.push({ ctor, values: [...new Set(uses.map((u) => valShow(u.value, u.num)))], renamed })
     }
+
+    // POST-CONDITION: no name may still carry two different runtime values. This is the claim the PR
+    // makes, so it is asserted rather than assumed — a rescan of the mutated entries. (#184 review)
+    const after = new Map()
+    for (const e of entries) {
+        const list = e.kind === 'tagVariant'
+            ? (e.branches || []).map((b) => ({ ctor: b.ctor, vkey: valKey(b.literal, false) }))
+            : (e.kind === 'enum' || e.kind === 'unboxed') ? (e.members || []).map((m) => ({ ctor: m.ctor, vkey: valKey(m.as, m.num) })) : []
+        for (const { ctor, vkey } of list) {
+            if (!ctor) continue
+            if (!after.has(ctor)) after.set(ctor, new Set())
+            if (vkey !== null) after.get(ctor).add(vkey)
+        }
+    }
+    const unresolved = [...after].filter(([, v]) => v.size > 1).map(([c]) => c)
+    if (unresolved.length) classA.push({ ctor: '(unresolved)', values: unresolved, renamed: [], unresolved })
     return { classA, classB }
 }
 

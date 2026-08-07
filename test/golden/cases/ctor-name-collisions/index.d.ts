@@ -22,19 +22,54 @@
 //    for no correctness gain. It must not pass SILENTLY though — see the report's collisions section.
 type JsxElement = { __brand: 'element' }
 
-// CLASS A — `Value` means different strings in the two enums, and `Mode` differs only by case.
+// CLASS A — `Value` means a different string in each enum.
 type Operator = '!=' | '>'
 type GapUnit = 'value' | 'percent'
-type LineCase = 'Solid' | 'Dashed'
 
-// CLASS B — `Solid` is "solid" in both, so it stays `Solid` and is only reported.
-type StrokeStyle = 'solid' | 'dotted'
-type BorderStyle = 'solid' | 'double'
+// CLASS A, case-only — `Solid` is "Solid" in one and "solid" in the other. Highcharts hits exactly
+// this (`Point` = "point"/"Point") and treats the two as different values.
+type LineCase = 'Solid' | 'Dashed'
+type FillCase = 'solid' | 'hatched'
+
+// CLASS A, numeric vs string — `@as(0)` emits `0` and `@as("0")` emits `"0"`; stringifying the value
+// collapsed them into one "safe" group and left the hazard in place. (#184 review)
+// The member NAME drives a numeric enum's constructor, and the VALUE drives a string literal's — so
+// naming the numeric member `V0` makes both sides land on `V0`: `@as(0)` vs `@as("0")`.
+declare enum Level { V0 = 0, V1 = 1 }
+type Digit = '0' | '1'
+
+// CLASS A, ACROSS KINDS — an `@unboxed` variant declares constructors in the same module namespace as
+// an enum. `boolean | 'mixed'` emits `Bool(bool) | @as("mixed") Mixed`; the enum below emits
+// `@as("Mixed") Mixed`. Collecting only enum entries (the first cut) reported NO collision here, while
+// an unannotated `Mixed` compiled to whichever came last. (#184 review)
+// The union carries a RECORD arm so the `@unboxed` homes with that record's module — the same module
+// as the enum below. A primitives-only union would sink to `CommonTypes` and never share a namespace.
+interface Marker { id: string }
+type Tri = Marker | 'mixed'
+type Casing = 'Mixed' | 'Upper'
+
+// ALLOCATOR — the computed replacement can already BE taken. `Value` collides (above), and its
+// owner-tail suffix would produce `ValueOperator` — which this enum already defines. The allocator
+// reserves every existing constructor first and falls back deterministically, so nothing is
+// overwritten. (#184 review)
+type Squatter = 'value operator' | 'other'
+
+// CLASS B — `Dotted` is "dotted" in BOTH, with no third definition dragging in another value, so it
+// keeps its name and is only reported. This is what the previous version of the fixture failed to
+// prove: an uppercase sibling made every `Solid` definition Class A, so no "left as-is" row existed.
+type StrokeStyle = 'dotted' | 'wavy'
+type BorderStyle = 'dotted' | 'groove'
 
 export declare const Chart: (props: {
     operator?: Operator
     gapUnit?: GapUnit
     lineCase?: LineCase
+    fillCase?: FillCase
+    level?: Level
+    digit?: Digit
+    squatter?: Squatter
+    tri?: Tri
+    casing?: Casing
     stroke?: StrokeStyle
     border?: BorderStyle
 }) => JsxElement

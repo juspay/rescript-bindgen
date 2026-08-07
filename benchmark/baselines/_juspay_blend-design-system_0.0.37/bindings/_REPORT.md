@@ -16,32 +16,32 @@ Left alone, an unannotated use would have compiled cleanly and sent the **wrong 
 
 | Module | Constructor | Conflicting `@as` values | Renamed to |
 |---|---|---|---|
-| `EditorSharedTypes` | `Alt` | `"6"` / `"alt"` | `AltKeyCode`, `AltCursorModifier` |
-| `EditorSharedTypes` | `CRLF` | `"2"` / `"1"` | `CRLFOfLine`, `CRLFLinePreference`, `CRLFLineSequence` |
-| `EditorSharedTypes` | `Explicit` | `"3"` / `"explicit"` | `ExplicitChangeReason`, `ExplicitCaretAnimation` |
-| `EditorSharedTypes` | `Hover` | `"hover"` / `"69"` | `HoverStateV2`, `HoverEditorOption`, `HoverActivatedOn` |
-| `EditorSharedTypes` | `Insert` | `"19"` / `"insert"` | `InsertKeyCode`, `InsertInsertMode` |
-| `EditorSharedTypes` | `Left` | `"left"` / `"0"` / `"1"` | `LeftDropdownPosition`, `LeftV2Direction`, `LeftOutsidePosition`, `LeftPositionAffinity`, `LeftMarginLane` |
-| `EditorSharedTypes` | `LF` | `"1"` / `"0"` | `LFOfLine`, `LFLinePreference`, `LFLineSequence` |
-| `EditorSharedTypes` | `None` | `"0"` / `"none"` / `"2"` | `NoneRenderMinimap`, `NoneOptionsAutohide`, `NoneWrappingIndent`, `NoneAutoIndent`, `NoneSnippetSuggestions`, `NoneRenderWhitespace`, `NoneLineHighlight`, `NonePositionAffinity` |
-| `EditorSharedTypes` | `Right` | `"right"` / `"1"` / `"3"` | `RightDropdownPosition`, `RightV2Direction`, `RightOutsidePosition`, `RightPositionAffinity`, `RightMarginLane` |
-| `EditorSharedTypes` | `Smooth` | `"smooth"` / `"0"` | `SmoothCursorBlinking`, `SmoothScrollType` |
-| `EditorSharedTypes` | `Text` | `"1"` / `"text"` | `TextRenderMinimap`, `TextMouseStyle`, `TextTagType` |
-| `EditorSharedTypes` | `WordWrapColumn` | `"152"` / `"wordWrapColumn"` | `WordWrapColumnEditorOption`, `WordWrapColumnWordWrap` |
-| `DataTableTypes` | `DateRange` | `"date_range"` / `"dateRange"` | `DateRangeTypeType`, `DateRangeColumnType`, `DateRangeFilterComponent` |
-| `HighchartsSharedTypes` | `Point` | `"point"` / `"Point"` | `PointObjectScope`, `PointConstructorType` |
-| `HighchartsSharedTypes` | `Pointer` | `"pointer"` / `"Pointer"` | `PointerCursorValue`, `PointerConstructorType` |
-| `HighchartsSharedTypes` | `Polygon` | `"polygon"` / `"Polygon"` | `PolygonInterpolationValue`, `PolygonTypeValue` |
-| `HighchartsSharedTypes` | `Series` | `"series"` / `"Series"` | `SeriesWithinValue`, `SeriesConstructorType` |
+| `EditorSharedTypes` | `Alt` | `6` / `"alt"` | `AltCursorModifier`, `AltKeyCode` |
+| `EditorSharedTypes` | `CRLF` | `2` / `1` | `CRLFOfLine`, `CRLFLinePreference`, `CRLFLineSequence` |
+| `EditorSharedTypes` | `Explicit` | `3` / `"explicit"` | `ExplicitCaretAnimation`, `ExplicitChangeReason` |
+| `EditorSharedTypes` | `Hover` | `"hover"` / `69` | `HoverActivatedOn`, `HoverEditorOption`, `HoverStateV2` |
+| `EditorSharedTypes` | `Insert` | `19` / `"insert"` | `InsertInsertMode`, `InsertKeyCode` |
+| `EditorSharedTypes` | `Left` | `"left"` / `0` / `1` | `LeftOutsidePosition`, `LeftMarginLane`, `LeftV2Direction`, `LeftPositionAffinity`, `LeftDropdownPosition` |
+| `EditorSharedTypes` | `LF` | `1` / `0` | `LFOfLine`, `LFLinePreference`, `LFLineSequence` |
+| `EditorSharedTypes` | `None` | `0` / `"none"` / `2` | `NoneOptionsAutohide`, `NoneAutoIndent`, `NoneLineHighlight`, `NoneRenderWhitespace`, `NoneSnippetSuggestions`, `NoneWrappingIndent`, `NonePositionAffinity`, `NoneRenderMinimap` |
+| `EditorSharedTypes` | `Right` | `"right"` / `1` / `3` | `RightOutsidePosition`, `RightMarginLane`, `RightV2Direction`, `RightPositionAffinity`, `RightDropdownPosition` |
+| `EditorSharedTypes` | `Smooth` | `"smooth"` / `0` | `SmoothCursorBlinking`, `SmoothScrollType` |
+| `EditorSharedTypes` | `Text` | `1` / `"text"` | `TextMouseStyle`, `TextTagType`, `TextRenderMinimap` |
+| `EditorSharedTypes` | `WordWrapColumn` | `152` / `"wordWrapColumn"` | `WordWrapColumnWordWrap`, `WordWrapColumnEditorOption` |
+| `DataTableTypes` | `DateRange` | `"date_range"` / `"dateRange"` | `DateRangeColumnType`, `DateRangeTypeType`, `DateRangeFilterComponent` |
+| `HighchartsSharedTypes` | `Point` | `"point"` / `"undefined"` / `"Point"` | `PointConstructorType`, `PointObjectScope`, `PointPointArray` |
+| `HighchartsSharedTypes` | `Pointer` | `"pointer"` / `"Pointer"` | `PointerConstructorType`, `PointerCursorValue` |
+| `HighchartsSharedTypes` | `Polygon` | `"polygon"` / `"Polygon"` | `PolygonTypeValue`, `PolygonInterpolationValue` |
+| `HighchartsSharedTypes` | `Series` | `"series"` / `"Series"` | `SeriesConstructorType`, `SeriesWithinValue` |
 | `HighchartsSharedTypes` | `Solid` | `"Solid"` / `"solid"` | `SolidStyleValue`, `SolidShapeValue` |
-| `HighchartsSharedTypes` | `TriangleDown` | `"triangle-down"` / `"triangleDown"` | `TriangleDownKeyValue`, `TriangleDownConstructorType` |
-| `HighchartsSharedTypes` | `Value` | `""` / `"!="` / `"value"` | `ValueSeriesSetState`, `ValuePointSetState`, `ValueAnnotationDraggable`, `ValueOptionsOperator`, `ValueOptionsGapUnit`, `ValueOptionsCompare` |
+| `HighchartsSharedTypes` | `TriangleDown` | `"triangle-down"` / `"triangleDown"` | `TriangleDownConstructorType`, `TriangleDownKeyValue` |
+| `HighchartsSharedTypes` | `Value` | `""` / `"!="` / `"value"` | `ValueAnnotationDraggable`, `ValuePointSetState`, `ValueSeriesSetState`, `ValueOptionsCompare`, `ValueOptionsGapUnit`, `ValueOptionsOperator` |
 
-### Left as-is — same name, same runtime value (117)
+### Left as-is — same name, same runtime value (145)
 
 These resolve to the right value whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
 
-- `EditorSharedTypes`: `Advanced`, `All`, `Always`, `Auto`, `Brackets`, `Default`, `Disabled`, `Error`, `Full`, `LanguageDefined`, `Line`, `Mouseover`, `Never`, `Off`, `On`, `Selection`
+- `EditorSharedTypes`: `Advanced`, `All`, `Always`, `Auto`, `Bool`, `Brackets`, `Default`, `Disabled`, `Error`, `Fn`, `Full`, `LanguageDefined`, `Line`, `Mouseover`, `Never`, `Off`, `On`, `Selection`, `SelectionArr`, `Str`
 - `TagsTypes`: `Lg`, `Md`, `Sm`, `Xs`
 - `InputsTypes`: `Left`, `Lg`, `Md`, `Right`, `Sm`
 - `TooltipTypes`: `Left`, `Right`
@@ -49,11 +49,12 @@ These resolve to the right value whichever definition wins, so renaming them wou
 - `DataTableTypes`: `Avatar`, `Custom`, `Date`, `Decimal`, `Dropdown`, `Error`, `Multiselect`, `Number`, `Percentage`, `Primary`, `Progress`, `ReactElement`, `Secondary`, `Select`, `Slider`, `Success`, `Tag`, `Text`, `Warning`
 - `DateRangePickerTypes`: `Custom`
 - `ProgressBarTypes`: `Segmented`, `Solid`
-- `HighchartsSharedTypes`: `All`, `Allow`, `Alt`, `Arc`, `Area`, `Auto`, `Bottom`, `Callout`, `Category`, `Center`, `Chart`, `Circle`, `Close`, `Ctrl`, `Day`, `Diamond`, `End`, `Flap`, `High`, `Horizontal`, `Hover`, `Inactive`, `Inside`, `Justify`, `Left`, `Linear`, `Logarithmic`, `Low`, `Meta`, `Middle` … +27 more
+- `HighchartsSharedTypes`: `All`, `Allow`, `Alt`, `AnnotationMockPointOptionsObject`, `Arc`, `Area`, `Arr`, `Auto`, `Bool`, `Bottom`, `Callout`, `Category`, `Center`, `Chart`, `Circle`, `Close`, `CssObject`, `Ctrl`, `Day`, `Diamond`, `End`, `Flap`, `Fn`, `High`, `Horizontal`, `Hover`, `Inactive`, `Inside`, `Justify`, `Left` … +35 more
 - `SkeletonTypes`: `Circle`
 - `UploadTypes`: `Error`, `Success`
 - `ButtonV2Types`: `Default`, `Disabled`
 - `TooltipV2Types`: `Left`, `Right`
+- `CommonTypes`: `Arr`, `Auto`, `Bool`, `Fn`, `Interval`, `N0`, `N1`, `N2`, `N3`, `N4`, `Num`, `Off`, `On`, `Relative`, `Str`, `StrArr`
 - `SliderTypes`: `Bottom`, `Inline`, `Top`
 
 ## 📦 Dependencies

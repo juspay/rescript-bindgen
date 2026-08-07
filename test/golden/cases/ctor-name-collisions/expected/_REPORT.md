@@ -2,7 +2,7 @@
 
 **1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**5** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**12** shared types deduplicated into **1** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 🔤 Constructor name collisions
 
@@ -14,8 +14,17 @@ Left alone, an unannotated use would have compiled cleanly and sent the **wrong 
 
 | Module | Constructor | Conflicting `@as` values | Renamed to |
 |---|---|---|---|
-| `CtorNameCollisionsTypes` | `Solid` | `"Solid"` / `"solid"` | `SolidLineCase`, `SolidStrokeStyle`, `SolidBorderStyle` |
-| `CtorNameCollisionsTypes` | `Value` | `"!="` / `"value"` | `ValueOperator`, `ValueGapUnit` |
+| `CtorNameCollisionsTypes` | `Mixed` | `"mixed"` / `"Mixed"` | `MixedCasing`, `MixedOrMarker` |
+| `CtorNameCollisionsTypes` | `Solid` | `"Solid"` / `"solid"` | `SolidFillCase`, `SolidLineCase` |
+| `CtorNameCollisionsTypes` | `V0` | `0` / `"0"` | `V0Digit`, `V0Level` |
+| `CtorNameCollisionsTypes` | `V1` | `1` / `"1"` | `V1Digit`, `V1Level` |
+| `CtorNameCollisionsTypes` | `Value` | `"!="` / `"value"` | `ValueGapUnit`, `ValueOperator2` |
+
+### Left as-is — same name, same runtime value (1)
+
+These resolve to the right value whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
+
+- `CtorNameCollisionsTypes`: `Dotted`
 
 ## 📦 Dependencies
 

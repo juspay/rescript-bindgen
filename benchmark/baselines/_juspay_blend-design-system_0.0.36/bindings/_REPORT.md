@@ -16,24 +16,25 @@ Left alone, an unannotated use would have compiled cleanly and sent the **wrong 
 
 | Module | Constructor | Conflicting `@as` values | Renamed to |
 |---|---|---|---|
-| `HighchartsSharedTypes` | `Point` | `"point"` / `"Point"` | `PointObjectScope`, `PointConstructorType` |
-| `HighchartsSharedTypes` | `Pointer` | `"pointer"` / `"Pointer"` | `PointerCursorValue`, `PointerConstructorType` |
-| `HighchartsSharedTypes` | `Polygon` | `"polygon"` / `"Polygon"` | `PolygonInterpolationValue`, `PolygonTypeValue` |
-| `HighchartsSharedTypes` | `Series` | `"series"` / `"Series"` | `SeriesWithinValue`, `SeriesConstructorType` |
+| `HighchartsSharedTypes` | `Point` | `"point"` / `"undefined"` / `"Point"` | `PointConstructorType`, `PointObjectScope`, `PointPointArray` |
+| `HighchartsSharedTypes` | `Pointer` | `"pointer"` / `"Pointer"` | `PointerConstructorType`, `PointerCursorValue` |
+| `HighchartsSharedTypes` | `Polygon` | `"polygon"` / `"Polygon"` | `PolygonTypeValue`, `PolygonInterpolationValue` |
+| `HighchartsSharedTypes` | `Series` | `"series"` / `"Series"` | `SeriesConstructorType`, `SeriesWithinValue` |
 | `HighchartsSharedTypes` | `Solid` | `"Solid"` / `"solid"` | `SolidStyleValue`, `SolidShapeValue` |
-| `HighchartsSharedTypes` | `TriangleDown` | `"triangle-down"` / `"triangleDown"` | `TriangleDownKeyValue`, `TriangleDownConstructorType` |
-| `HighchartsSharedTypes` | `Value` | `""` / `"!="` / `"value"` | `ValueSeriesSetState`, `ValuePointSetState`, `ValueAnnotationDraggable`, `ValueOptionsOperator`, `ValueOptionsGapUnit`, `ValueOptionsCompare` |
-| `DataTableTypes` | `DateRange` | `"date_range"` / `"dateRange"` | `DateRangeTypeType`, `DateRangeColumnType`, `DateRangeFilterComponent` |
+| `HighchartsSharedTypes` | `TriangleDown` | `"triangle-down"` / `"triangleDown"` | `TriangleDownConstructorType`, `TriangleDownKeyValue` |
+| `HighchartsSharedTypes` | `Value` | `""` / `"!="` / `"value"` | `ValueAnnotationDraggable`, `ValuePointSetState`, `ValueSeriesSetState`, `ValueOptionsCompare`, `ValueOptionsGapUnit`, `ValueOptionsOperator` |
+| `DataTableTypes` | `DateRange` | `"date_range"` / `"dateRange"` | `DateRangeColumnType`, `DateRangeTypeType`, `DateRangeFilterComponent` |
 
-### Left as-is — same name, same runtime value (98)
+### Left as-is — same name, same runtime value (113)
 
 These resolve to the right value whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
 
 - `ButtonTypes`: `Default`
 - `SkeletonTypes`: `Circle`
+- `CommonTypes`: `Arr`, `Auto`, `Bool`, `Fn`, `Num`, `Str`, `StrArr`
 - `TagsTypes`: `Lg`, `Md`, `Sm`, `Xs`
 - `TooltipTypes`: `Left`, `Right`
-- `HighchartsSharedTypes`: `All`, `Allow`, `Alt`, `Arc`, `Area`, `Auto`, `Bottom`, `Callout`, `Category`, `Center`, `Chart`, `Circle`, `Close`, `Ctrl`, `Day`, `Diamond`, `End`, `Flap`, `High`, `Horizontal`, `Hover`, `Inactive`, `Inside`, `Justify`, `Left`, `Linear`, `Logarithmic`, `Low`, `Meta`, `Middle` … +27 more
+- `HighchartsSharedTypes`: `All`, `Allow`, `Alt`, `AnnotationMockPointOptionsObject`, `Arc`, `Area`, `Arr`, `Auto`, `Bool`, `Bottom`, `Callout`, `Category`, `Center`, `Chart`, `Circle`, `Close`, `CssObject`, `Ctrl`, `Day`, `Diamond`, `End`, `Flap`, `Fn`, `High`, `Horizontal`, `Hover`, `Inactive`, `Inside`, `Justify`, `Left` … +35 more
 - `DateRangePickerTypes`: `Custom`
 - `InputsTypes`: `Left`, `Lg`, `Md`, `Right`, `Sm`
 - `DataTableTypes`: `Avatar`, `Custom`, `Date`, `Decimal`, `Dropdown`, `Error`, `Multiselect`, `Number`, `Percentage`, `Primary`, `Progress`, `ReactElement`, `Secondary`, `Select`, `Slider`, `Success`, `Tag`, `Text`, `Warning`

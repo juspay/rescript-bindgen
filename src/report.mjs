@@ -67,7 +67,7 @@ export function writeReport(path, label, rows, reports, deps, shared, fnInfo, cl
             L.push(`| Module | Constructor | Conflicting \`@as\` values | Renamed to |`)
             L.push(`|---|---|---|---|`)
             for (const a of renamedAll) {
-                L.push(`| \`${a.mod}\` | \`${a.ctor}\` | ${a.values.map((v) => '`' + JSON.stringify(v) + '`').join(' / ')} | ${a.renamed.map((r) => '`' + r.to + '`').join(', ')} |`)
+                L.push(`| \`${mdCell(a.mod)}\` | \`${mdCell(a.ctor)}\` | ${a.values.map((v) => '`' + mdCell(String(v)) + '`').join(' / ')} | ${a.renamed.map((r) => '`' + mdCell(r.to) + '`').join(', ')} |`)
             }
             L.push(``)
         }
@@ -78,7 +78,7 @@ export function writeReport(path, label, rows, reports, deps, shared, fnInfo, cl
             L.push(``)
             const byMod = new Map()
             for (const b of sameValAll) { if (!byMod.has(b.mod)) byMod.set(b.mod, []); byMod.get(b.mod).push(b.ctor) }
-            for (const [m, names] of byMod) L.push(`- \`${m}\`: ${names.slice(0, 30).map((n) => '`' + n + '`').join(', ')}${names.length > 30 ? ` … +${names.length - 30} more` : ''}`)
+            for (const [m, names] of byMod) L.push(`- \`${mdCell(m)}\`: ${names.slice(0, 30).map((n) => '`' + mdCell(n) + '`').join(', ')}${names.length > 30 ? ` … +${names.length - 30} more` : ''}`)
             L.push(``)
         }
     }
