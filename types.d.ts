@@ -14,6 +14,7 @@ export type IRType =
   | { kind: 'unit' }
   | { kind: 'typeRef'; to: string; _enum?: boolean; _unboxed?: boolean }
   | { kind: 'array'; of: IRType }
+  | { kind: 'option'; of: IRType }
   | { kind: 'dict'; of: IRType }
   | { kind: 'callback'; arg: IRType | { kind: 'event'; res: string }; ret: IRType }
   /** Complex but real type, widened to a fallback (default `string`). */
