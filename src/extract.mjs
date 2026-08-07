@@ -2567,6 +2567,14 @@ const REF_NAMES = /^(Ref|RefObject|MutableRefObject|LegacyRef)$/
  * #168) and every NAME it reserved (else a failed trial makes a later legitimate `Rect` become
  * `Rect2`, #39). Covers module mode and the single-file local registries alike.
  *
+ * It also restores every ctx-level MEMO that points INTO the state above — today that is
+ * `highchartsSeriesDataVar`, which caches WHICH type variable carries the Highcharts series payload.
+ * Restoring `typeVars` without it left the memo naming a variable the rollback had just removed, so a
+ * later, independent Highcharts record silently reused it and coupled two unrelated props to one
+ * variable (`later?: 'a` + `live?: seriesLiveOptions<'a>` instead of `'a` and `'b`). Any future cache
+ * of this shape — a value derived from the registry or from `typeVars`, held on ctx across builds —
+ * belongs in the snapshot for the same reason. (#174 review)
+ *
  * Known limit: it restores registry MEMBERSHIP, not mutations to entries that already existed before
  * the attempt (a tparam sync, a `_heal` fill). No builder relies on undoing those today.
  */
@@ -2578,6 +2586,7 @@ function registryTrial(ctx) {
         sigs: new Set(shared.bySig.keys()),
         names: new Set(shared.names),
         typeVars: ctx.typeVars ? new Map(ctx.typeVars) : null,
+        hcDataVar: ctx.highchartsSeriesDataVar,
     } : {
         recordsLen: ctx.records.length,
         enumsLen: ctx.enums.length,
@@ -2586,6 +2595,7 @@ function registryTrial(ctx) {
         seenEnums: new Set(ctx.seenEnums.keys()),
         seenUnboxed: new Set(ctx.seenUnboxed.keys()),
         typeVars: ctx.typeVars ? new Map(ctx.typeVars) : null,
+        hcDataVar: ctx.highchartsSeriesDataVar,
     }
     return {
         /** Undo everything the attempt registered. Returns null, so callers can `return trial.rollback()`. */
@@ -2604,6 +2614,7 @@ function registryTrial(ctx) {
                 for (const k of [...ctx.seenUnboxed.keys()]) if (!snap.seenUnboxed.has(k)) ctx.seenUnboxed.delete(k)
             }
             if (snap.typeVars && ctx.typeVars) { ctx.typeVars.clear(); for (const [k, v] of snap.typeVars) ctx.typeVars.set(k, v) }
+            ctx.highchartsSeriesDataVar = snap.hcDataVar
             return null
         },
     }
@@ -3799,18 +3810,21 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     // The name and `_construct` are computable up front; `members`/`deps`/`home`/`note` are filled in
     // place after the build (home is late-bound at emit for keyed refs, #128, so refining it after
     // the self-ref was minted is safe). Any bail below restores the registry via the trial.
+    // Registering early means an EXCEPTION is now a visible failure mode, not just a bail: `classify`
+    // can throw (a checker edge, a depth blow-up), and a half-built entry would survive to emit as an
+    // uninhabitable `module X = { type t }` — no `from*`, no `as*`, nothing that can construct or read
+    // it. Before early registration a throw simply left nothing behind. So the transaction opens HERE,
+    // immediately after the snapshot, and spans naming, registration, the member build AND
+    // finalization: a throw anywhere inside rolls back and RETHROWS, preserving what the caller always
+    // saw (the CLI catches per-component and reports `extract-error`). Opening it after the
+    // `entries.push` — as the first cut did — leaves exactly the window this guard exists to close.
+    // (#173, #174 review)
     const trial = registryTrial(ctx)
+    try {
     const name = uniqueName(pascal(opts.nameHint || typeName(type) || stableAnonBase(ctx, type, propName)), ctx.shared)
     const entry = { key, kind: 'opaque', name, home: homeOf(type, ctx), members: [], deps: new Set(), _construct: hasLiteralArm || !!opts.addNone }
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
-    // Registering early means an EXCEPTION mid-build is now a visible failure mode, not just a bail:
-    // `classify` can throw (a checker edge, a depth blow-up), and the half-built entry would survive
-    // to emit as an uninhabitable `module X = { type t }` — no `from*`, no `as*`, nothing that can
-    // construct or read it. Before early registration a throw simply left nothing behind. So the
-    // build is wrapped: roll back, then RETHROW, preserving the caller's existing behaviour (the CLI
-    // catches per-component and reports `extract-error`). (#174 review)
-    try {
     const { checker } = ctx
     const members = []
     let sawBool = false
@@ -5025,6 +5039,11 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
     const shared = ctx.shared
     const trial = registryTrial(ctx)
     const rollback = () => trial.rollback()
+    // The transaction spans naming, registration, the branch build AND finalization — a throw
+    // anywhere inside rolls back and rethrows. Opening it only around the build (the first cut)
+    // left the registration itself unguarded, so an exception there shipped an entry with EMPTY
+    // branches, which later crashed the emitter reading `ctor`. (#174 review)
+    try {
 
     // Names are computable before the build (they depend only on the path/typeName), so the entry can
     // register first. Named exactly as a record is (#90/#96): a NAMED union keeps the library's name;
@@ -5080,12 +5099,6 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
             if (fields.some((f) => !f)) return rollback()
             branches.push({ literal: lits[i], ctor, fields })
         }
-    } catch (e) {
-        // Same exposure the early registration creates in `opaqueUnion` (#174 review): `classify` can
-        // THROW mid-build, and the entry registered as the cycle guard would survive half-built —
-        // a variant with no branches. Roll back, then rethrow so the caller sees what it always saw.
-        rollback()
-        throw e
     } finally {
         ctx.inRecordField = prevInRecord
         ctx.path = prevPath
@@ -5122,6 +5135,7 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
     }
     shared.bySig.set(sig, entry)
     return refTo(entry)
+    } catch (e) { rollback(); throw e } // never leave a half-built entry behind (#174 review)
 }
 
 /**

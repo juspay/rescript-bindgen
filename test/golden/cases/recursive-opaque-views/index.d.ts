@@ -38,4 +38,8 @@ export declare const Shapes: (props: { shape?: Shape }) => JsxElement
 // `module Shape22` — a second duplicate on top of the first, and again non-compiling. Included
 // because one component alone does not exercise a second consumer arriving after the first
 // registration, and the golden suite is the only place that would catch it.
-export declare const ShapesToo: (props: { other?: Shape }) => JsxElement
+// NB `list` is what gives this teeth: at PROP position the union widens to a flagged `string` and
+// never reaches the module (see #181), so `other?: Shape` alone would pass with or without the fix.
+// The ARRAY position is the discriminating one — on main this emits `array<Shape.t>` in a component
+// file while the Types module is named `Shape2`.
+export declare const ShapesToo: (props: { other?: Shape; list?: Shape[] }) => JsxElement
