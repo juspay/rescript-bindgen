@@ -1,0 +1,31 @@
+type props = {
+  chartType?: HighchartsSharedTypes.chartType,
+  data?: Nullable.t<array<HighchartsSharedTypes.newNestedDataPoint>>,
+  colors?: array<HighchartsSharedTypes.chartsColorsConfig>,
+  slot1?: React.element,
+  slot2?: React.element,
+  slot3?: React.element,
+  legendPosition?: HighchartsSharedTypes.chartLegendPosition,
+  chartHeaderSlot: React.element,
+  stackedLegends?: bool,
+  stackedLegendsData?: array<HighchartsSharedTypes.stackedLegendsDataPoint>,
+  showAllLegends?: bool,
+  barsize?: float,
+  xAxis?: HighchartsSharedTypes.axisConfig,
+  yAxis?: HighchartsSharedTypes.axisConfig,
+  tooltip?: HighchartsSharedTypes.tooltipConfig,
+  noData?: HighchartsSharedTypes.noDataProps,
+  height?: float,
+  showHeader?: bool,
+  showCollapseIcon?: bool,
+  isExpanded?: bool,
+  onExpandedChange?: bool => unit,
+  chartName?: string,
+  skeleton?: HighchartsSharedTypes.chartsSkeletonProps,
+  legends?: array<HighchartsSharedTypes.chartsLegendsConfig>,
+  @as("CustomizedDot") customizedDot?: HighchartsSharedTypes.dotItemDotProps => React.element,
+  lineSeriesKeys?: array<string>,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "Charts"

@@ -474,6 +474,45 @@ Fixture: [`discriminated-union-variant-props`](../test/golden/cases/discriminate
 
 ---
 
+## The register-early invariant (cycle guards) — #170, #173
+Fixtures: [`recursive-opaque-views`](../test/golden/cases/recursive-opaque-views),
+[`union-arm-record-fields`](../test/golden/cases/union-arm-record-fields)
+
+**Every builder that registers a shared entry keyed by `type.id` must register BEFORE recursing into
+its members.** That entry *is* the cycle guard: a self-referential type re-enters the builder from
+inside its own build, and the early entry is what the re-entry resolves to. **Four** builders share the
+keyspace: `recordNode` (always did this), `tagVariantNode` (#170), `opaqueUnion` (#173) — and
+`overloadModule`, which does **not** follow the rule yet. Its re-entry is real (instrumented: four
+re-entries of one type at depths 2/4/6, and mutual re-entry across two) but every cyclic path bails to
+`review` before registering, so the duplicate is latent rather than live. Tracked in #179; treat it as
+an exception to be closed, not as a fourth pattern.
+
+Registering last has produced both possible failure modes, in production:
+
+| Builder | Symptom when it registered last |
+|---|---|
+| `tagVariantNode` (#170) | the re-entry restarted the branch build → **unbounded recursion**, stack overflow, the whole component silently dropped from the output |
+| `opaqueUnion` (#173) | the re-entry built a **duplicate entry** for the same `type.id` → a second `uniqueName`, `byKey` pointing at the last writer, and the earlier writer's refs dangling: `children: array<Poisoned.t>` beside `module Poisoned2` → *"The module or file Poisoned can't be found"*, i.e. **generated output that does not compile** |
+
+Because these builders may still **bail** after their members resolve (a lossy field, an ident
+collision, too few arms) — or **throw** — registering early means both exits must un-register. The
+transaction therefore opens immediately after the snapshot and spans naming, registration, the member
+build *and* finalization: a bail returns `trial.rollback()`, a throw rolls back and rethrows so the
+caller sees what it always saw. Opening it only around the build leaves the registration itself
+unguarded, which ships an uninhabitable `module X = { type t }` (or a variant with empty branches that
+crashes the emitter). (#174 review) Both use one helper,
+`registryTrial(ctx)` — snapshot the registry, and `rollback()` restores it exactly: every entry the
+attempt's recursion minted (else a bail strands orphans — measured at +50 types in blend, #168), every
+**name** it reserved (else a failed trial makes a later legitimate `Rect` become `Rect2`, #39), and
+every **type variable** it minted. It covers module mode and the single-file local registries alike.
+Its one documented limit: it restores registry *membership*, not mutations to entries that already
+existed before the attempt.
+
+Refining an entry after the self-reference was minted is safe because emit **late-binds `home`** for
+keyed refs (#128) — a ref reads the entry's current home from the registry, not the mint-time copy.
+
+---
+
 ## Records, recursion & utility unwrapping
 Fixture: [`records`](../test/golden/cases/records)
 

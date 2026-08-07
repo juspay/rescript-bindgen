@@ -2358,23 +2358,20 @@ function healGhostRecords(shared) {
         const bad = fallbacks(e.fields)
         if (!bad || bad < e.fields.length * 0.8) continue
         const { type, ctx } = e._heal
-        // snapshot for rollback
+        // Sandboxed rebuild via the SHARED trial (#174 review): this call site predates
+        // `registryTrial` and hand-rolled a partial snapshot — entries/byKey/bySig only. It missed
+        // `shared.names` and `ctx.typeVars`, so a rebuild that registered successfully and was then
+        // REJECTED still leaked its minted names (the `Rect` -> `Rect2` failure mode #39 closed for
+        // the vendor trial) and any type vars it minted. One helper, one behaviour.
         const entriesLen = shared.entries.length
-        const keysBefore = new Set(shared.byKey.keys())
-        const sigsBefore = new Set(shared.bySig.keys())
+        const trial = registryTrial(ctx)
         let rebuilt
         try { rebuilt = buildRecordFields(type, { ...ctx, visiting: new Set() }, 0) } catch { rebuilt = null }
         const newEntries = shared.entries.length - entriesLen
         // Accept only a self-contained improvement: strictly fewer fallbacks AND zero new
         // entries (no fresh library graph, so no possibility of a dangling module ref).
         const accept = rebuilt && fallbacks(rebuilt.fields) < bad && newEntries === 0
-        if (!accept) {
-            // roll back every registration the (rejected) rebuild performed
-            shared.entries.length = entriesLen
-            for (const k of [...shared.byKey.keys()]) if (!keysBefore.has(k)) shared.byKey.delete(k)
-            for (const s of [...shared.bySig.keys()]) if (!sigsBefore.has(s)) shared.bySig.delete(s)
-            continue
-        }
+        if (!accept) { trial.rollback(); continue }
         e.fields = rebuilt.fields
         e.spread = rebuilt.spread
         e.deps = new Set()
@@ -2548,6 +2545,80 @@ function depHome(deps, shared, fallback, nonSinkOnly = false) {
 /** React's ref-alias family — shared by classify() (solo ref props) and memberOf()
  *  (ref arms inside @unboxed unions) so the two dispatches can't drift. (#39) */
 const REF_NAMES = /^(Ref|RefObject|MutableRefObject|LegacyRef)$/
+
+/**
+ * THE REGISTER-EARLY INVARIANT, and the one snapshot that makes it safe. (#173)
+ *
+ * Every builder that registers a shared entry keyed by `type.id` — `recordNode`, `tagVariantNode`,
+ * `opaqueUnion` (and `overloadModule`, which shares the `t:` keyspace and does NOT yet follow this —
+ * its re-entry is real but every cyclic path currently bails to `review` before registering, so it is
+ * latent; tracked separately) — MUST register its entry BEFORE recursing into its members, because that entry is
+ * the CYCLE GUARD: a self-referential type re-enters the builder from inside its own build, and the
+ * early entry is what the re-entry resolves to. A builder that registers last has no guard, and the
+ * re-entry either recurses forever (`tagVariantNode`, #170) or silently builds a DUPLICATE entry for
+ * the same type — which mints a second `uniqueName`, so `byKey` ends up pointing at the last writer
+ * while refs handed out by the earlier one dangle at a name nothing declares (`opaqueUnion`, #173:
+ * `children: array<Poisoned.t>` beside `module Poisoned2` — output that does not compile).
+ *
+ * The tension is that these builders may still BAIL after their members resolve (a lossy field, an
+ * ident collision, too few arms) — so registering early means a bail must un-register. This helper
+ * is that half: snapshot the registry, then `rollback()` restores it exactly — including every entry
+ * the attempt's own recursion minted (else a bail strands orphans: measured at +50 types in blend,
+ * #168) and every NAME it reserved (else a failed trial makes a later legitimate `Rect` become
+ * `Rect2`, #39). Covers module mode and the single-file local registries alike.
+ *
+ * It also restores every ctx-level MEMO that points INTO the state above — today that is
+ * `highchartsSeriesDataVar`, which caches WHICH type variable carries the Highcharts series payload.
+ * Restoring `typeVars` without it left the memo naming a variable the rollback had just removed, so a
+ * later, independent Highcharts record silently reused it and coupled two unrelated props to one
+ * variable (`later?: 'a` + `live?: seriesLiveOptions<'a>` instead of `'a` and `'b`). Any future cache
+ * of this shape — a value derived from the registry or from `typeVars`, held on ctx across builds —
+ * belongs in the snapshot for the same reason. (#174 review)
+ *
+ * Known limit: it restores registry MEMBERSHIP, not mutations to entries that already existed before
+ * the attempt (a tparam sync, a `_heal` fill). No builder relies on undoing those today.
+ */
+function registryTrial(ctx) {
+    const shared = ctx.shared
+    const snap = shared ? {
+        entriesLen: shared.entries.length,
+        keys: new Set(shared.byKey.keys()),
+        sigs: new Set(shared.bySig.keys()),
+        names: new Set(shared.names),
+        typeVars: ctx.typeVars ? new Map(ctx.typeVars) : null,
+        hcDataVar: ctx.highchartsSeriesDataVar,
+    } : {
+        recordsLen: ctx.records.length,
+        enumsLen: ctx.enums.length,
+        unboxedLen: ctx.unboxed.length,
+        seenRecords: new Set(ctx.seenRecords.keys()),
+        seenEnums: new Set(ctx.seenEnums.keys()),
+        seenUnboxed: new Set(ctx.seenUnboxed.keys()),
+        typeVars: ctx.typeVars ? new Map(ctx.typeVars) : null,
+        hcDataVar: ctx.highchartsSeriesDataVar,
+    }
+    return {
+        /** Undo everything the attempt registered. Returns null, so callers can `return trial.rollback()`. */
+        rollback() {
+            if (shared) {
+                shared.entries.length = snap.entriesLen
+                for (const k of [...shared.byKey.keys()]) if (!snap.keys.has(k)) shared.byKey.delete(k)
+                for (const s of [...shared.bySig.keys()]) if (!snap.sigs.has(s)) shared.bySig.delete(s)
+                for (const n of [...shared.names]) if (!snap.names.has(n)) shared.names.delete(n)
+            } else {
+                ctx.records.length = snap.recordsLen
+                ctx.enums.length = snap.enumsLen
+                ctx.unboxed.length = snap.unboxedLen
+                for (const k of [...ctx.seenRecords.keys()]) if (!snap.seenRecords.has(k)) ctx.seenRecords.delete(k)
+                for (const k of [...ctx.seenEnums.keys()]) if (!snap.seenEnums.has(k)) ctx.seenEnums.delete(k)
+                for (const k of [...ctx.seenUnboxed.keys()]) if (!snap.seenUnboxed.has(k)) ctx.seenUnboxed.delete(k)
+            }
+            if (snap.typeVars && ctx.typeVars) { ctx.typeVars.clear(); for (const [k, v] of snap.typeVars) ctx.typeVars.set(k, v) }
+            ctx.highchartsSeriesDataVar = snap.hcDataVar
+            return null
+        },
+    }
+}
 
 /** Trial-extract a VENDOR library record (#39): the library gate normally refuses
  *  records for dependency-declared types (anti-hijack, anti-graph-pull), but small
@@ -3728,6 +3799,32 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
         if (e._construct && received) return null
         return ref(e)
     }
+    // REGISTER BEFORE BUILDING MEMBERS — the cycle guard (#173, the register-early invariant; see
+    // `registryTrial`). A SELF-REFERENTIAL union (`Poisoned = {ok, children: Poisoned[]} | {bad, …}`)
+    // re-enters here from inside its own arm; the early entry is what that re-entry resolves to, so
+    // ONE entry with ONE minted name serves every reference. Registering last (the previous shape)
+    // let the re-entry build a duplicate: two entries for one `type.id`, two `uniqueName`s, `byKey`
+    // left pointing at the last writer, and the earlier writer's refs dangling at a name nothing
+    // declares — `children: array<Poisoned.t>` beside `module Poisoned2`, which does not compile.
+    //
+    // The name and `_construct` are computable up front; `members`/`deps`/`home`/`note` are filled in
+    // place after the build (home is late-bound at emit for keyed refs, #128, so refining it after
+    // the self-ref was minted is safe). Any bail below restores the registry via the trial.
+    // Registering early means an EXCEPTION is now a visible failure mode, not just a bail: `classify`
+    // can throw (a checker edge, a depth blow-up), and a half-built entry would survive to emit as an
+    // uninhabitable `module X = { type t }` — no `from*`, no `as*`, nothing that can construct or read
+    // it. Before early registration a throw simply left nothing behind. So the transaction opens HERE,
+    // immediately after the snapshot, and spans naming, registration, the member build AND
+    // finalization: a throw anywhere inside rolls back and RETHROWS, preserving what the caller always
+    // saw (the CLI catches per-component and reports `extract-error`). Opening it after the
+    // `entries.push` — as the first cut did — leaves exactly the window this guard exists to close.
+    // (#173, #174 review)
+    const trial = registryTrial(ctx)
+    try {
+    const name = uniqueName(pascal(opts.nameHint || typeName(type) || stableAnonBase(ctx, type, propName)), ctx.shared)
+    const entry = { key, kind: 'opaque', name, home: homeOf(type, ctx), members: [], deps: new Set(), _construct: hasLiteralArm || !!opts.addNone }
+    ctx.shared.byKey.set(key, entry)
+    ctx.shared.entries.push(entry)
     const { checker } = ctx
     const members = []
     let sawBool = false
@@ -3758,7 +3855,7 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
         // DEEP imperfection check (#39): a member that is itself clean-KINDED can still
         // carry a fake inside (a callback whose return classified opaque renders as an
         // UNFLAGGED `=> string`). Reject the whole module — flag-don't-fake.
-        if (!node || irHasImperfection(node)) return null
+        if (!node || irHasImperfection(node)) return trial.rollback()
         // Constructor-name hint so emit produces clean `from*` names regardless of
         // how the member renders: `Element` -> fromElement, `Element[]` ->
         // fromElements (plural of the element's name), `File`/`File[]` ->
@@ -3810,7 +3907,7 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     // `none` constant (unit cast — `()` compiles to `undefined`, exactly what `void`
     // returns; the library treats null/undefined alike here).
     if (opts.addNone) members.push({ none: true, name: 'none' })
-    if (members.length < 2) return null
+    if (members.length < 2) return trial.rollback()
     // Constructor-ident COLLISION check (#39 review): two literals that camel to the same
     // ident (`'trap-focus'` vs `'trapFocus'`), or two same-named arms, would silently drop
     // a TS variant (emit's `seen` dedup). All-cases-or-flag: reject the module instead.
@@ -3818,9 +3915,9 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     // so `#"trap-focus"` and `#"trapFocus"` stay distinct; only ident-bearing arms count.)
     const identOf = (m) => m.tagSet ? 'fromTag' : m.literal !== undefined ? lower(pascal(m.literal)) : m.none ? 'none' : ('from' + (m.name ? pascal(m.name) : (m.type && m.type.kind) || 'value'))
     const idents = members.map(identOf)
-    if (new Set(idents).size !== idents.length) return null
-    // MODULE name: named alias/hint wins; an anonymous union is path-anchored, not bare-prop + counter (#96)
-    const name = uniqueName(pascal(opts.nameHint || typeName(type) || stableAnonBase(ctx, type, propName)), ctx.shared)
+    if (new Set(idents).size !== idents.length) return trial.rollback()
+    // (The MODULE name was minted with the early registration above — named alias/hint wins; an
+    // anonymous union is path-anchored, not bare-prop + counter, #96.)
     const deps = new Set()
     for (const m of members) { if (m.type) collectRefKeys(m.type, deps) }
     // Sit with the records it references (first dep's home); else the prop's own
@@ -3833,11 +3930,14 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     const note = members.every((m) => m.name)
         ? `was \`${checker.typeToString(type).replace(/ \| (null|undefined)\b/g, '')}\` — opaque; build with ${members.map(ctorName).join(' / ')}`
         : undefined
-    const entry = { key, kind: 'opaque', name, home, members, deps, note, _construct: hasLiteralArm || !!opts.addNone }
+    // Fill the already-registered entry in place (it is what the self-reference points at).
+    entry.home = home
+    entry.members = members
+    entry.deps = deps
+    entry.note = note
     if (members.some((m) => isHighchartsSeriesOptionsNode(m.type))) entry._highchartsSeriesUnion = true
-    ctx.shared.byKey.set(key, entry)
-    ctx.shared.entries.push(entry)
     return ref(entry)
+    } catch (e) { trial.rollback(); throw e } // never leave a half-built entry behind (#174 review)
 }
 
 /** True if a callback/type node tree contains anything we won't fake (unknown/any/review/opaque). */
@@ -4932,47 +5032,18 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
     // guard, so the re-entry restarted the branch build unboundedly: stack overflow, and the whole
     // component silently dropped from the output — strictly worse than 1.3.0's flagged placeholder.
     //
-    // SANDBOXED, because `classify` has REGISTRY side effects: a branch field mints records, enums and
-    // opaque modules as it resolves. Bailing after that would strand every one of them — measured as
-    // +50 orphan types (and new unreferenced Highcharts views modules) in blend. So snapshot the
-    // registry FIRST, and on any bail restore it exactly — which now also un-registers the early entry
-    // itself (and any self-refs minted against it die with the rolled-back types that held them); the
-    // union then falls through to the record collapse, whose own early registration handles the cycle.
-    // Single-file mode gets the same snapshot over its LOCAL registries (records/enums/unboxed +
-    // seen* maps) — previously it had none, so a bailed build leaked orphan locals there too.
+    // SANDBOXED via the shared `registryTrial` (#173 consolidated it): `classify` has REGISTRY side
+    // effects — a branch field mints records, enums and opaque modules as it resolves — so a bail must
+    // restore the registry exactly, including the early entry below and every name minted. Same helper
+    // `opaqueUnion` uses, so the register-early invariant has ONE implementation.
     const shared = ctx.shared
-    const snap = shared ? {
-        entriesLen: shared.entries.length,
-        keys: new Set(shared.byKey.keys()),
-        sigs: new Set(shared.bySig.keys()),
-        names: new Set(shared.names),
-        typeVars: ctx.typeVars ? new Map(ctx.typeVars) : null,
-    } : {
-        recordsLen: ctx.records.length,
-        enumsLen: ctx.enums.length,
-        unboxedLen: ctx.unboxed.length,
-        seenRecords: new Set(ctx.seenRecords.keys()),
-        seenEnums: new Set(ctx.seenEnums.keys()),
-        seenUnboxed: new Set(ctx.seenUnboxed.keys()),
-        typeVars: ctx.typeVars ? new Map(ctx.typeVars) : null,
-    }
-    const rollback = () => {
-        if (shared) {
-            shared.entries.length = snap.entriesLen
-            for (const k of [...shared.byKey.keys()]) if (!snap.keys.has(k)) shared.byKey.delete(k)
-            for (const s of [...shared.bySig.keys()]) if (!snap.sigs.has(s)) shared.bySig.delete(s)
-            for (const n of [...shared.names]) if (!snap.names.has(n)) shared.names.delete(n)
-        } else {
-            ctx.records.length = snap.recordsLen
-            ctx.enums.length = snap.enumsLen
-            ctx.unboxed.length = snap.unboxedLen
-            for (const k of [...ctx.seenRecords.keys()]) if (!snap.seenRecords.has(k)) ctx.seenRecords.delete(k)
-            for (const k of [...ctx.seenEnums.keys()]) if (!snap.seenEnums.has(k)) ctx.seenEnums.delete(k)
-            for (const k of [...ctx.seenUnboxed.keys()]) if (!snap.seenUnboxed.has(k)) ctx.seenUnboxed.delete(k)
-        }
-        if (snap.typeVars && ctx.typeVars) { ctx.typeVars.clear(); for (const [k, v] of snap.typeVars) ctx.typeVars.set(k, v) }
-        return null
-    }
+    const trial = registryTrial(ctx)
+    const rollback = () => trial.rollback()
+    // The transaction spans naming, registration, the branch build AND finalization — a throw
+    // anywhere inside rolls back and rethrows. Opening it only around the build (the first cut)
+    // left the registration itself unguarded, so an exception there shipped an entry with EMPTY
+    // branches, which later crashed the emitter reading `ctor`. (#174 review)
+    try {
 
     // Names are computable before the build (they depend only on the path/typeName), so the entry can
     // register first. Named exactly as a record is (#90/#96): a NAMED union keeps the library's name;
@@ -5064,6 +5135,7 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
     }
     shared.bySig.set(sig, entry)
     return refTo(entry)
+    } catch (e) { rollback(); throw e } // never leave a half-built entry behind (#174 review)
 }
 
 /**

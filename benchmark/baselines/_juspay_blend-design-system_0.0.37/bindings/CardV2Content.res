@@ -1,0 +1,6 @@
+type props = {
+  children?: React.element,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "CardV2Content"
