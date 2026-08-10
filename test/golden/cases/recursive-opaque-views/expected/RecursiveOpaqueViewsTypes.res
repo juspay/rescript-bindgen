@@ -2,12 +2,12 @@
 
 type poisoned_t
 type rec recursiveOpaqueViewsRootChildrenBadConfig = {
-  kind: [#bad],
+  kind: [#"bad"],
   children: array<poisoned_t>,
   payload: string,  // 🛑 BROKEN — contains `any`
 }
 and recursiveOpaqueViewsRootConfig = {
-  kind: [#ok],
+  kind: [#"ok"],
   children: array<poisoned_t>,
 }
 module Poisoned = {

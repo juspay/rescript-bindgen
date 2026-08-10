@@ -3,11 +3,11 @@ type seriesInnerOptions<'a> = {
   name: string,
 }
 type trialRollbackHighchartsMemoBailConfigV1rtfs<'a> = {
-  kind: [#a],
+  kind: [#"a"],
   series: seriesInnerOptions<'a>,
 }
 type trialRollbackHighchartsMemoBailConfigQ3izo = {
-  kind: [#b],
+  kind: [#"b"],
   other: float,
 }
 type seriesLiveOptions<'a> = {

@@ -3,5 +3,5 @@ type reactClassComponentOptionsConfig = {
   height: float,
 }
 type jsxElement = {
-  __brand: [#element],
+  __brand: [#"element"],
 }

@@ -1,10 +1,10 @@
 # Binding report — `demo`
 
-**3** components · ✅ **3** usable · 🔍 **0** need review · 🛑 **0** broken
+**5** components · ✅ **5** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**3** class module(s) → `@new`/`@send`/`@get` bindings.
+**4** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**9** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**16** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -21,15 +21,18 @@ Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new
 |-------|-------------|---------|------------|
 | `Api` | ✓ | 3 | 0 |
 | `Svc` | ✓ | 5 | 0 |
-| `Headers` | ✓ | 2 | 0 |
+| `Headers` | ✓ | 3 | 0 |
+| `Req` | ✓ | 1 | 0 |
 
 ## ✅ Usable
 
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- Edge  _(2 loose)_
+- Edge  _(6 loose)_
+- InlineArm
 - Kinds
+- NamedArm
 - setHeader
 
 ## ⚪ Loosely typed (widened to `string`)
@@ -40,6 +43,10 @@ These resolved to a real but complex type and were widened to `string` (they com
 |--------------------------|-----------|-------|---------------|
 | `"2"` | `string` | 1 | digit |
 | `"0"` | `string` | 1 | zero |
+| `"say \\"hi\\""` | `string` | 1 | quoted |
+| `"C:\\\\Users"` | `string` | 1 | backslash |
+| `"a\\tb"` | `string` | 1 | tabbed |
+| `"_"` | `string` | 1 | underscore |
 
 ## 🔍 Needs review
 

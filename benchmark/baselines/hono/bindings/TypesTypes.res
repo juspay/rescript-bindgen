@@ -112,25 +112,25 @@ type typesValueConfigJ1iob = {
   ...JsxDOM.domProps,
   _data: string,  // 🛑 BROKEN — contains `unknown`
   _status: string,  // 🛑 BROKEN — contains `unknown`
-  _format: [#body],
+  _format: [#"body"],
 }
 type typesValueConfigV1b0i4 = {
   ...JsxDOM.domProps,
   _data: string,  // 🛑 BROKEN — contains `unknown`
   _status: string,  // 🛑 BROKEN — contains `unknown`
-  _format: [#text],
+  _format: [#"text"],
 }
 type jsonRespondReturn = {
   ...JsxDOM.domProps,
   _data: string,  // ⚪ loose — was `JSONParsed<T, bigint | readonly bigint[]>`
   _status: string,  // 🛑 BROKEN — contains `unknown`
-  _format: [#json],
+  _format: [#"json"],
 }
 type typesValueConfigV1bcwu = {
   ...JsxDOM.domProps,
   _data: unit,
   _status: string,  // 🛑 BROKEN — contains `unknown`
-  _format: [#redirect],
+  _format: [#"redirect"],
 }
 type typesBodyCacheConfig = {
   json?: string,  // 🛑 BROKEN — contains `any`

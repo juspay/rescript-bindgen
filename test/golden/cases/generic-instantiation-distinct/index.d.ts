@@ -115,6 +115,27 @@ export declare class Headers {
     set(name: 'Content-Type', value?: string): void
     set(name: string, value?: string): void
     only(name: 'Content-Type'): void
+    // WIDENING A PARAM MUST WIDEN THE RETURN. Re-flagging the param makes overload 2 callable again,
+    // but the return still carried overload 1's literal — so `pick(~name="X-Foo")` type-checked while
+    // the runtime value was `"set-other"`, and a `switch` on it was exhaustive in one arm that can
+    // never match. The narrow param at least kept the return honest by making overload 2 unreachable,
+    // so that unsoundness was CREATED by the re-flag. Both ends widen, or neither.
+    pick(name: 'Content-Type'): 'set-content-type'
+    pick(name: string): 'set-other'
+}
+
+// RETURN-ONLY BEHIND A GENERIC RECORD. `demoteReturnOnly` DETECTED `T` here (`collectTypeVars` reads
+// `typeRef.tparams`) but `substTypeVars` rewrites typeVar NODES only and cannot reach a var carried in a
+// tparams array of name STRINGS — so the rule silently passed and emitted `=> box<'a>` with an unflagged
+// `v: 'a`, letting the caller choose the type of a value the LIBRARY controls. Compiled proof: `asInt`
+// and `asBool` both type-checked against one external, and `asInt(r).v + 1` became integer arithmetic on
+// arbitrary JSON. `Svc.returnOnly<R>(): R` (bare) could not catch this — the var has to sit behind a
+// registered generic record — and `parse<T>(): Result<T>` / `get<T>(): ApiResponse<T>` is a very common
+// shape. Must be FLAGGED, not faked.
+interface BoxOf<T> { v: T }
+
+export declare class Req {
+    jsonBoxed<T>(): BoxOf<T>
 }
 
 // TWO LITERALS THAT A POLYVAR CANNOT EXPRESS. Both compiled and read back from the emitted `.mjs`
@@ -129,14 +150,36 @@ export declare class Headers {
 //    "`type` is a reserved keyword", strictly worse than the `string` it replaces. Fixed by QUOTING
 //    rather than excluding (`[#"type"]` compiles and emits `"type"`), so unlike the digit case this one
 //    still gets an exact type. `'open'`/`'in'`/`'to'`/`'as'` are ordinary `.d.ts` values.
+//
+//  · ESCAPE-BEARING (`'say "hi"'`, `'C:\\Users'`, `'a\tb'`) — a QUOTED tag is taken literally and does
+//    NOT unescape, so `#"a\"b"` yields the 4-char `a\"b` and `#"C:\\\\Users"` yields two backslashes.
+//    Wrong strings on the wire, unflagged. A `"` is unrepresentable in a tag at all. Excluded.
+//
+//  · BARE `'_'` — `[#_]` parses in the TYPE position but `#_` is invalid in the VALUE position, so the
+//    type is uninhabitable: nothing can construct it. `'_blank'` is fine and must still narrow.
 export declare const Edge: (props: {
     digit?: '2'
     zero?: '0'
     negative?: '-1'
     decimal?: '1.5'
+    // Leading zeros do NOT coerce to a number, so these must still narrow — `/^\d+$/` over-excluded them.
+    leadingZero?: '007'
+    exponent?: '1e3'
+    hex?: '0x1'
     keyword?: 'type'
     keyword2?: 'open'
-    keyword3?: 'to'
+    // `await` is a ReScript keyword MISSING from `RESCRIPT_RESERVED`, so gating on that set shipped with
+    // a hole. Emit now quotes every tag unconditionally, which removes the whole class rather than
+    // chasing the list.
+    keyword3?: 'await'
+    quoted?: 'say "hi"'
+    backslash?: 'C:\\Users'
+    tabbed?: 'a\tb'
+    underscore?: '_'
+    underscorePrefixed?: '_blank'
+    empty?: ''
+    spaced?: 'a b'
+    unicode?: 'café'
 }) => JsxElement
 
 // GUARD: a NON-identifier literal must be quoted as a polyvar tag (`#"context-menu"`, not
@@ -145,4 +188,36 @@ export declare const Kinds: (props: {
     plain?: 'menubar'
     dashed?: 'context-menu'
     numeric?: '2xl'
+}) => JsxElement
+
+// POSITION SYMMETRY FOR IDENTICAL-KEY-SET ARMS. Making single-literal discriminants distinct polyvars
+// stopped two such arms deduping into one record, which exposed that the ARRAY-ELEMENT branch (#65/#169
+// — it has its own arm check and bypasses the union classifier) had no record-collapse fallback. The
+// symptom was the asymmetry #181 exists to prevent: as a record FIELD the union collapsed correctly,
+// as an ARRAY ELEMENT it degraded to opaque `%identity` views.
+//
+// Both positions must now give the collapsed record, whose discriminant is a real `@as` variant — one
+// directly-constructible type instead of a `t` reachable only through unchecked doors:
+//
+//     type inlineArmTag = | @as("a") A | @as("b") B
+//     type inlineArmConfig = { tag: inlineArmTag, v: string }
+//
+// The collapse is only taken when NO arm has a field another lacks, so `Pair`-style differing sets and
+// the NAMED-arm case below still get the views module (which is right for named types — it keeps each
+// library name, per #62, where a collapse would fuse them).
+export declare const InlineArm: (props: {
+    field?: { tag: 'a'; v: string } | { tag: 'b'; v: string }
+    elems?: ({ tag: 'a'; v: string } | { tag: 'b'; v: string })[]
+}) => JsxElement
+
+// NAMED arms with identical key sets keep their own records + a views module, in BOTH positions. On main
+// these two silently FUSED — it emitted `fromNamedArmA: namedArmA` and `fromNamedArmB: namedArmA`, both
+// doors casting from the SAME record, so `NamedArmB` did not exist in the output at all. That is the #177
+// conflation in miniature, and it is fixed here rather than being a regression.
+interface NamedArmA { kind: 'na'; v: string }
+interface NamedArmB { kind: 'nb'; v: string }
+
+export declare const NamedArm: (props: {
+    field?: NamedArmA | NamedArmB
+    elems?: (NamedArmA | NamedArmB)[]
 }) => JsxElement

@@ -1,10 +1,10 @@
 type seriesLineOptions<'b> = {
-  @as("type") type_: [#line],
+  @as("type") type_: [#"line"],
   data?: array<'b>,
   name?: string,
 }
 type seriesXrangeOptions<'b> = {
-  @as("type") type_: [#xrange],
+  @as("type") type_: [#"xrange"],
   data?: array<'b>,
   depth?: unit,
   name?: string,

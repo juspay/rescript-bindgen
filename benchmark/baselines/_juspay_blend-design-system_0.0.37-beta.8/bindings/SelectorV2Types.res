@@ -192,8 +192,8 @@ type selectorV2GetCheckboxSubtextPropsConfig = {
 }
 type selectorV2GetCheckboxLabelStylesConfig = {
   cursor: selectorV2GetCheckboxLabelStylesCursor,
-  display: [#flex],
-  alignItems: [#center],
+  display: [#"flex"],
+  alignItems: [#"center"],
   margin: float,
   padding: float,
 }

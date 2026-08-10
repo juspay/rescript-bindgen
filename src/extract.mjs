@@ -1664,7 +1664,20 @@ function demoteReturnOnly(retNode, paramNodes, sig, ctx, typeVars) {
         const c = tp.getConstraint && tp.getConstraint()
         subst[name] = c ? classify(c, ctx, '', 0) : { kind: 'unknown' }
     }
-    return Object.keys(subst).length ? substTypeVars(retNode, subst) : retNode
+    if (!Object.keys(subst).length) return retNode
+    const out = substTypeVars(retNode, subst)
+    // `substTypeVars` rewrites `typeVar` NODES only — it cannot reach a var carried in a `typeRef`'s
+    // `tparams` (which is an array of NAME STRINGS, not nodes). `collectTypeVars` does see them, so a
+    // return-only var behind a registered generic record was DETECTED, substituted nowhere, and the
+    // guard silently passed: `json<T>(): Box<T>` emitted `=> box<'a>` with an unflagged `v: 'a`, letting
+    // the caller pick the type of a value the LIBRARY controls. Compiled proof — `asInt` and `asBool`
+    // both type-check against the same external, and `asInt(r).v + 1` compiles to integer arithmetic on
+    // arbitrary JSON. That is exactly the unsoundness rule #4 exists to prevent, so if any substituted
+    // var survives, the return is FLAGGED rather than faked. (#189 review)
+    const left = new Set()
+    collectTypeVars(out, left)
+    if (Object.keys(subst).some((n) => left.has(n))) return { kind: 'unknown' }
+    return out
 }
 
 /**
@@ -1808,14 +1821,25 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
                 // Scoped to DIRECT params of a collapsed signature. A literal reached inside a param's
                 // record/union is not the collapsed thing and keeps its exact polyvar, as do return and
                 // record-field positions everywhere.
+                let mRet = ret
                 if (pt.getCallSignatures().length > 1) {
+                    const flagLit = (n) => ({ kind: 'opaque', text: n.tags.map((v) => JSON.stringify(v)).join(' | ') })
+                    let widened = false
                     for (const p of params) {
-                        if (p.type && p.type.kind === 'polyTag') {
-                            p.type = { kind: 'opaque', text: p.type.tags.map((v) => JSON.stringify(v)).join(' | ') }
-                        }
+                        if (p.type && p.type.kind === 'polyTag') { p.type = flagLit(p.type); widened = true }
                     }
+                    // WIDENING A PARAM MUST WIDEN THE RETURN. Re-flagging the param makes the LATER
+                    // overloads callable again — which is the point — but the return still carries the
+                    // FIRST overload's literal, and those are the two halves of one signature. For
+                    // `header(name:'Content-Type'):'set-content-type'` / `header(name:string):'set-other'`
+                    // that yielded `(t, ~name: string) => [#"set-content-type"]`: `header(~name="X-Foo")`
+                    // type-checks while the runtime value is `"set-other"`, and a `switch` on it is
+                    // exhaustive in one arm that can never match. The narrow param had at least kept the
+                    // return honest by making overload 2 unreachable, so this unsoundness is CREATED by
+                    // the re-flag — it has to widen both ends or neither. (#189 review)
+                    if (widened && mRet && mRet.kind === 'polyTag') mRet = flagLit(mRet)
                 }
-                methods.push({ jsName: pname, params, ret })
+                methods.push({ jsName: pname, params, ret: mRet })
             } catch (error) {
                 if (!isUnsupportedRestError(error)) throw error
                 skippedMembers.push({ name: pname, reason: error.message })
@@ -2940,6 +2964,35 @@ function boundedPastDepth(t, ctx, checker, budget, seen) {
     }
     return false
 }
+/**
+ * Can this string literal be a ReScript polyvar TAG that round-trips EXACTLY? A polyvar tag is not a
+ * general string slot, and every rejection below is a compiler-verified wire-format or parse failure
+ * rather than a style preference. Rejected values keep the flagged `string` mapping. (#189 review)
+ *
+ *  - CANONICAL DECIMAL INTEGER ("2", "0"): ReScript emits a JS NUMBER, `{v: #"2"}` -> `{v: 2}`, so a TS
+ *    *string* literal would silently put a number on the wire. Only the canonical form coerces —
+ *    verified that "01", "-1", "1.5", "1e3" and "0x1" all stay strings — hence `0 | [1-9]\d*` and not
+ *    `\d+`, which needlessly dropped '007'.
+ *  - `"` / `\` / CONTROL CHAR: a quoted tag is taken LITERALLY and does NOT unescape. `#"a\"b"` yields
+ *    the 4-char `a\"b` and `#"C:\\Users"` yields two backslashes — wrong strings on the wire, unflagged.
+ *    A `"` appears to be unrepresentable in a tag at all.
+ *  - BARE `_`: `[#_]` parses in the TYPE position but `#_` is invalid in the VALUE position, so the type
+ *    would be uninhabitable — nothing could construct it. (`_blank`, `__`, `_1` are all fine.)
+ *
+ * Verified safe and deliberately still narrowed: the empty string, spaces, `café`/`日本語`/emoji, `x-y`,
+ * `2xl`, leading zeros, signs, decimals, exponent/hex forms, `true`/`false`/`null`, `Infinity`/`NaN`,
+ * and every ReScript keyword (emit quotes all tags, so keywords are safe).
+ * @param {string} v
+ * @returns {boolean}
+ */
+function polyTagSafe(v) {
+    if (/^(0|[1-9]\d*)$/.test(v)) return false // would emit a JS number, not a string
+    if (/["\\]/.test(v)) return false // a quoted tag does not process escapes
+    if (/[\u0000-\u001f\u007f]/.test(v)) return false // control chars, same reason
+    if (v === '_') return false // uninhabitable: `#_` is invalid in the value position
+    return true
+}
+
 const PAST_BOUND_CAP = 3 // deepest object nesting materialized past MAX_DEPTH
 
 function classify(type, ctx, propName = '', depth = 0) {
@@ -3527,8 +3580,24 @@ function classify(type, ctx, propName = '', depth = 0) {
                     ? tagVariantNode(elem, members, ctx, propName, depth, elemName)
                     : null
                 if (v) return { kind: 'array', of: v }
-                const opaque = opaqueUnion(ctx, elem, members, propName, depth, type.aliasSymbol ? { nameHint: typeName(type) } : {})
-                if (opaque) return { kind: 'array', of: opaque }
+                // IDENTICAL KEY SETS -> fall through to the RECORD COLLAPSE (#30), don't build a module.
+                // The collapse is lossless here (no arm has a field another lacks) and strictly better
+                // than opaque views: it yields ONE directly-constructible record whose discriminant is a
+                // real `@as` variant — `{tag: | @as("a") A | @as("b") B, v: string}` — instead of a `t`
+                // reachable only through unchecked `%identity` doors.
+                //
+                // This branch had no such fallback and never needed one: both arms' single-literal
+                // discriminants used to classify to the same flagged `string`, so the arms deduped to one
+                // record and `objArms` never reached 2. Making those literals distinct polyvars (#177)
+                // exposed the gap, and the symptom was a POSITION ASYMMETRY — the same union collapsed
+                // correctly as a record FIELD while degrading to a module as an ARRAY ELEMENT, which is
+                // exactly the defect class #181 exists to prevent. (#189 review)
+                const keySet = (m) => (m.getProperties() || []).map((p) => p.getName()).sort().join(',')
+                const sameKeys = members.length > 1 && members.every((m) => m.getProperties && keySet(m) === keySet(members[0]))
+                if (!sameKeys) {
+                    const opaque = opaqueUnion(ctx, elem, members, propName, depth, type.aliasSymbol ? { nameHint: typeName(type) } : {})
+                    if (opaque) return { kind: 'array', of: opaque }
+                }
             }
         }
         // A bounded tagged-tuple union element (SVG path data) is safe to classify past MAX_DEPTH
@@ -3694,20 +3763,11 @@ function classify(type, ctx, propName = '', depth = 0) {
     // ENUM MEMBERS ARE EXCLUDED. TS sets `StringLiteral` on `Size.Sm` too, and an enum member must keep
     // its enum ref — the same `EnumLike` trap the `ctx.constValue` widening above guards against. A
     // const binding is already widened above, so it never reaches here. (#177)
-    // An ALL-DIGIT literal is excluded, and this one is a wire-format bug rather than a syntax nicety.
-    // ReScript compiles an all-digit polyvar tag to a JS NUMBER, not a string — compiled and read back
-    // from the emitted `.mjs`:
-    //
-    //     {v: #"2"}  ->  {v: 2}       // number
-    //     {z: #"0"}  ->  {z: 0}       // number
-    //     {n: #"-1"} ->  {n: "-1"}    // string (a sign makes it a non-numeric tag)
-    //     {f: #"1.5"}->  {f: "1.5"}   // string
-    //
-    // So a TS `'2'` STRING literal would put `2` on the wire — silently, no flag, no compile error. That
-    // is the plausible-but-wrong failure the contract forbids, and the same defect class as #177 itself.
-    // The polyvar cannot express this value, so it falls through to the flagged `string` below: honest,
-    // and the consumer sees the real literal in the ⚪ comment. (#189 review)
-    if ((flags & ts.TypeFlags.StringLiteral) && !(flags & ts.TypeFlags.EnumLike) && !/^\d+$/.test(String(type.value))) {
+    // A literal only becomes a polyvar when the tag round-trips EXACTLY. `polyTagSafe` is the gate, and
+    // every exclusion in it was found by compiling and reading the emitted `.mjs` rather than reasoning
+    // about ReScript semantics. Anything it rejects falls through to the flagged `string` below —
+    // honest, with the real literal preserved in the ⚪ comment. (#189 review)
+    if ((flags & ts.TypeFlags.StringLiteral) && !(flags & ts.TypeFlags.EnumLike) && polyTagSafe(String(type.value))) {
         return { kind: 'polyTag', tags: [String(type.value)] }
     }
 

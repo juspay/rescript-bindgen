@@ -3,3 +3,5 @@ type t = InstanceTypes.headers
 // ⚪ loose: `set` has a param/return widened to `string`.
 @send external set: (t, ~name: string, ~value: string=?, unit) => unit = "set"
 @send external only: (t, ~name: [#"Content-Type"]) => unit = "only"
+// ⚪ loose: `pick` has a param/return widened to `string`.
+@send external pick: (t, ~name: string) => string = "pick"

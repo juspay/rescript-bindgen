@@ -1,5 +1,5 @@
 type jsxElement = {
-  __brand: [#element],
+  __brand: [#"element"],
 }
 type compClass = {
   render: unit => jsxElement,

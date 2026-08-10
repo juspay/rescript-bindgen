@@ -1513,7 +1513,7 @@ type chart3dFrameOptions = {
 }
 type chart3dOptions = {
   alpha?: float,
-  axisLabelPosition?: [#auto],
+  axisLabelPosition?: [#"auto"],
   beta?: float,
   depth?: float,
   enabled?: bool,

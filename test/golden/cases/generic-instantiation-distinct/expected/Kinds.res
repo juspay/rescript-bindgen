@@ -1,5 +1,5 @@
 type props = {
-  plain?: [#menubar],
+  plain?: [#"menubar"],
   dashed?: [#"context-menu"],
   numeric?: [#"2xl"],
 }

@@ -558,7 +558,7 @@ type menubarContext = {
   rootId?: string,
 }
 type rootMenuStoreUseSyncedValuesParentConfigWx9iv = {
-  @as("type") type_: [#menubar],
+  @as("type") type_: [#"menubar"],
   context: menubarContext,
 }
 type contextMenuRootContext = {
@@ -627,7 +627,7 @@ and rootMenuStoreUseSyncedValuesParentConfigV1488y = {
   menuContext: menuRootContext,
 }
 and rootMenuStoreUseSyncedValuesParentConfigV1yuv5 = {
-  @as("type") type_: [#menu],
+  @as("type") type_: [#"menu"],
   store: menuStoreV1nk2i,
 }
 and storeMenuStoreUseSyncedValuesConfigZiqsf = {
