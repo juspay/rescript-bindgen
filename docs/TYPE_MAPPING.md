@@ -93,6 +93,7 @@ Fixtures: [`string-enums`](../test/golden/cases/string-enums), [`literal-union-o
 | `'a' \| 'A' \| 'm' \| 'M'` (case-only-distinct) | `\| @as("a") A \| @as("A") A2 \| @as("m") M \| @as("M") M2` — constructors that PascalCase to the same name get a numeric suffix (the `@as` keeps the real value). Fixture: [`enum-case-collision`](../test/golden/cases/enum-case-collision) |
 | `'a' \| 'b' \| (string & {})` | a plain enum — the `string & {}` "open" escape is dropped (this is the `HTMLInputTypeAttribute` shape) |
 | `'a' \| 'b' \| string` (plain `\| string` widening) | `@unboxed type <base>OrString = \| @as("a") A \| @as("b") B \| Custom(string)` — the literals as `@as` arms + a `Custom(string)` catch-all. Zero-cost, typo-safe on the known values, still accepts any other string. (TS collapses the union to bare `string`, so the literals are recovered from the **syntactic** node — component-prop level only for now.) |
+| a **single** string literal — `_format: 'body'`, a brand `__brand: 'element'`, base-ui's `@as("type") type_: 'context-menu'`, or a parameter fixed to one value (hono's `c.header('Content-Type', …)` overload) | a single-tag **polyvar**, `[#"body"]`. The tag's runtime value IS the bare string (compiler-verified: `{_format: #"body"}` emits `{_format: "body"}`), so this is exact and zero-cost where the previous flagged `string` both lost the value and accepted any string at all. A non-identifier value is quoted — `[#"context-menu"]`, `[#"2xl"]` — since `#context-menu` does not parse. **Enum members are excluded**: TS sets `StringLiteral` on `Size.Sm` too, and an enum member keeps its enum ref (same `EnumLike` trap the const-widening guards against — see [`enum-member-literal`](../test/golden/cases/enum-member-literal)). Also load-bearing for CORRECTNESS: as a flagged opaque the literal survived only as comment *text* while `typeSig` hashed the *kind*, so records differing solely in such a field deduped onto one entry. Fixture: [`generic-instantiation-distinct`](../test/golden/cases/generic-instantiation-distinct). (#177) |
 | real `enum` | same `@as` variant form |
 
 Constructors are PascalCased from the literal (`"icon-only"` → `IconOnly`, `"2xl"` → `V2xl`). A
@@ -845,17 +846,26 @@ that never registers is dropped → the honest `string` fallback stays. Effect o
 `dataGrouping`, `dragDrop`, … go from `string` to their real records; all other packages
 byte-identical. Fixture: [`relink-registered`](../test/golden/cases/relink-registered). (#120)
 
-**Twin healing (depth ghost ↔ shallow full sibling).** When the re-resolve above can't run because the
-shape's sub-types are a *distinct* generic instantiation (csstype gives `CSSObject['color']` vs
-`['backgroundColor']` different type ids, so `MenuV2VariantToken<StateToken<…>>` isn't deduped across
-them), a deep occurrence still truncates to an all-`string` ghost while the SAME shape resolved fully at
-a shallower site (`text.color` → `{ default: string, action: string }` vs `backgroundColor` →
-`{ default: stateToken, action: menuV2ActionConfig }`). A second pass copies field types from a
-structurally-richer **twin** — same name-family + home, same field names, non-fallback types — onto the
-ghost. Safe: it copies already-materialized field types (no re-resolution, no new entries, no depth
-change), so it can't dangle or re-expand the Highcharts graph (bumping `MAX_DEPTH` *does* — verified, it
-breaks the chart compile). Locked by blend's `menuV2VariantToken` in the benchmark baseline (a >6-level
-token tree is too fragile to pin in a synthetic golden). (#63 review)
+**Twin healing — REMOVED in #177.** A second pass used to repair a depth-truncated all-`string` ghost by
+copying field types from a structurally-richer **twin**, identified as: same home + same name-family +
+same field names + non-fallback types. Its case was real (blend's `MenuV2VariantToken<StateToken<…>>`,
+where csstype gives `CSSObject['color']` and `['backgroundColor']` different type ids so the shapes never
+dedup, leaving `text.color` → `{default: string, action: string}` beside a fully-resolved
+`backgroundColor`), and bumping `MAX_DEPTH` instead is not an option — verified, it re-expands the
+Highcharts graph and breaks the chart compile.
+
+But that identity test is **unsound for generics**: two distinct instantiations of one generic have the
+same name-family and the same field names *by construction*. So it transplanted hono's
+`TypedResponse<undefined, U, 'redirect'>` field types onto `TypedResponse<T, U, 'body'>`, giving
+`body`/`text`/`json` an unflagged `_data: unit` ("there is no data"). It fired **0 times** across all
+golden fixtures and 9 of 10 benchmark packages, and its single remaining firing was that bug. Its own
+case is also gone — blend's `menuV2VariantToken` now resolves fully and shares one entry, so the
+"locked by the benchmark baseline" claim this section used to make had quietly stopped being true.
+
+Removed rather than guarded: narrowing the gate would keep an unsound rule alive for a situation that no
+longer occurs, and the fallback without it is a *flagged* all-`string` record — honest, and recoverable,
+where this pass's failure mode was a confident wrong type with no diagnostic. Fixture:
+[`generic-instantiation-distinct`](../test/golden/cases/generic-instantiation-distinct). (#63 review, #177)
 
 **`@unboxed` inside a record cycle.** A field like `labelGrid?: string | ((…, Options) => string)`
 becomes an object-bearing `@unboxed`, and if its function arm references back into the record cycle

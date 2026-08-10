@@ -1,0 +1,2 @@
+type api
+type svc

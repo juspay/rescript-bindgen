@@ -78,7 +78,7 @@ type group<'f> = {
   items: array<'f>,
 }
 type utilsOnCheckedChangeConfig = {
-  reason: string,  // ⚪ loose — was `"none"`
+  reason: [#none],
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
@@ -114,7 +114,7 @@ type comboboxPositionerState = {
   empty: bool,
 }
 type utilsOnFormSubmitConfig = {
-  reason: string,  // ⚪ loose — was `"none"`
+  reason: [#none],
   event: Dom.event,
 }
 type menuPositionerState = {
@@ -158,7 +158,7 @@ type selectPositionerState = {
   anchorHidden: bool,
 }
 type baseUIChangeEventDetail = {
-  reason: string,  // ⚪ loose — was `"none"`
+  reason: [#none],
   event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,

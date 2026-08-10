@@ -136,6 +136,11 @@ export function numberType(propName) {
 function renderType(t, propName, cfg) {
     switch (t.kind) {
         case 'string': return 'string'
+        // A lone string-literal TS type -> a single-tag polyvar, `[#"body"]`. The tag's runtime value
+        // IS the bare string (compiler-verified: `{_format: #"body"}` emits `{_format: "body"}`), so
+        // this is exact and zero-cost where the old flagged `string` accepted any string at all. A
+        // non-identifier value is quoted, same rule as `renderPolyvariants`. (#177)
+        case 'polyTag': return `[${t.tags.map((v) => (/^[A-Za-z_][A-Za-z0-9_]*$/.test(v) ? `#${v}` : `#${JSON.stringify(v)}`)).join(' | ')}]`
         // verbatim ReScript type (e.g. aria poly variants from JsxDOM) — passed through as-is
         case 'raw': return t.res
         // a React synthetic event type (`ReactEvent.Mouse.t`, …) reached in a NON-handler position —

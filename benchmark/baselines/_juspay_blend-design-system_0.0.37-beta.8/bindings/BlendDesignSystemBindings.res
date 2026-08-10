@@ -101,8 +101,7 @@
 @module("@juspay/blend-design-system") external renderFallbackContent: (~fallbackText: string=?, ~alt: string=?, unit) => React.element = "renderFallbackContent"
 @module("@juspay/blend-design-system") external getColorFromText: (string) => string = "getColorFromText"
 @module("@juspay/blend-design-system") external getAccessibleLabel: (string, string, string) => string = "getAccessibleLabel"
-// ⚪ loose: `getAriaLiveValue` has a param/return widened to `string`.
-@module("@juspay/blend-design-system") external getAriaLiveValue: (string) => string = "getAriaLiveValue"
+@module("@juspay/blend-design-system") external getAriaLiveValue: (string) => [#polite] = "getAriaLiveValue"
 @module("@juspay/blend-design-system") external getStatusPositionStyles: (AvatarV2Types.avatarV2StatusPosition, AvatarV2Types.avatarV2Size, AvatarV2Types.avatarV2Shape, AvatarV2Types.avatarV2TokensType) => AvatarV2Types.avatarV2GetStatusPositionStylesConfig = "getStatusPositionStyles"
 @module("@juspay/blend-design-system") external createAvatarKeyboardHandler: (ReactEvent.Mouse.t => unit) => ReactEvent.Keyboard.t => unit = "createAvatarKeyboardHandler"
 @module("@juspay/blend-design-system") external isInteractive: (ReactEvent.Mouse.t => unit) => bool = "isInteractive"

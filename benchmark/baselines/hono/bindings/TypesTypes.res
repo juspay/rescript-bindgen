@@ -108,11 +108,29 @@ type headerRecord = {
   @as("X-Robots-Tag") xRobotsTag?: CommonTypes.stringOrStringArray,
   @as("X-XSS-Protection") xXSSProtection?: CommonTypes.stringOrStringArray,
 }
-type typesValueConfig = {
+type typesValueConfigJ1iob = {
+  ...JsxDOM.domProps,
+  _data: string,  // 🛑 BROKEN — contains `unknown`
+  _status: string,  // 🛑 BROKEN — contains `unknown`
+  _format: [#body],
+}
+type typesValueConfigV1b0i4 = {
+  ...JsxDOM.domProps,
+  _data: string,  // 🛑 BROKEN — contains `unknown`
+  _status: string,  // 🛑 BROKEN — contains `unknown`
+  _format: [#text],
+}
+type jsonRespondReturn = {
+  ...JsxDOM.domProps,
+  _data: string,  // ⚪ loose — was `JSONParsed<T, bigint | readonly bigint[]>`
+  _status: string,  // 🛑 BROKEN — contains `unknown`
+  _format: [#json],
+}
+type typesValueConfigV1bcwu = {
   ...JsxDOM.domProps,
   _data: unit,
   _status: string,  // 🛑 BROKEN — contains `unknown`
-  _format: string,  // ⚪ loose — was `"body"`
+  _format: [#redirect],
 }
 type typesBodyCacheConfig = {
   json?: string,  // 🛑 BROKEN — contains `any`

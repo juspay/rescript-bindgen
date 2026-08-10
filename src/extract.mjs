@@ -250,6 +250,9 @@ function structuralTypeSig(t, shared, seen) {
         case 'callback': return 'F(' + (t.thisArg ? '@this' + structuralTypeSig(t.thisArg, shared, seen) + ';' : '') +
             (t.params || []).map((x) => (x && x.optional ? '?' : '') + structuralTypeSig(x, shared, seen)).join(',') +
             ')=>' + structuralTypeSig(t.ret || { kind: 'unit' }, shared, seen)
+        // Same reason as `typeSig`: distinct tag sets are distinct TYPES, so they must not collide
+        // onto an order-dependent counter here either. (#177)
+        case 'polyTag': return 'PT' + JSON.stringify(t.tags)
         // Broken/opaque fields all EMIT `string`, but two records distinguishable ONLY through them
         // must still hash apart (else collision → order-dependent counter). The original TS type
         // text is stable (source-declared, not id/order-based), so a bounded slice discriminates
@@ -2272,7 +2275,14 @@ export function extractModule(entryFile, opts = {}) {
     }
 
     healGhostRecords(shared)
-    healGhostsFromTwin(shared)
+    // NB `healGhostsFromTwin` used to run here and was REMOVED in #177. It repaired a depth-truncated
+    // all-`string` ghost by transplanting field types from a "twin" it identified by same home + same
+    // base-name family + same field NAMES. Distinct instantiations of one generic satisfy all three by
+    // construction, so it fused hono's `TypedResponse<T,U,'body'>` with `TypedResponse<undefined,U,
+    // 'redirect'>` — `body`/`text`/`json` inherited `_data: unit` ("no data") from `redirect`,
+    // unflagged. Its own case is gone (blend's `menuV2VariantToken` resolves fully and shares one entry
+    // now), it fired 0 times across 113 fixtures and 9 of 10 benchmark packages, and its single
+    // remaining firing WAS that bug. See `no-twin-transplant` for the guard fixture.
     // #120: re-link fields that truncated to `string` past the bound because their (named, bounded)
     // record type wasn't registered YET — it since materialized at a shallower site. Runs BEFORE
     // propagateTypeParams so the new typeRefs get their `<'b>` threaded. Walks every IR tree.
@@ -2399,44 +2409,6 @@ function healGhostRecords(shared) {
         for (const f of rebuilt.fields) collectRefKeys(f.type, e.deps)
         const tvars = new Set()
         for (const f of rebuilt.fields) collectTypeVars(f.type, tvars)
-        e.tparams = tvars.size ? [...tvars] : undefined
-    }
-}
-
-/**
- * Heal a fully-degraded ghost record by copying field types from a structurally-richer TWIN —
- * a record of the same name-family + home with the same field names but non-fallback types.
- *
- * A deeply-nested type reached past `MAX_DEPTH` truncates to an all-`string` record (MenuV2's
- * `text.color` / `subText.color`: `MenuV2VariantToken<…>` -> `{ default: string, action: string }`)
- * even though the SAME shape resolved fully at a shallower site (`backgroundColor`'s
- * `menuV2VariantToken = { default: stateToken, action: menuV2ActionConfig }`). They don't dedup
- * because csstype gives `CSSObject['color']` / `['backgroundColor']` distinct type ids — but they
- * are the same shape, and bumping `MAX_DEPTH` is not an option (it re-expands the unbounded
- * Highcharts graph into dangling class refs — verified). Copying the twin's already-materialized
- * field types is safe: no re-resolution, no new entries, no depth change. (#63 review)
- */
-function healGhostsFromTwin(shared) {
-    const isFallback = (t) => irHasImperfection(t)
-    const baseFamily = (n) => n.replace(/\d+$/, '') // strip the uniqueName disambiguation suffix
-    const records = shared.entries.filter((e) => e.kind === 'record' && e.fields && e.fields.length)
-    for (const e of records) {
-        if (!e.fields.every((f) => isFallback(f.type))) continue // only fully-degraded ghosts
-        const names = e.fields.map((f) => f.name).slice().sort().join(',')
-        const twin = records.find((s) => s !== e && s.home === e.home &&
-            baseFamily(s.name) === baseFamily(e.name) &&
-            s.fields.map((f) => f.name).slice().sort().join(',') === names &&
-            s.fields.some((f) => !isFallback(f.type)))
-        if (!twin) continue
-        const byName = new Map(twin.fields.map((f) => [f.name, f]))
-        e.fields = e.fields.map((f) => {
-            const tf = byName.get(f.name)
-            return tf && !isFallback(tf.type) ? { ...f, type: tf.type, optional: f.optional } : f
-        })
-        e.deps = new Set()
-        for (const f of e.fields) collectRefKeys(f.type, e.deps)
-        const tvars = new Set()
-        for (const f of e.fields) collectTypeVars(f.type, tvars)
         e.tparams = tvars.size ? [...tvars] : undefined
     }
 }
@@ -3616,6 +3588,25 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (ctx.shared && isBareFunction(type)) {
         ctx.shared.usesJsFn = true
         return { kind: 'raw', res: 'JsFn.t', note: 'was `Function` — build with JsFn.fromFn0/1/2/3, read with JsFn.asFn0/1/2/3' }
+    }
+
+    // A LONE string-literal type — hono's `_format: 'body'`, a brand field `__brand: 'element'` — is
+    // exactly expressible as a single-tag POLYVAR, `[#"body"]`. The tag's runtime value IS the bare
+    // string (compiler-verified: `{_format: #"body"}` emits `{_format: "body"}`), so this is exact and
+    // zero-cost, where the flagged `string` below both lost the value AND accepted any string at all.
+    //
+    // It is also load-bearing for CORRECTNESS, not just fidelity: the flagged node carries the literal
+    // only as comment TEXT, while `typeSig` hashes the KIND — so two records differing solely in this
+    // field hashed identically and deduped onto ONE entry. That is how hono's
+    // `TypedResponse<…,'body'>`, `…,'text'>` and `…,'json'>` collapsed together, leaving `text` and
+    // `json` bound to a record whose comment read `"body"`. As distinct polyvar types they now separate
+    // for the right reason (see `typeSig`'s `polyTag` case).
+    //
+    // ENUM MEMBERS ARE EXCLUDED. TS sets `StringLiteral` on `Size.Sm` too, and an enum member must keep
+    // its enum ref — the same `EnumLike` trap the `ctx.constValue` widening above guards against. A
+    // const binding is already widened above, so it never reaches here. (#177)
+    if ((flags & ts.TypeFlags.StringLiteral) && !(flags & ts.TypeFlags.EnumLike)) {
+        return { kind: 'polyTag', tags: [String(type.value)] }
     }
 
     // give up -> opaque, flagged for review
@@ -5090,6 +5081,12 @@ function typeSig(t) {
         case 'event': return 'E(' + t.res + ')'
         case 'raw': return 'raw(' + t.res + ')'
         case 'typeVar': return 'V(' + t.name + ')'
+        // The TAG VALUES are the type — `[#"body"]` and `[#"text"]` are different ReScript types, so
+        // they must hash apart. This is what stops hono's `TypedResponse<…,'body'>` and `…,'text'>`
+        // from deduping onto one record: as flagged opaques they both hashed to `opaque` and merged,
+        // leaving `text`/`json` on a record whose comment read `"body"`. JSON-encoded so no tag value
+        // can forge a separator (#183's lesson). (#177)
+        case 'polyTag': return 'PT' + JSON.stringify(t.tags)
         case 'number': return t._float ? 'numF' : 'num'
         // opaque / review / unknown / any all render to the SAME `opaqueFallback` (string),
         // so they're interchangeable for dedup — normalize, ignoring the (display-only) text.

@@ -2,12 +2,12 @@ type seriesInnerOptions<'a> = {
   data: array<'a>,
   name: string,
 }
-type trialRollbackHighchartsMemoBailConfigV1qt8b<'a> = {
-  kind: string,  // ⚪ loose — was `"a"`
+type trialRollbackHighchartsMemoBailConfigV1rtfs<'a> = {
+  kind: [#a],
   series: seriesInnerOptions<'a>,
 }
-type trialRollbackHighchartsMemoBailConfigRvfzs = {
-  kind: string,  // ⚪ loose — was `"b"`
+type trialRollbackHighchartsMemoBailConfigQ3izo = {
+  kind: [#b],
   other: float,
 }
 type seriesLiveOptions<'a> = {
@@ -16,8 +16,8 @@ type seriesLiveOptions<'a> = {
 }
 module Bail = {
   type t
-  external fromTrialRollbackHighchartsMemoBailConfig: trialRollbackHighchartsMemoBailConfigV1qt8b<'a> => t = "%identity"
-  external asTrialRollbackHighchartsMemoBailConfig: t => (trialRollbackHighchartsMemoBailConfigV1qt8b<'a>) = "%identity"
-  external fromTrialRollbackHighchartsMemoBailConfig2: trialRollbackHighchartsMemoBailConfigRvfzs => t = "%identity"
-  external asTrialRollbackHighchartsMemoBailConfig2: t => (trialRollbackHighchartsMemoBailConfigRvfzs) = "%identity"
+  external fromTrialRollbackHighchartsMemoBailConfig: trialRollbackHighchartsMemoBailConfigV1rtfs<'a> => t = "%identity"
+  external asTrialRollbackHighchartsMemoBailConfig: t => (trialRollbackHighchartsMemoBailConfigV1rtfs<'a>) = "%identity"
+  external fromTrialRollbackHighchartsMemoBailConfig2: trialRollbackHighchartsMemoBailConfigQ3izo => t = "%identity"
+  external asTrialRollbackHighchartsMemoBailConfig2: t => (trialRollbackHighchartsMemoBailConfigQ3izo) = "%identity"
 }

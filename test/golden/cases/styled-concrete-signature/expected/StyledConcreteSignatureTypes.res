@@ -2,7 +2,7 @@ type styledConcreteSignatureTabsPropsOrientation =
   | @as("horizontal") Horizontal
   | @as("vertical") Vertical
 type jsxElement = {
-  __brand: string,  // ⚪ loose — was `"element"`
+  __brand: [#element],
 }
 type tabsProps = {
   value?: string,
