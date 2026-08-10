@@ -2542,17 +2542,17 @@ function relinkRegistered(t, byKey, seen, ownerDeps) {
     if (!t || typeof t !== 'object' || seen.has(t)) return
     seen.add(t)
     if (t.kind === 'opaque' && t.relinkId != null) {
-        const e = byKey.get('id:' + t.relinkId)
+        const e = byKey.get('id:' + t.relinkId + (t.relinkNp ? '|np' : ''))
         if (e && e.kind === 'record') {
             const r = refTo(e)
-            delete t.text; delete t.relinkId
+            delete t.text; delete t.relinkId; delete t.relinkNp
             Object.assign(t, r)
             // Register the NEW cross-reference on the owning entry, so planSharedModules sees the
             // edge and homes/orders the target correctly (else a `Module.t`/type-rec ordering miss).
             if (ownerDeps && e.key) ownerDeps.add(e.key)
             return
         }
-        delete t.relinkId // never registered → stays the honest opaque/string fallback
+        delete t.relinkId; delete t.relinkNp // never registered → stays the honest opaque/string fallback
         return
     }
     for (const k in t) {
@@ -3042,7 +3042,11 @@ function boundedPastDepth(t, ctx, checker, budget, seen) {
         ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void | ts.TypeFlags.EnumLike |
         ts.TypeFlags.NonPrimitive)) return true // the bare `object` keyword → a `JSON.t` leaf (#149)
     if (isCssType(t)) return true
-    if (t.id != null && ctx.shared && ctx.shared.byKey.has('id:' + t.id)) return true // registered → link
+    // Keyed like every other registry read, so this predicate cannot disagree with the lookup that
+    // immediately follows it: under suppression the entry that will actually be linked is the `|np` one.
+    // No demonstrated wrong type came out of the mismatch, but it is the same class as the order-dependence
+    // bug just fixed — a raw `id:` read silently reaching the other reading of a type. (#189 r5)
+    if (t.id != null && ctx.shared && ctx.shared.byKey.has(entryKey(ctx, t))) return true // registered → link
     if (checker.isArrayType?.(t) || checker.isTupleType?.(t)) return true
     if (t.getCallSignatures?.().length === 1 && !(t.getProperties?.().length)) return true
     if (isBareFunction(t)) return true // a bare `Function` → the fixed `JsFn` module: zero registry growth (#120)
@@ -3267,7 +3271,10 @@ function classify(type, ctx, propName = '', depth = 0) {
         // `relinkRegistered` post-pass can re-resolve it to the now-registered record — a
         // zero-expansion link, order-independent. (#120)
         if (type.id != null && type.getProperties?.().length && !type.getCallSignatures().length) {
-            return { kind: 'opaque', text: checker.typeToString(type), relinkId: type.id }
+            // `relinkNp` records WHICH reading of the type this node was truncated under, because
+            // `relinkRegistered` runs post-traversal with no ctx and would otherwise relink a
+            // suppression-built node to the un-suppressed entry, defeating the suppression on that path.
+            return { kind: 'opaque', text: checker.typeToString(type), relinkId: type.id, ...(ctx.noPolyTag ? { relinkNp: true } : {}) }
         }
         return { kind: 'opaque', text: checker.typeToString(type) }
     }
