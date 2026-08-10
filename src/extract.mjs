@@ -2542,7 +2542,7 @@ function relinkRegistered(t, byKey, seen, ownerDeps) {
     if (!t || typeof t !== 'object' || seen.has(t)) return
     seen.add(t)
     if (t.kind === 'opaque' && t.relinkId != null) {
-        const e = byKey.get('id:' + t.relinkId + (t.relinkNp ? '|np' : ''))
+        const e = byKey.get(keyOf(t.relinkId, t.relinkNp))
         if (e && e.kind === 'record') {
             const r = refTo(e)
             delete t.text; delete t.relinkId; delete t.relinkNp
@@ -3045,7 +3045,14 @@ function boundedPastDepth(t, ctx, checker, budget, seen) {
     // Keyed like every other registry read, so this predicate cannot disagree with the lookup that
     // immediately follows it: under suppression the entry that will actually be linked is the `|np` one.
     // No demonstrated wrong type came out of the mismatch, but it is the same class as the order-dependence
-    // bug just fixed — a raw `id:` read silently reaching the other reading of a type. (#189 r5)
+    // bug just fixed — a raw `id:` read silently reaching the other reading of a type.
+    //
+    // SIDE EFFECT, accepted: under suppression this shortcut now DECLINES when the entry exists only under
+    // the plain key, so a deep named record inside an ambiguous overload slot truncates to a flagged
+    // `string` instead of linking. That widens the suppression past the literals it targets — safe
+    // direction, zero benchmark impact, and it is not what the TYPE_MAPPING row describes. Kept because it
+    // also closes the opposite hole: the raw read promised a free link while the keyed lookup that follows
+    // then built a new entry anyway. (#189 r5)
     if (t.id != null && ctx.shared && ctx.shared.byKey.has(entryKey(ctx, t))) return true // registered → link
     if (checker.isArrayType?.(t) || checker.isTupleType?.(t)) return true
     if (t.getCallSignatures?.().length === 1 && !(t.getProperties?.().length)) return true
@@ -4143,7 +4150,16 @@ function literalUnionOpenNode(literals, baseName, ctx, propName) {
  * @returns {string}
  */
 function entryKey(ctx, type) {
-    return 'id:' + type.id + (ctx.noPolyTag ? '|np' : '')
+    return keyOf(type.id, ctx.noPolyTag)
+}
+
+/** The one formatter for a registry key. `entryKey` covers every read that has a `ctx`; this lower-level
+ *  form exists for `relinkRegistered`, which runs post-traversal with no ctx and carries the reading on
+ *  the node instead. Both go through here so a future dimension is added in ONE place — the alternative
+ *  is a second hand-built key, which is the "keyed one way, read another" shape that caused the
+ *  order-dependence bug. (#189 r5) */
+function keyOf(id, np) {
+    return 'id:' + id + (np ? '|np' : '')
 }
 
 /**
