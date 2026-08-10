@@ -1639,6 +1639,7 @@ function sigToMembers(sig, ctx, depth = 0, amb = null) {
             // a source-level suppression cannot, because every literal in the subtree passes this flag.
             const prevNP = ctx.noPolyTag
             if (amb && amb.params.has(pi)) ctx.noPolyTag = true
+            try {
             // `asArray` accepts Array/ReadonlyArray aliases but rejects heterogeneous tuple rests.
             // The finally below restores signature polarity when a class catches this error and
             // continues extracting sibling members.
@@ -1648,8 +1649,13 @@ function sigToMembers(sig, ctx, depth = 0, amb = null) {
             const type = (n && Object.prototype.hasOwnProperty.call(REACT_EVENTS, n))
                 ? { kind: 'event', res: REACT_EVENTS[n] }
                 : withPath(ctx, pp.getName(), () => classify(pt, ctx, pp.getName(), depth + 1)) // path-anchor param `{…}` (#90)
-            ctx.noPolyTag = prevNP
             return { name: pp.getName(), optional, rest, type }
+            // RESTORED IN A `finally`, matching `ctx.produced` below. A plain assignment leaked: the
+            // unsupported-tuple-rest `throw` a few lines up fires BEFORE it, and that throw is caught by
+            // the class builder so extraction CONTINUES with sibling members — so the flag stayed true and
+            // silently over-flagged every later member of the class (`after(): 'still-exact'` came out
+            // `=> string`). Safe direction, but contagious. (#189 r5)
+            } finally { ctx.noPolyTag = prevNP }
         })
         ctx.produced = false
         const prevNPR = ctx.noPolyTag
@@ -1700,7 +1706,15 @@ function collapseAmbiguity(callSigs) {
     // overloads that agree, while `Tagged<'set-ct'>` vs `Tagged<'set-other'>` and `'Content-Type'` vs
     // `string` differ exactly where the collapse actually loses information.
     const decls = callSigs.map((sg) => sg.declaration).filter((d) => d && d.parameters)
-    if (decls.length !== callSigs.length) { out.ret = true; for (let i = 0; i < 8; i++) out.params.add(i); return out }
+    // DEGENERATE CASE — a bound or synthesized signature with no declaration to read. Be conservative:
+    // treat every slot as ambiguous. The bound is the real MAX ARITY across the set, not a hardcoded 8,
+    // which left slots 9+ narrowable in exactly the case this branch exists to be careful about. (#189 r5)
+    if (decls.length !== callSigs.length) {
+        out.ret = true
+        const wide = Math.max(0, ...callSigs.map((sg) => (sg.getParameters() || []).length))
+        for (let i = 0; i < wide; i++) out.params.add(i)
+        return out
+    }
     const txt = (n) => { try { return n ? n.getText() : '\u0000none' } catch { return '\u0000err' } }
     out.ret = !decls.every((d) => txt(d.type) === txt(decls[0].type))
     const arity = Math.max(...decls.map((d) => d.parameters.length))
@@ -3123,7 +3137,7 @@ function classify(type, ctx, propName = '', depth = 0) {
         // Highcharts graph (whose deep records dangle `NavigatorOptions.t` / `Point.t`) stays
         // bounded. (#63 validation)
         if (type.id != null && type.id === ctx.selfId && ctx.shared) {
-            const e = ctx.shared.byKey.get('id:' + type.id)
+            const e = ctx.shared.byKey.get(entryKey(ctx, type))
             if (e && e.kind === 'record') return refTo(e)
         }
         // The self-ref exception, GENERALIZED (#98, #110): a reference to an already-REGISTERED
@@ -3150,7 +3164,7 @@ function classify(type, ctx, propName = '', depth = 0) {
         // cycle. RECORD entries only (the selfId precedent): an opaque-module/views entry emits as a
         // submodule, and a past-depth `Module.t` link references a file that never emitted.
         if (type.id != null && ctx.shared) {
-            const e = ctx.shared.byKey.get('id:' + type.id)
+            const e = ctx.shared.byKey.get(entryKey(ctx, type))
             if (e && e.kind === 'record') return refTo(e)
         }
         // A FUNCTION reached past the bound classifies through its signature: the function node
@@ -3264,7 +3278,7 @@ function classify(type, ctx, propName = '', depth = 0) {
             // `subMenu?: MenuItemType[]`): resolve to that record's typeRef instead of a
             // lossy `opaque`/string. The name was registered early in recordNode.
             if (ctx.shared) {
-                const e = ctx.shared.byKey.get('id:' + type.id)
+                const e = ctx.shared.byKey.get(entryKey(ctx, type))
                 if (e) return refTo(e)
             }
             const nm = typeName(type)
@@ -4098,13 +4112,41 @@ function literalUnionOpenNode(literals, baseName, ctx, propName) {
 }
 
 /**
+ * The registry key for a type. `'id:' + type.id` alone is NOT enough: a record's FIELDS depend on
+ * `ctx.noPolyTag` (an ambiguous overload slot suppresses literal narrowing throughout its subtree), and
+ * shared entries are memoized and built ONCE at whichever site reaches them first. So without the flag in
+ * the key the suppression was defeated by visit order, and one order was unsound — same `.d.ts`, two class
+ * members swapped:
+ *
+ *     put first:   type tagged = { _format: string   // loose, was "set-ct"
+ *     peek first:  type tagged = { _format: [#"set-ct"]
+ *
+ * In the second, `put(~name="X-Foo")` type-checks and claims `[#"set-ct"]` while the runtime value is
+ * `"set-other"` — a `switch` compiles away to an arm that can never match. In the first, the unambiguous
+ * `peek()` is needlessly downgraded because `put` happened to be built first. hono was correct only by
+ * luck of ordering, and no golden could catch it: the record must be reached from BOTH an ambiguous and an
+ * unambiguous site.
+ *
+ * Keying on the flag gives the two readings separate entries, which is right — they are genuinely
+ * different ReScript types. When a type contains no literal at all both readings are identical, so
+ * `bySig` merges them and nothing is duplicated. The suffix is EMPTY when the flag is off, so every
+ * existing key is byte-identical and nothing else churns. (#189 r5)
+ * @param {object} ctx
+ * @param {object} type
+ * @returns {string}
+ */
+function entryKey(ctx, type) {
+    return 'id:' + type.id + (ctx.noPolyTag ? '|np' : '')
+}
+
+/**
  * Register a NAMED type (enum/record) in the module-level registry, deduped by
  * `type.id`. Returns its typeRef. For records, `data` is filled by the caller AFTER
  * this returns the entry (so self-references resolve during field building).
  * @returns {object} the typeRef (when reused) — see registerEntry for new ones
  */
 function registerNamed(ctx, type, kind, base, data) {
-    const key = 'id:' + type.id
+    const key = entryKey(ctx, type)
     if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
     const entry = { key, kind, name: uniqueName(base, ctx.shared), base, home: homeOf(type, ctx), deps: new Set(), ...data }
     ctx.shared.byKey.set(key, entry)
@@ -5523,7 +5565,7 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
     const base = typeName ? lower(typeName) : lower(pathPascal) + 'Config'
     let entry = null // shared-mode early entry; branches filled in place after the build
     if (shared) {
-        const key = 'id:' + type.id
+        const key = entryKey(ctx, type)
         if (shared.byKey.has(key)) return refTo(shared.byKey.get(key)) // cycle re-entry or already built
         const home = homeOf(type, ctx)
         const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pathPascal + 'Config'
@@ -5637,7 +5679,7 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         // Module mode: register the entry EARLY (with its final name) so self/mutual
         // references during field building resolve to its typeRef, then fill fields.
         const recTrial = registryTrial(ctx) // throw guard only — this builder has no bail path (#182)
-        const key = 'id:' + type.id
+        const key = entryKey(ctx, type)
         if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
         const home = homeOf(type, ctx)
         // An ANONYMOUS `{…}` gets a DESCRIPTIVE, component-scoped name: `<home><Prop>Config`

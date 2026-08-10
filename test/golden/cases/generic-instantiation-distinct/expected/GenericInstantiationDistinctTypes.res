@@ -74,6 +74,14 @@ type genericInstantiationDistinctObjFieldConfig = {
   tag: genericInstantiationDistinctFieldTag,
   o: genericInstantiationDistinctObjFieldOConfig,
 }
+type ordTaggedZpk12 = {
+  _format: string,  // ⚪ loose — was `"ordCt"`
+  v: string,
+}
+type ordTaggedTp6gq = {
+  _format: [#"ordCt"],
+  v: string,
+}
 module FnArms = {
   type t
   external fromGenericInstantiationDistinctTakeFnArmsXsConfig: genericInstantiationDistinctTakeFnArmsXsConfigV1euep => t = "%identity"

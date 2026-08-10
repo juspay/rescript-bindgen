@@ -312,3 +312,43 @@ export declare const Symmetry: (props: {
     objElems?: SameObj[]
     diffElems?: DiffFn[]
 }) => JsxElement
+
+// ORDER-INDEPENDENCE OF THE SUPPRESSION. `ctx.noPolyTag` decides how a record's fields classify, but
+// shared entries are MEMOIZED and built once at whichever site reaches them first — so with the flag
+// absent from the registry key, visit order decided the outcome and one order was unsound. Swapping the
+// two members below used to flip `_format` between a flagged `string` and an exact `[#"ordCt"]`; in the
+// second ordering `ambiguous(~name="other")` type-checked and claimed `[#"ordCt"]` while the runtime value
+// is `"ordOther"`, so a `switch` compiled away to an arm that can never match. In the first ordering the
+// harm ran the other way — the unambiguous `unambiguous()` was downgraded because the overloaded member
+// happened to be built first. hono was correct only by luck of ordering.
+//
+// Keying entries on the flag gives the two readings SEPARATE records, which is right: they are genuinely
+// different ReScript types. Both members must now get their own, in either order —
+// `ambiguous` -> flagged, `unambiguous` -> `[#"ordCt"]`.
+//
+// A record has to be reached from BOTH an ambiguous and an unambiguous site to show this, which is why no
+// earlier arm could catch it.
+interface OrdTagged<F extends string> { _format: F; v: string }
+interface OrdPut {
+    (name: 'Content-Type'): OrdTagged<'ordCt'>
+    (name: string): OrdTagged<'ordOther'>
+}
+
+export declare class OrderDep {
+    ambiguous: OrdPut
+    unambiguous(): OrdTagged<'ordCt'>
+}
+
+// THE SUPPRESSION MUST NOT LEAK ACROSS MEMBERS. The flag was restored by plain assignment, but the
+// unsupported-tuple-rest `throw` fires before it — and that throw is CAUGHT so the class keeps extracting
+// siblings, leaving the flag set. `afterLeak` then came out `=> string` instead of `[#"leakExact"]`:
+// over-flagging, so the safe direction, but contagious to every later member. Restored in a `finally` now.
+interface BadRest {
+    (...args: [string, number]): void
+    (...args: [number, string]): void
+}
+
+export declare class LeakGuard {
+    badRest: BadRest
+    afterLeak(): 'leakExact'
+}

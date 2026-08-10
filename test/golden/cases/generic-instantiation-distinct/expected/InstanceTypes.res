@@ -5,3 +5,5 @@ type req
 type collapsed
 type statics
 type ctorOverload
+type orderDep
+type leakGuard

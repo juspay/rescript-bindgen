@@ -4,9 +4,9 @@
 
 **4** function binding(s) → `DemoBindings.res`.
 
-**7** class module(s) → `@new`/`@send`/`@get` bindings.
+**9** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**30** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**34** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -37,6 +37,8 @@ Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new
 | `Collapsed` | ✓ | 4 | 0 |
 | `Statics` | ✓ | 0 | 0 |
 | `CtorOverload` | ✓ | 0 | 0 |
+| `OrderDep` | ✓ | 2 | 0 |
+| `LeakGuard` | ✓ | 1 | 0 |
 
 ## ✅ Usable
 
