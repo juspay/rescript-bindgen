@@ -1,10 +1,10 @@
 # Binding report — `demo`
 
-**2** components · ✅ **2** usable · 🔍 **0** need review · 🛑 **0** broken
+**3** components · ✅ **3** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**2** class module(s) → `@new`/`@send`/`@get` bindings.
+**3** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**8** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**9** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -20,13 +20,15 @@ Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new
 | Class | Constructor | Methods | Properties |
 |-------|-------------|---------|------------|
 | `Api` | ✓ | 3 | 0 |
-| `Svc` | ✓ | 3 | 0 |
+| `Svc` | ✓ | 5 | 0 |
+| `Headers` | ✓ | 2 | 0 |
 
 ## ✅ Usable
 
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
+- Edge  _(2 loose)_
 - Kinds
 - setHeader
 
@@ -34,7 +36,10 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 
 These resolved to a real but complex type and were widened to `string` (they compile and work). Grouped by type so you can review each pattern once — confirm `string` is acceptable, or it may deserve a tighter mapping.
 
-_(none)_
+| Resolved TypeScript type | → emitted | count | example props |
+|--------------------------|-----------|-------|---------------|
+| `"2"` | `string` | 1 | digit |
+| `"0"` | `string` | 1 | zero |
 
 ## 🔍 Needs review
 

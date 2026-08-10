@@ -138,9 +138,17 @@ function renderType(t, propName, cfg) {
         case 'string': return 'string'
         // A lone string-literal TS type -> a single-tag polyvar, `[#"body"]`. The tag's runtime value
         // IS the bare string (compiler-verified: `{_format: #"body"}` emits `{_format: "body"}`), so
-        // this is exact and zero-cost where the old flagged `string` accepted any string at all. A
-        // non-identifier value is quoted, same rule as `renderPolyvariants`. (#177)
-        case 'polyTag': return `[${t.tags.map((v) => (/^[A-Za-z_][A-Za-z0-9_]*$/.test(v) ? `#${v}` : `#${JSON.stringify(v)}`)).join(' | ')}]`
+        // this is exact and zero-cost where the old flagged `string` accepted any string at all. (#177)
+        //
+        // A tag is quoted unless it is a plain identifier AND NOT A RESERVED WORD. `#type` is not a
+        // parse error in the value position only — it fails outright: `type kw = {k: [#type]}` gives
+        // "`type` is a reserved keyword", and a parse error takes the WHOLE FILE down, which is
+        // strictly worse than the flagged `string` this replaces. `'open'`, `'in'`, `'to'` and `'as'`
+        // are ordinary `.d.ts` values, so this is reachable, not theoretical. `#"type"` quoted compiles
+        // and emits `"type"` — verified. (`renderPolyvariants` carries the same identifier rule and the
+        // same latent bug, but nothing in `src/` produces `kind: 'polyvariant'` entries, so it has no
+        // live consumer to fix; `polyTag` is the first.) (#189 review)
+        case 'polyTag': return `[${t.tags.map((v) => (/^[A-Za-z_][A-Za-z0-9_]*$/.test(v) && !RESERVED.has(v) ? `#${v}` : `#${JSON.stringify(v)}`)).join(' | ')}]`
         // verbatim ReScript type (e.g. aria poly variants from JsxDOM) — passed through as-is
         case 'raw': return t.res
         // a React synthetic event type (`ReactEvent.Mouse.t`, …) reached in a NON-handler position —

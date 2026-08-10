@@ -88,11 +88,56 @@ export declare class Svc {
     // union named `v100OrV102Or…OrV511OrV1`, which lands in every signature mentioning a status.
     constrained<S extends string>(s: S): Pair<S>
     concrete(): Pair<string>
+    // RETURN-ONLY, and it must NOT become `'a` — contract rule #4 / TYPE_MAPPING "Return-only
+    // generics". `R` never appears in a parameter, so it does not round-trip: `=> 'a` would let the
+    // caller claim any type while the runtime value is whatever the body holds. `demoteReturnOnly`
+    // already enforced this for standalone `function`s, so omitting it in the method path gave the SAME
+    // TS shape opposite answers depending on whether it was a function or a method, with the unsound
+    // direction winning for methods (real instance: hono's `HonoRequest.json<T>(): Promise<T>`).
+    // Nothing pinned this before — the arms above all round-trip — so it was free to regress.
+    returnOnly<R>(): R
+    // Round-trip WITH a constraint present on a second param: `A` round-trips (-> a type var), `B` is
+    // return-only AND constrained (-> demoted to its bound, not `'a`).
+    mixed<A, B extends string>(a: A): Pair<A>
 }
 
-// A lone literal in a PARAMETER position tightens too — hono's real `c.header('Content-Type', …)`
-// overload. Was `~name: string`, which invited any header name alongside a `BaseMime` value.
+// A lone literal in a RECORD/PROP position tightens. (A collapsed OVERLOAD's direct parameter does
+// NOT — see `Headers` below.)
 export declare const setHeader: (props: { onlyContentType?: 'Content-Type' }) => JsxElement
+
+// OVERLOAD COLLAPSE MUST NOT NARROW A PARAMETER. This is hono's `SetHeaders` shape (context.d.ts:
+// 178-181): three overloads, and we keep only the FIRST. Binding `~name: [#"Content-Type"]` would make
+// `set("X-Message", "Hello!")` — hono's own first doc example — inexpressible, with no flag saying so.
+// That is the MIRROR of the bug this PR fixes: #177 accepted code the library rejects; this would
+// REJECT code the library accepts, and both silently. So `name` must stay a FLAGGED `string` here.
+// The single-overload `only` below must still narrow, or the guard would be over-broad.
+export declare class Headers {
+    set(name: 'Content-Type', value?: string): void
+    set(name: string, value?: string): void
+    only(name: 'Content-Type'): void
+}
+
+// TWO LITERALS THAT A POLYVAR CANNOT EXPRESS. Both compiled and read back from the emitted `.mjs`
+// before being excluded — neither is theoretical, and neither was covered by any golden or baseline.
+//
+//  · ALL-DIGIT (`'2'`) — a wire-format bug, the worst kind. ReScript compiles an all-digit tag to a JS
+//    NUMBER: `{v: #"2"}` emits `{v: 2}`, `{z: #"0"}` emits `{z: 0}`. A TS *string* literal would put a
+//    number on the wire, silently. (`'-1'` and `'1.5'` stay strings — the sign/dot makes the tag
+//    non-numeric — so they DO narrow, which is why both appear here.) Falls back to flagged `string`.
+//
+//  · RESERVED WORD (`'type'`) — a parse error that takes the WHOLE FILE down: `[#type]` gives
+//    "`type` is a reserved keyword", strictly worse than the `string` it replaces. Fixed by QUOTING
+//    rather than excluding (`[#"type"]` compiles and emits `"type"`), so unlike the digit case this one
+//    still gets an exact type. `'open'`/`'in'`/`'to'`/`'as'` are ordinary `.d.ts` values.
+export declare const Edge: (props: {
+    digit?: '2'
+    zero?: '0'
+    negative?: '-1'
+    decimal?: '1.5'
+    keyword?: 'type'
+    keyword2?: 'open'
+    keyword3?: 'to'
+}) => JsxElement
 
 // GUARD: a NON-identifier literal must be quoted as a polyvar tag (`#"context-menu"`, not
 // `#context-menu`, which does not parse). base-ui's menu `type` discriminants are exactly this.

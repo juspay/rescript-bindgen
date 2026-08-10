@@ -1759,10 +1759,13 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
                 // using it for `T extends string` (hono's `c.text<T extends string>`) would emit
                 // `~text: 'b` and let a consumer pass `42` where TS requires a string — accepting code
                 // the library rejects, which is the "plausible-but-wrong" failure the contract forbids.
-                // A CONSTRAINED parameter is left unmapped so `classify` resolves it through its
-                // constraint instead: `T extends string` -> `string`, sound and still round-trippable
-                // (the field and the argument land on the same concrete type). Unconstrained `T` keeps
-                // the type variable, which is the case `'a` exists for.
+                // A CONSTRAINED parameter is left unmapped, and what that means concretely is that it
+                // stays FLAGGED: `classify`'s unmapped-TypeParameter branch returns `{kind:'unknown'}`
+                // and does NOT consult the bound, so `T extends string` becomes a 🛑 `string`
+                // placeholder, not a clean `string`. Resolving the bound there was implemented and
+                // reverted — see that branch for why (a ~60-member union name). Deliberately flagged
+                // rather than silently narrowed OR silently widened; unconstrained `T` keeps the type
+                // variable, which is the case `'a` exists for.
                 const tpSyms = (sig0.typeParameters || [])
                     .filter((tp) => !(tp.getConstraint && tp.getConstraint()))
                     .map((tp) => tp.symbol).filter(Boolean)
@@ -1775,8 +1778,43 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
                     added.push(s)
                 }
                 let built
-                try { built = sigToMembers(sig0, ctx, 0) } finally { for (const s of added) ctx.typeVars.delete(s) }
+                try {
+                    const raw = sigToMembers(sig0, ctx, 0)
+                    // `demoteReturnOnly` must run INSIDE this scope: it resolves each type parameter via
+                    // `typeVars.get(tp.symbol)`, so calling it after the `finally` below cleared the
+                    // method's entries made it a silent no-op — `promise<'a>` survived and the fix looked
+                    // applied while doing nothing. Caught only by re-generating hono and looking.
+                    raw.ret = demoteReturnOnly(raw.ret, raw.params.map((p) => p.type), sig0, ctx, ctx.typeVars)
+                    built = raw
+                } finally { for (const s of added) ctx.typeVars.delete(s) }
                 const { params, ret } = built
+                // RETURN-ONLY vars are demoted, exactly as `buildFunctionIR` does at its own
+                // `sigToMembers` call. A type parameter appearing only in the return does NOT
+                // round-trip, so `'a` there is unsound (contract rule #4, `docs/TYPE_MAPPING.md`
+                // "Return-only generics"): `json<T>(): Promise<T>` as `=> promise<'a>` lets the caller
+                // pick any `T` while the runtime value is whatever the body actually holds. Omitting
+                // this call gave `function json<T>(): Promise<T>` and
+                // `class HonoRequest { json<T>(): Promise<T> }` OPPOSITE answers for the same TS shape,
+                // with the unsound direction winning for methods. (#189 review)
+                // OVERLOAD COLLAPSE must not narrow a parameter. We keep only the FIRST call signature,
+                // so a lone literal in a direct param can be an artifact of that choice rather than the
+                // API's real contract. hono's `SetHeaders` (context.d.ts:178-181) declares
+                // `(name: 'Content-Type', …)`, `(name: ResponseHeader, …)` and `(name: string, …)`;
+                // binding `~name: [#"Content-Type"]` makes `c.header("X-Message", "Hello!")` — hono's own
+                // first doc example — inexpressible, and with no flag to say so. That is the mirror of
+                // the defect this PR fixes: #177 accepted code the library rejects, this REJECTS code the
+                // library accepts, and both are silent. Re-flag the literal so the ⚪ comment carries it.
+                //
+                // Scoped to DIRECT params of a collapsed signature. A literal reached inside a param's
+                // record/union is not the collapsed thing and keeps its exact polyvar, as do return and
+                // record-field positions everywhere.
+                if (pt.getCallSignatures().length > 1) {
+                    for (const p of params) {
+                        if (p.type && p.type.kind === 'polyTag') {
+                            p.type = { kind: 'opaque', text: p.type.tags.map((v) => JSON.stringify(v)).join(' | ') }
+                        }
+                    }
+                }
                 methods.push({ jsName: pname, params, ret })
             } catch (error) {
                 if (!isUnsupportedRestError(error)) throw error
@@ -2318,7 +2356,9 @@ export function extractModule(entryFile, opts = {}) {
     // 'redirect'>` — `body`/`text`/`json` inherited `_data: unit` ("no data") from `redirect`,
     // unflagged. Its own case is gone (blend's `menuV2VariantToken` resolves fully and shares one entry
     // now), it fired 0 times across 113 fixtures and 9 of 10 benchmark packages, and its single
-    // remaining firing WAS that bug. See `no-twin-transplant` for the guard fixture.
+    // remaining firing WAS that bug. Guard fixture: `generic-instantiation-distinct` — specifically its
+    // `Pair<T>` / `Pair<string>` arm, which is the one that keeps every field degraded so this pass
+    // would fire on it (the hono arm cannot, since its `_format` polyvar is not an imperfection).
     // #120: re-link fields that truncated to `string` past the bound because their (named, bounded)
     // record type wasn't registered YET — it since materialized at a shallower site. Runs BEFORE
     // propagateTypeParams so the new typeRefs get their `<'b>` threaded. Walks every IR tree.
@@ -3654,7 +3694,20 @@ function classify(type, ctx, propName = '', depth = 0) {
     // ENUM MEMBERS ARE EXCLUDED. TS sets `StringLiteral` on `Size.Sm` too, and an enum member must keep
     // its enum ref — the same `EnumLike` trap the `ctx.constValue` widening above guards against. A
     // const binding is already widened above, so it never reaches here. (#177)
-    if ((flags & ts.TypeFlags.StringLiteral) && !(flags & ts.TypeFlags.EnumLike)) {
+    // An ALL-DIGIT literal is excluded, and this one is a wire-format bug rather than a syntax nicety.
+    // ReScript compiles an all-digit polyvar tag to a JS NUMBER, not a string — compiled and read back
+    // from the emitted `.mjs`:
+    //
+    //     {v: #"2"}  ->  {v: 2}       // number
+    //     {z: #"0"}  ->  {z: 0}       // number
+    //     {n: #"-1"} ->  {n: "-1"}    // string (a sign makes it a non-numeric tag)
+    //     {f: #"1.5"}->  {f: "1.5"}   // string
+    //
+    // So a TS `'2'` STRING literal would put `2` on the wire — silently, no flag, no compile error. That
+    // is the plausible-but-wrong failure the contract forbids, and the same defect class as #177 itself.
+    // The polyvar cannot express this value, so it falls through to the flagged `string` below: honest,
+    // and the consumer sees the real literal in the ⚪ comment. (#189 review)
+    if ((flags & ts.TypeFlags.StringLiteral) && !(flags & ts.TypeFlags.EnumLike) && !/^\d+$/.test(String(type.value))) {
         return { kind: 'polyTag', tags: [String(type.value)] }
     }
 

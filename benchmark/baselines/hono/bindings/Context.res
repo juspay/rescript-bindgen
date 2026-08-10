@@ -4,7 +4,8 @@ type t = InstanceTypes.context
 @send external setLayout: (t, ~layout: TypesTypes.typesLayoutConfig => 'a) => TypesTypes.typesLayoutConfig => 'a = "setLayout"
 @send external getLayout: (t) => TypesTypes.typesLayoutConfig => 'a = "getLayout"
 @send external setRenderer: (t, ~renderer: promise<string> => promise<WebTypes.response>) => unit = "setRenderer"
-@send external header: (t, ~name: [#"Content-Type"], ~value: UtilsTypes.baseMime=?, ~options: TypesTypes.setHeadersOptions=?, unit) => unit = "header"
+// ⚪ loose: `header` has a param/return widened to `string`.
+@send external header: (t, ~name: string, ~value: UtilsTypes.baseMime=?, ~options: TypesTypes.setHeadersOptions=?, unit) => unit = "header"
 @send external status: (t, ~status: CommonTypes.v100OrV101OrV102OrV103OrV200OrV201OrV202OrV203OrV204OrV205OrV206OrV207OrV208OrV226OrV300OrV301OrV302OrV303OrV304OrV305OrV306OrV307OrV308OrV400OrV401OrV402OrV403OrV404OrV405OrV406OrV407OrV408OrV409OrV410OrV411OrV412OrV413OrV414OrV415OrV416OrV417OrV418OrV421OrV422OrV423OrV424OrV425OrV426OrV428OrV429OrV431OrV451OrV500OrV501OrV502OrV503OrV504OrV505OrV506OrV507OrV508OrV510OrV511OrV1) => unit = "status"
 // 🛑 BROKEN: `set` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
 @send external set: (t, ~key: string, ~value: string) => unit = "set"

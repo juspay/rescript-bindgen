@@ -8,7 +8,8 @@ type t = InstanceTypes.honoRequest
 @send external header: (t, ~name: UtilsTypes.requestHeader) => string = "header"
 // 🛑 BROKEN: `parseBody` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
 @send external parseBody: (t, ~options: string=?, unit) => promise<string> = "parseBody"
-@send external json: (t) => promise<'a> = "json"
+// 🛑 BROKEN: `json` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
+@send external json: (t) => promise<string> = "json"
 @send external text: (t) => promise<string> = "text"
 // ⚪ loose: `arrayBuffer` has a param/return widened to `string`.
 @send external arrayBuffer: (t) => promise<string> = "arrayBuffer"
