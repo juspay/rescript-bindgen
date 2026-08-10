@@ -122,6 +122,17 @@ export declare class Headers {
     // so that unsoundness was CREATED by the re-flag. Both ends widen, or neither.
     pick(name: 'Content-Type'): 'set-content-type'
     pick(name: string): 'set-other'
+    // AND the widening must NOT be gated on "a polyTag param was just widened". When overload 1's literal
+    // is one `polyTagSafe` REJECTS, the param is already an `opaque` — so it renders `string` and makes
+    // overload 2 callable — while such a gate sees no polyTag to widen and leaves the return exact. The
+    // first version had that gate, so fix (a) punched a hole through fix (c): this emitted
+    // `(t, ~name: string) => [#"set-two"]`, and `switch` on the result compiled away to the single arm
+    // while the runtime value was `"set-other"`. What makes the return unsound is that the SIGNATURE WAS
+    // COLLAPSED, not how the param happened to render.
+    digit(name: '2'): 'set-two'
+    digit(name: string): 'set-other'
+    escaped(name: 'say "hi"'): 'set-quoted'
+    escaped(name: string): 'set-other'
 }
 
 // RETURN-ONLY BEHIND A GENERIC RECORD. `demoteReturnOnly` DETECTED `T` here (`collectTypeVars` reads
@@ -221,3 +232,19 @@ export declare const NamedArm: (props: {
     field?: NamedArmA | NamedArmB
     elems?: (NamedArmA | NamedArmB)[]
 }) => JsxElement
+
+
+// THE COLLAPSE GATE IS NOT "IDENTICAL KEY SETS". Identical keys do not make a collapse lossless if the
+// arms' field TYPES differ unmergeably — the SKILL's "a function union is not unionable" trap. TS
+// intersects the two `on` params to `never`, which then widened to `on: string => unit`: the float arm
+// GONE, and wrong for anyone holding it. So the collapse is taken only when the arms differ EXCLUSIVELY
+// in single-literal discriminant fields (`InlineArm` above), which is the shape it exists for.
+export type FnArms = { on: (x: string) => void } | { on: (x: number) => void }
+
+// Same gate, second consequence: keeping the views module preserves the library's own ALIAS NAME (#62).
+// Collapsing renamed this to a position-derived `<home><Prop>Config`, so reordering two declarations
+// renamed a shared type. `SharedArms.t` must survive as itself.
+export type SharedArms = { v: string } | { v: number }
+
+export declare function takeFnArms(xs: FnArms[]): void
+export declare function takeSharedArms(xs: SharedArms[]): void

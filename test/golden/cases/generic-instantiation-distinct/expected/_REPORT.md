@@ -2,9 +2,11 @@
 
 **5** components · ✅ **5** usable · 🔍 **0** need review · 🛑 **0** broken
 
+**2** function binding(s) → `DemoBindings.res`.
+
 **4** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**16** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**22** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -12,6 +14,13 @@
 |------|---------|----------|--------|
 | required | `@rescript/react + stdlib` | JsxDOM, Dom, React, ReactEvent | ✓ present |
 | optional | `rescript-webapi` | File, FileList | ✗ not installed |
+
+## 🔧 Function bindings
+
+Standalone function exports, emitted as positional `@module external` bindings in `DemoBindings.res`.
+
+- `takeFnArms`
+- `takeSharedArms`
 
 ## 🏛 Class modules
 
@@ -21,7 +30,7 @@ Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new
 |-------|-------------|---------|------------|
 | `Api` | ✓ | 3 | 0 |
 | `Svc` | ✓ | 5 | 0 |
-| `Headers` | ✓ | 3 | 0 |
+| `Headers` | ✓ | 5 | 0 |
 | `Req` | ✓ | 1 | 0 |
 
 ## ✅ Usable

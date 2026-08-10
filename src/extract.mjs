@@ -1676,7 +1676,14 @@ function demoteReturnOnly(retNode, paramNodes, sig, ctx, typeVars) {
     // var survives, the return is FLAGGED rather than faked. (#189 review)
     const left = new Set()
     collectTypeVars(out, left)
-    if (Object.keys(subst).some((n) => left.has(n))) return { kind: 'unknown' }
+    // `_demoteFailed` lets a caller UNDO the work that produced this dead end. Discarding the return
+    // typeRef strands whatever `classify` registered while building it: `jsonBoxed<T>(): BoxOf<T>` left an
+    // unreferenced `type boxOf<'a>` in the shared file AND renamed a correctly-bound sibling
+    // (`readBox(): BoxOf<string>` went from `boxOf` to `boxOfV1hnll`, since the orphan now occupies the
+    // bare name). The SKILL names that exact failure — a speculative build that bails must un-register.
+    // Signalled rather than rolled back HERE because this function has no trial of its own and is shared
+    // with `buildFunctionIR`; the method path owns the snapshot. (#189 review round 2)
+    if (Object.keys(subst).some((n) => left.has(n))) return { kind: 'unknown', _demoteFailed: true }
     return out
 }
 
@@ -1779,6 +1786,12 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
                 // reverted — see that branch for why (a ~60-member union name). Deliberately flagged
                 // rather than silently narrowed OR silently widened; unconstrained `T` keeps the type
                 // variable, which is the case `'a` exists for.
+                // Snapshot BEFORE the type vars are registered. `registryTrial` restores `ctx.typeVars`
+                // too, so a snapshot taken AFTER registration would put the method's vars BACK on
+                // rollback — the rebuild below would then re-derive the same generic return with no
+                // demotion pass, i.e. emit the exact unsound `box<'a>` this is meant to avoid. (Observed:
+                // the first cut did precisely that.)
+                const mTrial = registryTrial(ctx)
                 const tpSyms = (sig0.typeParameters || [])
                     .filter((tp) => !(tp.getConstraint && tp.getConstraint()))
                     .map((tp) => tp.symbol).filter(Boolean)
@@ -1800,6 +1813,15 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
                     raw.ret = demoteReturnOnly(raw.ret, raw.params.map((p) => p.type), sig0, ctx, ctx.typeVars)
                     built = raw
                 } finally { for (const s of added) ctx.typeVars.delete(s) }
+                // A return-only var that survived substitution means registering this method's type vars
+                // was a dead end: the return has to be flagged, and every entry minted for it is now
+                // unreachable. Roll the registry back and rebuild with NO vars registered — which is
+                // exactly what this method did before the type-var mapping existed, so the record is
+                // reachable again with its own flagged field, no orphan, and the sibling keeps its name.
+                if (built.ret && built.ret._demoteFailed) {
+                    mTrial.rollback()
+                    built = sigToMembers(sig0, ctx, 0)
+                }
                 const { params, ret } = built
                 // RETURN-ONLY vars are demoted, exactly as `buildFunctionIR` does at its own
                 // `sigToMembers` call. A type parameter appearing only in the return does NOT
@@ -1824,9 +1846,8 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
                 let mRet = ret
                 if (pt.getCallSignatures().length > 1) {
                     const flagLit = (n) => ({ kind: 'opaque', text: n.tags.map((v) => JSON.stringify(v)).join(' | ') })
-                    let widened = false
                     for (const p of params) {
-                        if (p.type && p.type.kind === 'polyTag') { p.type = flagLit(p.type); widened = true }
+                        if (p.type && p.type.kind === 'polyTag') p.type = flagLit(p.type)
                     }
                     // WIDENING A PARAM MUST WIDEN THE RETURN. Re-flagging the param makes the LATER
                     // overloads callable again — which is the point — but the return still carries the
@@ -1837,7 +1858,18 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
                     // exhaustive in one arm that can never match. The narrow param had at least kept the
                     // return honest by making overload 2 unreachable, so this unsoundness is CREATED by
                     // the re-flag — it has to widen both ends or neither. (#189 review)
-                    if (widened && mRet && mRet.kind === 'polyTag') mRet = flagLit(mRet)
+                    //
+                    // UNCONDITIONAL on the collapse, NOT gated on "did we just widen a param". The first
+                    // version gated it, and that gate was a hole: when overload 1's literal param is one
+                    // `polyTagSafe` REJECTS (all-digit `'2'`, escape-bearing, bare `_`), the param is
+                    // already an `opaque` — so it renders `string` and makes the later overloads callable
+                    // — while the gate saw no `polyTag` to widen and left the return exact. `digit(name:
+                    // '2'): 'set-two'` / `digit(name: string): 'set-other'` emitted
+                    // `(t, ~name: string) => [#"set-two"]`, and a switch on the result compiled away to
+                    // the single arm while the runtime value was `"set-other"`. What makes the return
+                    // unsound is that the SIGNATURE WAS COLLAPSED, which is true regardless of how the
+                    // param happened to render. (#189 review round 2)
+                    if (mRet && mRet.kind === 'polyTag') mRet = flagLit(mRet)
                 }
                 methods.push({ jsName: pname, params, ret: mRet })
             } catch (error) {
@@ -3592,9 +3624,37 @@ function classify(type, ctx, propName = '', depth = 0) {
                 // exposed the gap, and the symptom was a POSITION ASYMMETRY — the same union collapsed
                 // correctly as a record FIELD while degrading to a module as an ARRAY ELEMENT, which is
                 // exactly the defect class #181 exists to prevent. (#189 review)
-                const keySet = (m) => (m.getProperties() || []).map((p) => p.getName()).sort().join(',')
-                const sameKeys = members.length > 1 && members.every((m) => m.getProperties && keySet(m) === keySet(members[0]))
-                if (!sameKeys) {
+                // The gate is NOT just "identical key sets" — that was the first version and it was too
+                // loose in the way the SKILL warns about ("a function union is not unionable"). Identical
+                // keys do not make a collapse lossless if the arms' field TYPES differ unmergeably:
+                // `{on:(x:string)=>void} | {on:(x:number)=>void}` has one key, but TS intersects the two
+                // params to `never`, which then widened to `on: string => unit` — the float arm simply
+                // GONE, and wrong for anyone holding it. So the collapse is taken only when the arms
+                // differ EXCLUSIVELY in single-literal discriminant fields, which is the shape it exists
+                // for and the one the record collapse merges losslessly (into a real `@as` variant). Any
+                // other difference keeps the views module, which also preserves the library's own alias
+                // name (#62) — `type Shared = {v:string}|{v:number}` stays `Shared.t` instead of being
+                // renamed to a position-derived `<home><Prop>Config`. (#189 review round 2)
+                const propsOf = (m) => new Map((m.getProperties() || []).map((p) => [p.getName(), p]))
+                const collapsible = () => {
+                    if (members.length < 2 || !members.every((m) => m.getProperties)) return false
+                    const first = propsOf(members[0])
+                    const names = [...first.keys()].sort().join(',')
+                    if (!members.every((m) => [...propsOf(m).keys()].sort().join(',') === names)) return false
+                    for (const n of first.keys()) {
+                        const ts_ = members.map((m) => {
+                            const s = propsOf(m).get(n)
+                            return s && checker.getTypeOfSymbolAtLocation(s, s.valueDeclaration || s.declarations?.[0])
+                        })
+                        if (ts_.some((t) => !t)) return false
+                        const ids = new Set(ts_.map((t) => t.id))
+                        if (ids.size === 1) continue // identical everywhere -> merges trivially
+                        // Differs: only a set of string LITERALS is losslessly mergeable (-> `@as` variant).
+                        if (!ts_.every((t) => t.isStringLiteral && t.isStringLiteral())) return false
+                    }
+                    return true
+                }
+                if (!collapsible()) {
                     const opaque = opaqueUnion(ctx, elem, members, propName, depth, type.aliasSymbol ? { nameHint: typeName(type) } : {})
                     if (opaque) return { kind: 'array', of: opaque }
                 }

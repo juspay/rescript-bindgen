@@ -1,6 +1,18 @@
 type genericInstantiationDistinctFieldTag =
   | @as("a") A
   | @as("b") B
+type genericInstantiationDistinctTakeFnArmsXsConfigV1euep = {
+  on: string => unit,
+}
+type genericInstantiationDistinctTakeFnArmsXsConfigV1tjzn = {
+  on: float => unit,
+}
+type genericInstantiationDistinctTakeSharedArmsXsConfigV1hnll = {
+  v: string,
+}
+type genericInstantiationDistinctTakeSharedArmsXsConfigTj2n3 = {
+  v: float,
+}
 type genericInstantiationDistinctValueConfigV31qow<'a> = {
   ...JsxDOM.domProps,
   _data: 'a,
@@ -28,8 +40,8 @@ type pairV1o117 = {
   a: string,
   b: string,
 }
-type boxOf<'a> = {
-  v: 'a,
+type boxOf = {
+  v: string,  // 🛑 BROKEN — contains `unknown`
 }
 type genericInstantiationDistinctFieldConfig = {
   tag: genericInstantiationDistinctFieldTag,
@@ -42,6 +54,20 @@ type namedArmA = {
 type namedArmB = {
   kind: [#"nb"],
   v: string,
+}
+module FnArms = {
+  type t
+  external fromGenericInstantiationDistinctTakeFnArmsXsConfig: genericInstantiationDistinctTakeFnArmsXsConfigV1euep => t = "%identity"
+  external asGenericInstantiationDistinctTakeFnArmsXsConfig: t => (genericInstantiationDistinctTakeFnArmsXsConfigV1euep) = "%identity"
+  external fromGenericInstantiationDistinctTakeFnArmsXsConfig2: genericInstantiationDistinctTakeFnArmsXsConfigV1tjzn => t = "%identity"
+  external asGenericInstantiationDistinctTakeFnArmsXsConfig2: t => (genericInstantiationDistinctTakeFnArmsXsConfigV1tjzn) = "%identity"
+}
+module SharedArms = {
+  type t
+  external fromGenericInstantiationDistinctTakeSharedArmsXsConfig: genericInstantiationDistinctTakeSharedArmsXsConfigV1hnll => t = "%identity"
+  external asGenericInstantiationDistinctTakeSharedArmsXsConfig: t => (genericInstantiationDistinctTakeSharedArmsXsConfigV1hnll) = "%identity"
+  external fromGenericInstantiationDistinctTakeSharedArmsXsConfig2: genericInstantiationDistinctTakeSharedArmsXsConfigTj2n3 => t = "%identity"
+  external asGenericInstantiationDistinctTakeSharedArmsXsConfig2: t => (genericInstantiationDistinctTakeSharedArmsXsConfigTj2n3) = "%identity"
 }
 module GenericInstantiationDistinctField = {
   type t
