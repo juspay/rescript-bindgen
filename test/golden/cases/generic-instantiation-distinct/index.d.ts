@@ -248,3 +248,67 @@ export type SharedArms = { v: string } | { v: number }
 
 export declare function takeFnArms(xs: FnArms[]): void
 export declare function takeSharedArms(xs: SharedArms[]): void
+
+// OVERLOAD COLLAPSE, ROUND 3 — the per-site re-flag was replaced by a per-slot suppression at the SOURCE
+// (`collapseAmbiguity` + `ctx.noPolyTag`), because three review rounds each found the post-hoc version
+// missing a position. Every arm below was a demonstrated defect:
+//
+//  · NESTED IN THE RETURN — the shape this whole PR is about. `_format` lives inside the returned record,
+//    so a top-level check never saw it: `putNested(~name="X-Foo")` type-checked and claimed
+//    `_format: [#"set-ct"]` while overload 2 makes the runtime value `"set-other"`, and `switch` on it
+//    compiled away to an arm that can never match. `Api.body` above cannot catch this — BOTH its
+//    overloads carry the same literal, which is exactly why the suppression must be per-SLOT and not
+//    per-signature (hono's `c.body` overloads differ only in arity and must KEEP `[#"body"]`).
+//  · NESTED IN A PARAM — a literal inside a param's record or array element is just as much a collapse
+//    artifact as a direct one.
+//  · STATIC methods and overloaded CONSTRUCTORS had no re-flag at all.
+//  · A single-overload signature must still narrow, or the guard is over-broad (`onlyOne`).
+type NestedTag<F extends string> = { _data: number; _format: F }
+
+export declare class Collapsed {
+    putNested(name: 'Content-Type', v: string): NestedTag<'set-ct'>
+    putNested(name: string, v: string): NestedTag<'set-other'>
+    nestedParam(o: { kind: 'a'; v: string }): void
+    nestedParam(o: { kind: string; v: string }): void
+    arrayParam(names: 'Content-Type'[]): 'ret-a'
+    arrayParam(names: string[]): 'ret-b'
+    onlyOne(name: 'Content-Type'): 'just-one'
+}
+
+export declare class Statics {
+    static digitStatic(name: '2'): 'set-two'
+    static digitStatic(name: string): 'set-other'
+}
+
+// `new CtorOverload("dynamic")` is valid TS and was a hard compile error with no diagnostic.
+export declare class CtorOverload {
+    constructor(kind: 'fast', n?: number)
+    constructor(kind: string, n?: number)
+}
+
+// Standalone functions bind overloads SEPARATELY, so nothing is collapsed — but a literal param that
+// `polyTagSafe` cannot represent still widens to `string`, which admits calls belonging to the sibling
+// overload whose return differs. Emitted `(string) => [#"set-two"]`; must be `=> string`.
+export declare function fnDigit(name: '2'): 'set-two'
+export declare function fnDigit(name: string): 'set-other'
+
+// COLLAPSE GATE, SYNTACTIC. The gate first compared each property's RESOLVED type id, which asks the
+// wrong question: two arms sharing an identical `go(): void` or an inline `{n: number}` have DISTINCT ids
+// for identical shapes, so the collapse was declined and the #181 asymmetry came back — array position on
+// a views module while the field position collapsed. Its verdict tracked TS's id caching (`string[]` is
+// cached to one id, an inline object is not), which is not a property to depend on. Comparing DECLARATION
+// TEXT asks the right question, and avoids resolving types inside a gate (the churn trap).
+//
+// `SameDecl`/`SameObj` must collapse in BOTH positions; `DiffFn` (params TS intersects to `never`) must
+// keep the views module in the array position, as it does on main.
+export type SameDecl = { tag: 'a'; go(): void } | { tag: 'b'; go(): void }
+export type SameObj = { tag: 'a'; o: { n: number } } | { tag: 'b'; o: { n: number } }
+export type DiffFn = { on: (x: string) => void } | { on: (x: number) => void }
+
+export declare const Symmetry: (props: {
+    sameField?: SameDecl
+    sameElems?: SameDecl[]
+    objField?: SameObj
+    objElems?: SameObj[]
+    diffElems?: DiffFn[]
+}) => JsxElement

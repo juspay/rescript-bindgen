@@ -1,12 +1,12 @@
 # Binding report — `demo`
 
-**5** components · ✅ **5** usable · 🔍 **0** need review · 🛑 **0** broken
+**6** components · ✅ **6** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**2** function binding(s) → `DemoBindings.res`.
+**4** function binding(s) → `DemoBindings.res`.
 
-**4** class module(s) → `@new`/`@send`/`@get` bindings.
+**7** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**22** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**30** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -21,6 +21,8 @@ Standalone function exports, emitted as positional `@module external` bindings i
 
 - `takeFnArms`
 - `takeSharedArms`
+- `fnDigit`
+- `fnDigitForName`
 
 ## 🏛 Class modules
 
@@ -32,6 +34,9 @@ Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new
 | `Svc` | ✓ | 5 | 0 |
 | `Headers` | ✓ | 5 | 0 |
 | `Req` | ✓ | 1 | 0 |
+| `Collapsed` | ✓ | 4 | 0 |
+| `Statics` | ✓ | 0 | 0 |
+| `CtorOverload` | ✓ | 0 | 0 |
 
 ## ✅ Usable
 
@@ -43,6 +48,7 @@ _(n loose)_ = some props widened to `string`; they still work, just loosely type
 - Kinds
 - NamedArm
 - setHeader
+- Symmetry
 
 ## ⚪ Loosely typed (widened to `string`)
 

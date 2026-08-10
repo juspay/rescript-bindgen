@@ -55,6 +55,25 @@ type namedArmB = {
   kind: [#"nb"],
   v: string,
 }
+type nestedTag = {
+  _data: float,
+  _format: string,  // ⚪ loose — was `"set-ct"`
+}
+type genericInstantiationDistinctOConfig = {
+  kind: string,  // ⚪ loose — was `"a"`
+  v: string,
+}
+type genericInstantiationDistinctSameFieldConfig = {
+  tag: genericInstantiationDistinctFieldTag,
+  go: unit => unit,
+}
+type genericInstantiationDistinctObjFieldOConfig = {
+  n: float,
+}
+type genericInstantiationDistinctObjFieldConfig = {
+  tag: genericInstantiationDistinctFieldTag,
+  o: genericInstantiationDistinctObjFieldOConfig,
+}
 module FnArms = {
   type t
   external fromGenericInstantiationDistinctTakeFnArmsXsConfig: genericInstantiationDistinctTakeFnArmsXsConfigV1euep => t = "%identity"
