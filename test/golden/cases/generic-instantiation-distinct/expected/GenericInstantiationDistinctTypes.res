@@ -1,6 +1,6 @@
-type genericInstantiationDistinctValueConfigV1bq7o = {
+type genericInstantiationDistinctValueConfigV31qow<'a> = {
   ...JsxDOM.domProps,
-  _data: string,  // 🛑 BROKEN — contains `unknown`
+  _data: 'a,
   _format: [#body],
 }
 type genericInstantiationDistinctValueConfigVd30b = {
@@ -12,6 +12,10 @@ type genericInstantiationDistinctValueConfigV3fyyt = {
   ...JsxDOM.domProps,
   _data: unit,
   _format: [#redirect],
+}
+type pairRy8eg<'a> = {
+  a: 'a,
+  b: 'a,
 }
 type pairV1spt2 = {
   a: string,  // 🛑 BROKEN — contains `unknown`

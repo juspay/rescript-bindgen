@@ -1740,7 +1740,43 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
         const pt = checker.getTypeOfSymbolAtLocation(p, decl)
         if (pt.getCallSignatures().length) {
             try {
-                const { params, ret } = sigToMembers(pt.getCallSignatures()[0], ctx, 0)
+                const sig0 = pt.getCallSignatures()[0]
+                // A METHOD's own type parameters become ReScript type variables, exactly as
+                // `buildFunctionIR` already does for a standalone `function map<T, U>(…)` and
+                // `buildComponentIR` for generic props. Without this a method generic had no entry in
+                // `ctx.typeVars`, so `classify` took its unmapped-TypeParameter branch and returned
+                // `{kind:'unknown'}` — a flagged `string` placeholder. hono's `c.json<T>(data: T)` and
+                // its `TypedResponse<T,…>` return were both stranded that way: the payload you pass in
+                // and the payload you read back could not be connected, which is precisely the
+                // round-trip a type variable is FOR ("`'a` is only for a genuine generic that
+                // round-trips", CLAUDE.md).
+                //
+                // SCOPED PER METHOD, and restored after. Each method's `T` is its own — leaving them in
+                // the shared map would let one method's `'a` capture the next method's unrelated `T`,
+                // silently unifying two independent generics. Letters continue from the map's current
+                // size so a class-level or already-allocated var is never shadowed. (#177)
+                // ONLY AN UNCONSTRAINED PARAMETER BECOMES A TYPE VARIABLE. `'a` accepts anything, so
+                // using it for `T extends string` (hono's `c.text<T extends string>`) would emit
+                // `~text: 'b` and let a consumer pass `42` where TS requires a string — accepting code
+                // the library rejects, which is the "plausible-but-wrong" failure the contract forbids.
+                // A CONSTRAINED parameter is left unmapped so `classify` resolves it through its
+                // constraint instead: `T extends string` -> `string`, sound and still round-trippable
+                // (the field and the argument land on the same concrete type). Unconstrained `T` keeps
+                // the type variable, which is the case `'a` exists for.
+                const tpSyms = (sig0.typeParameters || [])
+                    .filter((tp) => !(tp.getConstraint && tp.getConstraint()))
+                    .map((tp) => tp.symbol).filter(Boolean)
+                const TVN = ['a', 'b', 'c', 'd', 'e', 'f']
+                const added = []
+                for (const s of tpSyms) {
+                    if (ctx.typeVars.has(s)) continue
+                    const i = ctx.typeVars.size
+                    ctx.typeVars.set(s, "'" + (TVN[i] || `t${i}`))
+                    added.push(s)
+                }
+                let built
+                try { built = sigToMembers(sig0, ctx, 0) } finally { for (const s of added) ctx.typeVars.delete(s) }
+                const { params, ret } = built
                 methods.push({ jsName: pname, params, ret })
             } catch (error) {
                 if (!isUnsupportedRestError(error)) throw error
@@ -3108,7 +3144,20 @@ function classify(type, ctx, propName = '', depth = 0) {
     // flagged rather than silently widened.
     if (flags & ts.TypeFlags.TypeParameter) {
         const tv = ctx.typeVars && ctx.typeVars.get(type.symbol)
-        return tv ? { kind: 'typeVar', name: tv } : { kind: 'unknown' }
+        if (tv) return { kind: 'typeVar', name: tv }
+        // A CONSTRAINED unmapped param stays flagged. Resolving it through its declared bound was tried
+        // and rejected here (#177): it is sound in principle — the bound is what the library promises
+        // about `T` — but hono's `U extends ContentfulStatusCode` resolves to a ~60-member numeric
+        // literal union whose generated name is
+        // `v100OrV102OrV103Or…OrV511OrV1`, pasted into every signature that mentions a status. That is
+        // technically more faithful and practically unusable, so the bound path needs the large-union
+        // NAMING problem solved first and belongs in its own change.
+        //
+        // A type VARIABLE is deliberately not used for a constrained param either: `'a` accepts
+        // anything, so emitting it for `T extends string` would let a consumer pass `42` where TS
+        // requires a string — accepting code the library rejects. `'a` stays reserved for a genuinely
+        // UNCONSTRAINED generic (CLAUDE.md), which is what the method-level mapping above registers.
+        return { kind: 'unknown' }
     }
 
     // primitives

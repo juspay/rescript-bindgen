@@ -4,7 +4,7 @@
 
 **2** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**7** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**8** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -20,7 +20,7 @@ Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new
 | Class | Constructor | Methods | Properties |
 |-------|-------------|---------|------------|
 | `Api` | ✓ | 3 | 0 |
-| `Svc` | ✓ | 2 | 0 |
+| `Svc` | ✓ | 3 | 0 |
 
 ## ✅ Usable
 

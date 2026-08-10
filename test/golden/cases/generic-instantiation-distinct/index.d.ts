@@ -74,7 +74,19 @@ export declare class Api {
 interface Pair<T> { a: T; b: T }
 
 export declare class Svc {
+    // Also the witness for the METHOD-GENERIC mapping: an UNCONSTRAINED method type parameter becomes a
+    // real ReScript type variable, so the record parameterizes and the round trip is connected —
+    // `gen: (t, ~x: 'a) => pair<'a>`. `buildFunctionIR` already did this for a standalone
+    // `function map<T>(…)` and `buildComponentIR` for generic props; a class METHOD was the gap, so its
+    // `T` had no entry in `ctx.typeVars` and classify's unmapped branch flagged it. What you pass in and
+    // what you read back could not be connected — exactly the round trip `'a` exists for.
     gen<T>(x: T): Pair<T>
+    // A CONSTRAINED parameter must NOT become `'a`: that accepts anything, so `~s: 'a` would let a
+    // consumer pass `42` where TS demands a string — accepting code the library rejects. It stays
+    // flagged instead. Resolving it through the declared bound is sound in principle and was tried;
+    // it is deferred because hono's `U extends ContentfulStatusCode` resolves to a ~60-member numeric
+    // union named `v100OrV102Or…OrV511OrV1`, which lands in every signature mentioning a status.
+    constrained<S extends string>(s: S): Pair<S>
     concrete(): Pair<string>
 }
 

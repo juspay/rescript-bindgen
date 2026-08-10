@@ -914,6 +914,25 @@ A **genuine** generic component maps its type parameter to a ReScript type varia
 | **prop-position `any`** — `type AccordionValue = (any \| null)[]`; `value?: AccordionValue`, `onValueChange?: (v: AccordionValue) => void` | an **implicit** component generic: `~value: array<'a>=?`, `~onValueChange: array<'a> => unit=?` — vars are **keyed by the carrying alias** so props over one alias unify; a bare `any` gets a fresh var per occurrence. Exactly as sound as the upstream `any`, strictly better than a broken `string` placeholder. Inside SHARED record fields `any` stays a flagged defect (a shared type can't be component-generic). Fixture: [`any-to-typevar`](../test/golden/cases/any-to-typevar) |
 | **ERROR-`any`** — the checker's error type from an UNRESOLVABLE reference (blend's `import { ThemeType } from './tokens'` where the module doesn't export it) | **never** the implicit generic (that would silently fake the theming entry point as `~foundationTokens: 'a=?` with `defects=0`): a 🛑-flagged `string` placeholder whose comment names the broken-import cause, in props, function params/returns, record fields, and class members alike. The report's declaration column shows the failing reference (`ThemeType`) — the type usually EXISTS in the package, so hand-matching is a seconds-long fix. Author-written `any` is untouched. Detected via the checker's `error`/`unresolved` intrinsics, so a REAL `any` in the source never false-positives. Fixture: [`error-any-unresolved`](../test/golden/cases/error-any-unresolved). (#107) |
 
+A **class METHOD's own type parameter** is mapped like a standalone generic function's: an
+**unconstrained** `T` becomes a ReScript type variable, so the method is polymorphic and any record it
+returns parameterizes with it — `gen<T>(x: T): Pair<T>` → `type pair<'a> = {a: 'a, b: 'a}` plus
+`@send external gen: (t, ~x: 'a) => pair<'a>`. This was the one signature kind that never registered
+its parameters (`buildFunctionIR` and `buildComponentIR` both already did), so classify took its
+unmapped-parameter branch and flagged a 🛑 `string` — leaving the payload you pass in unconnectable to
+the payload you read back, which is precisely the round trip `'a` is for. The vars are scoped **per
+method** and released afterwards, so one method's `'a` can never capture the next method's unrelated
+`T`. Fixture: [`generic-instantiation-distinct`](../test/golden/cases/generic-instantiation-distinct).
+(#177)
+
+> A **constrained** parameter (`T extends string`, hono's `U extends ContentfulStatusCode`) stays
+> flagged. `'a` would be *wrong* — it accepts anything, so `~text: 'a` lets a consumer pass `42` where
+> TS demands a string, i.e. we would accept code the library rejects. Resolving it through the declared
+> **bound** instead is sound in principle and was implemented and measured, then reverted: hono's status
+> constraint resolves to a ~60-member numeric literal union whose generated name is
+> `v100OrV102OrV103Or…OrV511OrV1`, which then lands in every signature mentioning a status. Faithful and
+> unusable. That path needs the large-union naming problem solved first.
+
 An **erased** generic — a `forwardRef`/`memo` export that pins the parameter to a placeholder
 (`Record<string, unknown>`) — is *re-genericized*: the placeholder is recovered as `'a`, `unknown`
 becomes `JSON.t`, `keyof T` becomes `string`, and nested records carry the type variable:
