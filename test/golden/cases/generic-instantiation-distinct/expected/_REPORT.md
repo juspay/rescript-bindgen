@@ -1,27 +1,28 @@
-# Binding report — `hono@4.12.25`
+# Binding report — `demo`
 
-**0** components · ✅ **0** usable · 🔍 **0** need review · 🛑 **0** broken
+**6** components · ✅ **6** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**3** class module(s) → `@new`/`@send`/`@get` bindings.
+**4** function binding(s) → `DemoBindings.res`.
 
-**37** shared types deduplicated into **6** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**9** class module(s) → `@new`/`@send`/`@get` bindings.
 
-## 🔤 Constructor name collisions
-
-ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
-
-### Left as-is — same name, same runtime representation (60)
-
-These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
-
-- `CommonTypes`: `N_1`, `N100`, `N102`, `N103`, `N200`, `N201`, `N202`, `N203`, `N206`, `N207`, `N208`, `N226`, `N300`, `N301`, `N302`, `N303`, `N305`, `N306`, `N307`, `N308`, `N400`, `N401`, `N402`, `N403`, `N404`, `N405`, `N406`, `N407`, `N408`, `N409` … +30 more
+**34** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
 | Kind | Package | Provides | Status |
 |------|---------|----------|--------|
 | required | `@rescript/react + stdlib` | JsxDOM, Dom, React, ReactEvent | ✓ present |
-| optional | `rescript-webapi` | File, FileList | ✓ present → used |
+| optional | `rescript-webapi` | File, FileList | ✗ not installed |
+
+## 🔧 Function bindings
+
+Standalone function exports, emitted as positional `@module external` bindings in `DemoBindings.res`.
+
+- `takeFnArms`
+- `takeSharedArms`
+- `fnDigit`
+- `fnDigitForName`
 
 ## 🏛 Class modules
 
@@ -29,22 +30,40 @@ Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new
 
 | Class | Constructor | Methods | Properties |
 |-------|-------------|---------|------------|
-| `Context` | ✓ | 15 | 8 |
-| `HonoRequest` | ✓ | 13 | 8 |
-| `Hono` | ✓ | 18 | 2 |
+| `Api` | ✓ | 3 | 0 |
+| `Svc` | ✓ | 5 | 0 |
+| `Headers` | ✓ | 5 | 0 |
+| `Req` | ✓ | 1 | 0 |
+| `Collapsed` | ✓ | 4 | 0 |
+| `Statics` | ✓ | 0 | 0 |
+| `CtorOverload` | ✓ | 0 | 0 |
+| `OrderDep` | ✓ | 2 | 0 |
+| `LeakGuard` | ✓ | 1 | 0 |
 
 ## ✅ Usable
 
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-_(none)_
+- Edge  _(6 loose)_
+- InlineArm
+- Kinds
+- NamedArm
+- setHeader
+- Symmetry
 
 ## ⚪ Loosely typed (widened to `string`)
 
 These resolved to a real but complex type and were widened to `string` (they compile and work). Grouped by type so you can review each pattern once — confirm `string` is acceptable, or it may deserve a tighter mapping.
 
-_(none)_
+| Resolved TypeScript type | → emitted | count | example props |
+|--------------------------|-----------|-------|---------------|
+| `"2"` | `string` | 1 | digit |
+| `"0"` | `string` | 1 | zero |
+| `"say \\"hi\\""` | `string` | 1 | quoted |
+| `"C:\\\\Users"` | `string` | 1 | backslash |
+| `"a\\tb"` | `string` | 1 | tabbed |
+| `"_"` | `string` | 1 | underscore |
 
 ## 🔍 Needs review
 

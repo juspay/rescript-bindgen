@@ -250,6 +250,9 @@ function structuralTypeSig(t, shared, seen) {
         case 'callback': return 'F(' + (t.thisArg ? '@this' + structuralTypeSig(t.thisArg, shared, seen) + ';' : '') +
             (t.params || []).map((x) => (x && x.optional ? '?' : '') + structuralTypeSig(x, shared, seen)).join(',') +
             ')=>' + structuralTypeSig(t.ret || { kind: 'unit' }, shared, seen)
+        // Same reason as `typeSig`: distinct tag sets are distinct TYPES, so they must not collide
+        // onto an order-dependent counter here either. (#177)
+        case 'polyTag': return 'PT' + JSON.stringify(t.tags)
         // Broken/opaque fields all EMIT `string`, but two records distinguishable ONLY through them
         // must still hash apart (else collision → order-dependent counter). The original TS type
         // text is stable (source-declared, not id/order-based), so a bounded slice discriminates
@@ -1455,7 +1458,23 @@ function buildFunctionIR(checker, sym, source, importName, from, opts) {
 
     // sigToMembers keeps each param's NAME + optionality (so the emitter can bind optional
     // args as labeled `~name=?` — a positional external can't express a trailing optional).
-    const { params, ret: rawRet } = sigToMembers(sig, ctx, 0)
+    // Overloads bind as SEPARATE externals here, so no signature is collapsed — but a literal param that
+    // `polyTagSafe` cannot represent still widens to `string`, and that admits calls belonging to a
+    // sibling overload whose return differs: `fdigit(name:'2'):'set-two' / (name:string):'set-other'`
+    // emitted `(string) => [#"set-two"]`. The ambiguity map over the whole overload set covers it. (#189 r3)
+    const allSigs = (() => {
+        try { return checker.getTypeOfSymbolAtLocation(sym, decl).getCallSignatures() } catch { return [sig] }
+    })()
+    // NB the return-only demotion can dead-end here too (`jsonBoxed<T>(): BoxOf<T>`), stranding whatever
+    // `classify` registered for the discarded return as an unreferenced type. A snapshot/rollback +
+    // rebuild was implemented and REVERTED: the rebuild itself works (it yields a non-generic `boxOf`
+    // ref, confirmed by instrumentation), but the orphan entry still reaches emit through late name/key
+    // resolution, so the fix did not actually remove it. That is entry-lifecycle work — the same class as
+    // #178, which is open and explicitly wants a post-traversal reachability sweep rather than more
+    // per-site rollbacks. Left as-is deliberately, with the finding recorded, instead of shipping a
+    // rebuild that costs a second pass and fixes nothing. The METHOD path's rollback DOES work and is
+    // kept. (#189 r3, tracked separately)
+    const { params, ret: rawRet } = sigToMembers(sig, ctx, 0, collapseAmbiguity(allSigs))
     // A type parameter used ONLY in the return doesn't round-trip, so `'a` there is unsound
     // (rule #4) — demote it to its constraint (`nanoid<T extends string>(): T` -> string).
     const ret = demoteReturnOnly(rawRet, params.map((p) => p.type), sig, ctx, typeVars)
@@ -1599,7 +1618,7 @@ function isUnsupportedRestError(error) {
  * when labeled). React-event params are recognised the same way functionNode does.
  * @returns {{params: Array<{name:string, optional:boolean, rest:boolean, type:object}>, ret:object}}
  */
-function sigToMembers(sig, ctx, depth = 0) {
+function sigToMembers(sig, ctx, depth = 0, amb = null) {
     const { checker } = ctx
     // POLARITY for a method/function the consumer CALLS (#50 review): its PARAMS are
     // consumer-supplied (input -> produced) and its RETURN is consumer-received
@@ -1610,9 +1629,17 @@ function sigToMembers(sig, ctx, depth = 0) {
     const prev = ctx.produced
     ctx.produced = true
     try {
-        const params = sig.getParameters().map((pp) => {
+        const params = sig.getParameters().map((pp, pi) => {
             const pt = checker.getTypeOfSymbolAtLocation(pp, ctx.decl)
             const rest = isRestParam(pp)
+            // AMBIGUOUS SLOT -> no literal anywhere under it narrows (see `collapseAmbiguity`). Suppressed
+            // at the SOURCE rather than re-flagged afterwards, which is what makes it cover a literal
+            // NESTED inside the slot (a param's record field, an array element) and not just the top
+            // level. Three successive review rounds each found a post-hoc re-flag that missed a position;
+            // a source-level suppression cannot, because every literal in the subtree passes this flag.
+            const prevNP = ctx.noPolyTag
+            if (amb && amb.params.has(pi)) ctx.noPolyTag = true
+            try {
             // `asArray` accepts Array/ReadonlyArray aliases but rejects heterogeneous tuple rests.
             // The finally below restores signature polarity when a class catches this error and
             // continues extracting sibling members.
@@ -1623,12 +1650,79 @@ function sigToMembers(sig, ctx, depth = 0) {
                 ? { kind: 'event', res: REACT_EVENTS[n] }
                 : withPath(ctx, pp.getName(), () => classify(pt, ctx, pp.getName(), depth + 1)) // path-anchor param `{…}` (#90)
             return { name: pp.getName(), optional, rest, type }
+            // RESTORED IN A `finally`, matching `ctx.produced` below. A plain assignment leaked: the
+            // unsupported-tuple-rest `throw` a few lines up fires BEFORE it, and that throw is caught by
+            // the class builder so extraction CONTINUES with sibling members — so the flag stayed true and
+            // silently over-flagged every later member of the class (`after(): 'still-exact'` came out
+            // `=> string`). Safe direction, but contagious. (#189 r5)
+            } finally { ctx.noPolyTag = prevNP }
         })
         ctx.produced = false
-        return { params, ret: returnNode(sig, ctx, depth) }
+        const prevNPR = ctx.noPolyTag
+        if (amb && amb.ret) ctx.noPolyTag = true
+        try {
+            return { params, ret: returnNode(sig, ctx, depth) }
+        } finally { ctx.noPolyTag = prevNPR }
     } finally {
         ctx.produced = prev
     }
+}
+
+/**
+ * Which slots of an OVERLOAD SET are ambiguous, i.e. made imprecise purely by our keeping one signature?
+ * We bind `getCallSignatures()[0]` and drop the rest, so a literal that differs between overloads is an
+ * artifact of that choice rather than the API's contract — narrowing it to a polyvar then either rejects
+ * calls the library accepts (a param) or claims a value the library will not produce (a return).
+ *
+ * Both directions were observed. `Headers.set(name:'Content-Type') / (name:string)` made
+ * `set("X-Message", …)` — hono's own doc example — inexpressible. `put(name:'Content-Type'):Tagged<'set-ct'>
+ * / (name:string):Tagged<'set-other'>` type-checked `put(~name="X-Foo")` and claimed `_format` is
+ * `[#"set-ct"]` while the runtime value is `"set-other"`, so a `switch` compiled away to an arm that can
+ * never match.
+ *
+ * PER SLOT, not per signature, and that distinction is load-bearing: hono's `c.body` has two overloads
+ * that differ only in ARITY (`(data:T)` / `(data:T, init?)`) and return the identical
+ * `TypedResponse<T,U,'body'>`. Suppressing narrowing for the whole signature would flag `_format` again
+ * and re-fuse `body`/`text`/`json` — undoing #177, the very fix this PR exists for. A slot is ambiguous
+ * only when the overloads actually DISAGREE about it.
+ * @returns {{params: Set<number>, ret: boolean}}
+ */
+function collapseAmbiguity(callSigs) {
+    const out = { params: new Set(), ret: false }
+    if (!callSigs || callSigs.length < 2) return out
+    // READ THE DECLARATION NODES, never the resolved types. Two reasons, both learned the hard way here:
+    //
+    //  1. Resolving types in a GATE is the documented churn trap (SKILL: "Calling
+    //     `checker.getTypeOfSymbolAtLocation` while deciding WHETHER a mapping applies forces resolution
+    //     earlier than the rest of the pipeline expects"). A gate must not perturb what it is judging.
+    //  2. Reference equality on resolved types is WRONG for generic overloads. Each overload owns its own
+    //     type parameters, so hono's two `TextRespond` signatures return `TypedResponse<T,U,'text'>`
+    //     objects that are not identical even though they say the same thing. The first cut compared them
+    //     by identity, called `text`/`json` ambiguous, flagged their `_format`, and let them re-fuse with
+    //     `body` onto one record labelled `[#"body"]` — regressing #177 on the very package that motivated
+    //     this PR. Caught by regenerating hono and reading it, not by any test.
+    //
+    // Comparing the source TEXT of each slot's type node sidesteps both: `T`/`U` print identically across
+    // overloads that agree, while `Tagged<'set-ct'>` vs `Tagged<'set-other'>` and `'Content-Type'` vs
+    // `string` differ exactly where the collapse actually loses information.
+    const decls = callSigs.map((sg) => sg.declaration).filter((d) => d && d.parameters)
+    // DEGENERATE CASE — a bound or synthesized signature with no declaration to read. Be conservative:
+    // treat every slot as ambiguous. The bound is the real MAX ARITY across the set, not a hardcoded 8,
+    // which left slots 9+ narrowable in exactly the case this branch exists to be careful about. (#189 r5)
+    if (decls.length !== callSigs.length) {
+        out.ret = true
+        const wide = Math.max(0, ...callSigs.map((sg) => (sg.getParameters() || []).length))
+        for (let i = 0; i < wide; i++) out.params.add(i)
+        return out
+    }
+    const txt = (n) => { try { return n ? n.getText() : '\u0000none' } catch { return '\u0000err' } }
+    out.ret = !decls.every((d) => txt(d.type) === txt(decls[0].type))
+    const arity = Math.max(...decls.map((d) => d.parameters.length))
+    for (let i = 0; i < arity; i++) {
+        const seen = decls.filter((d) => d.parameters[i]).map((d) => txt(d.parameters[i].type))
+        if (!seen.length || !seen.every((t) => t === seen[0])) out.params.add(i)
+    }
+    return out
 }
 
 /** Deep-replace `typeVar` nodes named in `subst` with their substitute IR. */
@@ -1661,7 +1755,27 @@ function demoteReturnOnly(retNode, paramNodes, sig, ctx, typeVars) {
         const c = tp.getConstraint && tp.getConstraint()
         subst[name] = c ? classify(c, ctx, '', 0) : { kind: 'unknown' }
     }
-    return Object.keys(subst).length ? substTypeVars(retNode, subst) : retNode
+    if (!Object.keys(subst).length) return retNode
+    const out = substTypeVars(retNode, subst)
+    // `substTypeVars` rewrites `typeVar` NODES only — it cannot reach a var carried in a `typeRef`'s
+    // `tparams` (which is an array of NAME STRINGS, not nodes). `collectTypeVars` does see them, so a
+    // return-only var behind a registered generic record was DETECTED, substituted nowhere, and the
+    // guard silently passed: `json<T>(): Box<T>` emitted `=> box<'a>` with an unflagged `v: 'a`, letting
+    // the caller pick the type of a value the LIBRARY controls. Compiled proof — `asInt` and `asBool`
+    // both type-check against the same external, and `asInt(r).v + 1` compiles to integer arithmetic on
+    // arbitrary JSON. That is exactly the unsoundness rule #4 exists to prevent, so if any substituted
+    // var survives, the return is FLAGGED rather than faked. (#189 review)
+    const left = new Set()
+    collectTypeVars(out, left)
+    // `_demoteFailed` lets a caller UNDO the work that produced this dead end. Discarding the return
+    // typeRef strands whatever `classify` registered while building it: `jsonBoxed<T>(): BoxOf<T>` left an
+    // unreferenced `type boxOf<'a>` in the shared file AND renamed a correctly-bound sibling
+    // (`readBox(): BoxOf<string>` went from `boxOf` to `boxOfV1hnll`, since the orphan now occupies the
+    // bare name). The SKILL names that exact failure — a speculative build that bails must un-register.
+    // Signalled rather than rolled back HERE because this function has no trial of its own and is shared
+    // with `buildFunctionIR`; the method path owns the snapshot. (#189 review round 2)
+    if (Object.keys(subst).some((n) => left.has(n))) return { kind: 'unknown', _demoteFailed: true }
+    return out
 }
 
 /**
@@ -1707,7 +1821,9 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
     let ctor = null
     if (ctors.length) {
         try {
-            ctor = { params: sigToMembers(ctors[0], ctx, 0).params }
+            // Overloaded CONSTRUCTORS collapse the same way instance methods do — `new Ctor("dynamic")`
+            // was a hard compile error with no diagnostic when overload 1 pinned `kind: 'fast'`. (#189 r3)
+            ctor = { params: sigToMembers(ctors[0], ctx, 0, collapseAmbiguity(ctors)).params }
         } catch (error) {
             if (!isUnsupportedRestError(error)) throw error
             skippedMembers.push({ name: 'constructor', reason: error.message })
@@ -1737,7 +1853,89 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
         const pt = checker.getTypeOfSymbolAtLocation(p, decl)
         if (pt.getCallSignatures().length) {
             try {
-                const { params, ret } = sigToMembers(pt.getCallSignatures()[0], ctx, 0)
+                const sig0 = pt.getCallSignatures()[0]
+                // A METHOD's own type parameters become ReScript type variables, exactly as
+                // `buildFunctionIR` already does for a standalone `function map<T, U>(…)` and
+                // `buildComponentIR` for generic props. Without this a method generic had no entry in
+                // `ctx.typeVars`, so `classify` took its unmapped-TypeParameter branch and returned
+                // `{kind:'unknown'}` — a flagged `string` placeholder. hono's `c.json<T>(data: T)` and
+                // its `TypedResponse<T,…>` return were both stranded that way: the payload you pass in
+                // and the payload you read back could not be connected, which is precisely the
+                // round-trip a type variable is FOR ("`'a` is only for a genuine generic that
+                // round-trips", CLAUDE.md).
+                //
+                // SCOPED PER METHOD, and restored after. Each method's `T` is its own — leaving them in
+                // the shared map would let one method's `'a` capture the next method's unrelated `T`,
+                // silently unifying two independent generics. Letters continue from the map's current
+                // size so a class-level or already-allocated var is never shadowed. (#177)
+                // ONLY AN UNCONSTRAINED PARAMETER BECOMES A TYPE VARIABLE. `'a` accepts anything, so
+                // using it for `T extends string` (hono's `c.text<T extends string>`) would emit
+                // `~text: 'b` and let a consumer pass `42` where TS requires a string — accepting code
+                // the library rejects, which is the "plausible-but-wrong" failure the contract forbids.
+                // A CONSTRAINED parameter is left unmapped, and what that means concretely is that it
+                // stays FLAGGED: `classify`'s unmapped-TypeParameter branch returns `{kind:'unknown'}`
+                // and does NOT consult the bound, so `T extends string` becomes a 🛑 `string`
+                // placeholder, not a clean `string`. Resolving the bound there was implemented and
+                // reverted — see that branch for why (a ~60-member union name). Deliberately flagged
+                // rather than silently narrowed OR silently widened; unconstrained `T` keeps the type
+                // variable, which is the case `'a` exists for.
+                // Snapshot BEFORE the type vars are registered. `registryTrial` restores `ctx.typeVars`
+                // too, so a snapshot taken AFTER registration would put the method's vars BACK on
+                // rollback — the rebuild below would then re-derive the same generic return with no
+                // demotion pass, i.e. emit the exact unsound `box<'a>` this is meant to avoid. (Observed:
+                // the first cut did precisely that.)
+                const mTrial = registryTrial(ctx)
+                const tpSyms = (sig0.typeParameters || [])
+                    .filter((tp) => !(tp.getConstraint && tp.getConstraint()))
+                    .map((tp) => tp.symbol).filter(Boolean)
+                const TVN = ['a', 'b', 'c', 'd', 'e', 'f']
+                const added = []
+                for (const s of tpSyms) {
+                    if (ctx.typeVars.has(s)) continue
+                    const i = ctx.typeVars.size
+                    ctx.typeVars.set(s, "'" + (TVN[i] || `t${i}`))
+                    added.push(s)
+                }
+                let built
+                try {
+                    const raw = sigToMembers(sig0, ctx, 0, collapseAmbiguity(pt.getCallSignatures()))
+                    // `demoteReturnOnly` must run INSIDE this scope: it resolves each type parameter via
+                    // `typeVars.get(tp.symbol)`, so calling it after the `finally` below cleared the
+                    // method's entries made it a silent no-op — `promise<'a>` survived and the fix looked
+                    // applied while doing nothing. Caught only by re-generating hono and looking.
+                    raw.ret = demoteReturnOnly(raw.ret, raw.params.map((p) => p.type), sig0, ctx, ctx.typeVars)
+                    built = raw
+                } finally { for (const s of added) ctx.typeVars.delete(s) }
+                // A return-only var that survived substitution means registering this method's type vars
+                // was a dead end: the return has to be flagged, and every entry minted for it is now
+                // unreachable. Roll the registry back and rebuild with NO vars registered — which is
+                // exactly what this method did before the type-var mapping existed, so the record is
+                // reachable again with its own flagged field, no orphan, and the sibling keeps its name.
+                if (built.ret && built.ret._demoteFailed) {
+                    mTrial.rollback()
+                    built = sigToMembers(sig0, ctx, 0, collapseAmbiguity(pt.getCallSignatures()))
+                }
+                const { params, ret } = built
+                // RETURN-ONLY vars are demoted, exactly as `buildFunctionIR` does at its own
+                // `sigToMembers` call. A type parameter appearing only in the return does NOT
+                // round-trip, so `'a` there is unsound (contract rule #4, `docs/TYPE_MAPPING.md`
+                // "Return-only generics"): `json<T>(): Promise<T>` as `=> promise<'a>` lets the caller
+                // pick any `T` while the runtime value is whatever the body actually holds. Omitting
+                // this call gave `function json<T>(): Promise<T>` and
+                // `class HonoRequest { json<T>(): Promise<T> }` OPPOSITE answers for the same TS shape,
+                // with the unsound direction winning for methods. (#189 review)
+                // OVERLOAD COLLAPSE must not narrow a parameter. We keep only the FIRST call signature,
+                // so a lone literal in a direct param can be an artifact of that choice rather than the
+                // API's real contract. hono's `SetHeaders` (context.d.ts:178-181) declares
+                // `(name: 'Content-Type', …)`, `(name: ResponseHeader, …)` and `(name: string, …)`;
+                // binding `~name: [#"Content-Type"]` makes `c.header("X-Message", "Hello!")` — hono's own
+                // first doc example — inexpressible, and with no flag to say so. That is the mirror of
+                // the defect this PR fixes: #177 accepted code the library rejects, this REJECTS code the
+                // library accepts, and both are silent. Re-flag the literal so the ⚪ comment carries it.
+                //
+                // Scoped to DIRECT params of a collapsed signature. A literal reached inside a param's
+                // record/union is not the collapsed thing and keeps its exact polyvar, as do return and
+                // record-field positions everywhere.
                 methods.push({ jsName: pname, params, ret })
             } catch (error) {
                 if (!isUnsupportedRestError(error)) throw error
@@ -1781,7 +1979,10 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
         const pt = checker.getTypeOfSymbolAtLocation(p, decl)
         if (pt.getCallSignatures().length) {
             try {
-                const { params, ret } = sigToMembers(pt.getCallSignatures()[0], ctx, 0)
+                // STATICS collapse overloads exactly as instance methods do, and were missed entirely by
+                // the earlier per-site re-flag — `static digit(name:'2'):'set-two' / (name:string):'set-other'`
+                // emitted `(~name: string) => [#"set-two"]`. (#189 r3)
+                const { params, ret } = sigToMembers(pt.getCallSignatures()[0], ctx, 0, collapseAmbiguity(pt.getCallSignatures()))
                 staticMethods.push({ jsName: pname, params, ret })
             } catch (error) {
                 if (!isUnsupportedRestError(error)) throw error
@@ -2272,7 +2473,16 @@ export function extractModule(entryFile, opts = {}) {
     }
 
     healGhostRecords(shared)
-    healGhostsFromTwin(shared)
+    // NB `healGhostsFromTwin` used to run here and was REMOVED in #177. It repaired a depth-truncated
+    // all-`string` ghost by transplanting field types from a "twin" it identified by same home + same
+    // base-name family + same field NAMES. Distinct instantiations of one generic satisfy all three by
+    // construction, so it fused hono's `TypedResponse<T,U,'body'>` with `TypedResponse<undefined,U,
+    // 'redirect'>` — `body`/`text`/`json` inherited `_data: unit` ("no data") from `redirect`,
+    // unflagged. Its own case is gone (blend's `menuV2VariantToken` resolves fully and shares one entry
+    // now), it fired 0 times across 113 fixtures and 9 of 10 benchmark packages, and its single
+    // remaining firing WAS that bug. Guard fixture: `generic-instantiation-distinct` — specifically its
+    // `Pair<T>` / `Pair<string>` arm, which is the one that keeps every field degraded so this pass
+    // would fire on it (the hono arm cannot, since its `_format` polyvar is not an imperfection).
     // #120: re-link fields that truncated to `string` past the bound because their (named, bounded)
     // record type wasn't registered YET — it since materialized at a shallower site. Runs BEFORE
     // propagateTypeParams so the new typeRefs get their `<'b>` threaded. Walks every IR tree.
@@ -2332,17 +2542,17 @@ function relinkRegistered(t, byKey, seen, ownerDeps) {
     if (!t || typeof t !== 'object' || seen.has(t)) return
     seen.add(t)
     if (t.kind === 'opaque' && t.relinkId != null) {
-        const e = byKey.get('id:' + t.relinkId)
+        const e = byKey.get(keyOf(t.relinkId, t.relinkNp))
         if (e && e.kind === 'record') {
             const r = refTo(e)
-            delete t.text; delete t.relinkId
+            delete t.text; delete t.relinkId; delete t.relinkNp
             Object.assign(t, r)
             // Register the NEW cross-reference on the owning entry, so planSharedModules sees the
             // edge and homes/orders the target correctly (else a `Module.t`/type-rec ordering miss).
             if (ownerDeps && e.key) ownerDeps.add(e.key)
             return
         }
-        delete t.relinkId // never registered → stays the honest opaque/string fallback
+        delete t.relinkId; delete t.relinkNp // never registered → stays the honest opaque/string fallback
         return
     }
     for (const k in t) {
@@ -2399,44 +2609,6 @@ function healGhostRecords(shared) {
         for (const f of rebuilt.fields) collectRefKeys(f.type, e.deps)
         const tvars = new Set()
         for (const f of rebuilt.fields) collectTypeVars(f.type, tvars)
-        e.tparams = tvars.size ? [...tvars] : undefined
-    }
-}
-
-/**
- * Heal a fully-degraded ghost record by copying field types from a structurally-richer TWIN —
- * a record of the same name-family + home with the same field names but non-fallback types.
- *
- * A deeply-nested type reached past `MAX_DEPTH` truncates to an all-`string` record (MenuV2's
- * `text.color` / `subText.color`: `MenuV2VariantToken<…>` -> `{ default: string, action: string }`)
- * even though the SAME shape resolved fully at a shallower site (`backgroundColor`'s
- * `menuV2VariantToken = { default: stateToken, action: menuV2ActionConfig }`). They don't dedup
- * because csstype gives `CSSObject['color']` / `['backgroundColor']` distinct type ids — but they
- * are the same shape, and bumping `MAX_DEPTH` is not an option (it re-expands the unbounded
- * Highcharts graph into dangling class refs — verified). Copying the twin's already-materialized
- * field types is safe: no re-resolution, no new entries, no depth change. (#63 review)
- */
-function healGhostsFromTwin(shared) {
-    const isFallback = (t) => irHasImperfection(t)
-    const baseFamily = (n) => n.replace(/\d+$/, '') // strip the uniqueName disambiguation suffix
-    const records = shared.entries.filter((e) => e.kind === 'record' && e.fields && e.fields.length)
-    for (const e of records) {
-        if (!e.fields.every((f) => isFallback(f.type))) continue // only fully-degraded ghosts
-        const names = e.fields.map((f) => f.name).slice().sort().join(',')
-        const twin = records.find((s) => s !== e && s.home === e.home &&
-            baseFamily(s.name) === baseFamily(e.name) &&
-            s.fields.map((f) => f.name).slice().sort().join(',') === names &&
-            s.fields.some((f) => !isFallback(f.type)))
-        if (!twin) continue
-        const byName = new Map(twin.fields.map((f) => [f.name, f]))
-        e.fields = e.fields.map((f) => {
-            const tf = byName.get(f.name)
-            return tf && !isFallback(tf.type) ? { ...f, type: tf.type, optional: f.optional } : f
-        })
-        e.deps = new Set()
-        for (const f of e.fields) collectRefKeys(f.type, e.deps)
-        const tvars = new Set()
-        for (const f of e.fields) collectTypeVars(f.type, tvars)
         e.tparams = tvars.size ? [...tvars] : undefined
     }
 }
@@ -2870,7 +3042,18 @@ function boundedPastDepth(t, ctx, checker, budget, seen) {
         ts.TypeFlags.Null | ts.TypeFlags.Undefined | ts.TypeFlags.Void | ts.TypeFlags.EnumLike |
         ts.TypeFlags.NonPrimitive)) return true // the bare `object` keyword → a `JSON.t` leaf (#149)
     if (isCssType(t)) return true
-    if (t.id != null && ctx.shared && ctx.shared.byKey.has('id:' + t.id)) return true // registered → link
+    // Keyed like every other registry read, so this predicate cannot disagree with the lookup that
+    // immediately follows it: under suppression the entry that will actually be linked is the `|np` one.
+    // No demonstrated wrong type came out of the mismatch, but it is the same class as the order-dependence
+    // bug just fixed — a raw `id:` read silently reaching the other reading of a type.
+    //
+    // SIDE EFFECT, accepted: under suppression this shortcut now DECLINES when the entry exists only under
+    // the plain key, so a deep named record inside an ambiguous overload slot truncates to a flagged
+    // `string` instead of linking. That widens the suppression past the literals it targets — safe
+    // direction, zero benchmark impact, and it is not what the TYPE_MAPPING row describes. Kept because it
+    // also closes the opposite hole: the raw read promised a free link while the keyed lookup that follows
+    // then built a new entry anyway. (#189 r5)
+    if (t.id != null && ctx.shared && ctx.shared.byKey.has(entryKey(ctx, t))) return true // registered → link
     if (checker.isArrayType?.(t) || checker.isTupleType?.(t)) return true
     if (t.getCallSignatures?.().length === 1 && !(t.getProperties?.().length)) return true
     if (isBareFunction(t)) return true // a bare `Function` → the fixed `JsFn` module: zero registry growth (#120)
@@ -2892,6 +3075,35 @@ function boundedPastDepth(t, ctx, checker, budget, seen) {
     }
     return false
 }
+/**
+ * Can this string literal be a ReScript polyvar TAG that round-trips EXACTLY? A polyvar tag is not a
+ * general string slot, and every rejection below is a compiler-verified wire-format or parse failure
+ * rather than a style preference. Rejected values keep the flagged `string` mapping. (#189 review)
+ *
+ *  - CANONICAL DECIMAL INTEGER ("2", "0"): ReScript emits a JS NUMBER, `{v: #"2"}` -> `{v: 2}`, so a TS
+ *    *string* literal would silently put a number on the wire. Only the canonical form coerces —
+ *    verified that "01", "-1", "1.5", "1e3" and "0x1" all stay strings — hence `0 | [1-9]\d*` and not
+ *    `\d+`, which needlessly dropped '007'.
+ *  - `"` / `\` / CONTROL CHAR: a quoted tag is taken LITERALLY and does NOT unescape. `#"a\"b"` yields
+ *    the 4-char `a\"b` and `#"C:\\Users"` yields two backslashes — wrong strings on the wire, unflagged.
+ *    A `"` appears to be unrepresentable in a tag at all.
+ *  - BARE `_`: `[#_]` parses in the TYPE position but `#_` is invalid in the VALUE position, so the type
+ *    would be uninhabitable — nothing could construct it. (`_blank`, `__`, `_1` are all fine.)
+ *
+ * Verified safe and deliberately still narrowed: the empty string, spaces, `café`/`日本語`/emoji, `x-y`,
+ * `2xl`, leading zeros, signs, decimals, exponent/hex forms, `true`/`false`/`null`, `Infinity`/`NaN`,
+ * and every ReScript keyword (emit quotes all tags, so keywords are safe).
+ * @param {string} v
+ * @returns {boolean}
+ */
+function polyTagSafe(v) {
+    if (/^(0|[1-9]\d*)$/.test(v)) return false // would emit a JS number, not a string
+    if (/["\\]/.test(v)) return false // a quoted tag does not process escapes
+    if (/[\u0000-\u001f\u007f]/.test(v)) return false // control chars, same reason
+    if (v === '_') return false // uninhabitable: `#_` is invalid in the value position
+    return true
+}
+
 const PAST_BOUND_CAP = 3 // deepest object nesting materialized past MAX_DEPTH
 
 function classify(type, ctx, propName = '', depth = 0) {
@@ -2936,7 +3148,7 @@ function classify(type, ctx, propName = '', depth = 0) {
         // Highcharts graph (whose deep records dangle `NavigatorOptions.t` / `Point.t`) stays
         // bounded. (#63 validation)
         if (type.id != null && type.id === ctx.selfId && ctx.shared) {
-            const e = ctx.shared.byKey.get('id:' + type.id)
+            const e = ctx.shared.byKey.get(entryKey(ctx, type))
             if (e && e.kind === 'record') return refTo(e)
         }
         // The self-ref exception, GENERALIZED (#98, #110): a reference to an already-REGISTERED
@@ -2963,7 +3175,7 @@ function classify(type, ctx, propName = '', depth = 0) {
         // cycle. RECORD entries only (the selfId precedent): an opaque-module/views entry emits as a
         // submodule, and a past-depth `Module.t` link references a file that never emitted.
         if (type.id != null && ctx.shared) {
-            const e = ctx.shared.byKey.get('id:' + type.id)
+            const e = ctx.shared.byKey.get(entryKey(ctx, type))
             if (e && e.kind === 'record') return refTo(e)
         }
         // A FUNCTION reached past the bound classifies through its signature: the function node
@@ -3066,7 +3278,10 @@ function classify(type, ctx, propName = '', depth = 0) {
         // `relinkRegistered` post-pass can re-resolve it to the now-registered record — a
         // zero-expansion link, order-independent. (#120)
         if (type.id != null && type.getProperties?.().length && !type.getCallSignatures().length) {
-            return { kind: 'opaque', text: checker.typeToString(type), relinkId: type.id }
+            // `relinkNp` records WHICH reading of the type this node was truncated under, because
+            // `relinkRegistered` runs post-traversal with no ctx and would otherwise relink a
+            // suppression-built node to the un-suppressed entry, defeating the suppression on that path.
+            return { kind: 'opaque', text: checker.typeToString(type), relinkId: type.id, ...(ctx.noPolyTag ? { relinkNp: true } : {}) }
         }
         return { kind: 'opaque', text: checker.typeToString(type) }
     }
@@ -3077,7 +3292,7 @@ function classify(type, ctx, propName = '', depth = 0) {
             // `subMenu?: MenuItemType[]`): resolve to that record's typeRef instead of a
             // lossy `opaque`/string. The name was registered early in recordNode.
             if (ctx.shared) {
-                const e = ctx.shared.byKey.get('id:' + type.id)
+                const e = ctx.shared.byKey.get(entryKey(ctx, type))
                 if (e) return refTo(e)
             }
             const nm = typeName(type)
@@ -3136,7 +3351,20 @@ function classify(type, ctx, propName = '', depth = 0) {
     // flagged rather than silently widened.
     if (flags & ts.TypeFlags.TypeParameter) {
         const tv = ctx.typeVars && ctx.typeVars.get(type.symbol)
-        return tv ? { kind: 'typeVar', name: tv } : { kind: 'unknown' }
+        if (tv) return { kind: 'typeVar', name: tv }
+        // A CONSTRAINED unmapped param stays flagged. Resolving it through its declared bound was tried
+        // and rejected here (#177): it is sound in principle — the bound is what the library promises
+        // about `T` — but hono's `U extends ContentfulStatusCode` resolves to a ~60-member numeric
+        // literal union whose generated name is
+        // `v100OrV102OrV103Or…OrV511OrV1`, pasted into every signature that mentions a status. That is
+        // technically more faithful and practically unusable, so the bound path needs the large-union
+        // NAMING problem solved first and belongs in its own change.
+        //
+        // A type VARIABLE is deliberately not used for a constrained param either: `'a` accepts
+        // anything, so emitting it for `T extends string` would let a consumer pass `42` where TS
+        // requires a string — accepting code the library rejects. `'a` stays reserved for a genuinely
+        // UNCONSTRAINED generic (CLAUDE.md), which is what the method-level mapping above registers.
+        return { kind: 'unknown' }
     }
 
     // primitives
@@ -3466,8 +3694,73 @@ function classify(type, ctx, propName = '', depth = 0) {
                     ? tagVariantNode(elem, members, ctx, propName, depth, elemName)
                     : null
                 if (v) return { kind: 'array', of: v }
-                const opaque = opaqueUnion(ctx, elem, members, propName, depth, type.aliasSymbol ? { nameHint: typeName(type) } : {})
-                if (opaque) return { kind: 'array', of: opaque }
+                // IDENTICAL KEY SETS -> fall through to the RECORD COLLAPSE (#30), don't build a module.
+                // The collapse is lossless here (no arm has a field another lacks) and strictly better
+                // than opaque views: it yields ONE directly-constructible record whose discriminant is a
+                // real `@as` variant — `{tag: | @as("a") A | @as("b") B, v: string}` — instead of a `t`
+                // reachable only through unchecked `%identity` doors.
+                //
+                // This branch had no such fallback and never needed one: both arms' single-literal
+                // discriminants used to classify to the same flagged `string`, so the arms deduped to one
+                // record and `objArms` never reached 2. Making those literals distinct polyvars (#177)
+                // exposed the gap, and the symptom was a POSITION ASYMMETRY — the same union collapsed
+                // correctly as a record FIELD while degrading to a module as an ARRAY ELEMENT, which is
+                // exactly the defect class #181 exists to prevent. (#189 review)
+                // The gate is NOT just "identical key sets" — that was the first version and it was too
+                // loose in the way the SKILL warns about ("a function union is not unionable"). Identical
+                // keys do not make a collapse lossless if the arms' field TYPES differ unmergeably:
+                // `{on:(x:string)=>void} | {on:(x:number)=>void}` has one key, but TS intersects the two
+                // params to `never`, which then widened to `on: string => unit` — the float arm simply
+                // GONE, and wrong for anyone holding it. So the collapse is taken only when the arms
+                // differ EXCLUSIVELY in single-literal discriminant fields, which is the shape it exists
+                // for and the one the record collapse merges losslessly (into a real `@as` variant). Any
+                // other difference keeps the views module, which also preserves the library's own alias
+                // name (#62) — `type Shared = {v:string}|{v:number}` stays `Shared.t` instead of being
+                // renamed to a position-derived `<home><Prop>Config`. (#189 review round 2)
+                const propsOf = (m) => new Map((m.getProperties() || []).map((p) => [p.getName(), p]))
+                // SYNTACTIC, like `collapseAmbiguity` and for the same two reasons: a gate must not force
+                // resolution (the churn trap), and resolved-type IDENTITY is the wrong question. The first
+                // cut compared `t.id` per property, so two arms sharing an identical `go(): void` or an
+                // inline `{n: number}` counted as DIFFERENT (distinct ids for identical shapes) and the
+                // collapse was declined — reintroducing the #181 position asymmetry it exists to remove,
+                // with the array position landing on the views module while the field position collapsed.
+                // Its verdict effectively tracked TS's id caching (`string[]` happens to be cached to one
+                // id, an inline object is not), which is not a property anyone should depend on.
+                //
+                // Comparing each member's DECLARATION TEXT asks the right question: arms that agree
+                // textually merge trivially, and where they differ the only losslessly mergeable case is a
+                // set of string literals (-> a real `@as` variant). Anything else — notably a function
+                // union, whose params TS intersects to `never` — keeps the views module.
+                const memberText = (sym) => {
+                    const d = (sym.declarations || [])[0]
+                    if (!d) return null
+                    try { return d.getText() } catch { return null }
+                }
+                const isStrLitMember = (sym) => {
+                    const d = (sym.declarations || [])[0]
+                    return !!(d && ts.isPropertySignature(d) && d.type && ts.isLiteralTypeNode(d.type) &&
+                        ts.isStringLiteral(d.type.literal))
+                }
+                const collapsible = () => {
+                    if (members.length < 2 || !members.every((m) => m.getProperties)) return false
+                    const first = propsOf(members[0])
+                    const names = [...first.keys()].sort().join(',')
+                    if (!members.every((m) => [...propsOf(m).keys()].sort().join(',') === names)) return false
+                    if (!first.size) return false
+                    for (const n of first.keys()) {
+                        const syms = members.map((m) => propsOf(m).get(n))
+                        if (syms.some((x) => !x)) return false
+                        const texts = syms.map(memberText)
+                        if (texts.some((t) => t === null)) return false
+                        if (new Set(texts).size === 1) continue // identical declarations -> merge trivially
+                        if (!syms.every(isStrLitMember)) return false
+                    }
+                    return true
+                }
+                if (!collapsible()) {
+                    const opaque = opaqueUnion(ctx, elem, members, propName, depth, type.aliasSymbol ? { nameHint: typeName(type) } : {})
+                    if (opaque) return { kind: 'array', of: opaque }
+                }
             }
         }
         // A bounded tagged-tuple union element (SVG path data) is safe to classify past MAX_DEPTH
@@ -3616,6 +3909,29 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (ctx.shared && isBareFunction(type)) {
         ctx.shared.usesJsFn = true
         return { kind: 'raw', res: 'JsFn.t', note: 'was `Function` — build with JsFn.fromFn0/1/2/3, read with JsFn.asFn0/1/2/3' }
+    }
+
+    // A LONE string-literal type — hono's `_format: 'body'`, a brand field `__brand: 'element'` — is
+    // exactly expressible as a single-tag POLYVAR, `[#"body"]`. The tag's runtime value IS the bare
+    // string (compiler-verified: `{_format: #"body"}` emits `{_format: "body"}`), so this is exact and
+    // zero-cost, where the flagged `string` below both lost the value AND accepted any string at all.
+    //
+    // It is also load-bearing for CORRECTNESS, not just fidelity: the flagged node carries the literal
+    // only as comment TEXT, while `typeSig` hashes the KIND — so two records differing solely in this
+    // field hashed identically and deduped onto ONE entry. That is how hono's
+    // `TypedResponse<…,'body'>`, `…,'text'>` and `…,'json'>` collapsed together, leaving `text` and
+    // `json` bound to a record whose comment read `"body"`. As distinct polyvar types they now separate
+    // for the right reason (see `typeSig`'s `polyTag` case).
+    //
+    // ENUM MEMBERS ARE EXCLUDED. TS sets `StringLiteral` on `Size.Sm` too, and an enum member must keep
+    // its enum ref — the same `EnumLike` trap the `ctx.constValue` widening above guards against. A
+    // const binding is already widened above, so it never reaches here. (#177)
+    // A literal only becomes a polyvar when the tag round-trips EXACTLY. `polyTagSafe` is the gate, and
+    // every exclusion in it was found by compiling and reading the emitted `.mjs` rather than reasoning
+    // about ReScript semantics. Anything it rejects falls through to the flagged `string` below —
+    // honest, with the real literal preserved in the ⚪ comment. (#189 review)
+    if ((flags & ts.TypeFlags.StringLiteral) && !(flags & ts.TypeFlags.EnumLike) && !ctx.noPolyTag && polyTagSafe(String(type.value))) {
+        return { kind: 'polyTag', tags: [String(type.value)] }
     }
 
     // give up -> opaque, flagged for review
@@ -3810,13 +4126,50 @@ function literalUnionOpenNode(literals, baseName, ctx, propName) {
 }
 
 /**
+ * The registry key for a type. `'id:' + type.id` alone is NOT enough: a record's FIELDS depend on
+ * `ctx.noPolyTag` (an ambiguous overload slot suppresses literal narrowing throughout its subtree), and
+ * shared entries are memoized and built ONCE at whichever site reaches them first. So without the flag in
+ * the key the suppression was defeated by visit order, and one order was unsound — same `.d.ts`, two class
+ * members swapped:
+ *
+ *     put first:   type tagged = { _format: string   // loose, was "set-ct"
+ *     peek first:  type tagged = { _format: [#"set-ct"]
+ *
+ * In the second, `put(~name="X-Foo")` type-checks and claims `[#"set-ct"]` while the runtime value is
+ * `"set-other"` — a `switch` compiles away to an arm that can never match. In the first, the unambiguous
+ * `peek()` is needlessly downgraded because `put` happened to be built first. hono was correct only by
+ * luck of ordering, and no golden could catch it: the record must be reached from BOTH an ambiguous and an
+ * unambiguous site.
+ *
+ * Keying on the flag gives the two readings separate entries, which is right — they are genuinely
+ * different ReScript types. When a type contains no literal at all both readings are identical, so
+ * `bySig` merges them and nothing is duplicated. The suffix is EMPTY when the flag is off, so every
+ * existing key is byte-identical and nothing else churns. (#189 r5)
+ * @param {object} ctx
+ * @param {object} type
+ * @returns {string}
+ */
+function entryKey(ctx, type) {
+    return keyOf(type.id, ctx.noPolyTag)
+}
+
+/** The one formatter for a registry key. `entryKey` covers every read that has a `ctx`; this lower-level
+ *  form exists for `relinkRegistered`, which runs post-traversal with no ctx and carries the reading on
+ *  the node instead. Both go through here so a future dimension is added in ONE place — the alternative
+ *  is a second hand-built key, which is the "keyed one way, read another" shape that caused the
+ *  order-dependence bug. (#189 r5) */
+function keyOf(id, np) {
+    return 'id:' + id + (np ? '|np' : '')
+}
+
+/**
  * Register a NAMED type (enum/record) in the module-level registry, deduped by
  * `type.id`. Returns its typeRef. For records, `data` is filled by the caller AFTER
  * this returns the entry (so self-references resolve during field building).
  * @returns {object} the typeRef (when reused) — see registerEntry for new ones
  */
 function registerNamed(ctx, type, kind, base, data) {
-    const key = 'id:' + type.id
+    const key = entryKey(ctx, type)
     if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
     const entry = { key, kind, name: uniqueName(base, ctx.shared), base, home: homeOf(type, ctx), deps: new Set(), ...data }
     ctx.shared.byKey.set(key, entry)
@@ -5090,6 +5443,12 @@ function typeSig(t) {
         case 'event': return 'E(' + t.res + ')'
         case 'raw': return 'raw(' + t.res + ')'
         case 'typeVar': return 'V(' + t.name + ')'
+        // The TAG VALUES are the type — `[#"body"]` and `[#"text"]` are different ReScript types, so
+        // they must hash apart. This is what stops hono's `TypedResponse<…,'body'>` and `…,'text'>`
+        // from deduping onto one record: as flagged opaques they both hashed to `opaque` and merged,
+        // leaving `text`/`json` on a record whose comment read `"body"`. JSON-encoded so no tag value
+        // can forge a separator (#183's lesson). (#177)
+        case 'polyTag': return 'PT' + JSON.stringify(t.tags)
         case 'number': return t._float ? 'numF' : 'num'
         // opaque / review / unknown / any all render to the SAME `opaqueFallback` (string),
         // so they're interchangeable for dedup — normalize, ignoring the (display-only) text.
@@ -5229,7 +5588,7 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
     const base = typeName ? lower(typeName) : lower(pathPascal) + 'Config'
     let entry = null // shared-mode early entry; branches filled in place after the build
     if (shared) {
-        const key = 'id:' + type.id
+        const key = entryKey(ctx, type)
         if (shared.byKey.has(key)) return refTo(shared.byKey.get(key)) // cycle re-entry or already built
         const home = homeOf(type, ctx)
         const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pathPascal + 'Config'
@@ -5343,7 +5702,7 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         // Module mode: register the entry EARLY (with its final name) so self/mutual
         // references during field building resolve to its typeRef, then fill fields.
         const recTrial = registryTrial(ctx) // throw guard only — this builder has no bail path (#182)
-        const key = 'id:' + type.id
+        const key = entryKey(ctx, type)
         if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
         const home = homeOf(type, ctx)
         // An ANONYMOUS `{…}` gets a DESCRIPTIVE, component-scoped name: `<home><Prop>Config`

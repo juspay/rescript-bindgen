@@ -136,6 +136,22 @@ export function numberType(propName) {
 function renderType(t, propName, cfg) {
     switch (t.kind) {
         case 'string': return 'string'
+        // A lone string-literal TS type -> a single-tag polyvar, `[#"body"]`. The tag's runtime value
+        // IS the bare string (compiler-verified: `{_format: #"body"}` emits `{_format: "body"}`), so
+        // this is exact and zero-cost where the old flagged `string` accepted any string at all. (#177)
+        //
+        // EVERY tag is quoted, unconditionally. The bare form `#body` is prettier but it is a standing
+        // hazard: a bare tag that happens to be a ReScript keyword is not a style problem, it is a parse
+        // error that takes the WHOLE FILE down (`type kw = {k: [#type]}` -> "`type` is a reserved
+        // keyword"), which is strictly worse than the flagged `string` this mapping replaces. Gating on
+        // a keyword SET was the first fix and it shipped with a hole — `await` was missing from
+        // `RESCRIPT_RESERVED`, found by brute-forcing 50 candidates through the compiler. Any such list
+        // is a maintenance liability that fails in the worst direction, and the two forms are the SAME
+        // ReScript type (`#body` ≡ `#"body"`), so quoting always costs nothing but a little prettiness
+        // and removes the entire class. Tag values that quoting canNOT rescue — a `"`/`\`/control char,
+        // which a quoted tag takes LITERALLY rather than unescaping — never reach here: `polyTagSafe`
+        // in extract.mjs keeps them on the flagged `string` path. (#189 review)
+        case 'polyTag': return `[${t.tags.map((v) => `#${JSON.stringify(v)}`).join(' | ')}]`
         // verbatim ReScript type (e.g. aria poly variants from JsxDOM) — passed through as-is
         case 'raw': return t.res
         // a React synthetic event type (`ReactEvent.Mouse.t`, …) reached in a NON-handler position —
