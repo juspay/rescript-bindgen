@@ -5,6 +5,67 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.0-beta.1] — 2026-08-12
+
+> **Upgrading: regenerate your bindings, and expect compile errors at four kinds of call site.** All four
+> are deliberate and none change runtime behaviour — the emitted JS shape is unchanged throughout.
+>
+> 1. **A single string literal is now a polyvar.** `@as("type") type_: string` becomes
+>    `@as("type") type_: [#line]`, and the same for brands and menu discriminants. Pass `#line`, not
+>    `"line"`. The runtime value is still the bare string (`{type: "line"}`), verified against the
+>    compiler.
+> 2. **Shared type names churn where a type's content changed.** `menuStoreNuqof` → `menuStoreV1nk2i`,
+>    `typesValueConfig` → `typesValueConfigJ1iob`, plus blend's DataTable arm records. The hash follows
+>    the content, so anything naming those identifiers must be renamed.
+> 3. **hono's `typesValueConfig` no longer exists** — it split into one record per response kind
+>    (`body`/`text`/`json`/`redirect`), which is the point of #177.
+> 4. **Props that were a dead `string` are now real types.** Anyone passing a string there was already
+>    broken (the value never reached the library), so this converts a silent runtime failure into a
+>    compile error pointing at real code.
+>
+> Benchmark buckets are unchanged everywhere (blend 219/7/0, base-ui 174/21/0) — no component moved
+> between usable/review/broken.
+
+### Fixed
+- **Self-referential discriminated unions crashed extraction** (#170) — a union whose arm referenced the
+  union itself (`Poisoned = {ok, children: Poisoned[]} | {bad, …}`) recursed without a cycle guard, so
+  extraction threw and the affected components **silently vanished from the output**. The `@tag` variant
+  builder now registers its entry BEFORE recursing (the entry *is* the guard) and emits `type rec`.
+- **Constructor-name collisions put the wrong string on the wire** (#171) — ReScript scopes variant
+  constructors per module, so two enums in one `*Types.res` could both define `Value`; where the expected
+  type isn't known, ReScript binds the LAST definition with no error and no warning. In blend this hit 7
+  names in Highcharts alone (`Point` = `"point"` vs `"Point"`, which Highcharts treats as case-sensitive)
+  and broke the portal dashboard migration (juspay/blend-rescript#133). Colliders whose `@as` values
+  differ are now renamed by their owning type; same-value collisions keep their names and are reported.
+- **A union bound differently depending on where it appeared** (#181) — a union of anonymous object arms
+  became a proper views module as an array element but degraded to a flagged `string` as a prop or record
+  field, *while the module it refused was already emitted in the same file*. Every position now agrees.
+- **Views modules were write-only for some arms** (#186) — `from<X>` fell back to the arm's kind while the
+  `as<X>` reader required a derivable name hint, so an arm could get a one-way door: `fromArray` with no
+  `asArray`, `fromNumber` with no `asNumber`. Highcharts' `ColorType` is returned by `color(…).get()` and
+  almost always holds a plain string, and the only reader that compiled was `asGradientColorObject` —
+  silently reading a string as a record. 95 readers added across 53 modules.
+- **Two instantiations of one generic collapsed into one lying record** (#177) — hono's
+  `TypedResponse<T, U, F>` is instantiated once per response kind, and all four shared a single record
+  claiming `_data: unit` ("there is no data"), true for `redirect` alone and false-and-unflagged for
+  `body`/`text`/`json`. Two causes: a post-extraction "twin healing" pass transplanted field types between
+  distinct instantiations (removed — it fired 0 times across every fixture and 9 of 10 benchmark packages,
+  and its one remaining firing *was* this bug), and flagged literals all hashed alike so the arms deduped.
+- **`void` / `undefined` leaves mapped to a dead `string`** (#175) — now `unit`, and a void union maps to
+  `option`.
+- **Entry-lifecycle correctness** (#179, #180, #182) — speculative builders that bail now restore the
+  registry, and a throw can no longer leave a half-built entry that emits as an uninhabitable module.
+
+### Added
+- **Method type parameters become real ReScript type variables** (#177) — an *unconstrained* generic on a
+  class method now round-trips (`gen: (t, ~x: 'a) => pair<'a>`) instead of being a flagged placeholder.
+  Constrained and return-only parameters stay flagged deliberately: `'a` accepts anything, so using it for
+  `T extends string` would admit calls the library rejects, and a return-only variable doesn't round-trip
+  (contract rule #4).
+- **Constructor-collision reporting** — a new "🔤 Constructor name collisions" section lists renamed and
+  left-as-is collisions, so a same-value collision can't pass silently.
+
+
 ## [1.4.0-beta.0] — 2026-08-06
 
 > **Upgrading:** regenerate your bindings. A nested discriminated union that previously emitted a
