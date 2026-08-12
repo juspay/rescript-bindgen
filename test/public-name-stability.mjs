@@ -1,0 +1,112 @@
+// Permanent public-name registry contract (#190).
+//
+// This exercises the real CLI across several generations of the SAME output directory. A generated
+// name is an API assignment: shape growth cannot rename it, removed identities stay reserved, a new
+// identity takes the suffix, and a reappearing identity recovers its original assignment.
+import { execFileSync } from 'child_process'
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs'
+import { dirname, join } from 'path'
+import { tmpdir } from 'os'
+import { fileURLToPath } from 'url'
+
+const HERE = dirname(fileURLToPath(import.meta.url))
+const CLI = join(dirname(HERE), 'src', 'cli.mjs')
+const root = mkdtempSync(join(tmpdir(), 'bindgen-public-names-'))
+const source = join(root, 'index.d.ts')
+const out = join(root, 'generated')
+const manifestPath = join(out, '.bindgen-manifest.json')
+
+const sourceText = ({ status = true, newcomer = false, five = false, split = false } = {}) => `
+type JsxElement = { __brand: 'element' }
+${status ? `export type StatusCode = 100 | 101 | 200 | 201${five ? ' | 500' : ''}` : ''}
+${newcomer ? 'export type ConsumerStatusCode = 300 | 301 | 302 | 303 | 304' : ''}
+export interface FirstConfig { value: string }
+export interface SecondConfig { value: ${split ? 'number' : 'string'} }
+export declare const ResponseView: (props: {
+  ${status ? 'status?: StatusCode' : ''}
+  ${newcomer ? 'consumerStatus?: ConsumerStatusCode' : ''}
+  first?: FirstConfig
+  second?: SecondConfig
+}) => JsxElement
+`
+
+function run(shape) {
+    writeFileSync(source, sourceText(shape))
+    execFileSync('node', [CLI, '--dir', root, '--out', out, '--from', 'demo', '--no-install'], {
+        stdio: ['ignore', 'ignore', 'pipe'],
+    })
+    return JSON.parse(readFileSync(manifestPath, 'utf-8'))
+}
+
+function rowFor(manifest, sourceName) {
+    const marker = `|named:${sourceName}`
+    const found = Object.entries(manifest.publicTypes || {}).find(([id]) => {
+        const at = id.indexOf(marker)
+        if (at < 0) return false
+        const next = id[at + marker.length]
+        return next == null || next === '<' || next === '|'
+    })
+    if (!found) throw new Error(`missing registry row for ${sourceName}`)
+    return { id: found[0], row: found[1] }
+}
+
+function assert(ok, message) {
+    if (!ok) throw new Error(message)
+    console.log(`✓ ${message}`)
+}
+
+try {
+    // Bootstrap a normal assignment, then replace it with a sentinel representing a public name
+    // written by some prior bindgen release. The next run must consume—not recompute—that assignment.
+    let manifest = run({ status: true })
+    const initial = rowFor(manifest, 'StatusCode')
+    assert(initial.row.name === 'v100OrV101OrV200OrV201', 'the frozen four-member boundary keeps its structural name')
+    const firstShared = rowFor(manifest, 'FirstConfig')
+    const secondShared = rowFor(manifest, 'SecondConfig')
+    assert(firstShared.row.name === secondShared.row.name, 'interchangeable upstream types initially share one declaration')
+    const initiallyGeneratedName = initial.row.name
+    initial.row.name = 'consumerStatusCode'
+    initial.row.module = 'LegacyTypes'
+    initial.row.aliases = [...new Set([...(initial.row.aliases || []), initiallyGeneratedName])]
+    writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n')
+
+    manifest = run({ status: true })
+    let status = rowFor(manifest, 'StatusCode')
+    let output = readFileSync(join(out, `${status.row.module}.res`), 'utf-8')
+    assert(status.id === initial.id && status.row.name === 'consumerStatusCode', 'a prior bindgen assignment is reused exactly')
+    assert(status.row.module === 'LegacyTypes', 'the prior qualified type module is reused exactly')
+    assert(output.includes('@unboxed type consumerStatusCode ='), 'references and declarations use the locked public name')
+    assert(readFileSync(join(out, 'ResponseView.res'), 'utf-8').includes('LegacyTypes.consumerStatusCode'), 'consumer references keep the locked qualified name')
+    assert(output.includes(`type ${initiallyGeneratedName} = consumerStatusCode`), 'the replaced generated name remains a compatibility alias')
+
+    // Crossing the permanently-frozen large-union threshold changes the preferred rule, but not an
+    // identity that already owns a public name.
+    manifest = run({ status: true, five: true })
+    status = rowFor(manifest, 'StatusCode')
+    assert(status.row.name === 'consumerStatusCode', 'member/shape changes do not rename the same upstream identity')
+
+    // Removal deactivates rather than deletes the assignment. A different upstream type requesting
+    // that exact source-derived name must take a suffix instead of stealing the tombstone.
+    manifest = run({ status: false, newcomer: true })
+    status = rowFor(manifest, 'StatusCode')
+    const newcomer = rowFor(manifest, 'ConsumerStatusCode')
+    assert(status.row.active === false, 'a removed upstream type becomes an inactive tombstone')
+    assert(newcomer.row.name === 'consumerStatusCode2', 'a new identity cannot steal a removed identity\'s name')
+
+    manifest = run({ status: true, newcomer: true, five: true })
+    status = rowFor(manifest, 'StatusCode')
+    assert(status.row.active === true && status.row.name === 'consumerStatusCode', 'a reappearing upstream identity recovers its original name')
+    assert(rowFor(manifest, 'ConsumerStatusCode').row.name === 'consumerStatusCode2', 'existing neighboring identities are not renumbered')
+
+    // When formerly interchangeable upstream types diverge, they can no longer share a ReScript
+    // declaration. The unchanged side keeps the old shared name; only the upstream-changed side moves.
+    manifest = run({ status: true, newcomer: true, five: true, split: true })
+    const firstSplit = rowFor(manifest, 'FirstConfig')
+    const secondSplit = rowFor(manifest, 'SecondConfig')
+    assert(firstSplit.row.name === firstShared.row.name, 'an unchanged identity keeps a formerly shared name after an upstream split')
+    assert(secondSplit.row.name !== firstSplit.row.name, 'the upstream-changed half of a deduplicated type receives a new name')
+
+    console.log('\n✅ permanent public-name registry invariants hold')
+} finally {
+    rmSync(root, { recursive: true, force: true })
+}

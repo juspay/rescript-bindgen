@@ -131,6 +131,41 @@ variant (discriminated at runtime). **At most one member may be an object type.*
 | `CSSProperties \| ((state: S) => CSSProperties)` (base-ui's state-dependent style; also the checker-resolved `CSSProperties \| (CSSProperties & ((state: S) => CSSProperties))` form) | `@unboxed type sStyle = Style(JsxDOM.style) \| Fn(s => JsxDOM.style)` — an **intersection arm with a call signature counts as the function** (at runtime the value IS a function). Fixture: [`callable-intersection-union`](../test/golden/cases/callable-intersection-union) |
 | `Record<string, V> \| Array<{ label, value: any }>` (Select's `items`) | `@unboxed type items<'a> = Dict(Dict.t<V>) \| ItemsConfigArr(array<itemsConfig<'a>>)` — a dict (object) and an array are runtime-distinct (`Array.isArray`). The element record's `value: any` becomes a generic `itemsConfig<'a>` threaded to the component — but **only** in a consumer-**SUPPLIED (input)** position (a prop, a method/constructor param). An `any` in a consumer-**RECEIVED (output)** position — a getter / method return (hono's `routes(): RouterRoute[]` whose `handler` returns `any`) — stays a flagged `string`, since an output-only `'a` unifies with anything (rule #4: a type var must round-trip). Also excluded: a plain record-field `any` (a state record consumed by `className`/`style`, per #31). Fixture: [`items-dict-array`](../test/golden/cases/items-dict-array). (#50) |
 
+### Large `@unboxed` unions and the permanent naming contract (#190)
+
+A structural `@unboxed` union with at most **4 runtime members** keeps the compact convention
+(`stringOrNumber`, `v1OrV2OrV3OrV4`). More than 4 members follows the upstream alias when one exists;
+anonymous/checker-synthetic unions keep their existing structural or path-derived convention. The threshold and rule are frozen public API;
+they are not tuning knobs for later bindgen releases. If that alias is already another generated
+declaration's public name, the union keeps its existing name rather than displacing the owner. Hono therefore emits:
+
+```rescript
+@unboxed type statusCode = @as(100) N100 | @as(101) N101 | /* … */ @as(511) N511
+type v100OrV101OrV102OrV103OrV200Or/* … */OrV511OrV1 = statusCode
+```
+
+Generated signatures use `CommonTypes.statusCode`, while the exact former member-list name remains a
+transparent alias, so existing consumer annotations continue to compile. See the
+[`large-literal-union-names`](../test/golden/cases/large-literal-union-names) fixture.
+
+For module/package generation, `.bindgen-manifest.json` is also an append-only public-name registry.
+Its identity is source-based—declaration path plus qualified upstream symbol, generic arguments, or an
+anonymous declaration/property path—and deliberately excludes TypeScript `type.id`, generated shape,
+home-module heuristics, and record-vs-variant decisions. On every later run:
+
+- the same upstream identity receives the exact previously assigned leaf name **and qualified type
+  module**, even if its members or generated representation change;
+- all prior names are emitted as aliases when a representation supports them;
+- removed or moved/renamed upstream declarations become inactive tombstones instead of freeing names;
+- a new identity that requests a reserved name takes a suffix; it never renumbers the existing type;
+- a removed identity that reappears recovers its assignment.
+
+Keep the manifest with generated bindings (and version-control it when the bindings are versioned).
+Legacy manifests containing only `files` bootstrap this registry on their first run. `--clean` does not
+delete it. An upstream declaration rename/move is a new identity and removal is recorded, but a bindgen
+upgrade alone is never permission to rename an existing identity. The multi-run executable contract is
+[`test/public-name-stability.mjs`](../test/public-name-stability.mjs).
+
 These synthesized variants are de-duplicated into `CommonTypes.res` (module mode) — **by
 structure, not by name**: two components sharing a prop name (`style`) but differing in
 payload (per-component state records) get two distinct types. A function-bearing union over

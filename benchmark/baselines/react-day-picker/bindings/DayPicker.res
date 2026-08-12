@@ -47,7 +47,7 @@ type props = {
   lang?: string,
   locale?: ClassesSharedTypes.classesLocaleConfig,
   numerals?: ClassesSharedTypes.numerals,
-  weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
+  weekStartsOn?: CommonTypes.day,
   firstWeekContainsDate?: CommonTypes.v1OrV4,
   useAdditionalWeekYearTokens?: bool,
   useAdditionalDayOfYearTokens?: bool,

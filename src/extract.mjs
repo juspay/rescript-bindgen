@@ -16,7 +16,7 @@
 // ============================================================================
 
 import ts from 'typescript'
-import { dirname } from 'path'
+import { dirname, relative } from 'path'
 import { DOM_ELEMENT_BY_LOWER, DOM_PROPS_FIELDS, RESCRIPT_RESERVED } from './stdlib-types.mjs'
 import { TS_NAME_TO_GROUP, chainFields } from './html-attrs.mjs'
 import { label } from './emit.mjs'
@@ -128,6 +128,176 @@ function homeOf(type, ctx) {
     return homeModuleOf(declFileOf(unwrapUtility(type)) || ctx.sourceFile)
 }
 
+/** A machine-stable declaration path for the public-name registry. Absolute install/workspace paths
+ *  must never become identity: `node_modules/hono/...` is stable across machines, while local inputs
+ *  are made relative to the extraction root. */
+function stableDeclPath(file, shared) {
+    if (!file) return '<synthetic>'
+    const normalized = String(file).replace(/\\/g, '/')
+    const marker = '/node_modules/'
+    const ix = normalized.lastIndexOf(marker)
+    if (ix >= 0) return normalized.slice(ix + marker.length)
+    if (shared?.sourceRoot) {
+        const rel = relative(shared.sourceRoot, file).replace(/\\/g, '/')
+        if (rel && !rel.startsWith('/')) return rel
+    }
+    return normalized.split('/').slice(-4).join('/')
+}
+
+/** Source-qualified symbol name with TypeScript's machine-specific quoted module prefix removed. */
+function sourceQualifiedTypeName(type, ctx) {
+    if (!type) return ''
+    const named = typeName(type)
+    if (!named || named === '__type') return ''
+    const symbol = type.aliasSymbol || type.getSymbol?.() || type.symbol
+    let qualified = named
+    try { qualified = ctx.checker.getFullyQualifiedName(symbol) || named } catch { /* use source name */ }
+    return qualified.replace(/^"[^"]+"\./, '')
+}
+
+/** A shallow source-level type-argument identity. Named arguments stay stable when their fields
+ *  evolve; primitive/literal arguments identify genuinely distinct generic instantiations. An
+ *  anonymous argument uses its source declaration slot, never its fields/rendered shape. */
+function typeArgAnchor(type, ctx, depth = 0) {
+    if (!type || depth > 2) return '?'
+    const flags = type.flags || 0
+    if (flags & ts.TypeFlags.String) return 'string'
+    if (flags & ts.TypeFlags.Number) return 'number'
+    if (flags & ts.TypeFlags.Boolean) return 'boolean'
+    if (flags & ts.TypeFlags.BigInt) return 'bigint'
+    if (flags & ts.TypeFlags.Undefined) return 'undefined'
+    if (flags & ts.TypeFlags.Void) return 'void'
+    if (flags & ts.TypeFlags.Null) return 'null'
+    if (flags & ts.TypeFlags.StringLiteral) return JSON.stringify(type.value)
+    if (flags & ts.TypeFlags.NumberLiteral) return String(type.value)
+    if (flags & ts.TypeFlags.BooleanLiteral) return String(type.intrinsicName)
+    if (flags & ts.TypeFlags.TypeParameter) return 'param:' + (type.symbol?.getName?.() || '?')
+    const named = sourceQualifiedTypeName(type, ctx)
+    if (named) {
+        const args = type.aliasTypeArguments ||
+            ((type.objectFlags & ts.ObjectFlags.Reference) ? (ctx.checker.getTypeArguments?.(type) || []) : [])
+        return 'named:' + named + (args.length ? `<${args.map((a) => typeArgAnchor(a, ctx, depth + 1)).join(',')}>` : '')
+    }
+    const elem = ctx.checker?.isArrayType?.(type) && ctx.checker.getTypeArguments(type)[0]
+    if (elem) return 'array<' + typeArgAnchor(elem, ctx, depth + 1) + '>'
+    const declaration = anonymousDeclAnchor(type)
+    if (declaration) return 'decl:' + declaration
+    return 'anonymous'
+}
+
+/** Source-syntax location for an anonymous declaration, expressed only through named ancestors and
+ *  child roles—not byte offsets or member contents. Thus editing fields inside `{...}` keeps the
+ *  identity, while two arms of `A | B`, two generic arguments, or two differently named methods are
+ *  distinct. This is the anonymous counterpart of a symbol's qualified name. */
+function anonymousDeclAnchor(type) {
+    const symbol = type?.aliasSymbol || type?.getSymbol?.() || type?.symbol
+    const decl = symbol?.getDeclarations?.()?.[0]
+    if (!decl) return ''
+    const parts = []
+    let node = decl
+    const arrayRoles = ['types', 'typeArguments', 'parameters', 'typeParameters', 'members', 'elements']
+    const scalarRoles = [
+        'type', 'elementType', 'returnType', 'trueType', 'falseType', 'checkType', 'extendsType',
+        'constraint', 'default', 'objectType', 'indexType', 'nameType', 'templateType',
+    ]
+    while (node?.parent && !ts.isSourceFile(node.parent)) {
+        const parent = node.parent
+        let role = ''
+        for (const key of arrayRoles) {
+            const values = parent[key]
+            if (values && typeof values.indexOf === 'function') {
+                const index = values.indexOf(node)
+                if (index >= 0) { role = `${key}[${index}]`; break }
+            }
+        }
+        if (!role) for (const key of scalarRoles) {
+            if (parent[key] === node) { role = key; break }
+        }
+        if (role) parts.unshift(`${ts.SyntaxKind[parent.kind]}.${role}`)
+        const name = parent.name?.getText?.()
+        if (name) parts.unshift(`${ts.SyntaxKind[parent.kind]}:${name}`)
+        node = parent
+    }
+    return parts.join('/')
+}
+
+/** Permanent source identity for a generated public declaration. Display-name and representation
+ *  algorithms are deliberately absent: changing record-vs-variant handling, home-module heuristics,
+ *  or a naming threshold must not manufacture a new identity. A named type uses declaration file +
+ *  source-qualified name + named type arguments. An anonymous type uses its exported owner/property
+ *  path, the same intrinsic location that already drives #90's stable naming. */
+function publicAnchor(type, ctx, _kind, fallbackBase, _originHome) {
+    const named = type && typeName(type)
+    const file = stableDeclPath((type && declFileOf(type)) || ctx.sourceFile, ctx.shared)
+    let subject
+    if (named && named !== '__type') {
+        // The declaration file is already an explicit part of the identity. The helper strips the
+        // absolute quoted path TypeScript prefixes to a fully-qualified module export.
+        const qualified = sourceQualifiedTypeName(type, ctx)
+        const args = type.aliasTypeArguments ||
+            ((type.objectFlags & ts.ObjectFlags.Reference) ? (ctx.checker.getTypeArguments?.(type) || []) : [])
+        subject = `named:${qualified}` + (args.length ? `<${args.map((a) => typeArgAnchor(a, ctx)).join(',')}>` : '')
+    } else {
+        const path = [ctx.identityRoot, ...(ctx.path && ctx.path.length ? ctx.path : [fallbackBase])]
+            .filter(Boolean).map((p) => String(p)).join('.')
+        // `ctx.path` can intentionally be shared by several anonymous projections of one property
+        // (Hono's Context return helpers). A source-syntax location separates inline union arms and
+        // generic arguments without incorporating their fields; a named union/intersection
+        // composition distinguishes checker-created projections that have no declaration of their
+        // own. The frozen slot is only the last fallback for a truly synthetic anonymous type.
+        const declaration = anonymousDeclAnchor(type)
+        const composition = type && (type.isIntersection?.() || type.isUnion?.())
+            ? `|composition:${(type.types || []).map((t) => typeArgAnchor(t, ctx)).join('&')}`
+            : ''
+        const sourceSlot = declaration ? `decl:${declaration}` : `slot:${String(fallbackBase)}`
+        subject = `path:${path}|${sourceSlot}${composition}`
+    }
+    return `${file}|${subject}${ctx.noPolyTag ? '|reading:no-poly-tag' : ''}`
+}
+
+/** Stable use-site projection, used only when one named upstream identity legitimately materializes
+ *  as several distinct generated declarations (conditional/generic readings). It is source/owner
+ *  path based; representation kind and output shape remain excluded. */
+function publicProjection(ctx, fallbackBase) {
+    return [ctx.identityRoot, ...(ctx.path && ctx.path.length ? ctx.path : [fallbackBase])]
+        .filter(Boolean).map((p) => String(p)).join('.')
+}
+
+function seedPublicAnchor(entry, type, ctx, kind, fallbackBase, originHome = entry.home) {
+    const anchor = publicAnchor(type, ctx, kind, fallbackBase, originHome)
+    entry._publicAnchors = new Set([anchor])
+    const sourceBase = (type && typeName(type) && typeName(type) !== '__type') ? typeName(type) : fallbackBase
+    entry._publicProjections = new Map([[anchor, new Set([publicProjection(ctx, sourceBase)])]])
+    entry._originHome = originHome
+    entry._identityBase = sourceBase
+    return entry
+}
+
+function seedSyntheticAnchor(entry, anchor) {
+    entry._publicAnchors = new Set([anchor])
+    entry._publicProjections = new Map([[anchor, new Set([anchor])]])
+    entry._originHome = entry.home
+    entry._identityBase = entry.base || entry.name
+    return entry
+}
+
+function mergePublicAnchors(canon, other) {
+    if (other?._publicAnchors?.size) {
+        if (!canon._publicAnchors) canon._publicAnchors = new Set()
+        for (const anchor of other._publicAnchors) canon._publicAnchors.add(anchor)
+    }
+    if (other?._publicProjections?.size) {
+        if (!canon._publicProjections) canon._publicProjections = new Map()
+        for (const [anchor, projections] of other._publicProjections) {
+            if (!canon._publicProjections.has(anchor)) canon._publicProjections.set(anchor, new Set())
+            for (const projection of projections) canon._publicProjections.get(anchor).add(projection)
+        }
+    }
+    if (other.compatNames?.length) {
+        canon.compatNames = [...new Set([...(canon.compatNames || []), ...other.compatNames])]
+    }
+}
+
 /** A generic type argument that's really a "fill-in-anything" placeholder — the export
  *  erased a `<T>` by instantiating it to `unknown` / `any` / `{}` / `Record<string, unknown>`.
  *  Such args are recovered as ReScript type variables, not bound concretely.
@@ -160,7 +330,7 @@ const RESERVED_TYPE_NAMES = new Set([
  *  can renumber across versions, a stability smell worth seeing, not business as usual. */
 function uniqueName(base, shared) {
     let n = base, i = 2
-    while (shared.names.has(n) || RESERVED_TYPE_NAMES.has(n)) n = base + i++
+    while (shared.names.has(n) || shared.compatNames?.has(n) || RESERVED_TYPE_NAMES.has(n)) n = base + i++
     if (n !== base && !RESERVED_TYPE_NAMES.has(base)) (shared.counterHits || (shared.counterHits = [])).push(n)
     shared.names.add(n)
     return n
@@ -306,6 +476,7 @@ function stabilizeNames(shared) {
             const s = e.home + '|' + entrySig(e)
             const canon = bySig.get(s)
             if (canon) {
+                mergePublicAnchors(canon, e)
                 shared.byKey.set(e.key, canon)
                 const i = shared.entries.indexOf(e); if (i >= 0) shared.entries.splice(i, 1)
                 shared.names.delete(e.name)
@@ -335,7 +506,7 @@ function stabilizeNames(shared) {
             const ownPrefixed = homeUnique && stem && base.startsWith(stem)
             const target = ownPrefixed ? base : base + (homeUnique ? pascal(stem) : pascal(shapeHash(sigOf.get(e)))) // #90: id-FREE structural hash so identical shapes get identical names across compiler versions / unrelated edits
             let cand = target, i = 2
-            while (shared.names.has(cand) && cand !== e.name) cand = target + (i++)
+            while ((shared.names.has(cand) && cand !== e.name) || shared.compatNames?.has(cand)) cand = target + (i++)
             if (cand !== e.name) {
                 const old = e.name
                 shared.names.delete(old)
@@ -349,6 +520,189 @@ function stabilizeNames(shared) {
     for (const { home, oldName, entry } of rec) renames.set(home + '|' + oldName, entry.name)
     shared.renames = renames
     return renames.size
+}
+
+/** Apply #190's readable name only after the full registry is known. A library alias that is already
+ *  a generated public name belongs to that existing declaration; the large union must not steal it
+ *  and force an unrelated type to move (Monaco has both `PositionAffinity` declarations). */
+function finalizeReadableUnboxedNames(shared) {
+    const renames = shared.renames || new Map()
+    for (const entry of shared.entries.filter((e) => e._readableUnionName)) {
+        const desired = entry._readableUnionName
+        const conflict = shared.entries.some((other) => other !== entry && other.name === desired) ||
+            shared.compatNames?.has(desired) || RESERVED_TYPE_NAMES.has(desired)
+        if (conflict || entry.name === desired) continue
+        const old = entry.name
+        shared.names.delete(old)
+        shared.names.add(desired)
+        shared.compatNames.add(old)
+        entry.name = desired
+        entry.compatNames = [...new Set([...(entry.compatNames || []), old])]
+        renames.set(entry.home + '|' + old, desired)
+    }
+    shared.renames = renames
+}
+
+/** Final public source identities. A named source anchor normally identifies one declaration. When a
+ *  generic/conditional source type materializes as several declarations, add its stable use-site
+ *  projection. Falling back to a shape hash would quietly rename an identity when fields change, so
+ *  a collision even after that source projection is a hard generation error instead. */
+function finalizePublicIds(shared, prior = {}) {
+    const scope = `scope:${shared.publicScope || '<module>'}|`
+    const byAnchor = new Map()
+    for (const e of shared.entries) {
+        const anchors = e._publicAnchors?.size
+            ? [...e._publicAnchors]
+            : [`${e.kind}|${e._originHome || e.home}|<legacy>|${e._identityBase || e.base || e.name}`]
+        for (const anchor of anchors) {
+            if (!byAnchor.has(anchor)) byAnchor.set(anchor, [])
+            byAnchor.get(anchor).push(e)
+        }
+        e.publicIds = []
+    }
+    for (const [anchor, raw] of byAnchor) {
+        const entries = [...new Set(raw)]
+        if (entries.length === 1) {
+            entries[0].publicIds.push(scope + anchor)
+            continue
+        }
+        const byProjection = new Map()
+        for (const entry of entries) {
+            const projections = entry._publicProjections?.get(anchor) || new Set([entry._identityBase || entry.base || entry.name])
+            for (const projection of projections) {
+                const owner = byProjection.get(projection)
+                if (owner && owner !== entry) {
+                    const describe = (e) => `${e.name}[base=${e._identityBase},key=${e.key}]`
+                    throw new Error(`ambiguous public type identity ${anchor}|projection:${projection}: ${[owner, entry].map(describe).join(', ')}`)
+                }
+                byProjection.set(projection, entry)
+            }
+        }
+        for (const [projection, entry] of byProjection) entry.publicIds.push(`${scope}${anchor}|projection:${projection}`)
+    }
+    for (const e of shared.entries) {
+        e.publicIds.sort()
+        // Diagnostic/migration fingerprint only. It NEVER participates in identity. It is needed
+        // only for a declaration shared by several source identities—or a later split carrying such
+        // a prior fingerprint—so ordinary entries avoid an expensive recursive structural walk.
+        const needsSignature = e.publicIds.length > 1 || e.publicIds.some((id) => prior[id]?.signature)
+        e.publicSignature = needsSignature ? shapeHash(structuralSig(e, shared)) : undefined
+    }
+}
+
+/** Reuse permanent name assignments from a previous `.bindgen-manifest.json`. A lock applies even
+ *  when marked inactive (a removed type that later reappears recovers its old name). New identities
+ *  may never steal a locked canonical name or alias; they receive a suffix instead. */
+function applyPublicNameRegistry(shared, prior = {}) {
+    finalizePublicIds(shared, prior)
+    const entries = [...shared.entries].sort((a, b) => (a.publicIds[0] || '').localeCompare(b.publicIds[0] || ''))
+    const priorRows = prior && typeof prior === 'object' ? prior : {}
+    const reserved = new Map() // public leaf name -> prior identity ids that own it
+    for (const [id, row] of Object.entries(priorRows)) {
+        if (!row || typeof row !== 'object') continue
+        for (const name of [row.name, ...(row.aliases || [])].filter(Boolean)) {
+            if (!reserved.has(name)) reserved.set(name, new Set())
+            reserved.get(name).add(id)
+        }
+    }
+
+    const desired = new Map()
+    const compat = new Map()
+    const priorOwned = new Map()
+    const lockedEntries = new Set()
+    for (const e of entries) {
+        const locks = e.publicIds.map((id) => ({ id, row: priorRows[id] })).filter((x) => x.row?.name)
+        const aliases = new Set(e.compatNames || [])
+        const oldNames = new Set()
+        e._generatedHome = e.home
+        if (locks.length) {
+            lockedEntries.add(e)
+            locks.sort((a, b) => (Number(b.row.active !== false) - Number(a.row.active !== false)) || a.id.localeCompare(b.id))
+            const chosen = locks[0].row.name
+            if (chosen !== e.name) {
+                const owners = reserved.get(e.name)
+                if (!owners || e.publicIds.some((id) => owners.has(id))) aliases.add(e.name) // additive improved name when unclaimed
+            }
+            desired.set(e, chosen)
+            if (locks[0].row.module) e.home = locks[0].row.module // qualified module path is public too
+            for (const { row } of locks) {
+                oldNames.add(row.name)
+                for (const alias of row.aliases || []) oldNames.add(alias)
+                if (row.name !== chosen) aliases.add(row.name)
+                for (const alias of row.aliases || []) if (alias !== chosen) aliases.add(alias)
+            }
+        } else desired.set(e, e.name)
+        aliases.delete(desired.get(e))
+        compat.set(e, aliases)
+        priorOwned.set(e, oldNames)
+    }
+
+    // A structural dedup can split only after the upstream declarations diverge. Its several source
+    // identities previously (correctly) shared one public name, so their locks now collide. Preserve
+    // the name on the unchanged shape when the manifest has a fingerprint; otherwise choose the
+    // lexicographically first identity. The changed/new side is allocated a fresh suffix below. This
+    // is the one allowed rename case: the upstream types themselves stopped being interchangeable.
+    const lockedByName = new Map()
+    for (const e of lockedEntries) {
+        const name = desired.get(e)
+        if (!lockedByName.has(name)) lockedByName.set(name, [])
+        lockedByName.get(name).push(e)
+    }
+    for (const [name, group] of lockedByName) {
+        if (group.length < 2) continue
+        const unchangedScore = (e) => e.publicIds.reduce((n, id) => n + Number(priorRows[id]?.signature === e.publicSignature), 0)
+        group.sort((a, b) => unchangedScore(b) - unchangedScore(a) || (a.publicIds[0] || '').localeCompare(b.publicIds[0] || ''))
+        for (const e of group.slice(1)) {
+            lockedEntries.delete(e)
+            desired.set(e, e.name)
+            e.home = e._generatedHome
+            for (const oldName of priorOwned.get(e) || []) compat.get(e).delete(oldName)
+        }
+    }
+
+    // Locked names win. A conflict between two still-live locked identities is a manifest/API
+    // invariant violation and must stop generation; choosing either would silently break consumers.
+    const claimed = new Map()
+    const claim = (name, e, what) => {
+        const owner = claimed.get(name)
+        if (owner && owner !== e) {
+            throw new Error(`public type-name registry conflict: ${name} is required by both ${owner.publicIds[0]} and ${e.publicIds[0]} (${what})`)
+        }
+        claimed.set(name, e)
+    }
+    for (const e of entries.filter((x) => lockedEntries.has(x))) claim(desired.get(e), e, 'canonical name')
+    for (const e of entries) for (const alias of compat.get(e)) claim(alias, e, 'compatibility alias')
+
+    // Allocate only NEW identities around every permanent/tombstoned name. Existing identities are
+    // never moved to make room; the newcomer takes the suffix.
+    for (const e of entries.filter((x) => !lockedEntries.has(x))) {
+        const base = desired.get(e)
+        let candidate = base, n = 2
+        const ownsReserved = (name) => {
+            const owners = reserved.get(name)
+            return owners && e.publicIds.some((id) => owners.has(id))
+        }
+        while ((reserved.has(candidate) && !ownsReserved(candidate)) || (claimed.has(candidate) && claimed.get(candidate) !== e)) {
+            candidate = base + n++
+        }
+        desired.set(e, candidate)
+        claim(candidate, e, 'new canonical name')
+    }
+
+    const renames = shared.renames || new Map()
+    for (const e of entries) {
+        const old = e.name
+        const next = desired.get(e)
+        e.name = next
+        e.compatNames = [...compat.get(e)].filter((name) => name !== next).sort()
+        if (old !== next) {
+            for (const [key, value] of [...renames]) if (value === old && key.startsWith(e.home + '|')) renames.set(key, next)
+            renames.set(e.home + '|' + old, next)
+        }
+    }
+    shared.renames = renames
+    shared.names = new Set(entries.flatMap((e) => [e.name, ...(e.compatNames || [])]))
+    shared.compatNames = new Set(entries.flatMap((e) => e.compatNames || []))
 }
 
 /** Run `fn` with `seg` pushed onto the property-path stack, so an anonymous record
@@ -1104,6 +1458,7 @@ function buildComponentIR(checker, sym, source, importName, from, opts) {
         shared: opts.shared || null,
         typeVars,
         sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
+        identityRoot: importName,
     }
     const allow = new Set(opts.htmlAllowlist || DEFAULT_HTML_ALLOWLIST)
 
@@ -1547,6 +1902,7 @@ function buildContextIR(checker, sym, source, importName, from, opts) {
         shared: opts.shared || null,
         typeVars: new Map(),
         sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
+        identityRoot: importName,
     }
     const ofType = inner ? classify(inner, ctx, importName) : { kind: 'unknown' }
     return {
@@ -1812,6 +2168,7 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
         classSink: opts.classSink || null,
         currentClass: importName, // a self-reference renders as bare `t`, not the sink
         sourceFile: (decl && decl.getSourceFile && decl.getSourceFile().fileName) || (source && source.fileName) || null,
+        identityRoot: importName,
     }
 
     // Constructor: first construct signature (overloads collapse to the first). An unsupported
@@ -2082,7 +2439,15 @@ export function extractModule(entryFile, opts = {}) {
     // emitted ONCE — deduped by `type.id` (same program → same ids) and homed by its DECLARING file,
     // not by which subpath referenced it. emit.mjs groups these by home, SCC-merges cycles, writes one
     // `*Types.res` each.
-    const shared = { byKey: new Map(), entries: [], names: new Set(), bySig: new Map() }
+    const shared = {
+        byKey: new Map(), entries: [], names: new Set(), compatNames: new Set(), bySig: new Map(),
+        // Stable root for public declaration identities. The first/main entry is canonical; subpath
+        // declarations remain stable `../x` relatives when they live beside it. Never persisted as an
+        // absolute path. (#190 public-name permanence)
+        sourceRoot: dirname(entries[0].entry),
+        publicScope: opts.from || entries[0].from || '<module>',
+        priorPublicTypes: opts.publicTypes || {},
+    }
 
     // Accumulators shared across entries. `seen`/`componentBySym` dedup a symbol re-exported from
     // multiple subpaths — FIRST wins, and the main `.` entry is processed first, so a re-exported
@@ -2184,7 +2549,11 @@ export function extractModule(entryFile, opts = {}) {
         const key = 'class:' + cn
         let entry = shared.byKey.get(key)
         if (!entry) {
-            entry = { key, kind: 'nominal', name: uniqueName(lower(cn), shared), home: INSTANCE_MODULE, deps: new Set() }
+            const base = lower(cn)
+            entry = seedSyntheticAnchor(
+                { key, kind: 'nominal', name: uniqueName(base, shared), base, home: INSTANCE_MODULE, deps: new Set() },
+                `nominal|${INSTANCE_MODULE}|class:${cn}`,
+            )
             shared.byKey.set(key, entry)
             shared.entries.push(entry)
         }
@@ -2529,6 +2898,11 @@ export function extractModule(entryFile, opts = {}) {
     // #90 residual: give same-base distinct shapes an order-INDEPENDENT intrinsic name, then resync
     // every reference to the final name. Runs last, so the whole colliding set (post-dedup) is known.
     stabilizeNames(shared) // populates shared.renames; applied at emit's resolveRef chokepoint
+    finalizeReadableUnboxedNames(shared)
+    // #190: a bindgen upgrade may improve names for NEW types but may never rename an existing source
+    // identity. Reuse the previous manifest's permanent assignments; reserve removed identities as
+    // tombstones; carry every old readable/legacy name as a compatibility alias.
+    applyPublicNameRegistry(shared, shared.priorPublicTypes)
 
     return { components, functions, classes, skipped, shared, namespaces }
 }
@@ -2777,6 +3151,7 @@ function registryTrial(ctx) {
         keys: new Set(shared.byKey.keys()),
         sigs: new Set(shared.bySig.keys()),
         names: new Set(shared.names),
+        compatNames: new Set(shared.compatNames || []),
         typeVars: ctx.typeVars ? new Map(ctx.typeVars) : null,
         hcDataVar: ctx.highchartsSeriesDataVar,
         usesJsFn: shared.usesJsFn,
@@ -2798,6 +3173,7 @@ function registryTrial(ctx) {
                 for (const k of [...shared.byKey.keys()]) if (!snap.keys.has(k)) shared.byKey.delete(k)
                 for (const s of [...shared.bySig.keys()]) if (!snap.sigs.has(s)) shared.bySig.delete(s)
                 for (const n of [...shared.names]) if (!snap.names.has(n)) shared.names.delete(n)
+                for (const n of [...(shared.compatNames || [])]) if (!snap.compatNames.has(n)) shared.compatNames.delete(n)
                 // A rejected candidate that contained a bare `Function` would otherwise leave this
                 // set and emit an unreferenced `JsFn.res` — the same orphan class as a stray entry. (#178)
                 shared.usesJsFn = snap.usesJsFn
@@ -2829,6 +3205,11 @@ const VENDOR_TRIAL_ENTRY_CAP = 8
 // `fromTag: [#"…" | …]` polyvar constructor instead of one named constant each. Below it,
 // keep readable named constants (`Boundary.clippingAncestors`). (#53)
 const LITERAL_COLLAPSE_THRESHOLD = 4
+// Public-name readability boundary for structural `aOrBOrC` @unboxed names. This is an allocation
+// rule for NEW source identities, never a rename rule: `.bindgen-manifest.json` permanently locks an
+// existing identity's assigned name. Large named unions follow the library alias; anonymous unions
+// retain the established structural/path convention. The previous structural name remains an alias.
+const STRUCTURAL_UNBOXED_NAME_MAX_MEMBERS = 4
 // Most arms a discriminated union may have before we stop trying to model it as a `@tag` variant
 // (#167). Real ones are 2–10 arms (`RowAnimationConfig`, `ColumnConfig`, blend's `ColumnDefinition`);
 // Highcharts' `SeriesOptionsType` is **118**, and a 118-branch inline-record variant would be
@@ -2844,6 +3225,7 @@ function trialVendorRecord(type, ctx, propName, named) {
     const keysBefore = new Set(shared.byKey.keys())
     const sigsBefore = new Set(shared.bySig.keys())
     const namesBefore = new Set(shared.names)
+    const compatNamesBefore = new Set(shared.compatNames || [])
     const typeVarsBefore = ctx.typeVars ? new Map(ctx.typeVars) : null
     let ref = null
     // Fresh depth budget: a vendor shape is often reached DEEP (anchor's fn-return inside
@@ -2864,6 +3246,7 @@ function trialVendorRecord(type, ctx, propName, named) {
     for (const k of [...shared.byKey.keys()]) if (!keysBefore.has(k)) shared.byKey.delete(k)
     for (const s of [...shared.bySig.keys()]) if (!sigsBefore.has(s)) shared.bySig.delete(s)
     for (const n of [...shared.names]) if (!namesBefore.has(n)) shared.names.delete(n)
+    for (const n of [...(shared.compatNames || [])]) if (!compatNamesBefore.has(n)) shared.compatNames.delete(n)
     if (typeVarsBefore && ctx.typeVars) { ctx.typeVars.clear(); for (const [k, v] of typeVarsBefore) ctx.typeVars.set(k, v) }
     return null
 }
@@ -2992,7 +3375,11 @@ function webSink(ctx, tsName) {
     const key = 'web:' + tsName
     let entry = ctx.shared.byKey.get(key)
     if (!entry) {
-        entry = { key, kind: 'nominal', name: uniqueName(WEB_PLATFORM_TYPES[tsName], ctx.shared), home: WEB_MODULE, deps: new Set() }
+        const base = WEB_PLATFORM_TYPES[tsName]
+        entry = seedSyntheticAnchor(
+            { key, kind: 'nominal', name: uniqueName(base, ctx.shared), base, home: WEB_MODULE, deps: new Set() },
+            `nominal|${WEB_MODULE}|web:${tsName}`,
+        )
         ctx.shared.byKey.set(key, entry)
         ctx.shared.entries.push(entry)
     }
@@ -3428,7 +3815,12 @@ function classify(type, ctx, propName = '', depth = 0) {
         const key = 'module:' + raw
         let entry = ctx.shared.byKey.get(key)
         if (!entry) {
-            entry = { key, kind: 'nominal', name: uniqueName(lower(pascal(last)) + 'Module', ctx.shared), home: INSTANCE_MODULE, deps: new Set() }
+            const base = lower(pascal(last)) + 'Module'
+            const source = stableDeclPath(declFileOf(type) || ctx.sourceFile, ctx.shared)
+            entry = seedSyntheticAnchor(
+                { key, kind: 'nominal', name: uniqueName(base, ctx.shared), base, home: INSTANCE_MODULE, deps: new Set() },
+                `nominal|${INSTANCE_MODULE}|module:${source}:${last}`,
+            )
             ctx.shared.byKey.set(key, entry)
             ctx.shared.entries.push(entry)
         }
@@ -4113,7 +4505,10 @@ function literalUnionOpenNode(literals, baseName, ctx, propName) {
         // prop shares) so distinct literal sets get distinct types and identical ones dedupe.
         const key = 'lu:' + sname + ':' + literals.join('|')
         if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
-        const entry = { key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), base: sname, home: 'CommonTypes', members, deps: new Set() }
+        const entry = seedPublicAnchor(
+            { key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), base: sname, home: 'CommonTypes', members, deps: new Set() },
+            null, ctx, 'unboxed', sname, 'CommonTypes',
+        )
         ctx.shared.byKey.set(key, entry)
         ctx.shared.entries.push(entry)
         return refTo(entry)
@@ -4171,7 +4566,11 @@ function keyOf(id, np) {
 function registerNamed(ctx, type, kind, base, data) {
     const key = entryKey(ctx, type)
     if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
-    const entry = { key, kind, name: uniqueName(base, ctx.shared), base, home: homeOf(type, ctx), deps: new Set(), ...data }
+    const home = homeOf(type, ctx)
+    const entry = seedPublicAnchor(
+        { key, kind, name: uniqueName(base, ctx.shared), base, home, deps: new Set(), ...data },
+        type, ctx, kind, base, home,
+    )
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
     return refTo(entry)
@@ -4258,8 +4657,13 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     // (#173, #174 review)
     const trial = registryTrial(ctx)
     try {
-    const name = uniqueName(pascal(opts.nameHint || typeName(type) || stableAnonBase(ctx, type, propName)), ctx.shared)
-    const entry = { key, kind: 'opaque', name, home: homeOf(type, ctx), members: [], deps: new Set(), _construct: hasLiteralArm || !!opts.addNone, _coversNullish: !!opts.addNone }
+    const base = pascal(opts.nameHint || typeName(type) || stableAnonBase(ctx, type, propName))
+    const name = uniqueName(base, ctx.shared)
+    let home = homeOf(type, ctx)
+    const entry = seedPublicAnchor(
+        { key, kind: 'opaque', name, home, members: [], deps: new Set(), _construct: hasLiteralArm || !!opts.addNone, _coversNullish: !!opts.addNone },
+        type, ctx, 'opaque', base, home,
+    )
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
     const { checker } = ctx
@@ -4359,7 +4763,6 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     for (const m of members) { if (m.type) collectRefKeys(m.type, deps) }
     // Sit with the records it references (first dep's home); else the prop's own
     // domain module (so anonymous prop-unions land in <Component>Types, not Common).
-    let home = homeOf(type, ctx)
     if (deps.size) home = depHome(deps, ctx.shared, home) // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
     // Note telling the caller how to build this opaque value (the `from*` ctors),
     // since the prop only shows `<Module>.t`. Mirrors the Dom-node note convention.
@@ -4386,6 +4789,7 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     const sig = entry.home + '|' + entrySig(entry)
     const canon = ctx.shared.bySig.get(sig)
     if (canon && canon !== entry) {
+        mergePublicAnchors(canon, entry)
         const i = ctx.shared.entries.indexOf(entry)
         if (i >= 0) ctx.shared.entries.splice(i, 1)
         ctx.shared.names.delete(entry.name)
@@ -4461,8 +4865,13 @@ function overloadModule(ctx, type, callSigs, propName, depth, props = null) {
     // front (home is refined below and again after props; emit late-binds it for keyed refs, #128).
     const trial = registryTrial(ctx)
     try {
-    const name = uniqueName(pascal(typeName(type) || stableAnonBase(ctx, type, propName)), ctx.shared) // a MODULE name; anonymous -> path-anchored (#96)
-    const entry = { key, kind: 'opaque', variant: (props && props.length) ? 'callable' : 'overload', name, home: homeOf(type, ctx), sigs: [], deps: new Set(), note: '' }
+    const base = pascal(typeName(type) || stableAnonBase(ctx, type, propName))
+    const name = uniqueName(base, ctx.shared) // a MODULE name; anonymous -> path-anchored (#96)
+    let home = homeOf(type, ctx)
+    const entry = seedPublicAnchor(
+        { key, kind: 'opaque', variant: (props && props.length) ? 'callable' : 'overload', name, home, sigs: [], deps: new Set(), note: '' },
+        type, ctx, 'opaque', base, home,
+    )
     ctx.shared.byKey.set(key, entry)
     ctx.shared.entries.push(entry)
     // Build a callback node per signature; bail (→ review) if any param/return can't be typed.
@@ -4499,7 +4908,6 @@ function overloadModule(ctx, type, callSigs, propName, depth, props = null) {
     // `module <Name> = {…}` never sinks into a primitive sink, even when the SIGNATURE's only dep is
     // a sink (`(x: string|number) => …`); it keeps its own module. Overloads keep the legacy pick.
     const isCallable = !!(props && props.length)
-    let home = homeOf(type, ctx)
     if (deps.size) home = depHome(deps, ctx.shared, home, isCallable) // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
     entry.home = home // refine the registration made above (late-bound at emit for keyed refs, #128)
     const members = []
@@ -4966,7 +5374,22 @@ function unionNodeCore(type, ctx, propName, depth = 0) {
             for (const m of members) collectRefKeys(m.type, deps)
             // Function-bearing variants can't be named structurally (a signature has no short
             // token) — anchor by path, not the bare prop name + churny counter (#96).
-            let sname = hasFn ? stableAnonBase(ctx, type, propName) : unboxedName(members)
+            const legacyName = hasFn ? null : unboxedName(members)
+            let sname = hasFn ? stableAnonBase(ctx, type, propName) : legacyName
+            // #190: an enumerated structural name is useful for a SMALL runtime union
+            // (`stringOrNumber`) and unusable for a large literal set (hono's 60 HTTP statuses).
+            // A named large union follows the upstream alias; an anonymous one follows the stable
+            // owner/property path. This is ADDITIVE: `legacyName` is emitted as a permanent type
+            // alias, so existing consumer annotations keep compiling. The manifest then locks the
+            // readable assignment for every future run, even if this allocation rule evolves.
+            // Only an upstream alias is a better permanent name. Anonymous/checker-synthetic unions
+            // keep the existing stable structural/path convention; renaming those by a threshold
+            // would create broad churn unrelated to #190's named-union problem.
+            const upstreamName = typeName(type)
+            const largeStructural = !hasFn && members.length > STRUCTURAL_UNBOXED_NAME_MAX_MEMBERS && upstreamName && upstreamName !== '__type'
+            if (largeStructural && !ctx.shared) {
+                sname = lower(upstreamName)
+            }
             // A fn-bearing union over ONE record/enum (base-ui's per-component
             // `style`/`className` over its state record) is named after that dep
             // (`accordionRootState` + `style` -> `accordionRootStyle`) — otherwise 178
@@ -4987,16 +5410,29 @@ function unionNodeCore(type, ctx, propName, depth = 0) {
                 // payload (per-component state records) must get two distinct types. (#22)
                 const key = 'u:' + sname + ':' + members.map((m) => (m.as !== undefined ? '@' + m.as : typeSig(m.type))).join('|')
                 if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
+                const compatNames = []
                 let home = 'CommonTypes'
                 if (deps.size) home = depHome(deps, ctx.shared, home) // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
-                const entry = { key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), base: sname, home, members, deps, tparams }
+                const entry = seedPublicAnchor(
+                    {
+                        key, kind: 'unboxed', name: uniqueName(sname, ctx.shared), base: sname, home,
+                        members, deps, tparams, compatNames,
+                        ...(largeStructural ? { _readableUnionName: lower(upstreamName) } : {}),
+                    },
+                    type, ctx, 'unboxed', sname, home,
+                )
                 ctx.shared.byKey.set(key, entry)
                 ctx.shared.entries.push(entry)
                 return refTo(entry)
             }
             if (!ctx.seenUnboxed.has(sname)) {
                 ctx.seenUnboxed.set(sname, true)
-                ctx.unboxed.push({ name: sname, members, tparams })
+                const compatNames = []
+                if (largeStructural && legacyName !== sname && !ctx.seenUnboxed.has(legacyName)) {
+                    ctx.seenUnboxed.set(legacyName, true)
+                    compatNames.push(legacyName)
+                }
+                ctx.unboxed.push({ name: sname, members, tparams, compatNames })
             }
             return tparams ? { kind: 'typeRef', to: sname, _unboxed: true, tparams } : { kind: 'typeRef', to: sname, _unboxed: true }
         }
@@ -5592,7 +6028,10 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
         if (shared.byKey.has(key)) return refTo(shared.byKey.get(key)) // cycle re-entry or already built
         const home = homeOf(type, ctx)
         const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pathPascal + 'Config'
-        entry = { key, kind: 'tagVariant', name: uniqueName(sharedBase, shared), base: sharedBase, home, deps: new Set(), tag, branches: [] }
+        entry = seedPublicAnchor(
+            { key, kind: 'tagVariant', name: uniqueName(sharedBase, shared), base: sharedBase, home, deps: new Set(), tag, branches: [] },
+            type, ctx, 'tagVariant', sharedBase, home,
+        )
         shared.byKey.set(key, entry)
         shared.entries.push(entry)
     } else {
@@ -5663,6 +6102,7 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
     const sig = entry.home + '|' + entrySig(entry)
     const canon = shared.bySig.get(sig)
     if (canon && canon !== entry) {
+        mergePublicAnchors(canon, entry)
         const i = shared.entries.indexOf(entry)
         if (i >= 0) shared.entries.splice(i, 1)
         shared.names.delete(entry.name)
@@ -5716,7 +6156,10 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         // The path segments (`pathPascal`, #90) make the per-home base distinct by location, so the
         // disambiguation counter is now a last-resort tiebreak for genuine same-home/same-path clashes.
         const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pathPascal + 'Config'
-        const entry = { key, kind: 'record', name: uniqueName(sharedBase, ctx.shared), base: sharedBase, home, deps: new Set(), spread: undefined, fields: [] }
+        const entry = seedPublicAnchor(
+            { key, kind: 'record', name: uniqueName(sharedBase, ctx.shared), base: sharedBase, home, deps: new Set(), spread: undefined, fields: [] },
+            type, ctx, 'record', sharedBase, home,
+        )
         // Heal handle (#33): keep the ts.Type + a ctx snapshot so a post-extraction pass
         // can RE-resolve fields with a fresh `visiting` set if this record was first built
         // in a degraded (mid-cycle) context and cached as an all-`string` ghost.
@@ -5775,6 +6218,7 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         const sig = entry.home + '|' + recordSig(entry)
         const canon = ctx.shared.bySig.get(sig)
         if (canon && canon !== entry) {
+            mergePublicAnchors(canon, entry)
             const i = ctx.shared.entries.indexOf(entry)
             if (i >= 0) ctx.shared.entries.splice(i, 1)
             ctx.shared.names.delete(entry.name)

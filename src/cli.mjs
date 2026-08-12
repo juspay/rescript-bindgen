@@ -108,6 +108,24 @@ function confirm(question, defaultVal) {
     }))
 }
 
+/** Read the generated-file list and permanent public-name registry from a previous run. Legacy
+ *  manifests contain only `files`; corrupt/foreign data is ignored and replaced after generation. */
+function readBindgenManifest(path) {
+    if (!existsSync(path)) return { scope: null, files: [], publicTypes: {} }
+    try {
+        const value = JSON.parse(readFileSync(path, 'utf-8'))
+        return {
+            scope: typeof value.scope === 'string' ? value.scope : null,
+            files: Array.isArray(value.files) ? value.files.filter((f) => typeof f === 'string') : [],
+            publicTypes: value.publicTypes && typeof value.publicTypes === 'object' && !Array.isArray(value.publicTypes)
+                ? value.publicTypes
+                : {},
+        }
+    } catch {
+        return { scope: null, files: [], publicTypes: {} }
+    }
+}
+
 /**
  * Parse `process.argv` flags into an options object.
  * @param {string[]} argv  args after `node cli.mjs`
@@ -190,9 +208,10 @@ Options:
                  generating (avoids stale "orphan" files from a previous run or a
                  different generator). Use only when --out is entirely generated.
 
-Each run writes a .bindgen-manifest.json in --out listing the files it generated.
-The next run automatically removes only those previously-generated files it no longer
-produces — hand-written files (never in the manifest) are always left untouched.
+Each run writes a .bindgen-manifest.json in --out. It lists generated files AND permanently
+assigns public type names to upstream source identities. Keep it with generated bindings:
+the next run reuses those exact names, reserves removed names, and removes only stale files
+listed there. Hand-written files (never in the manifest) are always left untouched.
 
 Add --report to also generate _REPORT.md alongside the bindings: a checklist of
 which components are ready, which props were loosely typed, and which need review.
@@ -215,6 +234,13 @@ async function main() {
         process.exit(opts.help ? 0 : 1)
     }
 
+    // Read this BEFORE extraction: public type-name assignments are inputs to generation, not just
+    // an after-the-fact file inventory. Once an upstream source identity owns a name, every future
+    // bindgen version must reuse it; inactive rows remain tombstones so newcomers cannot steal it.
+    const outDir = pathResolve(opts.out)
+    const manifestPath = join(outDir, '.bindgen-manifest.json')
+    const priorManifest = readBindgenManifest(manifestPath)
+
     const roots = []
     if (opts.nm) roots.push(pathResolve(opts.nm))
     roots.push(pathResolve('node_modules'))
@@ -224,6 +250,12 @@ async function main() {
         install: opts.install, nodeModulesRoots: roots, subpaths: opts.subpaths,
     })
     const from = opts.from || resolvedFrom || basename(entry).replace(/\.d\.ts$/, '')
+    const priorPublicTypes = priorManifest.scope == null || priorManifest.scope === from
+        ? priorManifest.publicTypes
+        : {}
+    if (priorManifest.scope != null && priorManifest.scope !== from) {
+        console.error(`[bindgen] note: public-name registry belongs to @module("${priorManifest.scope}"); starting a fresh registry for @module("${from}").`)
+    }
     // #147: one binding-entry per exports subpath, each stamped `@module("<from><suffix>")` — e.g.
     // `@mui/material` for the main entry, `@mui/material/styles` for `"./styles"`. Without --subpaths
     // this is just the single main entry, so behaviour is unchanged.
@@ -257,7 +289,10 @@ async function main() {
         const ir = extractComponent(entry, { from, webapi, augment: opts.augment, variantProps: opts.variantProps })
         units = [{ name: ir.import.name, ir }]
     } else {
-        const res = extractModule(entry, { from, entries, webapi, htmlAttrs: opts.htmlAttrs, augment: opts.augment, variantProps: opts.variantProps })
+        const res = extractModule(entry, {
+            from, entries, webapi, htmlAttrs: opts.htmlAttrs, augment: opts.augment,
+            variantProps: opts.variantProps, publicTypes: priorPublicTypes,
+        })
         units = res.components
         functions = res.functions || []
         classes = res.classes || []
@@ -378,7 +413,6 @@ async function main() {
         if (u.ir.attrsBase) u.ir.attrsBase.ref = `HtmlAttrs.${attrsPlan.refFor(u.ir.attrsBase)}`
     }
 
-    const outDir = pathResolve(opts.out)
     if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true })
     const typesDir = opts.typesDir ? join(outDir, opts.typesDir) : outDir
     if (plan && !existsSync(typesDir)) mkdirSync(typesDir, { recursive: true })
@@ -470,22 +504,38 @@ async function main() {
     // Manifest-based orphan cleanup: remove files a PREVIOUS bindgen run wrote that this run
     // no longer produces (e.g. a component renamed/dropped upstream). Only ever touches files
     // recorded in our own manifest — hand-written files are never listed, so never deleted.
-    const manifestPath = join(outDir, '.bindgen-manifest.json')
     let staleRemoved = 0
-    if (existsSync(manifestPath)) {
-        try {
-            const prior = JSON.parse(readFileSync(manifestPath, 'utf-8')).files || []
-            for (const rel of prior) {
-                if (!written.has(rel)) {
-                    const p = join(outDir, rel)
-                    // Unlink directly and swallow ENOENT — an existsSync-then-unlink check is a TOCTOU
-                    // race (the file could vanish in between); the try/catch already handles "gone". (CodeQL)
-                    try { unlinkSync(p); staleRemoved++ } catch { /* already gone / unreadable — ignore */ }
-                }
-            }
-        } catch { /* corrupt manifest — ignore, it'll be overwritten */ }
+    for (const rel of priorManifest.files) {
+        if (!written.has(rel)) {
+            const p = join(outDir, rel)
+            // Unlink directly and swallow ENOENT — an existsSync-then-unlink check is a TOCTOU
+            // race (the file could vanish in between); the try/catch already handles "gone". (CodeQL)
+            try { unlinkSync(p); staleRemoved++ } catch { /* already gone / unreadable — ignore */ }
+        }
     }
-    writeFileSync(manifestPath, JSON.stringify({ files: [...written].sort() }, null, 2) + '\n')
+
+    // The registry is append-only. A removed/moved/renamed upstream declaration becomes inactive,
+    // but its names stay reserved forever; if the same source identity reappears, it gets them back.
+    // Single-file mode has no shared registry, so it preserves any module-mode rows untouched.
+    const publicTypes = Object.fromEntries(Object.entries(priorPublicTypes).map(([id, row]) => [id, {
+        ...(row && typeof row === 'object' ? row : {}),
+        active: shared ? false : row?.active !== false,
+    }]))
+    if (shared && plan) {
+        for (const entry of shared.entries) {
+            const row = {
+                kind: entry.kind,
+                module: plan.finalOf.get(entry.home) || entry.home,
+                name: entry.name,
+                aliases: [...new Set(entry.compatNames || [])].sort(),
+                ...(entry.publicSignature ? { signature: entry.publicSignature } : {}),
+                active: true,
+            }
+            for (const id of entry.publicIds || []) publicTypes[id] = row
+        }
+    }
+    const sortedPublicTypes = Object.fromEntries(Object.entries(publicTypes).sort(([a], [b]) => a.localeCompare(b)))
+    writeFileSync(manifestPath, JSON.stringify({ schemaVersion: 2, scope: from, files: [...written].sort(), publicTypes: sortedPublicTypes }, null, 2) + '\n')
     if (staleRemoved) console.error(`[bindgen] removed ${staleRemoved} stale binding(s) from a previous run (per .bindgen-manifest.json)`)
 
     console.error(`\n[bindgen] wrote ${units.length} component + ${functions.length} function + ${classes.length} class binding(s) to ${outDir}`)
@@ -495,14 +545,14 @@ async function main() {
     // shout it, don't bury it among ordinary skips. (#105)
     const brokenReexports = skipped.filter((s) => s.reason.startsWith('unresolvable-reexport'))
     if (brokenReexports.length) console.error(`\n[bindgen] ⚠ ${brokenReexports.length} BROKEN re-export(s) — the package's own .d.ts re-exports a name its target module doesn't export (upstream types bug; the symbol is \`any\` for every TS consumer): ${brokenReexports.map((s) => s.name).join(', ')}`)
-    // A numeric name suffix means the stable anchors (library name / property path / discriminant)
-    // couldn't separate two types — such a name CAN renumber across versions. Rare by design (#96);
-    // surface the SURVIVING ones (raw counterHits includes names later discarded by structural
-    // dedup / healing) so churn risk is visible at generation time, not at downstream upgrade time.
+    // A numeric name suffix means the source anchors (library name / property path / discriminant)
+    // needed a tiebreak. Rare by design (#96); surface the SURVIVING ones (raw counterHits includes
+    // names later discarded by structural dedup / healing). The manifest permanently locks the
+    // assignment, so this is a readability signal—not permission to renumber it on a later run.
     if (shared && shared.counterHits && shared.counterHits.length) {
         const hitSet = new Set(shared.counterHits)
         const live = [...new Set(shared.entries.filter((e) => hitSet.has(e.name)).map((e) => e.name))]
-        if (live.length) console.error(`\n[bindgen] ⚠ ${live.length} counter-suffixed type name(s) — same base at the same anchor; these can renumber across versions: ${live.slice(0, 12).join(', ')}${live.length > 12 ? '…' : ''}`)
+        if (live.length) console.error(`\n[bindgen] ⚠ ${live.length} counter-suffixed type name(s) — same base at the same source anchor; assignments are locked in .bindgen-manifest.json: ${live.slice(0, 12).join(', ')}${live.length > 12 ? '…' : ''}`)
     }
     // A sink module (CommonTypes/InstanceTypes/WebTypes) pulled into an SCC merge = a synthetic
     // mis-homed into a sink with a non-sink dep (a circular-module-dep risk). Flagged, not faked. (#115 pkg)

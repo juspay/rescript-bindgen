@@ -728,12 +728,30 @@ export function emitClass(ir, options = {}) {
 
 // ── Type-declaration renderers (shared by single-file `emit` and module emit) ──
 
+/** Permanent public compatibility aliases. A generated type name is API: when a naming rule becomes
+ *  more readable, the old name remains constructible/annotatable for as long as the source identity
+ *  exists. Generic aliases thread the same parameters. Opaque entries are modules, so their backward
+ *  compatible surface is a module alias rather than a type alias. */
+function renderCompatAliases(entries, lines) {
+    for (const e of entries || []) {
+        const aliases = [...new Set(e.compatNames || [])].filter((name) => name && name !== e.name)
+        if (!aliases.length) continue
+        if (e.kind === 'opaque') {
+            for (const alias of aliases) lines.push(`module ${alias} = ${e.name}`)
+            continue
+        }
+        const params = e.tparams && e.tparams.length ? `<${e.tparams.join(', ')}>` : ''
+        for (const alias of aliases) lines.push(`type ${alias}${params} = ${e.name}${params}`)
+    }
+}
+
 /** Append `type x = | @as("a") A | …` declarations for each enum. */
 function renderEnums(enums, lines) {
     for (const e of enums || []) {
         lines.push(`type ${e.name} =`)
         // numeric enum member -> unquoted `@as(0)` (int runtime value); string -> `@as("sm")`.
         for (const m of e.members) lines.push(`  | @as(${m.num ? m.as : JSON.stringify(m.as)}) ${m.ctor}`)
+        renderCompatAliases([e], lines)
     }
 }
 
@@ -744,6 +762,7 @@ function renderPolyvariants(polys, lines) {
     for (const p of polys || []) {
         const tags = (p.tags || []).map((t) => (/^[A-Za-z_][A-Za-z0-9_]*$/.test(t) ? `#${t}` : `#${JSON.stringify(t)}`)).join(' | ')
         lines.push(`type ${p.name} = [${tags}]`)
+        renderCompatAliases([p], lines)
     }
 }
 
@@ -774,7 +793,10 @@ function unboxedBody(u, cfg) {
 
 /** Append one `@unboxed type x<'a> = Str(string) | Fn(… => 'a) | @as("…") Lit | …`. */
 function renderUnboxed(unboxed, lines, cfg) {
-    for (const u of unboxed || []) lines.push(`@unboxed type ${unboxedBody(u, cfg)}`)
+    for (const u of unboxed || []) {
+        lines.push(`@unboxed type ${unboxedBody(u, cfg)}`)
+        renderCompatAliases([u], lines)
+    }
 }
 
 /** Emit records + object-bearing `@unboxed` that are MUTUALLY RECURSIVE (one SCC) as a single
@@ -782,8 +804,9 @@ function renderUnboxed(unboxed, lines, cfg) {
  *  way to express a cycle that runs through an `@unboxed` (a record field `x?: labelGrid` whose
  *  variant in turn references the record), which ReScript otherwise rejects as a forward reference. */
 function renderRecGroupWithUnboxed(records, unboxed, lines, cfg) {
-    renderRecordGroup(records, lines, cfg, true) // a cross-record/unboxed cycle is always recursive
+    renderRecordGroup(records, lines, cfg, true, false) // a cross-record/unboxed cycle is always recursive
     for (const u of unboxed || []) lines.push(`@unboxed and ${unboxedBody(u, cfg)}`)
+    renderCompatAliases([...(records || []), ...(unboxed || [])], lines)
 }
 
 /** Collect the typeRef target NAMES an IR type tree references (single-file dep graph). */
@@ -860,7 +883,10 @@ function emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg)
             if (recs.length) renderRecordGroup(recs, lines, cfgGroup, recs.length > 1 || selfRec)
             if (ubs.length) renderUnboxed(ubs, lines, cfgGroup)
         }
-        if (ops.length) ops.forEach((o) => renderOpaque(o, lines, cfgGroup, tAlias.get(o.name)))
+        if (ops.length) ops.forEach((o) => {
+            renderOpaque(o, lines, cfgGroup, tAlias.get(o.name))
+            renderCompatAliases([o], lines)
+        })
     }
 }
 
@@ -1031,7 +1057,7 @@ function renderTagVariant(v, lines, cfg, kw) {
     }
 }
 
-function renderRecordGroup(records, lines, cfg, isRec) {
+function renderRecordGroup(records, lines, cfg, isRec, includeCompat = true) {
     ;(records || []).forEach((r, i) => {
         const tp = r.tparams && r.tparams.length ? `<${r.tparams.join(', ')}>` : '' // generic: foo<'a>
         const kw = i === 0 ? (isRec ? 'type rec' : 'type') : 'and'
@@ -1064,6 +1090,7 @@ function renderRecordGroup(records, lines, cfg, isRec) {
         const vt = renderType(r.indexValue, 'value', cfg)
         lines.push(`@set_index external ${r.name}Set: (${r.name}${tp}, string, ${vt}) => unit = ""`)
     }
+    if (includeCompat) renderCompatAliases(records, lines)
 }
 
 /** The trailing flag comment for a degraded record FIELD (mirrors propLine's buckets), or ''. */
@@ -1314,7 +1341,10 @@ export function makeResolveRef(finalOf, currentModule, renames, byKey) {
         // (old) name to the entry's final name here — the single chokepoint every ref flows through,
         // so keyless refs and every IR shape are covered without mutating the IR. (The rename map
         // is recorded against the entry's final home, so look up with the resolved home.)
-        const nm = (renames && renames.get(home + '|' + t.to)) || t.to
+        // A keyed ref's registry entry is authoritative for the permanent public-name lock (#190).
+        // `renames` remains the fallback for keyless refs and old cached names.
+        const entryName = e && (e.kind === 'opaque' && /\.t$/.test(t.to) ? e.name + '.t' : e.name)
+        const nm = entryName || (renames && renames.get(home + '|' + t.to)) || t.to
         return currentModule && fm === currentModule ? nm : `${fm}.${nm}`
     }
 }
@@ -1575,7 +1605,10 @@ export function emitSharedModule(mod, entries, finalOf, options = {}) {
     const depsOf = (e) => e.deps || []
     if (hasRecGroupLabelCollision(records, objUnboxed, opaque, idOf, depsOf)) lines.push('@@warning("-30")', '') // silence duplicate-label noise
     // Abstract instance types for class exports — `type counter` (no deps; the dependency sink).
-    for (const n of entries.filter((e) => e.kind === 'nominal')) lines.push(`type ${n.name}`)
+    for (const n of entries.filter((e) => e.kind === 'nominal')) {
+        lines.push(`type ${n.name}`)
+        renderCompatAliases([n], lines)
+    }
     // #171: resolve constructor collisions BEFORE anything renders — Class A is renamed in place.
     const ctorCollisions = resolveCtorCollisions(entries)
     if (options.collisions && (ctorCollisions.classA.length || ctorCollisions.classB.length)) {

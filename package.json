@@ -16,9 +16,10 @@
   },
   "scripts": {
     "gen": "node src/cli.mjs",
-    "test": "node test/smoke.mjs && node test/golden.mjs && node test/html-attrs.mjs",
+    "test": "node test/smoke.mjs && node test/public-name-stability.mjs && node test/golden.mjs && node test/html-attrs.mjs",
     "test:smoke": "node test/smoke.mjs",
     "test:golden": "node test/golden.mjs",
+    "test:names": "node test/public-name-stability.mjs",
     "test:golden:update": "node test/golden.mjs --update",
     "test:compile": "node test/golden-compile.mjs",
     "bench": "node benchmark/run.mjs",
