@@ -11,9 +11,15 @@
 import { existsSync, readFileSync, mkdirSync, writeFileSync } from 'fs'
 import { join, isAbsolute, resolve as pathResolve } from 'path'
 import { execFileSync } from 'child_process'
+import { fileURLToPath } from 'url'
 
-/** Where packages fetched for generation are installed (kept out of the project). */
-const SCRATCH = pathResolve(new URL('../.bindgen-cache', import.meta.url).pathname)
+/** Resolve the scratch directory as a native filesystem path. Reading `URL.pathname` directly
+ *  leaves Windows file URLs as `/C:/...`; `path.resolve` then prefixes the current drive and creates
+ *  the invalid `C:\\C:\\...` path reported by npm/npx users. */
+export function scratchPathFromModuleUrl(moduleUrl, options) {
+    return fileURLToPath(new URL('../.bindgen-cache', moduleUrl), options)
+}
+const SCRATCH = scratchPathFromModuleUrl(import.meta.url)
 
 // React type definitions co-installed with every scratch package so that `React.*` types
 // (ForwardRefExoticComponent, CSSProperties, ReactNode, MouseEvent, …) resolve instead of

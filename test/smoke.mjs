@@ -3,7 +3,7 @@
 // contains the expected ReScript constructs.
 import { extractComponent, extractModule, shapeHash, structuralSig } from '../src/extract.mjs'
 import { emit, emitClass, emitFunction, report } from '../src/emit.mjs'
-import { typesEntry, packageEntries } from '../src/resolve.mjs'
+import { typesEntry, packageEntries, scratchPathFromModuleUrl } from '../src/resolve.mjs'
 import { writeFileSync, readFileSync, mkdtempSync, mkdirSync } from 'fs'
 import { spawnSync } from 'child_process'
 import { dirname, join, relative } from 'path'
@@ -87,6 +87,10 @@ const cwpTranslator = cwp.shared && cwp.shared.entries.find((e) => e.variant ===
 const cwpClientEntry = cwp.shared && cwp.shared.entries.find((e) => e.variant === 'callable' && e.name === 'Client')
 
 const checks = [
+  ['Windows scratch path keeps one drive prefix', scratchPathFromModuleUrl(
+    'file:///C:/Users/user/AppData/Local/npm-cache/_npx/example/node_modules/@juspay/rescript-bindgen/src/resolve.mjs',
+    { windows: true },
+  ) === 'C:\\Users\\user\\AppData\\Local\\npm-cache\\_npx\\example\\node_modules\\@juspay\\rescript-bindgen\\.bindgen-cache'],
   ['string-literal union -> variant', /@as\("sm"\) Sm/.test(code)],
   ['count number -> int (name heuristic)', /count\?: int,/.test(code)],
   ['string|number -> @unboxed (structural name)', /@unboxed type stringOrNumber = Str\(string\) \| Num\(float\)/.test(code)],
