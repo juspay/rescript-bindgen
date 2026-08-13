@@ -180,6 +180,14 @@ annotations still resolve), forwards any `.t` type parameters, and persists on l
 change is warned on stderr, since a former opaque module's `from*`/`as*` constructors/accessors may not be
 reproducible on the new shape. Executable contract: [`test/representation-flip.mjs`](../test/representation-flip.mjs).
 
+**Cycle-forced module moves.** A dependency cycle between two home modules forces an SCC merge
+(`LeftTypes` + `RightTypes` → `LeftSharedTypes`) — a circular module dependency is otherwise
+uncompilable. Since the qualified module is public, each prior home is re-emitted as a **compatibility
+module** that re-exports the moved types (`LeftTypes.res` → `type left = LeftSharedTypes.left`), and the
+merged home is then pinned by the manifest lock so it never churns again. Every historical qualified
+path keeps resolving. Prior homes accumulate in each row's `formerModules`. Executable contract:
+[`test/module-move-compat.mjs`](../test/module-move-compat.mjs).
+
 Keep the manifest with generated bindings (and version-control it when the bindings are versioned).
 Legacy manifests containing only `files` bootstrap this registry on their first run. `--clean` does not
 delete it. An upstream declaration rename/move is a new identity and removal is recorded, but a bindgen

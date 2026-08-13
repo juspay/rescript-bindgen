@@ -153,6 +153,7 @@ function readBindgenManifest(path) {
             if (!isPlainObject(row)) fail(`registry row ${JSON.stringify(id)} is not an object`)
             if (typeof row.name !== 'string' || !ident.test(row.name)) fail(`registry row ${JSON.stringify(id)} has an invalid "name" ${JSON.stringify(row.name)} (must be an identifier)`)
             if (row.module !== undefined && !isIdentPath(row.module)) fail(`registry row ${JSON.stringify(id)} has an invalid "module" ${JSON.stringify(row.module)}`)
+            if (row.formerModules !== undefined && (!Array.isArray(row.formerModules) || !row.formerModules.every(isIdentPath))) fail(`registry row ${JSON.stringify(id)} has an invalid "formerModules" (must be an array of module paths)`)
             if (row.aliases !== undefined && (!Array.isArray(row.aliases) || !row.aliases.every((a) => typeof a === 'string' && ident.test(a)))) fail(`registry row ${JSON.stringify(id)} has an invalid "aliases" (must be an array of identifiers)`)
             if (row.kind !== undefined && typeof row.kind !== 'string') fail(`registry row ${JSON.stringify(id)} has a non-string "kind"`)
             if (row.signature !== undefined && typeof row.signature !== 'string') fail(`registry row ${JSON.stringify(id)} has a non-string "signature"`)
@@ -474,14 +475,63 @@ async function main() {
     // NEXT run can delete only the files WE previously generated (never hand-written ones).
     const written = new Set()
 
+    // #190 Blocker 2: an SCC merge (#35) FORCES a locked home to move (LeftTypes+RightTypes ⇄ cycle
+    // -> LeftSharedTypes) — a circular module dep is otherwise uncompilable. The qualified module is
+    // public, so re-export every moved identity from each home it has previously occupied. Former
+    // homes accumulate in the manifest (`formerModules`), so a multi-hop move stays covered, and a
+    // reappearing home recovers its file. Keyed by former module -> the moved entries + their new home.
+    const liveModules = plan ? new Set(plan.byModule.keys()) : new Set()
+    const formerHomeReexports = new Map()
+    if (plan) {
+        for (const e of shared.entries) {
+            const newModule = plan.finalOf.get(e.home) || e.home
+            const priorHomes = new Set()
+            for (const id of e.publicIds || []) {
+                const row = priorPublicTypes[id]
+                if (!row) continue
+                if (typeof row.module === 'string') priorHomes.add(row.module)
+                for (const fm of row.formerModules || []) if (typeof fm === 'string') priorHomes.add(fm)
+            }
+            priorHomes.delete(newModule)
+            e._formerModules = [...priorHomes].sort()
+            for (const fm of e._formerModules) {
+                if (!formerHomeReexports.has(fm)) formerHomeReexports.set(fm, [])
+                formerHomeReexports.get(fm).push({ entry: e, newModule })
+            }
+        }
+    }
+    // One re-export line: a plain module alias for an opaque, a type alias (threading params) otherwise.
+    const reexportLine = ({ entry: e, newModule }) => {
+        const params = e.tparams && e.tparams.length ? `<${e.tparams.join(', ')}>` : ''
+        return e.kind === 'opaque'
+            ? `module ${e.name} = ${newModule}.${e.name}`
+            : `type ${e.name}${params} = ${newModule}.${e.name}${params}`
+    }
+
     // Write the shared `*Types.res` modules once.
     if (plan) {
         for (const [mod, entries] of plan.byModule) {
             const p = join(typesDir, `${mod}.res`)
-            writeFileSync(p, emitSharedModule(mod, entries, plan.finalOf, { renames: shared.renames, byKey: shared.byKey, collisions }))
+            let content = emitSharedModule(mod, entries, plan.finalOf, { renames: shared.renames, byKey: shared.byKey, collisions })
+            // A former home REUSED as a live module (a fresh type homed to an orphaned name): append the
+            // moved identities' re-exports into that live file rather than a colliding standalone one.
+            const reexports = formerHomeReexports.get(mod)
+            if (reexports) content += '\n// #190: compatibility re-exports for identities that moved here previously\n' + reexports.map(reexportLine).join('\n') + '\n'
+            writeFileSync(p, content)
             written.add(relative(outDir, p))
         }
+        // Standalone compat files at orphaned prior homes no live module occupies.
+        let compatFiles = 0
+        for (const [fm, reexports] of formerHomeReexports) {
+            if (liveModules.has(fm)) continue
+            const p = join(typesDir, `${fm}.res`)
+            const body = reexports.map(reexportLine).join('\n')
+            writeFileSync(p, `// #190: compatibility re-exports — these identities moved to another module when a\n// dependency cycle merged this home. Old \`${fm}.<name>\` annotations keep resolving.\n${body}\n`)
+            written.add(relative(outDir, p))
+            compatFiles++
+        }
         console.error(`[bindgen] wrote ${plan.byModule.size} shared type module(s) (${shared.entries.length} unique types) to ${typesDir}`)
+        if (compatFiles) console.error(`[bindgen] wrote ${compatFiles} former-home compatibility module(s) — a dependency cycle moved locked types to a merged module (#190)`)
     }
 
     if (attrsPlan) {
@@ -568,6 +618,9 @@ async function main() {
                 module: plan.finalOf.get(entry.home) || entry.home,
                 name: entry.name,
                 aliases: [...new Set(entry.compatNames || [])].sort(),
+                // Every module this identity has previously lived in (accumulated), so a cycle-forced
+                // home move keeps re-exporting from each one on later runs. (#190 Blocker 2)
+                ...(entry._formerModules && entry._formerModules.length ? { formerModules: entry._formerModules } : {}),
                 ...(entry.publicSignature ? { signature: entry.publicSignature } : {}),
                 active: true,
             }
