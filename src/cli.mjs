@@ -20,7 +20,7 @@ import { emit, emitFunction, emitClass, emitNamespace, report, planSharedModules
 import { resolveInput } from './resolve.mjs'
 import { writeReport } from './report.mjs'
 import { planHtmlAttrs, HTML_ATTRS_PIN } from './html-attrs.mjs'
-import { writeFileSync, mkdirSync, existsSync, readFileSync, readdirSync, unlinkSync } from 'fs'
+import { writeFileSync, mkdirSync, existsSync, readFileSync, readdirSync, unlinkSync, renameSync } from 'fs'
 import { join, resolve as pathResolve, basename, dirname, relative } from 'path'
 import { createInterface } from 'readline'
 
@@ -109,20 +109,60 @@ function confirm(question, defaultVal) {
 }
 
 /** Read the generated-file list and permanent public-name registry from a previous run. Legacy
- *  manifests contain only `files`; corrupt/foreign data is ignored and replaced after generation. */
+ *  manifests (no `schemaVersion`) contain only `files` and stay tolerant — they carry no registry to
+ *  lose. A schema-v2 manifest is validated strictly (whole + every row) because it drives permanent
+ *  name assignment: unparseable JSON, an unknown schema version, a non-object `publicTypes`, or an
+ *  invalid row would otherwise silently reset the registry or emit uncompilable names. Any of those
+ *  fails loudly and leaves the bad file in place for diagnosis; delete it to opt into a fresh start. */
 function readBindgenManifest(path) {
     if (!existsSync(path)) return { scope: null, files: [], publicTypes: {} }
+    let value
     try {
-        const value = JSON.parse(readFileSync(path, 'utf-8'))
-        return {
-            scope: typeof value.scope === 'string' ? value.scope : null,
-            files: Array.isArray(value.files) ? value.files.filter((f) => typeof f === 'string') : [],
-            publicTypes: value.publicTypes && typeof value.publicTypes === 'object' && !Array.isArray(value.publicTypes)
-                ? value.publicTypes
-                : {},
+        value = JSON.parse(readFileSync(path, 'utf-8'))
+    } catch (e) {
+        throw new Error(
+            `corrupt .bindgen-manifest.json at ${path}: ${e.message}\n` +
+            `This file is the permanent public-name registry; refusing to overwrite it with recomputed ` +
+            `names. Restore it from version control, or delete it to regenerate names from scratch.`,
+        )
+    }
+    const isPlainObject = (v) => v != null && typeof v === 'object' && !Array.isArray(v)
+    const fail = (msg) => {
+        throw new Error(
+            `malformed .bindgen-manifest.json at ${path}: ${msg}.\n` +
+            `This file is the permanent public-name registry; refusing to overwrite it with recomputed ` +
+            `names. Restore it from version control, or delete it to regenerate names from scratch.`,
+        )
+    }
+    // An UNKNOWN schema version is not silently rewritten as v2: a future format may carry semantics
+    // we'd corrupt. Absent version = legacy (files-only) manifest, tolerated as a bootstrap below.
+    if (value.schemaVersion !== undefined && value.schemaVersion !== 2) {
+        fail(`unsupported schemaVersion ${JSON.stringify(value.schemaVersion)} (this bindgen understands schemaVersion 2, or a legacy files-only manifest)`)
+    }
+    // A schema-v2 manifest is OUR current format: `publicTypes` IS the permanent registry. Validate it
+    // whole AND row-by-row before any of it drives name assignment — silently coercing a malformed value
+    // to `{}` would recompute and overwrite every locked name, and an invalid row (e.g. `name: 42`) would
+    // emit uncompilable `type 42` / `Module.42`. Legacy/foreign manifests carry no registry to lose. (#190)
+    if (value.schemaVersion === 2) {
+        if (!isPlainObject(value.publicTypes)) {
+            fail(`schemaVersion 2 requires a plain-object "publicTypes" (got ${Array.isArray(value.publicTypes) ? 'array' : value.publicTypes === undefined ? 'missing' : typeof value.publicTypes})`)
         }
-    } catch {
-        return { scope: null, files: [], publicTypes: {} }
+        const ident = /^[A-Za-z_][A-Za-z0-9_']*$/ // ReScript type/module identifier (casing checked downstream)
+        const isIdentPath = (s) => typeof s === 'string' && s.length > 0 && s.split('.').every((seg) => ident.test(seg))
+        for (const [id, row] of Object.entries(value.publicTypes)) {
+            if (!isPlainObject(row)) fail(`registry row ${JSON.stringify(id)} is not an object`)
+            if (typeof row.name !== 'string' || !ident.test(row.name)) fail(`registry row ${JSON.stringify(id)} has an invalid "name" ${JSON.stringify(row.name)} (must be an identifier)`)
+            if (row.module !== undefined && !isIdentPath(row.module)) fail(`registry row ${JSON.stringify(id)} has an invalid "module" ${JSON.stringify(row.module)}`)
+            if (row.aliases !== undefined && (!Array.isArray(row.aliases) || !row.aliases.every((a) => typeof a === 'string' && ident.test(a)))) fail(`registry row ${JSON.stringify(id)} has an invalid "aliases" (must be an array of identifiers)`)
+            if (row.kind !== undefined && typeof row.kind !== 'string') fail(`registry row ${JSON.stringify(id)} has a non-string "kind"`)
+            if (row.signature !== undefined && typeof row.signature !== 'string') fail(`registry row ${JSON.stringify(id)} has a non-string "signature"`)
+            if (row.active !== undefined && typeof row.active !== 'boolean') fail(`registry row ${JSON.stringify(id)} has a non-boolean "active"`)
+        }
+    }
+    return {
+        scope: typeof value.scope === 'string' ? value.scope : null,
+        files: Array.isArray(value.files) ? value.files.filter((f) => typeof f === 'string') : [],
+        publicTypes: isPlainObject(value.publicTypes) ? value.publicTypes : {},
     }
 }
 
@@ -535,7 +575,13 @@ async function main() {
         }
     }
     const sortedPublicTypes = Object.fromEntries(Object.entries(publicTypes).sort(([a], [b]) => a.localeCompare(b)))
-    writeFileSync(manifestPath, JSON.stringify({ schemaVersion: 2, scope: from, files: [...written].sort(), publicTypes: sortedPublicTypes }, null, 2) + '\n')
+    // Atomic write: the manifest is the permanent public-name registry, so a half-written file (a
+    // crash/`Ctrl-C`/full disk mid-write) would truncate to invalid JSON — which the reader now
+    // rejects loudly rather than RESETTING every locked name, but only if the file survives intact.
+    // Write to a sibling temp path and rename it into place (rename is atomic on the same filesystem). (#190)
+    const manifestTmp = manifestPath + '.tmp'
+    writeFileSync(manifestTmp, JSON.stringify({ schemaVersion: 2, scope: from, files: [...written].sort(), publicTypes: sortedPublicTypes }, null, 2) + '\n')
+    renameSync(manifestTmp, manifestPath)
     if (staleRemoved) console.error(`[bindgen] removed ${staleRemoved} stale binding(s) from a previous run (per .bindgen-manifest.json)`)
 
     console.error(`\n[bindgen] wrote ${units.length} component + ${functions.length} function + ${classes.length} class binding(s) to ${outDir}`)
@@ -553,6 +599,15 @@ async function main() {
         const hitSet = new Set(shared.counterHits)
         const live = [...new Set(shared.entries.filter((e) => hitSet.has(e.name)).map((e) => e.name))]
         if (live.length) console.error(`\n[bindgen] ⚠ ${live.length} counter-suffixed type name(s) — same base at the same source anchor; assignments are locked in .bindgen-manifest.json: ${live.slice(0, 12).join(', ')}${live.length > 12 ? '…' : ''}`)
+    }
+    // A source identity whose ReScript REPRESENTATION flipped across bindgen versions (record ⇄ opaque,
+    // #190). The frozen name is preserved as a case-aware compatibility shim so annotations keep
+    // compiling, but a former opaque module's `from*`/`as*` constructors/accessors may not be
+    // reproducible on the new shape — surface it so the change isn't silent.
+    if (shared && shared.representationChanges && shared.representationChanges.length) {
+        const rc = shared.representationChanges
+        const shown = rc.slice(0, 12).map((c) => `${c.frozen}→${c.name} (${c.from}→${c.to})`).join(', ')
+        console.error(`\n[bindgen] ⚠ ${rc.length} type(s) changed representation across versions — frozen name kept as a compatibility shim, but old constructors/accessors may not be reproducible: ${shown}${rc.length > 12 ? '…' : ''}`)
     }
     // A sink module (CommonTypes/InstanceTypes/WebTypes) pulled into an SCC merge = a synthetic
     // mis-homed into a sink with a non-sink dep (a circular-module-dep risk). Flagged, not faked. (#115 pkg)

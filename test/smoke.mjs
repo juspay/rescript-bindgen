@@ -86,11 +86,23 @@ const cwpTCode = cwpT ? emitFunction(cwpT.ir) : ''
 const cwpTranslator = cwp.shared && cwp.shared.entries.find((e) => e.variant === 'callable' && e.name === 'Translator')
 const cwpClientEntry = cwp.shared && cwp.shared.entries.find((e) => e.variant === 'callable' && e.name === 'Client')
 
+// `fileURLToPath(url, { windows: true })` — used to SIMULATE a Windows file: URL on a POSIX runner —
+// was added in Node 20.13. This package declares `engines.node >=20`, and the PRODUCTION path in
+// resolve.mjs uses platform-default parsing (correct on Node 20.0). So only run the cross-platform
+// simulation when the option is actually honored; on Node <20.13 (POSIX) it is silently ignored, so
+// skip rather than fail. On real Windows the default parsing already yields backslashes, so it runs.
+const winOptSupported = scratchPathFromModuleUrl(
+  'file:///C:/x/node_modules/@juspay/rescript-bindgen/src/resolve.mjs', { windows: true },
+).includes('\\')
+
 const checks = [
-  ['Windows scratch path keeps one drive prefix', scratchPathFromModuleUrl(
-    'file:///C:/Users/user/AppData/Local/npm-cache/_npx/example/node_modules/@juspay/rescript-bindgen/src/resolve.mjs',
-    { windows: true },
-  ) === 'C:\\Users\\user\\AppData\\Local\\npm-cache\\_npx\\example\\node_modules\\@juspay\\rescript-bindgen\\.bindgen-cache'],
+  [winOptSupported
+    ? 'Windows scratch path keeps one drive prefix'
+    : 'Windows scratch path simulation skipped (Node <20.13 lacks fileURLToPath windows option)',
+    !winOptSupported || scratchPathFromModuleUrl(
+      'file:///C:/Users/user/AppData/Local/npm-cache/_npx/example/node_modules/@juspay/rescript-bindgen/src/resolve.mjs',
+      { windows: true },
+    ) === 'C:\\Users\\user\\AppData\\Local\\npm-cache\\_npx\\example\\node_modules\\@juspay\\rescript-bindgen\\.bindgen-cache'],
   ['string-literal union -> variant', /@as\("sm"\) Sm/.test(code)],
   ['count number -> int (name heuristic)', /count\?: int,/.test(code)],
   ['string|number -> @unboxed (structural name)', /@unboxed type stringOrNumber = Str\(string\) \| Num\(float\)/.test(code)],

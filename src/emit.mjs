@@ -731,17 +731,35 @@ export function emitClass(ir, options = {}) {
 /** Permanent public compatibility aliases. A generated type name is API: when a naming rule becomes
  *  more readable, the old name remains constructible/annotatable for as long as the source identity
  *  exists. Generic aliases thread the same parameters. Opaque entries are modules, so their backward
- *  compatible surface is a module alias rather than a type alias. */
+ *  compatible surface is a module alias rather than a type alias.
+ *
+ *  A CASE-AWARE shim covers a representation flip (#190): the alias's own casing tells us which kind
+ *  it came from. When the canonical is now an opaque `module` but the alias is a lowercase type name
+ *  from a former RECORD, emit `type old = New.t`; when the canonical is now a lowercase `type` but the
+ *  alias is a `Module` name from a former OPAQUE, emit `module Old = { type t = new }`. Both forms are
+ *  valid ReScript and keep old annotations compiling despite the incompatible casing. */
 function renderCompatAliases(entries, lines) {
+    const isUpper = (s) => /^[A-Z]/.test(s)
     for (const e of entries || []) {
         const aliases = [...new Set(e.compatNames || [])].filter((name) => name && name !== e.name)
         if (!aliases.length) continue
-        if (e.kind === 'opaque') {
-            for (const alias of aliases) lines.push(`module ${alias} = ${e.name}`)
-            continue
-        }
         const params = e.tparams && e.tparams.length ? `<${e.tparams.join(', ')}>` : ''
-        for (const alias of aliases) lines.push(`type ${alias}${params} = ${e.name}${params}`)
+        for (const alias of aliases) {
+            if (e.kind === 'opaque') {
+                // Canonical is a `module ${e.name}` exposing `.t`. Same-kind (upper) alias -> plain
+                // module alias; a lowercase alias is a former record type name -> `.t` shim. The `.t`
+                // may itself be generic (`SeriesOptionsType.t<'b>`), so the shim forwards those params
+                // (`e.tparams` is the opaque `.t`'s parameter list) — else `type x = M.t` fails to compile.
+                if (isUpper(alias)) lines.push(`module ${alias} = ${e.name}`)
+                else lines.push(`type ${alias}${params} = ${e.name}.t${params}`)
+            } else if (isUpper(alias)) {
+                // Canonical is a lowercase `type ${e.name}`; an upper-case alias is a former opaque
+                // module name -> a module shim re-exposing `.t`.
+                lines.push(`module ${alias} = { type t${params} = ${e.name}${params} }`)
+            } else {
+                lines.push(`type ${alias}${params} = ${e.name}${params}`)
+            }
+        }
     }
 }
 

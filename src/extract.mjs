@@ -616,20 +616,46 @@ function applyPublicNameRegistry(shared, prior = {}) {
         const oldNames = new Set()
         e._generatedHome = e.home
         if (locks.length) {
-            lockedEntries.add(e)
             locks.sort((a, b) => (Number(b.row.active !== false) - Number(a.row.active !== false)) || a.id.localeCompare(b.id))
             const chosen = locks[0].row.name
-            if (chosen !== e.name) {
-                const owners = reserved.get(e.name)
-                if (!owners || e.publicIds.some((id) => owners.has(id))) aliases.add(e.name) // additive improved name when unclaimed
-            }
-            desired.set(e, chosen)
-            if (locks[0].row.module) e.home = locks[0].row.module // qualified module path is public too
-            for (const { row } of locks) {
-                oldNames.add(row.name)
-                for (const alias of row.aliases || []) oldNames.add(alias)
-                if (row.name !== chosen) aliases.add(row.name)
-                for (const alias of row.aliases || []) if (alias !== chosen) aliases.add(alias)
+            // A frozen leaf name carries fixed casing, but ReScript ties casing to REPRESENTATION: an
+            // opaque entry is a `module Name` (upper-case), every other kind is a lowercase `type name`.
+            // When representation flips across bindgen versions (record ⇄ opaque), reusing the frozen
+            // name verbatim would emit uncompilable `module boundary` / `type Boundary`. (#190)
+            const needsUpper = e.kind === 'opaque'
+            const casingOk = /^[A-Z]/.test(chosen) === needsUpper
+            if (casingOk) {
+                lockedEntries.add(e)
+                if (chosen !== e.name) {
+                    const owners = reserved.get(e.name)
+                    if (!owners || e.publicIds.some((id) => owners.has(id))) aliases.add(e.name) // additive improved name when unclaimed
+                }
+                desired.set(e, chosen)
+                if (locks[0].row.module) e.home = locks[0].row.module // qualified module path is public too
+                for (const { row } of locks) {
+                    oldNames.add(row.name)
+                    for (const alias of row.aliases || []) oldNames.add(alias)
+                    if (row.name !== chosen) aliases.add(row.name)
+                    for (const alias of row.aliases || []) if (alias !== chosen) aliases.add(alias)
+                }
+            } else {
+                // Representation changed. The frozen name's casing is now illegal, so it can NOT be the
+                // canonical name: keep the correctly-cased GENERATED name (`e.name`) as canonical and
+                // demote every frozen name/alias to a case-aware compatibility SHIM (emitted as
+                // `type old = New.t` or `module Old = { type t = new }`), so existing annotations keep
+                // compiling. Not hard-locked — its casing is fresh for this representation. But the
+                // qualified module IS still public: keep the locked home so the shim lands in the same
+                // `<Home>.res`, preserving `Home.old` annotations. Old opaque constructors/accessors may
+                // not be reproducible, so flag it for the CLI to warn.
+                desired.set(e, e.name)
+                if (locks[0].row.module) e.home = locks[0].row.module // qualified module path is public too
+                for (const { row } of locks) {
+                    oldNames.add(row.name)
+                    aliases.add(row.name)
+                    for (const alias of row.aliases || []) { oldNames.add(alias); aliases.add(alias) }
+                }
+                ;(shared.representationChanges || (shared.representationChanges = [])).push(
+                    { name: e.name, frozen: chosen, from: locks[0].row.kind || '?', to: e.kind })
             }
         } else desired.set(e, e.name)
         aliases.delete(desired.get(e))

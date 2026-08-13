@@ -38,6 +38,21 @@ function run(shape) {
     return JSON.parse(readFileSync(manifestPath, 'utf-8'))
 }
 
+// A corrupt manifest must abort generation and be left untouched — never silently reset the
+// permanent registry by overwriting it with recomputed names. Returns whether the CLI failed and
+// whether the on-disk manifest is byte-identical to what we wrote.
+function runExpectingCorruptManifestAbort(manifestText) {
+    writeFileSync(source, sourceText({ status: true }))
+    writeFileSync(manifestPath, manifestText)
+    let failed = false
+    try {
+        execFileSync('node', [CLI, '--dir', root, '--out', out, '--from', 'demo', '--no-install'], {
+            stdio: ['ignore', 'ignore', 'pipe'],
+        })
+    } catch { failed = true }
+    return { failed, preserved: readFileSync(manifestPath, 'utf-8') === manifestText }
+}
+
 function rowFor(manifest, sourceName) {
     const marker = `|named:${sourceName}`
     const found = Object.entries(manifest.publicTypes || {}).find(([id]) => {
@@ -105,6 +120,31 @@ try {
     const secondSplit = rowFor(manifest, 'SecondConfig')
     assert(firstSplit.row.name === firstShared.row.name, 'an unchanged identity keeps a formerly shared name after an upstream split')
     assert(secondSplit.row.name !== firstSplit.row.name, 'the upstream-changed half of a deduplicated type receives a new name')
+
+    // Corrupt manifests must fail loudly and be preserved for diagnosis, NOT silently reset the registry.
+    const badJson = runExpectingCorruptManifestAbort('{ this is not valid json')
+    assert(badJson.failed, 'unparseable manifest aborts generation instead of resetting the registry')
+    assert(badJson.preserved, 'unparseable manifest is left intact on disk for diagnosis')
+
+    const badShape = runExpectingCorruptManifestAbort(
+        JSON.stringify({ schemaVersion: 2, scope: 'demo', files: [], publicTypes: [] }, null, 2) + '\n',
+    )
+    assert(badShape.failed, 'schema-v2 manifest with a non-object publicTypes aborts generation')
+    assert(badShape.preserved, 'malformed schema-v2 manifest is left intact on disk for diagnosis')
+
+    // An invalid REGISTRY ROW (e.g. a numeric name) would emit uncompilable `type 42` — reject it.
+    const badRow = runExpectingCorruptManifestAbort(
+        JSON.stringify({ schemaVersion: 2, scope: 'demo', files: [], publicTypes: { 'scope:demo|x': { name: 42 } } }, null, 2) + '\n',
+    )
+    assert(badRow.failed, 'schema-v2 row with an invalid name aborts generation')
+    assert(badRow.preserved, 'manifest with an invalid registry row is left intact on disk')
+
+    // An UNKNOWN schema version must not be silently rewritten as v2.
+    const badVersion = runExpectingCorruptManifestAbort(
+        JSON.stringify({ schemaVersion: 99, scope: 'demo', files: [], publicTypes: {} }, null, 2) + '\n',
+    )
+    assert(badVersion.failed, 'unknown schemaVersion aborts generation instead of being rewritten')
+    assert(badVersion.preserved, 'manifest with an unknown schemaVersion is left intact on disk')
 
     console.log('\n✅ permanent public-name registry invariants hold')
 } finally {

@@ -160,6 +160,26 @@ home-module heuristics, and record-vs-variant decisions. On every later run:
 - a new identity that requests a reserved name takes a suffix; it never renumbers the existing type;
 - a removed identity that reappears recovers its assignment.
 
+**Representation flips (record ⇄ opaque).** ReScript ties casing to representation: an opaque type is a
+`module Name` (upper-case), every other kind is a lowercase `type name`. If an identity's representation
+changes across bindgen versions, reusing the frozen name verbatim would emit uncompilable `module boundary`
+/ `type Boundary`. Instead the canonical name is re-cased to the current representation, and the frozen name
+is kept as a **case-aware compatibility shim** so existing annotations keep compiling:
+
+```rescript
+// record → opaque: canonical is the module; the old lowercase type name aliases its `.t`
+module Boundary = { type t /* … */ }
+type boundary = Boundary.t
+// opaque → record: canonical is the record; the old module name re-exposes `.t`
+type boundary = { /* … */ }
+module Boundary = { type t = boundary }
+```
+
+The shim is retained in the manifest `aliases`, lands in the **frozen qualified module** (so `Home.old`
+annotations still resolve), forwards any `.t` type parameters, and persists on later runs. A representation
+change is warned on stderr, since a former opaque module's `from*`/`as*` constructors/accessors may not be
+reproducible on the new shape. Executable contract: [`test/representation-flip.mjs`](../test/representation-flip.mjs).
+
 Keep the manifest with generated bindings (and version-control it when the bindings are versioned).
 Legacy manifests containing only `files` bootstrap this registry on their first run. `--clean` does not
 delete it. An upstream declaration rename/move is a new identity and removal is recorded, but a bindgen
