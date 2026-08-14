@@ -139,21 +139,28 @@ function readBindgenManifest(path) {
     if (value.schemaVersion !== undefined && value.schemaVersion !== 2) {
         fail(`unsupported schemaVersion ${JSON.stringify(value.schemaVersion)} (this bindgen understands schemaVersion 2, or a legacy files-only manifest)`)
     }
-    // A schema-v2 manifest is OUR current format: `publicTypes` IS the permanent registry. Validate it
-    // whole AND row-by-row before any of it drives name assignment — silently coercing a malformed value
-    // to `{}` would recompute and overwrite every locked name, and an invalid row (e.g. `name: 42`) would
-    // emit uncompilable `type 42` / `Module.42`. Legacy/foreign manifests carry no registry to lose. (#190)
-    if (value.schemaVersion === 2) {
-        if (!isPlainObject(value.publicTypes)) {
-            fail(`schemaVersion 2 requires a plain-object "publicTypes" (got ${Array.isArray(value.publicTypes) ? 'array' : value.publicTypes === undefined ? 'missing' : typeof value.publicTypes})`)
-        }
-        const ident = /^[A-Za-z_][A-Za-z0-9_']*$/ // ReScript type/module identifier (casing checked downstream)
-        const isIdentPath = (s) => typeof s === 'string' && s.length > 0 && s.split('.').every((seg) => ident.test(seg))
+    // schemaVersion 2 REQUIRES a plain-object `publicTypes` (a present-but-malformed value is corruption,
+    // not a legacy shape — coercing it to `{}` would recompute and overwrite every locked name).
+    if (value.schemaVersion === 2 && !isPlainObject(value.publicTypes)) {
+        fail(`schemaVersion 2 requires a plain-object "publicTypes" (got ${Array.isArray(value.publicTypes) ? 'array' : value.publicTypes === undefined ? 'missing' : typeof value.publicTypes})`)
+    }
+    // Validate the registry row-by-row whenever `publicTypes` is PRESENT — not only under schemaVersion 2.
+    // The rows are loaded (and drive name/module assignment) below regardless of the version tag, so a
+    // manifest that merely lacks `schemaVersion` (a legacy files-only file a user annotated, a foreign
+    // writer) must not slip an invalid row (`name: 42`, lower-case `module`) through to uncompilable
+    // output. A true legacy manifest has no `publicTypes` at all and skips this entirely. (#190)
+    if (isPlainObject(value.publicTypes)) {
+        const ident = /^[A-Za-z_][A-Za-z0-9_']*$/ // ReScript type/module identifier (leaf casing checked downstream by kind)
+        // A ReScript MODULE path is different: every segment must start upper-case, else it emits an
+        // uncompilable `legacytypes.left`. Leaf names stay case-agnostic (a type is lower, an opaque
+        // module is upper) and are re-cased by kind at emit, but a `module`/`formerModules` value is
+        // always a module and is used verbatim to qualify references.
+        const isModulePath = (s) => typeof s === 'string' && s.length > 0 && s.split('.').every((seg) => /^[A-Z][A-Za-z0-9_']*$/.test(seg))
         for (const [id, row] of Object.entries(value.publicTypes)) {
             if (!isPlainObject(row)) fail(`registry row ${JSON.stringify(id)} is not an object`)
             if (typeof row.name !== 'string' || !ident.test(row.name)) fail(`registry row ${JSON.stringify(id)} has an invalid "name" ${JSON.stringify(row.name)} (must be an identifier)`)
-            if (row.module !== undefined && !isIdentPath(row.module)) fail(`registry row ${JSON.stringify(id)} has an invalid "module" ${JSON.stringify(row.module)}`)
-            if (row.formerModules !== undefined && (!Array.isArray(row.formerModules) || !row.formerModules.every(isIdentPath))) fail(`registry row ${JSON.stringify(id)} has an invalid "formerModules" (must be an array of module paths)`)
+            if (row.module !== undefined && !isModulePath(row.module)) fail(`registry row ${JSON.stringify(id)} has an invalid "module" ${JSON.stringify(row.module)} (module segments must start upper-case)`)
+            if (row.formerModules !== undefined && (!Array.isArray(row.formerModules) || !row.formerModules.every(isModulePath))) fail(`registry row ${JSON.stringify(id)} has an invalid "formerModules" (must be an array of upper-case module paths)`)
             if (row.aliases !== undefined && (!Array.isArray(row.aliases) || !row.aliases.every((a) => typeof a === 'string' && ident.test(a)))) fail(`registry row ${JSON.stringify(id)} has an invalid "aliases" (must be an array of identifiers)`)
             if (row.kind !== undefined && typeof row.kind !== 'string') fail(`registry row ${JSON.stringify(id)} has a non-string "kind"`)
             if (row.signature !== undefined && typeof row.signature !== 'string') fail(`registry row ${JSON.stringify(id)} has a non-string "signature"`)
@@ -500,13 +507,56 @@ async function main() {
             }
         }
     }
-    // One re-export line: a plain module alias for an opaque, a type alias (threading params) otherwise.
-    const reexportLine = ({ entry: e, newModule }) => {
+    // Re-export lines for one moved identity at a former home, targeting its new module. EVERY name
+    // (canonical + every compatibility alias) is re-exported, case-aware and threading params, so all
+    // historical `<FormerHome>.<name>` paths keep resolving — not just the current canonical. (#190 P1b)
+    const reexportLinesFor = ({ entry: e, newModule }) => {
         const params = e.tparams && e.tparams.length ? `<${e.tparams.join(', ')}>` : ''
-        return e.kind === 'opaque'
-            ? `module ${e.name} = ${newModule}.${e.name}`
-            : `type ${e.name}${params} = ${newModule}.${e.name}${params}`
+        const names = [...new Set([e.name, ...(e.compatNames || [])])].filter(Boolean)
+        // An upper-case name is a module (opaque or a cross-kind module shim) -> module alias; a
+        // lower-case name is a type -> type alias threading the entry's params.
+        return names.map((nm) => /^[A-Z]/.test(nm) ? `module ${nm} = ${newModule}.${nm}` : `type ${nm}${params} = ${newModule}.${nm}${params}`)
     }
+    // Post-SCC module dependency graph, so a compat re-export never closes a NEW cycle: appending
+    // `type x = N.x` into module M adds an M->N edge, which is unsafe iff N already reaches M. The
+    // former-home re-exports are computed AFTER SCC planning, so their edges are invisible to the
+    // planner — this reachability guard is what keeps them from producing a circular module dep. (#190 P1a)
+    const moduleDeps = new Map()
+    if (plan) {
+        const finalHome = (e) => plan.finalOf.get(e.home) || e.home
+        for (const e of shared.entries) {
+            const from = finalHome(e)
+            for (const depKey of e.deps || []) {
+                const dep = shared.byKey.get(depKey)
+                if (!dep) continue
+                const to = finalHome(dep)
+                if (to === from) continue
+                if (!moduleDeps.has(from)) moduleDeps.set(from, new Set())
+                moduleDeps.get(from).add(to)
+            }
+        }
+    }
+    const moduleReaches = (from, target) => {
+        const seen = new Set(); const stack = [from]
+        while (stack.length) {
+            const n = stack.pop()
+            if (n === target) return true
+            if (seen.has(n)) continue
+            seen.add(n)
+            for (const m of moduleDeps.get(n) || []) stack.push(m)
+        }
+        return false
+    }
+    let cycleSkipped = 0
+    const safeReexports = (host, reexports) => reexports.filter((rx) => {
+        if (moduleReaches(rx.newModule, host)) { cycleSkipped++; return false } // host -> newModule -> ... -> host
+        // FOLD the approved edge into the graph: appending `type x = newModule.x` into `host` really
+        // adds host -> newModule, so a SIBLING re-export (e.g. two former homes re-exporting each other)
+        // is checked against it and can't silently close a cycle the static graph never saw.
+        if (!moduleDeps.has(host)) moduleDeps.set(host, new Set())
+        moduleDeps.get(host).add(rx.newModule)
+        return true
+    })
 
     // Write the shared `*Types.res` modules once.
     if (plan) {
@@ -514,22 +564,26 @@ async function main() {
             const p = join(typesDir, `${mod}.res`)
             let content = emitSharedModule(mod, entries, plan.finalOf, { renames: shared.renames, byKey: shared.byKey, collisions })
             // A former home REUSED as a live module (a fresh type homed to an orphaned name): append the
-            // moved identities' re-exports into that live file rather than a colliding standalone one.
-            const reexports = formerHomeReexports.get(mod)
-            if (reexports) content += '\n// #190: compatibility re-exports for identities that moved here previously\n' + reexports.map(reexportLine).join('\n') + '\n'
+            // moved identities' re-exports into that live file rather than a colliding standalone one —
+            // but only those that don't create a cycle back into this now-live module.
+            const reexports = safeReexports(mod, formerHomeReexports.get(mod) || [])
+            if (reexports.length) content += '\n// #190: compatibility re-exports for identities that moved here previously\n' + reexports.flatMap(reexportLinesFor).join('\n') + '\n'
             writeFileSync(p, content)
             written.add(relative(outDir, p))
         }
         // Standalone compat files at orphaned prior homes no live module occupies.
         let compatFiles = 0
-        for (const [fm, reexports] of formerHomeReexports) {
+        for (const [fm, allReexports] of formerHomeReexports) {
             if (liveModules.has(fm)) continue
+            const reexports = safeReexports(fm, allReexports)
+            if (!reexports.length) continue
             const p = join(typesDir, `${fm}.res`)
-            const body = reexports.map(reexportLine).join('\n')
+            const body = reexports.flatMap(reexportLinesFor).join('\n')
             writeFileSync(p, `// #190: compatibility re-exports — these identities moved to another module when a\n// dependency cycle merged this home. Old \`${fm}.<name>\` annotations keep resolving.\n${body}\n`)
             written.add(relative(outDir, p))
             compatFiles++
         }
+        if (cycleSkipped) console.error(`[bindgen] ⚠ ${cycleSkipped} former-home compatibility re-export(s) skipped — the prior home is now live and depends on the merged module, so re-exporting would create a module cycle (#190)`)
         console.error(`[bindgen] wrote ${plan.byModule.size} shared type module(s) (${shared.entries.length} unique types) to ${typesDir}`)
         if (compatFiles) console.error(`[bindgen] wrote ${compatFiles} former-home compatibility module(s) — a dependency cycle moved locked types to a merged module (#190)`)
     }

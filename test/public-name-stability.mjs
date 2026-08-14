@@ -146,6 +146,21 @@ try {
     assert(badVersion.failed, 'unknown schemaVersion aborts generation instead of being rewritten')
     assert(badVersion.preserved, 'manifest with an unknown schemaVersion is left intact on disk')
 
+    // A lower-case "module" path emits an uncompilable `legacytypes.x` — module segments must be upper-case.
+    const badModule = runExpectingCorruptManifestAbort(
+        JSON.stringify({ schemaVersion: 2, scope: 'demo', files: [], publicTypes: { 'scope:demo|x': { name: 'x', module: 'legacyTypes' } } }, null, 2) + '\n',
+    )
+    assert(badModule.failed, 'schema-v2 row with a lower-case module path aborts generation')
+    assert(badModule.preserved, 'manifest with an invalid module path is left intact on disk')
+
+    // Rows are validated whenever `publicTypes` is present — even with NO schemaVersion, since those
+    // rows still drive name/module assignment (a legacy files-only manifest a user annotated).
+    const legacyBadRow = runExpectingCorruptManifestAbort(
+        JSON.stringify({ scope: 'demo', files: [], publicTypes: { 'scope:demo|x': { name: 'x', module: 'lower_bad' } } }, null, 2) + '\n',
+    )
+    assert(legacyBadRow.failed, 'a manifest without schemaVersion but with an invalid row aborts (not silently used)')
+    assert(legacyBadRow.preserved, 'that manifest is left intact on disk')
+
     console.log('\n✅ permanent public-name registry invariants hold')
 } finally {
     rmSync(root, { recursive: true, force: true })

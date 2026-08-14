@@ -27,10 +27,13 @@ mkdirSync(join(pkg, 'components', 'left'), { recursive: true })
 mkdirSync(join(pkg, 'components', 'right'), { recursive: true })
 
 // Two types in distinct `components/<x>/` dirs get distinct home modules (LeftTypes / RightTypes).
-// `cycle` toggles whether Right refers back to Left — the edge that makes the two homes one SCC.
-function writeSources({ cycle }) {
+// `cycle` toggles whether Right refers back to Left (the SCC edge). `leftLocalDep` makes Left
+// additionally reference a NEW type declared in the LEFT home — so after a move, that home is live
+// AND depended on by the merged module (the compat-re-export-cycle hazard).
+function writeSources({ cycle, leftLocalDep = false }) {
     writeFileSync(join(pkg, 'components', 'left', 'types.d.ts'),
-        `import { Right } from '../right/types'\nexport interface Left { name: string; r?: Right }\n`)
+        (leftLocalDep ? `export interface NewThing { v: number }\n` : `import { Right } from '../right/types'\n`) +
+        `export interface Left { name: string; ${leftLocalDep ? 'n?: NewThing' : 'r?: Right'} }\n`)
     writeFileSync(join(pkg, 'components', 'right', 'types.d.ts'),
         cycle
             ? `import { Left } from '../left/types'\nexport interface Right { name: string; l?: Left }\n`
@@ -45,7 +48,7 @@ function run(shape) {
     writeSources(shape)
     const r = spawnSync('node', [CLI, '--dir', pkg, '--out', out, '--from', 'demo', '--no-install'], { encoding: 'utf-8' })
     if (r.status !== 0) throw new Error(`CLI failed (exit ${r.status}):\n${r.stderr}`)
-    return JSON.parse(readFileSync(manifestPath, 'utf-8'))
+    return { manifest: JSON.parse(readFileSync(manifestPath, 'utf-8')), stderr: r.stderr }
 }
 
 function assert(ok, message) {
@@ -72,14 +75,19 @@ function compileOut(label) {
 
 try {
     // 1. No cycle: two independent home modules.
-    let m = run({ cycle: false })
+    let m = run({ cycle: false }).manifest
     assert(rowOf(m, 'left').module === 'LeftTypes' && rowOf(m, 'right').module === 'RightTypes',
         'independent types get distinct home modules (LeftTypes, RightTypes)')
     assert(existsSync(join(out, 'LeftTypes.res')) && existsSync(join(out, 'RightTypes.res')),
         'both home modules are emitted')
 
+    // Inject a historical leaf alias on `left`, so we can prove the former home re-exports EVERY
+    // name (canonical + alias), not just the canonical. (P1b)
+    for (const v of Object.values(m.publicTypes)) if (v.name === 'left') v.aliases = ['legacyLeft']
+    writeFileSync(manifestPath, JSON.stringify(m, null, 2) + '\n')
+
     // 2. Cycle forms: the SCC merges the homes; each prior home survives as a compat re-export file.
-    m = run({ cycle: true })
+    m = run({ cycle: true }).manifest
     const merged = rowOf(m, 'left').module
     assert(merged !== 'LeftTypes' && merged === rowOf(m, 'right').module,
         'a dependency cycle merges both homes into one module')
@@ -89,22 +97,48 @@ try {
         'the prior home files are NOT deleted — they survive as compatibility modules')
     assert(readFileSync(join(out, 'LeftTypes.res'), 'utf-8').includes(`type left = ${merged}.left`),
         'the former home re-exports the moved type (LeftTypes.left keeps resolving)')
+    assert(readFileSync(join(out, 'LeftTypes.res'), 'utf-8').includes(`type legacyLeft = ${merged}.legacyLeft`),
+        'the former home also re-exports the historical alias (LeftTypes.legacyLeft keeps resolving)')
     assert(readFileSync(join(out, 'RightTypes.res'), 'utf-8').includes(`type right = ${merged}.right`),
         'the former home re-exports the moved type (RightTypes.right keeps resolving)')
     compileOut('cycle forms')
 
     // 3. Idempotent: a re-run with the cycle still present changes nothing.
     const snap = readFileSync(manifestPath, 'utf-8')
-    m = run({ cycle: true })
+    m = run({ cycle: true }).manifest
     assert(readFileSync(manifestPath, 'utf-8') === snap, 'manifest is byte-identical on a cycle re-run')
 
     // 4. Cycle dissolves: the manifest lock pins the merged home (no churn back), and the prior-home
     //    compat files persist — every historical qualified path still resolves and compiles.
-    m = run({ cycle: false })
+    m = run({ cycle: false }).manifest
     assert(rowOf(m, 'left').module === merged, 'the merged home is pinned by the lock even after the cycle dissolves (no re-churn)')
     assert(existsSync(join(out, 'LeftTypes.res')) && existsSync(join(out, 'RightTypes.res')),
         'former-home compatibility files persist after the cycle dissolves')
     compileOut('cycle dissolves')
+
+    // 5. A former home that becomes LIVE and depends on the merged module can't be re-exported into
+    //    without forming a new cycle — the unsafe re-export is skipped (warned), and output compiles. (P1a)
+    const res = run({ cycle: false, leftLocalDep: true })
+    assert(/former-home compatibility re-export\(s\) skipped/.test(res.stderr),
+        'a cycle-forming former-home re-export is skipped with a warning')
+    const leftFile = readFileSync(join(out, 'LeftTypes.res'), 'utf-8')
+    assert(leftFile.includes('newThing') && !leftFile.includes(`= ${merged}.left`),
+        'the now-live former home keeps its live type and drops only the cycle-forming re-export')
+    compileOut('former home becomes live and depends on the merge')
+
+    // 6. Two former homes that re-export EACH OTHER must not close a cycle. The reachability guard
+    //    folds each approved edge in, so the second (cycle-forming) re-export is skipped. (P1a sibling-edge)
+    rmSync(out, { recursive: true, force: true })
+    let mm = run({ cycle: false }).manifest
+    for (const v of Object.values(mm.publicTypes)) {
+        if (v.name === 'left') { v.module = 'RightTypes'; v.formerModules = ['LeftTypes'] }
+        if (v.name === 'right') { v.module = 'LeftTypes'; v.formerModules = ['RightTypes'] }
+    }
+    writeFileSync(manifestPath, JSON.stringify(mm, null, 2) + '\n')
+    const swap = run({ cycle: false })
+    assert(/former-home compatibility re-export\(s\) skipped/.test(swap.stderr),
+        'mutually cross-pointing former-home re-exports skip the cycle-forming one')
+    compileOut('mutual cross-pointing former homes')
 
     console.log('\n✅ cycle-forced module-move compatibility invariants hold')
 } finally {
