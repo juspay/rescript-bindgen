@@ -861,7 +861,10 @@ function sweepUnreachableEntries(shared, rootKeys) {
         for (const d of e.deps || []) childKeys.add(d) // relinked cross-refs the tree walk can't see
         for (const ck of childKeys) if (!reachable.has(ck)) stack.push(ck)
     }
-    if (reachable.size >= shared.entries.length) return [] // nothing unreachable — the common case
+    // `reachable` may hold keys that aren't entries (a `deps` key to an external/sink not in byKey), so
+    // this counts `>=`, not `===`. Worst case it over-counts and SKIPS the sweep — safe-direction: it can
+    // leave an orphan, never drop a live type.
+    if (reachable.size >= shared.entries.length) return []
     const dropped = []
     shared.entries = shared.entries.filter((e) => {
         if (reachable.has(e.key)) return true
@@ -3015,6 +3018,12 @@ export function extractModule(entryFile, opts = {}) {
             addRoot(c.ir.ctor)
             for (const m of c.ir.methods || []) addRoot(m)
             for (const g of c.ir.getters || []) addRoot(g.type)
+            // A type reachable ONLY through a write-only setter or a static member must count as a root
+            // too — each emits a `@set`/`@scope` external — else its shared type is dropped and the
+            // emitted external dangles. (Getters+setters usually pair up, hiding this behind the getter.)
+            for (const s of c.ir.setters || []) addRoot(s)
+            for (const m of c.ir.staticMethods || []) addRoot(m)
+            for (const v of c.ir.staticValues || []) addRoot(v)
         }
         sweepUnreachableEntries(shared, rootKeys)
     }
