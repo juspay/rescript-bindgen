@@ -131,6 +131,76 @@ variant (discriminated at runtime). **At most one member may be an object type.*
 | `CSSProperties \| ((state: S) => CSSProperties)` (base-ui's state-dependent style; also the checker-resolved `CSSProperties \| (CSSProperties & ((state: S) => CSSProperties))` form) | `@unboxed type sStyle = Style(JsxDOM.style) \| Fn(s => JsxDOM.style)` — an **intersection arm with a call signature counts as the function** (at runtime the value IS a function). Fixture: [`callable-intersection-union`](../test/golden/cases/callable-intersection-union) |
 | `Record<string, V> \| Array<{ label, value: any }>` (Select's `items`) | `@unboxed type items<'a> = Dict(Dict.t<V>) \| ItemsConfigArr(array<itemsConfig<'a>>)` — a dict (object) and an array are runtime-distinct (`Array.isArray`). The element record's `value: any` becomes a generic `itemsConfig<'a>` threaded to the component — but **only** in a consumer-**SUPPLIED (input)** position (a prop, a method/constructor param). An `any` in a consumer-**RECEIVED (output)** position — a getter / method return (hono's `routes(): RouterRoute[]` whose `handler` returns `any`) — stays a flagged `string`, since an output-only `'a` unifies with anything (rule #4: a type var must round-trip). Also excluded: a plain record-field `any` (a state record consumed by `className`/`style`, per #31). Fixture: [`items-dict-array`](../test/golden/cases/items-dict-array). (#50) |
 
+### Large `@unboxed` unions and the permanent naming contract (#190)
+
+A structural `@unboxed` union with at most **4 runtime members** keeps the compact convention
+(`stringOrNumber`, `v1OrV2OrV3OrV4`). More than 4 members follows the upstream alias when one exists;
+anonymous/checker-synthetic unions keep their existing structural or path-derived convention. The threshold and rule are frozen public API;
+they are not tuning knobs for later bindgen releases. If that alias is already another generated
+declaration's public name, the union keeps its existing name rather than displacing the owner. Hono therefore emits:
+
+```rescript
+@unboxed type statusCode = @as(100) N100 | @as(101) N101 | /* … */ @as(511) N511
+type v100OrV101OrV102OrV103OrV200Or/* … */OrV511OrV1 = statusCode
+```
+
+Generated signatures use `CommonTypes.statusCode`, while the exact former member-list name remains a
+transparent alias, so existing consumer annotations continue to compile. See the
+[`large-literal-union-names`](../test/golden/cases/large-literal-union-names) fixture.
+
+For module/package generation, `.bindgen-manifest.json` is also an append-only public-name registry.
+Its identity is source-based—declaration path plus qualified upstream symbol, generic arguments, or an
+anonymous declaration/property path—and deliberately excludes TypeScript `type.id`, generated shape,
+home-module heuristics, and record-vs-variant decisions. On every later run:
+
+- the same upstream identity receives the exact previously assigned leaf name **and qualified type
+  module**, even if its members or generated representation change;
+- all prior names are emitted as aliases when a representation supports them;
+- removed or moved/renamed upstream declarations become inactive tombstones instead of freeing names;
+- a new identity that requests a reserved name takes a suffix; it never renumbers the existing type;
+- a removed identity that reappears recovers its assignment.
+
+Two consequences of source-based identity worth knowing: (1) the **declaration file path** is part of
+the identity, so an upstream refactor that MOVES a type to a different `.d.ts` is a new identity and
+drops the old frozen name (the deliberate cost of keeping names stable across bindgen upgrades — the
+primary goal); (2) the `@module` **scope** (`--from`) is part of each anchor ID, so several scopes'
+assignments **co-exist** in one manifest — regenerating the same output dir under a different `--from`
+adds a scope's rows alongside the others and never wipes them.
+
+**Representation flips (record ⇄ opaque).** ReScript ties casing to representation: an opaque type is a
+`module Name` (upper-case), every other kind is a lowercase `type name`. If an identity's representation
+changes across bindgen versions, reusing the frozen name verbatim would emit uncompilable `module boundary`
+/ `type Boundary`. Instead the canonical name is re-cased to the current representation, and the frozen name
+is kept as a **case-aware compatibility shim** so existing annotations keep compiling:
+
+```rescript
+// record → opaque: canonical is the module; the old lowercase type name aliases its `.t`
+module Boundary = { type t /* … */ }
+type boundary = Boundary.t
+// opaque → record: canonical is the record; the old module name re-exposes `.t`
+type boundary = { /* … */ }
+module Boundary = { type t = boundary }
+```
+
+The shim is retained in the manifest `aliases`, lands in the **frozen qualified module** (so `Home.old`
+annotations still resolve), forwards any `.t` type parameters, and persists on later runs. A representation
+change is warned on stderr, since a former opaque module's `from*`/`as*` constructors/accessors may not be
+reproducible on the new shape. Executable contract: [`test/representation-flip.mjs`](../test/representation-flip.mjs).
+
+**Cycle-forced module moves.** A dependency cycle between two home modules forces an SCC merge
+(`LeftTypes` + `RightTypes` → `LeftSharedTypes`) — a circular module dependency is otherwise
+uncompilable. Since the qualified module is public, each prior home is re-emitted as a **compatibility
+module** that re-exports the moved types (`LeftTypes.res` → `type left = LeftSharedTypes.left`), and the
+merged home is then pinned by the manifest lock so it never churns again. Every historical qualified
+path keeps resolving. Prior homes accumulate in each row's `formerModules`. Executable contract:
+[`test/module-move-compat.mjs`](../test/module-move-compat.mjs).
+
+Keep the manifest with generated bindings (and version-control it when the bindings are versioned).
+Legacy manifests containing only `files` bootstrap this registry on their first run. `--clean` does not
+delete it. An upstream declaration rename/move is a new identity and removal is recorded, but a bindgen
+upgrade alone is never permission to rename an existing identity. The multi-run executable contract is
+[`test/public-name-stability.mjs`](../test/public-name-stability.mjs).
+
 These synthesized variants are de-duplicated into `CommonTypes.res` (module mode) — **by
 structure, not by name**: two components sharing a prop name (`style`) but differing in
 payload (per-component state records) get two distinct types. A function-bearing union over

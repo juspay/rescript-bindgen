@@ -101,7 +101,7 @@ type formatDistanceFnOptions = {
   comparison?: CommonTypes.v0OrV1OrV1,
 }
 type localeOptions = {
-  weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
+  weekStartsOn?: CommonTypes.day,
   firstWeekContainsDate?: CommonTypes.v1OrV4,
 }
 type rec localeFormatRelativeFnOptionsLocaleConfig = {
@@ -109,7 +109,7 @@ type rec localeFormatRelativeFnOptionsLocaleConfig = {
   formatRelative: (formatRelativeToken, string, string, option<formatRelativeFnOptions>) => string,  // ⚪ loose — was `DateType`
 }
 and formatRelativeFnOptions = {
-  weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
+  weekStartsOn?: CommonTypes.day,
   locale?: localeFormatRelativeFnOptionsLocaleConfig,
 }
 type localizeFnOptions = {
@@ -125,8 +125,8 @@ type localize = {
   ordinalNumber: (float, option<localizeFnOptions>) => string,
   era: (CommonTypes.v0OrV1, option<localizeFnOptions>) => string,
   quarter: (CommonTypes.v1OrV2OrV3OrV4, option<localizeFnOptions>) => string,
-  month: (CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6OrV7OrV8OrV9OrV10OrV11, option<localizeFnOptions>) => string,
-  day: (CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6, option<localizeFnOptions>) => string,
+  month: (CommonTypes.month, option<localizeFnOptions>) => string,
+  day: (CommonTypes.day, option<localizeFnOptions>) => string,
   dayPeriod: (localeDayPeriod, option<localizeFnOptions>) => string,
   preprocessor?: (string, array<formatPart>) => array<formatPart>,  // 🛑 BROKEN — contains `unknown`
 }
@@ -166,21 +166,21 @@ type classesMatchQuarterConfig = {
 }
 @set_index external classesMatchQuarterConfigSet: (classesMatchQuarterConfig, string, JSON.t) => unit = ""
 type matchFnResultDbjzg = {
-  value: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6OrV7OrV8OrV9OrV10OrV11,
+  value: CommonTypes.month,
   rest: string,
 }
 type classesMatchMonthConfig = {
   width?: localeWidth,
-  valueCallback?: string => CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6OrV7OrV8OrV9OrV10OrV11,
+  valueCallback?: string => CommonTypes.month,
 }
 @set_index external classesMatchMonthConfigSet: (classesMatchMonthConfig, string, JSON.t) => unit = ""
 type matchFnResultV1m0kk = {
-  value: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
+  value: CommonTypes.day,
   rest: string,
 }
 type classesMatchDayConfig = {
   width?: localeWidth,
-  valueCallback?: string => CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
+  valueCallback?: string => CommonTypes.day,
 }
 @set_index external classesMatchDayConfigSet: (classesMatchDayConfig, string, JSON.t) => unit = ""
 type matchFnResultV23d3o = {
@@ -228,7 +228,7 @@ and dateLibOptions = {
   locale?: dayPickerLocale,
   timeZone?: string,
   numerals?: numerals,
-  weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
+  weekStartsOn?: CommonTypes.day,
   firstWeekContainsDate?: CommonTypes.v1OrV4,
   useAdditionalWeekYearTokens?: bool,
   useAdditionalDayOfYearTokens?: bool,
@@ -251,7 +251,7 @@ type localeEndOfWeekOptionsLocaleConfig = {
   options?: localeOptions,
 }
 type endOfWeekOptions = {
-  weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
+  weekStartsOn?: CommonTypes.day,
   locale?: localeEndOfWeekOptionsLocaleConfig,
   @as("in") in_?: string => Date.t,  // ⚠️ REVIEW — was `string | number | Date` — match the real type by hand
 }
@@ -262,7 +262,7 @@ type localeFormatOptionsLocaleConfig = {
 }
 type formatOptions = {
   locale?: localeFormatOptionsLocaleConfig,
-  weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
+  weekStartsOn?: CommonTypes.day,
   firstWeekContainsDate?: CommonTypes.v1OrV4,
   useAdditionalWeekYearTokens?: bool,
   useAdditionalDayOfYearTokens?: bool,
@@ -273,13 +273,13 @@ type getMonthOptions = {
 }
 type getWeekOptions = {
   locale?: localeEndOfWeekOptionsLocaleConfig,
-  weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
+  weekStartsOn?: CommonTypes.day,
   firstWeekContainsDate?: CommonTypes.v1OrV4,
   @as("in") in_?: string => Date.t,  // ⚠️ REVIEW — was `string | number | Date` — match the real type by hand
 }
 type startOfWeekOptions = {
   locale?: localeEndOfWeekOptionsLocaleConfig,
-  weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
+  weekStartsOn?: CommonTypes.day,
   @as("in") in_?: string => Date.t,  // ⚠️ REVIEW — was `string | number | Date` — match the real type by hand
 }
 type rec classesOverridesConfig = {
@@ -772,7 +772,7 @@ type dayPickerProps = {
   lang?: string,
   locale?: classesLocaleConfig,
   numerals?: numerals,
-  weekStartsOn?: CommonTypes.v0OrV1OrV2OrV3OrV4OrV5OrV6,
+  weekStartsOn?: CommonTypes.day,
   firstWeekContainsDate?: CommonTypes.v1OrV4,
   useAdditionalWeekYearTokens?: bool,
   useAdditionalDayOfYearTokens?: bool,

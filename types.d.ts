@@ -126,6 +126,21 @@ export interface ExtractOptions {
    * The `--variant-props` CLI flag sets this. Off by default. (#65)
    */
   variantProps?: boolean
+  /**
+   * Prior `.bindgen-manifest.json` public-name assignments. Advanced programmatic callers can pass
+   * these to `extractModule`; the CLI reads and persists them automatically. (#190)
+   */
+  publicTypes?: Record<string, {
+    kind?: string
+    module?: string
+    /** Every module this identity has previously lived in, so a cycle-forced home move keeps
+     *  re-exporting from each on later runs. Written and read by the CLI. (#190) */
+    formerModules?: string[]
+    name: string
+    aliases?: string[]
+    signature?: string
+    active?: boolean
+  }>
 }
 
 /** One module's constructor-name collisions, as found while rendering it. (#171) */
@@ -178,6 +193,8 @@ export function extractModule(
   components: { name: string; ir: ComponentIR }[]
   functions: { name: string; ir: FunctionIR }[]
   classes: { name: string; ir: ClassIR }[]
+  /** Internal shared registry, including permanent `publicIds`/names used by the CLI emitter. */
+  shared: unknown
   skipped: { name: string; reason: string }[]
 }
 

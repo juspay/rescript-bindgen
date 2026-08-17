@@ -20,7 +20,8 @@ import { emit, emitFunction, emitClass, emitNamespace, report, planSharedModules
 import { resolveInput } from './resolve.mjs'
 import { writeReport } from './report.mjs'
 import { planHtmlAttrs, HTML_ATTRS_PIN } from './html-attrs.mjs'
-import { writeFileSync, mkdirSync, existsSync, readFileSync, readdirSync, unlinkSync } from 'fs'
+import { RESCRIPT_RESERVED } from './stdlib-types.mjs'
+import { writeFileSync, mkdirSync, existsSync, readFileSync, readdirSync, unlinkSync, renameSync } from 'fs'
 import { join, resolve as pathResolve, basename, dirname, relative } from 'path'
 import { createInterface } from 'readline'
 
@@ -108,6 +109,76 @@ function confirm(question, defaultVal) {
     }))
 }
 
+/** Read the generated-file list and permanent public-name registry from a previous run. Legacy
+ *  manifests (no `schemaVersion`) contain only `files` and stay tolerant — they carry no registry to
+ *  lose. A schema-v2 manifest is validated strictly (whole + every row) because it drives permanent
+ *  name assignment: unparseable JSON, an unknown schema version, a non-object `publicTypes`, or an
+ *  invalid row would otherwise silently reset the registry or emit uncompilable names. Any of those
+ *  fails loudly and leaves the bad file in place for diagnosis; delete it to opt into a fresh start. */
+function readBindgenManifest(path) {
+    if (!existsSync(path)) return { scope: null, files: [], publicTypes: {} }
+    let value
+    try {
+        value = JSON.parse(readFileSync(path, 'utf-8'))
+    } catch (e) {
+        throw new Error(
+            `corrupt .bindgen-manifest.json at ${path}: ${e.message}\n` +
+            `This file is the permanent public-name registry; refusing to overwrite it with recomputed ` +
+            `names. Restore it from version control, or delete it to regenerate names from scratch.`,
+        )
+    }
+    const isPlainObject = (v) => v != null && typeof v === 'object' && !Array.isArray(v)
+    const fail = (msg) => {
+        throw new Error(
+            `malformed .bindgen-manifest.json at ${path}: ${msg}.\n` +
+            `This file is the permanent public-name registry; refusing to overwrite it with recomputed ` +
+            `names. Restore it from version control, or delete it to regenerate names from scratch.`,
+        )
+    }
+    // An UNKNOWN schema version is not silently rewritten as v2: a future format may carry semantics
+    // we'd corrupt. Absent version = legacy (files-only) manifest, tolerated as a bootstrap below.
+    if (value.schemaVersion !== undefined && value.schemaVersion !== 2) {
+        fail(`unsupported schemaVersion ${JSON.stringify(value.schemaVersion)} (this bindgen understands schemaVersion 2, or a legacy files-only manifest)`)
+    }
+    // schemaVersion 2 REQUIRES a plain-object `publicTypes` (a present-but-malformed value is corruption,
+    // not a legacy shape — coercing it to `{}` would recompute and overwrite every locked name).
+    if (value.schemaVersion === 2 && !isPlainObject(value.publicTypes)) {
+        fail(`schemaVersion 2 requires a plain-object "publicTypes" (got ${Array.isArray(value.publicTypes) ? 'array' : value.publicTypes === undefined ? 'missing' : typeof value.publicTypes})`)
+    }
+    // Validate the registry row-by-row whenever `publicTypes` is PRESENT — not only under schemaVersion 2.
+    // The rows are loaded (and drive name/module assignment) below regardless of the version tag, so a
+    // manifest that merely lacks `schemaVersion` (a legacy files-only file a user annotated, a foreign
+    // writer) must not slip an invalid row (`name: 42`, lower-case `module`) through to uncompilable
+    // output. A true legacy manifest has no `publicTypes` at all and skips this entirely. (#190)
+    if (isPlainObject(value.publicTypes)) {
+        const ident = /^[A-Za-z_][A-Za-z0-9_']*$/ // ReScript type/module identifier (leaf casing checked downstream by kind)
+        // A leaf `name` becomes a bare `type <name>` / `module <Name>`, so a ReScript RESERVED word
+        // (`type`, `and`, `let`, …) is uncompilable — the generator's own `lower()` suffixes these, but
+        // a locked manifest name bypasses that, so reject it here.
+        const isReserved = (s) => RESCRIPT_RESERVED.has(s)
+        // A home `module` is ALWAYS a single upper-case identifier (it becomes the `.res` FILE name);
+        // a dotted value like `Foo.Bar` would write a file literally named `Foo.Bar.res`. So no dots,
+        // and the segment must start upper-case (a lower-case module emits `legacytypes.left`).
+        const isModuleName = (s) => typeof s === 'string' && /^[A-Z][A-Za-z0-9_']*$/.test(s)
+        for (const [id, row] of Object.entries(value.publicTypes)) {
+            if (!isPlainObject(row)) fail(`registry row ${JSON.stringify(id)} is not an object`)
+            if (typeof row.name !== 'string' || !ident.test(row.name)) fail(`registry row ${JSON.stringify(id)} has an invalid "name" ${JSON.stringify(row.name)} (must be an identifier)`)
+            if (typeof row.name === 'string' && isReserved(row.name)) fail(`registry row ${JSON.stringify(id)} has a reserved-word "name" ${JSON.stringify(row.name)}`)
+            if (row.module !== undefined && !isModuleName(row.module)) fail(`registry row ${JSON.stringify(id)} has an invalid "module" ${JSON.stringify(row.module)} (must be a single upper-case module name, no dots)`)
+            if (row.formerModules !== undefined && (!Array.isArray(row.formerModules) || !row.formerModules.every(isModuleName))) fail(`registry row ${JSON.stringify(id)} has an invalid "formerModules" (must be an array of single upper-case module names)`)
+            if (row.aliases !== undefined && (!Array.isArray(row.aliases) || !row.aliases.every((a) => typeof a === 'string' && ident.test(a)))) fail(`registry row ${JSON.stringify(id)} has an invalid "aliases" (must be an array of identifiers)`)
+            if (row.kind !== undefined && typeof row.kind !== 'string') fail(`registry row ${JSON.stringify(id)} has a non-string "kind"`)
+            if (row.signature !== undefined && typeof row.signature !== 'string') fail(`registry row ${JSON.stringify(id)} has a non-string "signature"`)
+            if (row.active !== undefined && typeof row.active !== 'boolean') fail(`registry row ${JSON.stringify(id)} has a non-boolean "active"`)
+        }
+    }
+    return {
+        scope: typeof value.scope === 'string' ? value.scope : null,
+        files: Array.isArray(value.files) ? value.files.filter((f) => typeof f === 'string') : [],
+        publicTypes: isPlainObject(value.publicTypes) ? value.publicTypes : {},
+    }
+}
+
 /**
  * Parse `process.argv` flags into an options object.
  * @param {string[]} argv  args after `node cli.mjs`
@@ -190,9 +261,10 @@ Options:
                  generating (avoids stale "orphan" files from a previous run or a
                  different generator). Use only when --out is entirely generated.
 
-Each run writes a .bindgen-manifest.json in --out listing the files it generated.
-The next run automatically removes only those previously-generated files it no longer
-produces — hand-written files (never in the manifest) are always left untouched.
+Each run writes a .bindgen-manifest.json in --out. It lists generated files AND permanently
+assigns public type names to upstream source identities. Keep it with generated bindings:
+the next run reuses those exact names, reserves removed names, and removes only stale files
+listed there. Hand-written files (never in the manifest) are always left untouched.
 
 Add --report to also generate _REPORT.md alongside the bindings: a checklist of
 which components are ready, which props were loosely typed, and which need review.
@@ -215,6 +287,13 @@ async function main() {
         process.exit(opts.help ? 0 : 1)
     }
 
+    // Read this BEFORE extraction: public type-name assignments are inputs to generation, not just
+    // an after-the-fact file inventory. Once an upstream source identity owns a name, every future
+    // bindgen version must reuse it; inactive rows remain tombstones so newcomers cannot steal it.
+    const outDir = pathResolve(opts.out)
+    const manifestPath = join(outDir, '.bindgen-manifest.json')
+    const priorManifest = readBindgenManifest(manifestPath)
+
     const roots = []
     if (opts.nm) roots.push(pathResolve(opts.nm))
     roots.push(pathResolve('node_modules'))
@@ -224,6 +303,14 @@ async function main() {
         install: opts.install, nodeModulesRoots: roots, subpaths: opts.subpaths,
     })
     const from = opts.from || resolvedFrom || basename(entry).replace(/\.d\.ts$/, '')
+    // Every registry row's anchor ID is SCOPE-PREFIXED (`scope:<from>|…`), so rows from different
+    // `@module` scopes co-exist safely — only the current scope's rows can ever match this run's
+    // identities. Pass them all: a foreign-scope row simply never locks, and (crucially) is preserved
+    // rather than wiped. A scope change must NEVER destroy another scope's frozen names. (#190)
+    const priorPublicTypes = priorManifest.publicTypes
+    if (priorManifest.scope != null && priorManifest.scope !== from) {
+        console.error(`[bindgen] note: registry also holds @module("${priorManifest.scope}") assignments; @module("${from}") is added alongside them (both preserved).`)
+    }
     // #147: one binding-entry per exports subpath, each stamped `@module("<from><suffix>")` — e.g.
     // `@mui/material` for the main entry, `@mui/material/styles` for `"./styles"`. Without --subpaths
     // this is just the single main entry, so behaviour is unchanged.
@@ -257,7 +344,10 @@ async function main() {
         const ir = extractComponent(entry, { from, webapi, augment: opts.augment, variantProps: opts.variantProps })
         units = [{ name: ir.import.name, ir }]
     } else {
-        const res = extractModule(entry, { from, entries, webapi, htmlAttrs: opts.htmlAttrs, augment: opts.augment, variantProps: opts.variantProps })
+        const res = extractModule(entry, {
+            from, entries, webapi, htmlAttrs: opts.htmlAttrs, augment: opts.augment,
+            variantProps: opts.variantProps, publicTypes: priorPublicTypes,
+        })
         units = res.components
         functions = res.functions || []
         classes = res.classes || []
@@ -378,7 +468,6 @@ async function main() {
         if (u.ir.attrsBase) u.ir.attrsBase.ref = `HtmlAttrs.${attrsPlan.refFor(u.ir.attrsBase)}`
     }
 
-    const outDir = pathResolve(opts.out)
     if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true })
     const typesDir = opts.typesDir ? join(outDir, opts.typesDir) : outDir
     if (plan && !existsSync(typesDir)) mkdirSync(typesDir, { recursive: true })
@@ -400,14 +489,110 @@ async function main() {
     // NEXT run can delete only the files WE previously generated (never hand-written ones).
     const written = new Set()
 
+    // #190 Blocker 2: an SCC merge (#35) FORCES a locked home to move (LeftTypes+RightTypes ⇄ cycle
+    // -> LeftSharedTypes) — a circular module dep is otherwise uncompilable. The qualified module is
+    // public, so re-export every moved identity from each home it has previously occupied. Former
+    // homes accumulate in the manifest (`formerModules`), so a multi-hop move stays covered, and a
+    // reappearing home recovers its file. Keyed by former module -> the moved entries + their new home.
+    const liveModules = plan ? new Set(plan.byModule.keys()) : new Set()
+    const formerHomeReexports = new Map()
+    if (plan) {
+        for (const e of shared.entries) {
+            const newModule = plan.finalOf.get(e.home) || e.home
+            const priorHomes = new Set()
+            for (const id of e.publicIds || []) {
+                const row = priorPublicTypes[id]
+                if (!row) continue
+                if (typeof row.module === 'string') priorHomes.add(row.module)
+                for (const fm of row.formerModules || []) if (typeof fm === 'string') priorHomes.add(fm)
+            }
+            priorHomes.delete(newModule)
+            e._formerModules = [...priorHomes].sort()
+            for (const fm of e._formerModules) {
+                if (!formerHomeReexports.has(fm)) formerHomeReexports.set(fm, [])
+                formerHomeReexports.get(fm).push({ entry: e, newModule })
+            }
+        }
+    }
+    // Re-export lines for one moved identity at a former home, targeting its new module. EVERY name
+    // (canonical + every compatibility alias) is re-exported, case-aware and threading params, so all
+    // historical `<FormerHome>.<name>` paths keep resolving — not just the current canonical. (#190 P1b)
+    const reexportLinesFor = ({ entry: e, newModule }) => {
+        const params = e.tparams && e.tparams.length ? `<${e.tparams.join(', ')}>` : ''
+        const names = [...new Set([e.name, ...(e.compatNames || [])])].filter(Boolean)
+        // An upper-case name is a module (opaque or a cross-kind module shim) -> module alias; a
+        // lower-case name is a type -> type alias threading the entry's params.
+        return names.map((nm) => /^[A-Z]/.test(nm) ? `module ${nm} = ${newModule}.${nm}` : `type ${nm}${params} = ${newModule}.${nm}${params}`)
+    }
+    // Post-SCC module dependency graph, so a compat re-export never closes a NEW cycle: appending
+    // `type x = N.x` into module M adds an M->N edge, which is unsafe iff N already reaches M. The
+    // former-home re-exports are computed AFTER SCC planning, so their edges are invisible to the
+    // planner — this reachability guard is what keeps them from producing a circular module dep. (#190 P1a)
+    const moduleDeps = new Map()
+    if (plan) {
+        const finalHome = (e) => plan.finalOf.get(e.home) || e.home
+        for (const e of shared.entries) {
+            const from = finalHome(e)
+            for (const depKey of e.deps || []) {
+                const dep = shared.byKey.get(depKey)
+                if (!dep) continue
+                const to = finalHome(dep)
+                if (to === from) continue
+                if (!moduleDeps.has(from)) moduleDeps.set(from, new Set())
+                moduleDeps.get(from).add(to)
+            }
+        }
+    }
+    const moduleReaches = (from, target) => {
+        const seen = new Set(); const stack = [from]
+        while (stack.length) {
+            const n = stack.pop()
+            if (n === target) return true
+            if (seen.has(n)) continue
+            seen.add(n)
+            for (const m of moduleDeps.get(n) || []) stack.push(m)
+        }
+        return false
+    }
+    let cycleSkipped = 0
+    const safeReexports = (host, reexports) => reexports.filter((rx) => {
+        if (moduleReaches(rx.newModule, host)) { cycleSkipped++; return false } // host -> newModule -> ... -> host
+        // FOLD the approved edge into the graph: appending `type x = newModule.x` into `host` really
+        // adds host -> newModule, so a SIBLING re-export (e.g. two former homes re-exporting each other)
+        // is checked against it and can't silently close a cycle the static graph never saw.
+        if (!moduleDeps.has(host)) moduleDeps.set(host, new Set())
+        moduleDeps.get(host).add(rx.newModule)
+        return true
+    })
+
     // Write the shared `*Types.res` modules once.
     if (plan) {
         for (const [mod, entries] of plan.byModule) {
             const p = join(typesDir, `${mod}.res`)
-            writeFileSync(p, emitSharedModule(mod, entries, plan.finalOf, { renames: shared.renames, byKey: shared.byKey, collisions }))
+            let content = emitSharedModule(mod, entries, plan.finalOf, { renames: shared.renames, byKey: shared.byKey, collisions })
+            // A former home REUSED as a live module (a fresh type homed to an orphaned name): append the
+            // moved identities' re-exports into that live file rather than a colliding standalone one —
+            // but only those that don't create a cycle back into this now-live module.
+            const reexports = safeReexports(mod, formerHomeReexports.get(mod) || [])
+            if (reexports.length) content += '\n// #190: compatibility re-exports for identities that moved here previously\n' + reexports.flatMap(reexportLinesFor).join('\n') + '\n'
+            writeFileSync(p, content)
             written.add(relative(outDir, p))
         }
+        // Standalone compat files at orphaned prior homes no live module occupies.
+        let compatFiles = 0
+        for (const [fm, allReexports] of formerHomeReexports) {
+            if (liveModules.has(fm)) continue
+            const reexports = safeReexports(fm, allReexports)
+            if (!reexports.length) continue
+            const p = join(typesDir, `${fm}.res`)
+            const body = reexports.flatMap(reexportLinesFor).join('\n')
+            writeFileSync(p, `// #190: compatibility re-exports — these identities moved to another module when a\n// dependency cycle merged this home. Old \`${fm}.<name>\` annotations keep resolving.\n${body}\n`)
+            written.add(relative(outDir, p))
+            compatFiles++
+        }
+        if (cycleSkipped) console.error(`[bindgen] ⚠ ${cycleSkipped} former-home compatibility re-export(s) skipped — the prior home is now live and depends on the merged module, so re-exporting would create a module cycle (#190)`)
         console.error(`[bindgen] wrote ${plan.byModule.size} shared type module(s) (${shared.entries.length} unique types) to ${typesDir}`)
+        if (compatFiles) console.error(`[bindgen] wrote ${compatFiles} former-home compatibility module(s) — a dependency cycle moved locked types to a merged module (#190)`)
     }
 
     if (attrsPlan) {
@@ -470,22 +655,53 @@ async function main() {
     // Manifest-based orphan cleanup: remove files a PREVIOUS bindgen run wrote that this run
     // no longer produces (e.g. a component renamed/dropped upstream). Only ever touches files
     // recorded in our own manifest — hand-written files are never listed, so never deleted.
-    const manifestPath = join(outDir, '.bindgen-manifest.json')
     let staleRemoved = 0
-    if (existsSync(manifestPath)) {
-        try {
-            const prior = JSON.parse(readFileSync(manifestPath, 'utf-8')).files || []
-            for (const rel of prior) {
-                if (!written.has(rel)) {
-                    const p = join(outDir, rel)
-                    // Unlink directly and swallow ENOENT — an existsSync-then-unlink check is a TOCTOU
-                    // race (the file could vanish in between); the try/catch already handles "gone". (CodeQL)
-                    try { unlinkSync(p); staleRemoved++ } catch { /* already gone / unreadable — ignore */ }
-                }
-            }
-        } catch { /* corrupt manifest — ignore, it'll be overwritten */ }
+    for (const rel of priorManifest.files) {
+        if (!written.has(rel)) {
+            const p = join(outDir, rel)
+            // Unlink directly and swallow ENOENT — an existsSync-then-unlink check is a TOCTOU
+            // race (the file could vanish in between); the try/catch already handles "gone". (CodeQL)
+            try { unlinkSync(p); staleRemoved++ } catch { /* already gone / unreadable — ignore */ }
+        }
     }
-    writeFileSync(manifestPath, JSON.stringify({ files: [...written].sort() }, null, 2) + '\n')
+
+    // The registry is append-only. A removed/moved/renamed upstream declaration becomes inactive,
+    // but its names stay reserved forever; if the same source identity reappears, it gets them back.
+    // Single-file mode has no shared registry, so it preserves any module-mode rows untouched.
+    // Only the CURRENT scope's rows are tombstoned/reactivated this run — rows from OTHER `@module`
+    // scopes (scope-prefixed IDs) pass through EXACTLY as they were, never wiped by a scope change. (#190)
+    const scopePrefix = `scope:${from}|`
+    const publicTypes = Object.fromEntries(Object.entries(priorPublicTypes).map(([id, row]) => {
+        const base = row && typeof row === 'object' ? { ...row } : {}
+        if (id.startsWith(scopePrefix)) base.active = shared ? false : base.active !== false
+        return [id, base]
+    }))
+    if (shared && plan) {
+        for (const entry of shared.entries) {
+            const row = {
+                kind: entry.kind,
+                module: plan.finalOf.get(entry.home) || entry.home,
+                name: entry.name,
+                aliases: [...new Set(entry.compatNames || [])].sort(),
+                // Every module this identity has previously lived in (accumulated), so a cycle-forced
+                // home move keeps re-exporting from each one on later runs. (#190 Blocker 2)
+                ...(entry._formerModules && entry._formerModules.length ? { formerModules: entry._formerModules } : {}),
+                ...(entry.publicSignature ? { signature: entry.publicSignature } : {}),
+                active: true,
+            }
+            for (const id of entry.publicIds || []) publicTypes[id] = row
+        }
+    }
+    const sortedPublicTypes = Object.fromEntries(Object.entries(publicTypes).sort(([a], [b]) => a.localeCompare(b)))
+    // Atomic write: the manifest is the permanent public-name registry, so a half-written file (a
+    // crash/`Ctrl-C`/full disk mid-write) would truncate to invalid JSON — which the reader now
+    // rejects loudly rather than RESETTING every locked name, but only if the file survives intact.
+    // Write to a sibling temp path and rename it into place (rename is atomic on the same filesystem). (#190)
+    // A per-process temp name so two concurrent runs on the same out-dir can't race on ONE shared
+    // temp file (each writes its own, renames its own into place).
+    const manifestTmp = `${manifestPath}.${process.pid}.tmp`
+    writeFileSync(manifestTmp, JSON.stringify({ schemaVersion: 2, scope: from, files: [...written].sort(), publicTypes: sortedPublicTypes }, null, 2) + '\n')
+    renameSync(manifestTmp, manifestPath)
     if (staleRemoved) console.error(`[bindgen] removed ${staleRemoved} stale binding(s) from a previous run (per .bindgen-manifest.json)`)
 
     console.error(`\n[bindgen] wrote ${units.length} component + ${functions.length} function + ${classes.length} class binding(s) to ${outDir}`)
@@ -495,14 +711,23 @@ async function main() {
     // shout it, don't bury it among ordinary skips. (#105)
     const brokenReexports = skipped.filter((s) => s.reason.startsWith('unresolvable-reexport'))
     if (brokenReexports.length) console.error(`\n[bindgen] ⚠ ${brokenReexports.length} BROKEN re-export(s) — the package's own .d.ts re-exports a name its target module doesn't export (upstream types bug; the symbol is \`any\` for every TS consumer): ${brokenReexports.map((s) => s.name).join(', ')}`)
-    // A numeric name suffix means the stable anchors (library name / property path / discriminant)
-    // couldn't separate two types — such a name CAN renumber across versions. Rare by design (#96);
-    // surface the SURVIVING ones (raw counterHits includes names later discarded by structural
-    // dedup / healing) so churn risk is visible at generation time, not at downstream upgrade time.
+    // A numeric name suffix means the source anchors (library name / property path / discriminant)
+    // needed a tiebreak. Rare by design (#96); surface the SURVIVING ones (raw counterHits includes
+    // names later discarded by structural dedup / healing). The manifest permanently locks the
+    // assignment, so this is a readability signal—not permission to renumber it on a later run.
     if (shared && shared.counterHits && shared.counterHits.length) {
         const hitSet = new Set(shared.counterHits)
         const live = [...new Set(shared.entries.filter((e) => hitSet.has(e.name)).map((e) => e.name))]
-        if (live.length) console.error(`\n[bindgen] ⚠ ${live.length} counter-suffixed type name(s) — same base at the same anchor; these can renumber across versions: ${live.slice(0, 12).join(', ')}${live.length > 12 ? '…' : ''}`)
+        if (live.length) console.error(`\n[bindgen] ⚠ ${live.length} counter-suffixed type name(s) — same base at the same source anchor; assignments are locked in .bindgen-manifest.json: ${live.slice(0, 12).join(', ')}${live.length > 12 ? '…' : ''}`)
+    }
+    // A source identity whose ReScript REPRESENTATION flipped across bindgen versions (record ⇄ opaque,
+    // #190). The frozen name is preserved as a case-aware compatibility shim so annotations keep
+    // compiling, but a former opaque module's `from*`/`as*` constructors/accessors may not be
+    // reproducible on the new shape — surface it so the change isn't silent.
+    if (shared && shared.representationChanges && shared.representationChanges.length) {
+        const rc = shared.representationChanges
+        const shown = rc.slice(0, 12).map((c) => `${c.frozen}→${c.name} (${c.from}→${c.to})`).join(', ')
+        console.error(`\n[bindgen] ⚠ ${rc.length} type(s) changed representation across versions — frozen name kept as a compatibility shim, but old constructors/accessors may not be reproducible: ${shown}${rc.length > 12 ? '…' : ''}`)
     }
     // A sink module (CommonTypes/InstanceTypes/WebTypes) pulled into an SCC merge = a synthetic
     // mis-homed into a sink with a non-sink dep (a circular-module-dep risk). Flagged, not faked. (#115 pkg)

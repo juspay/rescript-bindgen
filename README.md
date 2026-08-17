@@ -150,6 +150,11 @@ npx @juspay/rescript-bindgen --file ./types/Foo.d.ts --stdout
 npx @juspay/rescript-bindgen --dir ./node_modules/some-lib --out generated
 ```
 
+Keep `generated/.bindgen-manifest.json` alongside the generated bindings. Besides safe stale-file
+cleanup, it is the permanent public-name registry: once an upstream declaration receives a ReScript
+qualified type name, later bindgen versions reuse it exactly. Removed declarations become inactive tombstones,
+so a new type cannot steal their names; a declaration that reappears gets its old name back.
+
 | Flag | Meaning |
 |------|---------|
 | `--pkg <name[@ver]>` | npm package (auto-installed to a scratch cache if absent). A bare name resolves the `latest` dist-tag, so prerelease-only packages work |
@@ -205,6 +210,7 @@ INPUT          RESOLVE         EXTRACT          MAP             EMIT            
 | `number` | `int` (count/size/index names) or `float` |
 | string-literal union / `enum` | `@as` variant |
 | `string \| number`, `string \| string[]` | **`@unboxed` untagged variant** (`Str \| Num \| StrArr`) |
+| named `@unboxed` union with >4 runtime members | readable upstream-derived name when unambiguous; the former member-list name remains a type alias |
 | `ReactNode` / `ReactElement` | `React.element` |
 | `ComponentType<P>` / `FC<P>` | `React.component<p>` |
 | `React.CSSProperties` | `JsxDOM.style` |

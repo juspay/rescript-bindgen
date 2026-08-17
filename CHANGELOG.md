@@ -5,6 +5,20 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Large `@unboxed` unions no longer leak every member into the public type name** (#190) — a named
+  union with more than four runtime members now follows its upstream alias (`StatusCode` →
+  `statusCode`) instead of producing Hono's 60-member `v100OrV101Or…OrV511OrV1`. The exact previous
+  structural name remains a transparent compatibility alias.
+- **Generated public type names are permanent across bindgen upgrades** (#190) —
+  `.bindgen-manifest.json` now records source-based public identities and their assigned names.
+  Existing identities reuse the exact leaf name and qualified type module; removed identities remain reserved tombstones;
+  newcomers take suffixes; reappearing identities recover their old names. Shape hashes, TypeScript
+  `type.id`, representation choices, and naming-rule changes are not identity. The >4-member threshold
+  and naming algorithm are frozen; a bindgen release alone is never permission to rename consumers'
+  types.
+
 ## [1.4.0-beta.1] — 2026-08-12
 
 > **Upgrading: regenerate your bindings, and expect compile errors at four kinds of call site.** All four
