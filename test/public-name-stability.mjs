@@ -121,6 +121,25 @@ try {
     assert(firstSplit.row.name === firstShared.row.name, 'an unchanged identity keeps a formerly shared name after an upstream split')
     assert(secondSplit.row.name !== firstSplit.row.name, 'the upstream-changed half of a deduplicated type receives a new name')
 
+    // A `--from` (scope) change must PRESERVE the other scope's frozen rows — anchors are
+    // scope-prefixed, so scopes co-exist. Regenerating the SAME package under a different scope
+    // (an innocuous flag/entry difference) must never wipe the original scope's assignments. (#190)
+    {
+        const scopeOut = join(root, 'scoped')
+        const scopeManifest = join(scopeOut, '.bindgen-manifest.json')
+        const genScoped = (fromName) => {
+            writeFileSync(source, sourceText({ status: true }))
+            execFileSync('node', [CLI, '--dir', root, '--out', scopeOut, '--from', fromName, '--no-install'], { stdio: ['ignore', 'ignore', 'pipe'] })
+            return JSON.parse(readFileSync(scopeManifest, 'utf-8'))
+        }
+        genScoped('scopeA')
+        const afterB = Object.keys(genScoped('scopeB').publicTypes)
+        assert(afterB.some((i) => i.startsWith('scope:scopeA|')), 'a scope change preserves the prior scope\'s rows (not wiped)')
+        assert(afterB.some((i) => i.startsWith('scope:scopeB|')), 'the new scope\'s rows are added alongside the old')
+        const afterA = Object.keys(genScoped('scopeA').publicTypes)
+        assert(afterA.some((i) => i.startsWith('scope:scopeB|')), 'returning to the first scope still preserves the other scope\'s rows')
+    }
+
     // Corrupt manifests must fail loudly and be preserved for diagnosis, NOT silently reset the registry.
     const badJson = runExpectingCorruptManifestAbort('{ this is not valid json')
     assert(badJson.failed, 'unparseable manifest aborts generation instead of resetting the registry')
@@ -160,6 +179,20 @@ try {
     )
     assert(legacyBadRow.failed, 'a manifest without schemaVersion but with an invalid row aborts (not silently used)')
     assert(legacyBadRow.preserved, 'that manifest is left intact on disk')
+
+    // A DOTTED module (`Foo.Bar`) would write a file literally named `Foo.Bar.res` — reject it.
+    const dottedModule = runExpectingCorruptManifestAbort(
+        JSON.stringify({ schemaVersion: 2, scope: 'demo', files: [], publicTypes: { 'scope:demo|x': { name: 'x', module: 'Foo.Bar' } } }, null, 2) + '\n',
+    )
+    assert(dottedModule.failed, 'schema-v2 row with a dotted module path aborts generation')
+    assert(dottedModule.preserved, 'manifest with a dotted module path is left intact on disk')
+
+    // A RESERVED-word leaf name (`type`) would emit an uncompilable `type type = …` — reject it.
+    const reservedName = runExpectingCorruptManifestAbort(
+        JSON.stringify({ schemaVersion: 2, scope: 'demo', files: [], publicTypes: { 'scope:demo|x': { name: 'type', module: 'CommonTypes' } } }, null, 2) + '\n',
+    )
+    assert(reservedName.failed, 'schema-v2 row with a reserved-word name aborts generation')
+    assert(reservedName.preserved, 'manifest with a reserved-word name is left intact on disk')
 
     console.log('\n✅ permanent public-name registry invariants hold')
 } finally {

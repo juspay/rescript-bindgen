@@ -133,6 +133,9 @@ export interface ExtractOptions {
   publicTypes?: Record<string, {
     kind?: string
     module?: string
+    /** Every module this identity has previously lived in, so a cycle-forced home move keeps
+     *  re-exporting from each on later runs. Written and read by the CLI. (#190) */
+    formerModules?: string[]
     name: string
     aliases?: string[]
     signature?: string

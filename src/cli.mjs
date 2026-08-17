@@ -20,6 +20,7 @@ import { emit, emitFunction, emitClass, emitNamespace, report, planSharedModules
 import { resolveInput } from './resolve.mjs'
 import { writeReport } from './report.mjs'
 import { planHtmlAttrs, HTML_ATTRS_PIN } from './html-attrs.mjs'
+import { RESCRIPT_RESERVED } from './stdlib-types.mjs'
 import { writeFileSync, mkdirSync, existsSync, readFileSync, readdirSync, unlinkSync, renameSync } from 'fs'
 import { join, resolve as pathResolve, basename, dirname, relative } from 'path'
 import { createInterface } from 'readline'
@@ -151,16 +152,20 @@ function readBindgenManifest(path) {
     // output. A true legacy manifest has no `publicTypes` at all and skips this entirely. (#190)
     if (isPlainObject(value.publicTypes)) {
         const ident = /^[A-Za-z_][A-Za-z0-9_']*$/ // ReScript type/module identifier (leaf casing checked downstream by kind)
-        // A ReScript MODULE path is different: every segment must start upper-case, else it emits an
-        // uncompilable `legacytypes.left`. Leaf names stay case-agnostic (a type is lower, an opaque
-        // module is upper) and are re-cased by kind at emit, but a `module`/`formerModules` value is
-        // always a module and is used verbatim to qualify references.
-        const isModulePath = (s) => typeof s === 'string' && s.length > 0 && s.split('.').every((seg) => /^[A-Z][A-Za-z0-9_']*$/.test(seg))
+        // A leaf `name` becomes a bare `type <name>` / `module <Name>`, so a ReScript RESERVED word
+        // (`type`, `and`, `let`, …) is uncompilable — the generator's own `lower()` suffixes these, but
+        // a locked manifest name bypasses that, so reject it here.
+        const isReserved = (s) => RESCRIPT_RESERVED.has(s)
+        // A home `module` is ALWAYS a single upper-case identifier (it becomes the `.res` FILE name);
+        // a dotted value like `Foo.Bar` would write a file literally named `Foo.Bar.res`. So no dots,
+        // and the segment must start upper-case (a lower-case module emits `legacytypes.left`).
+        const isModuleName = (s) => typeof s === 'string' && /^[A-Z][A-Za-z0-9_']*$/.test(s)
         for (const [id, row] of Object.entries(value.publicTypes)) {
             if (!isPlainObject(row)) fail(`registry row ${JSON.stringify(id)} is not an object`)
             if (typeof row.name !== 'string' || !ident.test(row.name)) fail(`registry row ${JSON.stringify(id)} has an invalid "name" ${JSON.stringify(row.name)} (must be an identifier)`)
-            if (row.module !== undefined && !isModulePath(row.module)) fail(`registry row ${JSON.stringify(id)} has an invalid "module" ${JSON.stringify(row.module)} (module segments must start upper-case)`)
-            if (row.formerModules !== undefined && (!Array.isArray(row.formerModules) || !row.formerModules.every(isModulePath))) fail(`registry row ${JSON.stringify(id)} has an invalid "formerModules" (must be an array of upper-case module paths)`)
+            if (typeof row.name === 'string' && isReserved(row.name)) fail(`registry row ${JSON.stringify(id)} has a reserved-word "name" ${JSON.stringify(row.name)}`)
+            if (row.module !== undefined && !isModuleName(row.module)) fail(`registry row ${JSON.stringify(id)} has an invalid "module" ${JSON.stringify(row.module)} (must be a single upper-case module name, no dots)`)
+            if (row.formerModules !== undefined && (!Array.isArray(row.formerModules) || !row.formerModules.every(isModuleName))) fail(`registry row ${JSON.stringify(id)} has an invalid "formerModules" (must be an array of single upper-case module names)`)
             if (row.aliases !== undefined && (!Array.isArray(row.aliases) || !row.aliases.every((a) => typeof a === 'string' && ident.test(a)))) fail(`registry row ${JSON.stringify(id)} has an invalid "aliases" (must be an array of identifiers)`)
             if (row.kind !== undefined && typeof row.kind !== 'string') fail(`registry row ${JSON.stringify(id)} has a non-string "kind"`)
             if (row.signature !== undefined && typeof row.signature !== 'string') fail(`registry row ${JSON.stringify(id)} has a non-string "signature"`)
@@ -298,11 +303,13 @@ async function main() {
         install: opts.install, nodeModulesRoots: roots, subpaths: opts.subpaths,
     })
     const from = opts.from || resolvedFrom || basename(entry).replace(/\.d\.ts$/, '')
-    const priorPublicTypes = priorManifest.scope == null || priorManifest.scope === from
-        ? priorManifest.publicTypes
-        : {}
+    // Every registry row's anchor ID is SCOPE-PREFIXED (`scope:<from>|…`), so rows from different
+    // `@module` scopes co-exist safely — only the current scope's rows can ever match this run's
+    // identities. Pass them all: a foreign-scope row simply never locks, and (crucially) is preserved
+    // rather than wiped. A scope change must NEVER destroy another scope's frozen names. (#190)
+    const priorPublicTypes = priorManifest.publicTypes
     if (priorManifest.scope != null && priorManifest.scope !== from) {
-        console.error(`[bindgen] note: public-name registry belongs to @module("${priorManifest.scope}"); starting a fresh registry for @module("${from}").`)
+        console.error(`[bindgen] note: registry also holds @module("${priorManifest.scope}") assignments; @module("${from}") is added alongside them (both preserved).`)
     }
     // #147: one binding-entry per exports subpath, each stamped `@module("<from><suffix>")` — e.g.
     // `@mui/material` for the main entry, `@mui/material/styles` for `"./styles"`. Without --subpaths
@@ -661,10 +668,14 @@ async function main() {
     // The registry is append-only. A removed/moved/renamed upstream declaration becomes inactive,
     // but its names stay reserved forever; if the same source identity reappears, it gets them back.
     // Single-file mode has no shared registry, so it preserves any module-mode rows untouched.
-    const publicTypes = Object.fromEntries(Object.entries(priorPublicTypes).map(([id, row]) => [id, {
-        ...(row && typeof row === 'object' ? row : {}),
-        active: shared ? false : row?.active !== false,
-    }]))
+    // Only the CURRENT scope's rows are tombstoned/reactivated this run — rows from OTHER `@module`
+    // scopes (scope-prefixed IDs) pass through EXACTLY as they were, never wiped by a scope change. (#190)
+    const scopePrefix = `scope:${from}|`
+    const publicTypes = Object.fromEntries(Object.entries(priorPublicTypes).map(([id, row]) => {
+        const base = row && typeof row === 'object' ? { ...row } : {}
+        if (id.startsWith(scopePrefix)) base.active = shared ? false : base.active !== false
+        return [id, base]
+    }))
     if (shared && plan) {
         for (const entry of shared.entries) {
             const row = {
@@ -686,7 +697,9 @@ async function main() {
     // crash/`Ctrl-C`/full disk mid-write) would truncate to invalid JSON — which the reader now
     // rejects loudly rather than RESETTING every locked name, but only if the file survives intact.
     // Write to a sibling temp path and rename it into place (rename is atomic on the same filesystem). (#190)
-    const manifestTmp = manifestPath + '.tmp'
+    // A per-process temp name so two concurrent runs on the same out-dir can't race on ONE shared
+    // temp file (each writes its own, renames its own into place).
+    const manifestTmp = `${manifestPath}.${process.pid}.tmp`
     writeFileSync(manifestTmp, JSON.stringify({ schemaVersion: 2, scope: from, files: [...written].sort(), publicTypes: sortedPublicTypes }, null, 2) + '\n')
     renameSync(manifestTmp, manifestPath)
     if (staleRemoved) console.error(`[bindgen] removed ${staleRemoved} stale binding(s) from a previous run (per .bindgen-manifest.json)`)

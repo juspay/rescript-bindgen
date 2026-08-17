@@ -729,15 +729,16 @@ export function emitClass(ir, options = {}) {
 // ── Type-declaration renderers (shared by single-file `emit` and module emit) ──
 
 /** Permanent public compatibility aliases. A generated type name is API: when a naming rule becomes
- *  more readable, the old name remains constructible/annotatable for as long as the source identity
- *  exists. Generic aliases thread the same parameters. Opaque entries are modules, so their backward
- *  compatible surface is a module alias rather than a type alias.
+ *  more readable, the SAME-kind old name stays fully usable (constructible AND annotatable) for as long
+ *  as the source identity exists. Generic aliases thread the same parameters. Opaque entries are
+ *  modules, so their backward compatible surface is a module alias rather than a type alias.
  *
- *  A CASE-AWARE shim covers a representation flip (#190): the alias's own casing tells us which kind
- *  it came from. When the canonical is now an opaque `module` but the alias is a lowercase type name
- *  from a former RECORD, emit `type old = New.t`; when the canonical is now a lowercase `type` but the
- *  alias is a `Module` name from a former OPAQUE, emit `module Old = { type t = new }`. Both forms are
- *  valid ReScript and keep old annotations compiling despite the incompatible casing. */
+ *  A CASE-AWARE shim covers a representation FLIP (#190): the alias's own casing tells us which kind it
+ *  came from. When the canonical is now an opaque `module` but the alias is a lowercase type name from a
+ *  former RECORD, emit `type old = New.t`; when the canonical is now a lowercase `type` but the alias is
+ *  a `Module` name from a former OPAQUE, emit `module Old = { type t = new }`. A flip shim keeps old
+ *  ANNOTATIONS compiling, but NOT construction: `New.t` is abstract (no record literal), and a former
+ *  opaque's `from*`/`as*` accessors are gone — that's why the CLI also warns on stderr for a flip. */
 function renderCompatAliases(entries, lines) {
     const isUpper = (s) => /^[A-Z]/.test(s)
     for (const e of entries || []) {

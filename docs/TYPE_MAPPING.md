@@ -160,6 +160,13 @@ home-module heuristics, and record-vs-variant decisions. On every later run:
 - a new identity that requests a reserved name takes a suffix; it never renumbers the existing type;
 - a removed identity that reappears recovers its assignment.
 
+Two consequences of source-based identity worth knowing: (1) the **declaration file path** is part of
+the identity, so an upstream refactor that MOVES a type to a different `.d.ts` is a new identity and
+drops the old frozen name (the deliberate cost of keeping names stable across bindgen upgrades — the
+primary goal); (2) the `@module` **scope** (`--from`) is part of each anchor ID, so several scopes'
+assignments **co-exist** in one manifest — regenerating the same output dir under a different `--from`
+adds a scope's rows alongside the others and never wipes them.
+
 **Representation flips (record ⇄ opaque).** ReScript ties casing to representation: an opaque type is a
 `module Name` (upper-case), every other kind is a lowercase `type name`. If an identity's representation
 changes across bindgen versions, reusing the frozen name verbatim would emit uncompilable `module boundary`
