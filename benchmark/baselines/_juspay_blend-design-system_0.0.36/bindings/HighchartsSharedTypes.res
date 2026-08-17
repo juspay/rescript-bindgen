@@ -1,24 +1,5 @@
 @@warning("-30")
 
-type chartType =
-  | @as("line") Line
-  | @as("bar") Bar
-  | @as("lineBar") LineBar
-  | @as("pie") Pie
-  | @as("scatter") Scatter
-  | @as("area") Area
-  | @as("sankey") Sankey
-type axisType =
-  | @as("dateTime") DateTime
-  | @as("currency") Currency
-  | @as("percentage") Percentage
-  | @as("number") Number
-type chartLegendPosition =
-  | @as("top") Top
-  | @as("right") Right
-type legendsChangeType =
-  | @as("increase") Increase
-  | @as("decrease") Decrease
 type dashStyleValue =
   | @as("Dash") Dash
   | @as("DashDot") DashDot
@@ -41,7 +22,7 @@ type verticalAlignValue =
   | @as("middle") Middle
 type optionsGridLineInterpolationValue =
   | @as("circle") Circle
-  | @as("polygon") PolygonInterpolationValue
+  | @as("polygon") Polygon
 type optionsOverflowValue =
   | @as("justify") Justify
   | @as("allow") Allow
@@ -63,23 +44,12 @@ type axisTitleAlignValue =
   | @as("middle") Middle
   | @as("high") High
   | @as("low") Low
-type chartsXAxisTitleOptionsPosition3d =
-  | @as("chart") Chart
-  | @as("flap") Flap
-  | @as("offset") Offset
-  | @as("ortho") Ortho
 type axisTypeValue =
   | @as("treegrid") Treegrid
   | @as("linear") Linear
   | @as("category") Category
   | @as("datetime") Datetime
   | @as("logarithmic") Logarithmic
-type chartsSeriesSetState =
-  | @as("") ValueSeriesSetState
-  | @as("normal") Normal
-  | @as("select") Select
-  | @as("hover") Hover
-  | @as("inactive") Inactive
 type svgPathCommand =
   | @as("a") A
   | @as("q") Q
@@ -101,12 +71,6 @@ type svgPathCommand =
   | @as("T") T2
   | @as("V") V2
   | @as("Z") Z2
-type chartsPointSetState =
-  | @as("") ValuePointSetState
-  | @as("normal") Normal
-  | @as("select") Select
-  | @as("hover") Hover
-  | @as("inactive") Inactive
 type bubbleSizeByValue =
   | @as("width") Width
   | @as("area") Area
@@ -137,7 +101,7 @@ type cursorValue =
   | @as("ns-resize") NsResize
   | @as("nw-resize") NwResize
   | @as("nwse-resize") NwseResize
-  | @as("pointer") PointerCursorValue
+  | @as("pointer") Pointer
   | @as("row-resize") RowResize
   | @as("s-resize") SResize
   | @as("se-resize") SeResize
@@ -229,7 +193,7 @@ type optionsFindNearestPointByValue =
   | @as("x") X
   | @as("xy") Xy
 type optionsGapUnitValue =
-  | @as("value") ValueOptionsGapUnit
+  | @as("value") ValueGapUnit
   | @as("relative") Relative
 type optionsLegendSymbolValue =
   | @as("rectangle") Rectangle
@@ -247,10 +211,6 @@ type optionsRelativeToValue =
 type optionsCompareValue =
   | @as("value") ValueOptionsCompare
   | @as("percent") Percent
-type chartsSeriesArcdiagramOptionsLinkColorMode =
-  | @as("from") From
-  | @as("to") To
-  | @as("gradient") Gradient
 type optionsPointIntervalUnitValue =
   | @as("year") Year
   | @as("month") Month
@@ -261,12 +221,6 @@ type optionsStackingValue =
   | @as("null") Null
   | @as("overlap") Overlap
   | @as("stream") Stream
-type chartsBorderRadiusOptionsObjectScope =
-  | @as("point") PointObjectScope
-  | @as("stack") Stack
-type chartsBorderRadiusOptionsObjectWhere =
-  | @as("end") End
-  | @as("all") All
 type optionsPointValKeyValue =
   | @as("open") Open
   | @as("high") High
@@ -300,14 +254,6 @@ type organizationHangingIndentTranslationValue =
   | @as("inherit") Inherit
   | @as("cumulative") Cumulative
   | @as("shrink") Shrink
-type chartsPlotOrganizationLinkOptionsType =
-  | @as("straight") Straight
-  | @as("curved") Curved
-  | @as("orthogonal") Orthogonal
-type chartsSeriesOrganizationOptionsNodeAlignment =
-  | @as("center") Center
-  | @as("bottom") Bottom
-  | @as("top") Top
 type seriesOrganizationNodesLayoutValue =
   | @as("normal") Normal
   | @as("hanging") Hanging
@@ -392,11 +338,6 @@ type optionsDropdownValue =
   | @as("always") Always
   | @as("never") Never
   | @as("responsive") Responsive
-type mapGeometryTypeValue =
-  | @as("LineString") LineString
-  | @as("MultiLineString") MultiLineString
-  | @as("MultiPolygon") MultiPolygon
-  | @as("Polygon") PolygonTypeValue
 type synthPatchOscillatorType =
   | @as("pulse") Pulse
   | @as("square") Square
@@ -409,7 +350,7 @@ type optionsMapFunctionValue =
   | @as("logarithmic") Logarithmic
 type optionsWithinValue =
   | @as("chart") Chart
-  | @as("series") SeriesWithinValue
+  | @as("series") Series
   | @as("xAxis") XAxis
   | @as("yAxis") YAxis
 type optionsValueMapFunctionValue =
@@ -432,253 +373,7 @@ type symbolKeyValue =
   | @as("callout") Callout
   | @as("diamond") Diamond
   | @as("triangle") Triangle
-  | @as("triangle-down") TriangleDownKeyValue
-type chartsBlendChartPropsConstructorType =
-  | @as("color") Color
-  | @as("end") End
-  | @as("start") Start
-  | @as("width") Width
-  | @as("height") Height
-  | @as("animate") Animate
-  | @as("circle") Circle
-  | @as("rect") Rect
-  | @as("stop") Stop
-  | @as("find") Find
-  | @as("backgroundSize") BackgroundSize
-  | @as("wrap") Wrap
-  | @as("open") Open
-  | @as("chart") Chart
-  | @as("offset") Offset
-  | @as("x") X
-  | @as("y") Y
-  | @as("arc") Arc
-  | @as("callout") Callout
-  | @as("diamond") Diamond
-  | @as("triangle") Triangle
-  | @as("format") Format
-  | @as("addEvent") AddEvent
-  | @as("animObject") AnimObject
-  | @as("arrayMax") ArrayMax
-  | @as("arrayMin") ArrayMin
-  | @as("attr") Attr
-  | @as("correctFloat") CorrectFloat
-  | @as("createElement") CreateElement
-  | @as("css") Css
-  | @as("dateFormat") DateFormat
-  | @as("defined") Defined
-  | @as("destroyObjectProperties") DestroyObjectProperties
-  | @as("discardElement") DiscardElement
-  | @as("erase") Erase
-  | @as("error") Error
-  | @as("extend") Extend
-  | @as("extendClass") ExtendClass
-  | @as("fireEvent") FireEvent
-  | @as("getDeferredAnimation") GetDeferredAnimation
-  | @as("getMagnitude") GetMagnitude
-  | @as("getOptions") GetOptions
-  | @as("getStyle") GetStyle
-  | @as("isArray") IsArray
-  | @as("isClass") IsClass
-  | @as("isDOMElement") IsDOMElement
-  | @as("isFunction") IsFunction
-  | @as("isNumber") IsNumber
-  | @as("isObject") IsObject
-  | @as("isString") IsString
-  | @as("merge") Merge
-  | @as("normalizeTickInterval") NormalizeTickInterval
-  | @as("numberFormat") NumberFormat
-  | @as("objectEach") ObjectEach
-  | @as("pad") Pad
-  | @as("pick") Pick
-  | @as("relativeLength") RelativeLength
-  | @as("removeEvent") RemoveEvent
-  | @as("seriesType") SeriesType
-  | @as("setAnimation") SetAnimation
-  | @as("setOptions") SetOptions
-  | @as("splat") Splat
-  | @as("stableSort") StableSort
-  | @as("syncTimeout") SyncTimeout
-  | @as("uniqueKey") UniqueKey
-  | @as("useSerialIds") UseSerialIds
-  | @as("centerImage") CenterImage
-  | @as("dateTimeFormat") DateTimeFormat
-  | @as("deleteRows") DeleteRows
-  | @as("getColumn") GetColumn
-  | @as("getColumns") GetColumns
-  | @as("getLogTickPositions") GetLogTickPositions
-  | @as("getModified") GetModified
-  | @as("getRendererType") GetRendererType
-  | @as("getRow") GetRow
-  | @as("modifyTree") ModifyTree
-  | @as("registerRendererType") RegisterRendererType
-  | @as("registerSeriesType") RegisterSeriesType
-  | @as("roundedRect") RoundedRect
-  | @as("setColumn") SetColumn
-  | @as("setColumns") SetColumns
-  | @as("setRow") SetRow
-  | @as("str2dtf") Str2dtf
-  | @as("triangleDown") TriangleDownConstructorType
-  | @as("unescapeEntities") UnescapeEntities
-  | @as("Annotation") Annotation
-  | @as("AnnotationControlPoint") AnnotationControlPoint
-  | @as("AST") AST
-  | @as("Axis") Axis
-  | @as("Chart") Chart2
-  | @as("Color") Color2
-  | @as("DataTable") DataTable
-  | @as("DataTableCore") DataTableCore
-  | @as("Legend") Legend
-  | @as("PlotLineOrBand") PlotLineOrBand
-  | @as("Point") PointConstructorType
-  | @as("Pointer") PointerConstructorType
-  | @as("Series") SeriesConstructorType
-  | @as("StackItem") StackItem
-  | @as("SVGElement") SVGElement
-  | @as("SVGLabel") SVGLabel
-  | @as("SVGRenderer") SVGRenderer
-  | @as("Tick") Tick
-  | @as("Time") Time
-  | @as("Tooltip") Tooltip
-  | @as("charts") Charts
-  | @as("dateFormats") DateFormats
-  | @as("defaultOptions") DefaultOptions
-  | @as("theme") Theme
-  | @as("anchorX") AnchorX
-  | @as("anchorY") AnchorY
-  | @as("clockwise") Clockwise
-  | @as("context") Context
-  | @as("innerR") InnerR
-  | @as("longArc") LongArc
-  | @as("r") R
-type chartsDataPointPrimaryConfig = {
-  label: string,
-  val: float,
-}
-type chartsDataPointAuxConfig = {
-  label: string,
-  val: float,
-  @as("type") type_?: axisType,
-  dateOnly?: bool,
-  smart?: bool,
-  timeZone?: string,
-  hour12?: bool,
-}
-type chartsDataPointErrorErrorDataConfig = {
-  label: string,
-  value: string,
-}
-type chartsDataPointErrorConfig = {
-  title: string,
-  errorData?: array<chartsDataPointErrorErrorDataConfig>,
-}
-type dataPoint = {
-  primary: chartsDataPointPrimaryConfig,
-  aux?: array<chartsDataPointAuxConfig>,
-  error?: chartsDataPointErrorConfig,
-}
-type newNestedDataPoint = {
-  name: string,
-  data: Dict.t<dataPoint>,
-}
-type chartsColorsConfig = {
-  key: string,
-  color: string,
-}
-type stackedLegendsDataPoint = {
-  value: float,
-  delta: float,
-  changeType: legendsChangeType,
-}
-type chartsTickPropsPayloadConfig = {
-  value: CommonTypes.stringOrNumber,
-  index?: int,
-  coordinate?: float,
-}
-type tickProps = {
-  x?: float,
-  y?: float,
-  payload?: chartsTickPropsPayloadConfig,
-}
-@set_index external tickPropsSet: (tickProps, string, JSON.t) => unit = ""
-type axisConfig = {
-  label?: string,
-  showLabel?: bool,
-  interval?: CommonTypes.preserveStartOrPreserveEndOrPreserveStartEndOrNumber,
-  show?: bool,
-  @as("type") type_?: axisType,
-  tickFormatter?: CommonTypes.stringOrNumber => string,
-  customTick?: React.component<tickProps>,
-  dateOnly?: bool,
-  useUTC?: bool,
-  formatString?: string,
-  timeOnly?: bool,
-  showYear?: bool,
-  ticks?: array<CommonTypes.stringOrNumber>,
-  autoConsistentTicks?: bool,
-  maxTicks?: float,
-  smartDateTimeFormat?: bool,
-}
-type chartsTooltipConfigPositionConfig = {
-  x?: float,
-  y?: float,
-}
-type chartsTooltipConfigAllowEscapeViewBoxConfig = {
-  x?: bool,
-  y?: bool,
-}
-type tooltipConfig = {
-  position?: chartsTooltipConfigPositionConfig,
-  allowEscapeViewBox?: chartsTooltipConfigAllowEscapeViewBoxConfig,
-}
-type noDataProps = {
-  title?: string,
-  subtitle?: string,
-  slot?: React.element,
-  button?: ButtonTypes.buttonProps,
-}
-type chartsSkeletonProps = {
-  show: bool,
-  variant: SkeletonTypes.skeletonVariant,
-}
-type chartsLegendsConfig = {
-  title: string,
-  total?: string,
-}
-type chartsDotItemDotPropsPayloadConfig = {
-  name?: string,
-}
-type dotItemDotProps = {
-  cx?: float,
-  cy?: float,
-  value?: float,
-  payload?: chartsDotItemDotPropsPayloadConfig,
-}
-type chartsPayloadConfig = {
-  name: string,
-  id?: string,
-  color?: string,
-  value?: float,
-}
-type chartsSankeyTooltipDataPayloadConfig = {
-  name?: string,
-  value?: float,
-  source?: CommonTypes.stringOrNumber,
-  target?: CommonTypes.stringOrNumber,
-  sourceName?: string,
-  targetName?: string,
-  color?: string,
-  hoverColor?: string,
-}
-type sankeyTooltipData = {
-  payload: chartsSankeyTooltipDataPayloadConfig,
-}
-type sankeyLink = {
-  source: CommonTypes.stringOrNumber,
-  target: CommonTypes.stringOrNumber,
-  value: float,
-  color?: string,
-  hoverColor?: string,
-}
+  | @as("triangle-down") TriangleDown
 type axisAccessibilityOptionsObject = {
   description?: string,
   enabled?: bool,
@@ -766,7 +461,7 @@ type xAxisTitleOptions = {
   align?: axisTitleAlignValue,
   margin?: float,
   offset?: float,
-  position3d?: chartsXAxisTitleOptionsPosition3d,
+  position3d?: ChartsTypes.chartsXAxisTitleOptionsPosition3d,
   reserveSpace?: bool,
   rotation?: float,
   skew3d?: bool,
@@ -1546,7 +1241,7 @@ type chartParallelAxesTitleOptions = {
   align?: axisTitleAlignValue,
   margin?: float,
   offset?: float,
-  position3d?: chartsXAxisTitleOptionsPosition3d,
+  position3d?: ChartsTypes.chartsXAxisTitleOptionsPosition3d,
   reserveSpace?: bool,
   rotation?: float,
   skew3d?: bool,
@@ -1651,7 +1346,7 @@ type colorAxisTitleOptions = {
   align?: axisTitleAlignValue,
   margin?: float,
   offset?: float,
-  position3d?: chartsXAxisTitleOptionsPosition3d,
+  position3d?: ChartsTypes.chartsXAxisTitleOptionsPosition3d,
   reserveSpace?: bool,
   rotation?: float,
   skew3d?: bool,
@@ -3080,8 +2775,8 @@ module ChartsSeriesAtrOptionsOnPoint = {
 }
 type borderRadiusOptionsObject = {
   radius: CommonTypes.stringOrNumber,
-  scope: chartsBorderRadiusOptionsObjectScope,
-  where: chartsBorderRadiusOptionsObjectWhere,
+  scope: ChartsTypes.chartsBorderRadiusOptionsObjectScope,
+  where: ChartsTypes.chartsBorderRadiusOptionsObjectWhere,
 }
 @unboxed type stringOrNumberOrBorderRadiusOptionsObject = Str(string) | Num(float) | BorderRadiusOptionsObject(borderRadiusOptionsObject)
 module ChartsSeriesBarOptionsDataSorting = {
@@ -5031,7 +4726,7 @@ type plotOrganizationLinkOptions = {
   color?: string,
   lineWidth?: float,
   radius?: float,
-  @as("type") type_?: chartsPlotOrganizationLinkOptionsType,
+  @as("type") type_?: ChartsTypes.chartsPlotOrganizationLinkOptionsType,
 }
 module ChartsPlotOrganizationOnPointOptionsConnectorOptions = {
   type t
@@ -6163,7 +5858,7 @@ type plotTreegraphLinkOptions = {
   curveFactor?: float,
   lineWidth?: float,
   radius?: float,
-  @as("type") type_?: chartsPlotOrganizationLinkOptionsType,
+  @as("type") type_?: ChartsTypes.chartsPlotOrganizationLinkOptionsType,
 }
 module ChartsPlotTreegraphOnPointOptionsConnectorOptions = {
   type t
@@ -10347,11 +10042,11 @@ and plotSankeyOptions<'a, 'b, 'c> = {
   label?: seriesLabelOptionsObject<'a, 'b, 'c>,
   legendSymbol?: optionsLegendSymbolValue,
   levels?: array<plotArcdiagramLevelsOptions<'a, 'b, 'c>>,
-  linkColorMode?: chartsSeriesArcdiagramOptionsLinkColorMode,
+  linkColorMode?: ChartsTypes.chartsSeriesArcdiagramOptionsLinkColorMode,
   linkedTo?: string,
   linkOpacity?: float,
   minLinkWidth?: float,
-  nodeAlignment?: chartsSeriesOrganizationOptionsNodeAlignment,
+  nodeAlignment?: ChartsTypes.chartsSeriesOrganizationOptionsNodeAlignment,
   nodeDistance?: CommonTypes.stringOrNumber,
   nodePadding?: float,
   nodeWidth?: CommonTypes.stringOrNumber,
@@ -11532,12 +11227,12 @@ and plotOrganizationOptions<'a, 'b, 'c> = {
   legendSymbol?: optionsLegendSymbolValue,
   levels?: array<plotArcdiagramLevelsOptions<'a, 'b, 'c>>,
   link?: plotOrganizationLinkOptions,
-  linkColorMode?: chartsSeriesArcdiagramOptionsLinkColorMode,
+  linkColorMode?: ChartsTypes.chartsSeriesArcdiagramOptionsLinkColorMode,
   linkedTo?: string,
   linkOpacity?: float,
   minLinkWidth?: float,
   minNodeLength?: float,
-  nodeAlignment?: chartsSeriesOrganizationOptionsNodeAlignment,
+  nodeAlignment?: ChartsTypes.chartsSeriesOrganizationOptionsNodeAlignment,
   nodeDistance?: CommonTypes.stringOrNumber,
   nodePadding?: float,
   nodeWidth?: float,
@@ -14341,7 +14036,7 @@ and plotDependencywheelOptions<'a, 'b, 'c> = {
   label?: seriesLabelOptionsObject<'a, 'b, 'c>,
   legendSymbol?: optionsLegendSymbolValue,
   levels?: array<plotDependencywheelLevelsOptions<'a, 'b, 'c>>,
-  linkColorMode?: chartsSeriesArcdiagramOptionsLinkColorMode,
+  linkColorMode?: ChartsTypes.chartsSeriesArcdiagramOptionsLinkColorMode,
   linkedTo?: string,
   linkOpacity?: float,
   minLinkWidth?: float,
@@ -16276,7 +15971,7 @@ and plotArcdiagramOptions<'a, 'b, 'c> = {
   label?: seriesLabelOptionsObject<'a, 'b, 'c>,
   legendSymbol?: optionsLegendSymbolValue,
   levels?: array<plotArcdiagramLevelsOptions<'a, 'b, 'c>>,
-  linkColorMode?: chartsSeriesArcdiagramOptionsLinkColorMode,
+  linkColorMode?: ChartsTypes.chartsSeriesArcdiagramOptionsLinkColorMode,
   linkedTo?: string,
   linkOpacity?: float,
   marker?: pointMarkerOptionsObject,
@@ -19941,11 +19636,11 @@ and seriesSankeyOptions<'b, 'a, 'c> = {
   label?: seriesLabelOptionsObject<'a, 'b, 'c>,
   legendSymbol?: optionsLegendSymbolValue,
   levels?: array<JSON.t>,
-  linkColorMode?: chartsSeriesArcdiagramOptionsLinkColorMode,
+  linkColorMode?: ChartsTypes.chartsSeriesArcdiagramOptionsLinkColorMode,
   linkedTo?: string,
   linkOpacity?: float,
   minLinkWidth?: float,
-  nodeAlignment?: chartsSeriesOrganizationOptionsNodeAlignment,
+  nodeAlignment?: ChartsTypes.chartsSeriesOrganizationOptionsNodeAlignment,
   nodeDistance?: CommonTypes.stringOrNumber,
   nodePadding?: float,
   nodeWidth?: CommonTypes.stringOrNumber,
@@ -21373,12 +21068,12 @@ and seriesOrganizationOptions<'b, 'a, 'c> = {
   legendSymbol?: optionsLegendSymbolValue,
   levels?: array<JSON.t>,
   link?: plotOrganizationLinkOptions,
-  linkColorMode?: chartsSeriesArcdiagramOptionsLinkColorMode,
+  linkColorMode?: ChartsTypes.chartsSeriesArcdiagramOptionsLinkColorMode,
   linkedTo?: string,
   linkOpacity?: float,
   minLinkWidth?: float,
   minNodeLength?: float,
-  nodeAlignment?: chartsSeriesOrganizationOptionsNodeAlignment,
+  nodeAlignment?: ChartsTypes.chartsSeriesOrganizationOptionsNodeAlignment,
   nodeDistance?: CommonTypes.stringOrNumber,
   nodePadding?: float,
   nodeWidth?: float,
@@ -24955,7 +24650,7 @@ and seriesDependencywheelOptions<'b, 'a, 'c> = {
   label?: seriesLabelOptionsObject<'a, 'b, 'c>,
   legendSymbol?: optionsLegendSymbolValue,
   levels?: array<JSON.t>,
-  linkColorMode?: chartsSeriesArcdiagramOptionsLinkColorMode,
+  linkColorMode?: ChartsTypes.chartsSeriesArcdiagramOptionsLinkColorMode,
   linkedTo?: string,
   linkOpacity?: float,
   minLinkWidth?: float,
@@ -27468,7 +27163,7 @@ and seriesArcdiagramOptions<'b, 'a, 'c> = {
   label?: seriesLabelOptionsObject<'a, 'b, 'c>,
   legendSymbol?: optionsLegendSymbolValue,
   levels?: array<JSON.t>,
-  linkColorMode?: chartsSeriesArcdiagramOptionsLinkColorMode,
+  linkColorMode?: ChartsTypes.chartsSeriesArcdiagramOptionsLinkColorMode,
   linkedTo?: string,
   linkOpacity?: float,
   marker?: pointMarkerOptionsObject,
@@ -27860,7 +27555,7 @@ and tooltipPositionerPointObject<'a, 'b, 'c> = {
   remove: (option<bool>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
   select: (option<bool>, option<bool>) => unit,
   setNestedProperty: (string, string, string) => string,  // ⚪ loose — was `T`
-  setState: (option<chartsPointSetState>, option<bool>) => unit,
+  setState: (option<ChartsTypes.chartsPointSetState>, option<bool>) => unit,
   setVisible: (option<bool>, option<bool>) => unit,
   tooltipFormatter: string => string,
   update: (stringOrNumberOrStringOrNumberArrayOrPointOptionsObject<'a, 'b, 'c>, option<bool>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
@@ -29204,7 +28899,7 @@ and point<'a, 'b, 'c> = {
   remove: (option<bool>, option<string>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
   select: (option<bool>, option<bool>) => unit,
   setNestedProperty: (string, string, string) => string,  // ⚪ loose — was `T`
-  setState: (option<chartsPointSetState>, option<bool>) => unit,
+  setState: (option<ChartsTypes.chartsPointSetState>, option<bool>) => unit,
   setVisible: (option<bool>, option<bool>) => unit,
   tooltipFormatter: string => string,
   update: (string, option<bool>, option<string>) => unit,  // ⚪ loose — was `PointOptionsType`
@@ -29247,7 +28942,7 @@ and series<'a, 'b, 'c> = {
   searchPoint: (string, option<bool>) => point<'a, 'b, 'c>,  // ⚪ loose — was `PointerEvent`
   select: option<bool> => unit,
   setData: (array<JSON.t>, option<bool>, option<string>, option<bool>) => unit,  // ⚪ loose — was `boolean | Partial<AnimationOptionsObject>`
-  setState: (option<chartsSeriesSetState>, option<bool>) => unit,
+  setState: (option<ChartsTypes.chartsSeriesSetState>, option<bool>) => unit,
   setVisible: (option<bool>, option<bool>) => unit,
   show: unit => unit,
   translate: unit => unit,
@@ -29818,7 +29513,7 @@ and chart<'a, 'b, 'c> = {
 @unboxed and seriesArcDiagramDataLabelsOptionsObjectOrSeriesArcDiagramDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesArcDiagramDataLabelsOptionsObject(seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesArcDiagramDataLabelsOptionsObjectArr(array<seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>>)
 @unboxed and plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c> = PlotAoDataLabelsOptions(plotAoDataLabelsOptions<'a, 'b, 'c>) | PlotAoDataLabelsOptionsArr(array<plotAoDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c> = PlotAdDataLabelsOptions(plotAdDataLabelsOptions<'a, 'b, 'c>) | PlotAdDataLabelsOptionsArr(array<plotAdDataLabelsOptions<'a, 'b, 'c>>)
-@unboxed and pointOrPointArray<'a, 'b, 'c> = PointPointArray(point<'a, 'b, 'c>) | PointArr(array<point<'a, 'b, 'c>>)
+@unboxed and pointOrPointArray<'a, 'b, 'c> = Point(point<'a, 'b, 'c>) | PointArr(array<point<'a, 'b, 'c>>)
 @unboxed and stringOrNumberOrStringOrNumberArrayOrPointOptionsObject<'a, 'b, 'c> = Str(string) | Num(float) | Arr(array<CommonTypes.stringOrNumber>) | PointOptionsObject(pointOptionsObject<'a, 'b, 'c>)
 @unboxed and plotAbandsDataLabelsOptionsOrPlotAbandsDataLabelsOptionsArray<'a, 'b, 'c> = PlotAbandsDataLabelsOptions(plotAbandsDataLabelsOptions<'a, 'b, 'c>) | PlotAbandsDataLabelsOptionsArr(array<plotAbandsDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and boolOrAxisCrosshairOptions<'a, 'b, 'c> = Bool(bool) | AxisCrosshairOptions(axisCrosshairOptions<'a, 'b, 'c>)
@@ -30909,202 +30604,3 @@ module AxisOptions = {
   external fromZAxisOptions: zAxisOptions<'a, 'b, 'c> => t = "%identity"
   external asZAxisOptions: t => (zAxisOptions<'a, 'b, 'c>) = "%identity"
 }
-type defsArrowAttributesOptions = {
-  id?: string,
-  markerHeight?: float,
-  markerWidth?: float,
-  refX?: float,
-  refY?: float,
-}
-type defsReverseArrowOptions = {
-  attributes?: defsArrowAttributesOptions,
-  tagName?: string,
-}
-module ChartsDefsOptionsReverseArrow = {
-  type t
-  external fromASTNode: astNode => t = "%identity"
-  external asASTNode: t => (astNode) = "%identity"
-  external fromDefsReverseArrowOptions: defsReverseArrowOptions => t = "%identity"
-  external asDefsReverseArrowOptions: t => (defsReverseArrowOptions) = "%identity"
-}
-type chartsDefsOptionsArrow_t
-type rec defsArrowOptions = {
-  attributes?: defsArrowAttributesOptions,
-  children?: array<defsOptions>,
-  tagName?: string,
-}
-and defsOptions = {
-  arrow?: chartsDefsOptionsArrow_t,
-  @as("reverse-arrow") reverseArrow?: ChartsDefsOptionsReverseArrow.t,
-}
-module ChartsDefsOptionsArrow = {
-  type t = chartsDefsOptionsArrow_t
-  external fromASTNode: astNode => t = "%identity"
-  external asASTNode: t => (astNode) = "%identity"
-  external fromDefsArrowOptions: defsArrowOptions => t = "%identity"
-  external asDefsArrowOptions: t => (defsArrowOptions) = "%identity"
-}
-type dragDropGuideBoxOptionsObject = {
-  className?: string,
-  color?: string,  // ⚪ loose — was `ColorType`
-  cursor?: string,
-  lineColor?: string,
-  lineWidth?: float,
-  zIndex?: int,
-}
-type plotOptionsSeriesDragDropGuideBoxOptions = {
-  default?: dragDropGuideBoxOptionsObject,
-}
-type exportingButtonsOptionsObject = {
-  align?: alignValue,
-  buttonSpacing?: float,
-  className?: string,
-  enabled?: bool,
-  height?: float,
-  menuClassName?: string,
-  menuItems?: array<string>,
-  onclick?: JsFn.t,
-  symbol?: string,
-  symbolFill?: ColorType.t,
-  symbolSize?: float,
-  symbolStroke?: string,
-  symbolStrokeWidth?: float,
-  symbolX?: float,
-  symbolY?: float,
-  text?: string,
-  theme?: exportingButtonsContextButtonThemeOptions,
-  titleKey?: string,
-  useHTML?: bool,
-  verticalAlign?: verticalAlignValue,
-  width?: float,
-  x?: float,
-  y?: float,
-}
-type exportingButtonsOptions = {
-  contextButton?: exportingButtonsOptionsObject,
-}
-type exportingMenuItemDefinitionsDownloadCSVOptions = {
-  textKey?: string,
-}
-type exportingMenuItemDefinitionsSeparatorOptions = {
-  separator?: bool,
-}
-type exportingMenuItemDefinitionsOptions = {
-  downloadCSV?: exportingMenuItemDefinitionsDownloadCSVOptions,
-  downloadJPEG?: exportingMenuItemDefinitionsDownloadCSVOptions,
-  downloadPDF?: exportingMenuItemDefinitionsDownloadCSVOptions,
-  downloadPNG?: exportingMenuItemDefinitionsDownloadCSVOptions,
-  downloadSVG?: exportingMenuItemDefinitionsDownloadCSVOptions,
-  downloadXLS?: exportingMenuItemDefinitionsDownloadCSVOptions,
-  printChart?: exportingMenuItemDefinitionsDownloadCSVOptions,
-  separator?: exportingMenuItemDefinitionsSeparatorOptions,
-  viewData?: exportingMenuItemDefinitionsDownloadCSVOptions,
-  viewFullscreen?: exportingMenuItemDefinitionsDownloadCSVOptions,
-}
-type exportingMenuObject<'a, 'b, 'c> = {
-  onclick?: @this ((chart<'a, 'b, 'c>, option<string>, option<chart<'a, 'b, 'c>>) => option<bool>),  // ⚠️ REVIEW — was `Event | Dictionary<any>` — match the real type by hand
-  separator?: bool,
-  text?: string,
-  textKey?: string,
-}
-module ChartsSeriesMapDataGeometryOptionsCoordinates = {
-  type t
-  external fromArray: array<float> => t = "%identity"
-  external asArray: t => (array<float>) = "%identity"
-  external fromLonLatArrays: array<array<float>> => t = "%identity"
-  external asLonLatArrays: t => (array<array<float>>) = "%identity"
-}
-type seriesMapDataGeometryOptions = {
-  coordinates?: array<ChartsSeriesMapDataGeometryOptionsCoordinates.t>,
-  @as("type") type_?: mapGeometryTypeValue,
-}
-module ChartsSeriesMapDataOptionsGeometry = {
-  type t
-  external fromJSON: JSON.t => t = "%identity"
-  external asJSON: t => (JSON.t) = "%identity"
-  external fromSeriesMapDataGeometryOptions: seriesMapDataGeometryOptions => t = "%identity"
-  external asSeriesMapDataGeometryOptions: t => (seriesMapDataGeometryOptions) = "%identity"
-}
-type seriesMapDataOptions<'a, 'b, 'c> = {
-  color?: ColorType.t,
-  dataLabels?: dataLabelsOptions,
-  drilldown?: string,
-  events?: pointEventsOptionsObject<'a, 'b, 'c>,
-  geometry?: ChartsSeriesMapDataOptionsGeometry.t,
-  id?: string,
-  labelrank?: float,
-  middleX?: float,
-  middleY?: float,
-  name?: string,
-  path?: string,
-  states?: seriesStatesOptionsObject,
-  value?: float,
-}
-type blendChartProps<'a, 'b, 'c> = {
-  allowChartUpdate?: bool,
-  constructorType?: chartsBlendChartPropsConstructorType,
-  containerProps?: Dict.t<string>,  // 🛑 BROKEN — contains `any`
-  highcharts?: InstanceTypes.highchartsModule,
-  immutable?: bool,
-  options?: options<'a, 'b, 'c>,
-  updateArgs?: array<bool>,
-  callback?: chart<'a, 'b, 'c> => unit,
-}
-@set_index external blendChartPropsSet: (blendChartProps<'a, 'b, 'c>, string, JSON.t) => unit = ""
-type chartsChartTokensTypeHeaderPaddingConfig = {
-  x: string,
-  y: string,
-}
-type chartsChartTokensTypeHeaderSlotsConfig = {
-  gap: string,
-}
-type chartsChartTokensTypeHeaderConfig = {
-  padding: chartsChartTokensTypeHeaderPaddingConfig,
-  backgroundColor: string,
-  borderBottom: string,
-  borderRadius: string,
-  slots: chartsChartTokensTypeHeaderSlotsConfig,
-}
-type chartsChartTokensTypeContentLegendDropdownConfig = {
-  maxHeight: string,
-}
-type chartsChartTokensTypeContentLegendItemColorConfig = {
-  default: string,
-  hover: string,
-  active: string,
-  total: string,
-}
-type chartsChartTokensTypeContentLegendItemConfig = {
-  gap: string,
-  color: chartsChartTokensTypeContentLegendItemColorConfig,
-  fontSize: string,
-  fontWeight: string,
-}
-type chartsChartTokensTypeContentLegendConfig = {
-  gap: string,
-  dropdown: chartsChartTokensTypeContentLegendDropdownConfig,
-  item: chartsChartTokensTypeContentLegendItemConfig,
-}
-type chartsChartTokensTypeContentPaddingConfig = {
-  top: string,
-  right: string,
-  bottom: string,
-  left: string,
-}
-type chartsChartTokensTypeContentConfig = {
-  legend: chartsChartTokensTypeContentLegendConfig,
-  padding: chartsChartTokensTypeContentPaddingConfig,
-  gap: string,
-  backgroundColor: string,
-}
-type chartTokensType = {
-  border: string,
-  borderRadius: string,
-  header: chartsChartTokensTypeHeaderConfig,
-  content: chartsChartTokensTypeContentConfig,
-}
-type responsiveChartTokens = {
-  sm: chartTokensType,
-  lg: chartTokensType,
-}
-@unboxed type stringOrChartsColorsConfig = Str(string) | ChartsColorsConfig(chartsColorsConfig)

@@ -821,6 +821,75 @@ function collectRefKeys(t, out) {
     if (Array.isArray(t.params)) t.params.forEach((p) => collectRefKeys(p, out))
 }
 
+/** Deep-collect EVERY registry key referenced anywhere in an IR object tree — not just the type-node
+ *  child slots `collectRefKeys` knows (it skips record `fields`, `baseSpreads`, etc.). Used by the
+ *  reachability sweep, where under-collecting would drop a live type. Cycle-safe. (#191) */
+function collectAllRefKeys(node, out, seen) {
+    if (!node || typeof node !== 'object' || seen.has(node)) return
+    seen.add(node)
+    if (node.kind === 'typeRef' && node.key) out.add(node.key)
+    for (const k in node) {
+        const v = node[k]
+        if (v && typeof v === 'object') collectAllRefKeys(v, out, seen)
+    }
+}
+
+/** Post-traversal reachability sweep (#191, #178). After all IR trees are final but BEFORE naming is
+ *  stabilized, drop any registered entry UNREACHABLE from the emitted roots (component props, function
+ *  signatures, class members). A speculative build that bailed — a return-only generic whose return was
+ *  flagged (`jsonBoxed<T>(): BoxOf<T>`), or a rejected `@unboxed` classification (#178) — strands the
+ *  record it registered; nothing references it, so it must never reach a `*Types.res`. Reachability is
+ *  KEY-based (every module-mode ref is keyed via `refTo`), so an entry reached only through a keyed ref
+ *  whose home is late-bound (#128) is never wrongly dropped. Running before `stabilizeNames` also lets a
+ *  live sibling reclaim the clean base name the orphan squatted (`readBox(): BoxOf<string>` -> `boxOf`,
+ *  not `boxOfV1hnll`). `nominal` entries (class instance types) are roots: a class export emits its
+ *  `type <name>` even when nothing else references it. */
+function sweepUnreachableEntries(shared, rootKeys) {
+    const reachable = new Set()
+    const stack = [...rootKeys]
+    // A class's instance type is emitted for the class itself — anchor every nominal as a root.
+    for (const e of shared.entries) if (e.kind === 'nominal') stack.push(e.key)
+    while (stack.length) {
+        const k = stack.pop()
+        if (reachable.has(k)) continue
+        reachable.add(k)
+        const e = shared.byKey.get(k)
+        if (!e) continue
+        const childKeys = new Set()
+        const seen = new Set()
+        for (const t of entryChildTypes(e)) collectAllRefKeys(t, childKeys, seen)
+        for (const d of e.deps || []) childKeys.add(d) // relinked cross-refs the tree walk can't see
+        for (const ck of childKeys) if (!reachable.has(ck)) stack.push(ck)
+    }
+    if (reachable.size >= shared.entries.length) return [] // nothing unreachable — the common case
+    const dropped = []
+    shared.entries = shared.entries.filter((e) => {
+        if (reachable.has(e.key)) return true
+        dropped.push(e)
+        return false
+    })
+    for (const e of dropped) {
+        shared.byKey.delete(e.key)
+        shared.names.delete(e.name) // free the squatted base name so a live sibling can reclaim it
+        for (const [sig, canon] of shared.bySig) if (canon === e) shared.bySig.delete(sig)
+    }
+    // Reclaim: a survivor that `uniqueName` counter-bumped off a base the orphan squatted takes the
+    // now-free clean base (`boxOf2` -> `boxOf`), else a churny counter lingers where nothing collides.
+    // stabilizeNames won't (a single-shape group keeps its current name); keyed refs (module mode) then
+    // resolve to the entry's current name at emit. Deterministic: lowest current name per freed base.
+    const freed = [...new Set(dropped.map((e) => e.base).filter(Boolean))].sort()
+    for (const base of freed) {
+        if (shared.names.has(base) || shared.compatNames?.has(base) || RESERVED_TYPE_NAMES.has(base)) continue
+        const re = new RegExp(`^${base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\d+$`)
+        const cand = shared.entries.filter((e) => e.base === base && re.test(e.name)).sort((a, b) => a.name.localeCompare(b.name))[0]
+        if (!cand) continue
+        shared.names.delete(cand.name)
+        shared.names.add(base)
+        cand.name = base
+    }
+    return dropped
+}
+
 /** Collect the ReScript type-variable names ('a, 'b) an IR type tree uses, so a record
  *  containing them can be emitted parameterized (`type foo<'a> = {…}`). */
 function collectTypeVars(t, out) {
@@ -2925,6 +2994,29 @@ export function extractModule(entryFile, opts = {}) {
             if (m.ret) syncRefTparams(m.ret, shared.byKey, new Set())
         }
         for (const g of c.ir.getters || []) if (g.type) syncRefTparams(g.type, shared.byKey, new Set())
+    }
+
+    // #191/#178: reachability sweep. A speculative build that bailed (return-only generic flagged, or a
+    // rejected @unboxed classification) can strand the record it registered. Collect the keys the emitted
+    // roots reference, then drop every entry unreachable from them — BEFORE naming, so a live sibling
+    // reclaims any base name the orphan squatted. Key-based, so a late-bound keyed ref never loses a type.
+    {
+        // Deep-walk every reference-bearing subtree of the emitted units. Props can be inline records
+        // (fields hold refs), a component can spread a shared base (`baseSpreads[].ref`), a function
+        // nests under `sig`/`value` — a shallow field-walk misses these and would drop live types.
+        const rootKeys = new Set(), seen = new Set()
+        const addRoot = (n) => collectAllRefKeys(n, rootKeys, seen)
+        for (const c of components) {
+            for (const p of c.ir.props || []) addRoot(p.type)
+            for (const b of c.ir.baseSpreads || []) addRoot(b.ref)
+        }
+        for (const f of functions) { addRoot(f.ir.sig); addRoot(f.ir.value); addRoot(f.ir.context) } // context: React.Context.t<value>
+        for (const c of classes) {
+            addRoot(c.ir.ctor)
+            for (const m of c.ir.methods || []) addRoot(m)
+            for (const g of c.ir.getters || []) addRoot(g.type)
+        }
+        sweepUnreachableEntries(shared, rootKeys)
     }
 
     // #90 residual: give same-base distinct shapes an order-INDEPENDENT intrinsic name, then resync

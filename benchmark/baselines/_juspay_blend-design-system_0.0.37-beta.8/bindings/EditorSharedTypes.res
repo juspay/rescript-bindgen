@@ -1627,7 +1627,7 @@ type componentTokenType = {
   @as("STAT_CARD") statCard?: StatCardTypes.responsiveStatCardTokens,
   @as("PROGRESS_BAR") progressBar?: ProgressBarTypes.responsiveProgressBarTokens,
   @as("DRAWER") drawer?: DrawerTypes.responsiveDrawerTokens,
-  @as("CHARTS") charts?: HighchartsSharedTypes.responsiveChartTokens,
+  @as("CHARTS") charts?: ChartsTypes.responsiveChartTokens,
   @as("SNACKBAR") snackbar?: SnackbarTypes.responsiveSnackbarTokens,
   @as("STEPPER") stepper?: StepperTypes.responsiveStepperTokens,
   @as("KEYVALUEPAIR") keyvaluepair?: KeyValuePairTypes.responsiveKeyValuePairTokens,
@@ -1707,7 +1707,7 @@ type contextThemeContextTypeComponentTokensConfig = {
   @as("STAT_CARD") statCard: StatCardTypes.responsiveStatCardTokens,
   @as("PROGRESS_BAR") progressBar: ProgressBarTypes.responsiveProgressBarTokens,
   @as("DRAWER") drawer: DrawerTypes.responsiveDrawerTokens,
-  @as("CHARTS") charts: HighchartsSharedTypes.responsiveChartTokens,
+  @as("CHARTS") charts: ChartsTypes.responsiveChartTokens,
   @as("SNACKBAR") snackbar: SnackbarTypes.responsiveSnackbarTokens,
   @as("STEPPER") stepper: StepperTypes.responsiveStepperTokens,
   @as("KEYVALUEPAIR") keyvaluepair: KeyValuePairTypes.responsiveKeyValuePairTokens,
@@ -1899,7 +1899,7 @@ type embeddedSingleSelectOptions = {
   menuAlignment: SelectV2Types.selectV2Alignment,
   menuSideOffset: float,
   menuAlignOffset: float,
-  defaultSingleSelectGroupPosition: HighchartsSharedTypes.chartsSeriesOrganizationOptionsHangingSide,
+  defaultSingleSelectGroupPosition: ChartsTypes.chartsSeriesOrganizationOptionsHangingSide,
 }
 type inputsV2FOCUSRINGSTYLESConfig = {
   boxShadow: string,
@@ -2603,7 +2603,7 @@ type iEditorStickyScrollOptions = {
 type iEditorMinimapOptions = {
   enabled?: bool,
   autohide?: codeEditorV2IEditorMinimapOptionsAutohide,
-  side?: HighchartsSharedTypes.chartsSeriesOrganizationOptionsHangingSide,
+  side?: ChartsTypes.chartsSeriesOrganizationOptionsHangingSide,
   size?: codeEditorV2IEditorMinimapOptionsSize,
   showSlider?: codeEditorV2IEditorMinimapOptionsShowSlider,
   renderCharacters?: bool,

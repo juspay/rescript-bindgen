@@ -1,0 +1,3 @@
+type boxOf = {
+  v: string,
+}

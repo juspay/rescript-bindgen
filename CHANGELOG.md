@@ -7,6 +7,13 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **Return-only generic no longer strands an orphan record** (#191) — a function whose type parameter
+  appears only in its return (`jsonBoxed<T>(): BoxOf<T>`) has that return flagged (it can't round-trip),
+  but the record `classify` registered while building the discarded return was left in the output as an
+  unreferenced type. A post-traversal reachability sweep now drops any registered type unreachable from
+  the emitted roots, and a concrete sibling reclaims the clean base name (`readBox(): BoxOf<string>` →
+  `boxOf`, not `boxOfV1hnll`). Key-based, so a late-bound keyed ref never loses a live type.
+
 - **Large `@unboxed` unions no longer leak every member into the public type name** (#190) — a named
   union with more than four runtime members now follows its upstream alias (`StatusCode` →
   `statusCode`) instead of producing Hono's 60-member `v100OrV101Or…OrV511OrV1`. The exact previous

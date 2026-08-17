@@ -1,6 +1,6 @@
 type props<'a, 'b, 'c> = {
   allowChartUpdate?: bool,
-  constructorType?: HighchartsSharedTypes.chartsBlendChartPropsConstructorType,
+  constructorType?: ChartsTypes.chartsBlendChartPropsConstructorType,
   containerProps?: Dict.t<'a>,
   highcharts?: InstanceTypes.highchartsModule,
   immutable?: bool,

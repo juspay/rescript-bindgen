@@ -9,7 +9,7 @@
 @module("@juspay/blend-design-system") external normalizeBreadcrumbItems: (array<BreadcrumbTypes.breadcrumbItemType>) => array<BreadcrumbTypes.breadcrumbItemType> = "normalizeBreadcrumbItems"
 @module("@juspay/blend-design-system") external getButtonTokens: (TokensTypes.foundationTokenType) => ButtonTypes.responsiveButtonTokens = "getButtonTokens"
 @module("@juspay/blend-design-system") external getCardTokens: (TokensTypes.foundationTokenType) => CardTypes.responsiveCardTokens = "getCardTokens"
-@module("@juspay/blend-design-system") external getChartTokens: (TokensTypes.foundationTokenType) => HighchartsSharedTypes.responsiveChartTokens = "getChartTokens"
+@module("@juspay/blend-design-system") external getChartTokens: (TokensTypes.foundationTokenType) => ChartsTypes.responsiveChartTokens = "getChartTokens"
 @module("@juspay/blend-design-system") external blendChartBaseInstance: InstanceTypes.highchartsModule = "BlendChartBaseInstance"
 @module("@juspay/blend-design-system") external getChatInputTokens: (TokensTypes.foundationTokenType) => ChatInputTypes.responsiveChatInputTokensType = "getChatInputTokens"
 @module("@juspay/blend-design-system") external validateColumnData: DataTableTypes.dataTableValidateColumnDataConfig = "validateColumnData"

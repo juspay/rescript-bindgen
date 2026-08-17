@@ -692,6 +692,18 @@ blend's `point.options` (the `pointOptionsObject` field disappeared) and `option
 `string` placeholder) — with top-level bucket counts unmoved, so the loss was invisible to the
 metrics. Orphan removal belongs in a reachability sweep **after** traversal, not a rollback during it.
 
+**That sweep now exists (`sweepUnreachableEntries`, #191).** After every IR tree is final but BEFORE
+`stabilizeNames`, it walks the emitted roots (component props + `baseSpreads`, function/const/context
+signatures, class members) and drops any registered entry unreachable from them. It is **key-based**
+(every module-mode ref is keyed via `refTo`), so a type reached only through a keyed ref whose home is
+late-bound (#128) is never dropped; a deep walk (`collectAllRefKeys`) covers refs inside inline-record
+fields and spreads that the shallow `collectRefKeys` skips. Running it before naming also lets a live
+sibling reclaim a base name an orphan squatted (`jsonBoxed<T>(): BoxOf<T>` flags its return and strands
+`boxOf<'a>`; the sweep drops it and `readBox(): BoxOf<string>` reclaims the clean `boxOf`). Removing an
+orphan can also dissolve a spurious SCC merge it was wedged into, giving cleaner module homes. This is
+the general mechanism #178 called for; the per-site method-path rollback stays as a cheap early exit.
+Fixture: [`return-only-generic-orphan`](../test/golden/cases/return-only-generic-orphan). (#191)
+
 `opaqueUnion` also gained the **structural dedup** the other builders always had (#180): it registered
 unconditionally, so two `type.id`s widening to the same module each got their own — blend emitted
 `ColumnDefinition` and `ColumnDefinition2` with byte-identical bodies. Each `module` declares its own

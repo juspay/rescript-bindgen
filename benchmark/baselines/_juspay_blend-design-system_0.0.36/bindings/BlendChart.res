@@ -1,7 +1,7 @@
 type props<'a, 'b, 'c, 't7> = {
   ref?: React.ref<Nullable.t<DistTypes.highchartsReactRefObject<'a, 'b, 'c>>>,
   allowChartUpdate?: bool,
-  constructorType?: HighchartsSharedTypes.chartsBlendChartPropsConstructorType,
+  constructorType?: ChartsTypes.chartsBlendChartPropsConstructorType,
   containerProps?: Dict.t<'t7>,
   highcharts?: InstanceTypes.highchartsModule,
   immutable?: bool,
