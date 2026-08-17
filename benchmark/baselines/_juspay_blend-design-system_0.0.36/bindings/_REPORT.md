@@ -4,7 +4,7 @@
 
 **55** function binding(s) → `BlendDesignSystemBindings.res`.
 
-**2658** shared types deduplicated into **63** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**2638** shared types deduplicated into **64** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 🔤 Constructor name collisions
 
@@ -16,16 +16,12 @@ A bare constant, an identity payload and a `@tag`-injected object are different 
 
 | Module | Constructor | Conflicting runtime representations | Renamed to |
 |---|---|---|---|
-| `HighchartsSharedTypes` | `Point` | `"point"` / `(payload, passed through)` / `"Point"` | `PointConstructorType`, `PointObjectScope`, `PointPointArray` |
-| `HighchartsSharedTypes` | `Pointer` | `"pointer"` / `"Pointer"` | `PointerConstructorType`, `PointerCursorValue` |
-| `HighchartsSharedTypes` | `Polygon` | `"polygon"` / `"Polygon"` | `PolygonTypeValue`, `PolygonInterpolationValue` |
-| `HighchartsSharedTypes` | `Series` | `"series"` / `"Series"` | `SeriesConstructorType`, `SeriesWithinValue` |
+| `ChartsTypes` | `Point` | `"point"` / `"Point"` | `PointConstructorType`, `PointObjectScope` |
 | `HighchartsSharedTypes` | `Solid` | `"Solid"` / `"solid"` | `SolidStyleValue`, `SolidShapeValue` |
-| `HighchartsSharedTypes` | `TriangleDown` | `"triangle-down"` / `"triangleDown"` | `TriangleDownConstructorType`, `TriangleDownKeyValue` |
-| `HighchartsSharedTypes` | `Value` | `""` / `"!="` / `"value"` | `ValueAnnotationDraggable`, `ValuePointSetState`, `ValueSeriesSetState`, `ValueOptionsCompare`, `ValueOptionsGapUnit`, `ValueOptionsOperator` |
+| `HighchartsSharedTypes` | `Value` | `""` / `"!="` / `"value"` | `ValueAnnotationDraggable`, `ValueOptionsCompare`, `ValueGapUnit`, `ValueOptionsOperator` |
 | `DataTableTypes` | `DateRange` | `"date_range"` / `"dateRange"` | `DateRangeColumnType`, `DateRangeTypeType`, `DateRangeFilterComponent` |
 
-### Left as-is — same name, same runtime representation (113)
+### Left as-is — same name, same runtime representation (109)
 
 These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
 
@@ -34,7 +30,8 @@ These produce the same runtime shape whichever definition wins, so renaming them
 - `CommonTypes`: `Arr`, `Auto`, `Bool`, `Fn`, `Num`, `Str`, `StrArr`
 - `TagsTypes`: `Lg`, `Md`, `Sm`, `Xs`
 - `TooltipTypes`: `Left`, `Right`
-- `HighchartsSharedTypes`: `All`, `Allow`, `Alt`, `AnnotationMockPointOptionsObject`, `Arc`, `Area`, `Arr`, `Auto`, `Bool`, `Bottom`, `Callout`, `Category`, `Center`, `Chart`, `Circle`, `Close`, `CssObject`, `Ctrl`, `Day`, `Diamond`, `End`, `Flap`, `Fn`, `High`, `Horizontal`, `Hover`, `Inactive`, `Inside`, `Justify`, `Left` … +35 more
+- `ChartsTypes`: `Chart`, `End`, `Hover`, `Inactive`, `Normal`, `Offset`, `Select`, `Top`, `Value`
+- `HighchartsSharedTypes`: `All`, `Allow`, `Alt`, `AnnotationMockPointOptionsObject`, `Arc`, `Area`, `Arr`, `Auto`, `Bool`, `Callout`, `Category`, `Center`, `Chart`, `Circle`, `Close`, `CssObject`, `Ctrl`, `Day`, `Diamond`, `Fn`, `High`, `Horizontal`, `Inside`, `Justify`, `Left`, `Linear`, `Logarithmic`, `Low`, `Meta`, `Middle` … +22 more
 - `DateRangePickerTypes`: `Custom`
 - `InputsTypes`: `Left`, `Lg`, `Md`, `Right`, `Sm`
 - `DataTableTypes`: `Avatar`, `Custom`, `Date`, `Decimal`, `Dropdown`, `Error`, `Multiselect`, `Number`, `Percentage`, `Primary`, `Progress`, `ReactElement`, `Secondary`, `Select`, `Slider`, `Success`, `Tag`, `Text`, `Warning`

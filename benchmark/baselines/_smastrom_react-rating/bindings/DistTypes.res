@@ -54,19 +54,3 @@ type sharedProps = {
 type readOnlyProps = {
   halfFillMode?: hF,
 }
-type inputProps<'a> = {
-  onChange?: float => 'a,
-  onHoverChange?: float => option<unit => unit>,
-  onBlur?: option<option<option<option<option<option<option<string> => unit> => unit> => unit> => unit> => unit> => unit> => unit,  // ⚪ loose — was `FocusEvent_2`
-  onFocus?: option<option<option<option<option<option<option<string> => unit> => unit> => unit> => unit> => unit> => unit> => unit,  // ⚪ loose — was `FocusEvent_2`
-  isDisabled?: bool,
-  resetOnSecondClick?: bool,
-  transition?: transitions,
-  isRequired?: bool,
-  invisibleLabel?: string,
-  invisibleItemLabels?: array<string>,
-  visibleLabelId?: string,
-  visibleItemLabelIds?: array<string>,
-  resetLabel?: string,
-  preventDefault?: distInputPropsPreventDefault,
-}

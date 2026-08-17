@@ -1,45 +1,32 @@
-# Binding report — `@smastrom/react-rating@1.5.0`
+# Binding report — `demo`
 
-**1** components · ✅ **1** usable · 🔍 **0** need review · 🛑 **0** broken
+**0** components · ✅ **0** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**6** function binding(s) → `ReactRatingBindings.res`.
+**1** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**11** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
-
-## 🔤 Constructor name collisions
-
-ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
-
-### Left as-is — same name, same runtime representation (1)
-
-These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
-
-- `DistTypes`: `None`
+**3** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
 | Kind | Package | Provides | Status |
 |------|---------|----------|--------|
 | required | `@rescript/react + stdlib` | JsxDOM, Dom, React, ReactEvent | ✓ present |
-| optional | `rescript-webapi` | File, FileList | ✓ present → used |
+| optional | `rescript-webapi` | File, FileList | ✗ not installed |
 
-## 🔧 Function bindings
+## 🏛 Class modules
 
-Standalone function exports, emitted as positional `@module external` bindings in `ReactRatingBindings.res`.
+Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new` constructor, `@send` methods, `@get` properties).
 
-- `Heart`
-- `RoundedStar`
-- `Star`
-- `StickerStar`
-- `ThinRoundedStar`
-- `ThinStar`
+| Class | Constructor | Methods | Properties |
+|-------|-------------|---------|------------|
+| `Widget` | ✓ | 1 | 0 |
 
 ## ✅ Usable
 
 These compile and every prop is bound type-safely — use them directly.
 _(n loose)_ = some props widened to `string`; they still work, just loosely typed.
 
-- Rating
+_(none)_
 
 ## ⚪ Loosely typed (widened to `string`)
 

@@ -151,7 +151,7 @@ type chartDataPoint = {
   name: string,
 }
 type statCardAxisConfig = {
-  @as("type") type_?: HighchartsSharedTypes.axisType,
+  @as("type") type_?: ChartsTypes.axisType,
   tickFormatter?: CommonTypes.stringOrNumber => string,
   dateOnly?: bool,
   useUTC?: bool,
