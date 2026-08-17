@@ -133,9 +133,18 @@ try {
             return JSON.parse(readFileSync(scopeManifest, 'utf-8'))
         }
         genScoped('scopeA')
-        const afterB = Object.keys(genScoped('scopeB').publicTypes)
+        const b = genScoped('scopeB').publicTypes
+        const afterB = Object.keys(b)
         assert(afterB.some((i) => i.startsWith('scope:scopeA|')), 'a scope change preserves the prior scope\'s rows (not wiped)')
         assert(afterB.some((i) => i.startsWith('scope:scopeB|')), 'the new scope\'s rows are added alongside the old')
+        // Name STABILITY, not just row preservation: reservation is per-scope, so scopeB's identities
+        // get the SAME clean leaf names as scopeA's — cross-scope names must not force `…2` suffixes.
+        const nameIn = (scope, marker) => {
+            const hit = Object.entries(b).find(([id]) => id.startsWith(`scope:${scope}|`) && id.includes(`|named:${marker}`))
+            return hit && hit[1].name
+        }
+        assert(nameIn('scopeA', 'FirstConfig') && nameIn('scopeA', 'FirstConfig') === nameIn('scopeB', 'FirstConfig'),
+            'a second scope reuses the same clean leaf name, never a cross-scope `…2` suffix')
         const afterA = Object.keys(genScoped('scopeA').publicTypes)
         assert(afterA.some((i) => i.startsWith('scope:scopeB|')), 'returning to the first scope still preserves the other scope\'s rows')
     }

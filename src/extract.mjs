@@ -597,9 +597,15 @@ function applyPublicNameRegistry(shared, prior = {}) {
     finalizePublicIds(shared, prior)
     const entries = [...shared.entries].sort((a, b) => (a.publicIds[0] || '').localeCompare(b.publicIds[0] || ''))
     const priorRows = prior && typeof prior === 'object' ? prior : {}
-    const reserved = new Map() // public leaf name -> prior identity ids that own it
+    // Name reservation is PER-SCOPE. Rows from other `@module` scopes (scope-prefixed IDs) share the
+    // manifest but never share this run's output — same-named files in one out-dir overwrite, so a
+    // cross-scope name can't physically collide. Reserving them would only force THIS scope's clean
+    // names to churn to `…2` on a scope drift (the exact churn #190 exists to prevent). Locking is
+    // unaffected: it matches exact `publicIds`, never cross-scope. (#190)
+    const scopePrefix = `scope:${shared.publicScope || '<module>'}|`
+    const reserved = new Map() // public leaf name -> prior identity ids that own it (current scope only)
     for (const [id, row] of Object.entries(priorRows)) {
-        if (!row || typeof row !== 'object') continue
+        if (!row || typeof row !== 'object' || !id.startsWith(scopePrefix)) continue
         for (const name of [row.name, ...(row.aliases || [])].filter(Boolean)) {
             if (!reserved.has(name)) reserved.set(name, new Set())
             reserved.get(name).add(id)
