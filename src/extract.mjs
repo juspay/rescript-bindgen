@@ -3046,7 +3046,14 @@ export function extractModule(entryFile, opts = {}) {
         // (roots + remaining entries) so a dropped `JsFn.t` doesn't leave an orphan `JsFn.res`.
         if (shared.usesJsFn) {
             const s2 = new Set()
-            const survivors = [...roots, ...shared.entries.flatMap(entryChildTypes)]
+            // `entryChildTypes` returns a record's FIELDS but not its `indexValue` (the `@set_index`
+            // value type, emit.mjs), so a `Function`-typed index signature — `[k: string]: Function` ->
+            // `@set_index …Set: (rec, string, JsFn.t)` — would be missed and drop a still-needed JsFn.res.
+            const survivors = [
+                ...roots,
+                ...shared.entries.flatMap(entryChildTypes),
+                ...shared.entries.map((e) => e.indexValue).filter(Boolean),
+            ]
             shared.usesJsFn = survivors.some((t) => irUsesJsFn(t, s2))
         }
     }
