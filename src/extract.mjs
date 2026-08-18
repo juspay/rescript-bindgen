@@ -834,6 +834,18 @@ function collectAllRefKeys(node, out, seen) {
     }
 }
 
+/** Does an IR tree reach a `JsFn.t` node? `JsFn.t` is a hand-authored raw node (`{kind:'raw',
+ *  res:'JsFn.t'}`, from a bare `Function`), NOT a keyed registry ref — so the reachability sweep can't
+ *  see it. Used to recompute `usesJsFn` from the SURVIVORS after the sweep, so a `JsFn.t` stranded in a
+ *  dropped orphan doesn't leave an unreferenced `JsFn.res`. Cycle-safe. (#178) */
+function irUsesJsFn(node, seen) {
+    if (!node || typeof node !== 'object' || seen.has(node)) return false
+    seen.add(node)
+    if (node.kind === 'raw' && typeof node.res === 'string' && node.res.includes('JsFn')) return true
+    for (const k in node) { const v = node[k]; if (v && typeof v === 'object' && irUsesJsFn(v, seen)) return true }
+    return false
+}
+
 /** Post-traversal reachability sweep (#191, #178). After all IR trees are final but BEFORE naming is
  *  stabilized, drop any registered entry UNREACHABLE from the emitted roots (component props, function
  *  signatures, class members). A speculative build that bailed — a return-only generic whose return was
@@ -3007,25 +3019,36 @@ export function extractModule(entryFile, opts = {}) {
         // Deep-walk every reference-bearing subtree of the emitted units. Props can be inline records
         // (fields hold refs), a component can spread a shared base (`baseSpreads[].ref`), a function
         // nests under `sig`/`value` — a shallow field-walk misses these and would drop live types.
-        const rootKeys = new Set(), seen = new Set()
-        const addRoot = (n) => collectAllRefKeys(n, rootKeys, seen)
+        const roots = []
+        const pushRoot = (n) => { if (n) roots.push(n) }
         for (const c of components) {
-            for (const p of c.ir.props || []) addRoot(p.type)
-            for (const b of c.ir.baseSpreads || []) addRoot(b.ref)
+            for (const p of c.ir.props || []) pushRoot(p.type)
+            for (const b of c.ir.baseSpreads || []) pushRoot(b.ref)
         }
-        for (const f of functions) { addRoot(f.ir.sig); addRoot(f.ir.value); addRoot(f.ir.context) } // context: React.Context.t<value>
+        for (const f of functions) { pushRoot(f.ir.sig); pushRoot(f.ir.value); pushRoot(f.ir.context) } // context: React.Context.t<value>
         for (const c of classes) {
-            addRoot(c.ir.ctor)
-            for (const m of c.ir.methods || []) addRoot(m)
-            for (const g of c.ir.getters || []) addRoot(g.type)
+            pushRoot(c.ir.ctor)
+            for (const m of c.ir.methods || []) pushRoot(m)
+            for (const g of c.ir.getters || []) pushRoot(g.type)
             // A type reachable ONLY through a write-only setter or a static member must count as a root
             // too — each emits a `@set`/`@scope` external — else its shared type is dropped and the
             // emitted external dangles. (Getters+setters usually pair up, hiding this behind the getter.)
-            for (const s of c.ir.setters || []) addRoot(s)
-            for (const m of c.ir.staticMethods || []) addRoot(m)
-            for (const v of c.ir.staticValues || []) addRoot(v)
+            for (const s of c.ir.setters || []) pushRoot(s)
+            for (const m of c.ir.staticMethods || []) pushRoot(m)
+            for (const v of c.ir.staticValues || []) pushRoot(v)
         }
+        const rootKeys = new Set(), seen = new Set()
+        for (const r of roots) collectAllRefKeys(r, rootKeys, seen)
         sweepUnreachableEntries(shared, rootKeys)
+        // #178: `JsFn.t` (a raw node from a bare `Function`, not a keyed ref) can be stranded when its
+        // owner entry is swept — e.g. `makeBox<T>(): Box<T>` flags its return, and the `Box` record with
+        // a `cb: Function` field is dropped, but `usesJsFn` stayed set. Recompute it from the SURVIVORS
+        // (roots + remaining entries) so a dropped `JsFn.t` doesn't leave an orphan `JsFn.res`.
+        if (shared.usesJsFn) {
+            const s2 = new Set()
+            const survivors = [...roots, ...shared.entries.flatMap(entryChildTypes)]
+            shared.usesJsFn = survivors.some((t) => irUsesJsFn(t, s2))
+        }
     }
 
     // #90 residual: give same-base distinct shapes an order-INDEPENDENT intrinsic name, then resync

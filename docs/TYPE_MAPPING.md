@@ -715,6 +715,14 @@ roots, not just ctor/methods/getters; the `class-setter-static-reachable` fixtur
 Fixtures: [`return-only-generic-orphan`](../test/golden/cases/return-only-generic-orphan),
 [`class-setter-static-reachable`](../test/golden/cases/class-setter-static-reachable). (#191)
 
+`shared.usesJsFn` is recomputed from the survivors AFTER the sweep (#178). `JsFn.t` (from a bare
+`Function`) is a hand-authored raw node, not a keyed registry entry, so the sweep can't see it — and a
+bare `Function` sets `usesJsFn` while building a type that may later be discarded (`makeBox<T>(): Box<T>`
+flags its return, dropping the `Box` record and its `cb: Function` field). Left alone, `usesJsFn` would
+stay set and emit an unreferenced `JsFn.res`; scanning the surviving roots + entries for a `JsFn.t` node
+and clearing the flag when none remain keeps the emitted file set orphan-free. Fixture:
+[`speculative-jsfn-orphan`](../test/golden/cases/speculative-jsfn-orphan). (#178)
+
 `opaqueUnion` also gained the **structural dedup** the other builders always had (#180): it registered
 unconditionally, so two `type.id`s widening to the same module each got their own — blend emitted
 `ColumnDefinition` and `ColumnDefinition2` with byte-identical bodies. Each `module` declares its own
