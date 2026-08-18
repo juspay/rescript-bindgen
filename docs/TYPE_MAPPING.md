@@ -694,15 +694,26 @@ metrics. Orphan removal belongs in a reachability sweep **after** traversal, not
 
 **That sweep now exists (`sweepUnreachableEntries`, #191).** After every IR tree is final but BEFORE
 `stabilizeNames`, it walks the emitted roots (component props + `baseSpreads`, function/const/context
-signatures, class members) and drops any registered entry unreachable from them. It is **key-based**
+signatures, and **every class member that emits a binding** — the `@new` ctor, `@send` methods, `@get`
+getters, `@set` write-only setters, and `@scope` statics) and drops any registered entry unreachable
+from them. It is **key-based**
 (every module-mode ref is keyed via `refTo`), so a type reached only through a keyed ref whose home is
 late-bound (#128) is never dropped; a deep walk (`collectAllRefKeys`) covers refs inside inline-record
 fields and spreads that the shallow `collectRefKeys` skips. Running it before naming also lets a live
 sibling reclaim a base name an orphan squatted (`jsonBoxed<T>(): BoxOf<T>` flags its return and strands
 `boxOf<'a>`; the sweep drops it and `readBox(): BoxOf<string>` reclaims the clean `boxOf`). Removing an
-orphan can also dissolve a spurious SCC merge it was wedged into, giving cleaner module homes. This is
-the general mechanism #178 called for; the per-site method-path rollback stays as a cheap early exit.
-Fixture: [`return-only-generic-orphan`](../test/golden/cases/return-only-generic-orphan). (#191)
+orphan can also dissolve a spurious SCC merge it was wedged into (ReScript's cross-file module graph
+must be **acyclic** — a dependency cycle between two `*Types.res` homes is a compile error, so it is
+forced into one file, #35), giving cleaner module homes. This is the general mechanism #178 called for;
+the per-site method-path rollback stays as a cheap early exit.
+
+The class-member root set must stay **complete**: a type reached *only* through a write-only `@set`
+setter or a `@scope` static (`@get`+`@set` normally pair up, so a getter usually hides it) has no other
+path to a root, so dropping it emits an external referencing a `*Types.res` type that was never written
+— a dangling reference ReScript rejects at compile time. So all class members that bind a type are
+roots, not just ctor/methods/getters; the `class-setter-static-reachable` fixture guards that invariant.
+Fixtures: [`return-only-generic-orphan`](../test/golden/cases/return-only-generic-orphan),
+[`class-setter-static-reachable`](../test/golden/cases/class-setter-static-reachable). (#191)
 
 `opaqueUnion` also gained the **structural dedup** the other builders always had (#180): it registered
 unconditionally, so two `type.id`s widening to the same module each got their own — blend emitted
