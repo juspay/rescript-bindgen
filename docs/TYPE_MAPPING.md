@@ -135,7 +135,13 @@ variant (discriminated at runtime). **At most one member may be an object type.*
 
 A structural `@unboxed` union with at most **4 runtime members** keeps the compact convention
 (`stringOrNumber`, `v1OrV2OrV3OrV4`). More than 4 members follows the upstream alias when one exists;
-anonymous/checker-synthetic unions keep their existing structural or path-derived convention. The threshold and rule are frozen public API;
+anonymous/checker-synthetic unions keep their existing structural or path-derived convention — **unless
+the enumerated name exceeds a length cap** (#200), in which case it degrades to a readable prefix + a
+member-derived shape hash (`mozInitialOrInheritOrInitialOrRevertEtc<hash>`) so a csstype `Property.*`
+mix (blend's `DeepPartial` token types) no longer produces a 2,000+ char name. The cap is dedup-stable
+(the hash is a pure function of the members) and cosmetic (the emitted `@unboxed` type is unchanged);
+small structural names are untouched. Fixture: [`unboxed-name-cap`](../test/golden/cases/unboxed-name-cap).
+The threshold and rule are frozen public API;
 they are not tuning knobs for later bindgen releases. If that alias is already another generated
 declaration's public name, the union keeps its existing name rather than displacing the owner. Hono therefore emits:
 

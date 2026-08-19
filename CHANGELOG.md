@@ -7,6 +7,13 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **Anonymous large `@unboxed` union names no longer bloat to 2,000+ chars** (#200) — a union that mixes
+  dozens of string literals (csstype `Property.*` values, exposed by blend `0.0.38-beta.1`'s `DeepPartial`
+  token types) enumerated every member into a name up to 2,453 chars. Past a length cap the name degrades
+  to a readable prefix + a member-derived shape hash (`mozInitialOrInheritOrInitialOrRevertEtc<hash>`) —
+  short, deterministic, and dedup-preserving. Cosmetic only: the emitted `@unboxed` type is unchanged
+  (verified — all benchmark packages compile with metrics unchanged; small structural names untouched).
+
 - **Generation no longer hard-crashes on a public-identity collision** (#190 follow-up) — a package
   whose types collapse two genuinely-distinct declarations onto one source anchor+projection (blend
   `0.0.38-beta.1`'s `DeepPartial<ComponentTokenType>` mapping `SEARCH_INPUT`'s and `MODAL`'s `rangeDay`

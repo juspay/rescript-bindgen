@@ -25,6 +25,6 @@ type toastContentState = {
 @unboxed type navigationMenuContentClassName = Str(string) | Fn(navigationMenuContentState => option<string>)
 @unboxed type scrollAreaContentStyle = Style(JsxDOM.style) | Fn(scrollAreaContentState => option<JsxDOM.style>)
 @unboxed type scrollAreaContentClassName = Str(string) | Fn(scrollAreaContentState => option<string>)
-@unboxed type leftOrRightOrUpOrDownOrContentNavigationMenuContentStateActivationDirectionArray = @as("left") Left | @as("right") Right | @as("up") Up | @as("down") Down | Arr(array<contentNavigationMenuContentStateActivationDirection>)
+@unboxed type leftEtc1ai5f = @as("left") Left | @as("right") Right | @as("up") Up | @as("down") Down | Arr(array<contentNavigationMenuContentStateActivationDirection>)
 @unboxed type toastContentStyle = Style(JsxDOM.style) | Fn(toastContentState => option<JsxDOM.style>)
 @unboxed type toastContentClassName = Str(string) | Fn(toastContentState => option<string>)

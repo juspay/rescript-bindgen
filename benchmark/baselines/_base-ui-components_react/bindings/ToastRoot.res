@@ -3,7 +3,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.toastRootS
 
 type props = {
   toast: RootSharedTypes.toastRootToastObject,
-  swipeDirection?: ContentTypes.leftOrRightOrUpOrDownOrContentNavigationMenuContentStateActivationDirectionArray,
+  swipeDirection?: ContentTypes.leftEtc1ai5f,
   style?: RootSharedTypes.toastRootStyle,
   title?: string,
   autoFocus?: bool,
