@@ -19,6 +19,7 @@ import { extractComponent, extractModule } from './extract.mjs'
 import { emit, emitFunction, emitClass, emitNamespace, report, planSharedModules, emitSharedModule, makeResolveRef } from './emit.mjs'
 import { resolveInput } from './resolve.mjs'
 import { writeReport } from './report.mjs'
+import { findDanglingRefs } from './validate.mjs'
 import { planHtmlAttrs, HTML_ATTRS_PIN } from './html-attrs.mjs'
 import { RESCRIPT_RESERVED } from './stdlib-types.mjs'
 import { writeFileSync, mkdirSync, existsSync, readFileSync, readdirSync, unlinkSync, renameSync } from 'fs'
@@ -662,6 +663,27 @@ async function main() {
             // Unlink directly and swallow ENOENT — an existsSync-then-unlink check is a TOCTOU
             // race (the file could vanish in between); the try/catch already handles "gone". (CodeQL)
             try { unlinkSync(p); staleRemoved++ } catch { /* already gone / unreadable — ignore */ }
+        }
+    }
+
+    // #202: post-emit dangling-reference guard. Read back every .res we just wrote and assert each
+    // `Module.type` / `JsFn.t` reference into one of OUR OWN file-modules resolves to a real
+    // declaration. This is allowlist-INDEPENDENT — it catches the recurring failure (an emitter
+    // change outruns the reachability sweep's roots and strands a reference whose declaration was
+    // dropped → a ReScript compile error) without compiling. WARN, never fail: a real user's build
+    // must never be blocked by a text-parse edge case (the golden suite hard-fails on controlled
+    // output instead). Skipped for --stdout (nothing on disk to read back).
+    if (!opts.stdout) {
+        const emitted = []
+        for (const rel of written) {
+            if (!rel.endsWith('.res')) continue
+            try { emitted.push([rel, readFileSync(join(outDir, rel), 'utf-8')]) } catch { /* vanished — skip */ }
+        }
+        const dangling = findDanglingRefs(emitted)
+        if (dangling.length) {
+            console.error(`[bindgen] ⚠️  ${dangling.length} dangling reference(s) in generated output (please report — #202):`)
+            for (const p of dangling.slice(0, 20)) console.error(`[bindgen]   - ${p}`)
+            if (dangling.length > 20) console.error(`[bindgen]   … and ${dangling.length - 20} more`)
         }
     }
 

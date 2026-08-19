@@ -38,6 +38,13 @@ const WORK = join(HERE, '.work')
 const UPDATE = process.argv.includes('--update')
 const onlyIx = process.argv.indexOf('--only')
 const ONLY = onlyIx === -1 ? null : process.argv[onlyIx + 1]
+// #203: the pre-release gate — resolve the LATEST blend beta dist-tag (not a pinned version) and
+// prove the shipped checkout still generates + compiles it. blend is the primary downstream target
+// and moves faster than our pins; twice a regression compiled on the pins but broke on the newer
+// real one (#110, #198 — the latter a crash-before-emit that compile gates can't see, since there
+// is no output to compile). Only running the LATEST catches that class before it ships.
+const LATEST_BLEND = process.argv.includes('--latest-blend')
+const BLEND_PKG = '@juspay/blend-design-system'
 
 const YELLOW = (s) => `\x1b[33m${s}\x1b[0m`
 const slugOf = (name) => name.replace(/[@/]/g, '_') // "@s/p" -> "_s_p" (a leading @ already becomes _)
@@ -54,7 +61,7 @@ function sh(cmd, cwd) {
  * the committed lockfile. node_modules is kept across runs and only reinstalled
  * when the lockfile stamp changes (so CI can cache it).
  */
-function setupSandbox(pkg, slug, sandbox) {
+function setupSandbox(pkg, slug, sandbox, { freshInstall = false } = {}) {
     mkdirSync(sandbox, { recursive: true })
     const tpl = JSON.parse(readFileSync(join(TEMPLATE, 'package.json'), 'utf-8'))
     tpl.dependencies[pkg.name] = pkg.version // exact pin, no range
@@ -62,8 +69,9 @@ function setupSandbox(pkg, slug, sandbox) {
     cpSync(join(TEMPLATE, 'rescript.json'), join(sandbox, 'rescript.json'))
 
     const committedLock = join(BASELINES, slug, 'package-lock.json')
-    if (UPDATE) {
-        // Fresh resolve; the resulting lockfile becomes the committed baseline.
+    if (UPDATE || freshInstall) {
+        // Fresh resolve. Under --update the resulting lockfile becomes the committed baseline; under
+        // --latest-blend (fresh) the version floats and has no committed lockfile to reuse anyway.
         rmSync(join(sandbox, 'package-lock.json'), { force: true })
         const r = sh('npm install --silent --no-audit --no-fund', sandbox)
         if (!r.ok) throw new Error(`npm install failed:\n${r.out.slice(0, 2000)}`)
@@ -141,8 +149,90 @@ function verdictFor(metrics, baseline, diffProblems) {
     return { verdict: 'PASS', reason: '' }
 }
 
+/** Pick the newest pinned blend baseline (by semver-ish version sort) to diff a floating latest
+ *  build against — informational only; a newer version legitimately differs from every pin. */
+function newestPinnedBlendSlug(allPackages) {
+    const blends = allPackages.filter((p) => p.name === BLEND_PKG)
+    if (!blends.length) return null
+    const rank = (v) => v.split(/[.-]/).map((x) => (/^\d+$/.test(x) ? String(x).padStart(6, '0') : x)).join('.')
+    blends.sort((a, b) => rank(a.version).localeCompare(rank(b.version)))
+    const newest = blends[blends.length - 1]
+    return slugOf(nameCountHas(allPackages, newest.name) ? `${newest.name}@${newest.version}` : newest.name)
+}
+const nameCountHas = (all, name) => all.filter((p) => p.name === name).length > 1
+
+/** #203 pre-release gate: resolve the LATEST blend beta and prove the shipped checkout generates
+ *  non-empty output that compiles on ReScript 12. Fails on crash / empty output / compile break —
+ *  the three ways a "compiles on pinned, breaks on latest" regression shows up. Diff vs the newest
+ *  pinned blend baseline is surfaced for review but never fails the gate (a newer version differs). */
+function runLatestBlendGate(allPackages) {
+    const ver = sh(`npm view ${BLEND_PKG}@beta version`)
+    const version = ver.ok ? ver.out.trim().split('\n').pop().trim() : ''
+    if (!/^\d+\.\d+\.\d+/.test(version)) {
+        console.error(RED(`✗ could not resolve ${BLEND_PKG}@beta version:\n${ver.out.slice(0, 500)}`))
+        process.exit(1)
+    }
+    const pkg = { name: BLEND_PKG, version, flags: ['--webapi'] }
+    const label = `${pkg.name}@${version} (latest beta)`
+    const slug = slugOf(`${pkg.name}@${version}`)
+    const workDir = join(WORK, 'latest-blend')
+    const sandbox = join(workDir, 'sandbox')
+    mkdirSync(workDir, { recursive: true })
+    console.error(DIM(`── ${label} ──`))
+
+    const pinnedSlug = newestPinnedBlendSlug(allPackages)
+    const alreadyPinned = allPackages.some((p) => p.name === BLEND_PKG && p.version === version)
+    if (alreadyPinned) console.error(DIM(`  (latest beta ${version} is already pinned in packages.json — the benchmark covers it; this gate re-verifies the LATEST regardless)`))
+
+    let res
+    try {
+        setupSandbox(pkg, slug, sandbox, { freshInstall: true })
+        const gen = generate(pkg, sandbox, workDir)
+        const generated = readDir(join(sandbox, 'src'))
+        const hasRes = [...generated.keys()].some((f) => f.endsWith('.res'))
+        const cmp = compile(sandbox, workDir, hasRes)
+
+        const failures = []
+        if (gen.exit !== 0) failures.push(`generator exited ${gen.exit} (crash-before-emit — invisible to compile gates)`)
+        if (!hasRes || generated.size === 0) failures.push('no output produced')
+        if (hasRes && !cmp.ok) failures.push('generated bindings do not compile on ReScript 12')
+
+        // Informational diff vs the newest pinned blend baseline.
+        let diff = []
+        if (pinnedSlug && existsSync(join(BASELINES, pinnedSlug, 'bindings'))) {
+            diff = diffDirs(readDir(join(BASELINES, pinnedSlug, 'bindings')), generated).map(stripAnsi)
+        }
+        const metrics = {
+            resolvedVersion: version, generatorExit: gen.exit, compileOk: cmp.ok, warnings: cmp.warnings,
+            files: generated.size, buckets: gen.summary?.components ?? null,
+        }
+        const verdict = failures.length ? 'FAIL' : 'PASS'
+        res = { pkg: label, slug, verdict, reason: failures.join('; '), metrics, diffVsPinned: pinnedSlug, diff, compileErrors: cmp.errors }
+        const color = verdict === 'PASS' ? GREEN : RED
+        console.error(color(`${verdict === 'PASS' ? '✓' : '✗'} ${label}${res.reason ? ' — ' + res.reason : ''}`))
+        if (verdict === 'PASS') console.error(DIM(`  generated ${generated.size} file(s), compiled clean${diff.length ? `; ${diff.filter((d) => !d.startsWith('  ')).length} diff(s) vs pinned ${pinnedSlug}` : ''}`))
+    } catch (e) {
+        console.error(RED(`✗ ${label} — ${e.message.split('\n')[0]}`))
+        res = { pkg: label, slug, verdict: 'FAIL', reason: e.message.split('\n')[0], metrics: null, diff: [] }
+    }
+
+    mkdirSync(WORK, { recursive: true })
+    writeFileSync(join(WORK, 'latest-blend.json'), JSON.stringify(res, null, 2) + '\n')
+    const md = [`## Latest-blend gate: ${res.verdict === 'PASS' ? '✅ PASS' : '❌ FAIL'}`, '', `- Resolved \`${BLEND_PKG}@beta\` → \`${res.metrics?.resolvedVersion || '?'}\``,
+        `- Generator exit: ${res.metrics?.generatorExit ?? '—'} · Compiles: ${res.metrics ? (res.metrics.compileOk ? '✅' : '❌') : '—'} · Files: ${res.metrics?.files ?? '—'}`,
+        res.reason ? `- **Failure:** ${res.reason}` : '', res.diff?.length ? `- Diff vs pinned \`${res.diffVsPinned}\`: ${res.diff.filter((d) => !d.startsWith('  ')).length} file(s) changed (informational)` : '']
+    if (res.compileErrors) md.push('', '```', res.compileErrors, '```')
+    writeFileSync(join(WORK, 'latest-blend.md'), md.filter(Boolean).join('\n') + '\n')
+
+    console.error('')
+    if (res.verdict === 'FAIL') { console.error(RED(`❌ latest-blend gate FAILED — ${res.reason}`)); process.exit(1) }
+    console.error(GREEN(`✅ latest-blend gate PASS — ${BLEND_PKG}@${version} generates + compiles`))
+    process.exit(0)
+}
+
 // ── main ────────────────────────────────────────────────────────────────────
 const allPackages = JSON.parse(readFileSync(join(HERE, 'packages.json'), 'utf-8'))
+if (LATEST_BLEND) runLatestBlendGate(allPackages)
 // Two pinned versions of the SAME package (blend 0.0.36 stable + the 0.0.37 beta line that
 // blend-rescript actually regenerates from) need separate baselines — a duplicated name gets a
 // version-qualified slug; single-version packages keep their existing baseline dirs.

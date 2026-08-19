@@ -1,0 +1,46 @@
+# Latest-blend pre-release gate (#203) — resolve the LATEST `@juspay/blend-design-system@beta`
+# dist-tag (NOT a pinned version), generate with this checkout, and assert it exits 0 with
+# non-empty output that compiles on ReScript 12.
+#
+# Why this exists (see #203): the benchmark pins specific blend versions, but blend is the primary
+# downstream target and moves faster than our pins. Twice a regression compiled fine on the pins but
+# broke on a newer real one (#110, #198 — the latter a crash-BEFORE-emit that compile gates can't
+# see, because there is no output to compile). Only running the LATEST beta catches that class.
+#
+# Runs: weekly (catch a new blend beta soon after it ships), on demand, and — most importantly —
+# manually BEFORE cutting a release. It is intentionally NOT a required PR check: the version floats,
+# so it belongs on a cadence + pre-release, not on every PR.
+name: Latest-blend gate
+
+on:
+  schedule:
+    - cron: '17 6 * * 1' # Mondays 06:17 UTC — before the weekly stable release cadence
+  workflow_dispatch: # run this before cutting any release
+
+concurrency:
+  group: latest-blend-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  latest-blend:
+    name: Generate + compile the latest blend beta
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run latest-blend gate
+        run: node benchmark/run.mjs --latest-blend
+
+      - name: Job summary
+        if: always()
+        run: cat benchmark/.work/latest-blend.md >> "$GITHUB_STEP_SUMMARY" || echo "no latest-blend.md produced" >> "$GITHUB_STEP_SUMMARY"
