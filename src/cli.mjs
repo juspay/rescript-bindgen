@@ -720,6 +720,15 @@ async function main() {
         const live = [...new Set(shared.entries.filter((e) => hitSet.has(e.name)).map((e) => e.name))]
         if (live.length) console.error(`\n[bindgen] ⚠ ${live.length} counter-suffixed type name(s) — same base at the same source anchor; assignments are locked in .bindgen-manifest.json: ${live.slice(0, 12).join(', ')}${live.length > 12 ? '…' : ''}`)
     }
+    // Two genuinely-distinct types collapsed to ONE source anchor+projection (the anchor couldn't
+    // separate them — e.g. blend's `DeepPartial<ComponentTokenType>` over SEARCH_INPUT vs MODAL). The
+    // types still emit distinct names, but their PERMANENT manifest identity was shape-disambiguated, so
+    // it can churn if that shape changes. Surfaced so the anchor gap is visible, not a silent crash. (#190)
+    if (shared && shared.identityCollisions && shared.identityCollisions.length) {
+        const c = shared.identityCollisions
+        const shown = c.slice(0, 6).map((x) => `${x.projection} (${x.names.join(' vs ')})`).join('; ')
+        console.error(`\n[bindgen] ⚠ ${c.length} public-identity collision(s) shape-disambiguated (anchor couldn't separate distinct types; manifest id is shape-tied, not name-stable, for these): ${shown}${c.length > 6 ? '…' : ''}`)
+    }
     // A source identity whose ReScript REPRESENTATION flipped across bindgen versions (record ⇄ opaque,
     // #190). The frozen name is preserved as a case-aware compatibility shim so annotations keep
     // compiling, but a former opaque module's `from*`/`as*` constructors/accessors may not be

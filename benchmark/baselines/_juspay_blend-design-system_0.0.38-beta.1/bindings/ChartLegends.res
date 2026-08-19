@@ -1,0 +1,20 @@
+type props = {
+  chartContainerRef: React.ref<Nullable.t<Dom.element>>,
+  keys: array<string>,
+  colors: array<ChartsSharedTypes.chartsColorsConfig>,
+  handleLegendClick: string => unit,
+  handleLegendEnter: string => unit,
+  handleLegendLeave: unit => unit,
+  selectedKeys: array<string>,
+  setSelectedKeys: array<string> => unit,
+  hoveredKey: Nullable.t<string>,
+  activeKeys: Nullable.t<array<string>>,
+  stacked?: bool,
+  isSmallScreen?: bool,
+  stackedLegendsData?: array<ChartsSharedTypes.stackedLegendsDataPoint>,
+  legends?: array<ChartsSharedTypes.chartsLegendsConfig>,
+  showAllLegends?: bool,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "ChartLegends"

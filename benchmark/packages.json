@@ -24,6 +24,14 @@
     "notes": "the STABLE line blend-rescript publishes 1:1 against (@juspay/rescript-blend 0.0.37 / 0.0.37-N). Added after #167: RowAnimationConfig — the discriminated union that crashed DataTable at runtime — exists only from 0.0.37 final, so neither 0.0.36 nor the beta.8 pin covers the @tag-variant mapping or its regressions (#170/#173)"
   },
   {
+    "name": "@juspay/blend-design-system",
+    "version": "0.0.38-beta.1",
+    "flags": [
+      "--webapi"
+    ],
+    "notes": "the newer beta line. Its ThemeContext `ComponentTokenOverrides = DeepPartial<ComponentTokenType>` collapses two distinct configs (SEARCH_INPUT vs MODAL, both with a `rangeDay` field) onto one `ThemeProvider.rangeDay` source anchor+projection — which HARD-CRASHED #190's finalizePublicIds throw (zero output). Pinned as the regression lock: the fix degrades the collision to a shape-disambiguated manifest id + warning instead of aborting. This is the exact 'compiles on the pinned version, crashes on the newer real one' gap #110 warned about, now for the identity-freeze path."
+  },
+  {
     "name": "react-day-picker",
     "version": "10.0.1",
     "flags": [],
