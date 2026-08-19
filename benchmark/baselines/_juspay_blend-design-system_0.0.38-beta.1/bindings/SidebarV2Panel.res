@@ -1,0 +1,31 @@
+type props<'a> = {
+  sidebarTopSlot?: React.element,
+  merchantInfo?: SidebarV2Types.sidebarV2MerchantInfoConfig,
+  isExpanded: bool,
+  isScrolled: bool,
+  sidebarCollapseKey: string,
+  onToggle: unit => unit,
+  sidebarNavId?: string,
+  data: Nullable.t<array<DirectoryTypes.directoryData>>,
+  idPrefix: string,
+  activeItem?: Nullable.t<string>,
+  onActiveItemChange?: Nullable.t<string> => unit,
+  defaultActiveItem?: Nullable.t<string>,
+  iconOnlyMode?: bool,
+  hideToggleButton?: bool,
+  footer?: React.element,
+  setIsHovering?: bool => unit,
+  sidebarState?: SidebarV2Types.sidebarV2SidebarV2PropsOnSidebarStateChange,
+  tokens: SidebarV2Types.sidebarV2TokensType,
+  showHierarchyLines?: bool,
+  hierarchyLineBorderRadius?: string,
+  expandedItems?: DirectoryTypes.DirectoryExpandedItems.t,
+  defaultExpandedItems?: DirectoryTypes.DirectoryExpandedItems.t,
+  onExpandedItemsChange?: array<string> => unit,
+  onItemExpand?: (DirectoryTypes.navbarItem, string) => 'a,
+  enableVirtualization?: bool,
+  virtualization?: DirectoryTypes.directoryVirtualizationConfig,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props<'a>> = "SidebarV2Panel"

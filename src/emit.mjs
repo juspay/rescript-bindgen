@@ -1577,7 +1577,10 @@ function resolveCtorCollisions(entries) {
     }
     const unresolved = [...after].filter(([, reprs]) => reprs.size > 1)
     if (unresolved.length) {
-        throw new Error(`constructor collision unresolved after renaming — ${unresolved.map(([c, r]) => `${c} (${[...r.values()].join(' / ')})`).join('; ')}`)
+        // The renamer above assigns every colliding constructor a globally-unique name, so this is a
+        // should-never-happen assertion. WARN rather than throw: a binding generator must never abort
+        // generation with zero output (the #198 lesson) — surface the anomaly, keep the output. (#198 class)
+        console.error(`[bindgen] ⚠ constructor collision unresolved after renaming (please report): ${unresolved.map(([c, r]) => `${c} (${[...r.values()].join(' / ')})`).join('; ')}`)
     }
     return { classA, classB }
 }

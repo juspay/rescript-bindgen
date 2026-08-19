@@ -1,0 +1,37 @@
+type props = {
+  items: array<ContextSharedTypes.multiSelectV2GroupType>,
+  selected: array<string>,
+  onSelect: string => unit,
+  trigger: React.element,
+  menuDimensions?: ContextSharedTypes.selectV2MenuDimensions,
+  disabled?: bool,
+  search?: ContextSharedTypes.selectV2SearchConfig,
+  enableSelectAll?: bool,
+  selectAllText?: string,
+  onSelectAll?: (bool, array<ContextSharedTypes.multiSelectV2GroupType>) => unit,
+  maxSelections?: float,
+  menuPosition?: ContextSharedTypes.selectV2MenuPosition,
+  collisionBoundary?: ChatInputTypes.ChatInputOverflowMenuPropsCollisonBoundaryRef.t,  // ⓘ was `Element | Element[]` — opaque; build with ChatInputOverflowMenuPropsCollisonBoundaryRef.fromElement / ChatInputOverflowMenuPropsCollisonBoundaryRef.fromElements
+  @as("open") open_?: bool,
+  onOpenChange?: bool => unit,
+  showActionButtons?: bool,
+  primaryAction?: ContextSharedTypes.multiSelectV2PrimaryActionConfig,
+  secondaryAction?: ContextSharedTypes.multiSelectV2SecondaryActionConfig,
+  enableVirtualization?: bool,
+  virtualListItemHeight?: float,
+  virtualListOverscan?: float,
+  onEndReached?: unit => unit,
+  endReachedThreshold?: float,
+  hasMore?: bool,
+  loadingComponent?: React.element,
+  skeleton?: SelectV2Types.selectV2SkeletonProps,
+  size?: SelectV2Types.selectV2Size,
+  variant?: SelectV2Types.selectV2Variant,
+  allowCustomValue?: bool,
+  customValueLabel?: string,
+  menuId?: string,
+  menuFooter?: React.element,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "MultiSelectV2Menu"

@@ -160,6 +160,14 @@ home-module heuristics, and record-vs-variant decisions. On every later run:
 - a new identity that requests a reserved name takes a suffix; it never renumbers the existing type;
 - a removed identity that reappears recovers its assignment.
 
+If two **genuinely-distinct** types still collapse onto one source anchor+projection — the anchor
+couldn't separate them, as with blend's `DeepPartial<ComponentTokenType>` mapping `SEARCH_INPUT`'s and
+`MODAL`'s `rangeDay` configs both to `ThemeProvider.rangeDay` — identity assignment **degrades** to a
+stable shape-disambiguated id and warns on stderr, rather than aborting generation. (An earlier revision
+threw here; a binding generator must never crash on valid input. The cost is that such a type's manifest
+id is shape-tied — it can churn if its shape changes — not name-stable.) blend `0.0.38-beta.1` is pinned
+in the benchmark as the regression lock for exactly this collision.
+
 Two consequences of source-based identity worth knowing: (1) the **declaration file path** is part of
 the identity, so an upstream refactor that MOVES a type to a different `.d.ts` is a new identity and
 drops the old frozen name (the deliberate cost of keeping names stable across bindgen upgrades — the

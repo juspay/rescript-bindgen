@@ -1,0 +1,18 @@
+type props = {
+  width?: string,
+  height?: string,
+  title: string,
+  minWidth?: string,
+  maxWidth?: string,
+  subtitle?: string,
+  titleIcon?: React.element,
+  helpIconText?: string,
+  dropdownProps?: SingleSelectTypes.singleSelectProps,
+  showBorder?: bool,
+  tokens: StatCardV2Types.statCardV2TokensType,
+  isSmallScreen: bool,
+  filteredProps: JsxDOM.domProps,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "StatCardV2NoData"

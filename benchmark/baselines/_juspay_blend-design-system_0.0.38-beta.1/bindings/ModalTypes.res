@@ -1,0 +1,94 @@
+type modalModalTokensTypeOverlayConfig = {
+  backgroundColor: string,
+}
+type modalModalTokensTypeHeaderPaddingConfig = {
+  x: string,
+  y: string,
+}
+type modalModalTokensTypeHeaderTextConfig = {
+  title: string,  // ⚪ loose — was `{ color: Color; fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; }`
+  subtitle: string,  // ⚪ loose — was `{ color: Color; fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; }`
+}
+type modalModalTokensTypeHeaderConfig = {
+  padding: modalModalTokensTypeHeaderPaddingConfig,
+  borderBottom: string,
+  backgroundColor: string,
+  text: modalModalTokensTypeHeaderTextConfig,
+}
+type modalModalTokensTypeBodyConfig = {
+  padding: string,
+  backgroundColor: string,
+}
+type modalModalTokensTypeFooterConfig = {
+  padding: string,
+  borderTop: string,
+  backgroundColor: string,
+  gap: string,
+}
+type modalModalTokensTypeCloseButtonConfig = {
+  color: string,
+}
+type modalTokensType = {
+  boxShadow: string,
+  borderRadius: string,
+  overlay: modalModalTokensTypeOverlayConfig,
+  header: modalModalTokensTypeHeaderConfig,
+  body: modalModalTokensTypeBodyConfig,
+  footer: modalModalTokensTypeFooterConfig,
+  closeButton: modalModalTokensTypeCloseButtonConfig,
+}
+type responsiveModalTokens = {
+  sm: modalTokensType,
+  lg: modalTokensType,
+}
+type modalButtonAction = {
+  width?: CommonTypes.stringOrNumber,
+  size?: ButtonTypes.buttonSize,
+  disabled?: bool,
+  onClick?: option<ReactEvent.Mouse.t> => unit,
+  text?: string,
+  justifyContent?: string,
+  state?: ButtonTypes.buttonState,
+  buttonType?: ButtonTypes.buttonType,
+  subType?: ButtonTypes.buttonSubType,
+  leadingIcon?: React.element,
+  trailingIcon?: React.element,
+  loading?: bool,
+  showSkeleton?: bool,
+  skeletonVariant?: SkeletonTypes.skeletonVariant,
+  fullWidth?: bool,
+}
+type bodySkeletonPropsModal = {
+  show?: bool,
+  width?: string,
+  height?: string,
+}
+type modalSkeletonProps = {
+  show?: bool,
+  variant?: SkeletonTypes.skeletonVariant,
+  bodySkeletonProps?: bodySkeletonPropsModal,
+}
+type modalProps = {
+  isOpen: bool,
+  isCustom?: bool,
+  onClose: unit => unit,
+  title?: string,
+  subtitle?: string,
+  children: React.element,
+  primaryAction?: modalButtonAction,
+  secondaryAction?: modalButtonAction,
+  showCloseButton?: bool,
+  showHeader?: bool,
+  showFooter?: bool,
+  closeOnBackdropClick?: bool,
+  customHeader?: React.element,
+  customFooter?: React.element,
+  headerRightSlot?: React.element,
+  showDivider?: bool,
+  minWidth?: string,
+  useDrawerOnMobile?: bool,
+  skeleton?: modalSkeletonProps,
+  maxWidth?: string,
+  maxHeight?: string,
+  minHeight?: string,
+}

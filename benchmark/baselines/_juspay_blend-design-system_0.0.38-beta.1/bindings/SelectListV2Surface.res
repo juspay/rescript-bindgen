@@ -1,0 +1,32 @@
+type props = {
+  listId: string,
+  multiSelectable?: bool,
+  ariaLabelledBy?: string,
+  ariaLabel?: string,
+  chrome: SelectListV2Types.selectListV2ChromeTokens,
+  showSearch: bool,
+  searchPlaceholder: string,
+  searchValue: string,
+  searchInputRef: React.ref<Nullable.t<Dom.element>>,
+  onSearchChange: string => unit,
+  onSearchArrowDown: unit => unit,
+  isSearchControlled: bool,
+  isSearchLoading: bool,
+  isEmpty: bool,
+  emptyStateText: string,
+  disabled?: bool,
+  skeleton?: React.element,
+  header?: React.element,
+  maxHeight?: float,
+  onListKeyDown: ReactEvent.Keyboard.t => unit,
+  children: React.element,
+  onEndReached?: unit => unit,
+  endReachedThreshold?: float,
+  hasMore?: bool,
+  isLoadingMore?: bool,
+  paginationKey?: CommonTypes.stringOrNumber,
+  loadingComponent?: React.element,
+}
+
+@module("@juspay/blend-design-system")
+external make: React.component<props> = "SelectListV2Surface"

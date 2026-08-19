@@ -545,8 +545,12 @@ function finalizeReadableUnboxedNames(shared) {
 
 /** Final public source identities. A named source anchor normally identifies one declaration. When a
  *  generic/conditional source type materializes as several declarations, add its stable use-site
- *  projection. Falling back to a shape hash would quietly rename an identity when fields change, so
- *  a collision even after that source projection is a hard generation error instead. */
+ *  projection. If two GENUINELY-DISTINCT types still collide on one anchor+projection (the anchor
+ *  couldn't separate them — blend's `DeepPartial<ComponentTokenType>` collapses SEARCH_INPUT's and
+ *  MODAL's `rangeDay` configs onto one `ThemeProvider.rangeDay`), the identity DEGRADES to a stable
+ *  shape-disambiguated id and warns, instead of throwing. A binding generator must never abort on valid
+ *  input; the tradeoff is that the manifest id for such a type is shape-tied (may churn if its shape
+ *  changes) rather than name-stable — an honest, flagged fallback, not a crash. */
 function finalizePublicIds(shared, prior = {}) {
     const scope = `scope:${shared.publicScope || '<module>'}|`
     const byAnchor = new Map()
@@ -566,19 +570,34 @@ function finalizePublicIds(shared, prior = {}) {
             entries[0].publicIds.push(scope + anchor)
             continue
         }
-        const byProjection = new Map()
+        const byProjection = new Map() // projection -> [entries]
         for (const entry of entries) {
             const projections = entry._publicProjections?.get(anchor) || new Set([entry._identityBase || entry.base || entry.name])
             for (const projection of projections) {
-                const owner = byProjection.get(projection)
-                if (owner && owner !== entry) {
-                    const describe = (e) => `${e.name}[base=${e._identityBase},key=${e.key}]`
-                    throw new Error(`ambiguous public type identity ${anchor}|projection:${projection}: ${[owner, entry].map(describe).join(', ')}`)
-                }
-                byProjection.set(projection, entry)
+                if (!byProjection.has(projection)) byProjection.set(projection, [])
+                byProjection.get(projection).push(entry)
             }
         }
-        for (const [projection, entry] of byProjection) entry.publicIds.push(`${scope}${anchor}|projection:${projection}`)
+        for (const [projection, raw2] of byProjection) {
+            const group = [...new Set(raw2)]
+            if (group.length === 1) { group[0].publicIds.push(`${scope}${anchor}|projection:${projection}`); continue }
+            // Two GENUINELY-DISTINCT types collided on one source anchor+projection: the anchor couldn't
+            // separate them (blend's `DeepPartial<ComponentTokenType>` collapses SEARCH_INPUT's and
+            // MODAL's `rangeDay` configs to one `ThemeProvider.rangeDay` projection). Degrade to a stable
+            // SHAPE-disambiguated identity and WARN — a binding generator must never abort on valid input.
+            // The emitted NAMES are already distinct; only the permanent manifest id is shape-tied here,
+            // so it can churn if that shape later changes (the documented cost of an unseparable anchor).
+            const sorted = group.map((e) => ({ e, h: shapeHash(structuralSig(e, shared)) }))
+                .sort((a, b) => (a.h < b.h ? -1 : a.h > b.h ? 1 : (a.e.key < b.e.key ? -1 : 1)))
+            const used = new Set()
+            for (const { e, h } of sorted) {
+                let key = `${projection}#${h}`, n = 2
+                while (used.has(key)) key = `${projection}#${h}.${n++}` // pathological identical-shape tiebreak
+                used.add(key)
+                e.publicIds.push(`${scope}${anchor}|projection:${key}`)
+            }
+            ;(shared.identityCollisions || (shared.identityCollisions = [])).push({ anchor, projection, names: sorted.map(({ e }) => e.name) })
+        }
     }
     for (const e of shared.entries) {
         e.publicIds.sort()
@@ -692,34 +711,40 @@ function applyPublicNameRegistry(shared, prior = {}) {
         }
     }
 
-    // Locked names win. A conflict between two still-live locked identities is a manifest/API
-    // invariant violation and must stop generation; choosing either would silently break consumers.
+    // Locked names win. A conflict between two still-live locked identities is a manifest/API invariant
+    // violation — but it is reachable only from a corrupt/hand-edited/merged manifest (a normal run never
+    // writes one name under two identities), so it must NOT crash generation with zero output the way
+    // #198 did. `claim` now REPORTS the conflict and returns false; the caller degrades (suffix the
+    // canonical, drop the alias) + warns, instead of throwing. (#198 class — never abort on valid input.)
     const claimed = new Map()
+    const conflicts = []
     const claim = (name, e, what) => {
         const owner = claimed.get(name)
-        if (owner && owner !== e) {
-            throw new Error(`public type-name registry conflict: ${name} is required by both ${owner.publicIds[0]} and ${e.publicIds[0]} (${what})`)
-        }
+        if (owner && owner !== e) { conflicts.push({ name, what }); return false }
         claimed.set(name, e)
+        return true
     }
-    for (const e of entries.filter((x) => lockedEntries.has(x))) claim(desired.get(e), e, 'canonical name')
-    for (const e of entries) for (const alias of compat.get(e)) claim(alias, e, 'compatibility alias')
+    const ownsReserved = (e, name) => { const owners = reserved.get(name); return owners && e.publicIds.some((id) => owners.has(id)) }
+    const allocFree = (e, base) => {
+        let cand = base, n = 2
+        while ((reserved.has(cand) && !ownsReserved(e, cand)) || (claimed.has(cand) && claimed.get(cand) !== e)) cand = base + n++
+        return cand
+    }
+    for (const e of entries.filter((x) => lockedEntries.has(x))) {
+        if (claim(desired.get(e), e, 'canonical name')) continue
+        const cand = allocFree(e, desired.get(e)) // degrade: another live identity already holds this locked name
+        desired.set(e, cand); claim(cand, e, 'canonical name (degraded)')
+    }
+    for (const e of entries) for (const alias of [...compat.get(e)]) if (!claim(alias, e, 'compatibility alias')) compat.get(e).delete(alias) // drop the conflicting (optional) alias
 
     // Allocate only NEW identities around every permanent/tombstoned name. Existing identities are
     // never moved to make room; the newcomer takes the suffix.
     for (const e of entries.filter((x) => !lockedEntries.has(x))) {
-        const base = desired.get(e)
-        let candidate = base, n = 2
-        const ownsReserved = (name) => {
-            const owners = reserved.get(name)
-            return owners && e.publicIds.some((id) => owners.has(id))
-        }
-        while ((reserved.has(candidate) && !ownsReserved(candidate)) || (claimed.has(candidate) && claimed.get(candidate) !== e)) {
-            candidate = base + n++
-        }
+        const candidate = allocFree(e, desired.get(e))
         desired.set(e, candidate)
         claim(candidate, e, 'new canonical name')
     }
+    if (conflicts.length) (shared.registryConflicts || (shared.registryConflicts = [])).push(...conflicts)
 
     const renames = shared.renames || new Map()
     for (const e of entries) {
@@ -2586,10 +2611,14 @@ export function extractModule(entryFile, opts = {}) {
     const entryFile = __entry.entry
     const from = __entry.from
     const source = program.getSourceFile(entryFile)
-    if (!source) throw new Error(`Could not load source file: ${entryFile}`)
+    // SKIP an unloadable or module-less entry instead of aborting the WHOLE run: a global/script-only
+    // `.d.ts` (`declare global { … }` with no top-level export or ambient module — e.g. @webgpu/types,
+    // #194) has no module symbol, and one bad subpath must never kill the good entries. Degrade to a
+    // recorded skip + a clean "0 bindings from this entry", never a zero-output crash. (#198 class)
+    if (!source) { skipped.push({ name: entryFile, reason: 'entry-source-not-loadable' }); continue }
 
     const moduleSymbol = entryModuleSymbol(checker, source, from)
-    if (!moduleSymbol) throw new Error(`No module symbol for ${entryFile}`)
+    if (!moduleSymbol) { skipped.push({ name: entryFile, reason: 'no-module-symbol (global/script-only .d.ts, no exports — see #194)' }); continue }
     const exports = checker.getExportsOfModule(moduleSymbol)
     // `export = value` describes `module.exports = value`: getExportsOfModule exposes the
     // assigned value's namespace/static members (`bind`, `prototype`, …) but NOT the root

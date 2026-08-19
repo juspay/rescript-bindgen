@@ -7,6 +7,20 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **Generation no longer hard-crashes on a public-identity collision** (#190 follow-up) — a package
+  whose types collapse two genuinely-distinct declarations onto one source anchor+projection (blend
+  `0.0.38-beta.1`'s `DeepPartial<ComponentTokenType>` mapping `SEARCH_INPUT`'s and `MODAL`'s `rangeDay`
+  configs both to `ThemeProvider.rangeDay`) made `finalizePublicIds` **throw**, aborting the whole run
+  with zero output. It now **degrades** to a stable shape-disambiguated manifest id and warns on stderr
+  instead of crashing — a generator must never abort on valid input. blend `0.0.38-beta.1` is pinned in
+  the benchmark as the regression lock. The two other hard-`throw`s that sit outside the per-export
+  degrade net — the public-name registry conflict (`applyPublicNameRegistry`) and the constructor-
+  collision assertion (`resolveCtorCollisions`) — are hardened the same way (suffix/drop/warn, never
+  abort), closing the crash-on-valid-input class. The per-entry guards (`Could not load source file` /
+  `No module symbol`) now **skip** that entry with a recorded reason instead of aborting the whole run,
+  so a global/script-only `.d.ts` (`@webgpu/types`-style, #194) or one bad subpath degrades cleanly and
+  never kills the other entries.
+
 - **Speculative `@unboxed` classification no longer leaves an orphan `JsFn.res`** (#178) — the
   reachability sweep (#191) already drops orphan records stranded by a discarded speculative build, but
   a bare `Function` in such a build sets `shared.usesJsFn` (a `JsFn.t` raw node the key-based sweep can't
