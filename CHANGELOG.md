@@ -5,6 +5,27 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.0-beta.2] — 2026-08-20
+
+> **Upgrading: regenerate your bindings, and commit `.bindgen-manifest.json` alongside them.** #190
+> introduces a permanent public-name registry — the manifest is now the source of truth that keeps your
+> generated type names stable across future bindgen upgrades, so check it in next to the generated code
+> and regenerate through it. Two name changes land in this beta and only at the affected type sites, with
+> no runtime change:
+>
+> 1. **Large named `@unboxed` unions follow their upstream alias** (#190). A named union with more than
+>    four runtime members now emits its source name (`StatusCode` → `statusCode`) instead of enumerating
+>    every member (hono's `v100OrV101Or…OrV511OrV1`). The previous structural name stays as a transparent
+>    compatibility alias, so existing call sites keep compiling.
+> 2. **Bloated anonymous `@unboxed` union names are capped** (#200). An anonymous union mixing dozens of
+>    string literals (csstype `Property.*`, surfaced by blend `0.0.38-beta.1`) no longer produces a name up
+>    to 2,453 chars; past a length cap it degrades to a readable prefix + shape hash. Cosmetic only — the
+>    emitted `@unboxed` type body is unchanged.
+>
+> This beta also **unblocks generation on the newest blend** (`0.0.38-beta.1`): a public-identity collision
+> that previously aborted the whole run with zero output now degrades to a stable manifest id and a warning
+> (#190 follow-up). If you pin blend, you can move to `0.0.38-beta.1` after regenerating.
+
 ### Fixed
 
 - **Anonymous large `@unboxed` union names no longer bloat to 2,000+ chars** (#200) — a union that mixes
