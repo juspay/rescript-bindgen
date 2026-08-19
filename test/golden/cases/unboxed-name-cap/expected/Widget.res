@@ -1,5 +1,5 @@
 type props = {
-  width?: UnboxedNameCapTypes.fitContentKeywordEtc177kd,
+  width?: UnboxedNameCapTypes.fitContentKeywordOrMaxContentKeywordEtc177kd,
 }
 
 @module("demo")

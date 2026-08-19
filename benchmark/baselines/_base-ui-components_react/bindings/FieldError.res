@@ -2,7 +2,7 @@
 external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.fieldRootState) => React.element) => React.element = "%identity"
 
 type props = {
-  match?: CommonTypes.boolEtcrhs1q,
+  match?: CommonTypes.boolOrBadInputOrCustomErrorEtcrhs1q,
   style?: RootSharedTypes.fieldRootStyle,
   title?: string,
   autoFocus?: bool,

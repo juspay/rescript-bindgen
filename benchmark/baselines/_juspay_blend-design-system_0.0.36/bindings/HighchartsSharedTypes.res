@@ -11141,7 +11141,7 @@ and plotPackedbubbleOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesPackedBubbleDataLabelsOptionsObjecEtccwqqs<'a, 'b, 'c>,
+  dataLabels?: seriesPackedBubbleDataLabelsOptionsObjectEtccwqqs<'a, 'b, 'c>,
   description?: string,
   displayNegative?: bool,
   draggable?: bool,
@@ -11212,7 +11212,7 @@ and plotOrganizationOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesEtcmf6ti<'a, 'b, 'c>,
+  dataLabels?: seriesOrganizationDataLabelsOptionsObjectEtcmf6ti<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -11422,7 +11422,7 @@ and plotNetworkgraphOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesNetworkgraphDataLabelsOptionsObjecEtc14yc0<'a, 'b, 'c>,
+  dataLabels?: seriesNetworkgraphDataLabelsOptionsObjectEtc14yc0<'a, 'b, 'c>,
   description?: string,
   draggable?: bool,
   enableMouseTracking?: bool,
@@ -15960,7 +15960,7 @@ and plotArcdiagramOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesArcDiagramDataLabelsOptionsObjectOEtc147el<'a, 'b, 'c>,
+  dataLabels?: seriesArcDiagramDataLabelsOptionsObjectEtc147el<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   equalNodes?: bool,
@@ -20934,7 +20934,7 @@ and seriesPackedbubbleOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesPackedBubbleDataLabelsOptionsObjecEtccwqqs<'a, 'b, 'c>,
+  dataLabels?: seriesPackedBubbleDataLabelsOptionsObjectEtccwqqs<'a, 'b, 'c>,
   description?: string,
   displayNegative?: bool,
   draggable?: bool,
@@ -21053,7 +21053,7 @@ and seriesOrganizationOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesEtcmf6ti<'a, 'b, 'c>,
+  dataLabels?: seriesOrganizationDataLabelsOptionsObjectEtcmf6ti<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -21288,7 +21288,7 @@ and seriesObvOptions<'a, 'b, 'c> = {
 and seriesNetworkgraphNodesOptions<'a, 'b, 'c> = {
   color?: string,
   colorIndex?: float,
-  dataLabels?: seriesNetworkgraphDataLabelsOptionsObjecEtc14yc0<'a, 'b, 'c>,
+  dataLabels?: seriesNetworkgraphDataLabelsOptionsObjectEtc14yc0<'a, 'b, 'c>,
   id?: string,
   marker?: pointMarkerOptionsObject,
   mass?: float,
@@ -21311,7 +21311,7 @@ and seriesNetworkgraphOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesNetworkgraphDataLabelsOptionsObjecEtc14yc0<'a, 'b, 'c>,
+  dataLabels?: seriesNetworkgraphDataLabelsOptionsObjectEtc14yc0<'a, 'b, 'c>,
   description?: string,
   draggable?: bool,
   enableMouseTracking?: bool,
@@ -27152,7 +27152,7 @@ and seriesArcdiagramOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesArcDiagramDataLabelsOptionsObjectOEtc147el<'a, 'b, 'c>,
+  dataLabels?: seriesArcDiagramDataLabelsOptionsObjectEtc147el<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   equalNodes?: bool,
@@ -29494,9 +29494,9 @@ and chart<'a, 'b, 'c> = {
 @unboxed and seriesTreegraphDataLabelsOptionsObjectEtc12ung<'a, 'b, 'c> = SeriesTreegraphDataLabelsOptionsObject(seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesTreegraphDataLabelsOptionsObjectArr(array<seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c>>)
 @unboxed and timelineDataLabelsOptionsObjectEtc13zn4<'a, 'b, 'c> = TimelineDataLabelsOptionsObject(timelineDataLabelsOptionsObject<'a, 'b, 'c>) | TimelineDataLabelsOptionsObjectArr(array<timelineDataLabelsOptionsObject<'a, 'b, 'c>>)
 @unboxed and seriesSunburstDataLabelsOptionsObjectEtcjoblr<'a, 'b, 'c> = SeriesSunburstDataLabelsOptionsObject(seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesSunburstDataLabelsOptionsObjectArr(array<seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c>>)
-@unboxed and seriesPackedBubbleDataLabelsOptionsObjecEtccwqqs<'a, 'b, 'c> = SeriesPackedBubbleDataLabelsOptionsObject(seriesPackedBubbleDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesPackedBubbleDataLabelsOptionsObjectArr(array<seriesPackedBubbleDataLabelsOptionsObject<'a, 'b, 'c>>)
-@unboxed and seriesEtcmf6ti<'a, 'b, 'c> = SeriesOrganizationDataLabelsOptionsObject(seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesOrganizationDataLabelsOptionsObjectArr(array<seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c>>)
-@unboxed and seriesNetworkgraphDataLabelsOptionsObjecEtc14yc0<'a, 'b, 'c> = SeriesNetworkgraphDataLabelsOptionsObject(seriesNetworkgraphDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesNetworkgraphDataLabelsOptionsObjectArr(array<seriesNetworkgraphDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and seriesPackedBubbleDataLabelsOptionsObjectEtccwqqs<'a, 'b, 'c> = SeriesPackedBubbleDataLabelsOptionsObject(seriesPackedBubbleDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesPackedBubbleDataLabelsOptionsObjectArr(array<seriesPackedBubbleDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and seriesOrganizationDataLabelsOptionsObjectEtcmf6ti<'a, 'b, 'c> = SeriesOrganizationDataLabelsOptionsObject(seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesOrganizationDataLabelsOptionsObjectArr(array<seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and seriesNetworkgraphDataLabelsOptionsObjectEtc14yc0<'a, 'b, 'c> = SeriesNetworkgraphDataLabelsOptionsObject(seriesNetworkgraphDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesNetworkgraphDataLabelsOptionsObjectArr(array<seriesNetworkgraphDataLabelsOptionsObject<'a, 'b, 'c>>)
 @unboxed and plotMappointDataLabelsOptionsEtc13i28<'a, 'b, 'c> = PlotMappointDataLabelsOptions(plotMappointDataLabelsOptions<'a, 'b, 'c>) | PlotMappointDataLabelsOptionsArr(array<plotMappointDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotMapDataLabelsOptionsOrPlotMapDataLabelsOptionsArray<'a, 'b, 'c> = PlotMapDataLabelsOptions(plotMapDataLabelsOptions<'a, 'b, 'c>) | PlotMapDataLabelsOptionsArr(array<plotMapDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotMapbubbleDataLabelsOptionsEtczeugz<'a, 'b, 'c> = PlotMapbubbleDataLabelsOptions(plotMapbubbleDataLabelsOptions<'a, 'b, 'c>) | PlotMapbubbleDataLabelsOptionsArr(array<plotMapbubbleDataLabelsOptions<'a, 'b, 'c>>)
@@ -29510,7 +29510,7 @@ and chart<'a, 'b, 'c> = {
 @unboxed and plotBubbleDataLabelsOptionsOrPlotBubbleDataLabelsOptionsArray<'a, 'b, 'c> = PlotBubbleDataLabelsOptions(plotBubbleDataLabelsOptions<'a, 'b, 'c>) | PlotBubbleDataLabelsOptionsArr(array<plotBubbleDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c> = PlotBarDataLabelsOptions(plotBarDataLabelsOptions<'a, 'b, 'c>) | PlotBarDataLabelsOptionsArr(array<plotBarDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and seriesAreaRangeDataLabelsOptionsObjectEtcmk4px<'a, 'b, 'c> = SeriesAreaRangeDataLabelsOptionsObject(seriesAreaRangeDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesAreaRangeDataLabelsOptionsObjectArr(array<seriesAreaRangeDataLabelsOptionsObject<'a, 'b, 'c>>)
-@unboxed and seriesArcDiagramDataLabelsOptionsObjectOEtc147el<'a, 'b, 'c> = SeriesArcDiagramDataLabelsOptionsObject(seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesArcDiagramDataLabelsOptionsObjectArr(array<seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and seriesArcDiagramDataLabelsOptionsObjectEtc147el<'a, 'b, 'c> = SeriesArcDiagramDataLabelsOptionsObject(seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesArcDiagramDataLabelsOptionsObjectArr(array<seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>>)
 @unboxed and plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c> = PlotAoDataLabelsOptions(plotAoDataLabelsOptions<'a, 'b, 'c>) | PlotAoDataLabelsOptionsArr(array<plotAoDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c> = PlotAdDataLabelsOptions(plotAdDataLabelsOptions<'a, 'b, 'c>) | PlotAdDataLabelsOptionsArr(array<plotAdDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and pointOrPointArray<'a, 'b, 'c> = Point(point<'a, 'b, 'c>) | PointArr(array<point<'a, 'b, 'c>>)

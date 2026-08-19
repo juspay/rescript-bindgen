@@ -714,28 +714,28 @@ type inputsV2UploadErrorReasonConfig = {
 type contextComponentTokensTAGSSmMinWidthConfig = {
   ...JsxDOM.domProps,
 }
-@unboxed type mozInitialEtc1owcx = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("-moz-fit-content") MozFitContent | @as("-moz-max-content") MozMaxContent | @as("-moz-min-content") MozMinContent | @as("-webkit-fit-content") WebkitFitContent | @as("-webkit-max-content") WebkitMaxContent | @as("auto") Auto | @as("fit-content") FitContent | @as("intrinsic") Intrinsic | @as("max-content") MaxContent | @as("min-content") MinContent | @as("min-intrinsic") MinIntrinsic | @as("-webkit-min-content") WebkitMinContent | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
-@unboxed type mozInitialEtc1x0av = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneInitialEtc1x0av | @as("-moz-fit-content") MozFitContent | @as("-moz-max-content") MozMaxContent | @as("-moz-min-content") MozMinContent | @as("-webkit-fit-content") WebkitFitContent | @as("-webkit-max-content") WebkitMaxContent | @as("fit-content") FitContent | @as("intrinsic") Intrinsic | @as("max-content") MaxContent | @as("min-content") MinContent | @as("-webkit-min-content") WebkitMinContent | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
-@unboxed type mozInitialEtc1wbzz = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("-moz-fit-content") MozFitContent | @as("-moz-max-content") MozMaxContent | @as("-moz-min-content") MozMinContent | @as("-webkit-fit-content") WebkitFitContent | @as("-webkit-max-content") WebkitMaxContent | @as("auto") Auto | @as("fit-content") FitContent | @as("intrinsic") Intrinsic | @as("max-content") MaxContent | @as("min-content") MinContent | @as("min-intrinsic") MinIntrinsic | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
-@unboxed type mozInitialEtchhntk = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("normal") Normal | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
-@unboxed type mozInitialEtcgjquu = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("aliceblue") Aliceblue | @as("antiquewhite") Antiquewhite | @as("aqua") Aqua | @as("aquamarine") Aquamarine | @as("azure") Azure | @as("beige") Beige | @as("bisque") Bisque | @as("black") Black | @as("blanchedalmond") Blanchedalmond | @as("blue") Blue | @as("blueviolet") Blueviolet | @as("brown") Brown | @as("burlywood") Burlywood | @as("cadetblue") Cadetblue | @as("chartreuse") Chartreuse | @as("chocolate") Chocolate | @as("coral") Coral | @as("cornflowerblue") Cornflowerblue | @as("cornsilk") Cornsilk | @as("crimson") Crimson | @as("cyan") Cyan | @as("darkblue") Darkblue | @as("darkcyan") Darkcyan | @as("darkgoldenrod") Darkgoldenrod | @as("darkgray") Darkgray | @as("darkgreen") Darkgreen | @as("darkgrey") Darkgrey | @as("darkkhaki") Darkkhaki | @as("darkmagenta") Darkmagenta | @as("darkolivegreen") Darkolivegreen | @as("darkorange") Darkorange | @as("darkorchid") Darkorchid | @as("darkred") Darkred | @as("darksalmon") Darksalmon | @as("darkseagreen") Darkseagreen | @as("darkslateblue") Darkslateblue | @as("darkslategray") Darkslategray | @as("darkslategrey") Darkslategrey | @as("darkturquoise") Darkturquoise | @as("darkviolet") Darkviolet | @as("deeppink") Deeppink | @as("deepskyblue") Deepskyblue | @as("dimgray") Dimgray | @as("dimgrey") Dimgrey | @as("dodgerblue") Dodgerblue | @as("firebrick") Firebrick | @as("floralwhite") Floralwhite | @as("forestgreen") Forestgreen | @as("fuchsia") Fuchsia | @as("gainsboro") Gainsboro | @as("ghostwhite") Ghostwhite | @as("gold") Gold | @as("goldenrod") Goldenrod | @as("gray") Gray | @as("green") Green | @as("greenyellow") Greenyellow | @as("grey") Grey | @as("honeydew") Honeydew | @as("hotpink") Hotpink | @as("indianred") Indianred | @as("indigo") Indigo | @as("ivory") Ivory | @as("khaki") Khaki | @as("lavender") Lavender | @as("lavenderblush") Lavenderblush | @as("lawngreen") Lawngreen | @as("lemonchiffon") Lemonchiffon | @as("lightblue") Lightblue | @as("lightcoral") Lightcoral | @as("lightcyan") Lightcyan | @as("lightgoldenrodyellow") Lightgoldenrodyellow | @as("lightgray") Lightgray | @as("lightgreen") Lightgreen | @as("lightgrey") Lightgrey | @as("lightpink") Lightpink | @as("lightsalmon") Lightsalmon | @as("lightseagreen") Lightseagreen | @as("lightskyblue") Lightskyblue | @as("lightslategray") Lightslategray | @as("lightslategrey") Lightslategrey | @as("lightsteelblue") Lightsteelblue | @as("lightyellow") Lightyellow | @as("lime") Lime | @as("limegreen") Limegreen | @as("linen") Linen | @as("magenta") Magenta | @as("maroon") Maroon | @as("mediumaquamarine") Mediumaquamarine | @as("mediumblue") Mediumblue | @as("mediumorchid") Mediumorchid | @as("mediumpurple") Mediumpurple | @as("mediumseagreen") Mediumseagreen | @as("mediumslateblue") Mediumslateblue | @as("mediumspringgreen") Mediumspringgreen | @as("mediumturquoise") Mediumturquoise | @as("mediumvioletred") Mediumvioletred | @as("midnightblue") Midnightblue | @as("mintcream") Mintcream | @as("mistyrose") Mistyrose | @as("moccasin") Moccasin | @as("navajowhite") Navajowhite | @as("navy") Navy | @as("oldlace") Oldlace | @as("olive") Olive | @as("olivedrab") Olivedrab | @as("orange") Orange | @as("orangered") Orangered | @as("orchid") Orchid | @as("palegoldenrod") Palegoldenrod | @as("palegreen") Palegreen | @as("paleturquoise") Paleturquoise | @as("palevioletred") Palevioletred | @as("papayawhip") Papayawhip | @as("peachpuff") Peachpuff | @as("peru") Peru | @as("pink") Pink | @as("plum") Plum | @as("powderblue") Powderblue | @as("purple") Purple | @as("rebeccapurple") Rebeccapurple | @as("red") Red | @as("rosybrown") Rosybrown | @as("royalblue") Royalblue | @as("saddlebrown") Saddlebrown | @as("salmon") Salmon | @as("sandybrown") Sandybrown | @as("seagreen") Seagreen | @as("seashell") Seashell | @as("sienna") Sienna | @as("silver") Silver | @as("skyblue") Skyblue | @as("slateblue") Slateblue | @as("slategray") Slategray | @as("slategrey") Slategrey | @as("snow") Snow | @as("springgreen") Springgreen | @as("steelblue") Steelblue | @as("tan") Tan | @as("teal") Teal | @as("thistle") Thistle | @as("tomato") Tomato | @as("turquoise") Turquoise | @as("violet") Violet | @as("wheat") Wheat | @as("white") White | @as("whitesmoke") Whitesmoke | @as("yellow") Yellow | @as("yellowgreen") Yellowgreen | @as("transparent") Transparent | @as("AccentColor") AccentColor | @as("AccentColorText") AccentColorText | @as("ActiveText") ActiveText | @as("ButtonBorder") ButtonBorder | @as("ButtonFace") ButtonFace | @as("ButtonText") ButtonText | @as("Canvas") Canvas | @as("CanvasText") CanvasText | @as("Field") Field | @as("FieldText") FieldText | @as("GrayText") GrayText | @as("Highlight") HighlightInitialEtcgjquu | @as("HighlightText") HighlightText | @as("LinkText") LinkText | @as("Mark") Mark | @as("MarkText") MarkText | @as("SelectedItem") SelectedItem | @as("SelectedItemText") SelectedItemText | @as("VisitedText") VisitedText | @as("ActiveBorder") ActiveBorder | @as("ActiveCaption") ActiveCaption | @as("AppWorkspace") AppWorkspace | @as("Background") Background | @as("ButtonHighlight") ButtonHighlight | @as("ButtonShadow") ButtonShadow | @as("CaptionText") CaptionText | @as("InactiveBorder") InactiveBorder | @as("InactiveCaption") InactiveCaption | @as("InactiveCaptionText") InactiveCaptionText | @as("InfoBackground") InfoBackground | @as("InfoText") InfoText | @as("Menu") Menu | @as("MenuText") MenuText | @as("Scrollbar") ScrollbarInitialEtcgjquu | @as("ThreeDDarkShadow") ThreeDDarkShadow | @as("ThreeDFace") ThreeDFace | @as("ThreeDHighlight") ThreeDHighlight | @as("ThreeDLightShadow") ThreeDLightShadow | @as("ThreeDShadow") ThreeDShadow | @as("Window") Window | @as("WindowFrame") WindowFrame | @as("WindowText") WindowText | @as("currentColor") CurrentColor | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc1owcx = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("-moz-fit-content") MozFitContent | @as("-moz-max-content") MozMaxContent | @as("-moz-min-content") MozMinContent | @as("-webkit-fit-content") WebkitFitContent | @as("-webkit-max-content") WebkitMaxContent | @as("auto") Auto | @as("fit-content") FitContent | @as("intrinsic") Intrinsic | @as("max-content") MaxContent | @as("min-content") MinContent | @as("min-intrinsic") MinIntrinsic | @as("-webkit-min-content") WebkitMinContent | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc1x0av = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneRevertEtc1x0av | @as("-moz-fit-content") MozFitContent | @as("-moz-max-content") MozMaxContent | @as("-moz-min-content") MozMinContent | @as("-webkit-fit-content") WebkitFitContent | @as("-webkit-max-content") WebkitMaxContent | @as("fit-content") FitContent | @as("intrinsic") Intrinsic | @as("max-content") MaxContent | @as("min-content") MinContent | @as("-webkit-min-content") WebkitMinContent | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc1wbzz = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("-moz-fit-content") MozFitContent | @as("-moz-max-content") MozMaxContent | @as("-moz-min-content") MozMinContent | @as("-webkit-fit-content") WebkitFitContent | @as("-webkit-max-content") WebkitMaxContent | @as("auto") Auto | @as("fit-content") FitContent | @as("intrinsic") Intrinsic | @as("max-content") MaxContent | @as("min-content") MinContent | @as("min-intrinsic") MinIntrinsic | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtchhntk = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("normal") Normal | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtcgjquu = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("aliceblue") Aliceblue | @as("antiquewhite") Antiquewhite | @as("aqua") Aqua | @as("aquamarine") Aquamarine | @as("azure") Azure | @as("beige") Beige | @as("bisque") Bisque | @as("black") Black | @as("blanchedalmond") Blanchedalmond | @as("blue") Blue | @as("blueviolet") Blueviolet | @as("brown") Brown | @as("burlywood") Burlywood | @as("cadetblue") Cadetblue | @as("chartreuse") Chartreuse | @as("chocolate") Chocolate | @as("coral") Coral | @as("cornflowerblue") Cornflowerblue | @as("cornsilk") Cornsilk | @as("crimson") Crimson | @as("cyan") Cyan | @as("darkblue") Darkblue | @as("darkcyan") Darkcyan | @as("darkgoldenrod") Darkgoldenrod | @as("darkgray") Darkgray | @as("darkgreen") Darkgreen | @as("darkgrey") Darkgrey | @as("darkkhaki") Darkkhaki | @as("darkmagenta") Darkmagenta | @as("darkolivegreen") Darkolivegreen | @as("darkorange") Darkorange | @as("darkorchid") Darkorchid | @as("darkred") Darkred | @as("darksalmon") Darksalmon | @as("darkseagreen") Darkseagreen | @as("darkslateblue") Darkslateblue | @as("darkslategray") Darkslategray | @as("darkslategrey") Darkslategrey | @as("darkturquoise") Darkturquoise | @as("darkviolet") Darkviolet | @as("deeppink") Deeppink | @as("deepskyblue") Deepskyblue | @as("dimgray") Dimgray | @as("dimgrey") Dimgrey | @as("dodgerblue") Dodgerblue | @as("firebrick") Firebrick | @as("floralwhite") Floralwhite | @as("forestgreen") Forestgreen | @as("fuchsia") Fuchsia | @as("gainsboro") Gainsboro | @as("ghostwhite") Ghostwhite | @as("gold") Gold | @as("goldenrod") Goldenrod | @as("gray") Gray | @as("green") Green | @as("greenyellow") Greenyellow | @as("grey") Grey | @as("honeydew") Honeydew | @as("hotpink") Hotpink | @as("indianred") Indianred | @as("indigo") Indigo | @as("ivory") Ivory | @as("khaki") Khaki | @as("lavender") Lavender | @as("lavenderblush") Lavenderblush | @as("lawngreen") Lawngreen | @as("lemonchiffon") Lemonchiffon | @as("lightblue") Lightblue | @as("lightcoral") Lightcoral | @as("lightcyan") Lightcyan | @as("lightgoldenrodyellow") Lightgoldenrodyellow | @as("lightgray") Lightgray | @as("lightgreen") Lightgreen | @as("lightgrey") Lightgrey | @as("lightpink") Lightpink | @as("lightsalmon") Lightsalmon | @as("lightseagreen") Lightseagreen | @as("lightskyblue") Lightskyblue | @as("lightslategray") Lightslategray | @as("lightslategrey") Lightslategrey | @as("lightsteelblue") Lightsteelblue | @as("lightyellow") Lightyellow | @as("lime") Lime | @as("limegreen") Limegreen | @as("linen") Linen | @as("magenta") Magenta | @as("maroon") Maroon | @as("mediumaquamarine") Mediumaquamarine | @as("mediumblue") Mediumblue | @as("mediumorchid") Mediumorchid | @as("mediumpurple") Mediumpurple | @as("mediumseagreen") Mediumseagreen | @as("mediumslateblue") Mediumslateblue | @as("mediumspringgreen") Mediumspringgreen | @as("mediumturquoise") Mediumturquoise | @as("mediumvioletred") Mediumvioletred | @as("midnightblue") Midnightblue | @as("mintcream") Mintcream | @as("mistyrose") Mistyrose | @as("moccasin") Moccasin | @as("navajowhite") Navajowhite | @as("navy") Navy | @as("oldlace") Oldlace | @as("olive") Olive | @as("olivedrab") Olivedrab | @as("orange") Orange | @as("orangered") Orangered | @as("orchid") Orchid | @as("palegoldenrod") Palegoldenrod | @as("palegreen") Palegreen | @as("paleturquoise") Paleturquoise | @as("palevioletred") Palevioletred | @as("papayawhip") Papayawhip | @as("peachpuff") Peachpuff | @as("peru") Peru | @as("pink") Pink | @as("plum") Plum | @as("powderblue") Powderblue | @as("purple") Purple | @as("rebeccapurple") Rebeccapurple | @as("red") Red | @as("rosybrown") Rosybrown | @as("royalblue") Royalblue | @as("saddlebrown") Saddlebrown | @as("salmon") Salmon | @as("sandybrown") Sandybrown | @as("seagreen") Seagreen | @as("seashell") Seashell | @as("sienna") Sienna | @as("silver") Silver | @as("skyblue") Skyblue | @as("slateblue") Slateblue | @as("slategray") Slategray | @as("slategrey") Slategrey | @as("snow") Snow | @as("springgreen") Springgreen | @as("steelblue") Steelblue | @as("tan") Tan | @as("teal") Teal | @as("thistle") Thistle | @as("tomato") Tomato | @as("turquoise") Turquoise | @as("violet") Violet | @as("wheat") Wheat | @as("white") White | @as("whitesmoke") Whitesmoke | @as("yellow") Yellow | @as("yellowgreen") Yellowgreen | @as("transparent") Transparent | @as("AccentColor") AccentColor | @as("AccentColorText") AccentColorText | @as("ActiveText") ActiveText | @as("ButtonBorder") ButtonBorder | @as("ButtonFace") ButtonFace | @as("ButtonText") ButtonText | @as("Canvas") Canvas | @as("CanvasText") CanvasText | @as("Field") Field | @as("FieldText") FieldText | @as("GrayText") GrayText | @as("Highlight") HighlightRevertEtcgjquu | @as("HighlightText") HighlightText | @as("LinkText") LinkText | @as("Mark") Mark | @as("MarkText") MarkText | @as("SelectedItem") SelectedItem | @as("SelectedItemText") SelectedItemText | @as("VisitedText") VisitedText | @as("ActiveBorder") ActiveBorder | @as("ActiveCaption") ActiveCaption | @as("AppWorkspace") AppWorkspace | @as("Background") Background | @as("ButtonHighlight") ButtonHighlight | @as("ButtonShadow") ButtonShadow | @as("CaptionText") CaptionText | @as("InactiveBorder") InactiveBorder | @as("InactiveCaption") InactiveCaption | @as("InactiveCaptionText") InactiveCaptionText | @as("InfoBackground") InfoBackground | @as("InfoText") InfoText | @as("Menu") Menu | @as("MenuText") MenuText | @as("Scrollbar") ScrollbarRevertEtcgjquu | @as("ThreeDDarkShadow") ThreeDDarkShadow | @as("ThreeDFace") ThreeDFace | @as("ThreeDHighlight") ThreeDHighlight | @as("ThreeDLightShadow") ThreeDLightShadow | @as("ThreeDShadow") ThreeDShadow | @as("Window") Window | @as("WindowFrame") WindowFrame | @as("WindowText") WindowText | @as("currentColor") CurrentColor | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensTAGSSmBackgroundColorNoFillConfig = {
-  neutral?: mozInitialEtcgjquu,
-  primary?: mozInitialEtcgjquu,
-  success?: mozInitialEtcgjquu,
-  error?: mozInitialEtcgjquu,
-  warning?: mozInitialEtcgjquu,
-  purple?: mozInitialEtcgjquu,
+  neutral?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  primary?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  success?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  warning?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  purple?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTAGSSmBackgroundColorConfig = {
   noFill?: contextComponentTokensTAGSSmBackgroundColorNoFillConfig,
   attentive?: contextComponentTokensTAGSSmBackgroundColorNoFillConfig,
   subtle?: contextComponentTokensTAGSSmBackgroundColorNoFillConfig,
 }
-@unboxed type mozInitialEtcp2j1f = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtcp2j1f = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensTAGSSmBorderRadiusXsConfig = {
-  rounded?: mozInitialEtcp2j1f,
-  squarical?: mozInitialEtcp2j1f,
+  rounded?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  squarical?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensTAGSSmBorderRadiusConfig = {
   xs?: contextComponentTokensTAGSSmBorderRadiusXsConfig,
@@ -744,31 +744,31 @@ type contextComponentTokensTAGSSmBorderRadiusConfig = {
   lg?: contextComponentTokensTAGSSmBorderRadiusXsConfig,
 }
 type contextComponentTokensTAGSSmPaddingConfig = {
-  xs?: mozInitialEtcp2j1f,
-  sm?: mozInitialEtcp2j1f,
-  md?: mozInitialEtcp2j1f,
-  lg?: mozInitialEtcp2j1f,
+  xs?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  md?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
-@unboxed type mozInitialEtc1yz1q = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneInitialEtc1yz1q | @as("medium") Medium | @as("thick") Thick | @as("thin") Thin | @as("aliceblue") Aliceblue | @as("antiquewhite") Antiquewhite | @as("aqua") Aqua | @as("aquamarine") Aquamarine | @as("azure") Azure | @as("beige") Beige | @as("bisque") Bisque | @as("black") Black | @as("blanchedalmond") Blanchedalmond | @as("blue") Blue | @as("blueviolet") Blueviolet | @as("brown") Brown | @as("burlywood") Burlywood | @as("cadetblue") Cadetblue | @as("chartreuse") Chartreuse | @as("chocolate") Chocolate | @as("coral") Coral | @as("cornflowerblue") Cornflowerblue | @as("cornsilk") Cornsilk | @as("crimson") Crimson | @as("cyan") Cyan | @as("darkblue") Darkblue | @as("darkcyan") Darkcyan | @as("darkgoldenrod") Darkgoldenrod | @as("darkgray") Darkgray | @as("darkgreen") Darkgreen | @as("darkgrey") Darkgrey | @as("darkkhaki") Darkkhaki | @as("darkmagenta") Darkmagenta | @as("darkolivegreen") Darkolivegreen | @as("darkorange") Darkorange | @as("darkorchid") Darkorchid | @as("darkred") Darkred | @as("darksalmon") Darksalmon | @as("darkseagreen") Darkseagreen | @as("darkslateblue") Darkslateblue | @as("darkslategray") Darkslategray | @as("darkslategrey") Darkslategrey | @as("darkturquoise") Darkturquoise | @as("darkviolet") Darkviolet | @as("deeppink") Deeppink | @as("deepskyblue") Deepskyblue | @as("dimgray") Dimgray | @as("dimgrey") Dimgrey | @as("dodgerblue") Dodgerblue | @as("firebrick") Firebrick | @as("floralwhite") Floralwhite | @as("forestgreen") Forestgreen | @as("fuchsia") Fuchsia | @as("gainsboro") Gainsboro | @as("ghostwhite") Ghostwhite | @as("gold") Gold | @as("goldenrod") Goldenrod | @as("gray") Gray | @as("green") Green | @as("greenyellow") Greenyellow | @as("grey") Grey | @as("honeydew") Honeydew | @as("hotpink") Hotpink | @as("indianred") Indianred | @as("indigo") Indigo | @as("ivory") Ivory | @as("khaki") Khaki | @as("lavender") Lavender | @as("lavenderblush") Lavenderblush | @as("lawngreen") Lawngreen | @as("lemonchiffon") Lemonchiffon | @as("lightblue") Lightblue | @as("lightcoral") Lightcoral | @as("lightcyan") Lightcyan | @as("lightgoldenrodyellow") Lightgoldenrodyellow | @as("lightgray") Lightgray | @as("lightgreen") Lightgreen | @as("lightgrey") Lightgrey | @as("lightpink") Lightpink | @as("lightsalmon") Lightsalmon | @as("lightseagreen") Lightseagreen | @as("lightskyblue") Lightskyblue | @as("lightslategray") Lightslategray | @as("lightslategrey") Lightslategrey | @as("lightsteelblue") Lightsteelblue | @as("lightyellow") Lightyellow | @as("lime") Lime | @as("limegreen") Limegreen | @as("linen") Linen | @as("magenta") Magenta | @as("maroon") Maroon | @as("mediumaquamarine") Mediumaquamarine | @as("mediumblue") Mediumblue | @as("mediumorchid") Mediumorchid | @as("mediumpurple") Mediumpurple | @as("mediumseagreen") Mediumseagreen | @as("mediumslateblue") Mediumslateblue | @as("mediumspringgreen") Mediumspringgreen | @as("mediumturquoise") Mediumturquoise | @as("mediumvioletred") Mediumvioletred | @as("midnightblue") Midnightblue | @as("mintcream") Mintcream | @as("mistyrose") Mistyrose | @as("moccasin") Moccasin | @as("navajowhite") Navajowhite | @as("navy") Navy | @as("oldlace") Oldlace | @as("olive") Olive | @as("olivedrab") Olivedrab | @as("orange") Orange | @as("orangered") Orangered | @as("orchid") Orchid | @as("palegoldenrod") Palegoldenrod | @as("palegreen") Palegreen | @as("paleturquoise") Paleturquoise | @as("palevioletred") Palevioletred | @as("papayawhip") Papayawhip | @as("peachpuff") Peachpuff | @as("peru") Peru | @as("pink") Pink | @as("plum") Plum | @as("powderblue") Powderblue | @as("purple") Purple | @as("rebeccapurple") Rebeccapurple | @as("red") Red | @as("rosybrown") Rosybrown | @as("royalblue") Royalblue | @as("saddlebrown") Saddlebrown | @as("salmon") Salmon | @as("sandybrown") Sandybrown | @as("seagreen") Seagreen | @as("seashell") Seashell | @as("sienna") Sienna | @as("silver") Silver | @as("skyblue") Skyblue | @as("slateblue") Slateblue | @as("slategray") Slategray | @as("slategrey") Slategrey | @as("snow") Snow | @as("springgreen") Springgreen | @as("steelblue") Steelblue | @as("tan") Tan | @as("teal") Teal | @as("thistle") Thistle | @as("tomato") Tomato | @as("turquoise") Turquoise | @as("violet") Violet | @as("wheat") Wheat | @as("white") White | @as("whitesmoke") Whitesmoke | @as("yellow") Yellow | @as("yellowgreen") Yellowgreen | @as("transparent") Transparent | @as("AccentColor") AccentColor | @as("AccentColorText") AccentColorText | @as("ActiveText") ActiveText | @as("ButtonBorder") ButtonBorder | @as("ButtonFace") ButtonFace | @as("ButtonText") ButtonText | @as("Canvas") Canvas | @as("CanvasText") CanvasText | @as("Field") Field | @as("FieldText") FieldText | @as("GrayText") GrayText | @as("Highlight") HighlightInitialEtc1yz1q | @as("HighlightText") HighlightText | @as("LinkText") LinkText | @as("Mark") Mark | @as("MarkText") MarkText | @as("SelectedItem") SelectedItem | @as("SelectedItemText") SelectedItemText | @as("VisitedText") VisitedText | @as("ActiveBorder") ActiveBorder | @as("ActiveCaption") ActiveCaption | @as("AppWorkspace") AppWorkspace | @as("Background") Background | @as("ButtonHighlight") ButtonHighlight | @as("ButtonShadow") ButtonShadow | @as("CaptionText") CaptionText | @as("InactiveBorder") InactiveBorder | @as("InactiveCaption") InactiveCaption | @as("InactiveCaptionText") InactiveCaptionText | @as("InfoBackground") InfoBackground | @as("InfoText") InfoText | @as("Menu") Menu | @as("MenuText") MenuText | @as("Scrollbar") ScrollbarInitialEtc1yz1q | @as("ThreeDDarkShadow") ThreeDDarkShadow | @as("ThreeDFace") ThreeDFace | @as("ThreeDHighlight") ThreeDHighlight | @as("ThreeDLightShadow") ThreeDLightShadow | @as("ThreeDShadow") ThreeDShadow | @as("Window") Window | @as("WindowFrame") WindowFrame | @as("WindowText") WindowText | @as("currentColor") CurrentColor | @as("hidden") Hidden | @as("dashed") Dashed | @as("dotted") Dotted | @as("double") Double | @as("groove") Groove | @as("inset") Inset | @as("outset") Outset | @as("ridge") Ridge | @as("solid") Solid | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc1yz1q = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneRevertEtc1yz1q | @as("medium") Medium | @as("thick") Thick | @as("thin") Thin | @as("aliceblue") Aliceblue | @as("antiquewhite") Antiquewhite | @as("aqua") Aqua | @as("aquamarine") Aquamarine | @as("azure") Azure | @as("beige") Beige | @as("bisque") Bisque | @as("black") Black | @as("blanchedalmond") Blanchedalmond | @as("blue") Blue | @as("blueviolet") Blueviolet | @as("brown") Brown | @as("burlywood") Burlywood | @as("cadetblue") Cadetblue | @as("chartreuse") Chartreuse | @as("chocolate") Chocolate | @as("coral") Coral | @as("cornflowerblue") Cornflowerblue | @as("cornsilk") Cornsilk | @as("crimson") Crimson | @as("cyan") Cyan | @as("darkblue") Darkblue | @as("darkcyan") Darkcyan | @as("darkgoldenrod") Darkgoldenrod | @as("darkgray") Darkgray | @as("darkgreen") Darkgreen | @as("darkgrey") Darkgrey | @as("darkkhaki") Darkkhaki | @as("darkmagenta") Darkmagenta | @as("darkolivegreen") Darkolivegreen | @as("darkorange") Darkorange | @as("darkorchid") Darkorchid | @as("darkred") Darkred | @as("darksalmon") Darksalmon | @as("darkseagreen") Darkseagreen | @as("darkslateblue") Darkslateblue | @as("darkslategray") Darkslategray | @as("darkslategrey") Darkslategrey | @as("darkturquoise") Darkturquoise | @as("darkviolet") Darkviolet | @as("deeppink") Deeppink | @as("deepskyblue") Deepskyblue | @as("dimgray") Dimgray | @as("dimgrey") Dimgrey | @as("dodgerblue") Dodgerblue | @as("firebrick") Firebrick | @as("floralwhite") Floralwhite | @as("forestgreen") Forestgreen | @as("fuchsia") Fuchsia | @as("gainsboro") Gainsboro | @as("ghostwhite") Ghostwhite | @as("gold") Gold | @as("goldenrod") Goldenrod | @as("gray") Gray | @as("green") Green | @as("greenyellow") Greenyellow | @as("grey") Grey | @as("honeydew") Honeydew | @as("hotpink") Hotpink | @as("indianred") Indianred | @as("indigo") Indigo | @as("ivory") Ivory | @as("khaki") Khaki | @as("lavender") Lavender | @as("lavenderblush") Lavenderblush | @as("lawngreen") Lawngreen | @as("lemonchiffon") Lemonchiffon | @as("lightblue") Lightblue | @as("lightcoral") Lightcoral | @as("lightcyan") Lightcyan | @as("lightgoldenrodyellow") Lightgoldenrodyellow | @as("lightgray") Lightgray | @as("lightgreen") Lightgreen | @as("lightgrey") Lightgrey | @as("lightpink") Lightpink | @as("lightsalmon") Lightsalmon | @as("lightseagreen") Lightseagreen | @as("lightskyblue") Lightskyblue | @as("lightslategray") Lightslategray | @as("lightslategrey") Lightslategrey | @as("lightsteelblue") Lightsteelblue | @as("lightyellow") Lightyellow | @as("lime") Lime | @as("limegreen") Limegreen | @as("linen") Linen | @as("magenta") Magenta | @as("maroon") Maroon | @as("mediumaquamarine") Mediumaquamarine | @as("mediumblue") Mediumblue | @as("mediumorchid") Mediumorchid | @as("mediumpurple") Mediumpurple | @as("mediumseagreen") Mediumseagreen | @as("mediumslateblue") Mediumslateblue | @as("mediumspringgreen") Mediumspringgreen | @as("mediumturquoise") Mediumturquoise | @as("mediumvioletred") Mediumvioletred | @as("midnightblue") Midnightblue | @as("mintcream") Mintcream | @as("mistyrose") Mistyrose | @as("moccasin") Moccasin | @as("navajowhite") Navajowhite | @as("navy") Navy | @as("oldlace") Oldlace | @as("olive") Olive | @as("olivedrab") Olivedrab | @as("orange") Orange | @as("orangered") Orangered | @as("orchid") Orchid | @as("palegoldenrod") Palegoldenrod | @as("palegreen") Palegreen | @as("paleturquoise") Paleturquoise | @as("palevioletred") Palevioletred | @as("papayawhip") Papayawhip | @as("peachpuff") Peachpuff | @as("peru") Peru | @as("pink") Pink | @as("plum") Plum | @as("powderblue") Powderblue | @as("purple") Purple | @as("rebeccapurple") Rebeccapurple | @as("red") Red | @as("rosybrown") Rosybrown | @as("royalblue") Royalblue | @as("saddlebrown") Saddlebrown | @as("salmon") Salmon | @as("sandybrown") Sandybrown | @as("seagreen") Seagreen | @as("seashell") Seashell | @as("sienna") Sienna | @as("silver") Silver | @as("skyblue") Skyblue | @as("slateblue") Slateblue | @as("slategray") Slategray | @as("slategrey") Slategrey | @as("snow") Snow | @as("springgreen") Springgreen | @as("steelblue") Steelblue | @as("tan") Tan | @as("teal") Teal | @as("thistle") Thistle | @as("tomato") Tomato | @as("turquoise") Turquoise | @as("violet") Violet | @as("wheat") Wheat | @as("white") White | @as("whitesmoke") Whitesmoke | @as("yellow") Yellow | @as("yellowgreen") Yellowgreen | @as("transparent") Transparent | @as("AccentColor") AccentColor | @as("AccentColorText") AccentColorText | @as("ActiveText") ActiveText | @as("ButtonBorder") ButtonBorder | @as("ButtonFace") ButtonFace | @as("ButtonText") ButtonText | @as("Canvas") Canvas | @as("CanvasText") CanvasText | @as("Field") Field | @as("FieldText") FieldText | @as("GrayText") GrayText | @as("Highlight") HighlightRevertEtc1yz1q | @as("HighlightText") HighlightText | @as("LinkText") LinkText | @as("Mark") Mark | @as("MarkText") MarkText | @as("SelectedItem") SelectedItem | @as("SelectedItemText") SelectedItemText | @as("VisitedText") VisitedText | @as("ActiveBorder") ActiveBorder | @as("ActiveCaption") ActiveCaption | @as("AppWorkspace") AppWorkspace | @as("Background") Background | @as("ButtonHighlight") ButtonHighlight | @as("ButtonShadow") ButtonShadow | @as("CaptionText") CaptionText | @as("InactiveBorder") InactiveBorder | @as("InactiveCaption") InactiveCaption | @as("InactiveCaptionText") InactiveCaptionText | @as("InfoBackground") InfoBackground | @as("InfoText") InfoText | @as("Menu") Menu | @as("MenuText") MenuText | @as("Scrollbar") ScrollbarRevertEtc1yz1q | @as("ThreeDDarkShadow") ThreeDDarkShadow | @as("ThreeDFace") ThreeDFace | @as("ThreeDHighlight") ThreeDHighlight | @as("ThreeDLightShadow") ThreeDLightShadow | @as("ThreeDShadow") ThreeDShadow | @as("Window") Window | @as("WindowFrame") WindowFrame | @as("WindowText") WindowText | @as("currentColor") CurrentColor | @as("hidden") Hidden | @as("dashed") Dashed | @as("dotted") Dotted | @as("double") Double | @as("groove") Groove | @as("inset") Inset | @as("outset") Outset | @as("ridge") Ridge | @as("solid") Solid | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensTAGSSmBorderNoFillConfig = {
-  neutral?: mozInitialEtc1yz1q,
-  primary?: mozInitialEtc1yz1q,
-  success?: mozInitialEtc1yz1q,
-  error?: mozInitialEtc1yz1q,
-  warning?: mozInitialEtc1yz1q,
-  purple?: mozInitialEtc1yz1q,
+  neutral?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  primary?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  success?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  error?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  warning?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  purple?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensTAGSSmBorderConfig = {
   noFill?: contextComponentTokensTAGSSmBorderNoFillConfig,
   attentive?: contextComponentTokensTAGSSmBorderNoFillConfig,
   subtle?: contextComponentTokensTAGSSmBorderNoFillConfig,
 }
-@unboxed type mozInitialEtcly7v7 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("medium") Medium | @as("math") Math | @as("large") Large | @as("small") Small | @as("x-large") XLarge | @as("x-small") XSmall | @as("xx-large") XxLarge | @as("xx-small") XxSmall | @as("xxx-large") XxxLarge | @as("larger") Larger | @as("smaller") Smaller | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtcly7v7 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("medium") Medium | @as("math") Math | @as("large") Large | @as("small") Small | @as("x-large") XLarge | @as("x-small") XSmall | @as("xx-large") XxLarge | @as("xx-small") XxSmall | @as("xxx-large") XxxLarge | @as("larger") Larger | @as("smaller") Smaller | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensTAGSSmTextFontSizeConfig = {
-  xs?: mozInitialEtcly7v7,
-  sm?: mozInitialEtcly7v7,
-  md?: mozInitialEtcly7v7,
-  lg?: mozInitialEtcly7v7,
+  xs?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  md?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
 }
 type contextComponentTokensTAGSSmTextFontWeightConfig = {
   xs?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
@@ -782,10 +782,10 @@ type contextComponentTokensTAGSSmTextConfig = {
   fontWeight?: contextComponentTokensTAGSSmTextFontWeightConfig,
 }
 type contextComponentTokensTAGSSmConfig = {
-  minWidth?: mozInitialEtc1owcx,
-  maxWidth?: mozInitialEtc1x0av,
-  width?: mozInitialEtc1wbzz,
-  gap?: mozInitialEtchhntk,
+  minWidth?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   backgroundColor?: contextComponentTokensTAGSSmBackgroundColorConfig,
   borderRadius?: contextComponentTokensTAGSSmBorderRadiusConfig,
   padding?: contextComponentTokensTAGSSmPaddingConfig,
@@ -797,54 +797,54 @@ type contextComponentTokensTAGSConfig = {
   lg?: contextComponentTokensTAGSSmConfig,
 }
 type contextComponentTokensSEARCHINPUTSmLabelColorConfig = {
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
-  focus?: mozInitialEtcgjquu,
-  error?: mozInitialEtcgjquu,
-  disabled?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSEARCHINPUTSmLabelConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
 }
 type contextComponentTokensSEARCHINPUTSmErrorMessageConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSEARCHINPUTSmRequiredConfig = {
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig = {
-  x?: mozInitialEtcp2j1f,
-  y?: mozInitialEtcp2j1f,
+  x?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  y?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig = {
-  default?: mozInitialEtc1yz1q,
-  hover?: mozInitialEtc1yz1q,
-  focus?: mozInitialEtc1yz1q,
-  error?: mozInitialEtc1yz1q,
-  disabled?: mozInitialEtc1yz1q,
+  default?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  error?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
-@unboxed type mozInitialEtcsclw8 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneInitialEtcsclw8 | @as("medium") Medium | @as("thick") Thick | @as("thin") Thin | @as("auto") Auto | @as("aliceblue") Aliceblue | @as("antiquewhite") Antiquewhite | @as("aqua") Aqua | @as("aquamarine") Aquamarine | @as("azure") Azure | @as("beige") Beige | @as("bisque") Bisque | @as("black") Black | @as("blanchedalmond") Blanchedalmond | @as("blue") Blue | @as("blueviolet") Blueviolet | @as("brown") Brown | @as("burlywood") Burlywood | @as("cadetblue") Cadetblue | @as("chartreuse") Chartreuse | @as("chocolate") Chocolate | @as("coral") Coral | @as("cornflowerblue") Cornflowerblue | @as("cornsilk") Cornsilk | @as("crimson") Crimson | @as("cyan") Cyan | @as("darkblue") Darkblue | @as("darkcyan") Darkcyan | @as("darkgoldenrod") Darkgoldenrod | @as("darkgray") Darkgray | @as("darkgreen") Darkgreen | @as("darkgrey") Darkgrey | @as("darkkhaki") Darkkhaki | @as("darkmagenta") Darkmagenta | @as("darkolivegreen") Darkolivegreen | @as("darkorange") Darkorange | @as("darkorchid") Darkorchid | @as("darkred") Darkred | @as("darksalmon") Darksalmon | @as("darkseagreen") Darkseagreen | @as("darkslateblue") Darkslateblue | @as("darkslategray") Darkslategray | @as("darkslategrey") Darkslategrey | @as("darkturquoise") Darkturquoise | @as("darkviolet") Darkviolet | @as("deeppink") Deeppink | @as("deepskyblue") Deepskyblue | @as("dimgray") Dimgray | @as("dimgrey") Dimgrey | @as("dodgerblue") Dodgerblue | @as("firebrick") Firebrick | @as("floralwhite") Floralwhite | @as("forestgreen") Forestgreen | @as("fuchsia") Fuchsia | @as("gainsboro") Gainsboro | @as("ghostwhite") Ghostwhite | @as("gold") Gold | @as("goldenrod") Goldenrod | @as("gray") Gray | @as("green") Green | @as("greenyellow") Greenyellow | @as("grey") Grey | @as("honeydew") Honeydew | @as("hotpink") Hotpink | @as("indianred") Indianred | @as("indigo") Indigo | @as("ivory") Ivory | @as("khaki") Khaki | @as("lavender") Lavender | @as("lavenderblush") Lavenderblush | @as("lawngreen") Lawngreen | @as("lemonchiffon") Lemonchiffon | @as("lightblue") Lightblue | @as("lightcoral") Lightcoral | @as("lightcyan") Lightcyan | @as("lightgoldenrodyellow") Lightgoldenrodyellow | @as("lightgray") Lightgray | @as("lightgreen") Lightgreen | @as("lightgrey") Lightgrey | @as("lightpink") Lightpink | @as("lightsalmon") Lightsalmon | @as("lightseagreen") Lightseagreen | @as("lightskyblue") Lightskyblue | @as("lightslategray") Lightslategray | @as("lightslategrey") Lightslategrey | @as("lightsteelblue") Lightsteelblue | @as("lightyellow") Lightyellow | @as("lime") Lime | @as("limegreen") Limegreen | @as("linen") Linen | @as("magenta") Magenta | @as("maroon") Maroon | @as("mediumaquamarine") Mediumaquamarine | @as("mediumblue") Mediumblue | @as("mediumorchid") Mediumorchid | @as("mediumpurple") Mediumpurple | @as("mediumseagreen") Mediumseagreen | @as("mediumslateblue") Mediumslateblue | @as("mediumspringgreen") Mediumspringgreen | @as("mediumturquoise") Mediumturquoise | @as("mediumvioletred") Mediumvioletred | @as("midnightblue") Midnightblue | @as("mintcream") Mintcream | @as("mistyrose") Mistyrose | @as("moccasin") Moccasin | @as("navajowhite") Navajowhite | @as("navy") Navy | @as("oldlace") Oldlace | @as("olive") Olive | @as("olivedrab") Olivedrab | @as("orange") Orange | @as("orangered") Orangered | @as("orchid") Orchid | @as("palegoldenrod") Palegoldenrod | @as("palegreen") Palegreen | @as("paleturquoise") Paleturquoise | @as("palevioletred") Palevioletred | @as("papayawhip") Papayawhip | @as("peachpuff") Peachpuff | @as("peru") Peru | @as("pink") Pink | @as("plum") Plum | @as("powderblue") Powderblue | @as("purple") Purple | @as("rebeccapurple") Rebeccapurple | @as("red") Red | @as("rosybrown") Rosybrown | @as("royalblue") Royalblue | @as("saddlebrown") Saddlebrown | @as("salmon") Salmon | @as("sandybrown") Sandybrown | @as("seagreen") Seagreen | @as("seashell") Seashell | @as("sienna") Sienna | @as("silver") Silver | @as("skyblue") Skyblue | @as("slateblue") Slateblue | @as("slategray") Slategray | @as("slategrey") Slategrey | @as("snow") Snow | @as("springgreen") Springgreen | @as("steelblue") Steelblue | @as("tan") Tan | @as("teal") Teal | @as("thistle") Thistle | @as("tomato") Tomato | @as("turquoise") Turquoise | @as("violet") Violet | @as("wheat") Wheat | @as("white") White | @as("whitesmoke") Whitesmoke | @as("yellow") Yellow | @as("yellowgreen") Yellowgreen | @as("transparent") Transparent | @as("AccentColor") AccentColor | @as("AccentColorText") AccentColorText | @as("ActiveText") ActiveText | @as("ButtonBorder") ButtonBorder | @as("ButtonFace") ButtonFace | @as("ButtonText") ButtonText | @as("Canvas") Canvas | @as("CanvasText") CanvasText | @as("Field") Field | @as("FieldText") FieldText | @as("GrayText") GrayText | @as("Highlight") HighlightInitialEtcsclw8 | @as("HighlightText") HighlightText | @as("LinkText") LinkText | @as("Mark") Mark | @as("MarkText") MarkText | @as("SelectedItem") SelectedItem | @as("SelectedItemText") SelectedItemText | @as("VisitedText") VisitedText | @as("ActiveBorder") ActiveBorder | @as("ActiveCaption") ActiveCaption | @as("AppWorkspace") AppWorkspace | @as("Background") Background | @as("ButtonHighlight") ButtonHighlight | @as("ButtonShadow") ButtonShadow | @as("CaptionText") CaptionText | @as("InactiveBorder") InactiveBorder | @as("InactiveCaption") InactiveCaption | @as("InactiveCaptionText") InactiveCaptionText | @as("InfoBackground") InfoBackground | @as("InfoText") InfoText | @as("Menu") Menu | @as("MenuText") MenuText | @as("Scrollbar") ScrollbarInitialEtcsclw8 | @as("ThreeDDarkShadow") ThreeDDarkShadow | @as("ThreeDFace") ThreeDFace | @as("ThreeDHighlight") ThreeDHighlight | @as("ThreeDLightShadow") ThreeDLightShadow | @as("ThreeDShadow") ThreeDShadow | @as("Window") Window | @as("WindowFrame") WindowFrame | @as("WindowText") WindowText | @as("currentColor") CurrentColor | @as("dashed") Dashed | @as("dotted") Dotted | @as("double") Double | @as("groove") Groove | @as("inset") Inset | @as("outset") Outset | @as("ridge") Ridge | @as("solid") Solid | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
-@unboxed type mozInitialEtcz3a4s = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneInitialEtcz3a4s | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtcsclw8 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneRevertEtcsclw8 | @as("medium") Medium | @as("thick") Thick | @as("thin") Thin | @as("auto") Auto | @as("aliceblue") Aliceblue | @as("antiquewhite") Antiquewhite | @as("aqua") Aqua | @as("aquamarine") Aquamarine | @as("azure") Azure | @as("beige") Beige | @as("bisque") Bisque | @as("black") Black | @as("blanchedalmond") Blanchedalmond | @as("blue") Blue | @as("blueviolet") Blueviolet | @as("brown") Brown | @as("burlywood") Burlywood | @as("cadetblue") Cadetblue | @as("chartreuse") Chartreuse | @as("chocolate") Chocolate | @as("coral") Coral | @as("cornflowerblue") Cornflowerblue | @as("cornsilk") Cornsilk | @as("crimson") Crimson | @as("cyan") Cyan | @as("darkblue") Darkblue | @as("darkcyan") Darkcyan | @as("darkgoldenrod") Darkgoldenrod | @as("darkgray") Darkgray | @as("darkgreen") Darkgreen | @as("darkgrey") Darkgrey | @as("darkkhaki") Darkkhaki | @as("darkmagenta") Darkmagenta | @as("darkolivegreen") Darkolivegreen | @as("darkorange") Darkorange | @as("darkorchid") Darkorchid | @as("darkred") Darkred | @as("darksalmon") Darksalmon | @as("darkseagreen") Darkseagreen | @as("darkslateblue") Darkslateblue | @as("darkslategray") Darkslategray | @as("darkslategrey") Darkslategrey | @as("darkturquoise") Darkturquoise | @as("darkviolet") Darkviolet | @as("deeppink") Deeppink | @as("deepskyblue") Deepskyblue | @as("dimgray") Dimgray | @as("dimgrey") Dimgrey | @as("dodgerblue") Dodgerblue | @as("firebrick") Firebrick | @as("floralwhite") Floralwhite | @as("forestgreen") Forestgreen | @as("fuchsia") Fuchsia | @as("gainsboro") Gainsboro | @as("ghostwhite") Ghostwhite | @as("gold") Gold | @as("goldenrod") Goldenrod | @as("gray") Gray | @as("green") Green | @as("greenyellow") Greenyellow | @as("grey") Grey | @as("honeydew") Honeydew | @as("hotpink") Hotpink | @as("indianred") Indianred | @as("indigo") Indigo | @as("ivory") Ivory | @as("khaki") Khaki | @as("lavender") Lavender | @as("lavenderblush") Lavenderblush | @as("lawngreen") Lawngreen | @as("lemonchiffon") Lemonchiffon | @as("lightblue") Lightblue | @as("lightcoral") Lightcoral | @as("lightcyan") Lightcyan | @as("lightgoldenrodyellow") Lightgoldenrodyellow | @as("lightgray") Lightgray | @as("lightgreen") Lightgreen | @as("lightgrey") Lightgrey | @as("lightpink") Lightpink | @as("lightsalmon") Lightsalmon | @as("lightseagreen") Lightseagreen | @as("lightskyblue") Lightskyblue | @as("lightslategray") Lightslategray | @as("lightslategrey") Lightslategrey | @as("lightsteelblue") Lightsteelblue | @as("lightyellow") Lightyellow | @as("lime") Lime | @as("limegreen") Limegreen | @as("linen") Linen | @as("magenta") Magenta | @as("maroon") Maroon | @as("mediumaquamarine") Mediumaquamarine | @as("mediumblue") Mediumblue | @as("mediumorchid") Mediumorchid | @as("mediumpurple") Mediumpurple | @as("mediumseagreen") Mediumseagreen | @as("mediumslateblue") Mediumslateblue | @as("mediumspringgreen") Mediumspringgreen | @as("mediumturquoise") Mediumturquoise | @as("mediumvioletred") Mediumvioletred | @as("midnightblue") Midnightblue | @as("mintcream") Mintcream | @as("mistyrose") Mistyrose | @as("moccasin") Moccasin | @as("navajowhite") Navajowhite | @as("navy") Navy | @as("oldlace") Oldlace | @as("olive") Olive | @as("olivedrab") Olivedrab | @as("orange") Orange | @as("orangered") Orangered | @as("orchid") Orchid | @as("palegoldenrod") Palegoldenrod | @as("palegreen") Palegreen | @as("paleturquoise") Paleturquoise | @as("palevioletred") Palevioletred | @as("papayawhip") Papayawhip | @as("peachpuff") Peachpuff | @as("peru") Peru | @as("pink") Pink | @as("plum") Plum | @as("powderblue") Powderblue | @as("purple") Purple | @as("rebeccapurple") Rebeccapurple | @as("red") Red | @as("rosybrown") Rosybrown | @as("royalblue") Royalblue | @as("saddlebrown") Saddlebrown | @as("salmon") Salmon | @as("sandybrown") Sandybrown | @as("seagreen") Seagreen | @as("seashell") Seashell | @as("sienna") Sienna | @as("silver") Silver | @as("skyblue") Skyblue | @as("slateblue") Slateblue | @as("slategray") Slategray | @as("slategrey") Slategrey | @as("snow") Snow | @as("springgreen") Springgreen | @as("steelblue") Steelblue | @as("tan") Tan | @as("teal") Teal | @as("thistle") Thistle | @as("tomato") Tomato | @as("turquoise") Turquoise | @as("violet") Violet | @as("wheat") Wheat | @as("white") White | @as("whitesmoke") Whitesmoke | @as("yellow") Yellow | @as("yellowgreen") Yellowgreen | @as("transparent") Transparent | @as("AccentColor") AccentColor | @as("AccentColorText") AccentColorText | @as("ActiveText") ActiveText | @as("ButtonBorder") ButtonBorder | @as("ButtonFace") ButtonFace | @as("ButtonText") ButtonText | @as("Canvas") Canvas | @as("CanvasText") CanvasText | @as("Field") Field | @as("FieldText") FieldText | @as("GrayText") GrayText | @as("Highlight") HighlightRevertEtcsclw8 | @as("HighlightText") HighlightText | @as("LinkText") LinkText | @as("Mark") Mark | @as("MarkText") MarkText | @as("SelectedItem") SelectedItem | @as("SelectedItemText") SelectedItemText | @as("VisitedText") VisitedText | @as("ActiveBorder") ActiveBorder | @as("ActiveCaption") ActiveCaption | @as("AppWorkspace") AppWorkspace | @as("Background") Background | @as("ButtonHighlight") ButtonHighlight | @as("ButtonShadow") ButtonShadow | @as("CaptionText") CaptionText | @as("InactiveBorder") InactiveBorder | @as("InactiveCaption") InactiveCaption | @as("InactiveCaptionText") InactiveCaptionText | @as("InfoBackground") InfoBackground | @as("InfoText") InfoText | @as("Menu") Menu | @as("MenuText") MenuText | @as("Scrollbar") ScrollbarRevertEtcsclw8 | @as("ThreeDDarkShadow") ThreeDDarkShadow | @as("ThreeDFace") ThreeDFace | @as("ThreeDHighlight") ThreeDHighlight | @as("ThreeDLightShadow") ThreeDLightShadow | @as("ThreeDShadow") ThreeDShadow | @as("Window") Window | @as("WindowFrame") WindowFrame | @as("WindowText") WindowText | @as("currentColor") CurrentColor | @as("dashed") Dashed | @as("dotted") Dotted | @as("double") Double | @as("groove") Groove | @as("inset") Inset | @as("outset") Outset | @as("ridge") Ridge | @as("solid") Solid | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtcz3a4s = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneRevertEtcz3a4s | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensSEARCHINPUTSmInputContainerConfig = {
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  borderRadius?: mozInitialEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   borderBottom?: contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig,
-  outline?: mozInitialEtcsclw8,
-  boxShadow?: mozInitialEtcz3a4s,
+  outline?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
 }
 type contextComponentTokensSEARCHINPUTSmIconConfig = {
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
-  width?: mozInitialEtc1wbzz,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensSEARCHINPUTSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   subLabel?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   hintText?: contextComponentTokensSEARCHINPUTSmLabelConfig,
@@ -858,25 +858,25 @@ type contextComponentTokensSEARCHINPUTConfig = {
   lg?: contextComponentTokensSEARCHINPUTSmConfig,
 }
 type contextComponentTokensTEXTAREASmPlaceholderConfig = {
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
 }
 type contextComponentTokensTEXTAREASmHelpIconConfig = {
-  width?: mozInitialEtc1wbzz,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
 }
 type contextComponentTokensTEXTAREASmInputContainerConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  borderRadius?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   border?: contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig,
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
   backgroundColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
 }
 type contextComponentTokensTEXTAREASmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   placeholder?: contextComponentTokensTEXTAREASmPlaceholderConfig,
   label?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   subLabel?: contextComponentTokensSEARCHINPUTSmLabelConfig,
@@ -891,9 +891,9 @@ type contextComponentTokensTEXTAREAConfig = {
   lg?: contextComponentTokensTEXTAREASmConfig,
 }
 type contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig = {
-  sm?: mozInitialEtcly7v7,
-  md?: mozInitialEtcly7v7,
-  lg?: mozInitialEtcly7v7,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  md?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
 }
 type contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig = {
   sm?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
@@ -907,9 +907,9 @@ type contextComponentTokensTEXTAREAV2SmTopContainerLabelConfig = {
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
 }
 type contextComponentTokensTEXTAREAV2SmTopContainerHelpIconWidthConfig = {
-  sm?: mozInitialEtc1wbzz,
-  md?: mozInitialEtc1wbzz,
-  lg?: mozInitialEtc1wbzz,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  md?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensTEXTAREAV2SmTopContainerHelpIconConfig = {
   width?: contextComponentTokensTEXTAREAV2SmTopContainerHelpIconWidthConfig,
@@ -921,18 +921,18 @@ type contextComponentTokensTEXTAREAV2SmTopContainerConfig = {
   required?: contextComponentTokensSEARCHINPUTSmRequiredConfig,
   helpIcon?: contextComponentTokensTEXTAREAV2SmTopContainerHelpIconConfig,
 }
-@unboxed type mozInitialEtcydel2 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneInitialEtcydel2 | @as("normal") Normal | @as("ease") Ease | @as("ease-in") EaseIn | @as("ease-in-out") EaseInOut | @as("ease-out") EaseOut | @as("step-end") StepEnd | @as("step-start") StepStart | @as("linear") Linear | @as("all") All | @as("allow-discrete") AllowDiscrete | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtcydel2 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneRevertEtcydel2 | @as("normal") Normal | @as("ease") Ease | @as("ease-in") EaseIn | @as("ease-in-out") EaseInOut | @as("ease-out") EaseOut | @as("step-end") StepEnd | @as("step-start") StepStart | @as("linear") Linear | @as("all") All | @as("allow-discrete") AllowDiscrete | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensTEXTAREAV2SmInputContainerPlaceholderConfig = {
-  transition?: mozInitialEtcydel2,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
   lineHeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
 }
 type contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig = {
-  sm?: mozInitialEtcp2j1f,
-  md?: mozInitialEtcp2j1f,
-  lg?: mozInitialEtcp2j1f,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  md?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensTEXTAREAV2SmInputContainerPaddingConfig = {
   top?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
@@ -941,14 +941,14 @@ type contextComponentTokensTEXTAREAV2SmInputContainerPaddingConfig = {
   left?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
 }
 type contextComponentTokensTEXTAREAV2SmInputContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   placeholder?: contextComponentTokensTEXTAREAV2SmInputContainerPlaceholderConfig,
   lineHeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   padding?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingConfig,
-  borderRadius?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   border?: contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig,
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
   backgroundColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
@@ -957,14 +957,14 @@ type contextComponentTokensTEXTAREAV2SmBottomContainerErrorMessageConfig = {
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
   lineHeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTEXTAREAV2SmBottomContainerConfig = {
   hintText?: contextComponentTokensTEXTAREAV2SmTopContainerLabelConfig,
   errorMessage?: contextComponentTokensTEXTAREAV2SmBottomContainerErrorMessageConfig,
 }
 type contextComponentTokensTEXTAREAV2SmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   topContainer?: contextComponentTokensTEXTAREAV2SmTopContainerConfig,
   inputContainer?: contextComponentTokensTEXTAREAV2SmInputContainerConfig,
   bottomContainer?: contextComponentTokensTEXTAREAV2SmBottomContainerConfig,
@@ -974,13 +974,13 @@ type contextComponentTokensTEXTAREAV2Config = {
   lg?: contextComponentTokensTEXTAREAV2SmConfig,
 }
 type contextComponentTokensRADIOSmGroupConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensRADIOSmIndicatorActiveBackgroundColorConfig = {
-  disabled?: mozInitialEtcgjquu,
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
-  error?: mozInitialEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensRADIOSmIndicatorActiveConfig = {
   backgroundColor?: contextComponentTokensRADIOSmIndicatorActiveBackgroundColorConfig,
@@ -991,8 +991,8 @@ type contextComponentTokensRADIOSmIndicatorConfig = {
   inactive?: contextComponentTokensRADIOSmIndicatorActiveConfig,
 }
 type contextComponentTokensRADIOSmActiveIndicatorActiveBackgroundColorConfig = {
-  disabled?: mozInitialEtcgjquu,
-  default?: mozInitialEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensRADIOSmActiveIndicatorActiveConfig = {
   backgroundColor?: contextComponentTokensRADIOSmActiveIndicatorActiveBackgroundColorConfig,
@@ -1001,15 +1001,15 @@ type contextComponentTokensRADIOSmActiveIndicatorConfig = {
   active?: contextComponentTokensRADIOSmActiveIndicatorActiveConfig,
 }
 type contextComponentTokensRADIOSmContentLabelFontSizeConfig = {
-  sm?: mozInitialEtcly7v7,
-  md?: mozInitialEtcly7v7,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  md?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
 }
 type contextComponentTokensRADIOSmContentLabelFontWeightConfig = {
   sm?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   md?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
 }
 type contextComponentTokensRADIOSmContentLabelConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   color?: contextComponentTokensRADIOSmIndicatorActiveBackgroundColorConfig,
   fontSize?: contextComponentTokensRADIOSmContentLabelFontSizeConfig,
   fontWeight?: contextComponentTokensRADIOSmContentLabelFontWeightConfig,
@@ -1023,10 +1023,10 @@ type contextComponentTokensRADIOSmContentConfig = {
   label?: contextComponentTokensRADIOSmContentLabelConfig,
   sublabel?: contextComponentTokensRADIOSmContentSublabelConfig,
 }
-@unboxed type mozInitialEtc1avg4 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("-moz-fit-content") MozFitContent | @as("-moz-max-content") MozMaxContent | @as("-moz-min-content") MozMinContent | @as("-webkit-fit-content") WebkitFitContent | @as("auto") Auto | @as("fit-content") FitContent | @as("max-content") MaxContent | @as("min-content") MinContent | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc1avg4 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("-moz-fit-content") MozFitContent | @as("-moz-max-content") MozMaxContent | @as("-moz-min-content") MozMinContent | @as("-webkit-fit-content") WebkitFitContent | @as("auto") Auto | @as("fit-content") FitContent | @as("max-content") MaxContent | @as("min-content") MinContent | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensRADIOSmHeightConfig = {
-  sm?: mozInitialEtc1avg4,
-  md?: mozInitialEtc1avg4,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  md?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
 }
 type contextComponentTokensRADIOSmBorderWidthActiveConfig = {
   disabled?: float,
@@ -1039,11 +1039,11 @@ type contextComponentTokensRADIOSmBorderWidthConfig = {
   inactive?: contextComponentTokensRADIOSmBorderWidthActiveConfig,
 }
 type contextComponentTokensRADIOSmSlotConfig = {
-  sm?: mozInitialEtc1wbzz,
-  md?: mozInitialEtc1wbzz,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  md?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensRADIOSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   group?: contextComponentTokensRADIOSmGroupConfig,
   indicator?: contextComponentTokensRADIOSmIndicatorConfig,
   activeIndicator?: contextComponentTokensRADIOSmActiveIndicatorConfig,
@@ -1058,24 +1058,24 @@ type contextComponentTokensRADIOConfig = {
   lg?: contextComponentTokensRADIOSmConfig,
 }
 type contextComponentTokensSWITCHSmSwitchContainerBorderRadiusConfig = {
-  sm?: mozInitialEtcp2j1f,
-  md?: mozInitialEtcp2j1f,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  md?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensSWITCHSmSwitchContainerBackgroundColorConfig = {
   active?: contextComponentTokensRADIOSmIndicatorActiveBackgroundColorConfig,
   inactive?: contextComponentTokensRADIOSmIndicatorActiveBackgroundColorConfig,
 }
-@unboxed type mozInitialEtcrrza2 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("medium") Medium | @as("thick") Thick | @as("thin") Thin | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtcrrza2 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("medium") Medium | @as("thick") Thick | @as("thin") Thin | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensSWITCHSmSwitchContainerThumbBorderConfig = {
-  color?: mozInitialEtcgjquu,
-  width?: mozInitialEtcrrza2,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtcrrza2,
 }
-@unboxed type mozInitialEtcrldf7 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("auto") Auto | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtcrldf7 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("auto") Auto | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensSWITCHSmSwitchContainerThumbSizeSmConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  top?: mozInitialEtcrldf7,
-  left?: mozInitialEtcrldf7,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  top?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  left?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
   offset?: string,  // ⚪ loose — was `{ active?: number | Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?`
 }
 type contextComponentTokensSWITCHSmSwitchContainerThumbSizeConfig = {
@@ -1083,13 +1083,13 @@ type contextComponentTokensSWITCHSmSwitchContainerThumbSizeConfig = {
   md?: contextComponentTokensSWITCHSmSwitchContainerThumbSizeSmConfig,
 }
 type contextComponentTokensSWITCHSmSwitchContainerThumbConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   border?: contextComponentTokensSWITCHSmSwitchContainerThumbBorderConfig,
   borderRadius?: contextComponentTokensSWITCHSmSwitchContainerBorderRadiusConfig,
   size?: contextComponentTokensSWITCHSmSwitchContainerThumbSizeConfig,
-  outline?: mozInitialEtcsclw8,
-  outlineOffset?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
+  outline?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  outlineOffset?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensSWITCHSmSwitchContainerConfig = {
   height?: contextComponentTokensRADIOSmHeightConfig,
@@ -1102,19 +1102,19 @@ type contextComponentTokensSWITCHSmContentLabelConfig = {
   color?: contextComponentTokensRADIOSmIndicatorActiveBackgroundColorConfig,
   fontSize?: contextComponentTokensRADIOSmContentLabelFontSizeConfig,
   fontWeight?: contextComponentTokensRADIOSmContentLabelFontWeightConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensSWITCHSmContentConfig = {
   label?: contextComponentTokensSWITCHSmContentLabelConfig,
   subtext?: contextComponentTokensRADIOSmContentSublabelConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensSWITCHSmSlotConfig = {
   width?: contextComponentTokensRADIOSmSlotConfig,
   height?: contextComponentTokensRADIOSmHeightConfig,
 }
 type contextComponentTokensSWITCHSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   switchContainer?: contextComponentTokensSWITCHSmSwitchContainerConfig,
   content?: contextComponentTokensSWITCHSmContentConfig,
   required?: contextComponentTokensSEARCHINPUTSmRequiredConfig,
@@ -1133,14 +1133,14 @@ type contextComponentTokensTEXTINPUTSmInputContainerConfig = {
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
   borderRadius?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
-  boxShadow?: mozInitialEtcz3a4s,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   padding?: contextComponentTokensTEXTINPUTSmInputContainerPaddingConfig,
   border?: contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig,
   backgroundColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
 }
 type contextComponentTokensTEXTINPUTSmConfig = {
   placeholder?: contextComponentTokensTEXTAREASmPlaceholderConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   subLabel?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   hintText?: contextComponentTokensSEARCHINPUTSmLabelConfig,
@@ -1167,14 +1167,14 @@ type contextComponentTokensNUMBERINPUTSmInputContainerConfig = {
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
   borderRadius?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
-  boxShadow?: mozInitialEtcz3a4s,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   padding?: contextComponentTokensTEXTINPUTSmInputContainerPaddingConfig,
   border?: contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig,
   backgroundColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
   stepperButton?: contextComponentTokensNUMBERINPUTSmInputContainerStepperButtonConfig,
 }
 type contextComponentTokensNUMBERINPUTSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   subLabel?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   hintText?: contextComponentTokensSEARCHINPUTSmLabelConfig,
@@ -1188,8 +1188,8 @@ type contextComponentTokensNUMBERINPUTConfig = {
   lg?: contextComponentTokensNUMBERINPUTSmConfig,
 }
 type contextComponentTokensALERTSmBackgroundPrimaryConfig = {
-  subtle?: mozInitialEtcgjquu,
-  noFill?: mozInitialEtcgjquu,
+  subtle?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  noFill?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensALERTSmBackgroundConfig = {
   primary?: contextComponentTokensALERTSmBackgroundPrimaryConfig,
@@ -1201,18 +1201,18 @@ type contextComponentTokensALERTSmBackgroundConfig = {
   neutral?: contextComponentTokensALERTSmBackgroundPrimaryConfig,
 }
 type contextComponentTokensALERTSmTextHeadingColorConfig = {
-  primary?: mozInitialEtcgjquu,
-  success?: mozInitialEtcgjquu,
-  warning?: mozInitialEtcgjquu,
-  error?: mozInitialEtcgjquu,
-  purple?: mozInitialEtcgjquu,
-  orange?: mozInitialEtcgjquu,
-  neutral?: mozInitialEtcgjquu,
+  primary?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  success?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  warning?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  purple?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  orange?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  neutral?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensALERTSmTextHeadingConfig = {
   color?: contextComponentTokensALERTSmTextHeadingColorConfig,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
 }
 type contextComponentTokensALERTSmTextConfig = {
@@ -1220,18 +1220,18 @@ type contextComponentTokensALERTSmTextConfig = {
   description?: contextComponentTokensALERTSmTextHeadingConfig,
 }
 type contextComponentTokensALERTSmButtonConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   primaryAction?: contextComponentTokensALERTSmTextHeadingConfig,
   secondaryAction?: contextComponentTokensALERTSmTextHeadingConfig,
   closeButton?: contextComponentTokensALERTSmTextHeadingConfig,
 }
 type contextComponentTokensALERTSmConfig = {
-  width?: mozInitialEtc1wbzz,
-  maxWidth?: mozInitialEtc1x0av,
-  minWidth?: mozInitialEtc1owcx,
-  gap?: mozInitialEtchhntk,
-  padding?: mozInitialEtcp2j1f,
-  borderRadius?: mozInitialEtcp2j1f,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  minWidth?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   background?: contextComponentTokensALERTSmBackgroundConfig,
   border?: contextComponentTokensALERTSmBackgroundConfig,
   text?: contextComponentTokensALERTSmTextConfig,
@@ -1242,22 +1242,22 @@ type contextComponentTokensALERTConfig = {
   lg?: contextComponentTokensALERTSmConfig,
 }
 type contextComponentTokensOTPINPUTSmInputContainerInputConfig = {
-  height?: mozInitialEtc1avg4,
-  width?: mozInitialEtc1wbzz,
-  fontSize?: mozInitialEtcly7v7,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
-  borderRadius?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   border?: contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig,
   backgroundColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
 }
 type contextComponentTokensOTPINPUTSmInputContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   input?: contextComponentTokensOTPINPUTSmInputContainerInputConfig,
 }
 type contextComponentTokensOTPINPUTSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   subLabel?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   helpIcon?: contextComponentTokensTEXTAREASmHelpIconConfig,
@@ -1271,33 +1271,33 @@ type contextComponentTokensOTPINPUTConfig = {
   lg?: contextComponentTokensOTPINPUTSmConfig,
 }
 type contextComponentTokensTOOLTIPSmBorderRadiusConfig = {
-  sm?: mozInitialEtcp2j1f,
-  lg?: mozInitialEtcp2j1f,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensTOOLTIPSmMaxWidthConfig = {
-  sm?: mozInitialEtc1x0av,
-  lg?: mozInitialEtc1x0av,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
 }
 type contextComponentTokensTOOLTIPSmGapConfig = {
-  sm?: mozInitialEtchhntk,
-  lg?: mozInitialEtchhntk,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensTOOLTIPSmTextFontWeightConfig = {
   sm?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   lg?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
 }
 type contextComponentTokensTOOLTIPSmTextFontSizeConfig = {
-  sm?: mozInitialEtcly7v7,
-  lg?: mozInitialEtcly7v7,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
 }
 type contextComponentTokensTOOLTIPSmTextConfig = {
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontWeight?: contextComponentTokensTOOLTIPSmTextFontWeightConfig,
   fontSize?: contextComponentTokensTOOLTIPSmTextFontSizeConfig,
   lineHeight?: contextComponentTokensTOOLTIPSmTextFontWeightConfig,
 }
 type contextComponentTokensTOOLTIPSmConfig = {
-  background?: mozInitialEtcgjquu,
+  background?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   borderRadius?: contextComponentTokensTOOLTIPSmBorderRadiusConfig,
   maxWidth?: contextComponentTokensTOOLTIPSmMaxWidthConfig,
   padding?: contextComponentTokensTOOLTIPSmBorderRadiusConfig,
@@ -1320,14 +1320,14 @@ type contextComponentTokensUNITINPUTSmInputContainerConfig = {
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
   borderRadius?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
-  boxShadow?: mozInitialEtcz3a4s,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   padding?: contextComponentTokensTEXTINPUTSmInputContainerPaddingConfig,
   border?: contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig,
   backgroundColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
   unit?: contextComponentTokensUNITINPUTSmInputContainerUnitConfig,
 }
 type contextComponentTokensUNITINPUTSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   subLabel?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   helpIcon?: contextComponentTokensTEXTAREASmHelpIconConfig,
@@ -1342,17 +1342,17 @@ type contextComponentTokensUNITINPUTConfig = {
   lg?: contextComponentTokensUNITINPUTSmConfig,
 }
 type contextComponentTokensMULTIVALUEINPUTSmInputContainerBoxShadowConfig = {
-  default?: mozInitialEtcz3a4s,
-  hover?: mozInitialEtcz3a4s,
-  focus?: mozInitialEtcz3a4s,
-  error?: mozInitialEtcz3a4s,
-  disabled?: mozInitialEtcz3a4s,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensMULTIVALUEINPUTSmInputContainerConfig = {
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
-  gap?: mozInitialEtchhntk,
-  borderRadius?: mozInitialEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   boxShadow?: contextComponentTokensMULTIVALUEINPUTSmInputContainerBoxShadowConfig,
   padding?: contextComponentTokensTEXTINPUTSmInputContainerPaddingConfig,
   border?: contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig,
@@ -1360,7 +1360,7 @@ type contextComponentTokensMULTIVALUEINPUTSmInputContainerConfig = {
   backgroundColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
 }
 type contextComponentTokensMULTIVALUEINPUTSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   subLabel?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   hintText?: contextComponentTokensSEARCHINPUTSmLabelConfig,
@@ -1374,18 +1374,18 @@ type contextComponentTokensMULTIVALUEINPUTConfig = {
   lg?: contextComponentTokensMULTIVALUEINPUTSmConfig,
 }
 type contextComponentTokensDROPDOWNINPUTSmInputContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
   borderRadius?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
-  boxShadow?: mozInitialEtcz3a4s,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   padding?: contextComponentTokensTEXTINPUTSmInputContainerPaddingConfig,
   border?: contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig,
   backgroundColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
 }
 type contextComponentTokensDROPDOWNINPUTSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   subLabel?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   hintText?: contextComponentTokensSEARCHINPUTSmLabelConfig,
@@ -1400,13 +1400,13 @@ type contextComponentTokensDROPDOWNINPUTConfig = {
   lg?: contextComponentTokensDROPDOWNINPUTSmConfig,
 }
 type contextComponentTokensCHECKBOXSmSlotConfig = {
-  marginLeft?: mozInitialEtcrldf7,
+  marginLeft?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensCHECKBOXSmIndicatorBackgroundColorCheckedConfig = {
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
-  disabled?: mozInitialEtcgjquu,
-  error?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCHECKBOXSmIndicatorBackgroundColorConfig = {
   checked?: contextComponentTokensCHECKBOXSmIndicatorBackgroundColorCheckedConfig,
@@ -1414,10 +1414,10 @@ type contextComponentTokensCHECKBOXSmIndicatorBackgroundColorConfig = {
   indeterminate?: contextComponentTokensCHECKBOXSmIndicatorBackgroundColorCheckedConfig,
 }
 type contextComponentTokensCHECKBOXSmIndicatorBorderCheckedConfig = {
-  default?: mozInitialEtc1yz1q,
-  hover?: mozInitialEtc1yz1q,
-  disabled?: mozInitialEtc1yz1q,
-  error?: mozInitialEtc1yz1q,
+  default?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  error?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensCHECKBOXSmIndicatorBorderConfig = {
   checked?: contextComponentTokensCHECKBOXSmIndicatorBorderCheckedConfig,
@@ -1425,8 +1425,8 @@ type contextComponentTokensCHECKBOXSmIndicatorBorderConfig = {
   indeterminate?: contextComponentTokensCHECKBOXSmIndicatorBorderCheckedConfig,
 }
 type contextComponentTokensCHECKBOXSmIndicatorIconColorCheckedConfig = {
-  default?: mozInitialEtcgjquu,
-  disabled?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCHECKBOXSmIndicatorIconColorConfig = {
   checked?: contextComponentTokensCHECKBOXSmIndicatorIconColorCheckedConfig,
@@ -1445,9 +1445,9 @@ type contextComponentTokensCHECKBOXSmIndicatorConfig = {
   backgroundColor?: contextComponentTokensCHECKBOXSmIndicatorBackgroundColorConfig,
   borderRadius?: contextComponentTokensSWITCHSmSwitchContainerBorderRadiusConfig,
   border?: contextComponentTokensCHECKBOXSmIndicatorBorderConfig,
-  outline?: mozInitialEtcsclw8,
-  outlineOffset?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
+  outline?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  outlineOffset?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   icon?: contextComponentTokensCHECKBOXSmIndicatorIconConfig,
 }
 type contextComponentTokensCHECKBOXSmContentLabelConfig = {
@@ -1462,12 +1462,12 @@ type contextComponentTokensCHECKBOXSmContentSubtextConfig = {
   fontWeight?: contextComponentTokensRADIOSmContentLabelFontWeightConfig,
 }
 type contextComponentTokensCHECKBOXSmContentConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensCHECKBOXSmContentLabelConfig,
   subtext?: contextComponentTokensCHECKBOXSmContentSubtextConfig,
 }
 type contextComponentTokensCHECKBOXSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   slot?: contextComponentTokensCHECKBOXSmSlotConfig,
   indicator?: contextComponentTokensCHECKBOXSmIndicatorConfig,
   content?: contextComponentTokensCHECKBOXSmContentConfig,
@@ -1478,10 +1478,10 @@ type contextComponentTokensCHECKBOXConfig = {
   lg?: contextComponentTokensCHECKBOXSmConfig,
 }
 type contextComponentTokensTABSSmBackgroundColorBoxedConfig = {
-  disabled?: mozInitialEtcgjquu,
-  active?: mozInitialEtcgjquu,
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  active?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTABSSmBackgroundColorConfig = {
   boxed?: contextComponentTokensTABSSmBackgroundColorBoxedConfig,
@@ -1490,10 +1490,10 @@ type contextComponentTokensTABSSmBackgroundColorConfig = {
   pills?: contextComponentTokensTABSSmBackgroundColorBoxedConfig,
 }
 type contextComponentTokensTABSSmBorderRadiusSmConfig = {
-  boxed?: mozInitialEtcp2j1f,
-  floating?: mozInitialEtcp2j1f,
-  underline?: mozInitialEtcp2j1f,
-  pills?: mozInitialEtcp2j1f,
+  boxed?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  floating?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  underline?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  pills?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensTABSSmBorderRadiusConfig = {
   sm?: contextComponentTokensTABSSmBorderRadiusSmConfig,
@@ -1501,10 +1501,10 @@ type contextComponentTokensTABSSmBorderRadiusConfig = {
   lg?: contextComponentTokensTABSSmBorderRadiusSmConfig,
 }
 type contextComponentTokensTABSSmPaddingSmBoxedConfig = {
-  top?: mozInitialEtcp2j1f,
-  right?: mozInitialEtcp2j1f,
-  bottom?: mozInitialEtcp2j1f,
-  left?: mozInitialEtcp2j1f,
+  top?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  right?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  bottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  left?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensTABSSmPaddingSmConfig = {
   boxed?: contextComponentTokensTABSSmPaddingSmBoxedConfig,
@@ -1518,16 +1518,16 @@ type contextComponentTokensTABSSmPaddingConfig = {
   lg?: contextComponentTokensTABSSmPaddingSmConfig,
 }
 type contextComponentTokensTABSSmBorderConfig = {
-  boxed?: mozInitialEtc1yz1q,
-  floating?: mozInitialEtc1yz1q,
-  underline?: mozInitialEtc1yz1q,
-  pills?: mozInitialEtc1yz1q,
+  boxed?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  floating?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  underline?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  pills?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensTABSSmContainerBackgroundColorConfig = {
-  boxed?: mozInitialEtcgjquu,
-  floating?: mozInitialEtcgjquu,
-  underline?: mozInitialEtcgjquu,
-  pills?: mozInitialEtcgjquu,
+  boxed?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  floating?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  underline?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  pills?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTABSSmContainerConfig = {
   backgroundColor?: contextComponentTokensTABSSmContainerBackgroundColorConfig,
@@ -1535,8 +1535,8 @@ type contextComponentTokensTABSSmContainerConfig = {
   padding?: contextComponentTokensTABSSmPaddingConfig,
 }
 type contextComponentTokensTABSSmTriggerActiveIndicatorConfig = {
-  height?: mozInitialEtc1avg4,
-  color?: mozInitialEtcgjquu,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTABSSmTriggerTextConfig = {
   color?: contextComponentTokensTABSSmBackgroundColorConfig,
@@ -1544,12 +1544,12 @@ type contextComponentTokensTABSSmTriggerTextConfig = {
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
 }
 type contextComponentTokensTABSSmTriggerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   activeIndicator?: contextComponentTokensTABSSmTriggerActiveIndicatorConfig,
   text?: contextComponentTokensTABSSmTriggerTextConfig,
 }
 type contextComponentTokensTABSSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   backgroundColor?: contextComponentTokensTABSSmBackgroundColorConfig,
   borderRadius?: contextComponentTokensTABSSmBorderRadiusConfig,
   padding?: contextComponentTokensTABSSmPaddingConfig,
@@ -1563,16 +1563,16 @@ type contextComponentTokensTABSConfig = {
   lg?: contextComponentTokensTABSSmConfig,
 }
 type contextComponentTokensBUTTONSmSlotMaxHeightConfig = {
-  sm?: mozInitialEtc1x0av,
-  md?: mozInitialEtc1x0av,
-  lg?: mozInitialEtc1x0av,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  md?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
 }
-@unboxed type mozInitialEtc1mkx8 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneInitialEtc1mkx8 | @as("aliceblue") Aliceblue | @as("antiquewhite") Antiquewhite | @as("aqua") Aqua | @as("aquamarine") Aquamarine | @as("azure") Azure | @as("beige") Beige | @as("bisque") Bisque | @as("black") Black | @as("blanchedalmond") Blanchedalmond | @as("blue") Blue | @as("blueviolet") Blueviolet | @as("brown") Brown | @as("burlywood") Burlywood | @as("cadetblue") Cadetblue | @as("chartreuse") Chartreuse | @as("chocolate") Chocolate | @as("coral") Coral | @as("cornflowerblue") Cornflowerblue | @as("cornsilk") Cornsilk | @as("crimson") Crimson | @as("cyan") Cyan | @as("darkblue") Darkblue | @as("darkcyan") Darkcyan | @as("darkgoldenrod") Darkgoldenrod | @as("darkgray") Darkgray | @as("darkgreen") Darkgreen | @as("darkgrey") Darkgrey | @as("darkkhaki") Darkkhaki | @as("darkmagenta") Darkmagenta | @as("darkolivegreen") Darkolivegreen | @as("darkorange") Darkorange | @as("darkorchid") Darkorchid | @as("darkred") Darkred | @as("darksalmon") Darksalmon | @as("darkseagreen") Darkseagreen | @as("darkslateblue") Darkslateblue | @as("darkslategray") Darkslategray | @as("darkslategrey") Darkslategrey | @as("darkturquoise") Darkturquoise | @as("darkviolet") Darkviolet | @as("deeppink") Deeppink | @as("deepskyblue") Deepskyblue | @as("dimgray") Dimgray | @as("dimgrey") Dimgrey | @as("dodgerblue") Dodgerblue | @as("firebrick") Firebrick | @as("floralwhite") Floralwhite | @as("forestgreen") Forestgreen | @as("fuchsia") Fuchsia | @as("gainsboro") Gainsboro | @as("ghostwhite") Ghostwhite | @as("gold") Gold | @as("goldenrod") Goldenrod | @as("gray") Gray | @as("green") Green | @as("greenyellow") Greenyellow | @as("grey") Grey | @as("honeydew") Honeydew | @as("hotpink") Hotpink | @as("indianred") Indianred | @as("indigo") Indigo | @as("ivory") Ivory | @as("khaki") Khaki | @as("lavender") Lavender | @as("lavenderblush") Lavenderblush | @as("lawngreen") Lawngreen | @as("lemonchiffon") Lemonchiffon | @as("lightblue") Lightblue | @as("lightcoral") Lightcoral | @as("lightcyan") Lightcyan | @as("lightgoldenrodyellow") Lightgoldenrodyellow | @as("lightgray") Lightgray | @as("lightgreen") Lightgreen | @as("lightgrey") Lightgrey | @as("lightpink") Lightpink | @as("lightsalmon") Lightsalmon | @as("lightseagreen") Lightseagreen | @as("lightskyblue") Lightskyblue | @as("lightslategray") Lightslategray | @as("lightslategrey") Lightslategrey | @as("lightsteelblue") Lightsteelblue | @as("lightyellow") Lightyellow | @as("lime") Lime | @as("limegreen") Limegreen | @as("linen") Linen | @as("magenta") Magenta | @as("maroon") Maroon | @as("mediumaquamarine") Mediumaquamarine | @as("mediumblue") Mediumblue | @as("mediumorchid") Mediumorchid | @as("mediumpurple") Mediumpurple | @as("mediumseagreen") Mediumseagreen | @as("mediumslateblue") Mediumslateblue | @as("mediumspringgreen") Mediumspringgreen | @as("mediumturquoise") Mediumturquoise | @as("mediumvioletred") Mediumvioletred | @as("midnightblue") Midnightblue | @as("mintcream") Mintcream | @as("mistyrose") Mistyrose | @as("moccasin") Moccasin | @as("navajowhite") Navajowhite | @as("navy") Navy | @as("oldlace") Oldlace | @as("olive") Olive | @as("olivedrab") Olivedrab | @as("orange") Orange | @as("orangered") Orangered | @as("orchid") Orchid | @as("palegoldenrod") Palegoldenrod | @as("palegreen") Palegreen | @as("paleturquoise") Paleturquoise | @as("palevioletred") Palevioletred | @as("papayawhip") Papayawhip | @as("peachpuff") Peachpuff | @as("peru") Peru | @as("pink") Pink | @as("plum") Plum | @as("powderblue") Powderblue | @as("purple") Purple | @as("rebeccapurple") Rebeccapurple | @as("red") Red | @as("rosybrown") Rosybrown | @as("royalblue") Royalblue | @as("saddlebrown") Saddlebrown | @as("salmon") Salmon | @as("sandybrown") Sandybrown | @as("seagreen") Seagreen | @as("seashell") Seashell | @as("sienna") Sienna | @as("silver") Silver | @as("skyblue") Skyblue | @as("slateblue") Slateblue | @as("slategray") Slategray | @as("slategrey") Slategrey | @as("snow") Snow | @as("springgreen") Springgreen | @as("steelblue") Steelblue | @as("tan") Tan | @as("teal") Teal | @as("thistle") Thistle | @as("tomato") Tomato | @as("turquoise") Turquoise | @as("violet") Violet | @as("wheat") Wheat | @as("white") White | @as("whitesmoke") Whitesmoke | @as("yellow") Yellow | @as("yellowgreen") Yellowgreen | @as("transparent") Transparent | @as("AccentColor") AccentColor | @as("AccentColorText") AccentColorText | @as("ActiveText") ActiveText | @as("ButtonBorder") ButtonBorder | @as("ButtonFace") ButtonFace | @as("ButtonText") ButtonText | @as("Canvas") Canvas | @as("CanvasText") CanvasText | @as("Field") Field | @as("FieldText") FieldText | @as("GrayText") GrayText | @as("Highlight") HighlightInitialEtc1mkx8 | @as("HighlightText") HighlightText | @as("LinkText") LinkText | @as("Mark") Mark | @as("MarkText") MarkText | @as("SelectedItem") SelectedItem | @as("SelectedItemText") SelectedItemText | @as("VisitedText") VisitedText | @as("ActiveBorder") ActiveBorder | @as("ActiveCaption") ActiveCaption | @as("AppWorkspace") AppWorkspace | @as("Background") Background | @as("ButtonHighlight") ButtonHighlight | @as("ButtonShadow") ButtonShadow | @as("CaptionText") CaptionText | @as("InactiveBorder") InactiveBorder | @as("InactiveCaption") InactiveCaption | @as("InactiveCaptionText") InactiveCaptionText | @as("InfoBackground") InfoBackground | @as("InfoText") InfoText | @as("Menu") Menu | @as("MenuText") MenuText | @as("Scrollbar") ScrollbarInitialEtc1mkx8 | @as("ThreeDDarkShadow") ThreeDDarkShadow | @as("ThreeDFace") ThreeDFace | @as("ThreeDHighlight") ThreeDHighlight | @as("ThreeDLightShadow") ThreeDLightShadow | @as("ThreeDShadow") ThreeDShadow | @as("Window") Window | @as("WindowFrame") WindowFrame | @as("WindowText") WindowText | @as("currentColor") CurrentColor | @as("repeat") Repeat | @as("fixed") Fixed | @as("top") Top | @as("right") RightInitialEtc1mkx8 | @as("bottom") Bottom | @as("left") LeftInitialEtc1mkx8 | @as("center") CenterInitialEtc1mkx8 | @as("no-repeat") NoRepeat | @as("repeat-x") RepeatX | @as("repeat-y") RepeatY | @as("round") Round | @as("space") SpaceInitialEtc1mkx8 | @as("local") Local | @as("scroll") Scroll | @as("border-box") BorderBox | @as("content-box") ContentBox | @as("padding-box") PaddingBox | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc1mkx8 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneRevertEtc1mkx8 | @as("aliceblue") Aliceblue | @as("antiquewhite") Antiquewhite | @as("aqua") Aqua | @as("aquamarine") Aquamarine | @as("azure") Azure | @as("beige") Beige | @as("bisque") Bisque | @as("black") Black | @as("blanchedalmond") Blanchedalmond | @as("blue") Blue | @as("blueviolet") Blueviolet | @as("brown") Brown | @as("burlywood") Burlywood | @as("cadetblue") Cadetblue | @as("chartreuse") Chartreuse | @as("chocolate") Chocolate | @as("coral") Coral | @as("cornflowerblue") Cornflowerblue | @as("cornsilk") Cornsilk | @as("crimson") Crimson | @as("cyan") Cyan | @as("darkblue") Darkblue | @as("darkcyan") Darkcyan | @as("darkgoldenrod") Darkgoldenrod | @as("darkgray") Darkgray | @as("darkgreen") Darkgreen | @as("darkgrey") Darkgrey | @as("darkkhaki") Darkkhaki | @as("darkmagenta") Darkmagenta | @as("darkolivegreen") Darkolivegreen | @as("darkorange") Darkorange | @as("darkorchid") Darkorchid | @as("darkred") Darkred | @as("darksalmon") Darksalmon | @as("darkseagreen") Darkseagreen | @as("darkslateblue") Darkslateblue | @as("darkslategray") Darkslategray | @as("darkslategrey") Darkslategrey | @as("darkturquoise") Darkturquoise | @as("darkviolet") Darkviolet | @as("deeppink") Deeppink | @as("deepskyblue") Deepskyblue | @as("dimgray") Dimgray | @as("dimgrey") Dimgrey | @as("dodgerblue") Dodgerblue | @as("firebrick") Firebrick | @as("floralwhite") Floralwhite | @as("forestgreen") Forestgreen | @as("fuchsia") Fuchsia | @as("gainsboro") Gainsboro | @as("ghostwhite") Ghostwhite | @as("gold") Gold | @as("goldenrod") Goldenrod | @as("gray") Gray | @as("green") Green | @as("greenyellow") Greenyellow | @as("grey") Grey | @as("honeydew") Honeydew | @as("hotpink") Hotpink | @as("indianred") Indianred | @as("indigo") Indigo | @as("ivory") Ivory | @as("khaki") Khaki | @as("lavender") Lavender | @as("lavenderblush") Lavenderblush | @as("lawngreen") Lawngreen | @as("lemonchiffon") Lemonchiffon | @as("lightblue") Lightblue | @as("lightcoral") Lightcoral | @as("lightcyan") Lightcyan | @as("lightgoldenrodyellow") Lightgoldenrodyellow | @as("lightgray") Lightgray | @as("lightgreen") Lightgreen | @as("lightgrey") Lightgrey | @as("lightpink") Lightpink | @as("lightsalmon") Lightsalmon | @as("lightseagreen") Lightseagreen | @as("lightskyblue") Lightskyblue | @as("lightslategray") Lightslategray | @as("lightslategrey") Lightslategrey | @as("lightsteelblue") Lightsteelblue | @as("lightyellow") Lightyellow | @as("lime") Lime | @as("limegreen") Limegreen | @as("linen") Linen | @as("magenta") Magenta | @as("maroon") Maroon | @as("mediumaquamarine") Mediumaquamarine | @as("mediumblue") Mediumblue | @as("mediumorchid") Mediumorchid | @as("mediumpurple") Mediumpurple | @as("mediumseagreen") Mediumseagreen | @as("mediumslateblue") Mediumslateblue | @as("mediumspringgreen") Mediumspringgreen | @as("mediumturquoise") Mediumturquoise | @as("mediumvioletred") Mediumvioletred | @as("midnightblue") Midnightblue | @as("mintcream") Mintcream | @as("mistyrose") Mistyrose | @as("moccasin") Moccasin | @as("navajowhite") Navajowhite | @as("navy") Navy | @as("oldlace") Oldlace | @as("olive") Olive | @as("olivedrab") Olivedrab | @as("orange") Orange | @as("orangered") Orangered | @as("orchid") Orchid | @as("palegoldenrod") Palegoldenrod | @as("palegreen") Palegreen | @as("paleturquoise") Paleturquoise | @as("palevioletred") Palevioletred | @as("papayawhip") Papayawhip | @as("peachpuff") Peachpuff | @as("peru") Peru | @as("pink") Pink | @as("plum") Plum | @as("powderblue") Powderblue | @as("purple") Purple | @as("rebeccapurple") Rebeccapurple | @as("red") Red | @as("rosybrown") Rosybrown | @as("royalblue") Royalblue | @as("saddlebrown") Saddlebrown | @as("salmon") Salmon | @as("sandybrown") Sandybrown | @as("seagreen") Seagreen | @as("seashell") Seashell | @as("sienna") Sienna | @as("silver") Silver | @as("skyblue") Skyblue | @as("slateblue") Slateblue | @as("slategray") Slategray | @as("slategrey") Slategrey | @as("snow") Snow | @as("springgreen") Springgreen | @as("steelblue") Steelblue | @as("tan") Tan | @as("teal") Teal | @as("thistle") Thistle | @as("tomato") Tomato | @as("turquoise") Turquoise | @as("violet") Violet | @as("wheat") Wheat | @as("white") White | @as("whitesmoke") Whitesmoke | @as("yellow") Yellow | @as("yellowgreen") Yellowgreen | @as("transparent") Transparent | @as("AccentColor") AccentColor | @as("AccentColorText") AccentColorText | @as("ActiveText") ActiveText | @as("ButtonBorder") ButtonBorder | @as("ButtonFace") ButtonFace | @as("ButtonText") ButtonText | @as("Canvas") Canvas | @as("CanvasText") CanvasText | @as("Field") Field | @as("FieldText") FieldText | @as("GrayText") GrayText | @as("Highlight") HighlightRevertEtc1mkx8 | @as("HighlightText") HighlightText | @as("LinkText") LinkText | @as("Mark") Mark | @as("MarkText") MarkText | @as("SelectedItem") SelectedItem | @as("SelectedItemText") SelectedItemText | @as("VisitedText") VisitedText | @as("ActiveBorder") ActiveBorder | @as("ActiveCaption") ActiveCaption | @as("AppWorkspace") AppWorkspace | @as("Background") Background | @as("ButtonHighlight") ButtonHighlight | @as("ButtonShadow") ButtonShadow | @as("CaptionText") CaptionText | @as("InactiveBorder") InactiveBorder | @as("InactiveCaption") InactiveCaption | @as("InactiveCaptionText") InactiveCaptionText | @as("InfoBackground") InfoBackground | @as("InfoText") InfoText | @as("Menu") Menu | @as("MenuText") MenuText | @as("Scrollbar") ScrollbarRevertEtc1mkx8 | @as("ThreeDDarkShadow") ThreeDDarkShadow | @as("ThreeDFace") ThreeDFace | @as("ThreeDHighlight") ThreeDHighlight | @as("ThreeDLightShadow") ThreeDLightShadow | @as("ThreeDShadow") ThreeDShadow | @as("Window") Window | @as("WindowFrame") WindowFrame | @as("WindowText") WindowText | @as("currentColor") CurrentColor | @as("repeat") Repeat | @as("fixed") Fixed | @as("top") Top | @as("right") RightRevertEtc1mkx8 | @as("bottom") Bottom | @as("left") LeftRevertEtc1mkx8 | @as("center") CenterRevertEtc1mkx8 | @as("no-repeat") NoRepeat | @as("repeat-x") RepeatX | @as("repeat-y") RepeatY | @as("round") Round | @as("space") SpaceRevertEtc1mkx8 | @as("local") Local | @as("scroll") Scroll | @as("border-box") BorderBox | @as("content-box") ContentBox | @as("padding-box") PaddingBox | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensBUTTONSmBackgroundColorPrimaryDefaultConfig = {
-  default?: mozInitialEtc1mkx8,
-  hover?: mozInitialEtc1mkx8,
-  active?: mozInitialEtc1mkx8,
-  disabled?: mozInitialEtc1mkx8,
+  default?: mozInitialOrInheritOrInitialOrRevertEtc1mkx8,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtc1mkx8,
+  active?: mozInitialOrInheritOrInitialOrRevertEtc1mkx8,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtc1mkx8,
 }
 type contextComponentTokensBUTTONSmBackgroundColorPrimaryConfig = {
   default?: contextComponentTokensBUTTONSmBackgroundColorPrimaryDefaultConfig,
@@ -1586,10 +1586,10 @@ type contextComponentTokensBUTTONSmBackgroundColorConfig = {
   success?: contextComponentTokensBUTTONSmBackgroundColorPrimaryConfig,
 }
 type contextComponentTokensBUTTONSmBorderRadiusSmPrimaryDefaultConfig = {
-  default?: mozInitialEtcp2j1f,
-  hover?: mozInitialEtcp2j1f,
-  active?: mozInitialEtcp2j1f,
-  disabled?: mozInitialEtcp2j1f,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  active?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensBUTTONSmBorderRadiusSmPrimaryConfig = {
   default?: contextComponentTokensBUTTONSmBorderRadiusSmPrimaryDefaultConfig,
@@ -1624,10 +1624,10 @@ type contextComponentTokensBUTTONSmPaddingConfig = {
   lg?: contextComponentTokensBUTTONSmPaddingSmConfig,
 }
 type contextComponentTokensBUTTONSmBorderPrimaryDefaultConfig = {
-  default?: mozInitialEtc1yz1q,
-  hover?: mozInitialEtc1yz1q,
-  active?: mozInitialEtc1yz1q,
-  disabled?: mozInitialEtc1yz1q,
+  default?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  active?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensBUTTONSmBorderPrimaryConfig = {
   default?: contextComponentTokensBUTTONSmBorderPrimaryDefaultConfig,
@@ -1641,10 +1641,10 @@ type contextComponentTokensBUTTONSmBorderConfig = {
   success?: contextComponentTokensBUTTONSmBorderPrimaryConfig,
 }
 type contextComponentTokensBUTTONSmShadowPrimaryDefaultConfig = {
-  default?: mozInitialEtcz3a4s,
-  hover?: mozInitialEtcz3a4s,
-  active?: mozInitialEtcz3a4s,
-  disabled?: mozInitialEtcz3a4s,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  active?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensBUTTONSmShadowPrimaryConfig = {
   default?: contextComponentTokensBUTTONSmShadowPrimaryDefaultConfig,
@@ -1658,10 +1658,10 @@ type contextComponentTokensBUTTONSmShadowConfig = {
   success?: contextComponentTokensBUTTONSmShadowPrimaryConfig,
 }
 type contextComponentTokensBUTTONSmOutlinePrimaryDefaultConfig = {
-  default?: mozInitialEtcsclw8,
-  hover?: mozInitialEtcsclw8,
-  active?: mozInitialEtcsclw8,
-  disabled?: mozInitialEtcsclw8,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  active?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
 }
 type contextComponentTokensBUTTONSmOutlinePrimaryConfig = {
   default?: contextComponentTokensBUTTONSmOutlinePrimaryDefaultConfig,
@@ -1675,10 +1675,10 @@ type contextComponentTokensBUTTONSmOutlineConfig = {
   success?: contextComponentTokensBUTTONSmOutlinePrimaryConfig,
 }
 type contextComponentTokensBUTTONSmTextColorPrimaryDefaultConfig = {
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
-  active?: mozInitialEtcgjquu,
-  disabled?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  active?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensBUTTONSmTextColorPrimaryConfig = {
   default?: contextComponentTokensBUTTONSmTextColorPrimaryDefaultConfig,
@@ -1697,7 +1697,7 @@ type contextComponentTokensBUTTONSmTextConfig = {
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
 }
 type contextComponentTokensBUTTONSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   slotMaxHeight?: contextComponentTokensBUTTONSmSlotMaxHeightConfig,
   backgroundColor?: contextComponentTokensBUTTONSmBackgroundColorConfig,
   borderRadius?: contextComponentTokensBUTTONSmBorderRadiusConfig,
@@ -1712,11 +1712,11 @@ type contextComponentTokensBUTTONConfig = {
   lg?: contextComponentTokensBUTTONSmConfig,
 }
 type contextComponentTokensMODALSmOverlayConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensMODALSmHeaderTextTitleConfig = {
-  color?: mozInitialEtcgjquu,
-  fontSize?: mozInitialEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
 }
 type contextComponentTokensMODALSmHeaderTextConfig = {
@@ -1725,23 +1725,23 @@ type contextComponentTokensMODALSmHeaderTextConfig = {
 }
 type contextComponentTokensMODALSmHeaderConfig = {
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  borderBottom?: mozInitialEtc1yz1q,
-  backgroundColor?: mozInitialEtcgjquu,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   text?: contextComponentTokensMODALSmHeaderTextConfig,
 }
 type contextComponentTokensMODALSmBodyConfig = {
-  padding?: mozInitialEtcp2j1f,
-  backgroundColor?: mozInitialEtcgjquu,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensMODALSmFooterConfig = {
-  padding?: mozInitialEtcp2j1f,
-  borderTop?: mozInitialEtc1yz1q,
-  backgroundColor?: mozInitialEtcgjquu,
-  gap?: mozInitialEtchhntk,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensMODALSmConfig = {
-  boxShadow?: mozInitialEtcz3a4s,
-  borderRadius?: mozInitialEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   overlay?: contextComponentTokensMODALSmOverlayConfig,
   header?: contextComponentTokensMODALSmHeaderConfig,
   body?: contextComponentTokensMODALSmBodyConfig,
@@ -1753,22 +1753,22 @@ type contextComponentTokensMODALConfig = {
   lg?: contextComponentTokensMODALSmConfig,
 }
 type contextComponentTokensBREADCRUMBSmItemTextColorConfig = {
-  active?: mozInitialEtcgjquu,
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
+  active?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensBREADCRUMBSmItemTextConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   color?: contextComponentTokensBREADCRUMBSmItemTextColorConfig,
 }
 type contextComponentTokensBREADCRUMBSmItemConfig = {
-  padding?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   text?: contextComponentTokensBREADCRUMBSmItemTextConfig,
 }
 type contextComponentTokensBREADCRUMBSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   item?: contextComponentTokensBREADCRUMBSmItemConfig,
 }
 type contextComponentTokensBREADCRUMBConfig = {
@@ -1776,24 +1776,24 @@ type contextComponentTokensBREADCRUMBConfig = {
   lg?: contextComponentTokensBREADCRUMBSmConfig,
 }
 type contextComponentTokensPOPOVERSmShadowConfig = {
-  xs?: mozInitialEtcz3a4s,
-  sm?: mozInitialEtcz3a4s,
-  md?: mozInitialEtcz3a4s,
-  lg?: mozInitialEtcz3a4s,
-  xl?: mozInitialEtcz3a4s,
-  @as("2xl") _2xl?: mozInitialEtcz3a4s,
-  full?: mozInitialEtcz3a4s,
-  focusPrimary?: mozInitialEtcz3a4s,
-  focusError?: mozInitialEtcz3a4s,
+  xs?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  md?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  xl?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  @as("2xl") _2xl?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  full?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  focusPrimary?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  focusError?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
-@set_index external contextComponentTokensPOPOVERSmShadowConfigSet: (contextComponentTokensPOPOVERSmShadowConfig, string, mozInitialEtcz3a4s) => unit = ""
+@set_index external contextComponentTokensPOPOVERSmShadowConfigSet: (contextComponentTokensPOPOVERSmShadowConfig, string, mozInitialOrInheritOrInitialOrRevertEtcz3a4s) => unit = ""
 type contextComponentTokensPOPOVERSmGapConfig = {
-  small?: mozInitialEtchhntk,
-  medium?: mozInitialEtchhntk,
+  small?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  medium?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensPOPOVERSmBorderRadiusConfig = {
-  small?: mozInitialEtcp2j1f,
-  medium?: mozInitialEtcp2j1f,
+  small?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  medium?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensPOPOVERSmPaddingConfig = {
   left?: contextComponentTokensPOPOVERSmBorderRadiusConfig,
@@ -1802,15 +1802,15 @@ type contextComponentTokensPOPOVERSmPaddingConfig = {
   bottom?: contextComponentTokensPOPOVERSmBorderRadiusConfig,
 }
 type contextComponentTokensPOPOVERSmHeaderContainerHeadingFontSizeConfig = {
-  small?: mozInitialEtcly7v7,
-  medium?: mozInitialEtcly7v7,
+  small?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  medium?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
 }
 type contextComponentTokensPOPOVERSmHeaderContainerHeadingFontWeightConfig = {
   small?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   medium?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
 }
 type contextComponentTokensPOPOVERSmHeaderContainerHeadingConfig = {
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontSize?: contextComponentTokensPOPOVERSmHeaderContainerHeadingFontSizeConfig,
   fontWeight?: contextComponentTokensPOPOVERSmHeaderContainerHeadingFontWeightConfig,
   lineHeight?: contextComponentTokensPOPOVERSmHeaderContainerHeadingFontWeightConfig,
@@ -1823,8 +1823,8 @@ type contextComponentTokensPOPOVERSmFooterConfig = {
   gap?: contextComponentTokensPOPOVERSmGapConfig,
 }
 type contextComponentTokensPOPOVERSmConfig = {
-  background?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
+  background?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
   shadow?: contextComponentTokensPOPOVERSmShadowConfig,
   gap?: contextComponentTokensPOPOVERSmGapConfig,
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
@@ -1838,17 +1838,17 @@ type contextComponentTokensPOPOVERConfig = {
   lg?: contextComponentTokensPOPOVERSmConfig,
 }
 type contextComponentTokensMENUSmItemMarginConfig = {
-  x?: mozInitialEtcrldf7,
-  y?: mozInitialEtcrldf7,
+  x?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  y?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensMENUSmItemBackgroundColorDefaultEnabledConfig = {
-  disabled?: mozInitialEtcgjquu,
-  active?: mozInitialEtcgjquu,
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
-  focus?: mozInitialEtcgjquu,
-  focusVisible?: mozInitialEtcgjquu,
-  selected?: mozInitialEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  active?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  focusVisible?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  selected?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensMENUSmItemBackgroundColorDefaultConfig = {
   enabled?: contextComponentTokensMENUSmItemBackgroundColorDefaultEnabledConfig,
@@ -1864,13 +1864,13 @@ type contextComponentTokensMENUSmItemBackgroundColorConfig = {
 }
 type contextComponentTokensMENUSmItemCheckmarkConfig = {
   position?: contextComponentTokensMENUSmItemCheckmarkPosition,
-  width?: mozInitialEtc1wbzz,
-  color?: mozInitialEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensMENUSmItemOptionsLabelConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
   margin?: contextComponentTokensMENUSmItemMarginConfig,
 }
@@ -1887,21 +1887,21 @@ type contextComponentTokensMENUSmItemOptionColorConfig = {
   action?: contextComponentTokensMENUSmItemOptionColorActionConfig,
 }
 type contextComponentTokensMENUSmItemOptionConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   color?: contextComponentTokensMENUSmItemOptionColorConfig,
 }
 type contextComponentTokensMENUSmItemSeperatorConfig = {
-  color?: mozInitialEtcgjquu,
-  height?: mozInitialEtc1avg4,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
   margin?: contextComponentTokensMENUSmItemMarginConfig,
 }
 type contextComponentTokensMENUSmItemConfig = {
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
   margin?: contextComponentTokensMENUSmItemMarginConfig,
-  borderRadius?: mozInitialEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   backgroundColor?: contextComponentTokensMENUSmItemBackgroundColorConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   checkmark?: contextComponentTokensMENUSmItemCheckmarkConfig,
   optionsLabel?: contextComponentTokensMENUSmItemOptionsLabelConfig,
   option?: contextComponentTokensMENUSmItemOptionConfig,
@@ -1909,11 +1909,11 @@ type contextComponentTokensMENUSmItemConfig = {
   seperator?: contextComponentTokensMENUSmItemSeperatorConfig,
 }
 type contextComponentTokensMENUSmConfig = {
-  boxShadow?: mozInitialEtcz3a4s,
-  backgroundColor?: mozInitialEtcgjquu,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   item?: contextComponentTokensMENUSmItemConfig,
 }
 type contextComponentTokensMENUConfig = {
@@ -1921,21 +1921,21 @@ type contextComponentTokensMENUConfig = {
   lg?: contextComponentTokensMENUSmConfig,
 }
 type contextComponentTokensMENUV2SmSearchIconConfig = {
-  width?: mozInitialEtc1wbzz,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensMENUV2SmGroupLabelConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
-  color?: mozInitialEtcgjquu,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  marginTop?: mozInitialEtcrldf7,
-  marginRight?: mozInitialEtcrldf7,
-  marginBottom?: mozInitialEtcrldf7,
-  marginLeft?: mozInitialEtcrldf7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  marginTop?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginRight?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginBottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginLeft?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensMENUV2SmGroupItemBackgroundColorActionConfig = {
   primary?: contextComponentTokensMENUSmItemBackgroundColorDefaultEnabledConfig,
@@ -1950,21 +1950,21 @@ type contextComponentTokensMENUV2SmGroupItemTextColorConfig = {
   action?: contextComponentTokensMENUV2SmGroupItemBackgroundColorActionConfig,
 }
 type contextComponentTokensMENUV2SmGroupItemTextSubTextConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
   color?: contextComponentTokensMENUV2SmGroupItemTextColorConfig,
 }
 type contextComponentTokensMENUV2SmGroupItemTextLeftSlotConfig = {
-  maxWidth?: mozInitialEtc1x0av,
-  maxHeight?: mozInitialEtc1x0av,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
 }
 type contextComponentTokensMENUV2SmGroupItemTextRightChevronConfig = {
-  color?: mozInitialEtcgjquu,
-  width?: mozInitialEtc1wbzz,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensMENUV2SmGroupItemTextConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
   color?: contextComponentTokensMENUV2SmGroupItemTextColorConfig,
@@ -1974,16 +1974,16 @@ type contextComponentTokensMENUV2SmGroupItemTextConfig = {
   rightChevron?: contextComponentTokensMENUV2SmGroupItemTextRightChevronConfig,
 }
 type contextComponentTokensMENUV2SmGroupItemConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  marginTop?: mozInitialEtcrldf7,
-  marginRight?: mozInitialEtcrldf7,
-  marginBottom?: mozInitialEtcrldf7,
-  marginLeft?: mozInitialEtcrldf7,
-  gap?: mozInitialEtchhntk,
-  borderRadius?: mozInitialEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  marginTop?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginRight?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginBottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginLeft?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   backgroundColor?: contextComponentTokensMENUV2SmGroupItemBackgroundColorConfig,
   text?: contextComponentTokensMENUV2SmGroupItemTextConfig,
 }
@@ -1992,25 +1992,25 @@ type contextComponentTokensMENUV2SmGroupConfig = {
   item?: contextComponentTokensMENUV2SmGroupItemConfig,
 }
 type contextComponentTokensMENUV2SmSeparatorConfig = {
-  color?: mozInitialEtcgjquu,
-  height?: mozInitialEtc1avg4,
-  marginTop?: mozInitialEtcrldf7,
-  marginRight?: mozInitialEtcrldf7,
-  marginBottom?: mozInitialEtcrldf7,
-  marginLeft?: mozInitialEtcrldf7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  marginTop?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginRight?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginBottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginLeft?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensMENUV2SmConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
-  minWidth?: mozInitialEtc1owcx,
-  maxWidth?: mozInitialEtc1x0av,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
+  minWidth?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   searchIcon?: contextComponentTokensMENUV2SmSearchIconConfig,
   group?: contextComponentTokensMENUV2SmGroupConfig,
   separator?: contextComponentTokensMENUV2SmSeparatorConfig,
@@ -2020,13 +2020,13 @@ type contextComponentTokensMENUV2Config = {
   lg?: contextComponentTokensMENUV2SmConfig,
 }
 type contextComponentTokensMULTISELECTSmLabelConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   color?: contextComponentTokensMENUSmItemBackgroundColorDefaultEnabledConfig,
 }
 type contextComponentTokensMULTISELECTSmTriggerHeightSmConfig = {
-  container?: mozInitialEtc1avg4,
-  @as("no-container") noContainer?: mozInitialEtc1avg4,
+  container?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  @as("no-container") noContainer?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
 }
 type contextComponentTokensMULTISELECTSmTriggerHeightConfig = {
   sm?: contextComponentTokensMULTISELECTSmTriggerHeightSmConfig,
@@ -2043,8 +2043,8 @@ type contextComponentTokensMULTISELECTSmTriggerPaddingConfig = {
   lg?: contextComponentTokensMULTISELECTSmTriggerPaddingSmConfig,
 }
 type contextComponentTokensMULTISELECTSmTriggerBorderRadiusSmConfig = {
-  container?: mozInitialEtcp2j1f,
-  @as("no-container") noContainer?: mozInitialEtcp2j1f,
+  container?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  @as("no-container") noContainer?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensMULTISELECTSmTriggerBorderRadiusConfig = {
   sm?: contextComponentTokensMULTISELECTSmTriggerBorderRadiusSmConfig,
@@ -2052,34 +2052,34 @@ type contextComponentTokensMULTISELECTSmTriggerBorderRadiusConfig = {
   lg?: contextComponentTokensMULTISELECTSmTriggerBorderRadiusSmConfig,
 }
 type contextComponentTokensMULTISELECTSmTriggerBoxShadowConfig = {
-  container?: mozInitialEtcz3a4s,
-  @as("no-container") noContainer?: mozInitialEtcz3a4s,
+  container?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  @as("no-container") noContainer?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensMULTISELECTSmTriggerBackgroundColorContainerConfig = {
-  hover?: mozInitialEtcgjquu,
-  error?: mozInitialEtcgjquu,
-  focus?: mozInitialEtcgjquu,
-  @as("open") open_?: mozInitialEtcgjquu,
-  closed?: mozInitialEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  @as("open") open_?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  closed?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensMULTISELECTSmTriggerBackgroundColorConfig = {
   container?: contextComponentTokensMULTISELECTSmTriggerBackgroundColorContainerConfig,
   @as("no-container") noContainer?: contextComponentTokensMULTISELECTSmTriggerBackgroundColorContainerConfig,
 }
 type contextComponentTokensMULTISELECTSmTriggerOutlineContainerConfig = {
-  hover?: mozInitialEtcsclw8,
-  error?: mozInitialEtcsclw8,
-  focus?: mozInitialEtcsclw8,
-  @as("open") open_?: mozInitialEtcsclw8,
-  closed?: mozInitialEtcsclw8,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  @as("open") open_?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  closed?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
 }
 type contextComponentTokensMULTISELECTSmTriggerOutlineConfig = {
   container?: contextComponentTokensMULTISELECTSmTriggerOutlineContainerConfig,
   @as("no-container") noContainer?: contextComponentTokensMULTISELECTSmTriggerOutlineContainerConfig,
 }
 type contextComponentTokensMULTISELECTSmTriggerSelectionTagContainerCountConfig = {
-  color?: mozInitialEtcgjquu,
-  backgroundColor?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
 }
 type contextComponentTokensMULTISELECTSmTriggerSelectionTagContainerConfig = {
@@ -2102,15 +2102,15 @@ type contextComponentTokensMULTISELECTSmTriggerConfig = {
   selectedValue?: contextComponentTokensMODALSmHeaderTextTitleConfig,
 }
 type contextComponentTokensMULTISELECTSmMenuItemSeperatorConfig = {
-  color?: mozInitialEtcgjquu,
-  height?: mozInitialEtc1avg4,
-  margin?: mozInitialEtcrldf7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  margin?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensMULTISELECTSmMenuItemConfig = {
-  padding?: mozInitialEtcp2j1f,
-  margin?: mozInitialEtcrldf7,
-  borderRadius?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  margin?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   backgroundColor?: contextComponentTokensMENUSmItemBackgroundColorDefaultEnabledConfig,
   optionsLabel?: contextComponentTokensMULTISELECTSmLabelConfig,
   option?: contextComponentTokensMULTISELECTSmLabelConfig,
@@ -2118,21 +2118,21 @@ type contextComponentTokensMULTISELECTSmMenuItemConfig = {
   seperator?: contextComponentTokensMULTISELECTSmMenuItemSeperatorConfig,
 }
 type contextComponentTokensMULTISELECTSmMenuConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   padding?: contextComponentTokensMULTISELECTSmTriggerPaddingConfig,
   item?: contextComponentTokensMULTISELECTSmMenuItemConfig,
 }
 type contextComponentTokensMULTISELECTSmDrawerHeaderConfig = {
-  paddingX?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  borderBottom?: mozInitialEtc1yz1q,
+  paddingX?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensMULTISELECTSmDrawerSearchConfig = {
-  paddingX?: mozInitialEtcp2j1f,
-  marginTop?: mozInitialEtcrldf7,
-  marginBottom?: mozInitialEtcrldf7,
+  paddingX?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  marginTop?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginBottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensMULTISELECTSmDrawerConfig = {
   header?: contextComponentTokensMULTISELECTSmDrawerHeaderConfig,
@@ -2140,7 +2140,7 @@ type contextComponentTokensMULTISELECTSmDrawerConfig = {
   content?: contextComponentTokensRADIOSmGroupConfig,
 }
 type contextComponentTokensMULTISELECTSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensMULTISELECTSmLabelConfig,
   subLabel?: contextComponentTokensMULTISELECTSmLabelConfig,
   hintText?: contextComponentTokensMULTISELECTSmLabelConfig,
@@ -2168,7 +2168,7 @@ type contextComponentTokensSINGLESELECTSmDrawerConfig = {
   header?: contextComponentTokensMULTISELECTSmDrawerHeaderConfig,
 }
 type contextComponentTokensSINGLESELECTSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensMULTISELECTSmLabelConfig,
   subLabel?: contextComponentTokensMULTISELECTSmLabelConfig,
   hintText?: contextComponentTokensMULTISELECTSmLabelConfig,
@@ -2182,62 +2182,62 @@ type contextComponentTokensSINGLESELECTConfig = {
   sm?: contextComponentTokensSINGLESELECTSmConfig,
   lg?: contextComponentTokensSINGLESELECTSmConfig,
 }
-@unboxed type mozInitialEtc1ufa7 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneInitialEtc1ufa7 | @as("block") Block | @as("inline") Inline | @as("run-in") RunIn | @as("-ms-flexbox") MsFlexbox | @as("-ms-grid") MsGrid | @as("-webkit-flex") WebkitFlex | @as("flex") Flex | @as("flow") Flow | @as("flow-root") FlowRoot | @as("grid") Grid | @as("ruby") Ruby | @as("table") Table | @as("ruby-base") RubyBase | @as("ruby-base-container") RubyBaseContainer | @as("ruby-text") RubyText | @as("ruby-text-container") RubyTextContainer | @as("table-caption") TableCaption | @as("table-cell") TableCell | @as("table-column") TableColumn | @as("table-column-group") TableColumnGroup | @as("table-footer-group") TableFooterGroup | @as("table-header-group") TableHeaderGroup | @as("table-row") TableRow | @as("table-row-group") TableRowGroup | @as("-ms-inline-flexbox") MsInlineFlexbox | @as("-ms-inline-grid") MsInlineGrid | @as("-webkit-inline-flex") WebkitInlineFlex | @as("inline-block") InlineBlock | @as("inline-flex") InlineFlex | @as("inline-grid") InlineGrid | @as("inline-list-item") InlineListItem | @as("inline-table") InlineTable | @as("contents") Contents | @as("list-item") ListItem | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
-@unboxed type mozInitialEtc1w3ez = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("normal") Normal | @as("right") RightInitialEtc1w3ez | @as("left") LeftInitialEtc1w3ez | @as("center") CenterInitialEtc1w3ez | @as("space-around") SpaceAround | @as("space-between") SpaceBetween | @as("space-evenly") SpaceEvenly | @as("stretch") Stretch | @as("end") EndInitialEtc1w3ez | @as("flex-end") FlexEnd | @as("flex-start") FlexStart | @as("start") Start | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
-@unboxed type mozInitialEtcoic7x = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("normal") Normal | @as("center") CenterInitialEtcoic7x | @as("stretch") Stretch | @as("end") EndInitialEtcoic7x | @as("flex-end") FlexEnd | @as("flex-start") FlexStart | @as("start") Start | @as("self-end") SelfEnd | @as("self-start") SelfStart | @as("anchor-center") AnchorCenter | @as("baseline") Baseline | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc1ufa7 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneRevertEtc1ufa7 | @as("block") Block | @as("inline") Inline | @as("run-in") RunIn | @as("-ms-flexbox") MsFlexbox | @as("-ms-grid") MsGrid | @as("-webkit-flex") WebkitFlex | @as("flex") Flex | @as("flow") Flow | @as("flow-root") FlowRoot | @as("grid") Grid | @as("ruby") Ruby | @as("table") Table | @as("ruby-base") RubyBase | @as("ruby-base-container") RubyBaseContainer | @as("ruby-text") RubyText | @as("ruby-text-container") RubyTextContainer | @as("table-caption") TableCaption | @as("table-cell") TableCell | @as("table-column") TableColumn | @as("table-column-group") TableColumnGroup | @as("table-footer-group") TableFooterGroup | @as("table-header-group") TableHeaderGroup | @as("table-row") TableRow | @as("table-row-group") TableRowGroup | @as("-ms-inline-flexbox") MsInlineFlexbox | @as("-ms-inline-grid") MsInlineGrid | @as("-webkit-inline-flex") WebkitInlineFlex | @as("inline-block") InlineBlock | @as("inline-flex") InlineFlex | @as("inline-grid") InlineGrid | @as("inline-list-item") InlineListItem | @as("inline-table") InlineTable | @as("contents") Contents | @as("list-item") ListItem | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc1w3ez = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("normal") Normal | @as("right") RightRevertEtc1w3ez | @as("left") LeftRevertEtc1w3ez | @as("center") CenterRevertEtc1w3ez | @as("space-around") SpaceAround | @as("space-between") SpaceBetween | @as("space-evenly") SpaceEvenly | @as("stretch") Stretch | @as("end") EndRevertEtc1w3ez | @as("flex-end") FlexEnd | @as("flex-start") FlexStart | @as("start") Start | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtcoic7x = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("normal") Normal | @as("center") CenterRevertEtcoic7x | @as("stretch") Stretch | @as("end") EndRevertEtcoic7x | @as("flex-end") FlexEnd | @as("flex-start") FlexStart | @as("start") Start | @as("self-end") SelfEnd | @as("self-start") SelfStart | @as("anchor-center") AnchorCenter | @as("baseline") Baseline | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensTABLESmHeaderDescriptionConfig = {
-  fontSize?: mozInitialEtcly7v7,
-  color?: mozInitialEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
-  maxWidth?: mozInitialEtc1x0av,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
 }
 type contextComponentTokensTABLESmHeaderHeaderSlot1Config = {
-  maxHeight?: mozInitialEtc1x0av,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
   flexShrink?: string,  // ⚪ loose — was `Globals | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; indexOf?: `
 }
 type contextComponentTokensTABLESmHeaderTitleRowConfig = {
-  gap?: mozInitialEtchhntk,
-  marginBottom?: mozInitialEtcrldf7,
-  justifyContent?: mozInitialEtc1w3ez,
-  alignItems?: mozInitialEtcoic7x,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  marginBottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  justifyContent?: mozInitialOrInheritOrInitialOrRevertEtc1w3ez,
+  alignItems?: mozInitialOrInheritOrInitialOrRevertEtcoic7x,
 }
 type contextComponentTokensTABLESmHeaderDescriptionRowConfig = {
-  marginTop?: mozInitialEtcrldf7,
+  marginTop?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensTABLESmHeaderActionIconsSearchIconConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
 }
 type contextComponentTokensTABLESmHeaderActionIconsColumnManagerIconConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  color?: mozInitialEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTABLESmHeaderActionIconsColumnManagerTriggerFocusVisibleConfig = {
-  outline?: mozInitialEtcsclw8,
-  outlineOffset?: mozInitialEtcp2j1f,
-  borderRadius?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
+  outline?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  outlineOffset?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensTABLESmHeaderActionIconsColumnManagerTriggerConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   opacity?: string,  // ⚠️ REVIEW — was `string | number | RuleSet<any> | { [x: string]: string | number | RuleSet<any> | ... | {}; accentColor?: Globa` — match the real type by hand
   focusVisible?: contextComponentTokensTABLESmHeaderActionIconsColumnManagerTriggerFocusVisibleConfig,
 }
 type contextComponentTokensTABLESmHeaderActionIconsConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   searchIcon?: contextComponentTokensTABLESmHeaderActionIconsSearchIconConfig,
   filterIcon?: contextComponentTokensTABLESmHeaderActionIconsSearchIconConfig,
   columnManagerIcon?: contextComponentTokensTABLESmHeaderActionIconsColumnManagerIconConfig,
   columnManagerTrigger?: contextComponentTokensTABLESmHeaderActionIconsColumnManagerTriggerConfig,
 }
 type contextComponentTokensTABLESmHeaderConfig = {
-  display?: mozInitialEtc1ufa7,
-  justifyContent?: mozInitialEtc1w3ez,
-  alignItems?: mozInitialEtcoic7x,
-  marginBottom?: mozInitialEtcrldf7,
-  gap?: mozInitialEtchhntk,
-  maxWidth?: mozInitialEtc1x0av,
+  display?: mozInitialOrInheritOrInitialOrRevertEtc1ufa7,
+  justifyContent?: mozInitialOrInheritOrInitialOrRevertEtc1w3ez,
+  alignItems?: mozInitialOrInheritOrInitialOrRevertEtcoic7x,
+  marginBottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
   overflowX?: string,
   overflowY?: string,
   title?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
@@ -2249,106 +2249,106 @@ type contextComponentTokensTABLESmHeaderConfig = {
   descriptionRow?: contextComponentTokensTABLESmHeaderDescriptionRowConfig,
   actionIcons?: contextComponentTokensTABLESmHeaderActionIconsConfig,
 }
-@unboxed type mozInitialEtc96qi2 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("-moz-fit-content") MozFitContent | @as("-moz-max-content") MozMaxContent | @as("-moz-min-content") MozMinContent | @as("-webkit-fit-content") WebkitFitContent | @as("-webkit-max-content") WebkitMaxContent | @as("auto") Auto | @as("fit-content") FitContent | @as("intrinsic") Intrinsic | @as("max-content") MaxContent | @as("min-content") MinContent | @as("-webkit-min-content") WebkitMinContent | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc96qi2 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("-moz-fit-content") MozFitContent | @as("-moz-max-content") MozMaxContent | @as("-moz-min-content") MozMinContent | @as("-webkit-fit-content") WebkitFitContent | @as("-webkit-max-content") WebkitMaxContent | @as("auto") Auto | @as("fit-content") FitContent | @as("intrinsic") Intrinsic | @as("max-content") MaxContent | @as("min-content") MinContent | @as("-webkit-min-content") WebkitMinContent | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensTABLESmDataTableBulkActionsSelectTextConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   flex?: string,  // ⚪ loose — was `number | Globals | "none" | "auto" | "fit-content" | "max-content" | "min-content" | "content" | { readonly [x`
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTABLESmDataTableBulkActionsConfig = {
-  top?: mozInitialEtcrldf7,
-  left?: mozInitialEtcrldf7,
-  transform?: mozInitialEtcz3a4s,
+  top?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  left?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  transform?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
-  backgroundColor?: mozInitialEtcgjquu,
-  color?: mozInitialEtcgjquu,
-  borderRadius?: mozInitialEtcp2j1f,
-  padding?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
-  display?: mozInitialEtc1ufa7,
-  alignItems?: mozInitialEtcoic7x,
-  gap?: mozInitialEtchhntk,
-  minWidth?: mozInitialEtc1owcx,
-  width?: mozInitialEtc1wbzz,
-  maxWidth?: mozInitialEtc1x0av,
-  border?: mozInitialEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  display?: mozInitialOrInheritOrInitialOrRevertEtc1ufa7,
+  alignItems?: mozInitialOrInheritOrInitialOrRevertEtcoic7x,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  minWidth?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
   selectText?: contextComponentTokensTABLESmDataTableBulkActionsSelectTextConfig,
-  height?: mozInitialEtc1avg4,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
 }
 type contextComponentTokensTABLESmDataTableTableHeaderRowConfig = {
-  height?: mozInitialEtc1avg4,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
   @as("&:hover") __hover?: string,  // ⚪ loose — was `{ backgroundColor?: Globals | NamedColor | "transparent" | SystemColor | DeprecatedSystemColor | "currentColor`
 }
 type contextComponentTokensTABLESmDataTableTableHeaderCellConfig = {
-  padding?: mozInitialEtcp2j1f,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   textAlign?: string,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  color?: mozInitialEtcgjquu,
-  fontSize?: mozInitialEtcly7v7,
-  width?: mozInitialEtc1wbzz,
-  backgroundColor?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
-@unboxed type mozInitialEtcop7hp = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneInitialEtcop7hp | @as("auto") Auto | @as("text") TextInitialEtcop7hp | @as("default") Default | @as("-moz-grab") MozGrab | @as("-moz-zoom-in") MozZoomIn | @as("-moz-zoom-out") MozZoomOut | @as("-webkit-grab") WebkitGrab | @as("-webkit-grabbing") WebkitGrabbing | @as("-webkit-zoom-in") WebkitZoomIn | @as("-webkit-zoom-out") WebkitZoomOut | @as("alias") Alias | @as("all-scroll") AllScroll | @as("cell") Cell | @as("col-resize") ColResize | @as("context-menu") ContextMenuInitialEtcop7hp | @as("copy") Copy | @as("crosshair") Crosshair | @as("e-resize") EResize | @as("ew-resize") EwResize | @as("grab") Grab | @as("grabbing") Grabbing | @as("help") Help | @as("move") Move | @as("n-resize") NResize | @as("ne-resize") NeResize | @as("nesw-resize") NeswResize | @as("no-drop") NoDrop | @as("not-allowed") NotAllowed | @as("ns-resize") NsResize | @as("nw-resize") NwResize | @as("nwse-resize") NwseResize | @as("pointer") Pointer | @as("progress") Progress | @as("row-resize") RowResize | @as("s-resize") SResize | @as("se-resize") SeResize | @as("sw-resize") SwResize | @as("vertical-text") VerticalText | @as("w-resize") WResize | @as("wait") Wait | @as("zoom-in") ZoomIn | @as("zoom-out") ZoomOut | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtcop7hp = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneRevertEtcop7hp | @as("auto") Auto | @as("text") TextRevertEtcop7hp | @as("default") Default | @as("-moz-grab") MozGrab | @as("-moz-zoom-in") MozZoomIn | @as("-moz-zoom-out") MozZoomOut | @as("-webkit-grab") WebkitGrab | @as("-webkit-grabbing") WebkitGrabbing | @as("-webkit-zoom-in") WebkitZoomIn | @as("-webkit-zoom-out") WebkitZoomOut | @as("alias") Alias | @as("all-scroll") AllScroll | @as("cell") Cell | @as("col-resize") ColResize | @as("context-menu") ContextMenuRevertEtcop7hp | @as("copy") Copy | @as("crosshair") Crosshair | @as("e-resize") EResize | @as("ew-resize") EwResize | @as("grab") Grab | @as("grabbing") Grabbing | @as("help") Help | @as("move") Move | @as("n-resize") NResize | @as("ne-resize") NeResize | @as("nesw-resize") NeswResize | @as("no-drop") NoDrop | @as("not-allowed") NotAllowed | @as("ns-resize") NsResize | @as("nw-resize") NwResize | @as("nwse-resize") NwseResize | @as("pointer") Pointer | @as("progress") Progress | @as("row-resize") RowResize | @as("s-resize") SResize | @as("se-resize") SeResize | @as("sw-resize") SwResize | @as("vertical-text") VerticalText | @as("w-resize") WResize | @as("wait") Wait | @as("zoom-in") ZoomIn | @as("zoom-out") ZoomOut | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensTABLESmDataTableTableHeaderSortableConfig = {
-  cursor?: mozInitialEtcop7hp,
+  cursor?: mozInitialOrInheritOrInitialOrRevertEtcop7hp,
   userSelect?: string,
 }
-@unboxed type mozInitialEtcc55tl = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneInitialEtcc55tl | @as("full-width") FullWidth | @as("capitalize") Capitalize | @as("full-size-kana") FullSizeKana | @as("lowercase") Lowercase | @as("math-auto") MathAuto | @as("uppercase") Uppercase | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtcc55tl = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneRevertEtcc55tl | @as("full-width") FullWidth | @as("capitalize") Capitalize | @as("full-size-kana") FullSizeKana | @as("lowercase") Lowercase | @as("math-auto") MathAuto | @as("uppercase") Uppercase | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensTABLESmDataTableTableHeaderFilterConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  borderRadius?: mozInitialEtcp2j1f,
-  border?: mozInitialEtc1yz1q,
-  cursor?: mozInitialEtcop7hp,
-  textColor?: mozInitialEtcgjquu,
-  maxHeight?: mozInitialEtc1x0av,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  cursor?: mozInitialOrInheritOrInitialOrRevertEtcop7hp,
+  textColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
   overflowY?: string,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   sortOption?: string,  // ⚪ loose — was `{ padding?: number | Globals | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; co`
-  selectedBackground?: mozInitialEtcgjquu,
-  hoverBackground?: mozInitialEtcgjquu,
-  selectedTextColor?: mozInitialEtcgjquu,
-  normalTextColor?: mozInitialEtcgjquu,
+  selectedBackground?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hoverBackground?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  selectedTextColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  normalTextColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   selectedFontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   normalFontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  itemPadding?: mozInitialEtcp2j1f,
-  itemGap?: mozInitialEtchhntk,
-  itemBorderRadius?: mozInitialEtcp2j1f,
-  itemFontSize?: mozInitialEtcly7v7,
-  groupLabelFontSize?: mozInitialEtcly7v7,
+  itemPadding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  itemGap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  itemBorderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  itemFontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  groupLabelFontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   groupLabelFontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  groupLabelColor?: mozInitialEtcgjquu,
-  groupLabelPadding?: mozInitialEtcp2j1f,
-  groupLabelTextTransform?: mozInitialEtcc55tl,
-  separatorHeight?: mozInitialEtc1avg4,
-  separatorColor?: mozInitialEtcgjquu,
+  groupLabelColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  groupLabelPadding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  groupLabelTextTransform?: mozInitialOrInheritOrInitialOrRevertEtcc55tl,
+  separatorHeight?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  separatorColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTABLESmDataTableTableHeaderConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  borderBottom?: mozInitialEtc1yz1q,
-  height?: mozInitialEtc1avg4,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
   row?: contextComponentTokensTABLESmDataTableTableHeaderRowConfig,
   cell?: contextComponentTokensTABLESmDataTableTableHeaderCellConfig,
   sortable?: contextComponentTokensTABLESmDataTableTableHeaderSortableConfig,
   filter?: contextComponentTokensTABLESmDataTableTableHeaderFilterConfig,
 }
 type contextComponentTokensTABLESmDataTableTableBodyRowConfig = {
-  height?: mozInitialEtc1avg4,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
   @as("&:hover") __hover?: string,  // ⚪ loose — was `{ backgroundColor?: Globals | NamedColor | "transparent" | SystemColor | DeprecatedSystemColor | "currentColor`
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTABLESmDataTableTableBodyCellConfig = {
-  padding?: mozInitialEtcp2j1f,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  color?: mozInitialEtcgjquu,
-  fontSize?: mozInitialEtcly7v7,
-  borderTop?: mozInitialEtc1yz1q,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
   dateLabel?: string,  // ⚪ loose — was `{ fontSize?: number | Globals | "math" | AbsoluteSize | "larger" | "smaller" | { readonly [x: number]: string;`
   expandable?: string,  // ⚪ loose — was `{ padding?: number | Globals | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; co`
 }
 type contextComponentTokensTABLESmDataTableTableBodyConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  borderTop?: mozInitialEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
   row?: contextComponentTokensTABLESmDataTableTableBodyRowConfig,
   cell?: contextComponentTokensTABLESmDataTableTableBodyCellConfig,
 }
@@ -2358,43 +2358,43 @@ type contextComponentTokensTABLESmDataTableTableFooterPaginationConfig = {
   pageNavigation?: string,  // ⚪ loose — was `{ gap?: number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?:`
 }
 type contextComponentTokensTABLESmDataTableTableFooterConfig = {
-  display?: mozInitialEtc1ufa7,
-  justifyContent?: mozInitialEtc1w3ez,
-  alignItems?: mozInitialEtcoic7x,
-  padding?: mozInitialEtcp2j1f,
-  borderTop?: mozInitialEtc1yz1q,
-  height?: mozInitialEtc1avg4,
+  display?: mozInitialOrInheritOrInitialOrRevertEtc1ufa7,
+  justifyContent?: mozInitialOrInheritOrInitialOrRevertEtc1w3ez,
+  alignItems?: mozInitialOrInheritOrInitialOrRevertEtcoic7x,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
   position?: string,
-  bottom?: mozInitialEtcrldf7,
-  backgroundColor?: mozInitialEtcgjquu,
+  bottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
   flexShrink?: string,  // ⚪ loose — was `Globals | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; indexOf?: `
   pagination?: contextComponentTokensTABLESmDataTableTableFooterPaginationConfig,
 }
 type contextComponentTokensTABLESmDataTableTableConfig = {
-  width?: mozInitialEtc1wbzz,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
   tableLayout?: string,
   borderCollapse?: string,
-  borderSpacing?: mozInitialEtcp2j1f,
+  borderSpacing?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   position?: string,
-  minWidth?: mozInitialEtc1owcx,
+  minWidth?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
   header?: contextComponentTokensTABLESmDataTableTableHeaderConfig,
   body?: contextComponentTokensTABLESmDataTableTableBodyConfig,
   footer?: contextComponentTokensTABLESmDataTableTableFooterConfig,
 }
 type contextComponentTokensTABLESmDataTableConfig = {
-  borderRadius?: mozInitialEtcp2j1f,
-  border?: mozInitialEtc1yz1q,
-  maxHeight?: mozInitialEtc1x0av,
-  minHeight?: mozInitialEtc96qi2,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  minHeight?: mozInitialOrInheritOrInitialOrRevertEtc96qi2,
   bulkActions?: contextComponentTokensTABLESmDataTableBulkActionsConfig,
   table?: contextComponentTokensTABLESmDataTableTableConfig,
 }
 type contextComponentTokensTABLESmConfig = {
-  padding?: mozInitialEtcp2j1f,
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  display?: mozInitialEtc1ufa7,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  display?: mozInitialOrInheritOrInitialOrRevertEtc1ufa7,
   flexDirection?: string,
   position?: string,
   header?: contextComponentTokensTABLESmHeaderConfig,
@@ -2405,10 +2405,10 @@ type contextComponentTokensTABLEConfig = {
   lg?: contextComponentTokensTABLESmConfig,
 }
 type contextComponentTokensCALENDARSmTriggerQuickSelectorBorderRadiusConfig = {
-  topLeft?: mozInitialEtcp2j1f,
-  topRight?: mozInitialEtcp2j1f,
-  bottomLeft?: mozInitialEtcp2j1f,
-  bottomRight?: mozInitialEtcp2j1f,
+  topLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  topRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  bottomLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  bottomRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensCALENDARSmTriggerQuickSelectorPaddingConfig = {
   sm?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
@@ -2416,10 +2416,10 @@ type contextComponentTokensCALENDARSmTriggerQuickSelectorPaddingConfig = {
   lg?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
 }
 type contextComponentTokensCALENDARSmTriggerQuickSelectorBorderDisabledConfig = {
-  left?: mozInitialEtc1yz1q,
-  top?: mozInitialEtc1yz1q,
-  bottom?: mozInitialEtc1yz1q,
-  right?: mozInitialEtc1yz1q,
+  left?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  top?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  bottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  right?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensCALENDARSmTriggerQuickSelectorBorderConfig = {
   disabled?: contextComponentTokensCALENDARSmTriggerQuickSelectorBorderDisabledConfig,
@@ -2428,50 +2428,50 @@ type contextComponentTokensCALENDARSmTriggerQuickSelectorBorderConfig = {
   hover?: contextComponentTokensCALENDARSmTriggerQuickSelectorBorderDisabledConfig,
 }
 type contextComponentTokensCALENDARSmTriggerQuickSelectorTextConfig = {
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
 }
 type contextComponentTokensCALENDARSmTriggerQuickSelectorConfig = {
   borderRadius?: contextComponentTokensCALENDARSmTriggerQuickSelectorBorderRadiusConfig,
-  backgroundColor?: mozInitialEtcgjquu,
-  gap?: mozInitialEtchhntk,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   padding?: contextComponentTokensCALENDARSmTriggerQuickSelectorPaddingConfig,
   border?: contextComponentTokensCALENDARSmTriggerQuickSelectorBorderConfig,
   text?: contextComponentTokensCALENDARSmTriggerQuickSelectorTextConfig,
-  iconSize?: mozInitialEtc1wbzz,
+  iconSize?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensCALENDARSmTriggerDateInputBorderRadiusConfig = {
-  withQuickSelector?: mozInitialEtcp2j1f,
-  withoutQuickSelector?: mozInitialEtcp2j1f,
+  withQuickSelector?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  withoutQuickSelector?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensCALENDARSmTriggerDateInputTextConfig = {
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
 }
 type contextComponentTokensCALENDARSmTriggerDateInputBorderConfig = {
-  disabled?: mozInitialEtc1yz1q,
-  active?: mozInitialEtc1yz1q,
-  default?: mozInitialEtc1yz1q,
-  hover?: mozInitialEtc1yz1q,
-  error?: mozInitialEtc1yz1q,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  active?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  default?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  error?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensCALENDARSmTriggerDateInputConfig = {
   borderRadius?: contextComponentTokensCALENDARSmTriggerDateInputBorderRadiusConfig,
   padding?: contextComponentTokensCALENDARSmTriggerQuickSelectorPaddingConfig,
   text?: contextComponentTokensCALENDARSmTriggerDateInputTextConfig,
   border?: contextComponentTokensCALENDARSmTriggerDateInputBorderConfig,
-  backgroundColor?: mozInitialEtcgjquu,
-  iconSize?: mozInitialEtc1wbzz,
-  gap?: mozInitialEtchhntk,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  iconSize?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensCALENDARSmTriggerConfig = {
   quickSelector?: contextComponentTokensCALENDARSmTriggerQuickSelectorConfig,
   dateInput?: contextComponentTokensCALENDARSmTriggerDateInputConfig,
 }
 type contextComponentTokensCALENDARSmCalendarHeaderDateInputConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensMODALSmHeaderTextTitleConfig,
 }
 type contextComponentTokensCALENDARSmCalendarHeaderConfig = {
@@ -2479,31 +2479,31 @@ type contextComponentTokensCALENDARSmCalendarHeaderConfig = {
   dateInput?: contextComponentTokensCALENDARSmCalendarHeaderDateInputConfig,
 }
 type contextComponentTokensCALENDARSmCalendarCalendarGridMonthHeaderConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   padding?: string,  // ⚪ loose — was `{ x?: number | Globals | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?:`
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensCALENDARSmCalendarCalendarGridMonthConfig = {
   header?: contextComponentTokensCALENDARSmCalendarCalendarGridMonthHeaderConfig,
 }
 type contextComponentTokensCALENDARSmCalendarCalendarGridWeekConfig = {
-  gap?: mozInitialEtchhntk,
-  fontSize?: mozInitialEtcly7v7,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  boxShadow?: mozInitialEtcz3a4s,
-  color?: mozInitialEtcgjquu,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
   row?: contextComponentTokensRADIOSmGroupConfig,
 }
 type contextComponentTokensCALENDARSmCalendarCalendarGridDayCellConfig = {
   padding?: string,  // ⚪ loose — was `{ x?: number | Globals | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?:`
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
   border?: string,  // ⚪ loose — was `{ disabled?: number | "-moz-initial" | "inherit" | "initial" | "revert" | "revert-layer" | "unset" | "none" | `
-  borderRadius?: mozInitialEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensCALENDARSmCalendarCalendarGridDayStatesConfig = {
   startDate?: string,  // ⚪ loose — was `{ backgroundColor?: Globals | NamedColor | "transparent" | SystemColor | DeprecatedSystemColor | "currentColor`
@@ -2521,8 +2521,8 @@ type contextComponentTokensCALENDARSmCalendarCalendarGridDayTextConfig = {
   disabledDate?: contextComponentTokensSEARCHINPUTSmRequiredConfig,
 }
 type contextComponentTokensCALENDARSmCalendarCalendarGridDayTodayIndicatorConfig = {
-  width?: mozInitialEtc1wbzz,
-  backgroundColor?: mozInitialEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCALENDARSmCalendarCalendarGridDayConfig = {
   cell?: contextComponentTokensCALENDARSmCalendarCalendarGridDayCellConfig,
@@ -2537,16 +2537,16 @@ type contextComponentTokensCALENDARSmCalendarCalendarGridConfig = {
 }
 type contextComponentTokensCALENDARSmCalendarFooterConfig = {
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  borderTop?: mozInitialEtc1yz1q,
-  gap?: mozInitialEtchhntk,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensCALENDARSmCalendarConfig = {
-  minWidth?: mozInitialEtc1owcx,
-  width?: mozInitialEtc1wbzz,
-  backgroundColor?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
+  minWidth?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   header?: contextComponentTokensCALENDARSmCalendarHeaderConfig,
   calendarGrid?: contextComponentTokensCALENDARSmCalendarCalendarGridConfig,
   footer?: contextComponentTokensCALENDARSmCalendarFooterConfig,
@@ -2560,54 +2560,54 @@ type contextComponentTokensCALENDARConfig = {
   lg?: contextComponentTokensCALENDARSmConfig,
 }
 type contextComponentTokensTIMEPICKERSmDropdownColumnHeaderConfig = {
-  color?: mozInitialEtcgjquu,
-  fontSize?: mozInitialEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  paddingY?: mozInitialEtcp2j1f,
+  paddingY?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensTIMEPICKERSmDropdownColumnConfig = {
-  width?: mozInitialEtc1wbzz,
-  gap?: mozInitialEtchhntk,
-  separator?: mozInitialEtc1yz1q,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  separator?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
   header?: contextComponentTokensTIMEPICKERSmDropdownColumnHeaderConfig,
 }
 type contextComponentTokensTIMEPICKERSmDropdownOptionColorConfig = {
-  default?: mozInitialEtcgjquu,
-  selected?: mozInitialEtcgjquu,
-  disabled?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  selected?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTIMEPICKERSmDropdownOptionBackgroundColorConfig = {
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
-  selected?: mozInitialEtcgjquu,
-  disabled?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  selected?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTIMEPICKERSmDropdownOptionConfig = {
-  height?: mozInitialEtc1avg4,
-  paddingX?: mozInitialEtcp2j1f,
-  borderRadius?: mozInitialEtcp2j1f,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  paddingX?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   color?: contextComponentTokensTIMEPICKERSmDropdownOptionColorConfig,
   backgroundColor?: contextComponentTokensTIMEPICKERSmDropdownOptionBackgroundColorConfig,
-  focusOutline?: mozInitialEtcsclw8,
+  focusOutline?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
 }
 type contextComponentTokensTIMEPICKERSmDropdownConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
-  padding?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
-  maxHeight?: mozInitialEtc1x0av,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
   column?: contextComponentTokensTIMEPICKERSmDropdownColumnConfig,
   option?: contextComponentTokensTIMEPICKERSmDropdownOptionConfig,
 }
 type contextComponentTokensTIMEPICKERSmErrorMessageConfig = {
-  color?: mozInitialEtcgjquu,
-  fontSize?: mozInitialEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  marginTop?: mozInitialEtcrldf7,
+  marginTop?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensTIMEPICKERSmConfig = {
   dropdown?: contextComponentTokensTIMEPICKERSmDropdownConfig,
@@ -2618,43 +2618,43 @@ type contextComponentTokensTIMEPICKERConfig = {
   lg?: contextComponentTokensTIMEPICKERSmConfig,
 }
 type contextComponentTokensACCORDIONSmGapConfig = {
-  border?: mozInitialEtchhntk,
-  noBorder?: mozInitialEtchhntk,
+  border?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  noBorder?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensACCORDIONSmBorderRadiusConfig = {
-  border?: mozInitialEtcp2j1f,
-  noBorder?: mozInitialEtcp2j1f,
+  border?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  noBorder?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensACCORDIONSmTriggerBackgroundColorBorderConfig = {
-  disabled?: mozInitialEtcgjquu,
-  active?: mozInitialEtcgjquu,
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
-  @as("open") open_?: mozInitialEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  active?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  @as("open") open_?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensACCORDIONSmTriggerBackgroundColorConfig = {
   border?: contextComponentTokensACCORDIONSmTriggerBackgroundColorBorderConfig,
   noBorder?: contextComponentTokensACCORDIONSmTriggerBackgroundColorBorderConfig,
 }
 type contextComponentTokensACCORDIONSmTriggerBorderBorderConfig = {
-  disabled?: mozInitialEtc1yz1q,
-  active?: mozInitialEtc1yz1q,
-  default?: mozInitialEtc1yz1q,
-  hover?: mozInitialEtc1yz1q,
-  @as("open") open_?: mozInitialEtc1yz1q,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  active?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  default?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  @as("open") open_?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensACCORDIONSmTriggerBorderConfig = {
   border?: contextComponentTokensACCORDIONSmTriggerBorderBorderConfig,
   noBorder?: contextComponentTokensACCORDIONSmTriggerBorderBorderConfig,
 }
 type contextComponentTokensACCORDIONSmTriggerTextTitleConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   color?: contextComponentTokensACCORDIONSmTriggerBackgroundColorBorderConfig,
 }
 type contextComponentTokensACCORDIONSmTriggerTextSubtextConfig = {
-  fontSize?: mozInitialEtcly7v7,
-  gap?: mozInitialEtchhntk,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   color?: contextComponentTokensACCORDIONSmTriggerBackgroundColorBorderConfig,
 }
 type contextComponentTokensACCORDIONSmTriggerTextConfig = {
@@ -2662,7 +2662,7 @@ type contextComponentTokensACCORDIONSmTriggerTextConfig = {
   subtext?: contextComponentTokensACCORDIONSmTriggerTextSubtextConfig,
 }
 type contextComponentTokensACCORDIONSmTriggerSlotConfig = {
-  maxWidth?: mozInitialEtc1x0av,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
 }
 type contextComponentTokensACCORDIONSmTriggerConfig = {
   backgroundColor?: contextComponentTokensACCORDIONSmTriggerBackgroundColorConfig,
@@ -2672,8 +2672,8 @@ type contextComponentTokensACCORDIONSmTriggerConfig = {
   slot?: contextComponentTokensACCORDIONSmTriggerSlotConfig,
 }
 type contextComponentTokensACCORDIONSmSeparatorColorConfig = {
-  border?: mozInitialEtcgjquu,
-  noBorder?: mozInitialEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  noBorder?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensACCORDIONSmSeparatorConfig = {
   color?: contextComponentTokensACCORDIONSmSeparatorColorConfig,
@@ -2689,15 +2689,15 @@ type contextComponentTokensACCORDIONConfig = {
   lg?: contextComponentTokensACCORDIONSmConfig,
 }
 type contextComponentTokensSTATCARDSmTextContainerHeaderHelpIconColorConfig = {
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSTATCARDSmTextContainerHeaderHelpIconConfig = {
-  width?: mozInitialEtc1wbzz,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
   color?: contextComponentTokensSTATCARDSmTextContainerHeaderHelpIconColorConfig,
 }
 type contextComponentTokensSTATCARDSmTextContainerHeaderConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   title?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
   titleIcon?: contextComponentTokensMENUV2SmSearchIconConfig,
   helpIcon?: contextComponentTokensSTATCARDSmTextContainerHeaderHelpIconConfig,
@@ -2709,31 +2709,31 @@ type contextComponentTokensSTATCARDSmTextContainerStatsTitleValueConfig = {
   number?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
 }
 type contextComponentTokensSTATCARDSmTextContainerStatsTitleChangeConfig = {
-  margin?: mozInitialEtcrldf7,
+  margin?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
   arrow?: string,  // ⚪ loose — was `{ width?: number | Globals | "-moz-fit-content" | "-moz-max-content" | "-moz-min-content" | "-webkit-fit-conte`
   text?: string,  // ⚪ loose — was `{ fontSize?: number | Globals | "math" | AbsoluteSize | "larger" | "smaller" | { readonly [x: number]: string;`
 }
 type contextComponentTokensSTATCARDSmTextContainerStatsTitleConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   value?: contextComponentTokensSTATCARDSmTextContainerStatsTitleValueConfig,
   change?: contextComponentTokensSTATCARDSmTextContainerStatsTitleChangeConfig,
 }
 type contextComponentTokensSTATCARDSmTextContainerStatsConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   title?: contextComponentTokensSTATCARDSmTextContainerStatsTitleConfig,
   subtitle?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
 }
 type contextComponentTokensSTATCARDSmTextContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   header?: contextComponentTokensSTATCARDSmTextContainerHeaderConfig,
   stats?: contextComponentTokensSTATCARDSmTextContainerStatsConfig,
 }
 type contextComponentTokensSTATCARDSmChartColorsLineConfig = {
-  increase?: mozInitialEtcgjquu,
-  decrease?: mozInitialEtcgjquu,
+  increase?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  decrease?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSTATCARDSmChartColorsGradientConfig = {
-  end?: mozInitialEtcgjquu,
+  end?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   startOpacity?: float,
   endOpacity?: float,
 }
@@ -2742,53 +2742,53 @@ type contextComponentTokensSTATCARDSmChartColorsConfig = {
   area?: contextComponentTokensSTATCARDSmChartColorsLineConfig,
   gradient?: contextComponentTokensSTATCARDSmChartColorsGradientConfig,
 }
-@unboxed type mozInitialEtc1i3k7 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneInitialEtc1i3k7 | @as("aliceblue") Aliceblue | @as("antiquewhite") Antiquewhite | @as("aqua") Aqua | @as("aquamarine") Aquamarine | @as("azure") Azure | @as("beige") Beige | @as("bisque") Bisque | @as("black") Black | @as("blanchedalmond") Blanchedalmond | @as("blue") Blue | @as("blueviolet") Blueviolet | @as("brown") Brown | @as("burlywood") Burlywood | @as("cadetblue") Cadetblue | @as("chartreuse") Chartreuse | @as("chocolate") Chocolate | @as("coral") Coral | @as("cornflowerblue") Cornflowerblue | @as("cornsilk") Cornsilk | @as("crimson") Crimson | @as("cyan") Cyan | @as("darkblue") Darkblue | @as("darkcyan") Darkcyan | @as("darkgoldenrod") Darkgoldenrod | @as("darkgray") Darkgray | @as("darkgreen") Darkgreen | @as("darkgrey") Darkgrey | @as("darkkhaki") Darkkhaki | @as("darkmagenta") Darkmagenta | @as("darkolivegreen") Darkolivegreen | @as("darkorange") Darkorange | @as("darkorchid") Darkorchid | @as("darkred") Darkred | @as("darksalmon") Darksalmon | @as("darkseagreen") Darkseagreen | @as("darkslateblue") Darkslateblue | @as("darkslategray") Darkslategray | @as("darkslategrey") Darkslategrey | @as("darkturquoise") Darkturquoise | @as("darkviolet") Darkviolet | @as("deeppink") Deeppink | @as("deepskyblue") Deepskyblue | @as("dimgray") Dimgray | @as("dimgrey") Dimgrey | @as("dodgerblue") Dodgerblue | @as("firebrick") Firebrick | @as("floralwhite") Floralwhite | @as("forestgreen") Forestgreen | @as("fuchsia") Fuchsia | @as("gainsboro") Gainsboro | @as("ghostwhite") Ghostwhite | @as("gold") Gold | @as("goldenrod") Goldenrod | @as("gray") Gray | @as("green") Green | @as("greenyellow") Greenyellow | @as("grey") Grey | @as("honeydew") Honeydew | @as("hotpink") Hotpink | @as("indianred") Indianred | @as("indigo") Indigo | @as("ivory") Ivory | @as("khaki") Khaki | @as("lavender") Lavender | @as("lavenderblush") Lavenderblush | @as("lawngreen") Lawngreen | @as("lemonchiffon") Lemonchiffon | @as("lightblue") Lightblue | @as("lightcoral") Lightcoral | @as("lightcyan") Lightcyan | @as("lightgoldenrodyellow") Lightgoldenrodyellow | @as("lightgray") Lightgray | @as("lightgreen") Lightgreen | @as("lightgrey") Lightgrey | @as("lightpink") Lightpink | @as("lightsalmon") Lightsalmon | @as("lightseagreen") Lightseagreen | @as("lightskyblue") Lightskyblue | @as("lightslategray") Lightslategray | @as("lightslategrey") Lightslategrey | @as("lightsteelblue") Lightsteelblue | @as("lightyellow") Lightyellow | @as("lime") Lime | @as("limegreen") Limegreen | @as("linen") Linen | @as("magenta") Magenta | @as("maroon") Maroon | @as("mediumaquamarine") Mediumaquamarine | @as("mediumblue") Mediumblue | @as("mediumorchid") Mediumorchid | @as("mediumpurple") Mediumpurple | @as("mediumseagreen") Mediumseagreen | @as("mediumslateblue") Mediumslateblue | @as("mediumspringgreen") Mediumspringgreen | @as("mediumturquoise") Mediumturquoise | @as("mediumvioletred") Mediumvioletred | @as("midnightblue") Midnightblue | @as("mintcream") Mintcream | @as("mistyrose") Mistyrose | @as("moccasin") Moccasin | @as("navajowhite") Navajowhite | @as("navy") Navy | @as("oldlace") Oldlace | @as("olive") Olive | @as("olivedrab") Olivedrab | @as("orange") Orange | @as("orangered") Orangered | @as("orchid") Orchid | @as("palegoldenrod") Palegoldenrod | @as("palegreen") Palegreen | @as("paleturquoise") Paleturquoise | @as("palevioletred") Palevioletred | @as("papayawhip") Papayawhip | @as("peachpuff") Peachpuff | @as("peru") Peru | @as("pink") Pink | @as("plum") Plum | @as("powderblue") Powderblue | @as("purple") Purple | @as("rebeccapurple") Rebeccapurple | @as("red") Red | @as("rosybrown") Rosybrown | @as("royalblue") Royalblue | @as("saddlebrown") Saddlebrown | @as("salmon") Salmon | @as("sandybrown") Sandybrown | @as("seagreen") Seagreen | @as("seashell") Seashell | @as("sienna") Sienna | @as("silver") Silver | @as("skyblue") Skyblue | @as("slateblue") Slateblue | @as("slategray") Slategray | @as("slategrey") Slategrey | @as("snow") Snow | @as("springgreen") Springgreen | @as("steelblue") Steelblue | @as("tan") Tan | @as("teal") Teal | @as("thistle") Thistle | @as("tomato") Tomato | @as("turquoise") Turquoise | @as("violet") Violet | @as("wheat") Wheat | @as("white") White | @as("whitesmoke") Whitesmoke | @as("yellow") Yellow | @as("yellowgreen") Yellowgreen | @as("transparent") Transparent | @as("AccentColor") AccentColor | @as("AccentColorText") AccentColorText | @as("ActiveText") ActiveText | @as("ButtonBorder") ButtonBorder | @as("ButtonFace") ButtonFace | @as("ButtonText") ButtonText | @as("Canvas") Canvas | @as("CanvasText") CanvasText | @as("Field") Field | @as("FieldText") FieldText | @as("GrayText") GrayText | @as("Highlight") HighlightInitialEtc1i3k7 | @as("HighlightText") HighlightText | @as("LinkText") LinkText | @as("Mark") Mark | @as("MarkText") MarkText | @as("SelectedItem") SelectedItem | @as("SelectedItemText") SelectedItemText | @as("VisitedText") VisitedText | @as("ActiveBorder") ActiveBorder | @as("ActiveCaption") ActiveCaption | @as("AppWorkspace") AppWorkspace | @as("Background") Background | @as("ButtonHighlight") ButtonHighlight | @as("ButtonShadow") ButtonShadow | @as("CaptionText") CaptionText | @as("InactiveBorder") InactiveBorder | @as("InactiveCaption") InactiveCaption | @as("InactiveCaptionText") InactiveCaptionText | @as("InfoBackground") InfoBackground | @as("InfoText") InfoText | @as("Menu") Menu | @as("MenuText") MenuText | @as("Scrollbar") ScrollbarInitialEtc1i3k7 | @as("ThreeDDarkShadow") ThreeDDarkShadow | @as("ThreeDFace") ThreeDFace | @as("ThreeDHighlight") ThreeDHighlight | @as("ThreeDLightShadow") ThreeDLightShadow | @as("ThreeDShadow") ThreeDShadow | @as("Window") Window | @as("WindowFrame") WindowFrame | @as("WindowText") WindowText | @as("currentColor") CurrentColor | @as("context-fill") ContextFill | @as("context-stroke") ContextStroke | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc1i3k7 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneRevertEtc1i3k7 | @as("aliceblue") Aliceblue | @as("antiquewhite") Antiquewhite | @as("aqua") Aqua | @as("aquamarine") Aquamarine | @as("azure") Azure | @as("beige") Beige | @as("bisque") Bisque | @as("black") Black | @as("blanchedalmond") Blanchedalmond | @as("blue") Blue | @as("blueviolet") Blueviolet | @as("brown") Brown | @as("burlywood") Burlywood | @as("cadetblue") Cadetblue | @as("chartreuse") Chartreuse | @as("chocolate") Chocolate | @as("coral") Coral | @as("cornflowerblue") Cornflowerblue | @as("cornsilk") Cornsilk | @as("crimson") Crimson | @as("cyan") Cyan | @as("darkblue") Darkblue | @as("darkcyan") Darkcyan | @as("darkgoldenrod") Darkgoldenrod | @as("darkgray") Darkgray | @as("darkgreen") Darkgreen | @as("darkgrey") Darkgrey | @as("darkkhaki") Darkkhaki | @as("darkmagenta") Darkmagenta | @as("darkolivegreen") Darkolivegreen | @as("darkorange") Darkorange | @as("darkorchid") Darkorchid | @as("darkred") Darkred | @as("darksalmon") Darksalmon | @as("darkseagreen") Darkseagreen | @as("darkslateblue") Darkslateblue | @as("darkslategray") Darkslategray | @as("darkslategrey") Darkslategrey | @as("darkturquoise") Darkturquoise | @as("darkviolet") Darkviolet | @as("deeppink") Deeppink | @as("deepskyblue") Deepskyblue | @as("dimgray") Dimgray | @as("dimgrey") Dimgrey | @as("dodgerblue") Dodgerblue | @as("firebrick") Firebrick | @as("floralwhite") Floralwhite | @as("forestgreen") Forestgreen | @as("fuchsia") Fuchsia | @as("gainsboro") Gainsboro | @as("ghostwhite") Ghostwhite | @as("gold") Gold | @as("goldenrod") Goldenrod | @as("gray") Gray | @as("green") Green | @as("greenyellow") Greenyellow | @as("grey") Grey | @as("honeydew") Honeydew | @as("hotpink") Hotpink | @as("indianred") Indianred | @as("indigo") Indigo | @as("ivory") Ivory | @as("khaki") Khaki | @as("lavender") Lavender | @as("lavenderblush") Lavenderblush | @as("lawngreen") Lawngreen | @as("lemonchiffon") Lemonchiffon | @as("lightblue") Lightblue | @as("lightcoral") Lightcoral | @as("lightcyan") Lightcyan | @as("lightgoldenrodyellow") Lightgoldenrodyellow | @as("lightgray") Lightgray | @as("lightgreen") Lightgreen | @as("lightgrey") Lightgrey | @as("lightpink") Lightpink | @as("lightsalmon") Lightsalmon | @as("lightseagreen") Lightseagreen | @as("lightskyblue") Lightskyblue | @as("lightslategray") Lightslategray | @as("lightslategrey") Lightslategrey | @as("lightsteelblue") Lightsteelblue | @as("lightyellow") Lightyellow | @as("lime") Lime | @as("limegreen") Limegreen | @as("linen") Linen | @as("magenta") Magenta | @as("maroon") Maroon | @as("mediumaquamarine") Mediumaquamarine | @as("mediumblue") Mediumblue | @as("mediumorchid") Mediumorchid | @as("mediumpurple") Mediumpurple | @as("mediumseagreen") Mediumseagreen | @as("mediumslateblue") Mediumslateblue | @as("mediumspringgreen") Mediumspringgreen | @as("mediumturquoise") Mediumturquoise | @as("mediumvioletred") Mediumvioletred | @as("midnightblue") Midnightblue | @as("mintcream") Mintcream | @as("mistyrose") Mistyrose | @as("moccasin") Moccasin | @as("navajowhite") Navajowhite | @as("navy") Navy | @as("oldlace") Oldlace | @as("olive") Olive | @as("olivedrab") Olivedrab | @as("orange") Orange | @as("orangered") Orangered | @as("orchid") Orchid | @as("palegoldenrod") Palegoldenrod | @as("palegreen") Palegreen | @as("paleturquoise") Paleturquoise | @as("palevioletred") Palevioletred | @as("papayawhip") Papayawhip | @as("peachpuff") Peachpuff | @as("peru") Peru | @as("pink") Pink | @as("plum") Plum | @as("powderblue") Powderblue | @as("purple") Purple | @as("rebeccapurple") Rebeccapurple | @as("red") Red | @as("rosybrown") Rosybrown | @as("royalblue") Royalblue | @as("saddlebrown") Saddlebrown | @as("salmon") Salmon | @as("sandybrown") Sandybrown | @as("seagreen") Seagreen | @as("seashell") Seashell | @as("sienna") Sienna | @as("silver") Silver | @as("skyblue") Skyblue | @as("slateblue") Slateblue | @as("slategray") Slategray | @as("slategrey") Slategrey | @as("snow") Snow | @as("springgreen") Springgreen | @as("steelblue") Steelblue | @as("tan") Tan | @as("teal") Teal | @as("thistle") Thistle | @as("tomato") Tomato | @as("turquoise") Turquoise | @as("violet") Violet | @as("wheat") Wheat | @as("white") White | @as("whitesmoke") Whitesmoke | @as("yellow") Yellow | @as("yellowgreen") Yellowgreen | @as("transparent") Transparent | @as("AccentColor") AccentColor | @as("AccentColorText") AccentColorText | @as("ActiveText") ActiveText | @as("ButtonBorder") ButtonBorder | @as("ButtonFace") ButtonFace | @as("ButtonText") ButtonText | @as("Canvas") Canvas | @as("CanvasText") CanvasText | @as("Field") Field | @as("FieldText") FieldText | @as("GrayText") GrayText | @as("Highlight") HighlightRevertEtc1i3k7 | @as("HighlightText") HighlightText | @as("LinkText") LinkText | @as("Mark") Mark | @as("MarkText") MarkText | @as("SelectedItem") SelectedItem | @as("SelectedItemText") SelectedItemText | @as("VisitedText") VisitedText | @as("ActiveBorder") ActiveBorder | @as("ActiveCaption") ActiveCaption | @as("AppWorkspace") AppWorkspace | @as("Background") Background | @as("ButtonHighlight") ButtonHighlight | @as("ButtonShadow") ButtonShadow | @as("CaptionText") CaptionText | @as("InactiveBorder") InactiveBorder | @as("InactiveCaption") InactiveCaption | @as("InactiveCaptionText") InactiveCaptionText | @as("InfoBackground") InfoBackground | @as("InfoText") InfoText | @as("Menu") Menu | @as("MenuText") MenuText | @as("Scrollbar") ScrollbarRevertEtc1i3k7 | @as("ThreeDDarkShadow") ThreeDDarkShadow | @as("ThreeDFace") ThreeDFace | @as("ThreeDHighlight") ThreeDHighlight | @as("ThreeDLightShadow") ThreeDLightShadow | @as("ThreeDShadow") ThreeDShadow | @as("Window") Window | @as("WindowFrame") WindowFrame | @as("WindowText") WindowText | @as("currentColor") CurrentColor | @as("context-fill") ContextFill | @as("context-stroke") ContextStroke | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensSTATCARDSmChartLineActiveDotConfig = {
-  width?: mozInitialEtc1wbzz,
-  fill?: mozInitialEtc1i3k7,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  fill?: mozInitialOrInheritOrInitialOrRevertEtc1i3k7,
 }
 type contextComponentTokensSTATCARDSmChartLineConfig = {
   strokeWidth?: string,  // ⚪ loose — was `number | Globals | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
   activeDot?: contextComponentTokensSTATCARDSmChartLineActiveDotConfig,
 }
 type contextComponentTokensSTATCARDSmChartBarFillConfig = {
-  default?: mozInitialEtc1i3k7,
-  hover?: mozInitialEtc1i3k7,
+  default?: mozInitialOrInheritOrInitialOrRevertEtc1i3k7,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtc1i3k7,
 }
 type contextComponentTokensSTATCARDSmChartBarConfig = {
-  borderTopRightRadius?: mozInitialEtcp2j1f,
-  borderTopLeftRadius?: mozInitialEtcp2j1f,
-  borderBottomRightRadius?: mozInitialEtcp2j1f,
-  borderBottomLeftRadius?: mozInitialEtcp2j1f,
+  borderTopRightRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderTopLeftRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderBottomRightRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderBottomLeftRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   fill?: contextComponentTokensSTATCARDSmChartBarFillConfig,
 }
-@unboxed type mozInitialEtcyzzvl = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("auto") Auto | @as("contain") Contain | @as("cover") Cover | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtcyzzvl = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("auto") Auto | @as("contain") Contain | @as("cover") Cover | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensSTATCARDSmChartProgressBarBackgroundPatternConfig = {
-  color?: mozInitialEtcgjquu,
-  size?: mozInitialEtcyzzvl,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  size?: mozInitialOrInheritOrInitialOrRevertEtcyzzvl,
 }
 type contextComponentTokensSTATCARDSmChartProgressBarBackgroundConfig = {
-  fill?: mozInitialEtcgjquu,
-  empty?: mozInitialEtcgjquu,
+  fill?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  empty?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   pattern?: contextComponentTokensSTATCARDSmChartProgressBarBackgroundPatternConfig,
 }
 type contextComponentTokensSTATCARDSmChartProgressBarConfig = {
-  height?: mozInitialEtc1avg4,
-  borderRadius?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   background?: contextComponentTokensSTATCARDSmChartProgressBarBackgroundConfig,
   label?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
 }
 type contextComponentTokensSTATCARDSmChartTooltipConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  borderRadius?: mozInitialEtcp2j1f,
-  color?: mozInitialEtcgjquu,
-  fontSize?: mozInitialEtcly7v7,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
 }
 type contextComponentTokensSTATCARDSmChartConfig = {
-  height?: mozInitialEtc1avg4,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
   colors?: contextComponentTokensSTATCARDSmChartColorsConfig,
   line?: contextComponentTokensSTATCARDSmChartLineConfig,
   bar?: contextComponentTokensSTATCARDSmChartBarConfig,
@@ -2796,12 +2796,12 @@ type contextComponentTokensSTATCARDSmChartConfig = {
   tooltip?: contextComponentTokensSTATCARDSmChartTooltipConfig,
 }
 type contextComponentTokensSTATCARDSmConfig = {
-  height?: mozInitialEtc1avg4,
-  maxWidth?: mozInitialEtc1x0av,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
-  backgroundColor?: mozInitialEtcgjquu,
-  boxShadow?: mozInitialEtcz3a4s,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
   textContainer?: contextComponentTokensSTATCARDSmTextContainerConfig,
   chart?: contextComponentTokensSTATCARDSmChartConfig,
@@ -2811,27 +2811,27 @@ type contextComponentTokensSTATCARDConfig = {
   lg?: contextComponentTokensSTATCARDSmConfig,
 }
 type contextComponentTokensPROGRESSBARSmLinearHeightConfig = {
-  sm?: mozInitialEtc1avg4,
-  md?: mozInitialEtc1avg4,
-  lg?: mozInitialEtc1avg4,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  md?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
 }
 type contextComponentTokensPROGRESSBARSmLinearFillBackgroundColorConfig = {
-  solid?: mozInitialEtcgjquu,
-  segmented?: mozInitialEtcgjquu,
+  solid?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  segmented?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensPROGRESSBARSmLinearFillBorderRadiusConfig = {
-  solid?: mozInitialEtcp2j1f,
-  segmented?: mozInitialEtcp2j1f,
+  solid?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  segmented?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensPROGRESSBARSmLinearFillConfig = {
   backgroundColor?: contextComponentTokensPROGRESSBARSmLinearFillBackgroundColorConfig,
   borderRadius?: contextComponentTokensPROGRESSBARSmLinearFillBorderRadiusConfig,
 }
 type contextComponentTokensPROGRESSBARSmLinearEmptyBackgroundImageConfig = {
-  segmented?: mozInitialEtcz3a4s,
+  segmented?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensPROGRESSBARSmLinearEmptyBackgroundSizeConfig = {
-  segmented?: mozInitialEtcyzzvl,
+  segmented?: mozInitialOrInheritOrInitialOrRevertEtcyzzvl,
 }
 type contextComponentTokensPROGRESSBARSmLinearEmptyConfig = {
   backgroundColor?: contextComponentTokensPROGRESSBARSmLinearFillBackgroundColorConfig,
@@ -2850,8 +2850,8 @@ type contextComponentTokensPROGRESSBARSmCircularStrokeWidthConfig = {
   lg?: float,
 }
 type contextComponentTokensPROGRESSBARSmCircularStrokeConfig = {
-  solid?: mozInitialEtc1i3k7,
-  segmented?: mozInitialEtc1i3k7,
+  solid?: mozInitialOrInheritOrInitialOrRevertEtc1i3k7,
+  segmented?: mozInitialOrInheritOrInitialOrRevertEtc1i3k7,
 }
 type contextComponentTokensPROGRESSBARSmCircularDashArrayConfig = {
   solid?: string,
@@ -2876,19 +2876,19 @@ type contextComponentTokensPROGRESSBARConfig = {
   lg?: contextComponentTokensPROGRESSBARSmConfig,
 }
 type contextComponentTokensDRAWERSmOffsetConfig = {
-  top?: mozInitialEtcrldf7,
-  bottom?: mozInitialEtcrldf7,
-  left?: mozInitialEtcrldf7,
-  right?: mozInitialEtcrldf7,
+  top?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  bottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  left?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  right?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensDRAWERSmContentHandleConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  borderRadius?: mozInitialEtcp2j1f,
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
 }
 type contextComponentTokensDRAWERSmContentConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
   handle?: contextComponentTokensDRAWERSmContentHandleConfig,
 }
@@ -2904,40 +2904,40 @@ type contextComponentTokensDRAWERConfig = {
 }
 type contextComponentTokensCHARTSSmHeaderConfig = {
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  backgroundColor?: mozInitialEtcgjquu,
-  borderBottom?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   slots?: contextComponentTokensRADIOSmGroupConfig,
 }
 type contextComponentTokensCHARTSSmContentLegendDropdownConfig = {
-  maxHeight?: mozInitialEtc1x0av,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
 }
 type contextComponentTokensCHARTSSmContentLegendItemColorConfig = {
-  active?: mozInitialEtcgjquu,
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
-  total?: mozInitialEtcgjquu,
+  active?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  total?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCHARTSSmContentLegendItemConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   color?: contextComponentTokensCHARTSSmContentLegendItemColorConfig,
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
 }
 type contextComponentTokensCHARTSSmContentLegendConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   dropdown?: contextComponentTokensCHARTSSmContentLegendDropdownConfig,
   item?: contextComponentTokensCHARTSSmContentLegendItemConfig,
 }
 type contextComponentTokensCHARTSSmContentConfig = {
   legend?: contextComponentTokensCHARTSSmContentLegendConfig,
   padding?: contextComponentTokensTABSSmPaddingSmBoxedConfig,
-  gap?: mozInitialEtchhntk,
-  backgroundColor?: mozInitialEtcgjquu,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCHARTSSmConfig = {
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   header?: contextComponentTokensCHARTSSmHeaderConfig,
   content?: contextComponentTokensCHARTSSmContentConfig,
 }
@@ -2946,37 +2946,37 @@ type contextComponentTokensCHARTSConfig = {
   lg?: contextComponentTokensCHARTSSmConfig,
 }
 type contextComponentTokensSNACKBARSmInfoIconColorConfig = {
-  info?: mozInitialEtcgjquu,
-  success?: mozInitialEtcgjquu,
-  warning?: mozInitialEtcgjquu,
-  error?: mozInitialEtcgjquu,
+  info?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  success?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  warning?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSNACKBARSmInfoIconConfig = {
   color?: contextComponentTokensSNACKBARSmInfoIconColorConfig,
-  height?: mozInitialEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensSNACKBARSmContentTextContainerHeaderConfig = {
   color?: contextComponentTokensSNACKBARSmInfoIconColorConfig,
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
 }
 type contextComponentTokensSNACKBARSmContentTextContainerDescriptionConfig = {
   color?: contextComponentTokensSNACKBARSmInfoIconColorConfig,
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
 }
 type contextComponentTokensSNACKBARSmContentTextContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   header?: contextComponentTokensSNACKBARSmContentTextContainerHeaderConfig,
   description?: contextComponentTokensSNACKBARSmContentTextContainerDescriptionConfig,
 }
 type contextComponentTokensSNACKBARSmContentConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   textContainer?: contextComponentTokensSNACKBARSmContentTextContainerConfig,
 }
 type contextComponentTokensSNACKBARSmActionsCloseButtonConfig = {
-  height?: mozInitialEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
   color?: contextComponentTokensSNACKBARSmInfoIconColorConfig,
 }
 type contextComponentTokensSNACKBARSmActionsConfig = {
@@ -2984,12 +2984,12 @@ type contextComponentTokensSNACKBARSmActionsConfig = {
   closeButton?: contextComponentTokensSNACKBARSmActionsCloseButtonConfig,
 }
 type contextComponentTokensSNACKBARSmConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  borderRadius?: mozInitialEtcp2j1f,
-  padding?: mozInitialEtcp2j1f,
-  maxWidth?: mozInitialEtc1x0av,
-  boxShadow?: mozInitialEtcz3a4s,
-  gap?: mozInitialEtchhntk,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   infoIcon?: contextComponentTokensSNACKBARSmInfoIconConfig,
   content?: contextComponentTokensSNACKBARSmContentConfig,
   actions?: contextComponentTokensSNACKBARSmActionsConfig,
@@ -3002,14 +3002,14 @@ type contextComponentTokensSTEPPERSmContainerConfig = {
   default?: contextComponentTokensRADIOSmGroupConfig,
 }
 type contextComponentTokensSTEPPERSmStepCircleCompletedDisabledConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  borderColor?: mozInitialEtcgjquu,
-  borderWidth?: mozInitialEtcrrza2,
-  borderRadius?: mozInitialEtcp2j1f,
-  size?: mozInitialEtc1wbzz,
-  transition?: mozInitialEtcydel2,
-  outline?: mozInitialEtcsclw8,
-  outlineOffset?: mozInitialEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderWidth?: mozInitialOrInheritOrInitialOrRevertEtcrrza2,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  size?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
+  outline?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  outlineOffset?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensSTEPPERSmStepCircleCompletedConfig = {
   disabled?: contextComponentTokensSTEPPERSmStepCircleCompletedDisabledConfig,
@@ -3042,8 +3042,8 @@ type contextComponentTokensSTEPPERSmStepConfig = {
   icon?: contextComponentTokensSTEPPERSmStepIconConfig,
 }
 type contextComponentTokensSTEPPERSmConnectorLineActiveDefaultConfig = {
-  color?: mozInitialEtcgjquu,
-  height?: mozInitialEtc1avg4,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
 }
 type contextComponentTokensSTEPPERSmConnectorLineActiveConfig = {
   default?: contextComponentTokensSTEPPERSmConnectorLineActiveDefaultConfig,
@@ -3056,10 +3056,10 @@ type contextComponentTokensSTEPPERSmConnectorConfig = {
   line?: contextComponentTokensSTEPPERSmConnectorLineConfig,
 }
 type contextComponentTokensSTEPPERSmTitleTextCompletedDisabledConfig = {
-  color?: mozInitialEtcgjquu,
-  fontSize?: mozInitialEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensSTEPPERSmTitleTextCompletedConfig = {
   disabled?: contextComponentTokensSTEPPERSmTitleTextCompletedDisabledConfig,
@@ -3088,14 +3088,14 @@ type contextComponentTokensSTEPPERConfig = {
   lg?: contextComponentTokensSTEPPERSmConfig,
 }
 type contextComponentTokensKEYVALUEPAIRSmGapConfig = {
-  horizontal?: mozInitialEtchhntk,
-  vertical?: mozInitialEtchhntk,
+  horizontal?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  vertical?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensKEYVALUEPAIRSmValueConfig = {
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensKEYVALUEPAIRSmConfig = {
   gap?: contextComponentTokensKEYVALUEPAIRSmGapConfig,
@@ -3112,20 +3112,20 @@ type contextComponentTokensCARDSmPaddingConfig = {
   custom?: unit,
 }
 type contextComponentTokensCARDSmHeaderTextTitleConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  color?: mozInitialEtcgjquu,
-  gap?: mozInitialEtchhntk,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensCARDSmHeaderTextConfig = {
   title?: contextComponentTokensCARDSmHeaderTextTitleConfig,
   subTitle?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensCARDSmHeaderDefaultConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  borderBottom?: mozInitialEtc1yz1q,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensCARDSmHeaderConfig = {
   text?: contextComponentTokensCARDSmHeaderTextConfig,
@@ -3139,23 +3139,23 @@ type contextComponentTokensCARDSmBodyPaddingConfig = {
   custom?: unit,
 }
 type contextComponentTokensCARDSmBodyGapConfig = {
-  default?: mozInitialEtchhntk,
-  aligned?: mozInitialEtchhntk,
-  custom?: mozInitialEtchhntk,
+  default?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  aligned?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  custom?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensCARDSmBodyTextContentConfig = {
-  fontSize?: mozInitialEtcly7v7,
-  color?: mozInitialEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
 }
 type contextComponentTokensCARDSmBodyTextConfig = {
   title?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
   content?: contextComponentTokensCARDSmBodyTextContentConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensCARDSmBodyActionsConfig = {
-  gap?: mozInitialEtchhntk,
-  centerAlignGap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  centerAlignGap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensCARDSmBodyAlignmentAlignedCardSlotConfig = {
   vertical?: string,  // ⚪ loose — was `{ marginBottom?: number | Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charC`
@@ -3177,11 +3177,11 @@ type contextComponentTokensCARDSmBodyConfig = {
   alignment?: contextComponentTokensCARDSmBodyAlignmentConfig,
 }
 type contextComponentTokensCARDSmConfig = {
-  maxWidth?: mozInitialEtc1x0av,
-  borderRadius?: mozInitialEtcp2j1f,
-  border?: mozInitialEtc1yz1q,
-  boxShadow?: mozInitialEtcz3a4s,
-  backgroundColor?: mozInitialEtcgjquu,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   padding?: contextComponentTokensCARDSmPaddingConfig,
   header?: contextComponentTokensCARDSmHeaderConfig,
   body?: contextComponentTokensCARDSmBodyConfig,
@@ -3191,27 +3191,27 @@ type contextComponentTokensCARDConfig = {
   lg?: contextComponentTokensCARDSmConfig,
 }
 type contextComponentTokensCARDV2SmBorderConfig = {
-  outlined?: mozInitialEtc1yz1q,
-  elevated?: mozInitialEtc1yz1q,
-  ghost?: mozInitialEtc1yz1q,
+  outlined?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  elevated?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  ghost?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensCARDV2SmBackgroundColorConfig = {
-  outlined?: mozInitialEtcgjquu,
-  elevated?: mozInitialEtcgjquu,
-  ghost?: mozInitialEtcgjquu,
+  outlined?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  elevated?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  ghost?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCARDV2SmBoxShadowConfig = {
-  outlined?: mozInitialEtcz3a4s,
-  elevated?: mozInitialEtcz3a4s,
-  ghost?: mozInitialEtcz3a4s,
+  outlined?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  elevated?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  ghost?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensCARDV2SmStateHoverConfig = {
-  border?: mozInitialEtc1yz1q,
-  boxShadow?: mozInitialEtcz3a4s,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensCARDV2SmStateFocusConfig = {
-  outline?: mozInitialEtcsclw8,
-  outlineOffset?: mozInitialEtcp2j1f,
+  outline?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  outlineOffset?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensCARDV2SmStateConfig = {
   hover?: contextComponentTokensCARDV2SmStateHoverConfig,
@@ -3224,46 +3224,46 @@ type contextComponentTokensCARDV2SmPaddingConfig = {
   comfortable?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
 }
 type contextComponentTokensCARDV2SmLayoutMediaGapConfig = {
-  vertical?: mozInitialEtchhntk,
-  horizontal?: mozInitialEtchhntk,
+  vertical?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  horizontal?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensCARDV2SmLayoutConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   mediaGap?: contextComponentTokensCARDV2SmLayoutMediaGapConfig,
 }
 type contextComponentTokensCARDV2SmMediaConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  minHeight?: mozInitialEtc96qi2,
-  borderRadius?: mozInitialEtcp2j1f,
-  backgroundColor?: mozInitialEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  minHeight?: mozInitialOrInheritOrInitialOrRevertEtc96qi2,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCARDV2SmHeaderEyebrowConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCARDV2SmHeaderConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   eyebrow?: contextComponentTokensCARDV2SmHeaderEyebrowConfig,
   title?: contextComponentTokensCARDV2SmHeaderEyebrowConfig,
   subtitle?: contextComponentTokensCARDV2SmHeaderEyebrowConfig,
 }
 type contextComponentTokensCARDV2SmBodyConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   description?: contextComponentTokensCARDV2SmHeaderEyebrowConfig,
 }
 type contextComponentTokensCARDV2SmFooterConfig = {
-  gap?: mozInitialEtchhntk,
-  paddingTop?: mozInitialEtcp2j1f,
-  borderTop?: mozInitialEtc1yz1q,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensCARDV2SmConfig = {
-  width?: mozInitialEtc1wbzz,
-  minWidth?: mozInitialEtc1owcx,
-  maxWidth?: mozInitialEtc1x0av,
-  borderRadius?: mozInitialEtcp2j1f,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  minWidth?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   border?: contextComponentTokensCARDV2SmBorderConfig,
   backgroundColor?: contextComponentTokensCARDV2SmBackgroundColorConfig,
   boxShadow?: contextComponentTokensCARDV2SmBoxShadowConfig,
@@ -3280,32 +3280,32 @@ type contextComponentTokensCARDV2Config = {
   sm?: contextComponentTokensCARDV2SmConfig,
   lg?: contextComponentTokensCARDV2SmConfig,
 }
-@unboxed type mozInitialEtc12qc2 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("auto") Auto | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
-@unboxed type mozInitialEtc1tr76 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("ease") Ease | @as("ease-in") EaseIn | @as("ease-in-out") EaseInOut | @as("ease-out") EaseOut | @as("step-end") StepEnd | @as("step-start") StepStart | @as("linear") Linear | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
-@unboxed type mozInitialEtcvavy2 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("normal") Normal | @as("reverse") Reverse | @as("alternate") Alternate | @as("alternate-reverse") AlternateReverse | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc12qc2 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("auto") Auto | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc1tr76 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("ease") Ease | @as("ease-in") EaseIn | @as("ease-in-out") EaseInOut | @as("ease-out") EaseOut | @as("step-end") StepEnd | @as("step-start") StepStart | @as("linear") Linear | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtcvavy2 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("normal") Normal | @as("reverse") Reverse | @as("alternate") Alternate | @as("alternate-reverse") AlternateReverse | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensSKELETONSmAnimationConfig = {
-  duration?: mozInitialEtc12qc2,
-  timingFunction?: mozInitialEtc1tr76,
+  duration?: mozInitialOrInheritOrInitialOrRevertEtc12qc2,
+  timingFunction?: mozInitialOrInheritOrInitialOrRevertEtc1tr76,
   iterationCount?: string,  // ⚪ loose — was `Globals | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; indexOf?: `
-  direction?: mozInitialEtcvavy2,
+  direction?: mozInitialOrInheritOrInitialOrRevertEtcvavy2,
 }
 type contextComponentTokensSKELETONSmColorsConfig = {
-  base?: mozInitialEtcgjquu,
-  highlight?: mozInitialEtcgjquu,
-  shimmer?: mozInitialEtcgjquu,
+  base?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  highlight?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  shimmer?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSKELETONSmBorderRadiusConfig = {
-  rectangle?: mozInitialEtcp2j1f,
-  rounded?: mozInitialEtcp2j1f,
-  circle?: mozInitialEtcp2j1f,
+  rectangle?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  rounded?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  circle?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensSKELETONSmSpacingConfig = {
-  gap?: mozInitialEtchhntk,
-  margin?: mozInitialEtcrldf7,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  margin?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensSKELETONSmSizesTextConfig = {
-  height?: mozInitialEtc1avg4,
-  minWidth?: mozInitialEtc1owcx,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  minWidth?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
 }
 type contextComponentTokensSKELETONSmSizesButtonConfig = {
   sm?: contextComponentTokensSKELETONSmSizesTextConfig,
@@ -3329,22 +3329,22 @@ type contextComponentTokensSKELETONConfig = {
   lg?: contextComponentTokensSKELETONSmConfig,
 }
 type contextComponentTokensSPINNERSmColorsConfig = {
-  default?: mozInitialEtcgjquu,
-  primary?: mozInitialEtcgjquu,
-  inverse?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  primary?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  inverse?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSPINNERSmAnimationConfig = {
   duration?: string,
 }
 type contextComponentTokensSPINNERSmOverlayConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
 }
 type contextComponentTokensSPINNERSmConfig = {
   size?: contextComponentTokensTEXTAREAV2SmTopContainerHelpIconWidthConfig,
   strokeWidth?: contextComponentTokensPROGRESSBARSmCircularStrokeWidthConfig,
   colors?: contextComponentTokensSPINNERSmColorsConfig,
-  trackColor?: mozInitialEtcgjquu,
+  trackColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   animation?: contextComponentTokensSPINNERSmAnimationConfig,
   overlay?: contextComponentTokensSPINNERSmOverlayConfig,
 }
@@ -3353,23 +3353,23 @@ type contextComponentTokensSPINNERConfig = {
   lg?: contextComponentTokensSPINNERSmConfig,
 }
 type contextComponentTokensEMPTYSTATESmSmLayoutConfig = {
-  minHeight?: mozInitialEtc96qi2,
-  maxWidth?: mozInitialEtc1x0av,
-  padding?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
-  contentGap?: mozInitialEtchhntk,
-  actionGap?: mozInitialEtchhntk,
+  minHeight?: mozInitialOrInheritOrInitialOrRevertEtc96qi2,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  contentGap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  actionGap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensEMPTYSTATESmSmTitleConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensEMPTYSTATESmSmDescriptionConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensEMPTYSTATESmSmConfig = {
   layout?: contextComponentTokensEMPTYSTATESmSmLayoutConfig,
@@ -3386,48 +3386,48 @@ type contextComponentTokensEMPTYSTATEConfig = {
   lg?: contextComponentTokensEMPTYSTATESmConfig,
 }
 type contextComponentTokensTOPBARSmToggleButtonIconConfig = {
-  size?: mozInitialEtc1wbzz,
-  color?: mozInitialEtcgjquu,
+  size?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTOPBARSmToggleButtonConfig = {
-  borderRadius?: mozInitialEtcp2j1f,
-  padding?: mozInitialEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   backgroundColor?: contextComponentTokensBREADCRUMBSmItemTextColorConfig,
-  transition?: mozInitialEtcydel2,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
   icon?: contextComponentTokensTOPBARSmToggleButtonIconConfig,
 }
 type contextComponentTokensTOPBARSmActionButtonConfig = {
-  borderRadius?: mozInitialEtcp2j1f,
-  padding?: mozInitialEtcp2j1f,
-  minWidth?: mozInitialEtc1owcx,
-  height?: mozInitialEtc1avg4,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  minWidth?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
   backgroundColor?: contextComponentTokensBREADCRUMBSmItemTextColorConfig,
-  transition?: mozInitialEtcydel2,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
   icon?: contextComponentTokensTOPBARSmToggleButtonIconConfig,
 }
 type contextComponentTokensTOPBARSmTenantIconButtonConfig = {
-  borderRadius?: mozInitialEtcp2j1f,
-  minHeight?: mozInitialEtc96qi2,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  minHeight?: mozInitialOrInheritOrInitialOrRevertEtc96qi2,
   backgroundColor?: contextComponentTokensBREADCRUMBSmItemTextColorConfig,
-  transition?: mozInitialEtcydel2,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
 }
 type contextComponentTokensTOPBARSmMerchantSelectTriggerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   icon?: contextComponentTokensTOPBARSmToggleButtonIconConfig,
   text?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
 }
 type contextComponentTokensTOPBARSmLeftSectionConfig = {
-  gap?: mozInitialEtchhntk,
-  maxHeight?: mozInitialEtc1x0av,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
   divider?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
 }
 type contextComponentTokensTOPBARSmConfig = {
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
-  borderBottom?: mozInitialEtc1yz1q,
-  backgroundColor?: mozInitialEtcgjquu,
-  backdropFilter?: mozInitialEtcz3a4s,
-  padding?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  backdropFilter?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   toggleButton?: contextComponentTokensTOPBARSmToggleButtonConfig,
   actionButton?: contextComponentTokensTOPBARSmActionButtonConfig,
   tenantIconButton?: contextComponentTokensTOPBARSmTenantIconButtonConfig,
@@ -3441,17 +3441,17 @@ type contextComponentTokensTOPBARConfig = {
   lg?: contextComponentTokensTOPBARSmConfig,
 }
 type contextComponentTokensTOPBARV2SmSeparatorConfig = {
-  width?: mozInitialEtc1wbzz,
-  color?: mozInitialEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTOPBARV2SmConfig = {
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
-  height?: mozInitialEtc1avg4,
-  borderBottom?: mozInitialEtc1yz1q,
-  backgroundColor?: mozInitialEtcgjquu,
-  backdropFilter?: mozInitialEtcz3a4s,
-  padding?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  backdropFilter?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   separator?: contextComponentTokensTOPBARV2SmSeparatorConfig,
   toggleButton?: contextComponentTokensTOPBARSmToggleButtonConfig,
   actionButton?: contextComponentTokensTOPBARSmActionButtonConfig,
@@ -3473,24 +3473,24 @@ type contextComponentTokensAVATARSmContainerSizeConfig = {
   xl?: contextComponentTokensTABLESmHeaderActionIconsSearchIconConfig,
 }
 type contextComponentTokensAVATARSmContainerBackgroundColorWithImageConfig = {
-  default?: mozInitialEtcgjquu,
-  online?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  online?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensAVATARSmContainerBackgroundColorConfig = {
   withImage?: contextComponentTokensAVATARSmContainerBackgroundColorWithImageConfig,
   withoutImage?: contextComponentTokensAVATARSmContainerBackgroundColorWithImageConfig,
 }
 type contextComponentTokensAVATARSmContainerBorderWithImageConfig = {
-  default?: mozInitialEtc1yz1q,
-  online?: mozInitialEtc1yz1q,
+  default?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  online?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensAVATARSmContainerBorderConfig = {
   withImage?: contextComponentTokensAVATARSmContainerBorderWithImageConfig,
   withoutImage?: contextComponentTokensAVATARSmContainerBorderWithImageConfig,
 }
 type contextComponentTokensAVATARSmContainerBorderRadiusConfig = {
-  circular?: mozInitialEtcp2j1f,
-  rounded?: mozInitialEtcp2j1f,
+  circular?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  rounded?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensAVATARSmContainerConfig = {
   size?: contextComponentTokensAVATARSmContainerSizeConfig,
@@ -3499,11 +3499,11 @@ type contextComponentTokensAVATARSmContainerConfig = {
   borderRadius?: contextComponentTokensAVATARSmContainerBorderRadiusConfig,
 }
 type contextComponentTokensAVATARSmTextFontSizeConfig = {
-  sm?: mozInitialEtcly7v7,
-  regular?: mozInitialEtcly7v7,
-  md?: mozInitialEtcly7v7,
-  lg?: mozInitialEtcly7v7,
-  xl?: mozInitialEtcly7v7,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  regular?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  md?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  xl?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
 }
 type contextComponentTokensAVATARSmTextFontWeightConfig = {
   sm?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
@@ -3532,15 +3532,15 @@ type contextComponentTokensAVATARSmIndicatorConfig = {
   backgroundColor?: contextComponentTokensAVATARSmContainerBackgroundColorWithImageConfig,
   border?: contextComponentTokensAVATARSmIndicatorBorderConfig,
   size?: contextComponentTokensAVATARSmContainerSizeConfig,
-  borderRadius?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensAVATARSmSlotConfig = {
-  spacing?: mozInitialEtcrldf7,
+  spacing?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
   color?: contextComponentTokensAVATARSmContainerBackgroundColorWithImageConfig,
 }
 type contextComponentTokensAVATARSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   container?: contextComponentTokensAVATARSmContainerConfig,
   text?: contextComponentTokensAVATARSmTextConfig,
   indicator?: contextComponentTokensAVATARSmIndicatorConfig,
@@ -3551,39 +3551,39 @@ type contextComponentTokensAVATARConfig = {
   lg?: contextComponentTokensAVATARSmConfig,
 }
 type contextComponentTokensAVATARGROUPSmContainerMarginLeftConfig = {
-  sm?: mozInitialEtcrldf7,
-  regular?: mozInitialEtcrldf7,
-  md?: mozInitialEtcrldf7,
-  lg?: mozInitialEtcrldf7,
-  xl?: mozInitialEtcrldf7,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  regular?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  md?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  xl?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensAVATARGROUPSmContainerConfig = {
   marginLeft?: contextComponentTokensAVATARGROUPSmContainerMarginLeftConfig,
 }
-@unboxed type mozInitialEtc1270i = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("auto") Auto | @as("aliceblue") Aliceblue | @as("antiquewhite") Antiquewhite | @as("aqua") Aqua | @as("aquamarine") Aquamarine | @as("azure") Azure | @as("beige") Beige | @as("bisque") Bisque | @as("black") Black | @as("blanchedalmond") Blanchedalmond | @as("blue") Blue | @as("blueviolet") Blueviolet | @as("brown") Brown | @as("burlywood") Burlywood | @as("cadetblue") Cadetblue | @as("chartreuse") Chartreuse | @as("chocolate") Chocolate | @as("coral") Coral | @as("cornflowerblue") Cornflowerblue | @as("cornsilk") Cornsilk | @as("crimson") Crimson | @as("cyan") Cyan | @as("darkblue") Darkblue | @as("darkcyan") Darkcyan | @as("darkgoldenrod") Darkgoldenrod | @as("darkgray") Darkgray | @as("darkgreen") Darkgreen | @as("darkgrey") Darkgrey | @as("darkkhaki") Darkkhaki | @as("darkmagenta") Darkmagenta | @as("darkolivegreen") Darkolivegreen | @as("darkorange") Darkorange | @as("darkorchid") Darkorchid | @as("darkred") Darkred | @as("darksalmon") Darksalmon | @as("darkseagreen") Darkseagreen | @as("darkslateblue") Darkslateblue | @as("darkslategray") Darkslategray | @as("darkslategrey") Darkslategrey | @as("darkturquoise") Darkturquoise | @as("darkviolet") Darkviolet | @as("deeppink") Deeppink | @as("deepskyblue") Deepskyblue | @as("dimgray") Dimgray | @as("dimgrey") Dimgrey | @as("dodgerblue") Dodgerblue | @as("firebrick") Firebrick | @as("floralwhite") Floralwhite | @as("forestgreen") Forestgreen | @as("fuchsia") Fuchsia | @as("gainsboro") Gainsboro | @as("ghostwhite") Ghostwhite | @as("gold") Gold | @as("goldenrod") Goldenrod | @as("gray") Gray | @as("green") Green | @as("greenyellow") Greenyellow | @as("grey") Grey | @as("honeydew") Honeydew | @as("hotpink") Hotpink | @as("indianred") Indianred | @as("indigo") Indigo | @as("ivory") Ivory | @as("khaki") Khaki | @as("lavender") Lavender | @as("lavenderblush") Lavenderblush | @as("lawngreen") Lawngreen | @as("lemonchiffon") Lemonchiffon | @as("lightblue") Lightblue | @as("lightcoral") Lightcoral | @as("lightcyan") Lightcyan | @as("lightgoldenrodyellow") Lightgoldenrodyellow | @as("lightgray") Lightgray | @as("lightgreen") Lightgreen | @as("lightgrey") Lightgrey | @as("lightpink") Lightpink | @as("lightsalmon") Lightsalmon | @as("lightseagreen") Lightseagreen | @as("lightskyblue") Lightskyblue | @as("lightslategray") Lightslategray | @as("lightslategrey") Lightslategrey | @as("lightsteelblue") Lightsteelblue | @as("lightyellow") Lightyellow | @as("lime") Lime | @as("limegreen") Limegreen | @as("linen") Linen | @as("magenta") Magenta | @as("maroon") Maroon | @as("mediumaquamarine") Mediumaquamarine | @as("mediumblue") Mediumblue | @as("mediumorchid") Mediumorchid | @as("mediumpurple") Mediumpurple | @as("mediumseagreen") Mediumseagreen | @as("mediumslateblue") Mediumslateblue | @as("mediumspringgreen") Mediumspringgreen | @as("mediumturquoise") Mediumturquoise | @as("mediumvioletred") Mediumvioletred | @as("midnightblue") Midnightblue | @as("mintcream") Mintcream | @as("mistyrose") Mistyrose | @as("moccasin") Moccasin | @as("navajowhite") Navajowhite | @as("navy") Navy | @as("oldlace") Oldlace | @as("olive") Olive | @as("olivedrab") Olivedrab | @as("orange") Orange | @as("orangered") Orangered | @as("orchid") Orchid | @as("palegoldenrod") Palegoldenrod | @as("palegreen") Palegreen | @as("paleturquoise") Paleturquoise | @as("palevioletred") Palevioletred | @as("papayawhip") Papayawhip | @as("peachpuff") Peachpuff | @as("peru") Peru | @as("pink") Pink | @as("plum") Plum | @as("powderblue") Powderblue | @as("purple") Purple | @as("rebeccapurple") Rebeccapurple | @as("red") Red | @as("rosybrown") Rosybrown | @as("royalblue") Royalblue | @as("saddlebrown") Saddlebrown | @as("salmon") Salmon | @as("sandybrown") Sandybrown | @as("seagreen") Seagreen | @as("seashell") Seashell | @as("sienna") Sienna | @as("silver") Silver | @as("skyblue") Skyblue | @as("slateblue") Slateblue | @as("slategray") Slategray | @as("slategrey") Slategrey | @as("snow") Snow | @as("springgreen") Springgreen | @as("steelblue") Steelblue | @as("tan") Tan | @as("teal") Teal | @as("thistle") Thistle | @as("tomato") Tomato | @as("turquoise") Turquoise | @as("violet") Violet | @as("wheat") Wheat | @as("white") White | @as("whitesmoke") Whitesmoke | @as("yellow") Yellow | @as("yellowgreen") Yellowgreen | @as("transparent") Transparent | @as("AccentColor") AccentColor | @as("AccentColorText") AccentColorText | @as("ActiveText") ActiveText | @as("ButtonBorder") ButtonBorder | @as("ButtonFace") ButtonFace | @as("ButtonText") ButtonText | @as("Canvas") Canvas | @as("CanvasText") CanvasText | @as("Field") Field | @as("FieldText") FieldText | @as("GrayText") GrayText | @as("Highlight") HighlightInitialEtc1270i | @as("HighlightText") HighlightText | @as("LinkText") LinkText | @as("Mark") Mark | @as("MarkText") MarkText | @as("SelectedItem") SelectedItem | @as("SelectedItemText") SelectedItemText | @as("VisitedText") VisitedText | @as("ActiveBorder") ActiveBorder | @as("ActiveCaption") ActiveCaption | @as("AppWorkspace") AppWorkspace | @as("Background") Background | @as("ButtonHighlight") ButtonHighlight | @as("ButtonShadow") ButtonShadow | @as("CaptionText") CaptionText | @as("InactiveBorder") InactiveBorder | @as("InactiveCaption") InactiveCaption | @as("InactiveCaptionText") InactiveCaptionText | @as("InfoBackground") InfoBackground | @as("InfoText") InfoText | @as("Menu") Menu | @as("MenuText") MenuText | @as("Scrollbar") ScrollbarInitialEtc1270i | @as("ThreeDDarkShadow") ThreeDDarkShadow | @as("ThreeDFace") ThreeDFace | @as("ThreeDHighlight") ThreeDHighlight | @as("ThreeDLightShadow") ThreeDLightShadow | @as("ThreeDShadow") ThreeDShadow | @as("Window") Window | @as("WindowFrame") WindowFrame | @as("WindowText") WindowText | @as("currentColor") CurrentColor | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc1270i = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("auto") Auto | @as("aliceblue") Aliceblue | @as("antiquewhite") Antiquewhite | @as("aqua") Aqua | @as("aquamarine") Aquamarine | @as("azure") Azure | @as("beige") Beige | @as("bisque") Bisque | @as("black") Black | @as("blanchedalmond") Blanchedalmond | @as("blue") Blue | @as("blueviolet") Blueviolet | @as("brown") Brown | @as("burlywood") Burlywood | @as("cadetblue") Cadetblue | @as("chartreuse") Chartreuse | @as("chocolate") Chocolate | @as("coral") Coral | @as("cornflowerblue") Cornflowerblue | @as("cornsilk") Cornsilk | @as("crimson") Crimson | @as("cyan") Cyan | @as("darkblue") Darkblue | @as("darkcyan") Darkcyan | @as("darkgoldenrod") Darkgoldenrod | @as("darkgray") Darkgray | @as("darkgreen") Darkgreen | @as("darkgrey") Darkgrey | @as("darkkhaki") Darkkhaki | @as("darkmagenta") Darkmagenta | @as("darkolivegreen") Darkolivegreen | @as("darkorange") Darkorange | @as("darkorchid") Darkorchid | @as("darkred") Darkred | @as("darksalmon") Darksalmon | @as("darkseagreen") Darkseagreen | @as("darkslateblue") Darkslateblue | @as("darkslategray") Darkslategray | @as("darkslategrey") Darkslategrey | @as("darkturquoise") Darkturquoise | @as("darkviolet") Darkviolet | @as("deeppink") Deeppink | @as("deepskyblue") Deepskyblue | @as("dimgray") Dimgray | @as("dimgrey") Dimgrey | @as("dodgerblue") Dodgerblue | @as("firebrick") Firebrick | @as("floralwhite") Floralwhite | @as("forestgreen") Forestgreen | @as("fuchsia") Fuchsia | @as("gainsboro") Gainsboro | @as("ghostwhite") Ghostwhite | @as("gold") Gold | @as("goldenrod") Goldenrod | @as("gray") Gray | @as("green") Green | @as("greenyellow") Greenyellow | @as("grey") Grey | @as("honeydew") Honeydew | @as("hotpink") Hotpink | @as("indianred") Indianred | @as("indigo") Indigo | @as("ivory") Ivory | @as("khaki") Khaki | @as("lavender") Lavender | @as("lavenderblush") Lavenderblush | @as("lawngreen") Lawngreen | @as("lemonchiffon") Lemonchiffon | @as("lightblue") Lightblue | @as("lightcoral") Lightcoral | @as("lightcyan") Lightcyan | @as("lightgoldenrodyellow") Lightgoldenrodyellow | @as("lightgray") Lightgray | @as("lightgreen") Lightgreen | @as("lightgrey") Lightgrey | @as("lightpink") Lightpink | @as("lightsalmon") Lightsalmon | @as("lightseagreen") Lightseagreen | @as("lightskyblue") Lightskyblue | @as("lightslategray") Lightslategray | @as("lightslategrey") Lightslategrey | @as("lightsteelblue") Lightsteelblue | @as("lightyellow") Lightyellow | @as("lime") Lime | @as("limegreen") Limegreen | @as("linen") Linen | @as("magenta") Magenta | @as("maroon") Maroon | @as("mediumaquamarine") Mediumaquamarine | @as("mediumblue") Mediumblue | @as("mediumorchid") Mediumorchid | @as("mediumpurple") Mediumpurple | @as("mediumseagreen") Mediumseagreen | @as("mediumslateblue") Mediumslateblue | @as("mediumspringgreen") Mediumspringgreen | @as("mediumturquoise") Mediumturquoise | @as("mediumvioletred") Mediumvioletred | @as("midnightblue") Midnightblue | @as("mintcream") Mintcream | @as("mistyrose") Mistyrose | @as("moccasin") Moccasin | @as("navajowhite") Navajowhite | @as("navy") Navy | @as("oldlace") Oldlace | @as("olive") Olive | @as("olivedrab") Olivedrab | @as("orange") Orange | @as("orangered") Orangered | @as("orchid") Orchid | @as("palegoldenrod") Palegoldenrod | @as("palegreen") Palegreen | @as("paleturquoise") Paleturquoise | @as("palevioletred") Palevioletred | @as("papayawhip") Papayawhip | @as("peachpuff") Peachpuff | @as("peru") Peru | @as("pink") Pink | @as("plum") Plum | @as("powderblue") Powderblue | @as("purple") Purple | @as("rebeccapurple") Rebeccapurple | @as("red") Red | @as("rosybrown") Rosybrown | @as("royalblue") Royalblue | @as("saddlebrown") Saddlebrown | @as("salmon") Salmon | @as("sandybrown") Sandybrown | @as("seagreen") Seagreen | @as("seashell") Seashell | @as("sienna") Sienna | @as("silver") Silver | @as("skyblue") Skyblue | @as("slateblue") Slateblue | @as("slategray") Slategray | @as("slategrey") Slategrey | @as("snow") Snow | @as("springgreen") Springgreen | @as("steelblue") Steelblue | @as("tan") Tan | @as("teal") Teal | @as("thistle") Thistle | @as("tomato") Tomato | @as("turquoise") Turquoise | @as("violet") Violet | @as("wheat") Wheat | @as("white") White | @as("whitesmoke") Whitesmoke | @as("yellow") Yellow | @as("yellowgreen") Yellowgreen | @as("transparent") Transparent | @as("AccentColor") AccentColor | @as("AccentColorText") AccentColorText | @as("ActiveText") ActiveText | @as("ButtonBorder") ButtonBorder | @as("ButtonFace") ButtonFace | @as("ButtonText") ButtonText | @as("Canvas") Canvas | @as("CanvasText") CanvasText | @as("Field") Field | @as("FieldText") FieldText | @as("GrayText") GrayText | @as("Highlight") HighlightRevertEtc1270i | @as("HighlightText") HighlightText | @as("LinkText") LinkText | @as("Mark") Mark | @as("MarkText") MarkText | @as("SelectedItem") SelectedItem | @as("SelectedItemText") SelectedItemText | @as("VisitedText") VisitedText | @as("ActiveBorder") ActiveBorder | @as("ActiveCaption") ActiveCaption | @as("AppWorkspace") AppWorkspace | @as("Background") Background | @as("ButtonHighlight") ButtonHighlight | @as("ButtonShadow") ButtonShadow | @as("CaptionText") CaptionText | @as("InactiveBorder") InactiveBorder | @as("InactiveCaption") InactiveCaption | @as("InactiveCaptionText") InactiveCaptionText | @as("InfoBackground") InfoBackground | @as("InfoText") InfoText | @as("Menu") Menu | @as("MenuText") MenuText | @as("Scrollbar") ScrollbarRevertEtc1270i | @as("ThreeDDarkShadow") ThreeDDarkShadow | @as("ThreeDFace") ThreeDFace | @as("ThreeDHighlight") ThreeDHighlight | @as("ThreeDLightShadow") ThreeDLightShadow | @as("ThreeDShadow") ThreeDShadow | @as("Window") Window | @as("WindowFrame") WindowFrame | @as("WindowText") WindowText | @as("currentColor") CurrentColor | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensAVATARGROUPSmAvatarSelectedConfig = {
-  ringColor?: mozInitialEtcgjquu,
-  ringWidth?: mozInitialEtcrrza2,
-  ringOffset?: mozInitialEtcp2j1f,
-  outlineColor?: mozInitialEtc1270i,
+  ringColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  ringWidth?: mozInitialOrInheritOrInitialOrRevertEtcrrza2,
+  ringOffset?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  outlineColor?: mozInitialOrInheritOrInitialOrRevertEtc1270i,
 }
 type contextComponentTokensAVATARGROUPSmAvatarBorderConfig = {
-  width?: mozInitialEtcrrza2,
-  color?: mozInitialEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtcrrza2,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensAVATARGROUPSmAvatarConfig = {
   selected?: contextComponentTokensAVATARGROUPSmAvatarSelectedConfig,
   border?: contextComponentTokensAVATARGROUPSmAvatarBorderConfig,
 }
 type contextComponentTokensAVATARGROUPSmOverflowCounterBackgroundConfig = {
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
-  active?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  active?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensAVATARGROUPSmOverflowCounterSizeSmConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  fontSize?: mozInitialEtcly7v7,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
 }
 type contextComponentTokensAVATARGROUPSmOverflowCounterSizeConfig = {
   sm?: contextComponentTokensAVATARGROUPSmOverflowCounterSizeSmConfig,
@@ -3600,7 +3600,7 @@ type contextComponentTokensAVATARGROUPSmOverflowCounterConfig = {
   borderRadius?: contextComponentTokensAVATARSmContainerBorderRadiusConfig,
 }
 type contextComponentTokensAVATARGROUPSmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   container?: contextComponentTokensAVATARGROUPSmContainerConfig,
   avatar?: contextComponentTokensAVATARGROUPSmAvatarConfig,
   overflowCounter?: contextComponentTokensAVATARGROUPSmOverflowCounterConfig,
@@ -3611,54 +3611,54 @@ type contextComponentTokensAVATARGROUPConfig = {
   lg?: contextComponentTokensAVATARGROUPSmConfig,
 }
 type contextComponentTokensSIDEBARSmMaxWidthConfig = {
-  withLeftPanel?: mozInitialEtc1x0av,
-  withoutLeftPanel?: mozInitialEtc1x0av,
-  iconOnly?: mozInitialEtc1x0av,
+  withLeftPanel?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  withoutLeftPanel?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  iconOnly?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
 }
 type contextComponentTokensSIDEBARSmLeftPanelItemBorderConfig = {
-  active?: mozInitialEtc1yz1q,
-  default?: mozInitialEtc1yz1q,
-  hover?: mozInitialEtc1yz1q,
+  active?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  default?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensSIDEBARSmLeftPanelItemConfig = {
-  width?: mozInitialEtc1wbzz,
-  borderRadius?: mozInitialEtcp2j1f,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   border?: contextComponentTokensSIDEBARSmLeftPanelItemBorderConfig,
   backgroundColor?: contextComponentTokensBREADCRUMBSmItemTextColorConfig,
 }
 type contextComponentTokensSIDEBARSmLeftPanelConfig = {
-  width?: mozInitialEtc1wbzz,
-  backgroundColor?: mozInitialEtcgjquu,
-  borderRight?: mozInitialEtc1yz1q,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderRight?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   item?: contextComponentTokensSIDEBARSmLeftPanelItemConfig,
 }
 type contextComponentTokensSIDEBARSmHeaderToggleButtonConfig = {
   backgroundColor?: contextComponentTokensBREADCRUMBSmItemTextColorConfig,
-  width?: mozInitialEtc1wbzz,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensSIDEBARSmHeaderConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  gap?: mozInitialEtchhntk,
-  borderBottom?: mozInitialEtc1yz1q,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
   toggleButton?: contextComponentTokensSIDEBARSmHeaderToggleButtonConfig,
 }
 type contextComponentTokensSIDEBARSmDirectoryConfig = {
-  gap?: mozInitialEtchhntk,
-  paddingX?: mozInitialEtcp2j1f,
-  paddingY?: mozInitialEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  paddingX?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingY?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensSIDEBARSmFooterConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  borderTop?: mozInitialEtc1yz1q,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensSIDEBARSmConfig = {
   maxWidth?: contextComponentTokensSIDEBARSmMaxWidthConfig,
-  backgroundColor?: mozInitialEtcgjquu,
-  borderRight?: mozInitialEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderRight?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
   leftPanel?: contextComponentTokensSIDEBARSmLeftPanelConfig,
   header?: contextComponentTokensSIDEBARSmHeaderConfig,
   directory?: contextComponentTokensSIDEBARSmDirectoryConfig,
@@ -3674,63 +3674,63 @@ type contextComponentTokensDIRECTORYSmSectionHeaderConfig = {
   chevron?: contextComponentTokensTOPBARV2SmSeparatorConfig,
 }
 type contextComponentTokensDIRECTORYSmSectionItemListItemIconOnlyPaddingConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensDIRECTORYSmSectionItemListItemBackgroundColorConfig = {
-  active?: mozInitialEtcgjquu,
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
-  activePath?: mozInitialEtcgjquu,
-  muted?: mozInitialEtcgjquu,
+  active?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  activePath?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  muted?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensDIRECTORYSmSectionItemListItemConfig = {
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
   iconOnlyPadding?: contextComponentTokensDIRECTORYSmSectionItemListItemIconOnlyPaddingConfig,
-  gap?: mozInitialEtchhntk,
-  borderRadius?: mozInitialEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  fontSize?: mozInitialEtcly7v7,
-  transition?: mozInitialEtcydel2,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
   backgroundColor?: contextComponentTokensDIRECTORYSmSectionItemListItemBackgroundColorConfig,
   color?: contextComponentTokensDIRECTORYSmSectionItemListItemBackgroundColorConfig,
   icon?: contextComponentTokensMENUV2SmSearchIconConfig,
   chevron?: contextComponentTokensTOPBARV2SmSeparatorConfig,
 }
 type contextComponentTokensDIRECTORYSmSectionItemListNestedBorderConfig = {
-  width?: mozInitialEtc1wbzz,
-  color?: mozInitialEtcgjquu,
-  leftOffset?: mozInitialEtcrldf7,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  leftOffset?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensDIRECTORYSmSectionItemListNestedConnectorConfig = {
-  itemInset?: mozInitialEtcrldf7,
-  itemPaddingLeft?: mozInitialEtcp2j1f,
-  elbowTop?: mozInitialEtcrldf7,
-  elbowHeight?: mozInitialEtc1avg4,
-  elbowWidthOffset?: mozInitialEtc1wbzz,
+  itemInset?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  itemPaddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  elbowTop?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  elbowHeight?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  elbowWidthOffset?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensDIRECTORYSmSectionItemListNestedConfig = {
-  paddingLeft?: mozInitialEtcp2j1f,
-  marginTop?: mozInitialEtcrldf7,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  marginTop?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
   border?: contextComponentTokensDIRECTORYSmSectionItemListNestedBorderConfig,
   connector?: contextComponentTokensDIRECTORYSmSectionItemListNestedConnectorConfig,
 }
 type contextComponentTokensDIRECTORYSmSectionItemListConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   item?: contextComponentTokensDIRECTORYSmSectionItemListItemConfig,
   nested?: contextComponentTokensDIRECTORYSmSectionItemListNestedConfig,
 }
 type contextComponentTokensDIRECTORYSmSectionConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   header?: contextComponentTokensDIRECTORYSmSectionHeaderConfig,
   itemList?: contextComponentTokensDIRECTORYSmSectionItemListConfig,
 }
 type contextComponentTokensDIRECTORYSmConfig = {
-  gap?: mozInitialEtchhntk,
-  paddingX?: mozInitialEtcp2j1f,
-  paddingY?: mozInitialEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  paddingX?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingY?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   section?: contextComponentTokensDIRECTORYSmSectionConfig,
 }
 type contextComponentTokensDIRECTORYConfig = {
@@ -3738,38 +3738,38 @@ type contextComponentTokensDIRECTORYConfig = {
   lg?: contextComponentTokensDIRECTORYSmConfig,
 }
 type contextComponentTokensMOBILENAVIGATIONSmContainerConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  background?: mozInitialEtc1mkx8,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
-  backdropFilter?: mozInitialEtcz3a4s,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  background?: mozInitialOrInheritOrInitialOrRevertEtc1mkx8,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  backdropFilter?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
-  transition?: mozInitialEtcydel2,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
 }
 type contextComponentTokensMOBILENAVIGATIONSmDrawerConfig = {
-  borderRadius?: mozInitialEtcp2j1f,
-  borderTop?: mozInitialEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensMOBILENAVIGATIONSmRowItemBackgroundColorConfig = {
-  active?: mozInitialEtcgjquu,
-  default?: mozInitialEtcgjquu,
+  active?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensMOBILENAVIGATIONSmRowItemIconConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  borderRadius?: mozInitialEtcp2j1f,
-  transition?: mozInitialEtcydel2,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
 }
 type contextComponentTokensMOBILENAVIGATIONSmRowItemTextConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   textAlign?: string,
 }
 type contextComponentTokensMOBILENAVIGATIONSmRowItemConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  borderRadius?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   backgroundColor?: contextComponentTokensMOBILENAVIGATIONSmRowItemBackgroundColorConfig,
   color?: contextComponentTokensMOBILENAVIGATIONSmRowItemBackgroundColorConfig,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
@@ -3777,26 +3777,26 @@ type contextComponentTokensMOBILENAVIGATIONSmRowItemConfig = {
   text?: contextComponentTokensMOBILENAVIGATIONSmRowItemTextConfig,
 }
 type contextComponentTokensMOBILENAVIGATIONSmRowPrimaryActionConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  borderRadius?: mozInitialEtcp2j1f,
-  background?: mozInitialEtc1mkx8,
-  boxShadow?: mozInitialEtcz3a4s,
-  color?: mozInitialEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  background?: mozInitialOrInheritOrInitialOrRevertEtc1mkx8,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   icon?: contextComponentTokensTABLESmHeaderActionIconsSearchIconConfig,
 }
 type contextComponentTokensMOBILENAVIGATIONSmRowConfig = {
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   item?: contextComponentTokensMOBILENAVIGATIONSmRowItemConfig,
   primaryAction?: contextComponentTokensMOBILENAVIGATIONSmRowPrimaryActionConfig,
 }
 type contextComponentTokensMOBILENAVIGATIONSmConfig = {
   container?: contextComponentTokensMOBILENAVIGATIONSmContainerConfig,
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   drawer?: contextComponentTokensMOBILENAVIGATIONSmDrawerConfig,
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   row?: contextComponentTokensMOBILENAVIGATIONSmRowConfig,
 }
 type contextComponentTokensMOBILENAVIGATIONConfig = {
@@ -3805,43 +3805,43 @@ type contextComponentTokensMOBILENAVIGATIONConfig = {
 }
 type contextComponentTokensMOBILENAVIGATIONV2SmContainerConfig = {
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
-  backgroundColor?: mozInitialEtcgjquu,
-  background?: mozInitialEtc1mkx8,
-  border?: mozInitialEtc1yz1q,
-  borderWidth?: mozInitialEtcrrza2,
-  borderRadius?: mozInitialEtcp2j1f,
-  backdropFilter?: mozInitialEtcz3a4s,
-  transition?: mozInitialEtcydel2,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  background?: mozInitialOrInheritOrInitialOrRevertEtc1mkx8,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderWidth?: mozInitialOrInheritOrInitialOrRevertEtcrrza2,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  backdropFilter?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
 }
 type contextComponentTokensMOBILENAVIGATIONV2SmLayoutConfig = {
-  safeAreaOffset?: mozInitialEtcp2j1f,
-  floatingPadding?: mozInitialEtcp2j1f,
-  primaryActionMarginX?: mozInitialEtcrldf7,
-  itemLabelMarginTop?: mozInitialEtcrldf7,
+  safeAreaOffset?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  floatingPadding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  primaryActionMarginX?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  itemLabelMarginTop?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
   itemLabelLineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
-  rowPaddingTop?: mozInitialEtcp2j1f,
-  rowPaddingBottom?: mozInitialEtcp2j1f,
-  rowPaddingLeft?: mozInitialEtcp2j1f,
-  rowPaddingRight?: mozInitialEtcp2j1f,
-  rowGap?: mozInitialEtchhntk,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  rowPaddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  rowPaddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  rowPaddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  rowPaddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  rowGap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensMOBILENAVIGATIONV2SmItemIconConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  borderRadius?: mozInitialEtcp2j1f,
-  transition?: mozInitialEtcydel2,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
   strokeWidth?: float,
 }
 type contextComponentTokensMOBILENAVIGATIONV2SmItemConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  borderRadius?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   backgroundColor?: contextComponentTokensMOBILENAVIGATIONSmRowItemBackgroundColorConfig,
   color?: contextComponentTokensMOBILENAVIGATIONSmRowItemBackgroundColorConfig,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
@@ -3849,17 +3849,17 @@ type contextComponentTokensMOBILENAVIGATIONV2SmItemConfig = {
   text?: contextComponentTokensMOBILENAVIGATIONSmRowItemTextConfig,
 }
 type contextComponentTokensMOBILENAVIGATIONV2SmPrimaryActionIconConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
   strokeWidth?: float,
 }
 type contextComponentTokensMOBILENAVIGATIONV2SmPrimaryActionConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  borderRadius?: mozInitialEtcp2j1f,
-  background?: mozInitialEtc1mkx8,
-  boxShadow?: mozInitialEtcz3a4s,
-  color?: mozInitialEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  background?: mozInitialOrInheritOrInitialOrRevertEtc1mkx8,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   icon?: contextComponentTokensMOBILENAVIGATIONV2SmPrimaryActionIconConfig,
 }
 type contextComponentTokensMOBILENAVIGATIONV2SmConfig = {
@@ -3874,16 +3874,16 @@ type contextComponentTokensMOBILENAVIGATIONV2Config = {
 }
 type contextComponentTokensUPLOADSmHeaderLabelConfig = {
   text?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
-  marginBottom?: mozInitialEtcrldf7,
-  gap?: mozInitialEtchhntk,
+  marginBottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensUPLOADSmHeaderRequiredConfig = {
   text?: contextComponentTokensSEARCHINPUTSmRequiredConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensUPLOADSmHeaderSubLabelConfig = {
   text?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensUPLOADSmHeaderConfig = {
   label?: contextComponentTokensUPLOADSmHeaderLabelConfig,
@@ -3892,30 +3892,30 @@ type contextComponentTokensUPLOADSmHeaderConfig = {
   helpIcon?: contextComponentTokensTOPBARV2SmSeparatorConfig,
 }
 type contextComponentTokensUPLOADSmContainerBorderConfig = {
-  idle?: mozInitialEtc1yz1q,
-  uploading?: mozInitialEtc1yz1q,
-  success?: mozInitialEtc1yz1q,
-  error?: mozInitialEtc1yz1q,
-  dragActive?: mozInitialEtc1yz1q,
+  idle?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  uploading?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  success?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  error?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  dragActive?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensUPLOADSmContainerBackgroundColorConfig = {
-  idle?: mozInitialEtcgjquu,
-  uploading?: mozInitialEtcgjquu,
-  success?: mozInitialEtcgjquu,
-  error?: mozInitialEtcgjquu,
-  dragActive?: mozInitialEtcgjquu,
+  idle?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  uploading?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  success?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  dragActive?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensUPLOADSmContainerContentSlotConfig = {
-  width?: mozInitialEtc1wbzz,
-  gap?: mozInitialEtchhntk,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensUPLOADSmContainerContentTextConfig = {
   title?: contextComponentTokensMODALSmHeaderTextTitleConfig,
   subtitle?: contextComponentTokensMODALSmHeaderTextTitleConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensUPLOADSmContainerContentActionableConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   errorText?: contextComponentTokensMODALSmHeaderTextTitleConfig,
 }
 type contextComponentTokensUPLOADSmContainerContentConfig = {
@@ -3926,8 +3926,8 @@ type contextComponentTokensUPLOADSmContainerContentConfig = {
 type contextComponentTokensUPLOADSmContainerConfig = {
   border?: contextComponentTokensUPLOADSmContainerBorderConfig,
   backgroundColor?: contextComponentTokensUPLOADSmContainerBackgroundColorConfig,
-  borderRadius?: mozInitialEtcp2j1f,
-  padding?: mozInitialEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   content?: contextComponentTokensUPLOADSmContainerContentConfig,
 }
 type contextComponentTokensUPLOADSmConfig = {
@@ -3939,42 +3939,42 @@ type contextComponentTokensUPLOADConfig = {
   lg?: contextComponentTokensUPLOADSmConfig,
 }
 type contextComponentTokensCODEBLOCKSmHeaderConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  borderBottom?: mozInitialEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   icon?: contextComponentTokensMENUV2SmSearchIconConfig,
   text?: contextComponentTokensCARDV2SmHeaderEyebrowConfig,
 }
 type contextComponentTokensCODEBLOCKSmBodyGutterBackgroundColorConfig = {
-  added?: mozInitialEtcgjquu,
-  removed?: mozInitialEtcgjquu,
-  unchanged?: mozInitialEtcgjquu,
+  added?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  removed?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  unchanged?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCODEBLOCKSmBodyGutterBorderLeftConfig = {
-  added?: mozInitialEtc1yz1q,
-  removed?: mozInitialEtc1yz1q,
-  unchanged?: mozInitialEtc1yz1q,
+  added?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  removed?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  unchanged?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensCODEBLOCKSmBodyGutterConfig = {
-  width?: mozInitialEtc1wbzz,
-  color?: mozInitialEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   backgroundColor?: contextComponentTokensCODEBLOCKSmBodyGutterBackgroundColorConfig,
   borderLeft?: contextComponentTokensCODEBLOCKSmBodyGutterBorderLeftConfig,
   borderColor?: contextComponentTokensCODEBLOCKSmBodyGutterBackgroundColorConfig,
 }
-@unboxed type mozInitialEtc12oc1 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("-apple-system") AppleSystem | @as("cursive") Cursive | @as("fantasy") Fantasy | @as("math") Math | @as("monospace") Monospace | @as("sans-serif") SansSerif | @as("serif") Serif | @as("system-ui") SystemUi | @as("ui-monospace") UiMonospace | @as("ui-rounded") UiRounded | @as("ui-sans-serif") UiSansSerif | @as("ui-serif") UiSerif | @as("emoji") Emoji | @as("fangsong") Fangsong | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc12oc1 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("-apple-system") AppleSystem | @as("cursive") Cursive | @as("fantasy") Fantasy | @as("math") Math | @as("monospace") Monospace | @as("sans-serif") SansSerif | @as("serif") Serif | @as("system-ui") SystemUi | @as("ui-monospace") UiMonospace | @as("ui-rounded") UiRounded | @as("ui-sans-serif") UiSansSerif | @as("ui-serif") UiSerif | @as("emoji") Emoji | @as("fangsong") Fangsong | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensCODEBLOCKSmBodyCodePaddingXConfig = {
-  left?: mozInitialEtcp2j1f,
-  right?: mozInitialEtcp2j1f,
+  left?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  right?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensCODEBLOCKSmBodyCodePaddingConfig = {
   x?: contextComponentTokensCODEBLOCKSmBodyCodePaddingXConfig,
-  y?: mozInitialEtcp2j1f,
+  y?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensCODEBLOCKSmBodyCodeConfig = {
-  fontFamily?: mozInitialEtc12oc1,
-  fontSize?: mozInitialEtcly7v7,
+  fontFamily?: mozInitialOrInheritOrInitialOrRevertEtc12oc1,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
   padding?: contextComponentTokensCODEBLOCKSmBodyCodePaddingConfig,
 }
@@ -3982,37 +3982,37 @@ type contextComponentTokensCODEBLOCKSmBodyHighlightedLineConfig = {
   backgroundColor?: contextComponentTokensCODEBLOCKSmBodyGutterBackgroundColorConfig,
 }
 type contextComponentTokensCODEBLOCKSmBodySyntaxConfig = {
-  keyword?: mozInitialEtcgjquu,
-  function?: mozInitialEtcgjquu,
-  string?: mozInitialEtcgjquu,
-  number?: mozInitialEtcgjquu,
-  operator?: mozInitialEtcgjquu,
-  variable?: mozInitialEtcgjquu,
-  comment?: mozInitialEtcgjquu,
-  text?: mozInitialEtcgjquu,
+  keyword?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  function?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  string?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  number?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  operator?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  variable?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  comment?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  text?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCODEBLOCKSmBodyExpandContextButtonConfig = {
-  padding?: mozInitialEtcp2j1f,
-  dotsPadding?: mozInitialEtcp2j1f,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  dotsPadding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   opacity?: string,  // ⚪ loose — was `Globals | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; indexOf?: `
   disabledOpacity?: string,  // ⚪ loose — was `Globals | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; indexOf?: `
-  hoverBackgroundColor?: mozInitialEtcgjquu,
-  borderRadius?: mozInitialEtcp2j1f,
+  hoverBackgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   iconSize?: float,
 }
 type contextComponentTokensCODEBLOCKSmBodyExpandContextConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  borderTop?: mozInitialEtc1yz1q,
-  borderBottom?: mozInitialEtc1yz1q,
-  padding?: mozInitialEtcp2j1f,
-  color?: mozInitialEtcgjquu,
-  fontSize?: mozInitialEtcly7v7,
-  letterSpacing?: mozInitialEtchhntk,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  letterSpacing?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   button?: contextComponentTokensCODEBLOCKSmBodyExpandContextButtonConfig,
 }
 type contextComponentTokensCODEBLOCKSmBodyConfig = {
   padding?: contextComponentTokensSEARCHINPUTSmInputContainerPaddingConfig,
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   gutter?: contextComponentTokensCODEBLOCKSmBodyGutterConfig,
   code?: contextComponentTokensCODEBLOCKSmBodyCodeConfig,
   highlightedLine?: contextComponentTokensCODEBLOCKSmBodyHighlightedLineConfig,
@@ -4020,10 +4020,10 @@ type contextComponentTokensCODEBLOCKSmBodyConfig = {
   expandContext?: contextComponentTokensCODEBLOCKSmBodyExpandContextConfig,
 }
 type contextComponentTokensCODEBLOCKSmConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   header?: contextComponentTokensCODEBLOCKSmHeaderConfig,
   body?: contextComponentTokensCODEBLOCKSmBodyConfig,
 }
@@ -4032,8 +4032,8 @@ type contextComponentTokensCODEBLOCKConfig = {
   lg?: contextComponentTokensCODEBLOCKSmConfig,
 }
 type contextComponentTokensBUTTONGROUPSmGapConfig = {
-  default?: mozInitialEtchhntk,
-  stacked?: mozInitialEtchhntk,
+  default?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  stacked?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensBUTTONGROUPSmConfig = {
   gap?: contextComponentTokensBUTTONGROUPSmGapConfig,
@@ -4044,29 +4044,29 @@ type contextComponentTokensBUTTONGROUPConfig = {
   lg?: contextComponentTokensBUTTONGROUPSmConfig,
 }
 type contextComponentTokensCHATINPUTSmBackgroundColorConfig = {
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
-  disabled?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCHATINPUTSmBorderRadiusConfig = {
-  default?: mozInitialEtcp2j1f,
-  focus?: mozInitialEtcp2j1f,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensCHATINPUTSmBorderConfig = {
-  default?: mozInitialEtc1yz1q,
-  focus?: mozInitialEtc1yz1q,
+  default?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensCHATINPUTSmTextColorConfig = {
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
-  focus?: mozInitialEtcgjquu,
-  disabled?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCHATINPUTSmTextFontSizeConfig = {
-  default?: mozInitialEtcly7v7,
-  hover?: mozInitialEtcly7v7,
-  focus?: mozInitialEtcly7v7,
-  disabled?: mozInitialEtcly7v7,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
 }
 type contextComponentTokensCHATINPUTSmTextFontWeightConfig = {
   default?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
@@ -4085,90 +4085,90 @@ type contextComponentTokensCHATINPUTSmTextConfig = {
   fontWeight?: contextComponentTokensCHATINPUTSmTextFontWeightConfig,
   lineHeight?: contextComponentTokensCHATINPUTSmTextLineHeightConfig,
 }
-@unboxed type mozInitialEtc1cx47 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("auto") Auto | @as("hidden") Hidden | @as("scroll") Scroll | @as("overlay") Overlay | @as("-moz-hidden-unscrollable") MozHiddenUnscrollable | @as("clip") Clip | @as("visible") Visible | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc1cx47 = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("auto") Auto | @as("hidden") Hidden | @as("scroll") Scroll | @as("overlay") Overlay | @as("-moz-hidden-unscrollable") MozHiddenUnscrollable | @as("clip") Clip | @as("visible") Visible | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensCHATINPUTSmContainerBoxShadowConfig = {
-  default?: mozInitialEtcz3a4s,
-  hover?: mozInitialEtcz3a4s,
-  focus?: mozInitialEtcz3a4s,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensCHATINPUTSmContainerConfig = {
   backgroundColor?: contextComponentTokensCHATINPUTSmBackgroundColorConfig,
   border?: contextComponentTokensCHATINPUTSmBorderConfig,
-  borderRadius?: mozInitialEtcp2j1f,
-  padding?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
-  minHeight?: mozInitialEtc96qi2,
-  transition?: mozInitialEtcydel2,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  minHeight?: mozInitialOrInheritOrInitialOrRevertEtc96qi2,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
   boxShadow?: contextComponentTokensCHATINPUTSmContainerBoxShadowConfig,
 }
 type contextComponentTokensCHATINPUTSmAttachmentContainerConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  borderRadius?: mozInitialEtcp2j1f,
-  padding?: mozInitialEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensCHATINPUTSmTextareaConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  color?: mozInitialEtcgjquu,
-  fontSize?: mozInitialEtcly7v7,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   placeholder?: contextComponentTokensSEARCHINPUTSmRequiredConfig,
   resize?: string,
-  fontFamily?: mozInitialEtc12oc1,
-  minHeight?: mozInitialEtc96qi2,
-  maxHeight?: mozInitialEtc1x0av,
+  fontFamily?: mozInitialOrInheritOrInitialOrRevertEtc12oc1,
+  minHeight?: mozInitialOrInheritOrInitialOrRevertEtc96qi2,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
   overflowY?: string,
 }
 type contextComponentTokensCHATINPUTSmFilesContainerConfig = {
-  gap?: mozInitialEtchhntk,
-  paddingX?: mozInitialEtcp2j1f,
-  paddingY?: mozInitialEtcp2j1f,
-  maxHeight?: mozInitialEtc1x0av,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  paddingX?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingY?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
   overflowY?: string,
-  margin?: mozInitialEtcrldf7,
+  margin?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensCHATINPUTSmBottomActionsConfig = {
-  paddingX?: mozInitialEtcp2j1f,
-  paddingY?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
-  justifyContent?: mozInitialEtc1w3ez,
+  paddingX?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingY?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  justifyContent?: mozInitialOrInheritOrInitialOrRevertEtc1w3ez,
 }
 type contextComponentTokensCHATINPUTSmOverflowTagConfig = {
   backgroundColor?: contextComponentTokensAVATARGROUPSmOverflowCounterBackgroundConfig,
   color?: contextComponentTokensAVATARGROUPSmOverflowCounterBackgroundConfig,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
-  paddingX?: mozInitialEtcp2j1f,
-  paddingY?: mozInitialEtcp2j1f,
-  fontSize?: mozInitialEtcly7v7,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingX?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingY?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  gap?: mozInitialEtchhntk,
-  transition?: mozInitialEtcydel2,
-  cursor?: mozInitialEtcop7hp,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
+  cursor?: mozInitialOrInheritOrInitialOrRevertEtcop7hp,
 }
 type contextComponentTokensCHATINPUTSmTopQueriesContainerConfig = {
-  borderTop?: mozInitialEtc1yz1q,
-  paddingTop?: mozInitialEtcp2j1f,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensCHATINPUTSmTopQueriesHeaderConfig = {
-  color?: mozInitialEtcgjquu,
-  fontSize?: mozInitialEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  paddingX?: mozInitialEtcp2j1f,
-  paddingY?: mozInitialEtcp2j1f,
-  textTransform?: mozInitialEtcc55tl,
-  backgroundColor?: mozInitialEtcgjquu,
+  paddingX?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingY?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  textTransform?: mozInitialOrInheritOrInitialOrRevertEtcc55tl,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   flexShrink?: string,  // ⚪ loose — was `Globals | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; indexOf?: `
 }
 type contextComponentTokensCHATINPUTSmTopQueriesScrollContainerConfig = {
   overflowY?: string,
   maxHeightOffset?: float,
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   scrollbarColor?: string,
 }
 type contextComponentTokensCHATINPUTSmTopQueriesItemOpacityConfig = {
@@ -4178,13 +4178,13 @@ type contextComponentTokensCHATINPUTSmTopQueriesItemOpacityConfig = {
 type contextComponentTokensCHATINPUTSmTopQueriesItemConfig = {
   backgroundColor?: contextComponentTokensBUTTONSmTextColorPrimaryDefaultConfig,
   color?: contextComponentTokensBUTTONSmTextColorPrimaryDefaultConfig,
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  paddingX?: mozInitialEtcp2j1f,
-  paddingY?: mozInitialEtcp2j1f,
-  border?: mozInitialEtc1yz1q,
-  transition?: mozInitialEtcydel2,
-  cursor?: mozInitialEtcop7hp,
+  paddingX?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingY?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
+  cursor?: mozInitialOrInheritOrInitialOrRevertEtcop7hp,
   opacity?: contextComponentTokensCHATINPUTSmTopQueriesItemOpacityConfig,
 }
 type contextComponentTokensCHATINPUTSmTopQueriesConfig = {
@@ -4197,15 +4197,15 @@ type contextComponentTokensCHATINPUTSmConfig = {
   backgroundColor?: contextComponentTokensCHATINPUTSmBackgroundColorConfig,
   borderRadius?: contextComponentTokensCHATINPUTSmBorderRadiusConfig,
   border?: contextComponentTokensCHATINPUTSmBorderConfig,
-  minHeight?: mozInitialEtc96qi2,
-  maxHeight?: mozInitialEtc1x0av,
-  gap?: mozInitialEtchhntk,
+  minHeight?: mozInitialOrInheritOrInitialOrRevertEtc96qi2,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   text?: contextComponentTokensCHATINPUTSmTextConfig,
   resize?: string,
-  overflow?: mozInitialEtc1cx47,
-  paddingLeft?: mozInitialEtcp2j1f,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
+  overflow?: mozInitialOrInheritOrInitialOrRevertEtc1cx47,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   container?: contextComponentTokensCHATINPUTSmContainerConfig,
   attachmentContainer?: contextComponentTokensCHATINPUTSmAttachmentContainerConfig,
   textarea?: contextComponentTokensCHATINPUTSmTextareaConfig,
@@ -4219,110 +4219,110 @@ type contextComponentTokensCHATINPUTConfig = {
   lg?: contextComponentTokensCHATINPUTSmConfig,
 }
 type contextComponentTokensCHATINPUTV2SmContainerAttachedFilesContainerOverflowMenuConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   backgroundColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
-  borderRadius?: mozInitialEtcp2j1f,
-  padding?: mozInitialEtcp2j1f,
-  top?: mozInitialEtcrldf7,
-  right?: mozInitialEtcrldf7,
-  maxHeight?: mozInitialEtc1x0av,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  top?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  right?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
 }
 type contextComponentTokensCHATINPUTV2SmContainerAttachedFilesContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   overflowMenu?: contextComponentTokensCHATINPUTV2SmContainerAttachedFilesContainerOverflowMenuConfig,
 }
 type contextComponentTokensCHATINPUTV2SmContainerTagContainerConfig = {
-  gap?: mozInitialEtchhntk,
-  borderRadius?: mozInitialEtcp2j1f,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  border?: mozInitialEtc1yz1q,
-  backgroundColor?: mozInitialEtcgjquu,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   text?: contextComponentTokensMODALSmHeaderTextTitleConfig,
 }
 type contextComponentTokensCHATINPUTV2SmContainerInputContainerOutlineConfig = {
-  default?: mozInitialEtcsclw8,
-  hover?: mozInitialEtcsclw8,
-  focus?: mozInitialEtcsclw8,
-  error?: mozInitialEtcsclw8,
-  disabled?: mozInitialEtcsclw8,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
 }
 type contextComponentTokensCHATINPUTV2SmContainerInputContainerInputConfig = {
-  color?: mozInitialEtcgjquu,
-  placeholder?: mozInitialEtcgjquu,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  minHeight?: mozInitialEtc96qi2,
-  maxHeight?: mozInitialEtc1x0av,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  placeholder?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  minHeight?: mozInitialOrInheritOrInitialOrRevertEtc96qi2,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
 }
 type contextComponentTokensCHATINPUTV2SmContainerInputContainerActionContainerConfig = {
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensCHATINPUTV2SmContainerInputContainerTopQueriesContainerHeaderConfig = {
-  color?: mozInitialEtcgjquu,
-  fontSize?: mozInitialEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  textTransform?: mozInitialEtcc55tl,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  backgroundColor?: mozInitialEtcgjquu,
+  textTransform?: mozInitialOrInheritOrInitialOrRevertEtcc55tl,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCHATINPUTV2SmContainerInputContainerTopQueriesContainerItemConfig = {
   backgroundColor?: string,  // ⚪ loose — was `{ default?: Globals | NamedColor | "transparent" | SystemColor | DeprecatedSystemColor | "currentColor" | { re`
   color?: string,  // ⚪ loose — was `{ default?: Globals | NamedColor | "transparent" | SystemColor | DeprecatedSystemColor | "currentColor" | { re`
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  border?: mozInitialEtc1yz1q,
-  transition?: mozInitialEtcydel2,
-  cursor?: mozInitialEtcop7hp,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
+  cursor?: mozInitialOrInheritOrInitialOrRevertEtcop7hp,
   opacity?: string,  // ⚪ loose — was `{ default?: Globals | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}`
 }
 type contextComponentTokensCHATINPUTV2SmContainerInputContainerTopQueriesContainerConfig = {
-  marginRight?: mozInitialEtcrldf7,
-  marginLeft?: mozInitialEtcrldf7,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  borderTop?: mozInitialEtc1yz1q,
+  marginRight?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginLeft?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
   header?: contextComponentTokensCHATINPUTV2SmContainerInputContainerTopQueriesContainerHeaderConfig,
   item?: contextComponentTokensCHATINPUTV2SmContainerInputContainerTopQueriesContainerItemConfig,
 }
 type contextComponentTokensCHATINPUTV2SmContainerInputContainerConfig = {
   outline?: contextComponentTokensCHATINPUTV2SmContainerInputContainerOutlineConfig,
   boxShadow?: contextComponentTokensMULTIVALUEINPUTSmInputContainerBoxShadowConfig,
-  gap?: mozInitialEtchhntk,
-  borderRadius?: mozInitialEtcp2j1f,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  border?: mozInitialEtc1yz1q,
-  backgroundColor?: mozInitialEtcgjquu,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   input?: contextComponentTokensCHATINPUTV2SmContainerInputContainerInputConfig,
   actionContainer?: contextComponentTokensCHATINPUTV2SmContainerInputContainerActionContainerConfig,
   topQueriesContainer?: contextComponentTokensCHATINPUTV2SmContainerInputContainerTopQueriesContainerConfig,
 }
 type contextComponentTokensCHATINPUTV2SmContainerConfig = {
   backgroundColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
-  borderRadius?: mozInitialEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   border?: contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig,
-  gap?: mozInitialEtchhntk,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   attachedFilesContainer?: contextComponentTokensCHATINPUTV2SmContainerAttachedFilesContainerConfig,
   tagContainer?: contextComponentTokensCHATINPUTV2SmContainerTagContainerConfig,
   inputContainer?: contextComponentTokensCHATINPUTV2SmContainerInputContainerConfig,
@@ -4335,51 +4335,51 @@ type contextComponentTokensCHATINPUTV2Config = {
   lg?: contextComponentTokensCHATINPUTV2SmConfig,
 }
 type contextComponentTokensTIMELINESmTrackConfig = {
-  width?: mozInitialEtc1wbzz,
-  backgroundColor?: mozInitialEtcgjquu,
-  left?: mozInitialEtcrldf7,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  left?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensTIMELINESmIndicatorConfig = {
-  left?: mozInitialEtcrldf7,
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
+  left?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
 }
 type contextComponentTokensTIMELINESmStatusColorsConfig = {
-  success?: mozInitialEtcgjquu,
-  warning?: mozInitialEtcgjquu,
-  error?: mozInitialEtcgjquu,
-  neutral?: mozInitialEtcgjquu,
+  success?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  warning?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  neutral?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTIMELINESmLabelCircleConfig = {
-  left?: mozInitialEtcrldf7,
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  backgroundColor?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
+  left?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensTIMELINESmLabelMaskConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  height?: mozInitialEtc1avg4,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
 }
 type contextComponentTokensTIMELINESmLabelConfig = {
-  paddingLeft?: mozInitialEtcp2j1f,
-  marginBottom?: mozInitialEtcrldf7,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  marginBottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
   circle?: contextComponentTokensTIMELINESmLabelCircleConfig,
   mask?: contextComponentTokensTIMELINESmLabelMaskConfig,
   text?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
 }
 type contextComponentTokensTIMELINESmHeaderRowConfig = {
-  paddingLeft?: mozInitialEtcp2j1f,
-  marginBottom?: mozInitialEtcrldf7,
-  gap?: mozInitialEtchhntk,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  marginBottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensTIMELINESmHeaderSectionConfig = {
-  marginBottom?: mozInitialEtcrldf7,
+  marginBottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensTIMELINESmHeaderTimestampConfig = {
-  fontSize?: mozInitialEtcly7v7,
-  color?: mozInitialEtcgjquu,
-  gap?: mozInitialEtchhntk,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensTIMELINESmHeaderConfig = {
   row?: contextComponentTokensTIMELINESmHeaderRowConfig,
@@ -4388,47 +4388,47 @@ type contextComponentTokensTIMELINESmHeaderConfig = {
   timestamp?: contextComponentTokensTIMELINESmHeaderTimestampConfig,
 }
 type contextComponentTokensTIMELINESmSubsectionRootIndicatorConfig = {
-  top?: mozInitialEtcrldf7,
+  top?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensTIMELINESmSubsectionDescriptionConfig = {
-  fontSize?: mozInitialEtcly7v7,
-  color?: mozInitialEtcgjquu,
-  marginTop?: mozInitialEtcrldf7,
-  marginBottom?: mozInitialEtcrldf7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  marginTop?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginBottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
 }
 type contextComponentTokensTIMELINESmSubsectionConnectorConfig = {
-  left?: mozInitialEtcrldf7,
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  color?: mozInitialEtcgjquu,
+  left?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTIMELINESmSubsectionAvatarConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  marginTop?: mozInitialEtcrldf7,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  marginTop?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensTIMELINESmSubsectionUserConfig = {
-  fontSize?: mozInitialEtcly7v7,
-  color?: mozInitialEtcgjquu,
-  marginLeft?: mozInitialEtcrldf7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  marginLeft?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensTIMELINESmSubsectionTimeConfig = {
-  fontSize?: mozInitialEtcly7v7,
-  color?: mozInitialEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensTIMELINESmSubsectionSeparatorConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  color?: mozInitialEtcgjquu,
-  marginLeft?: mozInitialEtcrldf7,
-  marginRight?: mozInitialEtcrldf7,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  marginLeft?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginRight?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensTIMELINESmSubsectionConfig = {
-  paddingLeft?: mozInitialEtcp2j1f,
-  marginTop?: mozInitialEtcrldf7,
-  marginBottom?: mozInitialEtcrldf7,
-  marginLeft?: mozInitialEtcrldf7,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  marginTop?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginBottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginLeft?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
   rootIndicator?: contextComponentTokensTIMELINESmSubsectionRootIndicatorConfig,
   headerRow?: contextComponentTokensRADIOSmGroupConfig,
   titleRow?: contextComponentTokensRADIOSmGroupConfig,
@@ -4443,8 +4443,8 @@ type contextComponentTokensTIMELINESmSubsectionConfig = {
   separator?: contextComponentTokensTIMELINESmSubsectionSeparatorConfig,
 }
 type contextComponentTokensTIMELINESmShowMoreConfig = {
-  paddingLeft?: mozInitialEtcp2j1f,
-  marginTop?: mozInitialEtcrldf7,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  marginTop?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensTIMELINESmConfig = {
   track?: contextComponentTokensTIMELINESmTrackConfig,
@@ -4466,9 +4466,9 @@ type contextComponentTokensBUTTONV2SmSlotMaxHeightConfig = {
   lg?: CommonTypes.stringOrNumber,
 }
 type contextComponentTokensBUTTONV2SmFocusRingPrimaryConfig = {
-  default?: mozInitialEtcz3a4s,
-  iconOnly?: mozInitialEtcz3a4s,
-  inline?: mozInitialEtcz3a4s,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  iconOnly?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  inline?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensBUTTONV2SmFocusRingConfig = {
   primary?: contextComponentTokensBUTTONV2SmFocusRingPrimaryConfig,
@@ -4542,10 +4542,10 @@ type contextComponentTokensBUTTONV2Config = {
   lg?: contextComponentTokensBUTTONV2SmConfig,
 }
 type contextComponentTokensTAGV2SmHeightConfig = {
-  xs?: mozInitialEtc1avg4,
-  sm?: mozInitialEtc1avg4,
-  md?: mozInitialEtc1avg4,
-  lg?: mozInitialEtc1avg4,
+  xs?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  md?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
 }
 type contextComponentTokensTAGV2SmPaddingConfig = {
   top?: contextComponentTokensTAGSSmPaddingConfig,
@@ -4554,10 +4554,10 @@ type contextComponentTokensTAGV2SmPaddingConfig = {
   right?: contextComponentTokensTAGSSmPaddingConfig,
 }
 type contextComponentTokensTAGV2SmLeftSlotMaxHeightConfig = {
-  xs?: mozInitialEtc1x0av,
-  sm?: mozInitialEtc1x0av,
-  md?: mozInitialEtc1x0av,
-  lg?: mozInitialEtc1x0av,
+  xs?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  md?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
 }
 type contextComponentTokensTAGV2SmLeftSlotConfig = {
   maxHeight?: contextComponentTokensTAGV2SmLeftSlotMaxHeightConfig,
@@ -4574,7 +4574,7 @@ type contextComponentTokensTAGV2SmConfig = {
   backgroundColor?: contextComponentTokensTAGSSmBackgroundColorConfig,
   height?: contextComponentTokensTAGV2SmHeightConfig,
   padding?: contextComponentTokensTAGV2SmPaddingConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   leftSlot?: contextComponentTokensTAGV2SmLeftSlotConfig,
   rightSlot?: contextComponentTokensTAGV2SmLeftSlotConfig,
   text?: contextComponentTokensTAGV2SmTextConfig,
@@ -4584,28 +4584,28 @@ type contextComponentTokensTAGV2Config = {
   lg?: contextComponentTokensTAGV2SmConfig,
 }
 type contextComponentTokensALERTV2SmPaddingConfig = {
-  top?: mozInitialEtcp2j1f,
-  bottom?: mozInitialEtcp2j1f,
-  left?: mozInitialEtcp2j1f,
-  right?: mozInitialEtcp2j1f,
+  top?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  bottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  left?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  right?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensALERTV2SmGapConfig = {
-  bottom?: mozInitialEtchhntk,
-  right?: mozInitialEtchhntk,
+  bottom?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  right?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensALERTV2SmMainContainerContentTextContainerHeadingConfig = {
   color?: string,  // ⚪ loose — was `{ primary?: Globals | NamedColor | "transparent" | SystemColor | DeprecatedSystemColor | "currentColor" | { re`
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
 }
 type contextComponentTokensALERTV2SmMainContainerContentTextContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   heading?: contextComponentTokensALERTV2SmMainContainerContentTextContainerHeadingConfig,
   description?: contextComponentTokensALERTV2SmMainContainerContentTextContainerHeadingConfig,
 }
 type contextComponentTokensALERTV2SmMainContainerContentActionContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   primaryAction?: contextComponentTokensALERTV2SmMainContainerContentTextContainerHeadingConfig,
   secondaryAction?: contextComponentTokensALERTV2SmMainContainerContentTextContainerHeadingConfig,
 }
@@ -4616,20 +4616,20 @@ type contextComponentTokensALERTV2SmMainContainerContentConfig = {
 }
 type contextComponentTokensALERTV2SmMainContainerCloseButtonConfig = {
   color?: contextComponentTokensALERTSmTextHeadingColorConfig,
-  height?: mozInitialEtc1avg4,
-  width?: mozInitialEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensALERTV2SmMainContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   content?: contextComponentTokensALERTV2SmMainContainerContentConfig,
   closeButton?: contextComponentTokensALERTV2SmMainContainerCloseButtonConfig,
 }
 type contextComponentTokensALERTV2SmConfig = {
-  width?: mozInitialEtc1wbzz,
-  maxWidth?: mozInitialEtc1x0av,
-  minWidth?: mozInitialEtc1owcx,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  minWidth?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
   border?: contextComponentTokensALERTSmBackgroundConfig,
-  borderRadius?: mozInitialEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   backgroundColor?: contextComponentTokensALERTSmBackgroundConfig,
   padding?: contextComponentTokensALERTV2SmPaddingConfig,
   gap?: contextComponentTokensALERTV2SmGapConfig,
@@ -4641,25 +4641,25 @@ type contextComponentTokensALERTV2Config = {
   lg?: contextComponentTokensALERTV2SmConfig,
 }
 type contextComponentTokensACCORDIONV2SmTriggerTextTitleConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
   color?: contextComponentTokensACCORDIONSmTriggerBackgroundColorBorderConfig,
 }
 type contextComponentTokensACCORDIONV2SmTriggerTextSubtextConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   color?: contextComponentTokensACCORDIONSmTriggerBackgroundColorBorderConfig,
 }
 type contextComponentTokensACCORDIONV2SmTriggerTextConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   title?: contextComponentTokensACCORDIONV2SmTriggerTextTitleConfig,
   subtext?: contextComponentTokensACCORDIONV2SmTriggerTextSubtextConfig,
 }
 type contextComponentTokensACCORDIONV2SmTriggerSlotConfig = {
-  height?: mozInitialEtc1avg4,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
 }
 type contextComponentTokensACCORDIONV2SmTriggerConfig = {
   content?: contextComponentTokensRADIOSmGroupConfig,
@@ -4670,7 +4670,7 @@ type contextComponentTokensACCORDIONV2SmTriggerConfig = {
   slot?: contextComponentTokensACCORDIONV2SmTriggerSlotConfig,
 }
 type contextComponentTokensACCORDIONV2SmChevronConfig = {
-  height?: mozInitialEtc1avg4,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
   color?: contextComponentTokensACCORDIONSmTriggerBackgroundColorBorderConfig,
 }
 type contextComponentTokensACCORDIONV2SmConfig = {
@@ -4685,18 +4685,18 @@ type contextComponentTokensACCORDIONV2Config = {
   lg?: contextComponentTokensACCORDIONV2SmConfig,
 }
 type contextComponentTokensSNACKBARV2SmSlotConfig = {
-  height?: mozInitialEtc1avg4,
-  width?: mozInitialEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
   color?: contextComponentTokensSNACKBARSmInfoIconColorConfig,
 }
 type contextComponentTokensSNACKBARV2SmMainContainerContentTextContainerHeaderConfig = {
   color?: string,  // ⚪ loose — was `{ info?: Globals | NamedColor | "transparent" | SystemColor | DeprecatedSystemColor | "currentColor" | { reado`
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
 }
 type contextComponentTokensSNACKBARV2SmMainContainerContentTextContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   header?: contextComponentTokensSNACKBARV2SmMainContainerContentTextContainerHeaderConfig,
   description?: contextComponentTokensSNACKBARV2SmMainContainerContentTextContainerHeaderConfig,
 }
@@ -4704,28 +4704,28 @@ type contextComponentTokensSNACKBARV2SmMainContainerContentActionContainerConfig
   primaryAction?: contextComponentTokensSNACKBARV2SmMainContainerContentTextContainerHeaderConfig,
 }
 type contextComponentTokensSNACKBARV2SmMainContainerContentConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   textContainer?: contextComponentTokensSNACKBARV2SmMainContainerContentTextContainerConfig,
   actionContainer?: contextComponentTokensSNACKBARV2SmMainContainerContentActionContainerConfig,
 }
 type contextComponentTokensSNACKBARV2SmMainContainerCloseButtonConfig = {
-  height?: mozInitialEtc1avg4,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
   color?: contextComponentTokensSNACKBARSmInfoIconColorConfig,
 }
 type contextComponentTokensSNACKBARV2SmMainContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   content?: contextComponentTokensSNACKBARV2SmMainContainerContentConfig,
   closeButton?: contextComponentTokensSNACKBARV2SmMainContainerCloseButtonConfig,
 }
 type contextComponentTokensSNACKBARV2SmConfig = {
-  width?: mozInitialEtc1wbzz,
-  maxWidth?: mozInitialEtc1x0av,
-  minWidth?: mozInitialEtc1owcx,
-  backgroundColor?: mozInitialEtcgjquu,
-  borderRadius?: mozInitialEtcp2j1f,
-  padding?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
-  gap?: mozInitialEtchhntk,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  minWidth?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   slot?: contextComponentTokensSNACKBARV2SmSlotConfig,
   mainContainer?: contextComponentTokensSNACKBARV2SmMainContainerConfig,
 }
@@ -4738,11 +4738,11 @@ type contextComponentTokensSWITCHV2SmSwitchBackgroundColorConfig = {
   unchecked?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
 }
 type contextComponentTokensSWITCHV2SmSwitchThumbConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
   width?: contextComponentTokensTEXTAREAV2SmTopContainerHelpIconWidthConfig,
   height?: contextComponentTokensPROGRESSBARSmLinearHeightConfig,
-  outline?: mozInitialEtcsclw8,
+  outline?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
 }
 type contextComponentTokensSWITCHV2SmSwitchConfig = {
   height?: contextComponentTokensPROGRESSBARSmLinearHeightConfig,
@@ -4754,7 +4754,7 @@ type contextComponentTokensSWITCHV2SmContentLabelSlotConfig = {
   maxHeight?: contextComponentTokensBUTTONSmSlotMaxHeightConfig,
 }
 type contextComponentTokensSWITCHV2SmContentLabelConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
@@ -4768,13 +4768,13 @@ type contextComponentTokensSWITCHV2SmContentSubLabelConfig = {
   lineHeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
 }
 type contextComponentTokensSWITCHV2SmContentConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensSWITCHV2SmContentLabelConfig,
   subLabel?: contextComponentTokensSWITCHV2SmContentSubLabelConfig,
   required?: contextComponentTokensSEARCHINPUTSmRequiredConfig,
 }
 type contextComponentTokensSWITCHV2SmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   @as("switch") switch_?: contextComponentTokensSWITCHV2SmSwitchConfig,
   content?: contextComponentTokensSWITCHV2SmContentConfig,
 }
@@ -4792,8 +4792,8 @@ type contextComponentTokensSINGLESELECTV2SmTriggerPaddingConfig = {
   lg?: contextComponentTokensSINGLESELECTV2SmTriggerPaddingSmConfig,
 }
 type contextComponentTokensSINGLESELECTV2SmTriggerSlotConfig = {
-  gap?: mozInitialEtchhntk,
-  width?: mozInitialEtc1wbzz,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensSINGLESELECTV2SmTriggerConfig = {
   height?: contextComponentTokensMULTISELECTSmTriggerHeightConfig,
@@ -4807,29 +4807,29 @@ type contextComponentTokensSINGLESELECTV2SmTriggerConfig = {
   selectedValue?: contextComponentTokensMODALSmHeaderTextTitleConfig,
 }
 type contextComponentTokensSINGLESELECTV2SmMenuContentConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensSINGLESELECTV2SmMenuGroupLabelConfig = {
-  margin?: mozInitialEtcrldf7,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  fontSize?: mozInitialEtcly7v7,
+  margin?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   color?: contextComponentTokensMENUSmItemBackgroundColorDefaultEnabledConfig,
 }
 type contextComponentTokensSINGLESELECTV2SmMenuItemConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  margin?: mozInitialEtcrldf7,
-  borderRadius?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  margin?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   backgroundColor?: contextComponentTokensMENUSmItemBackgroundColorDefaultEnabledConfig,
   groupLabelText?: contextComponentTokensMULTISELECTSmLabelConfig,
   option?: contextComponentTokensMULTISELECTSmLabelConfig,
@@ -4837,42 +4837,42 @@ type contextComponentTokensSINGLESELECTV2SmMenuItemConfig = {
   separator?: contextComponentTokensMULTISELECTSmMenuItemSeperatorConfig,
 }
 type contextComponentTokensSINGLESELECTV2SmMenuSubmenuTriggerBackgroundColorConfig = {
-  default?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
-  focus?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSINGLESELECTV2SmMenuSubmenuTriggerConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  margin?: mozInitialEtcrldf7,
-  borderRadius?: mozInitialEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  margin?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   backgroundColor?: contextComponentTokensSINGLESELECTV2SmMenuSubmenuTriggerBackgroundColorConfig,
 }
 type contextComponentTokensSINGLESELECTV2SmMenuSubmenuContentConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensSINGLESELECTV2SmMenuSubmenuConfig = {
   trigger?: contextComponentTokensSINGLESELECTV2SmMenuSubmenuTriggerConfig,
   content?: contextComponentTokensSINGLESELECTV2SmMenuSubmenuContentConfig,
   optionText?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
-  iconColor?: mozInitialEtcgjquu,
+  iconColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSINGLESELECTV2SmMenuFooterConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  backgroundColor?: mozInitialEtcgjquu,
-  borderTop?: mozInitialEtc1yz1q,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensSINGLESELECTV2SmMenuConfig = {
   content?: contextComponentTokensSINGLESELECTV2SmMenuContentConfig,
@@ -4883,17 +4883,17 @@ type contextComponentTokensSINGLESELECTV2SmMenuConfig = {
   footer?: contextComponentTokensSINGLESELECTV2SmMenuFooterConfig,
 }
 type contextComponentTokensSINGLESELECTV2SmMobilePanelHeaderConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  borderBottom?: mozInitialEtc1yz1q,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensSINGLESELECTV2SmMobilePanelConfig = {
   header?: contextComponentTokensSINGLESELECTV2SmMobilePanelHeaderConfig,
 }
 type contextComponentTokensSINGLESELECTV2SmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensMULTISELECTSmLabelConfig,
   subLabel?: contextComponentTokensMULTISELECTSmLabelConfig,
   hintText?: contextComponentTokensMULTISELECTSmLabelConfig,
@@ -4908,13 +4908,13 @@ type contextComponentTokensSINGLESELECTV2Config = {
   lg?: contextComponentTokensSINGLESELECTV2SmConfig,
 }
 type contextComponentTokensMULTISELECTV2SmTriggerSelectionTagContainerCountConfig = {
-  color?: mozInitialEtcgjquu,
-  backgroundColor?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensMULTISELECTV2SmTriggerSelectionTagContainerConfig = {
   count?: contextComponentTokensMULTISELECTV2SmTriggerSelectionTagContainerCountConfig,
@@ -4923,26 +4923,26 @@ type contextComponentTokensMULTISELECTV2SmTriggerSelectionTagContainerConfig = {
 type contextComponentTokensMULTISELECTV2SmTriggerSelectionTagConfig = {
   container?: contextComponentTokensMULTISELECTV2SmTriggerSelectionTagContainerConfig,
   @as("no-container") noContainer?: contextComponentTokensMULTISELECTV2SmTriggerSelectionTagContainerConfig,
-  marginLeft?: mozInitialEtcrldf7,
-  borderRadius?: mozInitialEtcp2j1f,
+  marginLeft?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensMULTISELECTV2SmTriggerChevronConfig = {
-  gap?: mozInitialEtchhntk,
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
   iconSize?: float,
 }
 type contextComponentTokensMULTISELECTV2SmTriggerClearButtonConfig = {
   backgroundColor?: contextComponentTokensMULTISELECTSmTriggerBackgroundColorContainerConfig,
   outline?: contextComponentTokensMULTISELECTSmTriggerOutlineContainerConfig,
-  color?: mozInitialEtcgjquu,
-  width?: mozInitialEtc1wbzz,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensMULTISELECTV2SmTriggerFloatingLabelConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensMULTISELECTV2SmTriggerConfig = {
   height?: contextComponentTokensMULTISELECTSmTriggerHeightConfig,
@@ -4960,48 +4960,48 @@ type contextComponentTokensMULTISELECTV2SmTriggerConfig = {
   selectedValue?: contextComponentTokensMODALSmHeaderTextTitleConfig,
 }
 type contextComponentTokensMULTISELECTV2SmMenuScrollConfig = {
-  height?: mozInitialEtc1avg4,
-  maxHeight?: mozInitialEtc1x0av,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
 }
 type contextComponentTokensMULTISELECTV2SmMenuHeaderConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  borderBottom?: mozInitialEtc1yz1q,
-  selectAllRowPaddingLeft?: mozInitialEtcp2j1f,
-  selectAllRowPaddingRight?: mozInitialEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  selectAllRowPaddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  selectAllRowPaddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensMULTISELECTV2SmMenuSelectAllConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  borderRadius?: mozInitialEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensMULTISELECTV2SmMenuActionsConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
-  backgroundColor?: mozInitialEtcgjquu,
-  borderTop?: mozInitialEtc1yz1q,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensMULTISELECTV2SmMenuItemOptionsLabelConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   color?: contextComponentTokensMENUSmItemBackgroundColorDefaultEnabledConfig,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensMULTISELECTV2SmMenuItemConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  margin?: mozInitialEtcrldf7,
-  borderRadius?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  margin?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   backgroundColor?: contextComponentTokensMENUSmItemBackgroundColorDefaultEnabledConfig,
   optionsLabel?: contextComponentTokensMULTISELECTV2SmMenuItemOptionsLabelConfig,
   option?: contextComponentTokensMULTISELECTSmLabelConfig,
@@ -5009,11 +5009,11 @@ type contextComponentTokensMULTISELECTV2SmMenuItemConfig = {
   seperator?: contextComponentTokensMULTISELECTSmMenuItemSeperatorConfig,
 }
 type contextComponentTokensMULTISELECTV2SmMenuConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   padding?: contextComponentTokensSINGLESELECTV2SmTriggerPaddingConfig,
-  minWidth?: mozInitialEtc1owcx,
+  minWidth?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
   scroll?: contextComponentTokensMULTISELECTV2SmMenuScrollConfig,
   header?: contextComponentTokensMULTISELECTV2SmMenuHeaderConfig,
   selectAll?: contextComponentTokensMULTISELECTV2SmMenuSelectAllConfig,
@@ -5022,31 +5022,31 @@ type contextComponentTokensMULTISELECTV2SmMenuConfig = {
   item?: contextComponentTokensMULTISELECTV2SmMenuItemConfig,
 }
 type contextComponentTokensMULTISELECTV2SmSubMenuTriggerConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  margin?: mozInitialEtcrldf7,
-  borderRadius?: mozInitialEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  margin?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensMULTISELECTV2SmSubMenuContentConfig = {
-  borderRadius?: mozInitialEtcp2j1f,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensMULTISELECTV2SmSubMenuConfig = {
   trigger?: contextComponentTokensMULTISELECTV2SmSubMenuTriggerConfig,
   content?: contextComponentTokensMULTISELECTV2SmSubMenuContentConfig,
 }
 type contextComponentTokensMULTISELECTV2SmDrawerSearchConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  marginTop?: mozInitialEtcrldf7,
-  marginBottom?: mozInitialEtcrldf7,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  marginTop?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  marginBottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensMULTISELECTV2SmDrawerConfig = {
   header?: contextComponentTokensSINGLESELECTV2SmMobilePanelHeaderConfig,
@@ -5054,7 +5054,7 @@ type contextComponentTokensMULTISELECTV2SmDrawerConfig = {
   content?: contextComponentTokensRADIOSmGroupConfig,
 }
 type contextComponentTokensMULTISELECTV2SmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensMULTISELECTSmLabelConfig,
   subLabel?: contextComponentTokensMULTISELECTSmLabelConfig,
   hintText?: contextComponentTokensMULTISELECTSmLabelConfig,
@@ -5070,42 +5070,42 @@ type contextComponentTokensMULTISELECTV2Config = {
   lg?: contextComponentTokensMULTISELECTV2SmConfig,
 }
 type contextComponentTokensAVATARV2SmContainerWidthConfig = {
-  sm?: mozInitialEtc1wbzz,
-  regular?: mozInitialEtc1wbzz,
-  md?: mozInitialEtc1wbzz,
-  lg?: mozInitialEtc1wbzz,
-  xl?: mozInitialEtc1wbzz,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  regular?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  md?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  xl?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensAVATARV2SmContainerHeightConfig = {
-  sm?: mozInitialEtc1avg4,
-  regular?: mozInitialEtc1avg4,
-  md?: mozInitialEtc1avg4,
-  lg?: mozInitialEtc1avg4,
-  xl?: mozInitialEtc1avg4,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  regular?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  md?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  xl?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
 }
 type contextComponentTokensAVATARV2SmContainerImageConfig = {
-  border?: mozInitialEtc1yz1q,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensAVATARV2SmContainerFallbackTextConfig = {
-  border?: mozInitialEtc1yz1q,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
   fontSize?: contextComponentTokensAVATARSmTextFontSizeConfig,
   fontWeight?: contextComponentTokensAVATARSmTextFontWeightConfig,
   lineHeight?: contextComponentTokensAVATARSmTextFontWeightConfig,
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensAVATARV2SmContainerStatusBorderConfig = {
-  sm?: mozInitialEtc1yz1q,
-  regular?: mozInitialEtc1yz1q,
-  md?: mozInitialEtc1yz1q,
-  lg?: mozInitialEtc1yz1q,
-  xl?: mozInitialEtc1yz1q,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  regular?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  md?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  xl?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensAVATARV2SmContainerStatusBackgroundColorConfig = {
-  none?: mozInitialEtcgjquu,
-  online?: mozInitialEtcgjquu,
-  offline?: mozInitialEtcgjquu,
-  away?: mozInitialEtcgjquu,
-  busy?: mozInitialEtcgjquu,
+  none?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  online?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  offline?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  away?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  busy?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensAVATARV2SmContainerStatusPositionConfig = {
   circular?: contextComponentTokensAVATARSmTextFontWeightConfig,
@@ -5115,13 +5115,13 @@ type contextComponentTokensAVATARV2SmContainerStatusConfig = {
   width?: contextComponentTokensAVATARV2SmContainerWidthConfig,
   height?: contextComponentTokensAVATARV2SmContainerHeightConfig,
   border?: contextComponentTokensAVATARV2SmContainerStatusBorderConfig,
-  borderRadius?: mozInitialEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   backgroundColor?: contextComponentTokensAVATARV2SmContainerStatusBackgroundColorConfig,
-  boxShadow?: mozInitialEtcz3a4s,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   position?: contextComponentTokensAVATARV2SmContainerStatusPositionConfig,
 }
 type contextComponentTokensAVATARV2SmContainerConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   width?: contextComponentTokensAVATARV2SmContainerWidthConfig,
   height?: contextComponentTokensAVATARV2SmContainerHeightConfig,
   borderRadius?: contextComponentTokensAVATARSmContainerBorderRadiusConfig,
@@ -5130,11 +5130,11 @@ type contextComponentTokensAVATARV2SmContainerConfig = {
   status?: contextComponentTokensAVATARV2SmContainerStatusConfig,
 }
 type contextComponentTokensAVATARV2SmSlotConfig = {
-  height?: mozInitialEtc1avg4,
-  width?: mozInitialEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensAVATARV2SmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   container?: contextComponentTokensAVATARV2SmContainerConfig,
   slot?: contextComponentTokensAVATARV2SmSlotConfig,
 }
@@ -5143,17 +5143,17 @@ type contextComponentTokensAVATARV2Config = {
   lg?: contextComponentTokensAVATARV2SmConfig,
 }
 type contextComponentTokensTEXTINPUTV2SmInputContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   placeholder?: contextComponentTokensSWITCHV2SmContentSubLabelConfig,
   inputText?: contextComponentTokensTEXTAREAV2SmTopContainerLabelConfig,
   borderRadius?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
-  boxShadow?: mozInitialEtcz3a4s,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   padding?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingConfig,
   border?: contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig,
   backgroundColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
 }
 type contextComponentTokensTEXTINPUTV2SmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   topContainer?: contextComponentTokensTEXTAREAV2SmTopContainerConfig,
   inputContainer?: contextComponentTokensTEXTINPUTV2SmInputContainerConfig,
   bottomContainer?: contextComponentTokensTEXTAREAV2SmBottomContainerConfig,
@@ -5164,37 +5164,37 @@ type contextComponentTokensTEXTINPUTV2Config = {
 }
 type contextComponentTokensCHARTSV2SmHeaderConfig = {
   padding?: contextComponentTokensTABSSmPaddingSmBoxedConfig,
-  backgroundColor?: mozInitialEtcgjquu,
-  borderBottom?: mozInitialEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensCHARTSV2SmLegendsLegendItemShapeConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  borderRadius?: mozInitialEtcp2j1f,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensCHARTSV2SmLegendsLegendItemTextSeparatorConfig = {
-  color?: mozInitialEtcgjquu,
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
 }
 type contextComponentTokensCHARTSV2SmLegendsLegendItemTextConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   name?: contextComponentTokensCARDV2SmHeaderEyebrowConfig,
   value?: contextComponentTokensCARDV2SmHeaderEyebrowConfig,
   separator?: contextComponentTokensCHARTSV2SmLegendsLegendItemTextSeparatorConfig,
 }
 type contextComponentTokensCHARTSV2SmLegendsLegendItemConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   shape?: contextComponentTokensCHARTSV2SmLegendsLegendItemShapeConfig,
   text?: contextComponentTokensCHARTSV2SmLegendsLegendItemTextConfig,
 }
 type contextComponentTokensCHARTSV2SmLegendsConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   legendItem?: contextComponentTokensCHARTSV2SmLegendsLegendItemConfig,
 }
 type contextComponentTokensCHARTSV2SmChartXAxisTitleConfig = {
-  fontSize?: mozInitialEtcly7v7,
-  color?: mozInitialEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
 }
@@ -5205,15 +5205,15 @@ type contextComponentTokensCHARTSV2SmChartXAxisConfig = {
   gridLine?: contextComponentTokensTOPBARV2SmSeparatorConfig,
 }
 type contextComponentTokensCHARTSV2SmChartConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   xAxis?: contextComponentTokensCHARTSV2SmChartXAxisConfig,
   yAxis?: contextComponentTokensCHARTSV2SmChartXAxisConfig,
 }
 type contextComponentTokensCHARTSV2SmConfig = {
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
-  backgroundColor?: mozInitialEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   header?: contextComponentTokensCHARTSV2SmHeaderConfig,
   legends?: contextComponentTokensCHARTSV2SmLegendsConfig,
   chart?: contextComponentTokensCHARTSV2SmChartConfig,
@@ -5245,13 +5245,13 @@ type contextComponentTokensCHECKBOXV2SmCheckboxConfig = {
   backgroundColor?: contextComponentTokensCHECKBOXV2SmCheckboxBackgroundColorConfig,
   borderRadius?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
   border?: contextComponentTokensCHECKBOXV2SmCheckboxBorderConfig,
-  outline?: mozInitialEtcsclw8,
-  outlineOffset?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
+  outline?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  outlineOffset?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   icon?: contextComponentTokensCHECKBOXV2SmCheckboxIconConfig,
 }
 type contextComponentTokensCHECKBOXV2SmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   checkbox?: contextComponentTokensCHECKBOXV2SmCheckboxConfig,
   content?: contextComponentTokensSWITCHV2SmContentConfig,
 }
@@ -5260,18 +5260,18 @@ type contextComponentTokensCHECKBOXV2Config = {
   lg?: contextComponentTokensCHECKBOXV2SmConfig,
 }
 type contextComponentTokensSTATCARDV2SmTopContainerDataContainerTitleContainerTitleConfig = {
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
 }
 type contextComponentTokensSTATCARDV2SmTopContainerDataContainerTitleContainerHelpIconConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
   color?: string,  // ⚪ loose — was `{ default?: Globals | NamedColor | "transparent" | SystemColor | DeprecatedSystemColor | "currentColor" | { re`
 }
 type contextComponentTokensSTATCARDV2SmTopContainerDataContainerTitleContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   title?: contextComponentTokensSTATCARDV2SmTopContainerDataContainerTitleContainerTitleConfig,
   helpIcon?: contextComponentTokensSTATCARDV2SmTopContainerDataContainerTitleContainerHelpIconConfig,
 }
@@ -5281,38 +5281,38 @@ type contextComponentTokensSTATCARDV2SmTopContainerDataContainerStatsContainerVa
   number?: contextComponentTokensSTATCARDV2SmTopContainerDataContainerTitleContainerTitleConfig,
 }
 type contextComponentTokensSTATCARDV2SmTopContainerDataContainerStatsContainerChangeContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   change?: string,  // ⚪ loose — was `{ fontSize?: number | Globals | "math" | AbsoluteSize | "larger" | "smaller" | { readonly [x: number]: string;`
   arrow?: string,  // ⚪ loose — was `{ width?: number | Globals | "-moz-fit-content" | "-moz-max-content" | "-moz-min-content" | "-webkit-fit-conte`
 }
 type contextComponentTokensSTATCARDV2SmTopContainerDataContainerStatsContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   value?: contextComponentTokensSTATCARDV2SmTopContainerDataContainerStatsContainerValueConfig,
   changeContainer?: contextComponentTokensSTATCARDV2SmTopContainerDataContainerStatsContainerChangeContainerConfig,
 }
 type contextComponentTokensSTATCARDV2SmTopContainerDataContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   titleContainer?: contextComponentTokensSTATCARDV2SmTopContainerDataContainerTitleContainerConfig,
   statsContainer?: contextComponentTokensSTATCARDV2SmTopContainerDataContainerStatsContainerConfig,
   subtitle?: contextComponentTokensSTATCARDV2SmTopContainerDataContainerTitleContainerTitleConfig,
 }
 type contextComponentTokensSTATCARDV2SmTopContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   dataContainer?: contextComponentTokensSTATCARDV2SmTopContainerDataContainerConfig,
 }
 type contextComponentTokensSTATCARDV2SmConfig = {
-  height?: mozInitialEtc1avg4,
-  width?: mozInitialEtc1wbzz,
-  maxWidth?: mozInitialEtc1x0av,
-  minWidth?: mozInitialEtc1owcx,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
-  backgroundColor?: mozInitialEtcgjquu,
-  boxShadow?: mozInitialEtcz3a4s,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  minWidth?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   topContainer?: contextComponentTokensSTATCARDV2SmTopContainerConfig,
 }
 type contextComponentTokensSTATCARDV2Config = {
@@ -5320,18 +5320,18 @@ type contextComponentTokensSTATCARDV2Config = {
   lg?: contextComponentTokensSTATCARDV2SmConfig,
 }
 type contextComponentTokensTOOLTIPV2SmGapConfig = {
-  sm?: mozInitialEtchhntk,
-  md?: mozInitialEtchhntk,
-  lg?: mozInitialEtchhntk,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  md?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensTOOLTIPV2SmTextConfig = {
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   lineHeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
 }
 type contextComponentTokensTOOLTIPV2SmConfig = {
-  background?: mozInitialEtcgjquu,
+  background?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   borderRadius?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
   maxWidth?: contextComponentTokensBUTTONSmSlotMaxHeightConfig,
   padding?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
@@ -5352,9 +5352,9 @@ type contextComponentTokensRADIOV2SmRadioIndicatorConfig = {
   inactive?: contextComponentTokensRADIOV2SmRadioIndicatorActiveConfig,
 }
 type contextComponentTokensRADIOV2SmRadioActiveIndicatorActiveBackgroundColorConfig = {
-  default?: mozInitialEtcgjquu,
-  focus?: mozInitialEtcgjquu,
-  disabled?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensRADIOV2SmRadioActiveIndicatorActiveConfig = {
   backgroundColor?: contextComponentTokensRADIOV2SmRadioActiveIndicatorActiveBackgroundColorConfig,
@@ -5380,7 +5380,7 @@ type contextComponentTokensRADIOV2SmRadioConfig = {
   borderWidth?: contextComponentTokensRADIOV2SmRadioBorderWidthConfig,
 }
 type contextComponentTokensRADIOV2SmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   group?: contextComponentTokensRADIOSmGroupConfig,
   radio?: contextComponentTokensRADIOV2SmRadioConfig,
   content?: contextComponentTokensSWITCHV2SmContentConfig,
@@ -5396,14 +5396,14 @@ type contextComponentTokensPOPOVERV2SmPaddingConfig = {
   bottom?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
 }
 type contextComponentTokensPOPOVERV2SmTopContainerHeadingConfig = {
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
   lineHeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
   @as("IconSize") iconSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
 }
 type contextComponentTokensPOPOVERV2SmTopContainerDescriptionConfig = {
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
   lineHeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
@@ -5417,8 +5417,8 @@ type contextComponentTokensPOPOVERV2SmBottomContainerConfig = {
   gap?: contextComponentTokensTOOLTIPV2SmGapConfig,
 }
 type contextComponentTokensPOPOVERV2SmConfig = {
-  background?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
+  background?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
   shadow?: contextComponentTokensPOPOVERSmShadowConfig,
   gap?: contextComponentTokensTOOLTIPV2SmGapConfig,
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
@@ -5432,79 +5432,79 @@ type contextComponentTokensPOPOVERV2Config = {
   lg?: contextComponentTokensPOPOVERV2SmConfig,
 }
 type contextComponentTokensSIDEBARV2SmContainerHoverPreviewConfig = {
-  boxShadow?: mozInitialEtcz3a4s,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensSIDEBARV2SmContainerConfig = {
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
-  backgroundColor?: mozInitialEtcgjquu,
-  borderRight?: mozInitialEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderRight?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
   hoverPreview?: contextComponentTokensSIDEBARV2SmContainerHoverPreviewConfig,
   maxWidth?: contextComponentTokensSIDEBARSmMaxWidthConfig,
 }
 type contextComponentTokensSIDEBARV2SmLeftPanelConfig = {
-  width?: mozInitialEtc1wbzz,
-  backgroundColor?: mozInitialEtcgjquu,
-  borderRight?: mozInitialEtc1yz1q,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderRight?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   item?: contextComponentTokensSIDEBARSmLeftPanelItemConfig,
 }
 type contextComponentTokensSIDEBARV2SmHeaderToggleButtonConfig = {
-  borderRadius?: mozInitialEtcp2j1f,
-  padding?: mozInitialEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   backgroundColor?: contextComponentTokensBREADCRUMBSmItemTextColorConfig,
-  width?: mozInitialEtc1wbzz,
-  iconColor?: mozInitialEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  iconColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSIDEBARV2SmHeaderConfig = {
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
-  backgroundColor?: mozInitialEtcgjquu,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
-  borderBottom?: mozInitialEtc1yz1q,
-  borderBottomWidth?: mozInitialEtcrrza2,
-  scrolledBorderColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderBottomWidth?: mozInitialOrInheritOrInitialOrRevertEtcrrza2,
+  scrolledBorderColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   toggleButton?: contextComponentTokensSIDEBARV2SmHeaderToggleButtonConfig,
 }
 type contextComponentTokensSIDEBARV2SmDirectoryConfig = {
-  gap?: mozInitialEtchhntk,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensSIDEBARV2SmFooterConfig = {
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
-  backgroundColor?: mozInitialEtcgjquu,
-  gap?: mozInitialEtchhntk,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  borderTop?: mozInitialEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensSIDEBARV2SmSecondarySidebarItemConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  borderRadius?: mozInitialEtcp2j1f,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   border?: contextComponentTokensSIDEBARSmLeftPanelItemBorderConfig,
   backgroundColor?: contextComponentTokensBREADCRUMBSmItemTextColorConfig,
 }
 type contextComponentTokensSIDEBARV2SmSecondarySidebarConfig = {
-  width?: mozInitialEtc1wbzz,
-  borderRight?: mozInitialEtc1yz1q,
-  backgroundColor?: mozInitialEtcgjquu,
-  gap?: mozInitialEtchhntk,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  borderRight?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   item?: contextComponentTokensSIDEBARV2SmSecondarySidebarItemConfig,
 }
 type contextComponentTokensSIDEBARV2SmConfig = {
@@ -5521,17 +5521,17 @@ type contextComponentTokensSIDEBARV2Config = {
   lg?: contextComponentTokensSIDEBARV2SmConfig,
 }
 type contextComponentTokensTABSV2SmTabListActiveIndicatorPositionConfig = {
-  bottom?: mozInitialEtcrldf7,
+  bottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensTABSV2SmTabListActiveIndicatorConfig = {
-  height?: mozInitialEtc1avg4,
-  color?: mozInitialEtcgjquu,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   position?: contextComponentTokensTABSV2SmTabListActiveIndicatorPositionConfig,
-  transition?: mozInitialEtcydel2,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
 }
 type contextComponentTokensTABSV2SmTabListStickyHeaderConfig = {
-  boxShadow?: mozInitialEtcz3a4s,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   zIndex?: string,  // ⚪ loose — was `Globals | "auto" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; i`
 }
 type contextComponentTokensTABSV2SmTabListTriggerPaddingSmConfig = {
@@ -5551,12 +5551,12 @@ type contextComponentTokensTABSV2SmTabListTriggerTextConfig = {
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
 }
 type contextComponentTokensTABSV2SmTabListTriggerCloseButtonConfig = {
-  width?: mozInitialEtc1wbzz,
-  borderRadius?: mozInitialEtcp2j1f,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   backgroundColor?: contextComponentTokensTABSSmBackgroundColorBoxedConfig,
 }
 type contextComponentTokensTABSV2SmTabListTriggerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   icon?: contextComponentTokensACCORDIONSmTriggerSlotConfig,
   backgroundColor?: contextComponentTokensTABSSmBackgroundColorConfig,
   borderRadius?: contextComponentTokensTABSSmBorderRadiusConfig,
@@ -5564,10 +5564,10 @@ type contextComponentTokensTABSV2SmTabListTriggerConfig = {
   padding?: contextComponentTokensTABSV2SmTabListTriggerPaddingConfig,
   text?: contextComponentTokensTABSV2SmTabListTriggerTextConfig,
   closeButton?: contextComponentTokensTABSV2SmTabListTriggerCloseButtonConfig,
-  transition?: mozInitialEtcydel2,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
 }
 type contextComponentTokensTABSV2SmTabListConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   backgroundColor?: contextComponentTokensTABSSmContainerBackgroundColorConfig,
   borderRadius?: contextComponentTokensTABSSmBorderRadiusConfig,
   padding?: contextComponentTokensTABSSmPaddingConfig,
@@ -5577,8 +5577,8 @@ type contextComponentTokensTABSV2SmTabListConfig = {
   trigger?: contextComponentTokensTABSV2SmTabListTriggerConfig,
 }
 type contextComponentTokensTABSV2SmConfig = {
-  width?: mozInitialEtc1wbzz,
-  outline?: mozInitialEtcsclw8,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  outline?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
   tabList?: contextComponentTokensTABSV2SmTabListConfig,
 }
 type contextComponentTokensTABSV2Config = {
@@ -5586,12 +5586,12 @@ type contextComponentTokensTABSV2Config = {
   lg?: contextComponentTokensTABSV2SmConfig,
 }
 type contextComponentTokensBREADCRUMBV2SmEllipsisConfig = {
-  color?: mozInitialEtcgjquu,
-  borderRadius?: mozInitialEtcp2j1f,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   size?: float,
 }
 type contextComponentTokensBREADCRUMBV2SmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   item?: contextComponentTokensBREADCRUMBSmItemConfig,
   ellipsis?: contextComponentTokensBREADCRUMBV2SmEllipsisConfig,
   separator?: contextComponentTokensSEARCHINPUTSmRequiredConfig,
@@ -5601,24 +5601,24 @@ type contextComponentTokensBREADCRUMBV2Config = {
   lg?: contextComponentTokensBREADCRUMBV2SmConfig,
 }
 type contextComponentTokensCODEEDITORV2SmHeaderConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  borderBottom?: mozInitialEtc1yz1q,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  gap?: mozInitialEtchhntk,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   icon?: contextComponentTokensMENUV2SmSearchIconConfig,
   text?: contextComponentTokensCARDV2SmHeaderEyebrowConfig,
 }
 type contextComponentTokensCODEEDITORV2SmBodyCodeConfig = {
-  fontFamily?: mozInitialEtc12oc1,
-  fontSize?: mozInitialEtcly7v7,
+  fontFamily?: mozInitialOrInheritOrInitialOrRevertEtc12oc1,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensCODEEDITORV2SmBodySyntaxConfig = {
   keyword?: contextComponentTokensSEARCHINPUTSmRequiredConfig,
@@ -5631,21 +5631,21 @@ type contextComponentTokensCODEEDITORV2SmBodySyntaxConfig = {
   text?: contextComponentTokensSEARCHINPUTSmRequiredConfig,
 }
 type contextComponentTokensCODEEDITORV2SmBodyConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  backgroundColor?: mozInitialEtcgjquu,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   gutter?: contextComponentTokensCODEBLOCKSmBodyGutterConfig,
   code?: contextComponentTokensCODEEDITORV2SmBodyCodeConfig,
   highlightedLine?: contextComponentTokensCODEBLOCKSmBodyHighlightedLineConfig,
   syntax?: contextComponentTokensCODEEDITORV2SmBodySyntaxConfig,
 }
 type contextComponentTokensCODEEDITORV2SmConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
-  boxShadow?: mozInitialEtcz3a4s,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   theme?: contextComponentTokensCODEEDITORV2SmTheme,
   header?: contextComponentTokensCODEEDITORV2SmHeaderConfig,
   body?: contextComponentTokensCODEEDITORV2SmBodyConfig,
@@ -5655,12 +5655,12 @@ type contextComponentTokensCODEEDITORV2Config = {
   lg?: contextComponentTokensCODEEDITORV2SmConfig,
 }
 type contextComponentTokensPROGRESSBARV2SmLinearEmptyBackgroundImageConfig = {
-  solid?: mozInitialEtcz3a4s,
-  segmented?: mozInitialEtcz3a4s,
+  solid?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  segmented?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
 }
 type contextComponentTokensPROGRESSBARV2SmLinearEmptyBackgroundSizeConfig = {
-  solid?: mozInitialEtcyzzvl,
-  segmented?: mozInitialEtcyzzvl,
+  solid?: mozInitialOrInheritOrInitialOrRevertEtcyzzvl,
+  segmented?: mozInitialOrInheritOrInitialOrRevertEtcyzzvl,
 }
 type contextComponentTokensPROGRESSBARV2SmLinearEmptyConfig = {
   backgroundColor?: contextComponentTokensPROGRESSBARSmLinearFillBackgroundColorConfig,
@@ -5672,7 +5672,7 @@ type contextComponentTokensPROGRESSBARV2SmLinearConfig = {
   fill?: contextComponentTokensPROGRESSBARSmLinearFillConfig,
   empty?: contextComponentTokensPROGRESSBARV2SmLinearEmptyConfig,
   borderRadius?: contextComponentTokensPROGRESSBARSmLinearFillBorderRadiusConfig,
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensPROGRESSBARV2SmCircularConfig = {
   size?: contextComponentTokensTEXTAREAV2SmTopContainerHelpIconWidthConfig,
@@ -5693,22 +5693,22 @@ type contextComponentTokensPROGRESSBARV2Config = {
   lg?: contextComponentTokensPROGRESSBARV2SmConfig,
 }
 type contextComponentTokensMULTIVALUEINPUTV2SmInputContainerPlaceholderColorConfig = {
-  default?: mozInitialEtcgjquu,
-  focus?: mozInitialEtcgjquu,
-  hover?: mozInitialEtcgjquu,
-  error?: mozInitialEtcgjquu,
-  disabled?: mozInitialEtcgjquu,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensMULTIVALUEINPUTV2SmInputContainerSlotAlignTopConfig = {
-  withTags?: mozInitialEtcrldf7,
-  withoutTags?: mozInitialEtcrldf7,
+  withTags?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  withoutTags?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensMULTIVALUEINPUTV2SmInputContainerConfig = {
   offSet?: float,
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
-  gap?: mozInitialEtchhntk,
-  borderRadius?: mozInitialEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   boxShadow?: contextComponentTokensMULTIVALUEINPUTSmInputContainerBoxShadowConfig,
   paddingTop?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
   paddingRight?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
@@ -5724,8 +5724,8 @@ type contextComponentTokensMULTIVALUEINPUTV2SmInputContainerConfig = {
   slotAlignTop?: contextComponentTokensMULTIVALUEINPUTV2SmInputContainerSlotAlignTopConfig,
 }
 type contextComponentTokensMULTIVALUEINPUTV2SmConfig = {
-  gap?: mozInitialEtchhntk,
-  borderRadius?: mozInitialEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   topContainer?: contextComponentTokensTEXTAREAV2SmTopContainerConfig,
   inputContainer?: contextComponentTokensMULTIVALUEINPUTV2SmInputContainerConfig,
   bottomContainer?: contextComponentTokensTEXTAREAV2SmBottomContainerConfig,
@@ -5735,9 +5735,9 @@ type contextComponentTokensMULTIVALUEINPUTV2Config = {
   lg?: contextComponentTokensMULTIVALUEINPUTV2SmConfig,
 }
 type contextComponentTokensNUMBERINPUTV2SmInputContainerSlotLeftMarginConfig = {
-  sm?: mozInitialEtcrldf7,
-  md?: mozInitialEtcrldf7,
-  lg?: mozInitialEtcrldf7,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  md?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensNUMBERINPUTV2SmInputContainerSlotLeftConfig = {
   width?: contextComponentTokensTEXTAREAV2SmTopContainerHelpIconWidthConfig,
@@ -5754,7 +5754,7 @@ type contextComponentTokensNUMBERINPUTV2SmInputContainerConfig = {
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
   borderRadius?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
-  boxShadow?: mozInitialEtcz3a4s,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   paddingTop?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
   paddingRight?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
   paddingBottom?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
@@ -5781,7 +5781,7 @@ type contextComponentTokensNUMBERINPUTV2SmFloatingLabelsConfig = {
   required?: contextComponentTokensSEARCHINPUTSmRequiredConfig,
 }
 type contextComponentTokensNUMBERINPUTV2SmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   topContainer?: contextComponentTokensTEXTAREAV2SmTopContainerConfig,
   inputContainer?: contextComponentTokensNUMBERINPUTV2SmInputContainerConfig,
   unit?: contextComponentTokensNUMBERINPUTV2SmUnitConfig,
@@ -5793,21 +5793,21 @@ type contextComponentTokensNUMBERINPUTV2Config = {
   lg?: contextComponentTokensNUMBERINPUTV2SmConfig,
 }
 type contextComponentTokensOTPINPUTV2SmInputContainerInputConfig = {
-  height?: mozInitialEtc1avg4,
-  width?: mozInitialEtc1wbzz,
-  fontSize?: mozInitialEtcly7v7,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
-  borderRadius?: mozInitialEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   border?: contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig,
   backgroundColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
 }
 type contextComponentTokensOTPINPUTV2SmInputContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   input?: contextComponentTokensOTPINPUTV2SmInputContainerInputConfig,
 }
 type contextComponentTokensOTPINPUTV2SmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   topContainer?: contextComponentTokensTEXTAREAV2SmTopContainerConfig,
   inputContainer?: contextComponentTokensOTPINPUTV2SmInputContainerConfig,
   bottomContainer?: contextComponentTokensTEXTAREAV2SmBottomContainerConfig,
@@ -5819,12 +5819,12 @@ type contextComponentTokensOTPINPUTV2Config = {
 type contextComponentTokensBADGESmDotConfig = {
   width?: contextComponentTokensTEXTAREAV2SmTopContainerHelpIconWidthConfig,
   height?: contextComponentTokensPROGRESSBARSmLinearHeightConfig,
-  borderRadius?: mozInitialEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensBADGESmPillMinWidthConfig = {
-  sm?: mozInitialEtc1owcx,
-  md?: mozInitialEtc1owcx,
-  lg?: mozInitialEtc1owcx,
+  sm?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
+  md?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
+  lg?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
 }
 type contextComponentTokensBADGESmPillConfig = {
   minWidth?: contextComponentTokensBADGESmPillMinWidthConfig,
@@ -5834,14 +5834,14 @@ type contextComponentTokensBADGESmPillConfig = {
   borderRadius?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
 }
 type contextComponentTokensBADGESmBackgroundColorConfig = {
-  alert?: mozInitialEtcgjquu,
-  neutral?: mozInitialEtcgjquu,
-  warning?: mozInitialEtcgjquu,
-  primary?: mozInitialEtcgjquu,
-  success?: mozInitialEtcgjquu,
+  alert?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  neutral?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  warning?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  primary?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  success?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensBADGESmTextConfig = {
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   lineHeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontWeightConfig,
@@ -5861,20 +5861,20 @@ type contextComponentTokensBADGEConfig = {
   lg?: contextComponentTokensBADGESmConfig,
 }
 type contextComponentTokensSEARCHINPUTV2SmInputContainerSlotLeftConfig = {
-  top?: mozInitialEtcrldf7,
-  left?: mozInitialEtcrldf7,
-  bottom?: mozInitialEtcrldf7,
+  top?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  left?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  bottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensSEARCHINPUTV2SmInputContainerSlotRightConfig = {
-  top?: mozInitialEtcrldf7,
-  right?: mozInitialEtcrldf7,
-  bottom?: mozInitialEtcrldf7,
+  top?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  right?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  bottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensSEARCHINPUTV2SmInputContainerSlotConfig = {
   left?: contextComponentTokensSEARCHINPUTV2SmInputContainerSlotLeftConfig,
   right?: contextComponentTokensSEARCHINPUTV2SmInputContainerSlotRightConfig,
-  transition?: mozInitialEtcydel2,
-  transform?: mozInitialEtcz3a4s,
+  transition?: mozInitialOrInheritOrInitialOrRevertEtcydel2,
+  transform?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
 }
 type contextComponentTokensSEARCHINPUTV2SmInputContainerConfig = {
@@ -5882,18 +5882,18 @@ type contextComponentTokensSEARCHINPUTV2SmInputContainerConfig = {
   paddingRight?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
   paddingBottom?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
   paddingLeft?: contextComponentTokensTEXTAREAV2SmInputContainerPaddingTopConfig,
-  borderRadius?: mozInitialEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   borderBottom?: contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig,
-  outline?: mozInitialEtcsclw8,
-  boxShadow?: mozInitialEtcz3a4s,
+  outline?: mozInitialOrInheritOrInitialOrRevertEtcsclw8,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   color?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
   placeholderColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   slot?: contextComponentTokensSEARCHINPUTV2SmInputContainerSlotConfig,
 }
 type contextComponentTokensSEARCHINPUTV2SmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   label?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   subLabel?: contextComponentTokensSEARCHINPUTSmLabelConfig,
   hintText?: contextComponentTokensSEARCHINPUTSmLabelConfig,
@@ -5907,51 +5907,51 @@ type contextComponentTokensSEARCHINPUTV2Config = {
   lg?: contextComponentTokensSEARCHINPUTV2SmConfig,
 }
 type contextComponentTokensCHATINPUTV2MOBILEAttachmentButtonDimensionsConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   backgroundColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCHATINPUTV2MOBILEInputContainerBorderRadiusConfig = {
-  default?: mozInitialEtcp2j1f,
-  hover?: mozInitialEtcp2j1f,
-  focus?: mozInitialEtcp2j1f,
-  error?: mozInitialEtcp2j1f,
-  disabled?: mozInitialEtcp2j1f,
+  default?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  hover?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  focus?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensCHATINPUTV2MOBILEInputContainerConfig = {
   border?: contextComponentTokensSEARCHINPUTSmInputContainerBorderBottomConfig,
   borderRadius?: contextComponentTokensCHATINPUTV2MOBILEInputContainerBorderRadiusConfig,
   boxShadow?: contextComponentTokensMULTIVALUEINPUTSmInputContainerBoxShadowConfig,
-  paddingLeft?: mozInitialEtcp2j1f,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   placeholder?: contextComponentTokensSEARCHINPUTSmRequiredConfig,
-  backgroundColor?: mozInitialEtcgjquu,
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  minHeight?: mozInitialEtc96qi2,
-  maxHeight?: mozInitialEtc1x0av,
-  minWidth?: mozInitialEtc1owcx,
-  maxWidth?: mozInitialEtc1x0av,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  minHeight?: mozInitialOrInheritOrInitialOrRevertEtc96qi2,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  minWidth?: mozInitialOrInheritOrInitialOrRevertEtc1owcx,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
 }
 type contextComponentTokensCHATINPUTV2MOBILESecondaryActionConfig = {
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  borderRadius?: mozInitialEtcp2j1f,
-  right?: mozInitialEtcrldf7,
-  bottom?: mozInitialEtcrldf7,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  right?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
+  bottom?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
   backgroundColor?: contextComponentTokensSEARCHINPUTSmLabelColorConfig,
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensCHATINPUTV2MOBILEConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   attachmentButtonDimensions?: contextComponentTokensCHATINPUTV2MOBILEAttachmentButtonDimensionsConfig,
   inputContainer?: contextComponentTokensCHATINPUTV2MOBILEInputContainerConfig,
   secondaryAction?: contextComponentTokensCHATINPUTV2MOBILESecondaryActionConfig,
@@ -5978,18 +5978,18 @@ type contextComponentTokensSTEPPERV2SmContainerConnectorConfig = {
   line?: contextComponentTokensSTEPPERSmConnectorLineActiveDefaultConfig,
 }
 type contextComponentTokensSTEPPERV2SmContainerSubConnectorDotConfig = {
-  border?: mozInitialEtc1yz1q,
-  borderRadius?: mozInitialEtcp2j1f,
-  height?: mozInitialEtc1avg4,
-  width?: mozInitialEtc1wbzz,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensSTEPPERV2SmContainerSubConnectorExpanderConfig = {
   icon?: contextComponentTokensSEARCHINPUTSmRequiredConfig,
-  width?: mozInitialEtc1wbzz,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
 }
 type contextComponentTokensSTEPPERV2SmContainerSubConnectorTextConfig = {
   default?: contextComponentTokensMODALSmHeaderTextTitleConfig,
@@ -6012,7 +6012,7 @@ type contextComponentTokensSTEPPERV2SmContainerDescriptionConfig = {
   text?: contextComponentTokensMODALSmHeaderTextTitleConfig,
 }
 type contextComponentTokensSTEPPERV2SmContainerConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   step?: contextComponentTokensSTEPPERV2SmContainerStepConfig,
   connector?: contextComponentTokensSTEPPERV2SmContainerConnectorConfig,
   subConnector?: contextComponentTokensSTEPPERV2SmContainerSubConnectorConfig,
@@ -6027,51 +6027,51 @@ type contextComponentTokensSTEPPERV2Config = {
   lg?: contextComponentTokensSTEPPERV2SmConfig,
 }
 type contextComponentTokensUPLOADV2SmUploadContainerBorderConfig = {
-  idle?: mozInitialEtc1yz1q,
-  uploading?: mozInitialEtc1yz1q,
-  success?: mozInitialEtc1yz1q,
-  error?: mozInitialEtc1yz1q,
-  disabled?: mozInitialEtc1yz1q,
-  drag_enter?: mozInitialEtc1yz1q,
-  drag_leave?: mozInitialEtc1yz1q,
-  drag_over?: mozInitialEtc1yz1q,
-  drop?: mozInitialEtc1yz1q,
+  idle?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  uploading?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  success?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  error?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  drag_enter?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  drag_leave?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  drag_over?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  drop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensUPLOADV2SmUploadContainerBackgroundColorConfig = {
-  idle?: mozInitialEtcgjquu,
-  uploading?: mozInitialEtcgjquu,
-  success?: mozInitialEtcgjquu,
-  error?: mozInitialEtcgjquu,
-  disabled?: mozInitialEtcgjquu,
-  drag_enter?: mozInitialEtcgjquu,
-  drag_leave?: mozInitialEtcgjquu,
-  drag_over?: mozInitialEtcgjquu,
-  drop?: mozInitialEtcgjquu,
+  idle?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  uploading?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  success?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  error?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  disabled?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  drag_enter?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  drag_leave?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  drag_over?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  drop?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensUPLOADV2SmUploadContainerHeaderConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   title?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
   description?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
   errorText?: contextComponentTokensSEARCHINPUTSmErrorMessageConfig,
 }
 type contextComponentTokensUPLOADV2SmUploadContainerFileTagConfig = {
-  maxWidth?: mozInitialEtc1x0av,
-  gap?: mozInitialEtchhntk,
+  maxWidth?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensUPLOADV2SmUploadContainerConfig = {
-  gap?: mozInitialEtchhntk,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  borderRadius?: mozInitialEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   border?: contextComponentTokensUPLOADV2SmUploadContainerBorderConfig,
   backgroundColor?: contextComponentTokensUPLOADV2SmUploadContainerBackgroundColorConfig,
   header?: contextComponentTokensUPLOADV2SmUploadContainerHeaderConfig,
   fileTag?: contextComponentTokensUPLOADV2SmUploadContainerFileTagConfig,
 }
 type contextComponentTokensUPLOADV2SmConfig = {
-  gap?: mozInitialEtchhntk,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
   topContainer?: contextComponentTokensTEXTAREAV2SmTopContainerConfig,
   uploadContainer?: contextComponentTokensUPLOADV2SmUploadContainerConfig,
   bottomContainer?: contextComponentTokensTEXTAREAV2SmBottomContainerConfig,
@@ -6080,14 +6080,14 @@ type contextComponentTokensUPLOADV2Config = {
   sm?: contextComponentTokensUPLOADV2SmConfig,
   lg?: contextComponentTokensUPLOADV2SmConfig,
 }
-@unboxed type mozInitialEtc2zoye = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneInitialEtc2zoye | @as("normal") Normal | @as("auto") Auto | @as("top") Top | @as("right") RightInitialEtc2zoye | @as("bottom") Bottom | @as("left") LeftInitialEtc2zoye | @as("center") CenterInitialEtc2zoye | @as("border-box") BorderBox | @as("content-box") ContentBox | @as("padding-box") PaddingBox | @as("fill-box") FillBox | @as("stroke-box") StrokeBox | @as("view-box") ViewBox | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
+@unboxed type mozInitialOrInheritOrInitialOrRevertEtc2zoye = @as("-moz-initial") MozInitial | @as("inherit") Inherit | @as("initial") Initial | @as("revert") Revert | @as("revert-layer") RevertLayer | @as("unset") Unset | @as("none") NoneRevertEtc2zoye | @as("normal") Normal | @as("auto") Auto | @as("top") Top | @as("right") RightRevertEtc2zoye | @as("bottom") Bottom | @as("left") LeftRevertEtc2zoye | @as("center") CenterRevertEtc2zoye | @as("border-box") BorderBox | @as("content-box") ContentBox | @as("padding-box") PaddingBox | @as("fill-box") FillBox | @as("stroke-box") StrokeBox | @as("view-box") ViewBox | Num(float) | ContextComponentTokensTAGSSmMinWidthConfig(contextComponentTokensTAGSSmMinWidthConfig)
 type contextComponentTokensMODALV2SmOverlayConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  offset?: mozInitialEtc2zoye,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  offset?: mozInitialOrInheritOrInitialOrRevertEtc2zoye,
 }
 type contextComponentTokensMODALV2SmHeaderTextTitleConfig = {
-  color?: mozInitialEtcgjquu,
-  fontSize?: mozInitialEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
   lineHeight?: string,  // ⚪ loose — was `number | Globals | "normal" | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; con`
 }
@@ -6096,68 +6096,68 @@ type contextComponentTokensMODALV2SmHeaderTextConfig = {
   subtitle?: contextComponentTokensMODALV2SmHeaderTextTitleConfig,
 }
 type contextComponentTokensMODALV2SmHeaderConfig = {
-  gap?: mozInitialEtchhntk,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  maxHeight?: mozInitialEtc1x0av,
-  borderBottom?: mozInitialEtc1yz1q,
-  backgroundColor?: mozInitialEtcgjquu,
-  borderTopLeftRadius?: mozInitialEtcp2j1f,
-  borderTopRightRadius?: mozInitialEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  maxHeight?: mozInitialOrInheritOrInitialOrRevertEtc1x0av,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  borderTopLeftRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderTopRightRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   slot?: contextComponentTokensRADIOSmGroupConfig,
   text?: contextComponentTokensMODALV2SmHeaderTextConfig,
 }
 type contextComponentTokensMODALV2SmDividerConfig = {
-  borderColor?: mozInitialEtcgjquu,
+  borderColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensMODALV2SmSkeletonHeaderConfig = {
-  gap?: mozInitialEtchhntk,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  borderBottom?: mozInitialEtc1yz1q,
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  borderRadius?: mozInitialEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderBottom?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensMODALV2SmSkeletonBodyConfig = {
-  gap?: mozInitialEtchhntk,
-  width?: mozInitialEtc1wbzz,
-  height?: mozInitialEtc1avg4,
-  borderRadius?: mozInitialEtcp2j1f,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
+  width?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
 }
 type contextComponentTokensMODALV2SmSkeletonConfig = {
   header?: contextComponentTokensMODALV2SmSkeletonHeaderConfig,
   body?: contextComponentTokensMODALV2SmSkeletonBodyConfig,
 }
 type contextComponentTokensMODALV2SmBodyConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  backgroundColor?: mozInitialEtcgjquu,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensMODALV2SmFooterConfig = {
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  borderTop?: mozInitialEtc1yz1q,
-  backgroundColor?: mozInitialEtcgjquu,
-  gap?: mozInitialEtchhntk,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  borderTop?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  gap?: mozInitialOrInheritOrInitialOrRevertEtchhntk,
 }
 type contextComponentTokensMODALV2SmConfig = {
-  boxShadow?: mozInitialEtcz3a4s,
-  borderRadius?: mozInitialEtcp2j1f,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
   overlay?: contextComponentTokensMODALV2SmOverlayConfig,
-  paddingTop?: mozInitialEtcp2j1f,
-  paddingRight?: mozInitialEtcp2j1f,
-  paddingBottom?: mozInitialEtcp2j1f,
-  paddingLeft?: mozInitialEtcp2j1f,
-  backgroundColor?: mozInitialEtcgjquu,
+  paddingTop?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingRight?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingBottom?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  paddingLeft?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   header?: contextComponentTokensMODALV2SmHeaderConfig,
   divider?: contextComponentTokensMODALV2SmDividerConfig,
   skeleton?: contextComponentTokensMODALV2SmSkeletonConfig,
@@ -6170,28 +6170,28 @@ type contextComponentTokensMODALV2Config = {
   lg?: contextComponentTokensMODALV2SmConfig,
 }
 type contextComponentTokensSLIDERSmSmConfig = {
-  height?: mozInitialEtc1avg4,
-  trackHeight?: mozInitialEtc1avg4,
-  thumbSize?: mozInitialEtc1wbzz,
-  thumbBorder?: mozInitialEtcrrza2,
+  height?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  trackHeight?: mozInitialOrInheritOrInitialOrRevertEtc1avg4,
+  thumbSize?: mozInitialOrInheritOrInitialOrRevertEtc1wbzz,
+  thumbBorder?: mozInitialOrInheritOrInitialOrRevertEtcrrza2,
 }
 type contextComponentTokensSLIDERSmPrimaryConfig = {
-  trackBackground?: mozInitialEtcgjquu,
-  rangeBackground?: mozInitialEtcgjquu,
-  thumbBackground?: mozInitialEtcgjquu,
-  thumbBorder?: mozInitialEtcgjquu,
-  thumbFocusRing?: mozInitialEtcgjquu,
+  trackBackground?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  rangeBackground?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  thumbBackground?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  thumbBorder?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  thumbFocusRing?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSLIDERSmLabelConfig = {
-  color?: mozInitialEtcgjquu,
-  fontSize?: mozInitialEtcly7v7,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  backgroundColor?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
-  boxShadow?: mozInitialEtcz3a4s,
-  borderRadius?: mozInitialEtcp2j1f,
-  padding?: mozInitialEtcp2j1f,
-  margin?: mozInitialEtcrldf7,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  boxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  padding?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  margin?: mozInitialOrInheritOrInitialOrRevertEtcrldf7,
 }
 type contextComponentTokensSLIDERSmConfig = {
   sm?: contextComponentTokensSLIDERSmSmConfig,
@@ -6199,10 +6199,10 @@ type contextComponentTokensSLIDERSmConfig = {
   lg?: contextComponentTokensSLIDERSmSmConfig,
   primary?: contextComponentTokensSLIDERSmPrimaryConfig,
   secondary?: contextComponentTokensSLIDERSmPrimaryConfig,
-  borderRadius?: mozInitialEtcp2j1f,
-  thumbBorderRadius?: mozInitialEtcp2j1f,
-  thumbBoxShadow?: mozInitialEtcz3a4s,
-  thumbHoverBoxShadow?: mozInitialEtcz3a4s,
+  borderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  thumbBorderRadius?: mozInitialOrInheritOrInitialOrRevertEtcp2j1f,
+  thumbBoxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
+  thumbHoverBoxShadow?: mozInitialOrInheritOrInitialOrRevertEtcz3a4s,
   disabledOpacity?: string,  // ⚪ loose — was `Globals | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; indexOf?: `
   label?: contextComponentTokensSLIDERSmLabelConfig,
 }
@@ -6211,9 +6211,9 @@ type contextComponentTokensSLIDERConfig = {
   lg?: contextComponentTokensSLIDERSmConfig,
 }
 type contextComponentTokensSELECTSmTriggerLabelConfig = {
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   fontWeight?: string,  // ⚪ loose — was `Globals | "bold" | "normal" | "bolder" | "lighter" | { readonly [x: number]: string; toString?: {}; charAt?: {`
-  fontSize?: mozInitialEtcly7v7,
+  fontSize?: mozInitialOrInheritOrInitialOrRevertEtcly7v7,
 }
 type contextComponentTokensSELECTSmTriggerSelectedValueFontSizeConfig = {
   sm?: string,
@@ -6225,7 +6225,7 @@ type contextComponentTokensSELECTSmTriggerSelectedValueFontConfig = {
   size?: contextComponentTokensSELECTSmTriggerSelectedValueFontSizeConfig,
 }
 type contextComponentTokensSELECTSmTriggerSelectedValueConfig = {
-  color?: mozInitialEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
   font?: contextComponentTokensSELECTSmTriggerSelectedValueFontConfig,
   padding?: contextComponentTokensCALENDARSmTriggerQuickSelectorPaddingConfig,
 }
@@ -6235,51 +6235,51 @@ type contextComponentTokensSELECTSmTriggerConfig = {
   selectedValue?: contextComponentTokensSELECTSmTriggerSelectedValueConfig,
 }
 type contextComponentTokensSELECTSmContainerConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  border?: mozInitialEtc1yz1q,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  border?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
 }
 type contextComponentTokensSELECTSmItemConfig = {
-  selectedBackgroundColor?: mozInitialEtcgjquu,
-  hoverBackgroundColor?: mozInitialEtcgjquu,
-  highlightedBackgroundColor?: mozInitialEtcgjquu,
-  color?: mozInitialEtcgjquu,
-  selectedColor?: mozInitialEtcgjquu,
-  subLabelColor?: mozInitialEtcgjquu,
-  checkmarkColor?: mozInitialEtcgjquu,
+  selectedBackgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hoverBackgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  highlightedBackgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  selectedColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  subLabelColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  checkmarkColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSELECTSmSubTriggerConfig = {
-  hoverBackgroundColor?: mozInitialEtcgjquu,
-  highlightedBackgroundColor?: mozInitialEtcgjquu,
-  color?: mozInitialEtcgjquu,
-  subLabelColor?: mozInitialEtcgjquu,
+  hoverBackgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  highlightedBackgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  subLabelColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSELECTSmSubContentConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  color?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  color?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSELECTSmTriggerColorsConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  hoverBackgroundColor?: mozInitialEtcgjquu,
-  focusBackgroundColor?: mozInitialEtcgjquu,
-  outlineBorder?: mozInitialEtc1yz1q,
-  outlineBorderFocus?: mozInitialEtc1yz1q,
-  caretColor?: mozInitialEtcgjquu,
-  chevronIconColor?: mozInitialEtcgjquu,
-  placeholderColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hoverBackgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  focusBackgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  outlineBorder?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  outlineBorderFocus?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  caretColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  chevronIconColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  placeholderColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSELECTSmClearButtonConfig = {
-  backgroundColor?: mozInitialEtcgjquu,
-  hoverBackgroundColor?: mozInitialEtcgjquu,
-  focusBackgroundColor?: mozInitialEtcgjquu,
-  outlineBorder?: mozInitialEtc1yz1q,
-  outlineBorderFocus?: mozInitialEtc1yz1q,
-  iconColor?: mozInitialEtcgjquu,
+  backgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hoverBackgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  focusBackgroundColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  outlineBorder?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  outlineBorderFocus?: mozInitialOrInheritOrInitialOrRevertEtc1yz1q,
+  iconColor?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSELECTSmLabelColorsConfig = {
-  subLabel?: mozInitialEtcgjquu,
-  hintText?: mozInitialEtcgjquu,
-  required?: mozInitialEtcgjquu,
-  helpIcon?: mozInitialEtcgjquu,
+  subLabel?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  hintText?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  required?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
+  helpIcon?: mozInitialOrInheritOrInitialOrRevertEtcgjquu,
 }
 type contextComponentTokensSELECTSmConfig = {
   trigger?: contextComponentTokensSELECTSmTriggerConfig,

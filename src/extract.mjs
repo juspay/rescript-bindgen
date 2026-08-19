@@ -5594,13 +5594,15 @@ function unionNodeCore(type, ctx, propName, depth = 0) {
                 sname = lower(upstreamName)
             }
             // #200: cap a bloated ANONYMOUS enumerated name (a NAMED large union already took the readable
-            // upstream name above). `legacyName` is a pure function of the members, so a readable prefix
-            // (trimmed to the last `Or` boundary within the cap) + `shapeHash(legacyName)` is SHORT,
-            // deterministic, and DEDUP-PRESERVING (identical members -> identical capped name -> identical
-            // `u:` key). Drops the 2000-char member list; not kept as an alias (a monster nobody used).
+            // upstream name above). Keep as many WHOLE leading member tokens as fit in ~40 chars (no
+            // mid-token cut) + `shapeHash(legacyName)`. `legacyName` is a pure function of the members, so
+            // the capped name is SHORT, deterministic, and DEDUP-PRESERVING (identical members -> identical
+            // capped name -> identical `u:` key). Drops the 2000-char list; not kept as an alias.
             if (!hasFn && !largeStructural && legacyName && legacyName.length > STRUCTURAL_UNBOXED_NAME_MAX_CHARS) {
-                const prefix = legacyName.slice(0, 40).replace(/Or[A-Za-z0-9]*$/, '') || legacyName.slice(0, 40)
-                sname = prefix + 'Etc' + shapeHash(legacyName)
+                const toks = unboxedTokens(members)
+                let prefix = ''
+                for (const t of toks) { if (prefix && (prefix + 'Or' + t).length > 40) break; prefix += (prefix ? 'Or' : '') + t }
+                sname = lower(prefix || toks[0].slice(0, 40)) + 'Etc' + shapeHash(legacyName)
             }
             // A fn-bearing union over ONE record/enum (base-ui's per-component
             // `style`/`className` over its state record) is named after that dep
@@ -5938,7 +5940,7 @@ function memberOf(t, ctx, propName, depth) {
  * @param {Array<{ctor:string, type:object}>} members
  * @returns {string}
  */
-function unboxedName(members) {
+function unboxedTokens(members) {
     const tokType = (t) => {
         switch (t.kind) {
             case 'string': return 'String'
@@ -5953,8 +5955,10 @@ function unboxedName(members) {
     }
     // bare `@as("indeterminate")` literal members contribute their value (Indeterminate);
     // payload members contribute their structural token (String/Number/…).
-    const tok = (m) => (m.as !== undefined ? pascal(String(m.as)) : tokType(m.type))
-    return lower(members.map(tok).join('Or'))
+    return members.map((m) => (m.as !== undefined ? pascal(String(m.as)) : tokType(m.type)))
+}
+function unboxedName(members) {
+    return lower(unboxedTokens(members).join('Or'))
 }
 
 /**

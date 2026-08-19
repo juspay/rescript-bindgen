@@ -29,7 +29,7 @@
 @unboxed type descriptionClassName = Str(string) | Fn(JSON.t => option<string>)
 @unboxed type closeFormAction<'a> = Str(string) | Fn(Webapi.FormData.t => 'a)
 @unboxed type stringOrStringArray = Str(string) | StrArr(array<string>)
-@unboxed type boolEtcrhs1q = Bool(bool) | @as("badInput") BadInput | @as("customError") CustomError | @as("patternMismatch") PatternMismatch | @as("rangeOverflow") RangeOverflow | @as("rangeUnderflow") RangeUnderflow | @as("stepMismatch") StepMismatch | @as("tooLong") TooLong | @as("tooShort") TooShort | @as("typeMismatch") TypeMismatch | @as("valid") Valid | @as("valueMissing") ValueMissing
+@unboxed type boolOrBadInputOrCustomErrorEtcrhs1q = Bool(bool) | @as("badInput") BadInput | @as("customError") CustomError | @as("patternMismatch") PatternMismatch | @as("rangeOverflow") RangeOverflow | @as("rangeUnderflow") RangeUnderflow | @as("stepMismatch") StepMismatch | @as("tooLong") TooLong | @as("tooShort") TooShort | @as("typeMismatch") TypeMismatch | @as("valid") Valid | @as("valueMissing") ValueMissing
 @unboxed type controlFormAction<'a> = Str(string) | Fn(Webapi.FormData.t => 'a)
 @unboxed type formStyle = Style(JsxDOM.style) | Fn(JSON.t => option<JsxDOM.style>)
 @unboxed type formClassName = Str(string) | Fn(JSON.t => option<string>)
