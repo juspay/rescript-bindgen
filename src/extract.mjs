@@ -711,34 +711,40 @@ function applyPublicNameRegistry(shared, prior = {}) {
         }
     }
 
-    // Locked names win. A conflict between two still-live locked identities is a manifest/API
-    // invariant violation and must stop generation; choosing either would silently break consumers.
+    // Locked names win. A conflict between two still-live locked identities is a manifest/API invariant
+    // violation — but it is reachable only from a corrupt/hand-edited/merged manifest (a normal run never
+    // writes one name under two identities), so it must NOT crash generation with zero output the way
+    // #198 did. `claim` now REPORTS the conflict and returns false; the caller degrades (suffix the
+    // canonical, drop the alias) + warns, instead of throwing. (#198 class — never abort on valid input.)
     const claimed = new Map()
+    const conflicts = []
     const claim = (name, e, what) => {
         const owner = claimed.get(name)
-        if (owner && owner !== e) {
-            throw new Error(`public type-name registry conflict: ${name} is required by both ${owner.publicIds[0]} and ${e.publicIds[0]} (${what})`)
-        }
+        if (owner && owner !== e) { conflicts.push({ name, what }); return false }
         claimed.set(name, e)
+        return true
     }
-    for (const e of entries.filter((x) => lockedEntries.has(x))) claim(desired.get(e), e, 'canonical name')
-    for (const e of entries) for (const alias of compat.get(e)) claim(alias, e, 'compatibility alias')
+    const ownsReserved = (e, name) => { const owners = reserved.get(name); return owners && e.publicIds.some((id) => owners.has(id)) }
+    const allocFree = (e, base) => {
+        let cand = base, n = 2
+        while ((reserved.has(cand) && !ownsReserved(e, cand)) || (claimed.has(cand) && claimed.get(cand) !== e)) cand = base + n++
+        return cand
+    }
+    for (const e of entries.filter((x) => lockedEntries.has(x))) {
+        if (claim(desired.get(e), e, 'canonical name')) continue
+        const cand = allocFree(e, desired.get(e)) // degrade: another live identity already holds this locked name
+        desired.set(e, cand); claim(cand, e, 'canonical name (degraded)')
+    }
+    for (const e of entries) for (const alias of [...compat.get(e)]) if (!claim(alias, e, 'compatibility alias')) compat.get(e).delete(alias) // drop the conflicting (optional) alias
 
     // Allocate only NEW identities around every permanent/tombstoned name. Existing identities are
     // never moved to make room; the newcomer takes the suffix.
     for (const e of entries.filter((x) => !lockedEntries.has(x))) {
-        const base = desired.get(e)
-        let candidate = base, n = 2
-        const ownsReserved = (name) => {
-            const owners = reserved.get(name)
-            return owners && e.publicIds.some((id) => owners.has(id))
-        }
-        while ((reserved.has(candidate) && !ownsReserved(candidate)) || (claimed.has(candidate) && claimed.get(candidate) !== e)) {
-            candidate = base + n++
-        }
+        const candidate = allocFree(e, desired.get(e))
         desired.set(e, candidate)
         claim(candidate, e, 'new canonical name')
     }
+    if (conflicts.length) (shared.registryConflicts || (shared.registryConflicts = [])).push(...conflicts)
 
     const renames = shared.renames || new Map()
     for (const e of entries) {

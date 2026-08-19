@@ -13,7 +13,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   configs both to `ThemeProvider.rangeDay`) made `finalizePublicIds` **throw**, aborting the whole run
   with zero output. It now **degrades** to a stable shape-disambiguated manifest id and warns on stderr
   instead of crashing — a generator must never abort on valid input. blend `0.0.38-beta.1` is pinned in
-  the benchmark as the regression lock.
+  the benchmark as the regression lock. The two other hard-`throw`s that sit outside the per-export
+  degrade net — the public-name registry conflict (`applyPublicNameRegistry`) and the constructor-
+  collision assertion (`resolveCtorCollisions`) — are hardened the same way (suffix/drop/warn, never
+  abort), closing the crash-on-valid-input class.
 
 - **Speculative `@unboxed` classification no longer leaves an orphan `JsFn.res`** (#178) — the
   reachability sweep (#191) already drops orphan records stranded by a discarded speculative build, but

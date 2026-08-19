@@ -729,6 +729,13 @@ async function main() {
         const shown = c.slice(0, 6).map((x) => `${x.projection} (${x.names.join(' vs ')})`).join('; ')
         console.error(`\n[bindgen] ⚠ ${c.length} public-identity collision(s) shape-disambiguated (anchor couldn't separate distinct types; manifest id is shape-tied, not name-stable, for these): ${shown}${c.length > 6 ? '…' : ''}`)
     }
+    // A prior `.bindgen-manifest.json` listed one name under two live identities (a corrupt/hand-edited/
+    // merged manifest). Rather than abort generation, the conflicting name was degraded (canonical
+    // suffixed / alias dropped) — surfaced so the manifest can be fixed. (#198 class — never crash)
+    if (shared && shared.registryConflicts && shared.registryConflicts.length) {
+        const rc = shared.registryConflicts
+        console.error(`\n[bindgen] ⚠ ${rc.length} public-name registry conflict(s) in .bindgen-manifest.json degraded (a name was claimed by two identities; suffixed/dropped instead of crashing — inspect the manifest): ${rc.slice(0, 8).map((x) => `${x.name} (${x.what})`).join(', ')}${rc.length > 8 ? '…' : ''}`)
+    }
     // A source identity whose ReScript REPRESENTATION flipped across bindgen versions (record ⇄ opaque,
     // #190). The frozen name is preserved as a case-aware compatibility shim so annotations keep
     // compiling, but a former opaque module's `from*`/`as*` constructors/accessors may not be
