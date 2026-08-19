@@ -3024,6 +3024,11 @@ export function extractModule(entryFile, opts = {}) {
         for (const c of components) {
             for (const p of c.ir.props || []) pushRoot(p.type)
             for (const b of c.ir.baseSpreads || []) pushRoot(b.ref)
+            // A `--variant-props` component emits each branch's OWN field types (emit.mjs), not the
+            // merged `props` list — and the merge keeps only the FIRST branch's type for a shared field
+            // name, so a type used only by a later branch's same-named field is invisible to `props`.
+            // Root every branch field or it gets swept and the `@tag` variant dangles. (#178 review)
+            for (const br of c.ir.variantProps?.branches || []) for (const f of br.fields || []) pushRoot(f.type)
         }
         for (const f of functions) { pushRoot(f.ir.sig); pushRoot(f.ir.value); pushRoot(f.ir.context) } // context: React.Context.t<value>
         for (const c of classes) {
