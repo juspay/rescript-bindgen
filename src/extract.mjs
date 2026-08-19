@@ -3407,6 +3407,12 @@ const LITERAL_COLLAPSE_THRESHOLD = 4
 // existing identity's assigned name. Large named unions follow the library alias; anonymous unions
 // retain the established structural/path convention. The previous structural name remains an alias.
 const STRUCTURAL_UNBOXED_NAME_MAX_MEMBERS = 4
+// Char cap for an ENUMERATED anonymous `@unboxed` name (#200). An anonymous union that mixes dozens of
+// string literals (csstype `Property.*` — blend's DeepPartial token types) enumerates every member into
+// a 2000+ char name. Past this length the name is capped to a readable prefix + a member-derived shape
+// hash: identical unions still dedupe (the hash is a pure function of the members, like the full name),
+// but the name stays short. Cosmetic only — the emitted `@unboxed` type is unchanged.
+const STRUCTURAL_UNBOXED_NAME_MAX_CHARS = 64
 // Most arms a discriminated union may have before we stop trying to model it as a `@tag` variant
 // (#167). Real ones are 2–10 arms (`RowAnimationConfig`, `ColumnConfig`, blend's `ColumnDefinition`);
 // Highcharts' `SeriesOptionsType` is **118**, and a 118-branch inline-record variant would be
@@ -5580,12 +5586,25 @@ function unionNodeCore(type, ctx, propName, depth = 0) {
             // alias, so existing consumer annotations keep compiling. The manifest then locks the
             // readable assignment for every future run, even if this allocation rule evolves.
             // Only an upstream alias is a better permanent name. Anonymous/checker-synthetic unions
-            // keep the existing stable structural/path convention; renaming those by a threshold
-            // would create broad churn unrelated to #190's named-union problem.
+            // keep the existing stable structural/path convention — EXCEPT a name past the char cap
+            // below, which is capped to a prefix+hash (#200); a small structural name is untouched.
             const upstreamName = typeName(type)
             const largeStructural = !hasFn && members.length > STRUCTURAL_UNBOXED_NAME_MAX_MEMBERS && upstreamName && upstreamName !== '__type'
             if (largeStructural && !ctx.shared) {
                 sname = lower(upstreamName)
+            }
+            // #200: cap a bloated ANONYMOUS enumerated name (a NAMED large union already took the readable
+            // upstream name above). Keep as many WHOLE leading member tokens as fit in ~40 chars (no
+            // mid-token cut) + `shapeHash(legacyName)`. `legacyName` is a pure function of the members, so
+            // the capped name is SHORT, deterministic, and DEDUP-PRESERVING (identical members -> identical
+            // capped name -> identical `u:` key). Drops the 2000-char list; not kept as an alias.
+            if (!hasFn && !largeStructural && legacyName && legacyName.length > STRUCTURAL_UNBOXED_NAME_MAX_CHARS) {
+                const toks = unboxedTokens(members)
+                let prefix = ''
+                for (const t of toks) { if (prefix && (prefix + 'Or' + t).length > 40) break; prefix += (prefix ? 'Or' : '') + t }
+                // `.slice(0, 40)` also caps a single first token that alone exceeds 40 chars (the loop
+                // adds the first token in full), so the name stays bounded even in that pathological case.
+                sname = lower((prefix || toks[0] || '').slice(0, 40)) + 'Etc' + shapeHash(legacyName)
             }
             // A fn-bearing union over ONE record/enum (base-ui's per-component
             // `style`/`className` over its state record) is named after that dep
@@ -5923,7 +5942,7 @@ function memberOf(t, ctx, propName, depth) {
  * @param {Array<{ctor:string, type:object}>} members
  * @returns {string}
  */
-function unboxedName(members) {
+function unboxedTokens(members) {
     const tokType = (t) => {
         switch (t.kind) {
             case 'string': return 'String'
@@ -5938,8 +5957,10 @@ function unboxedName(members) {
     }
     // bare `@as("indeterminate")` literal members contribute their value (Indeterminate);
     // payload members contribute their structural token (String/Number/…).
-    const tok = (m) => (m.as !== undefined ? pascal(String(m.as)) : tokType(m.type))
-    return lower(members.map(tok).join('Or'))
+    return members.map((m) => (m.as !== undefined ? pascal(String(m.as)) : tokType(m.type)))
+}
+function unboxedName(members) {
+    return lower(unboxedTokens(members).join('Or'))
 }
 
 /**

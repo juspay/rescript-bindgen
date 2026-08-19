@@ -988,7 +988,7 @@ type annotationsEventsOptions = {
 type annotationLabelAccessibilityOptionsObject = {
   description?: string,
 }
-@unboxed type annotationControlPointOptionsObjectOrAnnotationControlPointOptionsObjectArray = AnnotationControlPointOptionsObject(annotationControlPointOptionsObject) | AnnotationControlPointOptionsObjectArr(array<annotationControlPointOptionsObject>)
+@unboxed type annotationControlPointOptionsObjectEtc150tj = AnnotationControlPointOptionsObject(annotationControlPointOptionsObject) | AnnotationControlPointOptionsObjectArr(array<annotationControlPointOptionsObject>)
 type annotationMockPointOptionsObject = {
   x: float,
   xAxis: CommonTypes.stringOrNumber,
@@ -8768,7 +8768,7 @@ and plotVariablepieOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesPieDataLabelsOptionsObjectEtc1kumz<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -9056,7 +9056,7 @@ and plotTreegraphOptions<'a, 'b, 'c> = {
   cropThreshold?: float,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: seriesTreegraphDataLabelsOptionsObjectOrSeriesTreegraphDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesTreegraphDataLabelsOptionsObjectEtc12ung<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -9117,7 +9117,7 @@ and plotTimelineOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: timelineDataLabelsOptionsObjectOrTimelineDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: timelineDataLabelsOptionsObjectEtc13zn4<'a, 'b, 'c>,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
@@ -9171,7 +9171,7 @@ and plotTilemapOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: plotMapbubbleDataLabelsOptionsOrPlotMapbubbleDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotMapbubbleDataLabelsOptionsEtczeugz<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -9395,7 +9395,7 @@ and plotSunburstOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: seriesSunburstDataLabelsOptionsObjectOrSeriesSunburstDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesSunburstDataLabelsOptionsObjectEtcjoblr<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -10031,7 +10031,7 @@ and plotSankeyOptions<'a, 'b, 'c> = {
   curveFactor?: float,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesSankeyDataLabelsOptionsObjectEtcuyuhz<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -10304,7 +10304,7 @@ and plotPyramid3dOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: plotFunnel3dDataLabelsOptionsOrPlotFunnel3dDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotFunnel3dDataLabelsOptionsEtc3ql0o<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -10382,7 +10382,7 @@ and plotPyramidOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesPieDataLabelsOptionsObjectEtc1kumz<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -10888,7 +10888,7 @@ and plotPieOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesPieDataLabelsOptionsObjectEtc1kumz<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -11141,7 +11141,7 @@ and plotPackedbubbleOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesPackedBubbleDataLabelsOptionsObjectOrSeriesPackedBubbleDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesPackedBubbleDataLabelsOptionsObjecEtccwqqs<'a, 'b, 'c>,
   description?: string,
   displayNegative?: bool,
   draggable?: bool,
@@ -11212,7 +11212,7 @@ and plotOrganizationOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesOrganizationDataLabelsOptionsObjectOrSeriesOrganizationDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesOrganizationDataLabelsOptionsObjecEtcmf6ti<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -11422,7 +11422,7 @@ and plotNetworkgraphOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesNetworkgraphDataLabelsOptionsObjectOrSeriesNetworkgraphDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesNetworkgraphDataLabelsOptionsObjecEtc14yc0<'a, 'b, 'c>,
   description?: string,
   draggable?: bool,
   enableMouseTracking?: bool,
@@ -11697,7 +11697,7 @@ and plotMappointOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: plotMappointDataLabelsOptionsOrPlotMappointDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotMappointDataLabelsOptionsEtc13i28<'a, 'b, 'c>,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
@@ -11748,7 +11748,7 @@ and plotMaplineOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: plotGeoheatmapDataLabelsOptionsOrPlotGeoheatmapDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotGeoheatmapDataLabelsOptionsEtc110mk<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -11798,7 +11798,7 @@ and plotMapbubbleOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: plotMapbubbleDataLabelsOptionsOrPlotMapbubbleDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotMapbubbleDataLabelsOptionsEtczeugz<'a, 'b, 'c>,
   description?: string,
   displayNegative?: bool,
   dragDrop?: seriesDragDropOptionsObject,
@@ -11989,7 +11989,7 @@ and plotLollipopOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectEtcmk4px<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesLollipopOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -12586,7 +12586,7 @@ and plotItemOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesPieDataLabelsOptionsObjectEtc1kumz<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   endAngle?: float,
@@ -13115,7 +13115,7 @@ and plotGeoheatmapOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: plotGeoheatmapDataLabelsOptionsOrPlotGeoheatmapDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotGeoheatmapDataLabelsOptionsEtc110mk<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -13270,7 +13270,7 @@ and plotFunnel3dOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: plotFunnel3dDataLabelsOptionsOrPlotFunnel3dDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotFunnel3dDataLabelsOptionsEtc3ql0o<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -13349,7 +13349,7 @@ and plotFunnelOptions<'a, 'b, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
-  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesPieDataLabelsOptionsObjectEtc1kumz<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -13718,7 +13718,7 @@ and plotDumbbellOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectEtcmk4px<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesDumbbellOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -14001,7 +14001,7 @@ and plotDependencywheelLevelsOptions<'a, 'b, 'c> = {
   borderWidth?: float,
   color?: ColorType.t,
   colorByPoint?: bool,
-  dataLabels?: seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesSankeyDataLabelsOptionsObjectEtcuyuhz<'a, 'b, 'c>,
   level?: int,
   linkOpacity?: float,
   states?: seriesStatesOptionsObject,
@@ -14025,7 +14025,7 @@ and plotDependencywheelOptions<'a, 'b, 'c> = {
   curveFactor?: float,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesSankeyDataLabelsOptionsObjectEtcuyuhz<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -14300,7 +14300,7 @@ and plotColumnrangeOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectEtcmk4px<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesColumnrangeOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -15616,7 +15616,7 @@ and plotAreasplinerangeOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectEtcmk4px<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAreasplinerangeOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -15786,7 +15786,7 @@ and plotArearangeOptions<'a, 'b, 'c> = {
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectEtcmk4px<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesArearangeOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -15939,7 +15939,7 @@ and plotArcdiagramLevelsOptions<'a, 'b, 'c> = {
   borderWidth?: float,
   color?: ColorType.t,
   colorByPoint?: bool,
-  dataLabels?: seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesSankeyDataLabelsOptionsObjectEtcuyuhz<'a, 'b, 'c>,
   level?: int,
   linkOpacity?: float,
   states?: seriesStatesOptionsObject,
@@ -15960,7 +15960,7 @@ and plotArcdiagramOptions<'a, 'b, 'c> = {
   cursor?: string,
   custom?: Dict.t<string>,  // ⚪ loose — was `any`
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesArcDiagramDataLabelsOptionsObjectOrSeriesArcDiagramDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesArcDiagramDataLabelsOptionsObjectEtc147el<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   equalNodes?: bool,
@@ -16713,7 +16713,7 @@ and navigatorSeriesOptions<'a, 'b, 'c> = {
   color?: ColorType.t,
   data?: array<CommonTypes.numberOrValueOrStringOrNumberArray>,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: navigatorSeriesDataLabelsOptionsOrNavigatorSeriesDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: navigatorSeriesDataLabelsOptionsEtcemv4e<'a, 'b, 'c>,
   fillOpacity?: float,
   id?: string,
   lineColor?: string,
@@ -16741,7 +16741,7 @@ and navigatorOptions<'a, 'b, 'c> = {
   yAxis?: navigatorYAxisOptionsOrNavigatorYAxisOptionsArray<'a, 'b, 'c>,
 }
 and navigationAnnotationsShapesOptions<'f, 't6> = {
-  controlPoints?: annotationControlPointOptionsObjectOrAnnotationControlPointOptionsObjectArray,
+  controlPoints?: annotationControlPointOptionsObjectEtc150tj,
   dashStyle?: dashStyleValue,
   fill?: ColorType.t,
   height?: float,
@@ -16769,7 +16769,7 @@ and navigationAnnotationsLabelsOptions<'a, 'b, 'c, 'e> = {
   borderRadius?: float,
   borderWidth?: float,
   className?: string,
-  controlPoints?: annotationControlPointOptionsObjectOrAnnotationControlPointOptionsObjectArray,
+  controlPoints?: annotationControlPointOptionsObjectEtc150tj,
   crop?: bool,
   distance?: float,
   format?: string,
@@ -17932,7 +17932,7 @@ and seriesVariablepieOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesPieDataLabelsOptionsObjectEtc1kumz<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -18192,7 +18192,7 @@ and plotTreemapLevelsOptions<'a, 'b, 'c> = {
   borderWidth?: float,
   color?: ColorType.t,
   colorVariation?: plotSunburstLevelsColorVariationOptions,
-  dataLabels?: plotTreemapLevelsDataLabelsOptionsOrPlotTreemapLevelsDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotTreemapLevelsDataLabelsOptionsEtc1oig7<'a, 'b, 'c>,
   layoutAlgorithm?: optionsLayoutAlgorithmValue,
   layoutStartingDirection?: optionsLayoutStartingDirectionValue,
   level?: int,
@@ -18331,7 +18331,7 @@ and plotTreegraphLevelsOptions<'a, 'b, 'c> = {
   borderWidth?: float,
   color?: ColorType.t,
   colorVariation?: plotSunburstLevelsColorVariationOptions,
-  dataLabels?: seriesTreegraphDataLabelsOptionsObjectOrSeriesTreegraphDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesTreegraphDataLabelsOptionsObjectEtc12ung<'a, 'b, 'c>,
   layoutAlgorithm?: optionsLayoutAlgorithmValue,
   layoutStartingDirection?: optionsLayoutStartingDirectionValue,
   level?: int,
@@ -18366,7 +18366,7 @@ and seriesTreegraphOptions<'b, 'a, 'c> = {
   cropThreshold?: float,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: seriesTreegraphDataLabelsOptionsObjectOrSeriesTreegraphDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesTreegraphDataLabelsOptionsObjectEtc12ung<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -18477,7 +18477,7 @@ and seriesTimelineOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: timelineDataLabelsOptionsObjectOrTimelineDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: timelineDataLabelsOptionsObjectEtc13zn4<'a, 'b, 'c>,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
@@ -18546,7 +18546,7 @@ and seriesTilemapOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: plotMapbubbleDataLabelsOptionsOrPlotMapbubbleDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotMapbubbleDataLabelsOptionsEtczeugz<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -18805,7 +18805,7 @@ and plotSunburstLevelsOptions<'a, 'b, 'c> = {
   color?: ColorType.t,
   colorByPoint?: bool,
   colorVariation?: plotSunburstLevelsColorVariationOptions,
-  dataLabels?: seriesSunburstDataLabelsOptionsObjectOrSeriesSunburstDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesSunburstDataLabelsOptionsObjectEtcjoblr<'a, 'b, 'c>,
   level?: int,
   levelSize?: JSON.t,
 }
@@ -18833,7 +18833,7 @@ and seriesSunburstOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: seriesSunburstDataLabelsOptionsObjectOrSeriesSunburstDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesSunburstDataLabelsOptionsObjectEtcjoblr<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -19625,7 +19625,7 @@ and seriesSankeyOptions<'b, 'a, 'c> = {
   curveFactor?: float,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesSankeyDataLabelsOptionsObjectEtcuyuhz<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -19947,7 +19947,7 @@ and seriesPyramidOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesPieDataLabelsOptionsObjectEtc1kumz<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -20021,7 +20021,7 @@ and seriesPyramid3dOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: plotFunnel3dDataLabelsOptionsOrPlotFunnel3dDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotFunnel3dDataLabelsOptionsEtc3ql0o<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -20628,7 +20628,7 @@ and seriesPieOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesPieDataLabelsOptionsObjectEtc1kumz<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -20934,7 +20934,7 @@ and seriesPackedbubbleOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesPackedBubbleDataLabelsOptionsObjectOrSeriesPackedBubbleDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesPackedBubbleDataLabelsOptionsObjecEtccwqqs<'a, 'b, 'c>,
   description?: string,
   displayNegative?: bool,
   draggable?: bool,
@@ -21053,7 +21053,7 @@ and seriesOrganizationOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesOrganizationDataLabelsOptionsObjectOrSeriesOrganizationDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesOrganizationDataLabelsOptionsObjecEtcmf6ti<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -21288,7 +21288,7 @@ and seriesObvOptions<'a, 'b, 'c> = {
 and seriesNetworkgraphNodesOptions<'a, 'b, 'c> = {
   color?: string,
   colorIndex?: float,
-  dataLabels?: seriesNetworkgraphDataLabelsOptionsObjectOrSeriesNetworkgraphDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesNetworkgraphDataLabelsOptionsObjecEtc14yc0<'a, 'b, 'c>,
   id?: string,
   marker?: pointMarkerOptionsObject,
   mass?: float,
@@ -21311,7 +21311,7 @@ and seriesNetworkgraphOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesNetworkgraphDataLabelsOptionsObjectOrSeriesNetworkgraphDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesNetworkgraphDataLabelsOptionsObjecEtc14yc0<'a, 'b, 'c>,
   description?: string,
   draggable?: bool,
   enableMouseTracking?: bool,
@@ -21679,7 +21679,7 @@ and seriesMappointOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: plotMappointDataLabelsOptionsOrPlotMappointDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotMappointDataLabelsOptionsEtc13i28<'a, 'b, 'c>,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
   enableMouseTracking?: bool,
@@ -21838,7 +21838,7 @@ and seriesMaplineOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: plotGeoheatmapDataLabelsOptionsOrPlotGeoheatmapDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotGeoheatmapDataLabelsOptionsEtc110mk<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -21934,7 +21934,7 @@ and seriesMapbubbleOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: plotMapbubbleDataLabelsOptionsOrPlotMapbubbleDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotMapbubbleDataLabelsOptionsEtczeugz<'a, 'b, 'c>,
   description?: string,
   displayNegative?: bool,
   dragDrop?: seriesDragDropOptionsObject,
@@ -22096,7 +22096,7 @@ and seriesLollipopOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectEtcmk4px<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesLollipopOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -22789,7 +22789,7 @@ and seriesItemOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesPieDataLabelsOptionsObjectEtc1kumz<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   endAngle?: float,
@@ -23440,7 +23440,7 @@ and seriesGeoheatmapOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: plotGeoheatmapDataLabelsOptionsOrPlotGeoheatmapDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotGeoheatmapDataLabelsOptionsEtc110mk<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -23699,7 +23699,7 @@ and seriesFunnelOptions<'b, 'a, 'c> = {
   crisp?: bool,
   cursor?: string,
   custom?: Dict.t<JSON.t>,
-  dataLabels?: seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesPieDataLabelsOptionsObjectEtc1kumz<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   enableMouseTracking?: bool,
@@ -23807,7 +23807,7 @@ and seriesFunnel3dOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: plotFunnel3dDataLabelsOptionsOrPlotFunnel3dDataLabelsOptionsArray<'a, 'b, 'c>,
+  dataLabels?: plotFunnel3dDataLabelsOptionsEtc3ql0o<'a, 'b, 'c>,
   depth?: float,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -24257,7 +24257,7 @@ and seriesDumbbellOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectEtcmk4px<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesDumbbellOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -24639,7 +24639,7 @@ and seriesDependencywheelOptions<'b, 'a, 'c> = {
   curveFactor?: float,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesSankeyDataLabelsOptionsObjectEtcuyuhz<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   events?: seriesEventsOptionsObject<'a, 'b, 'c>,
@@ -24968,7 +24968,7 @@ and seriesColumnrangeOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectEtcmk4px<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesColumnrangeOptionsDataSorting.t,
   depth?: float,
   description?: string,
@@ -26596,7 +26596,7 @@ and seriesAreasplinerangeOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectEtcmk4px<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesAreasplinerangeOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -26830,7 +26830,7 @@ and seriesArearangeOptions<'b, 'a, 'c> = {
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
   dataGrouping?: dataGroupingOptionsObject,
-  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesAreaRangeDataLabelsOptionsObjectEtcmk4px<'a, 'b, 'c>,
   dataSorting?: ChartsSeriesArearangeOptionsDataSorting.t,
   description?: string,
   dragDrop?: seriesDragDropOptionsObject,
@@ -27152,7 +27152,7 @@ and seriesArcdiagramOptions<'b, 'a, 'c> = {
   cursor?: string,
   custom?: Dict.t<JSON.t>,
   dashStyle?: dashStyleValue,
-  dataLabels?: seriesArcDiagramDataLabelsOptionsObjectOrSeriesArcDiagramDataLabelsOptionsObjectArray<'a, 'b, 'c>,
+  dataLabels?: seriesArcDiagramDataLabelsOptionsObjectEtc147el<'a, 'b, 'c>,
   description?: string,
   enableMouseTracking?: bool,
   equalNodes?: bool,
@@ -28365,7 +28365,7 @@ and annotationsTypesOptions<'a, 'b, 'c> = {
   verticalLine?: annotationsTypesVerticalLineOptions<'a, 'b, 'c>,
 }
 and annotationsShapesOptions<'b, 'c> = {
-  controlPoints?: annotationControlPointOptionsObjectOrAnnotationControlPointOptionsObjectArray,
+  controlPoints?: annotationControlPointOptionsObjectEtc150tj,
   dashStyle?: dashStyleValue,
   fill?: ColorType.t,
   height?: float,
@@ -28393,7 +28393,7 @@ and annotationsLabelsOptions<'a, 'b, 'c> = {
   borderRadius?: float,
   borderWidth?: float,
   className?: string,
-  controlPoints?: annotationControlPointOptionsObjectOrAnnotationControlPointOptionsObjectArray,
+  controlPoints?: annotationControlPointOptionsObjectEtc150tj,
   crop?: bool,
   distance?: float,
   format?: string,
@@ -29484,33 +29484,33 @@ and chart<'a, 'b, 'c> = {
 @unboxed and numberOrPlotMappointOptions<'a, 'b, 'c> = Num(float) | PlotMappointOptions(plotMappointOptions<'a, 'b, 'c>)
 @unboxed and navigatorYAxisOptionsOrNavigatorYAxisOptionsArray<'a, 'b, 'c> = NavigatorYAxisOptions(navigatorYAxisOptions<'a, 'b, 'c>) | NavigatorYAxisOptionsArr(array<navigatorYAxisOptions<'a, 'b, 'c>>)
 @unboxed and navigatorXAxisOptionsOrNavigatorXAxisOptionsArray<'a, 'b, 'c> = NavigatorXAxisOptions(navigatorXAxisOptions<'a, 'b, 'c>) | NavigatorXAxisOptionsArr(array<navigatorXAxisOptions<'a, 'b, 'c>>)
-@unboxed and navigatorSeriesDataLabelsOptionsOrNavigatorSeriesDataLabelsOptionsArray<'a, 'b, 'c> = NavigatorSeriesDataLabelsOptions(navigatorSeriesDataLabelsOptions<'a, 'b, 'c>) | NavigatorSeriesDataLabelsOptionsArr(array<navigatorSeriesDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and navigatorSeriesDataLabelsOptionsEtcemv4e<'a, 'b, 'c> = NavigatorSeriesDataLabelsOptions(navigatorSeriesDataLabelsOptions<'a, 'b, 'c>) | NavigatorSeriesDataLabelsOptionsArr(array<navigatorSeriesDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and highchartsNavigationAnnotationsShapesOptionsPoints<'t6> = Str(string) | Fn('t6 => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
 @unboxed and highchartsNavigationAnnotationsShapesOptionsPoint<'f> = Str(string) | Fn('f => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
 @unboxed and highchartsNavigationAnnotationsLabelsOptionsPoint<'e> = Str(string) | Fn('e => pointTarget_t) | AnnotationMockPointOptionsObject(annotationMockPointOptionsObject)
 @unboxed and plotXrangeDataLabelsOptionsOrPlotXrangeDataLabelsOptionsArray<'a, 'b, 'c> = PlotXrangeDataLabelsOptions(plotXrangeDataLabelsOptions<'a, 'b, 'c>) | PlotXrangeDataLabelsOptionsArr(array<plotXrangeDataLabelsOptions<'a, 'b, 'c>>)
-@unboxed and plotTreemapLevelsDataLabelsOptionsOrPlotTreemapLevelsDataLabelsOptionsArray<'a, 'b, 'c> = PlotTreemapLevelsDataLabelsOptions(plotTreemapLevelsDataLabelsOptions<'a, 'b, 'c>) | PlotTreemapLevelsDataLabelsOptionsArr(array<plotTreemapLevelsDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and plotTreemapLevelsDataLabelsOptionsEtc1oig7<'a, 'b, 'c> = PlotTreemapLevelsDataLabelsOptions(plotTreemapLevelsDataLabelsOptions<'a, 'b, 'c>) | PlotTreemapLevelsDataLabelsOptionsArr(array<plotTreemapLevelsDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotTreemapDataLabelsOptionsOrPlotTreemapDataLabelsOptionsArray<'a, 'b, 'c> = PlotTreemapDataLabelsOptions(plotTreemapDataLabelsOptions<'a, 'b, 'c>) | PlotTreemapDataLabelsOptionsArr(array<plotTreemapDataLabelsOptions<'a, 'b, 'c>>)
-@unboxed and seriesTreegraphDataLabelsOptionsObjectOrSeriesTreegraphDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesTreegraphDataLabelsOptionsObject(seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesTreegraphDataLabelsOptionsObjectArr(array<seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c>>)
-@unboxed and timelineDataLabelsOptionsObjectOrTimelineDataLabelsOptionsObjectArray<'a, 'b, 'c> = TimelineDataLabelsOptionsObject(timelineDataLabelsOptionsObject<'a, 'b, 'c>) | TimelineDataLabelsOptionsObjectArr(array<timelineDataLabelsOptionsObject<'a, 'b, 'c>>)
-@unboxed and seriesSunburstDataLabelsOptionsObjectOrSeriesSunburstDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesSunburstDataLabelsOptionsObject(seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesSunburstDataLabelsOptionsObjectArr(array<seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c>>)
-@unboxed and seriesPackedBubbleDataLabelsOptionsObjectOrSeriesPackedBubbleDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesPackedBubbleDataLabelsOptionsObject(seriesPackedBubbleDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesPackedBubbleDataLabelsOptionsObjectArr(array<seriesPackedBubbleDataLabelsOptionsObject<'a, 'b, 'c>>)
-@unboxed and seriesOrganizationDataLabelsOptionsObjectOrSeriesOrganizationDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesOrganizationDataLabelsOptionsObject(seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesOrganizationDataLabelsOptionsObjectArr(array<seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c>>)
-@unboxed and seriesNetworkgraphDataLabelsOptionsObjectOrSeriesNetworkgraphDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesNetworkgraphDataLabelsOptionsObject(seriesNetworkgraphDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesNetworkgraphDataLabelsOptionsObjectArr(array<seriesNetworkgraphDataLabelsOptionsObject<'a, 'b, 'c>>)
-@unboxed and plotMappointDataLabelsOptionsOrPlotMappointDataLabelsOptionsArray<'a, 'b, 'c> = PlotMappointDataLabelsOptions(plotMappointDataLabelsOptions<'a, 'b, 'c>) | PlotMappointDataLabelsOptionsArr(array<plotMappointDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and seriesTreegraphDataLabelsOptionsObjectEtc12ung<'a, 'b, 'c> = SeriesTreegraphDataLabelsOptionsObject(seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesTreegraphDataLabelsOptionsObjectArr(array<seriesTreegraphDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and timelineDataLabelsOptionsObjectEtc13zn4<'a, 'b, 'c> = TimelineDataLabelsOptionsObject(timelineDataLabelsOptionsObject<'a, 'b, 'c>) | TimelineDataLabelsOptionsObjectArr(array<timelineDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and seriesSunburstDataLabelsOptionsObjectEtcjoblr<'a, 'b, 'c> = SeriesSunburstDataLabelsOptionsObject(seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesSunburstDataLabelsOptionsObjectArr(array<seriesSunburstDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and seriesPackedBubbleDataLabelsOptionsObjecEtccwqqs<'a, 'b, 'c> = SeriesPackedBubbleDataLabelsOptionsObject(seriesPackedBubbleDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesPackedBubbleDataLabelsOptionsObjectArr(array<seriesPackedBubbleDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and seriesOrganizationDataLabelsOptionsObjecEtcmf6ti<'a, 'b, 'c> = SeriesOrganizationDataLabelsOptionsObject(seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesOrganizationDataLabelsOptionsObjectArr(array<seriesOrganizationDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and seriesNetworkgraphDataLabelsOptionsObjecEtc14yc0<'a, 'b, 'c> = SeriesNetworkgraphDataLabelsOptionsObject(seriesNetworkgraphDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesNetworkgraphDataLabelsOptionsObjectArr(array<seriesNetworkgraphDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and plotMappointDataLabelsOptionsEtc13i28<'a, 'b, 'c> = PlotMappointDataLabelsOptions(plotMappointDataLabelsOptions<'a, 'b, 'c>) | PlotMappointDataLabelsOptionsArr(array<plotMappointDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotMapDataLabelsOptionsOrPlotMapDataLabelsOptionsArray<'a, 'b, 'c> = PlotMapDataLabelsOptions(plotMapDataLabelsOptions<'a, 'b, 'c>) | PlotMapDataLabelsOptionsArr(array<plotMapDataLabelsOptions<'a, 'b, 'c>>)
-@unboxed and plotMapbubbleDataLabelsOptionsOrPlotMapbubbleDataLabelsOptionsArray<'a, 'b, 'c> = PlotMapbubbleDataLabelsOptions(plotMapbubbleDataLabelsOptions<'a, 'b, 'c>) | PlotMapbubbleDataLabelsOptionsArr(array<plotMapbubbleDataLabelsOptions<'a, 'b, 'c>>)
-@unboxed and plotGeoheatmapDataLabelsOptionsOrPlotGeoheatmapDataLabelsOptionsArray<'a, 'b, 'c> = PlotGeoheatmapDataLabelsOptions(plotGeoheatmapDataLabelsOptions<'a, 'b, 'c>) | PlotGeoheatmapDataLabelsOptionsArr(array<plotGeoheatmapDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and plotMapbubbleDataLabelsOptionsEtczeugz<'a, 'b, 'c> = PlotMapbubbleDataLabelsOptions(plotMapbubbleDataLabelsOptions<'a, 'b, 'c>) | PlotMapbubbleDataLabelsOptionsArr(array<plotMapbubbleDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and plotGeoheatmapDataLabelsOptionsEtc110mk<'a, 'b, 'c> = PlotGeoheatmapDataLabelsOptions(plotGeoheatmapDataLabelsOptions<'a, 'b, 'c>) | PlotGeoheatmapDataLabelsOptionsArr(array<plotGeoheatmapDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotGaugeDataLabelsOptionsOrPlotGaugeDataLabelsOptionsArray<'a, 'b, 'c> = PlotGaugeDataLabelsOptions(plotGaugeDataLabelsOptions<'a, 'b, 'c>) | PlotGaugeDataLabelsOptionsArr(array<plotGaugeDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotGanttDataLabelsOptionsOrPlotGanttDataLabelsOptionsArray<'a, 'b, 'c> = PlotGanttDataLabelsOptions(plotGanttDataLabelsOptions<'a, 'b, 'c>) | PlotGanttDataLabelsOptionsArr(array<plotGanttDataLabelsOptions<'a, 'b, 'c>>)
-@unboxed and seriesPieDataLabelsOptionsObjectOrSeriesPieDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesPieDataLabelsOptionsObject(seriesPieDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesPieDataLabelsOptionsObjectArr(array<seriesPieDataLabelsOptionsObject<'a, 'b, 'c>>)
-@unboxed and plotFunnel3dDataLabelsOptionsOrPlotFunnel3dDataLabelsOptionsArray<'a, 'b, 'c> = PlotFunnel3dDataLabelsOptions(plotFunnel3dDataLabelsOptions<'a, 'b, 'c>) | PlotFunnel3dDataLabelsOptionsArr(array<plotFunnel3dDataLabelsOptions<'a, 'b, 'c>>)
-@unboxed and seriesSankeyDataLabelsOptionsObjectOrSeriesSankeyDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesSankeyDataLabelsOptionsObject(seriesSankeyDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesSankeyDataLabelsOptionsObjectArr(array<seriesSankeyDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and seriesPieDataLabelsOptionsObjectEtc1kumz<'a, 'b, 'c> = SeriesPieDataLabelsOptionsObject(seriesPieDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesPieDataLabelsOptionsObjectArr(array<seriesPieDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and plotFunnel3dDataLabelsOptionsEtc3ql0o<'a, 'b, 'c> = PlotFunnel3dDataLabelsOptions(plotFunnel3dDataLabelsOptions<'a, 'b, 'c>) | PlotFunnel3dDataLabelsOptionsArr(array<plotFunnel3dDataLabelsOptions<'a, 'b, 'c>>)
+@unboxed and seriesSankeyDataLabelsOptionsObjectEtcuyuhz<'a, 'b, 'c> = SeriesSankeyDataLabelsOptionsObject(seriesSankeyDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesSankeyDataLabelsOptionsObjectArr(array<seriesSankeyDataLabelsOptionsObject<'a, 'b, 'c>>)
 @unboxed and plotBulletDataLabelsOptionsOrPlotBulletDataLabelsOptionsArray<'a, 'b, 'c> = PlotBulletDataLabelsOptions(plotBulletDataLabelsOptions<'a, 'b, 'c>) | PlotBulletDataLabelsOptionsArr(array<plotBulletDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotBubbleDataLabelsOptionsOrPlotBubbleDataLabelsOptionsArray<'a, 'b, 'c> = PlotBubbleDataLabelsOptions(plotBubbleDataLabelsOptions<'a, 'b, 'c>) | PlotBubbleDataLabelsOptionsArr(array<plotBubbleDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotBarDataLabelsOptionsOrPlotBarDataLabelsOptionsArray<'a, 'b, 'c> = PlotBarDataLabelsOptions(plotBarDataLabelsOptions<'a, 'b, 'c>) | PlotBarDataLabelsOptionsArr(array<plotBarDataLabelsOptions<'a, 'b, 'c>>)
-@unboxed and seriesAreaRangeDataLabelsOptionsObjectOrSeriesAreaRangeDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesAreaRangeDataLabelsOptionsObject(seriesAreaRangeDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesAreaRangeDataLabelsOptionsObjectArr(array<seriesAreaRangeDataLabelsOptionsObject<'a, 'b, 'c>>)
-@unboxed and seriesArcDiagramDataLabelsOptionsObjectOrSeriesArcDiagramDataLabelsOptionsObjectArray<'a, 'b, 'c> = SeriesArcDiagramDataLabelsOptionsObject(seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesArcDiagramDataLabelsOptionsObjectArr(array<seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and seriesAreaRangeDataLabelsOptionsObjectEtcmk4px<'a, 'b, 'c> = SeriesAreaRangeDataLabelsOptionsObject(seriesAreaRangeDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesAreaRangeDataLabelsOptionsObjectArr(array<seriesAreaRangeDataLabelsOptionsObject<'a, 'b, 'c>>)
+@unboxed and seriesArcDiagramDataLabelsOptionsObjectEtc147el<'a, 'b, 'c> = SeriesArcDiagramDataLabelsOptionsObject(seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>) | SeriesArcDiagramDataLabelsOptionsObjectArr(array<seriesArcDiagramDataLabelsOptionsObject<'a, 'b, 'c>>)
 @unboxed and plotAoDataLabelsOptionsOrPlotAoDataLabelsOptionsArray<'a, 'b, 'c> = PlotAoDataLabelsOptions(plotAoDataLabelsOptions<'a, 'b, 'c>) | PlotAoDataLabelsOptionsArr(array<plotAoDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and plotAdDataLabelsOptionsOrPlotAdDataLabelsOptionsArray<'a, 'b, 'c> = PlotAdDataLabelsOptions(plotAdDataLabelsOptions<'a, 'b, 'c>) | PlotAdDataLabelsOptionsArr(array<plotAdDataLabelsOptions<'a, 'b, 'c>>)
 @unboxed and pointOrPointArray<'a, 'b, 'c> = Point(point<'a, 'b, 'c>) | PointArr(array<point<'a, 'b, 'c>>)
