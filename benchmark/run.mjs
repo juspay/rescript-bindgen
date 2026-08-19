@@ -149,13 +149,35 @@ function verdictFor(metrics, baseline, diffProblems) {
     return { verdict: 'PASS', reason: '' }
 }
 
-/** Pick the newest pinned blend baseline (by semver-ish version sort) to diff a floating latest
- *  build against — informational only; a newer version legitimately differs from every pin. */
+/** Semver precedence for the version strings we pin (`0.0.37`, `0.0.38-beta.1`, …). Returns <0 / 0 /
+ *  >0. Correct on the one subtlety that matters here: a prerelease is OLDER than its release
+ *  (`0.0.38-beta.1` < `0.0.38`), and numeric prerelease identifiers compare numerically
+ *  (`beta.2` < `beta.10`). */
+function cmpVersion(a, b) {
+    const split = (v) => { const i = v.indexOf('-'); return i < 0 ? [v, ''] : [v.slice(0, i), v.slice(i + 1)] }
+    const [ma, pa] = split(a), [mb, pb] = split(b)
+    const na = ma.split('.').map(Number), nb = mb.split('.').map(Number)
+    for (let i = 0; i < 3; i++) if ((na[i] || 0) !== (nb[i] || 0)) return (na[i] || 0) - (nb[i] || 0)
+    if (!pa && !pb) return 0
+    if (!pa) return 1 // a is the release -> newer than any prerelease of it
+    if (!pb) return -1
+    const ia = pa.split('.'), ib = pb.split('.')
+    for (let i = 0; i < Math.max(ia.length, ib.length); i++) {
+        const x = ia[i], y = ib[i]
+        if (x === undefined) return -1
+        if (y === undefined) return 1
+        if (/^\d+$/.test(x) && /^\d+$/.test(y)) { const dv = Number(x) - Number(y); if (dv) return dv }
+        else if (x !== y) return x < y ? -1 : 1
+    }
+    return 0
+}
+
+/** Pick the newest pinned blend baseline to diff a floating latest build against — informational
+ *  only; a newer version legitimately differs from every pin. */
 function newestPinnedBlendSlug(allPackages) {
     const blends = allPackages.filter((p) => p.name === BLEND_PKG)
     if (!blends.length) return null
-    const rank = (v) => v.split(/[.-]/).map((x) => (/^\d+$/.test(x) ? String(x).padStart(6, '0') : x)).join('.')
-    blends.sort((a, b) => rank(a.version).localeCompare(rank(b.version)))
+    blends.sort((a, b) => cmpVersion(a.version, b.version))
     const newest = blends[blends.length - 1]
     return slugOf(nameCountHas(allPackages, newest.name) ? `${newest.name}@${newest.version}` : newest.name)
 }
@@ -167,7 +189,9 @@ const nameCountHas = (all, name) => all.filter((p) => p.name === name).length > 
  *  pinned blend baseline is surfaced for review but never fails the gate (a newer version differs). */
 function runLatestBlendGate(allPackages) {
     const ver = sh(`npm view ${BLEND_PKG}@beta version`)
-    const version = ver.ok ? ver.out.trim().split('\n').pop().trim() : ''
+    // sh() merges stderr, so an `npm notice`/warning line can precede the value — take the LAST line
+    // that looks like a version, not blindly the last line. Still fails closed (empty -> exit 1).
+    const version = (ver.ok ? ver.out.trim().split('\n').map((s) => s.trim()) : []).reverse().find((l) => /^\d+\.\d+\.\d+/.test(l)) || ''
     if (!/^\d+\.\d+\.\d+/.test(version)) {
         console.error(RED(`✗ could not resolve ${BLEND_PKG}@beta version:\n${ver.out.slice(0, 500)}`))
         process.exit(1)

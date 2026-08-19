@@ -85,6 +85,40 @@ check(
     'decorator/rec forms must be collected as declared names',
 )
 
+// --- SILENT: the FIRST @unboxed/variant arm (no leading `|`) is collected ------
+// (review P2: an under-collected first constructor would invent a false positive on
+//  a cross-module `Mod.FirstArm` reference.)
+check(
+    'first constructor arm (no leading pipe) is a declared name',
+    [
+        ['M.res', '@unboxed type u = Str(string) | Num(float)\n'],
+        ['U.res', 'let z = M.Str("a")\nlet w = M.Num(1.0)\n'],
+    ],
+    none,
+    'both Str (first arm) and Num must be collected',
+)
+
+// --- SILENT: a `//` inside a string must not eat the rest of the line ----------
+// (review P2: line-comment stripping ordered before string stripping was a false positive.)
+check(
+    'line-comment marker inside a string does not swallow a declaration',
+    [
+        ['A.res', '@module("http://cdn/x") external realThing: int = "realThing"\n'],
+        ['User.res', 'let x = A.realThing\n'],
+    ],
+    none,
+    'A.realThing is a real external; the // in the URL must not hide it',
+)
+
+// --- SILENT: nested block comments are fully masked ----------------------------
+// (review P3: a non-greedy block-comment strip leaked the tail after an inner close.)
+check(
+    'nested block comments do not leak a ref',
+    [['A.res', '/* outer /* inner */ Gone.here is still comment */\ntype t = int\n']],
+    none,
+    'Gone.here lives inside a nested comment -> not a reference',
+)
+
 // --- SILENT: a valid cross-file type ref resolves -----------------------------
 check(
     'valid cross-file type ref resolves',

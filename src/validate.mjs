@@ -25,14 +25,40 @@
 // checking them risks false positives on legitimate intra-file scoping.
 // ============================================================================
 
-/** Strip line comments, block comments and `"…"` string literals so a module-looking
- *  token inside `@module("Foo.Bar")`, an `@as("X")` tag, or a doc comment is never
- *  mistaken for a real cross-module reference. */
+/** Blank out comments and string literals (to spaces, newlines preserved) so a module-looking
+ *  token inside a `@module(...)`/`@as(...)` string arg, a line or block comment, or a backtick
+ *  template is never mistaken for a real cross-module reference. A single left-to-right pass —
+ *  NOT ordered regex replaces — so the three interact correctly: a line-comment marker inside a
+ *  string does not start a comment, a quote inside a comment does not start a string, block
+ *  comments nest, and backslash escapes inside strings are respected. (`'a` is a ReScript type
+ *  variable, never a char literal, so a single quote is not a string delimiter.) */
 function stripNoise(content) {
-    return content
-        .replace(/\/\*[\s\S]*?\*\//g, ' ') // block comments
-        .replace(/\/\/[^\n]*/g, ' ') // line comments
-        .replace(/"(?:[^"\\]|\\.)*"/g, '""') // string literals -> empty
+    const n = content.length
+    let out = ''
+    let block = 0 // block-comment nesting depth
+    for (let i = 0; i < n; ) {
+        const c = content[i], d = i + 1 < n ? content[i + 1] : ''
+        if (block > 0) {
+            if (c === '/' && d === '*') { block++; out += '  '; i += 2; continue }
+            if (c === '*' && d === '/') { block--; out += '  '; i += 2; continue }
+            out += c === '\n' ? '\n' : ' '; i++; continue
+        }
+        if (c === '/' && d === '*') { block = 1; out += '  '; i += 2; continue }
+        if (c === '/' && d === '/') { while (i < n && content[i] !== '\n') { out += ' '; i++ } continue }
+        if (c === '"' || c === '`') {
+            const quote = c
+            out += ' '; i++
+            while (i < n) {
+                const e = content[i]
+                if (e === '\\') { out += '  '; i += 2; continue } // escaped char (incl. \" \`)
+                if (e === quote) { out += ' '; i++; break }
+                out += e === '\n' ? '\n' : ' '; i++
+            }
+            continue
+        }
+        out += c; i++
+    }
+    return out
 }
 
 /** Every identifier a module `.res` file DECLARES, collected generously. Over-collection
@@ -51,7 +77,9 @@ export function collectDeclaredNames(content) {
     add(/\b(?:type|and)[ \t]+(?:rec[ \t]+)?([a-z_][A-Za-z0-9_]*)/g) // type / and [rec] <name>
     add(/\b(?:let|external)[ \t]+(?:rec[ \t]+)?([a-zA-Z_][A-Za-z0-9_]*)/g) // let / external [rec] <name>
     add(/\bmodule[ \t]+([A-Z][A-Za-z0-9_]*)/g) // nested module <Name>
-    add(/[|][ \t]*([A-Z][A-Za-z0-9_]*)/g) // | Constructor  (incl. @unboxed arms)
+    add(/[=|][ \t]*([A-Z][A-Za-z0-9_]*)/g) // = FirstArm / | Constructor  (the first @unboxed/variant
+    //                                        arm has no leading `|`; the extra `= Upper` matches are
+    //                                        harmless over-collection)
     add(/[({,\n][ \t]*([a-z_][A-Za-z0-9_]*)[ \t]*\??:/g) // record field label:  (over-collects; safe)
     return names
 }
