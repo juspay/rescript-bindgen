@@ -5602,7 +5602,9 @@ function unionNodeCore(type, ctx, propName, depth = 0) {
                 const toks = unboxedTokens(members)
                 let prefix = ''
                 for (const t of toks) { if (prefix && (prefix + 'Or' + t).length > 40) break; prefix += (prefix ? 'Or' : '') + t }
-                sname = lower(prefix || toks[0].slice(0, 40)) + 'Etc' + shapeHash(legacyName)
+                // `.slice(0, 40)` also caps a single first token that alone exceeds 40 chars (the loop
+                // adds the first token in full), so the name stays bounded even in that pathological case.
+                sname = lower((prefix || toks[0] || '').slice(0, 40)) + 'Etc' + shapeHash(legacyName)
             }
             // A fn-bearing union over ONE record/enum (base-ui's per-component
             // `style`/`className` over its state record) is named after that dep
