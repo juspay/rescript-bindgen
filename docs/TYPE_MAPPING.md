@@ -712,8 +712,22 @@ setter or a `@scope` static (`@get`+`@set` normally pair up, so a getter usually
 path to a root, so dropping it emits an external referencing a `*Types.res` type that was never written
 — a dangling reference ReScript rejects at compile time. So all class members that bind a type are
 roots, not just ctor/methods/getters; the `class-setter-static-reachable` fixture guards that invariant.
-Fixtures: [`return-only-generic-orphan`](../test/golden/cases/return-only-generic-orphan),
-[`class-setter-static-reachable`](../test/golden/cases/class-setter-static-reachable). (#191)
+The same completeness rule covers `--variant-props`: a component's `props` list MERGES branch fields by
+name (first branch wins for a shared name), but emit renders each branch's OWN field types, so a type
+used only by a later branch's same-named field is invisible to the `props` roots — every
+`variantProps.branches[*].fields[*].type` must be rooted too, or the `@tag` variant dangles
+(`variant-props-shadowed-branch-field` fixture). Fixtures:
+[`return-only-generic-orphan`](../test/golden/cases/return-only-generic-orphan),
+[`class-setter-static-reachable`](../test/golden/cases/class-setter-static-reachable),
+[`variant-props-shadowed-branch-field`](../test/golden/cases/variant-props-shadowed-branch-field). (#191, #178)
+
+`shared.usesJsFn` is recomputed from the survivors AFTER the sweep (#178). `JsFn.t` (from a bare
+`Function`) is a hand-authored raw node, not a keyed registry entry, so the sweep can't see it — and a
+bare `Function` sets `usesJsFn` while building a type that may later be discarded (`makeBox<T>(): Box<T>`
+flags its return, dropping the `Box` record and its `cb: Function` field). Left alone, `usesJsFn` would
+stay set and emit an unreferenced `JsFn.res`; scanning the surviving roots + entries for a `JsFn.t` node
+and clearing the flag when none remain keeps the emitted file set orphan-free. Fixture:
+[`speculative-jsfn-orphan`](../test/golden/cases/speculative-jsfn-orphan). (#178)
 
 `opaqueUnion` also gained the **structural dedup** the other builders always had (#180): it registered
 unconditionally, so two `type.id`s widening to the same module each got their own — blend emitted

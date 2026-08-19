@@ -7,6 +7,12 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **Speculative `@unboxed` classification no longer leaves an orphan `JsFn.res`** (#178) — the
+  reachability sweep (#191) already drops orphan records stranded by a discarded speculative build, but
+  a bare `Function` in such a build sets `shared.usesJsFn` (a `JsFn.t` raw node the key-based sweep can't
+  see), which left an unreferenced `JsFn.res`. `usesJsFn` is now recomputed from the surviving roots +
+  entries after the sweep, so the emitted file set stays orphan-free.
+
 - **Return-only generic no longer strands an orphan record** (#191) — a function whose type parameter
   appears only in its return (`jsonBoxed<T>(): BoxOf<T>`) has that return flagged (it can't round-trip),
   but the record `classify` registered while building the discarded return was left in the output as an
