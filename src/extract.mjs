@@ -2611,10 +2611,14 @@ export function extractModule(entryFile, opts = {}) {
     const entryFile = __entry.entry
     const from = __entry.from
     const source = program.getSourceFile(entryFile)
-    if (!source) throw new Error(`Could not load source file: ${entryFile}`)
+    // SKIP an unloadable or module-less entry instead of aborting the WHOLE run: a global/script-only
+    // `.d.ts` (`declare global { … }` with no top-level export or ambient module — e.g. @webgpu/types,
+    // #194) has no module symbol, and one bad subpath must never kill the good entries. Degrade to a
+    // recorded skip + a clean "0 bindings from this entry", never a zero-output crash. (#198 class)
+    if (!source) { skipped.push({ name: entryFile, reason: 'entry-source-not-loadable' }); continue }
 
     const moduleSymbol = entryModuleSymbol(checker, source, from)
-    if (!moduleSymbol) throw new Error(`No module symbol for ${entryFile}`)
+    if (!moduleSymbol) { skipped.push({ name: entryFile, reason: 'no-module-symbol (global/script-only .d.ts, no exports — see #194)' }); continue }
     const exports = checker.getExportsOfModule(moduleSymbol)
     // `export = value` describes `module.exports = value`: getExportsOfModule exposes the
     // assigned value's namespace/static members (`bind`, `prototype`, …) but NOT the root
