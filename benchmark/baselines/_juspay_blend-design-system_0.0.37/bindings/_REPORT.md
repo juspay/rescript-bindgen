@@ -4,7 +4,7 @@
 
 **253** function binding(s) → `BlendDesignSystemBindings.res`.
 
-**3343** shared types deduplicated into **77** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**3672** shared types deduplicated into **77** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 🔤 Constructor name collisions
 
@@ -576,7 +576,7 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 |------|-----------------|
 | `chartRef` | `chartRef?: RefObject<ChartV2ReactRefObject \| null>;` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
 | `chartRefs` | `chartRefs?: ReadonlyArray<RefObject<ChartV2ReactRefObject \| null>>;` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
-| `renderItem` | `renderItem?: (params: { item: ChartV2LegendItem; name: string; visible: boolean; color: string; value?: string \| number; onClick: () => void; }) => ReactNode;` — binds, but references shared field(s) `seriesPieDataLabelsOptionsObject.animation` (`review`), `seriesPieDataLabelsOptionsObject.connectorShape` (`review`), `seriesNetworkgraphDataLabelsOptionsObject.animation` (`review`), `seriesPackedBubbleDataLabelsOptionsObject.animation` (`review`) emitted as `string` |
+| `renderItem` | `renderItem?: (params: { item: ChartV2LegendItem; name: string; visible: boolean; color: string; value?: string \| number; onClick: () => void; }) => ReactNode;` — binds, but references shared field(s) `seriesPieDataLabelsOptionsObject.connectorShape` (`review`), `seriesSunburstDataLabelsOptionsObject.connectorShape` (`review`), `seriesLineDataDragDropOptions.guideBox` (`review`), `partialRbka3.easing` (`review`) emitted as `string` |
 
 ### DataTable
 

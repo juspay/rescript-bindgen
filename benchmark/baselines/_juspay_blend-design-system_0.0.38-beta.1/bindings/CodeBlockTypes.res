@@ -47,14 +47,27 @@ type codeBlockCodeBlockTokenTypeBodyGutterConfig = {
   borderLeft: string,  // ⚪ loose — was `{ added: BorderLeft<number | (string & {})>; removed: BorderLeft<number | (string & {})>; unchanged: BorderLef`
   borderColor: string,  // ⚪ loose — was `{ added: Color; removed: Color; unchanged: Color; }`
 }
+type __typeV1ap9j = {
+  left: string,
+  right: string,
+}
+type __typeOodha = {
+  x: __typeV1ap9j,
+  y: string,
+}
 type codeBlockCodeBlockTokenTypeBodyCodeConfig = {
   fontFamily: string,
   fontSize: string,
   lineHeight: string,
-  padding: string,  // ⚪ loose — was `{ x: { left: PaddingLeft<number | (string & {})>; right: PaddingRight<number | (string & {})>; }; y: Padding<n`
+  padding: __typeOodha,
+}
+type codeBlockUseThemeBackgroundColorConfig = {
+  added: string,
+  removed: string,
+  unchanged: string,
 }
 type codeBlockCodeBlockTokenTypeBodyHighlightedLineConfig = {
-  backgroundColor: string,  // ⚪ loose — was `{ added: BackgroundColor; removed: BackgroundColor; unchanged: BackgroundColor; }`
+  backgroundColor: codeBlockUseThemeBackgroundColorConfig,
 }
 type codeBlockCodeBlockTokenTypeBodySyntaxConfig = {
   keyword: string,
@@ -66,6 +79,15 @@ type codeBlockCodeBlockTokenTypeBodySyntaxConfig = {
   comment: string,
   text: string,
 }
+type __typeV8w704 = {
+  padding: string,
+  dotsPadding: string,
+  opacity: string,
+  disabledOpacity: string,
+  hoverBackgroundColor: string,
+  borderRadius: string,
+  iconSize: float,
+}
 type codeBlockCodeBlockTokenTypeBodyExpandContextConfig = {
   backgroundColor: string,
   borderTop: string,
@@ -74,7 +96,7 @@ type codeBlockCodeBlockTokenTypeBodyExpandContextConfig = {
   color: string,
   fontSize: string,
   letterSpacing: string,
-  button: string,  // ⚪ loose — was `{ padding: Padding<number | (string & {})>; dotsPadding: Padding<number | (string & {})>; opacity: Opacity; di`
+  button: __typeV8w704,
 }
 type codeBlockCodeBlockTokenTypeBodyConfig = {
   padding: codeBlockCodeBlockTokenTypeHeaderPaddingConfig,

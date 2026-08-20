@@ -16,30 +16,51 @@ type statCardStatCardTokenTypePaddingConfig = {
   x: string,
   y: string,
 }
+type __typeUx2o0 = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+}
+type __typeQklzj = {
+  width: string,
+}
 type statCardStatCardTokenTypeTextContainerHeaderConfig = {
   gap: string,
-  title: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: Color; }`
-  titleIcon: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; }`
+  title: __typeUx2o0,
+  titleIcon: __typeQklzj,
   helpIcon: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; color: { default: Color; hover: Color; }; }`
 }
 type statCardStatCardTokenTypeTextContainerStatsConfig = {
   gap: string,
   title: string,  // ⚪ loose — was `{ gap: Gap<number | (string & {})>; value: { line: { fontSize: FontSize<number | (string & {})>; fontWeight: F`
-  subtitle: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: Color; }`
+  subtitle: __typeUx2o0,
 }
 type statCardStatCardTokenTypeTextContainerConfig = {
   gap: string,
   header: statCardStatCardTokenTypeTextContainerHeaderConfig,
   stats: statCardStatCardTokenTypeTextContainerStatsConfig,
 }
+type __typeSmi8o = {
+  increase: string,
+  decrease: string,
+}
+type __typeV16qvn = {
+  end: string,
+  startOpacity: float,
+  endOpacity: float,
+}
 type statCardStatCardTokenTypeChartColorsConfig = {
-  line: string,  // ⚪ loose — was `{ increase: Color; decrease: Color; }`
-  area: string,  // ⚪ loose — was `{ increase: Color; decrease: Color; }`
-  gradient: string,  // ⚪ loose — was `{ end: Color; startOpacity: number; endOpacity: number; }`
+  line: __typeSmi8o,
+  area: __typeSmi8o,
+  gradient: __typeV16qvn,
+}
+type __typeV1xaug = {
+  width: string,
+  fill: string,
 }
 type statCardStatCardTokenTypeChartLineConfig = {
   strokeWidth: string,
-  activeDot: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; fill: Fill; }`
+  activeDot: __typeV1xaug,
 }
 type statCardStatCardTokenTypeChartBarConfig = {
   borderTopRightRadius: string,
@@ -48,16 +69,25 @@ type statCardStatCardTokenTypeChartBarConfig = {
   borderBottomLeftRadius: string,
   fill: string,  // ⚪ loose — was `{ default: Fill; hover: Fill; }`
 }
+type __typeQlu7n = {
+  color: string,
+  size: string,
+}
+type __typeHnfo1 = {
+  fill: string,
+  empty: string,
+  pattern: __typeQlu7n,
+}
 type statCardStatCardTokenTypeChartProgressBarConfig = {
   height: string,
   borderRadius: string,
   gap: string,
-  background: string,  // ⚪ loose — was `{ fill: BackgroundColor; empty: BackgroundColor; pattern: { color: Color; size: BackgroundSize<number | (strin`
-  label: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: Color; }`
+  background: __typeHnfo1,
+  label: __typeUx2o0,
 }
 type statCardStatCardTokenTypeChartTooltipConfig = {
   backgroundColor: string,
-  padding: string,  // ⚪ loose — was `{ x: Padding<number | (string & {})>; y: Padding<number | (string & {})>; }`
+  padding: statCardStatCardTokenTypePaddingConfig,
   borderRadius: string,
   color: string,
   fontSize: string,

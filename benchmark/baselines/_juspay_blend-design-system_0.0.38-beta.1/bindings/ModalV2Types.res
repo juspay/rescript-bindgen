@@ -5,9 +5,15 @@ type modalV2ModalV2TokensTypeOverlayConfig = {
 type modalV2ModalV2TokensTypeHeaderSlotConfig = {
   gap: string,
 }
+type __typeV9r18w = {
+  color: string,
+  fontSize: string,
+  fontWeight: string,
+  lineHeight: string,
+}
 type modalV2ModalV2TokensTypeHeaderTextConfig = {
-  title: string,  // ⚪ loose — was `{ color: Color; fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; lineHeight: LineHeight<num`
-  subtitle: string,  // ⚪ loose — was `{ color: Color; fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; lineHeight: LineHeight<num`
+  title: __typeV9r18w,
+  subtitle: __typeV9r18w,
 }
 type modalV2ModalV2TokensTypeHeaderConfig = {
   gap: string,

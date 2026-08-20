@@ -46,7 +46,7 @@ type statCardStatCardTokenTypeTextContainerStatsTitleValueConfig = {
 }
 type statCardStatCardTokenTypeTextContainerStatsTitleChangeConfig = {
   margin: string,
-  arrow: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; }`
+  arrow: statCardStatCardTokenTypeTextContainerHeaderTitleIconConfig,
   text: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: { increase: Color; decrease: Colo`
 }
 type statCardStatCardTokenTypeTextContainerStatsTitleConfig = {

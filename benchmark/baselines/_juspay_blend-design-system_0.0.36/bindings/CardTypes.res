@@ -71,9 +71,18 @@ type cardCardTokenTypeBodyActionsConfig = {
   gap: string,
   centerAlignGap: string,
 }
+type __typeLzdw5 = {
+  marginBottom: string,
+  minHeight: string,
+}
+type __typeFzq0p = {
+  marginRight: string,
+  width: string,
+  height: string,
+}
 type cardCardTokenTypeBodyAlignmentAlignedCardSlotConfig = {
-  vertical: string,  // ⚪ loose — was `{ marginBottom: MarginBottom<number | (string & {})>; minHeight: MinHeight<number | (string & {})>; }`
-  horizontal: string,  // ⚪ loose — was `{ marginRight: MarginRight<number | (string & {})>; width: Width<number | (string & {})>; height: Height<numbe`
+  vertical: __typeLzdw5,
+  horizontal: __typeFzq0p,
 }
 type cardCardTokenTypeBodyAlignmentAlignedConfig = {
   cardSlot: cardCardTokenTypeBodyAlignmentAlignedCardSlotConfig,

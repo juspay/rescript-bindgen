@@ -179,6 +179,9 @@ type chartsBlendChartPropsConstructorType =
   | @as("context") Context
   | @as("innerR") InnerR
   | @as("longArc") LongArc
+type chartsAxisPointBreakEventObjectType =
+  | @as("pointBreak") PointBreak
+  | @as("pointInBreak") PointInBreak
 type chartsChartTokensTypeHeaderPaddingConfig = {
   x: string,
   y: string,
@@ -193,9 +196,12 @@ type chartsChartTokensTypeHeaderConfig = {
   borderRadius: string,
   slots: chartsChartTokensTypeHeaderSlotsConfig,
 }
+type __typeSfat4 = {
+  maxHeight: string,
+}
 type chartsChartTokensTypeContentLegendConfig = {
   gap: string,
-  dropdown: string,  // ⚪ loose — was `{ maxHeight: MaxHeight<number | (string & {})>; }`
+  dropdown: __typeSfat4,
   item: string,  // ⚪ loose — was `{ gap: Gap<number | (string & {})>; color: { active: Color; default: Color; hover: Color; total: Color; }; fon`
 }
 type chartsChartTokensTypeContentPaddingConfig = {

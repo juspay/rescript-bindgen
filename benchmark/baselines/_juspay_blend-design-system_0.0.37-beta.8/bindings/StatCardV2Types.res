@@ -14,10 +14,14 @@ type statCardV2StatCardV2TokensTypeTopContainerDataContainerTitleContainerTitleC
   color: string,
   lineHeight: string,
 }
+type __typeV1bifo = {
+  default: string,
+  hover: string,
+}
 type statCardV2StatCardV2TokensTypeTopContainerDataContainerTitleContainerHelpIconConfig = {
   width: string,
   height: string,
-  color: string,  // ⚪ loose — was `{ default: Color; hover: Color; }`
+  color: __typeV1bifo,
 }
 type statCardV2StatCardV2TokensTypeTopContainerDataContainerTitleContainerConfig = {
   gap: string,

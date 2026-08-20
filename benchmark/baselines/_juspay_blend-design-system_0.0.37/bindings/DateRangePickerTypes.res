@@ -134,7 +134,7 @@ type dateRangePickerCalendarTokenTypeCalendarCalendarGridMonthHeaderConfig = {
   fontSize: string,
   fontWeight: string,
   color: string,
-  padding: string,  // ⚪ loose — was `{ x: Padding<number | (string & {})>; y: Padding<number | (string & {})>; }`
+  padding: dateRangePickerCalendarTokenTypeTriggerQuickSelectorPaddingSmConfig,
   gap: string,
 }
 type dateRangePickerCalendarTokenTypeCalendarCalendarGridMonthConfig = {
@@ -153,27 +153,56 @@ type dateRangePickerCalendarTokenTypeCalendarCalendarGridWeekConfig = {
   row: dateRangePickerCalendarTokenTypeCalendarCalendarGridWeekRowConfig,
 }
 type dateRangePickerCalendarTokenTypeCalendarCalendarGridDayCellConfig = {
-  padding: string,  // ⚪ loose — was `{ x: Padding<number | (string & {})>; y: Padding<number | (string & {})>; }`
+  padding: dateRangePickerCalendarTokenTypeTriggerQuickSelectorPaddingSmConfig,
   fontWeight: string,
   fontSize: string,
   lineHeight: string,
   border: string,  // ⚪ loose — was `{ disabled: Border<number | (string & {})>; active: Border<number | (string & {})>; default: Border<number | (`
   borderRadius: string,
 }
+type __typeV12m5i = {
+  topLeft: string,
+  bottomLeft: string,
+}
+type __typeK75gz = {
+  backgroundColor: string,
+  borderRadius: __typeV12m5i,
+}
+type __typeV79lrl = {
+  topRight: string,
+  bottomRight: string,
+}
+type __typeV16sc8 = {
+  backgroundColor: string,
+  borderRadius: __typeV79lrl,
+}
+type __typeV1w9qo = {
+  backgroundColor: string,
+  borderRadius: string,
+}
+type __typeV139hr2 = {
+  backgroundColor: string,
+}
+type __typeWviqp = {
+  fontWeight: string,
+}
+type __typeV12ovp = {
+  color: string,
+}
 type dateRangePickerCalendarTokenTypeCalendarCalendarGridDayStatesConfig = {
-  startDate: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; borderRadius: { topLeft: BorderTopLeftRadius<number | (string & {})>; bott`
-  endDate: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; borderRadius: { topRight: BorderTopRightRadius<number | (string & {})>; bo`
-  singleDate: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; borderRadius: BorderRadius<number | (string & {})>; }`
-  rangeDay: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; }`
-  todayDay: string,  // ⚪ loose — was `{ fontWeight: FontWeight; }`
-  disabledDay: string,  // ⚪ loose — was `{ color: Color; }`
+  startDate: __typeK75gz,
+  endDate: __typeV16sc8,
+  singleDate: __typeV1w9qo,
+  rangeDay: __typeV139hr2,
+  todayDay: __typeWviqp,
+  disabledDay: __typeV12ovp,
 }
 type dateRangePickerCalendarTokenTypeCalendarCalendarGridDayTextConfig = {
-  dayNumber: string,  // ⚪ loose — was `{ color: Color; }`
-  selectedDay: string,  // ⚪ loose — was `{ color: Color; }`
-  rangeDay: string,  // ⚪ loose — was `{ color: Color; }`
-  todayDay: string,  // ⚪ loose — was `{ color: Color; }`
-  disabledDate: string,  // ⚪ loose — was `{ color: Color; }`
+  dayNumber: __typeV12ovp,
+  selectedDay: __typeV12ovp,
+  rangeDay: __typeV12ovp,
+  todayDay: __typeV12ovp,
+  disabledDate: __typeV12ovp,
 }
 type dateRangePickerCalendarTokenTypeCalendarCalendarGridDayTodayIndicatorConfig = {
   width: string,

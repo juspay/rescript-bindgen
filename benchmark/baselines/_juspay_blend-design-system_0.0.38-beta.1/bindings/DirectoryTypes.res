@@ -1,12 +1,43 @@
+type __typeV1okzr2 = {
+  x: string,
+  y: string,
+}
+type __typeQb0or2 = {
+  fontSize: string,
+  color: string,
+  fontWeight: string,
+}
+type __typeV1agq4 = {
+  width: string,
+  color: string,
+}
 type directoryDirectoryTokenTypeSectionHeaderConfig = {
-  padding: string,  // ⚪ loose — was `{ x: Padding<number | (string & {})>; y: Padding<number | (string & {})>; }`
-  label: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; color: Color; fontWeight: FontWeight; }`
-  chevron: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; color: Color; }`
+  padding: __typeV1okzr2,
+  label: __typeQb0or2,
+  chevron: __typeV1agq4,
+}
+type __typeV1c78s = {
+  width: string,
+  color: string,
+  leftOffset: string,
+}
+type __typeV1cbrj = {
+  itemInset: string,
+  itemPaddingLeft: string,
+  elbowTop: string,
+  elbowHeight: string,
+  elbowWidthOffset: string,
+}
+type __typeQic2i = {
+  paddingLeft: string,
+  marginTop: string,
+  border: __typeV1c78s,
+  connector: __typeV1cbrj,
 }
 type directoryDirectoryTokenTypeSectionItemListConfig = {
   gap: string,
   item: string,  // ⚪ loose — was `{ padding: { x: Padding<number | (string & {})>; y: Padding<number | (string & {})>; }; iconOnlyPadding: { pad`
-  nested: string,  // ⚪ loose — was `{ paddingLeft: PaddingLeft<number | (string & {})>; marginTop: MarginTop<number | (string & {})>; border: { wi`
+  nested: __typeQic2i,
 }
 type directoryDirectoryTokenTypeSectionConfig = {
   gap: string,

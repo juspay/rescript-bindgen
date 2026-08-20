@@ -37,11 +37,17 @@ type tabsTabsTokensTypeBorderRadiusConfig = {
   md: tabsTabsTokensTypeBorderRadiusSmConfig,
   lg: tabsTabsTokensTypeBorderRadiusSmConfig,
 }
+type __typeV1if0q = {
+  top: string,
+  right: string,
+  bottom: string,
+  left: string,
+}
 type tabsTabsTokensTypePaddingSmConfig = {
-  boxed: string,  // ⚪ loose — was `{ top: PaddingTop<number | (string & {})>; right: PaddingRight<number | (string & {})>; bottom: PaddingBottom<`
-  floating: string,  // ⚪ loose — was `{ top: PaddingTop<number | (string & {})>; right: PaddingRight<number | (string & {})>; bottom: PaddingBottom<`
-  underline: string,  // ⚪ loose — was `{ top: PaddingTop<number | (string & {})>; right: PaddingRight<number | (string & {})>; bottom: PaddingBottom<`
-  pills: string,  // ⚪ loose — was `{ top: PaddingTop<number | (string & {})>; right: PaddingRight<number | (string & {})>; bottom: PaddingBottom<`
+  boxed: __typeV1if0q,
+  floating: __typeV1if0q,
+  underline: __typeV1if0q,
+  pills: __typeV1if0q,
 }
 type tabsTabsTokensTypePaddingConfig = {
   sm: tabsTabsTokensTypePaddingSmConfig,
@@ -62,10 +68,15 @@ type tabsTabsTokensTypeTriggerActiveIndicatorConfig = {
   height: string,
   color: string,
 }
+type tabsUseThemeFontSizeConfig = {
+  sm: string,
+  md: string,
+  lg: string,
+}
 type tabsTabsTokensTypeTriggerTextConfig = {
-  color: string,  // ⚪ loose — was `{ boxed: { disabled: Color; active: Color; default: Color; hover: Color; }; floating: { disabled: Color; activ`
-  fontSize: string,  // ⚪ loose — was `{ sm: FontSize<number | (string & {})>; md: FontSize<number | (string & {})>; lg: FontSize<number | (string & `
-  fontWeight: string,  // ⚪ loose — was `{ sm: FontWeight; md: FontWeight; lg: FontWeight; }`
+  color: tabsTabsTokensTypeBackgroundColorConfig,
+  fontSize: tabsUseThemeFontSizeConfig,
+  fontWeight: tabsUseThemeFontSizeConfig,
 }
 type tabsTabsTokensTypeTriggerConfig = {
   gap: string,

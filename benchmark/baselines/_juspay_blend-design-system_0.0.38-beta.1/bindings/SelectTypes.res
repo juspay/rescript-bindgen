@@ -6,10 +6,28 @@ type selectSelectTokenTypesTriggerLabelConfig = {
   fontWeight: string,
   fontSize: string,
 }
+type __typeV1hngb = {
+  sm: string,
+  md: string,
+  lg: string,
+}
+type __typeV13zht = {
+  weight: string,
+  size: __typeV1hngb,
+}
+type __typeV1okzr3 = {
+  x: string,
+  y: string,
+}
+type __typeNt0cu = {
+  sm: __typeV1okzr3,
+  md: __typeV1okzr3,
+  lg: __typeV1okzr3,
+}
 type selectSelectTokenTypesTriggerSelectedValueConfig = {
   color: string,
-  font: string,  // ⚪ loose — was `{ weight: FontWeight; size: { sm: string; md: string; lg: string; }; }`
-  padding: string,  // ⚪ loose — was `{ sm: { x: Padding<number | (string & {})>; y: Padding<number | (string & {})>; }; md: { x: Padding<number | (`
+  font: __typeV13zht,
+  padding: __typeNt0cu,
 }
 type selectSelectTokenTypesTriggerConfig = {
   container: selectSelectTokenTypesTriggerContainerConfig,

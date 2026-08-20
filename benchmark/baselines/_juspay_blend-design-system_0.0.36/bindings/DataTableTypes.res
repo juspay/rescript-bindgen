@@ -617,9 +617,12 @@ type bulkActionsType = {
   selectText: dataTableBulkActionsTypeSelectTextConfig,
   height: string,
 }
+type __typeV139hr2 = {
+  backgroundColor: string,
+}
 type dataTableTableTokenTypeDataTableTableHeaderRowConfig = {
   height: string,
-  @as("&:hover") __hover: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; }`
+  @as("&:hover") __hover: __typeV139hr2,
 }
 type dataTableTableTokenTypeDataTableTableHeaderCellConfig = {
   padding: string,
@@ -634,6 +637,15 @@ type dataTableTableTokenTypeDataTableTableHeaderSortableConfig = {
   cursor: string,
   userSelect: string,
 }
+type __typeV182le = {
+  padding: string,
+  borderRadius: string,
+  hoverBackground: string,
+  iconColor: string,
+  textColor: string,
+  fontSize: string,
+  fontWeight: string,
+}
 type dataTableTableTokenTypeDataTableTableHeaderFilterConfig = {
   backgroundColor: string,
   borderRadius: string,
@@ -643,7 +655,7 @@ type dataTableTableTokenTypeDataTableTableHeaderFilterConfig = {
   maxHeight: string,
   overflowY: string,
   gap: string,
-  sortOption: string,  // ⚪ loose — was `{ padding: Padding<number | (string & {})>; borderRadius: BorderRadius<number | (string & {})>; hoverBackgroun`
+  sortOption: __typeV182le,
   selectedBackground: string,
   hoverBackground: string,
   selectedTextColor: string,
@@ -671,10 +683,37 @@ type dataTableTableTokenTypeDataTableTableHeaderConfig = {
   sortable: dataTableTableTokenTypeDataTableTableHeaderSortableConfig,
   filter: dataTableTableTokenTypeDataTableTableHeaderFilterConfig,
 }
+type __typeV13u1g = {
+  backgroundColor: string,
+  cursor: string,
+}
 type dataTableTableTokenTypeDataTableTableBodyRowConfig = {
   height: string,
-  @as("&:hover") __hover: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; cursor: Cursor; }`
+  @as("&:hover") __hover: __typeV13u1g,
   backgroundColor: string,
+}
+type __typeYkc2w = {
+  backgroundColor: string,
+  color: string,
+}
+type __typeR0eqo = {
+  display: string,
+  alignItems: string,
+  justifyContent: string,
+  width: string,
+  height: string,
+  borderRadius: string,
+  backgroundColor: string,
+  cursor: string,
+  transition: string,
+  color: string,
+  border: string,
+  @as("&:hover") __hover: __typeYkc2w,
+}
+type __typeBbn2n = {
+  padding: string,
+  borderTop: string,
+  expandButton: __typeR0eqo,
 }
 type dataTableTableTokenTypeDataTableTableBodyCellConfig = {
   padding: string,
@@ -682,7 +721,7 @@ type dataTableTableTokenTypeDataTableTableBodyCellConfig = {
   color: string,
   fontSize: string,
   borderTop: string,
-  expandable: string,  // ⚪ loose — was `{ padding: Padding<number | (string & {})>; borderTop: BorderTop<number | (string & {})>; expandButton: { disp`
+  expandable: __typeBbn2n,
 }
 type dataTableTableTokenTypeDataTableTableBodyConfig = {
   backgroundColor: string,
@@ -690,10 +729,31 @@ type dataTableTableTokenTypeDataTableTableBodyConfig = {
   row: dataTableTableTokenTypeDataTableTableBodyRowConfig,
   cell: dataTableTableTokenTypeDataTableTableBodyCellConfig,
 }
+type __typeYye8b = {
+  fontSize: string,
+  color: string,
+}
+type __typeAn4co = {
+  gap: string,
+  padding: string,
+  borderRadius: string,
+  display: string,
+  alignItems: string,
+  backgroundColor: string,
+  border: string,
+  background: string,
+  cursor: string,
+  color: string,
+  fontSize: string,
+  hoverColor: string,
+}
+type __typeV17xsx = {
+  gap: string,
+}
 type dataTableTableTokenTypeDataTableTableFooterPaginationConfig = {
-  pageText: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; color: Color; }`
-  pageSizeSelector: string,  // ⚪ loose — was `{ gap: Gap<number | (string & {})>; padding: Padding<number | (string & {})>; borderRadius: BorderRadius<numbe`
-  pageNavigation: string,  // ⚪ loose — was `{ gap: Gap<number | (string & {})>; }`
+  pageText: __typeYye8b,
+  pageSizeSelector: __typeAn4co,
+  pageNavigation: __typeV17xsx,
 }
 type dataTableTableTokenTypeDataTableTableFooterConfig = {
   display: string,

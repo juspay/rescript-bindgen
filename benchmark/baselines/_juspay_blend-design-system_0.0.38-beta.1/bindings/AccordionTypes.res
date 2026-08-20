@@ -8,13 +8,30 @@ type accordionAccordionTokenTypeGapConfig = {
   border: string,
   noBorder: string,
 }
+type accordionUseThemeBorderConfig = {
+  disabled: string,
+  active: string,
+  default: string,
+  hover: string,
+  @as("open") open_: string,
+}
 type accordionAccordionTokenTypeTriggerBackgroundColorConfig = {
-  border: string,  // ⚪ loose — was `{ disabled: BackgroundColor; active: BackgroundColor; default: BackgroundColor; hover: BackgroundColor; open: `
-  noBorder: string,  // ⚪ loose — was `{ disabled: BackgroundColor; active: BackgroundColor; default: BackgroundColor; hover: BackgroundColor; open: `
+  border: accordionUseThemeBorderConfig,
+  noBorder: accordionUseThemeBorderConfig,
+}
+type accordionUseThemeTitleConfig = {
+  fontSize: string,
+  fontWeight: string,
+  color: accordionUseThemeBorderConfig,
+}
+type accordionUseThemeSubtextConfig = {
+  fontSize: string,
+  gap: string,
+  color: accordionUseThemeBorderConfig,
 }
 type accordionAccordionTokenTypeTriggerTextConfig = {
-  title: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: { disabled: Color; active: Color;`
-  subtext: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; gap: Gap<number | (string & {})>; color: { disabled: Color; acti`
+  title: accordionUseThemeTitleConfig,
+  subtext: accordionUseThemeSubtextConfig,
 }
 type accordionAccordionTokenTypeTriggerSlotConfig = {
   maxWidth: string,

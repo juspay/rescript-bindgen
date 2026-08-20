@@ -169,6 +169,9 @@ type chartsBlendChartPropsConstructorType =
   | @as("innerR") InnerR
   | @as("longArc") LongArc
   | @as("r") R
+type chartsAxisPointBreakEventObjectType =
+  | @as("pointBreak") PointBreak
+  | @as("pointInBreak") PointInBreak
 type chartsDataPointPrimaryConfig = {
   label: string,
   val: float,

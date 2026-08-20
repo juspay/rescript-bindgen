@@ -72,6 +72,17 @@ type sidebarMobileNavigationTokenTypeDrawerConfig = {
   borderRadius: string,
   borderTop: string,
 }
+type __typeHdipr = {
+  width: string,
+  height: string,
+  borderRadius: string,
+  transition: string,
+}
+type __typeNl3f3 = {
+  fontSize: string,
+  fontWeight: string,
+  textAlign: string,
+}
 type sidebarMobileNavigationTokenTypeRowItemConfig = {
   width: string,
   height: string,
@@ -80,8 +91,12 @@ type sidebarMobileNavigationTokenTypeRowItemConfig = {
   backgroundColor: string,  // ⚪ loose — was `{ active: BackgroundColor; default: BackgroundColor; }`
   color: string,  // ⚪ loose — was `{ active: Color; default: Color; }`
   fontWeight: string,
-  icon: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; height: Height<number | (string & {})>; borderRadius: BorderRadius<num`
-  text: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; textAlign: TextAlign; }`
+  icon: __typeHdipr,
+  text: __typeNl3f3,
+}
+type __typeV44l1h3 = {
+  width: string,
+  height: string,
 }
 type sidebarMobileNavigationTokenTypeRowPrimaryActionConfig = {
   width: string,
@@ -90,7 +105,7 @@ type sidebarMobileNavigationTokenTypeRowPrimaryActionConfig = {
   background: string,
   boxShadow: string,
   color: string,
-  icon: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; height: Height<number | (string & {})>; }`
+  icon: __typeV44l1h3,
 }
 type sidebarMobileNavigationTokenTypeRowConfig = {
   padding: sidebarSidebarTokenTypeLeftPanelPaddingConfig,

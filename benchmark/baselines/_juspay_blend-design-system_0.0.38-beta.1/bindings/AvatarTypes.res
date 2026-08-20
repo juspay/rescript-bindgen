@@ -10,12 +10,16 @@ type avatarShape =
 type avatarOnlinePosition =
   | @as("top") Top
   | @as("bottom") Bottom
+type __typeV44l1h2 = {
+  width: string,
+  height: string,
+}
 type avatarAvatarTokensTypeContainerSizeConfig = {
-  sm: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; height: Height<number | (string & {})>; }`
-  regular: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; height: Height<number | (string & {})>; }`
-  md: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; height: Height<number | (string & {})>; }`
-  lg: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; height: Height<number | (string & {})>; }`
-  xl: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; height: Height<number | (string & {})>; }`
+  sm: __typeV44l1h2,
+  regular: __typeV44l1h2,
+  md: __typeV44l1h2,
+  lg: __typeV44l1h2,
+  xl: __typeV44l1h2,
 }
 type avatarAvatarTokensTypeTextColorConfig = {
   default: string,
@@ -47,9 +51,24 @@ type avatarAvatarTokensTypeTextConfig = {
   fontSize: avatarAvatarTokensTypeTextFontSizeConfig,
   fontWeight: avatarAvatarTokensTypeTextFontSizeConfig,
 }
+type avatarUseThemeSmDefaultConfig = {
+  color: string,
+  width: string,
+}
+type avatarUseThemeSmConfig = {
+  default: avatarUseThemeSmDefaultConfig,
+  online: avatarUseThemeSmDefaultConfig,
+}
+type avatarAvatarTokensTypeIndicatorBorderConfig = {
+  sm: avatarUseThemeSmConfig,
+  regular: avatarUseThemeSmConfig,
+  md: avatarUseThemeSmConfig,
+  lg: avatarUseThemeSmConfig,
+  xl: avatarUseThemeSmConfig,
+}
 type avatarAvatarTokensTypeIndicatorConfig = {
   backgroundColor: avatarAvatarTokensTypeTextColorConfig,
-  border: avatarAvatarTokensTypeContainerSizeConfig,
+  border: avatarAvatarTokensTypeIndicatorBorderConfig,
   size: avatarAvatarTokensTypeContainerSizeConfig,
   borderRadius: string,
   boxShadow: string,

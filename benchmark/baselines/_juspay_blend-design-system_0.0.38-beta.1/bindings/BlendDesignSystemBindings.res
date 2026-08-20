@@ -28,7 +28,7 @@
 @module("@juspay/blend-design-system") external getUnitInputTokens: (TokensTypes.foundationTokenType, ~theme: string=?, unit) => InputsTypes.responsiveUnitInputTokens = "getUnitInputTokens"
 @module("@juspay/blend-design-system") external getMultiValueInputTokens: (TokensTypes.foundationTokenType) => InputsTypes.responsiveMultiValueInputTokens = "getMultiValueInputTokens"
 @module("@juspay/blend-design-system") external getKeyValuePairTokens: (TokensTypes.foundationTokenType) => KeyValuePairTypes.responsiveKeyValuePairTokens = "getKeyValuePairTokens"
-@module("@juspay/blend-design-system") external getMenuItemStateToken: (ContextSharedTypes.menuItemStateTokens<'a>, ContextSharedTypes.menuItemSelectionStates) => 'a = "getMenuItemStateToken"
+@module("@juspay/blend-design-system") external getMenuItemStateToken: (ContextSharedTypes.menuItemStateTokensV1lywh<'a>, ContextSharedTypes.menuItemSelectionStates) => 'a = "getMenuItemStateToken"
 @module("@juspay/blend-design-system") external getMenuTokens: (TokensTypes.foundationTokenType) => ContextSharedTypes.responsiveMenuTokensType = "getMenuTokens"
 @module("@juspay/blend-design-system") external getModalComponentTokens: (TokensTypes.foundationTokenType, ~theme: string=?, unit) => ModalTypes.responsiveModalTokens = "getModalComponentTokens"
 @module("@juspay/blend-design-system") external getMultiSelectTokens: (TokensTypes.foundationTokenType) => MultiSelectTypes.responsiveMultiSelectTokens = "getMultiSelectTokens"

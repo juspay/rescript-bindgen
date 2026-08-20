@@ -8,16 +8,31 @@ type checkboxCheckboxTokensTypeIndicatorWidthConfig = {
   sm: string,
   md: string,
 }
+type checkboxUseThemeCheckedConfig = {
+  default?: string,
+  hover?: string,
+  disabled?: string,
+  error?: string,
+}
 type checkboxCheckboxTokensTypeIndicatorBackgroundColorConfig = {
-  checked?: string,  // ⚪ loose — was `{ default?: BackgroundColor; hover?: BackgroundColor; disabled?: BackgroundColor; error?: BackgroundColor; }`
-  unchecked?: string,  // ⚪ loose — was `{ default?: BackgroundColor; hover?: BackgroundColor; disabled?: BackgroundColor; error?: BackgroundColor; }`
-  indeterminate?: string,  // ⚪ loose — was `{ default?: BackgroundColor; hover?: BackgroundColor; disabled?: BackgroundColor; error?: BackgroundColor; }`
+  checked?: checkboxUseThemeCheckedConfig,
+  unchecked?: checkboxUseThemeCheckedConfig,
+  indeterminate?: checkboxUseThemeCheckedConfig,
+}
+type checkboxUseThemeColorCheckedConfig = {
+  default?: string,
+  disabled?: string,
+}
+type checkboxUseThemeColorConfigV1iwo4 = {
+  checked?: checkboxUseThemeColorCheckedConfig,
+  unchecked?: checkboxUseThemeColorCheckedConfig,
+  indeterminate?: checkboxUseThemeColorCheckedConfig,
 }
 type checkboxCheckboxTokensTypeIndicatorIconConfig = {
-  color: string,  // ⚪ loose — was `{ checked?: { default?: Color; disabled?: Color; }; unchecked?: { default?: Color; disabled?: Color; }; indete`
-  width: string,  // ⚪ loose — was `{ sm: Width<number | (string & {})>; md: Width<number | (string & {})>; }`
-  height: string,  // ⚪ loose — was `{ sm: Height<number | (string & {})>; md: Height<number | (string & {})>; }`
-  strokeWidth: string,  // ⚪ loose — was `{ sm: StrokeWidth<number | (string & {})>; md: StrokeWidth<number | (string & {})>; }`
+  color: checkboxUseThemeColorConfigV1iwo4,
+  width: checkboxCheckboxTokensTypeIndicatorWidthConfig,
+  height: checkboxCheckboxTokensTypeIndicatorWidthConfig,
+  strokeWidth: checkboxCheckboxTokensTypeIndicatorWidthConfig,
 }
 type checkboxCheckboxTokensTypeIndicatorConfig = {
   width: checkboxCheckboxTokensTypeIndicatorWidthConfig,
@@ -30,16 +45,22 @@ type checkboxCheckboxTokensTypeIndicatorConfig = {
   boxShadow: string,
   icon: checkboxCheckboxTokensTypeIndicatorIconConfig,
 }
+type checkboxUseThemeColorConfigHeuf4 = {
+  default: string,
+  hover: string,
+  disabled: string,
+  error: string,
+}
 type checkboxCheckboxTokensTypeContentLabelConfig = {
-  color: string,  // ⚪ loose — was `{ default: Color; hover: Color; disabled: Color; error: Color; }`
-  fontSize: string,  // ⚪ loose — was `{ sm: FontSize<number | (string & {})>; md: FontSize<number | (string & {})>; }`
-  fontWeight: string,  // ⚪ loose — was `{ sm: FontWeight; md: FontWeight; }`
-  lineHeight: string,  // ⚪ loose — was `{ sm: LineHeight<number | (string & {})>; md: LineHeight<number | (string & {})>; }`
+  color: checkboxUseThemeColorConfigHeuf4,
+  fontSize: checkboxCheckboxTokensTypeIndicatorWidthConfig,
+  fontWeight: checkboxCheckboxTokensTypeIndicatorWidthConfig,
+  lineHeight: checkboxCheckboxTokensTypeIndicatorWidthConfig,
 }
 type checkboxCheckboxTokensTypeContentSubtextConfig = {
-  color: string,  // ⚪ loose — was `{ default: Color; hover: Color; disabled: Color; error: Color; }`
-  fontSize: string,  // ⚪ loose — was `{ sm: FontSize<number | (string & {})>; md: FontSize<number | (string & {})>; }`
-  fontWeight: string,  // ⚪ loose — was `{ sm: FontWeight; md: FontWeight; }`
+  color: checkboxUseThemeColorConfigHeuf4,
+  fontSize: checkboxCheckboxTokensTypeIndicatorWidthConfig,
+  fontWeight: checkboxCheckboxTokensTypeIndicatorWidthConfig,
 }
 type checkboxCheckboxTokensTypeContentConfig = {
   gap: string,

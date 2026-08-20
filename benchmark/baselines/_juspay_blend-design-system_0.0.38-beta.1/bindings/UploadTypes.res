@@ -6,13 +6,25 @@ type uploadState2 =
 type uploadUploadedFileWithStatusStatus =
   | @as("error") Error
   | @as("success") Success
+type __typeUx2o03 = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+}
 type uploadUploadTokenTypeHeaderLabelConfig = {
-  text: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: Color; }`
+  text: __typeUx2o03,
   marginBottom: string,
   gap: string,
 }
+type __typeV12ovp = {
+  color: string,
+}
 type uploadUploadTokenTypeHeaderRequiredConfig = {
-  text: string,  // ⚪ loose — was `{ color: Color; }`
+  text: __typeV12ovp,
+  gap: string,
+}
+type uploadUploadTokenTypeHeaderSubLabelConfig = {
+  text: __typeUx2o03,
   gap: string,
 }
 type uploadUploadTokenTypeHeaderHelpIconConfig = {
@@ -22,7 +34,7 @@ type uploadUploadTokenTypeHeaderHelpIconConfig = {
 type uploadUploadTokenTypeHeaderConfig = {
   label: uploadUploadTokenTypeHeaderLabelConfig,
   required: uploadUploadTokenTypeHeaderRequiredConfig,
-  subLabel: uploadUploadTokenTypeHeaderRequiredConfig,
+  subLabel: uploadUploadTokenTypeHeaderSubLabelConfig,
   helpIcon: uploadUploadTokenTypeHeaderHelpIconConfig,
 }
 type uploadUploadTokenTypeContainerBorderConfig = {
@@ -32,10 +44,28 @@ type uploadUploadTokenTypeContainerBorderConfig = {
   error: string,
   dragActive: string,
 }
+type __typeTuyz6 = {
+  width: string,
+  gap: string,
+}
+type __typeV1y6we3 = {
+  color: string,
+  fontSize: string,
+  fontWeight: string,
+}
+type __typeSdi5z = {
+  title: __typeV1y6we3,
+  subtitle: __typeV1y6we3,
+  gap: string,
+}
+type __typeV1asz9 = {
+  gap: string,
+  errorText: __typeV1y6we3,
+}
 type uploadUploadTokenTypeContainerContentConfig = {
-  slot: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; gap: Gap<number | (string & {})>; }`
-  text: string,  // ⚪ loose — was `{ title: { color: Color; fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; }; subtitle: { co`
-  actionable: string,  // ⚪ loose — was `{ gap: Gap<number | (string & {})>; errorText: { color: Color; fontSize: FontSize<number | (string & {})>; fon`
+  slot: __typeTuyz6,
+  text: __typeSdi5z,
+  actionable: __typeV1asz9,
 }
 type uploadUploadTokenTypeContainerConfig = {
   border: uploadUploadTokenTypeContainerBorderConfig,

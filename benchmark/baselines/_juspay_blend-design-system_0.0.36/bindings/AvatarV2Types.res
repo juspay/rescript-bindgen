@@ -46,12 +46,18 @@ type avatarV2AvatarV2TokensTypeContainerStatusBackgroundColorConfig = {
   away: string,
   busy: string,
 }
+type __typeX42gq = {
+  top?: string,
+  right?: string,
+  bottom?: string,
+  left?: string,
+}
 type avatarV2AvatarV2TokensTypeContainerStatusPositionCircularConfig = {
-  sm: string,  // ⚪ loose — was `{ top?: Top<number | (string & {})>; right?: Right<number | (string & {})>; bottom?: Bottom<number | (string &`
-  regular: string,  // ⚪ loose — was `{ top?: Top<number | (string & {})>; right?: Right<number | (string & {})>; bottom?: Bottom<number | (string &`
-  md: string,  // ⚪ loose — was `{ top?: Top<number | (string & {})>; right?: Right<number | (string & {})>; bottom?: Bottom<number | (string &`
-  lg: string,  // ⚪ loose — was `{ top?: Top<number | (string & {})>; right?: Right<number | (string & {})>; bottom?: Bottom<number | (string &`
-  xl: string,  // ⚪ loose — was `{ top?: Top<number | (string & {})>; right?: Right<number | (string & {})>; bottom?: Bottom<number | (string &`
+  sm: __typeX42gq,
+  regular: __typeX42gq,
+  md: __typeX42gq,
+  lg: __typeX42gq,
+  xl: __typeX42gq,
 }
 type avatarV2AvatarV2TokensTypeContainerStatusPositionConfig = {
   circular: avatarV2AvatarV2TokensTypeContainerStatusPositionCircularConfig,
