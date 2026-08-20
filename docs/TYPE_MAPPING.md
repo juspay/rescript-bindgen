@@ -993,7 +993,11 @@ records too, not just named ones: blend's `DeepPartial<ComponentTokenType>` re-p
 config into an anonymous mapped-type object (the original name is stripped), so a name-only gate left
 ~185 of them as `string` ghosts (#205). Anonymous is safe because names are path-scoped
 (`<home><Path>Config`, #90/#63), not an order-churny global `…Config2/3` counter — the same shape gets
-one stable name; (b) a **past-bound UNION** whose arms are all
+one stable name. Lifting the name gate applies to **every** package, not just blend: any anonymous
+record that is provably bounded now materializes rather than truncating — Highcharts' shared-types
+graph grows accordingly (bounded option records that were flagged `string` become real records; the
+`boundedPastDepth` cycle guard still truncates the genuinely cyclic ones), which is a fidelity gain
+(fewer flags, verified 0 dangling refs), not new unbounded expansion; (b) a **past-bound UNION** whose arms are all
 bounded is split through `unionNode` instead of truncated wholesale — `tooltipOptions.shadow`
 (`boolean | ShadowOptionsObject`) → `@unboxed Bool | ShadowOptionsObject`, `seriesXrangeOptions.dataLabels`
 (`A | A[]`) → `@unboxed One(a) | Many(array<a>)`, `tooltipOptions.style` (`CSSObject | TooltipStyleOptions`)

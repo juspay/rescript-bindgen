@@ -3205,7 +3205,7 @@ function relinkRegistered(t, byKey, seen, ownerDeps) {
  *  one-shot recovery (no per-field chaining to bound), and blend's token configs nest several levels
  *  (`trigger.text.title.fontSize`). Highcharts' option graph is cyclic, so `boundedPastDepth` returns
  *  false at ANY budget (cycle-guarded), keeping the unbounded graph truncated. */
-const HEAL_BOUND_BUDGET = 8
+const HEAL_BOUND_BUDGET = 12
 
 /**
  * Post-extraction healing pass (#33, probe I-4). A shared record whose FIRST encounter
@@ -3220,10 +3220,11 @@ const HEAL_BOUND_BUDGET = 8
  * whole graph (28k lines + dangling `Point.t`/`NavigatorOptions.t` module refs). So a heal
  * is accepted only when it is SAFE: either its re-resolve introduces ZERO new registry entries
  * (`setOpenConfig2`: its enum/records were already registered by a shallow-resolved twin, so
- * re-resolving adds nothing), OR the record is provably bounded (`boundedPastDepth` within
- * `HEAL_BOUND_BUDGET`) so its new entries form a finite self-contained subtree (blend's token
- * configs, #205). A record that would pull fresh UNBOUNDED library graph (Highcharts options —
- * cyclic, so `boundedPastDepth` is false) still registers new entries, fails both tests, is
+ * re-resolving adds nothing), OR the record's FIELDS are provably bounded (`healFieldsBounded`,
+ * which recurses `boundedPastDepth` per field with the record's own id pre-seeded) so its new
+ * entries form a finite subtree (blend's token configs, #205). A record that would pull fresh
+ * UNBOUNDED library graph (Highcharts options — cyclic, so the field recursion trips the cycle
+ * guard and returns false) still registers new entries, fails both tests, is
  * rolled back, and stays truncated. The snapshot/rollback undoes a rejected rebuild's side-effects.
  */
 function healGhostRecords(shared) {
@@ -3247,14 +3248,15 @@ function healGhostRecords(shared) {
         // registered by a shallow twin. It rejects blend's token configs — first reached deep through
         // `DeepPartial<ComponentTokenType>`, their leaves (`FontSize`, `Color`, …) re-resolve to fresh
         // entries — so 350 records stayed all-`string` ghosts (#205). Relax to also accept a rebuild
-        // whose new entries form a PROVABLY-BOUNDED subtree (`boundedPastDepth` — the same predicate the
-        // named-bounded-record escape trusts): a bounded token tree heals, while Highcharts' unbounded /
-        // cyclic option graph stays `false` → rejected → truncated, keeping the MAX_DEPTH bound intact.
-        // Boundedness here means FINITE, not small: `boundedPastDepth` treats an array/tuple as a leaf
-        // without inspecting its element, so the depth-0 rebuild can re-expand that element up to
-        // MAX_DEPTH. That is still finite and never dangling (past-bound links are record-only), just not
-        // guaranteed minimal — acceptable, and blend's token leaves are csstype/primitive regardless.
-        const bounded = !!type && boundedPastDepth(type, ctx, ctx.checker, HEAL_BOUND_BUDGET, new Set())
+        // whose new entries form a PROVABLY-BOUNDED subtree (`healFieldsBounded` — the record's fields
+        // recurse through `boundedPastDepth` with the record's own id pre-seeded): a finite token tree
+        // heals, while Highcharts' cyclic option graph trips the cycle/budget guard → `false` → rejected
+        // → truncated, keeping the MAX_DEPTH bound intact. Boundedness here means FINITE, not minimal —
+        // `boundedPastDepth` treats an array/tuple as a leaf without inspecting its element, so the
+        // depth-0 rebuild can re-expand that element up to MAX_DEPTH (still finite, never dangling —
+        // past-bound links are record-only). Checking the FIELDS, not the record, is essential: the
+        // ghost's own entry is registered, so `boundedPastDepth(type)` would short-circuit to `true`.
+        const bounded = healFieldsBounded(type, ctx, ctx.checker, HEAL_BOUND_BUDGET)
         const accept = rebuilt && fallbacks(rebuilt.fields) < bad && (newEntries === 0 || bounded)
         if (!accept) { trial.rollback(); continue }
         e.fields = rebuilt.fields
@@ -3704,6 +3706,30 @@ function isBareFunction(type) {
     if (!sym || sym.getName?.() !== 'Function' || !isLibraryType(type)) return false
     const props = new Set((type.getProperties?.() || []).map((p) => p.getName()))
     return ['apply', 'call', 'bind'].every((n) => props.has(n))
+}
+
+/** Is the RECORD `type`'s subtree provably bounded (finite, non-cyclic) for a depth-0 heal rebuild?
+ *  `boundedPastDepth(type, …)` can't answer this directly: `type` is the ghost's own registered entry,
+ *  so it hits the "registered → link" short-circuit and returns `true` unconditionally. Instead recurse
+ *  through the record's FIELDS with the record's id pre-seeded into the cycle guard. A field that links
+ *  to an already-registered entry is zero-growth (safe, `true` via the same short-circuit); a field that
+ *  the rebuild would REGISTER anew is not yet keyed, so it gets the real structural check — a finite
+ *  token subtree passes, a cyclic/too-deep graph (Highcharts) trips the cycle/budget guard → `false`. */
+function healFieldsBounded(type, ctx, checker, budget) {
+    if (!type || type.id == null) return false
+    const props = (type.getProperties && type.getProperties()) || []
+    if (!props.length) return false
+    const seen = new Set([type.id])
+    return props.every((p) => {
+        // `DeepPartial<>` yields SYNTHESIZED property symbols with no declaration node, so
+        // `getTypeOfSymbolAtLocation` can't be used; `getTypeOfSymbol` reads a synthetic symbol's type
+        // directly. (The object-branch of `boundedPastDepth` bails on such props, but this heal root is
+        // exactly the DeepPartial-projected record, so it must resolve them.)
+        const d = p.valueDeclaration || (p.declarations && p.declarations[0])
+        let ft
+        try { ft = checker.getNonNullableType(d ? checker.getTypeOfSymbolAtLocation(p, d) : checker.getTypeOfSymbol(p)) } catch { return false }
+        return boundedPastDepth(ft, ctx, checker, budget - 1, seen)
+    })
 }
 
 function boundedPastDepth(t, ctx, checker, budget, seen) {
