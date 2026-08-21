@@ -7,22 +7,20 @@ type t = InstanceTypes.context
 // ⚪ loose: `header` has a param/return widened to `string`.
 @send external header: (t, ~name: string, ~value: UtilsTypes.baseMime=?, ~options: TypesTypes.setHeadersOptions=?, unit) => unit = "header"
 @send external status: (t, ~status: CommonTypes.statusCode) => unit = "status"
-// 🛑 BROKEN: `set` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
+// ⚪ loose: `set` has a param/return widened to `string`.
 @send external set: (t, ~key: string, ~value: string) => unit = "set"
-// 🛑 BROKEN: `get` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
+// ⚪ loose: `get` has a param/return widened to `string`.
 @send external get: (t, ~key: string) => string = "get"
 // ⚠️ REVIEW: `newResponse` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
 @send external newResponse: (t, ~data: string, ~status: CommonTypes.statusCode=?, ~headers: TypesTypes.headerRecord=?, unit) => WebTypes.response = "newResponse"
-// 🛑 BROKEN: `body` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
-@send external body: (t, ~data: string, ~status: string=?, ~headers: TypesTypes.headerRecord=?, unit) => TypesTypes.typesValueConfigJ1iob = "body"
-// 🛑 BROKEN: `text` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
-@send external text: (t, ~text: string, ~status: string=?, ~headers: TypesTypes.headerRecord=?, unit) => TypesTypes.typesValueConfigV1b0i4 = "text"
-// 🛑 BROKEN: `json` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
-@send external json: (t, ~object: string, ~status: string=?, ~headers: TypesTypes.headerRecord=?, unit) => TypesTypes.jsonRespondReturn = "json"
-// 🛑 BROKEN: `html` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
-@send external html: (t, ~html: string, ~status: CommonTypes.contentfulStatusCode=?, ~headers: TypesTypes.headerRecord=?, unit) => string = "html"
-// 🛑 BROKEN: `redirect` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
-@send external redirect: (t, ~location: string, ~status: string=?, unit) => TypesTypes.typesValueConfigV1bcwu = "redirect"
+@send external body: (t, ~data: 'b, ~status: 'c=?, ~headers: TypesTypes.headerRecord=?, unit) => TypesTypes.typesValueConfigV1xxoa<'b, 'c> = "body"
+@send external text: (t, ~text: 'b, ~status: 'c=?, ~headers: TypesTypes.headerRecord=?, unit) => TypesTypes.typesValueConfigG2ock<'b, 'c> = "text"
+// ⚠️ REVIEW: `json` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
+@send external json: (t, ~object: string, ~status: 'c=?, ~headers: TypesTypes.headerRecord=?, unit) => TypesTypes.jsonRespondReturn<'c> = "json"
+// ⚪ loose: `html` has a param/return widened to `string`.
+@send external html: (t, ~html: promise<string>, ~status: CommonTypes.contentfulStatusCode=?, ~headers: TypesTypes.headerRecord=?, unit) => string = "html"
+// ⚠️ REVIEW: `redirect` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
+@send external redirect: (t, ~location: string, ~status: 'b=?, unit) => TypesTypes.typesValueConfigWli51<'b> = "redirect"
 @send external notFound: (t) => promise<WebTypes.response> = "notFound"
 // ⚪ loose: `env` has a param/return widened to `string`.
 @get external env: t => string = "env"

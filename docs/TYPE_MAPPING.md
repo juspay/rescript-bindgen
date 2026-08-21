@@ -1088,27 +1088,34 @@ A **genuine** generic component maps its type parameter to a ReScript type varia
 | **prop-position `any`** — `type AccordionValue = (any \| null)[]`; `value?: AccordionValue`, `onValueChange?: (v: AccordionValue) => void` | an **implicit** component generic: `~value: array<'a>=?`, `~onValueChange: array<'a> => unit=?` — vars are **keyed by the carrying alias** so props over one alias unify; a bare `any` gets a fresh var per occurrence. Exactly as sound as the upstream `any`, strictly better than a broken `string` placeholder. Inside SHARED record fields `any` stays a flagged defect (a shared type can't be component-generic). Fixture: [`any-to-typevar`](../test/golden/cases/any-to-typevar) |
 | **ERROR-`any`** — the checker's error type from an UNRESOLVABLE reference (blend's `import { ThemeType } from './tokens'` where the module doesn't export it) | **never** the implicit generic (that would silently fake the theming entry point as `~foundationTokens: 'a=?` with `defects=0`): a 🛑-flagged `string` placeholder whose comment names the broken-import cause, in props, function params/returns, record fields, and class members alike. The report's declaration column shows the failing reference (`ThemeType`) — the type usually EXISTS in the package, so hand-matching is a seconds-long fix. Author-written `any` is untouched. Detected via the checker's `error`/`unresolved` intrinsics, so a REAL `any` in the source never false-positives. Fixture: [`error-any-unresolved`](../test/golden/cases/error-any-unresolved). (#107) |
 
-A **class METHOD's own type parameter** is mapped like a standalone generic function's: an
-**unconstrained** `T` becomes a ReScript type variable, so the method is polymorphic and any record it
-returns parameterizes with it — `gen<T>(x: T): Pair<T>` → `type pair<'a> = {a: 'a, b: 'a}` plus
-`@send external gen: (t, ~x: 'a) => pair<'a>`. This was the one signature kind that never registered
-its parameters (`buildFunctionIR` and `buildComponentIR` both already did), so classify took its
-unmapped-parameter branch and flagged a 🛑 `string` — leaving the payload you pass in unconnectable to
-the payload you read back, which is precisely the round trip `'a` is for. The vars are scoped **per
-method** and released afterwards, so one method's `'a` can never capture the next method's unrelated
-`T`. **Return-only** parameters are demoted exactly as they are for a standalone function — the method
-path runs the same `demoteReturnOnly`, so `json<T>(): Promise<T>` does *not* become `promise<'a>` (rule
-#4 below). Omitting that call gave the same TS shape opposite answers depending on whether it was a
-function or a method. Fixture:
-[`generic-instantiation-distinct`](../test/golden/cases/generic-instantiation-distinct). (#177)
+### Signature type parameters — the four-way rule (#192)
 
-> A **constrained** parameter (`T extends string`, hono's `U extends ContentfulStatusCode`) stays
-> flagged. `'a` would be *wrong* — it accepts anything, so `~text: 'a` lets a consumer pass `42` where
-> TS demands a string, i.e. we would accept code the library rejects. Resolving it through the declared
-> **bound** instead is sound in principle and was implemented and measured, then reverted: hono's status
-> constraint resolves to a ~60-member numeric literal union whose generated name is
-> `v100OrV102OrV103Or…OrV511OrV1`, which then lands in every signature mentioning a status. Faithful and
-> unusable. That path needs the large-union naming problem solved first.
+A signature type parameter (on a standalone `function`, a class **method**, a **static**, or a
+**constructor**) is decided by **one** rule, so the same TypeScript never gets four different answers.
+Every type param is registered as a ReScript type variable, then a shared demotion pass
+(`demoteNonRoundTrip`, generalising the earlier return-only pass) resolves the ones that shouldn't
+stay `'a`. The decision is four-way — it needs both **where** the param appears and **whether it has a
+bound**:
+
+| `T` … | position | mapping | why |
+|---|---|---|---|
+| unconstrained | round-trips (a param **and** the return) | `'a` | genuine generic — `gen<T>(x: T): Pair<T>` → `type pair<'a> = {a:'a, b:'a}` + `(~x: 'a) => pair<'a>` |
+| unconstrained | param-only | `'a` | a generic input; there's no bound to resolve to (`identity<T>(x: T): void` → `('a) => unit`) |
+| unconstrained | return-only | 🛑 flagged | **rule #4** — `'a` there lets the caller claim a type the library controls (`json<T>(): Promise<T>` ↛ `promise<'a>`) |
+| **constrained** | **round-trips** | **`'a`** | keep the input→output link — `'a` hands the caller's exact type back; the bound would flatten a precise `Size` to `string`. Mildly looser input than TS (a fidelity gap), never a soundness bug |
+| **constrained** | **param-only** *or* **return-only** | **the bound** | honor the promise — `greet<T extends string>(name: T): void` → `(string) => unit`; hono's `c.text`/`valid`/`parseBody` status become usable |
+
+The two "param-only" rows differ only by the constraint, so "param-only" alone can't decide — the rule
+branches on the bound too. Type vars are scoped **per signature** and released afterwards (one member's
+`'a` can never capture the next member's unrelated `T`). A constrained bound resolves to whatever it
+is: `T extends string` → `string`, `T extends "a"|"b"|"c"` → the polyvar union, hono's `U extends
+ContentfulStatusCode` → the **readable** `CommonTypes.contentfulStatusCode` (the ~60-member union name
+that once made this "faithful but unusable" is fixed by #190, which unblocked resolving bounds at all).
+Constructors return the abstract `t`, so a ctor type param can't round-trip → it's always param-only →
+resolves to its bound. A resolved bound in a *return* position is an honest ⚪ *loose* widening.
+Fixtures: [`generic-instantiation-distinct`](../test/golden/cases/generic-instantiation-distinct) (the
+round-trip cases), [`constrained-type-param-bound`](../test/golden/cases/constrained-type-param-bound)
+(the param-only-resolve cases across all four kinds). (#177, #192)
 
 An **erased** generic — a `forwardRef`/`memo` export that pins the parameter to a placeholder
 (`Record<string, unknown>`) — is *re-genericized*: the placeholder is recovered as `'a`, `unknown`

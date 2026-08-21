@@ -15,7 +15,7 @@ type props<'a> = {
   actionsRef?: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>,
   triggerId?: Nullable.t<string>,
   defaultTriggerId?: Nullable.t<string>,
-  handle?: RootSharedTypes.menuHandleV1tgxi<'a>,
+  handle?: RootSharedTypes.menuHandleV70elz<'a>,
   children?: React.element,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
 }
 

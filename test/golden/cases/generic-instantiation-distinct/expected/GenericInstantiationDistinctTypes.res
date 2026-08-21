@@ -32,10 +32,6 @@ type pairRy8eg<'a> = {
   a: 'a,
   b: 'a,
 }
-type pairV1spt2 = {
-  a: string,  // 🛑 BROKEN — contains `unknown`
-  b: string,  // 🛑 BROKEN — contains `unknown`
-}
 type pairV1o117 = {
   a: string,
   b: string,

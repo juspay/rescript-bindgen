@@ -5,6 +5,13 @@ type typesTarget =
   | @as("param") Param
   | @as("header") Header
   | @as("cookie") Cookie
+type typesValue =
+  | @as("json") Json
+  | @as("form") Form
+  | @as("query") Query
+  | @as("param") Param
+  | @as("header") Header
+  | @as("cookie") Cookie
 type fetchEventLike = {
   request: WebTypes.request,
   respondWith: promise<WebTypes.response> => unit,
@@ -108,28 +115,28 @@ type headerRecord = {
   @as("X-Robots-Tag") xRobotsTag?: CommonTypes.stringOrStringArray,
   @as("X-XSS-Protection") xXSSProtection?: CommonTypes.stringOrStringArray,
 }
-type typesValueConfigJ1iob = {
+type typesValueConfigV1xxoa<'b, 'c> = {
   ...JsxDOM.domProps,
-  _data: string,  // 🛑 BROKEN — contains `unknown`
-  _status: string,  // 🛑 BROKEN — contains `unknown`
-  _format: [#"body"],
+  _data: 'b,
+  _status: 'c,
+  _format: string,  // ⚪ loose — was `"body"`
 }
-type typesValueConfigV1b0i4 = {
+type typesValueConfigG2ock<'b, 'c> = {
   ...JsxDOM.domProps,
-  _data: string,  // 🛑 BROKEN — contains `unknown`
-  _status: string,  // 🛑 BROKEN — contains `unknown`
+  _data: 'b,
+  _status: 'c,
   _format: [#"text"],
 }
-type jsonRespondReturn = {
+type jsonRespondReturn<'c> = {
   ...JsxDOM.domProps,
   _data: string,  // ⚪ loose — was `JSONParsed<T, bigint | readonly bigint[]>`
-  _status: string,  // 🛑 BROKEN — contains `unknown`
+  _status: 'c,
   _format: [#"json"],
 }
-type typesValueConfigV1bcwu = {
+type typesValueConfigWli51<'b> = {
   ...JsxDOM.domProps,
   _data: unit,
-  _status: string,  // 🛑 BROKEN — contains `unknown`
+  _status: 'b,
   _format: [#"redirect"],
 }
 type typesBodyCacheConfig = {
@@ -174,6 +181,18 @@ type typesOptionsConfig = {
   replaceRequest?: CommonTypes.typesOptionsReplaceRequest,
 }
 @unboxed type typesOptionsConfigOptions = Fn(InstanceTypes.context => JSON.t) | TypesOptionsConfig(typesOptionsConfig)
+module HandlerTarget = {
+  type t
+  external fromR: 'c => t = "%identity"
+  external fromPromise: promise<option<'c>> => t = "%identity"
+  external asPromise: t => (promise<option<'c>>) = "%identity"
+}
+module HandlerTarget2 = {
+  type t
+  external fromR: 'd => t = "%identity"
+  external fromPromise: promise<option<'d>> => t = "%identity"
+  external asPromise: t => (promise<option<'d>>) = "%identity"
+}
 module TypesHandler = {
   type t
   external fromError: JsError.t => t = "%identity"

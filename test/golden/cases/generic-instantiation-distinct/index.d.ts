@@ -81,11 +81,13 @@ export declare class Svc {
     // `T` had no entry in `ctx.typeVars` and classify's unmapped branch flagged it. What you pass in and
     // what you read back could not be connected — exactly the round trip `'a` exists for.
     gen<T>(x: T): Pair<T>
-    // A CONSTRAINED parameter must NOT become `'a`: that accepts anything, so `~s: 'a` would let a
-    // consumer pass `42` where TS demands a string — accepting code the library rejects. It stays
-    // flagged instead. Resolving it through the declared bound is sound in principle and was tried;
-    // it is deferred because hono's `U extends ContentfulStatusCode` resolves to a ~60-member numeric
-    // union named `v100OrV102Or…OrV511OrV1`, which lands in every signature mentioning a status.
+    // #192: `S` ROUND-TRIPS (it is in the parameter `s` AND the return `Pair<S>`), so it KEEPS `'a`
+    // (-> `~s: 'a) => pair<'a>`), preserving the input->output link — swapping in the bound `string`
+    // would flatten a caller's precise `Size` back to `string`. The mild cost (ReScript would also let
+    // `s` be a number) is the accepted fidelity gap for a round-trip, never a soundness bug. A
+    // param-only constrained param (`greet<T extends string>(name: T): void`, no return) instead
+    // resolves to its bound — see the `constrained-type-param-bound` fixture. (Before #192 this was
+    // flagged `string`; the #190 naming fix unblocked resolving bounds like hono's status union.)
     constrained<S extends string>(s: S): Pair<S>
     concrete(): Pair<string>
     // RETURN-ONLY, and it must NOT become `'a` — contract rule #4 / TYPE_MAPPING "Return-only
@@ -96,8 +98,9 @@ export declare class Svc {
     // direction winning for methods (real instance: hono's `HonoRequest.json<T>(): Promise<T>`).
     // Nothing pinned this before — the arms above all round-trip — so it was free to regress.
     returnOnly<R>(): R
-    // Round-trip WITH a constraint present on a second param: `A` round-trips (-> a type var), `B` is
-    // return-only AND constrained (-> demoted to its bound, not `'a`).
+    // `A` round-trips (param `a` + return `Pair<A>`) -> keeps `'a`; `B extends string` appears in
+    // NEITHER position (a phantom param), so there's nothing to emit for it — the signature is just
+    // `(~a: 'a) => pair<'a>`, same as `gen`. Confirms an unused constrained param doesn't leak.
     mixed<A, B extends string>(a: A): Pair<A>
 }
 

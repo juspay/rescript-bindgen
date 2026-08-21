@@ -2435,6 +2435,11 @@ type iCodeEditorViewState = {
   viewState: iViewState,
   contributionsState: Dict.t<string>,  // 🛑 BROKEN — contains `any`
 }
+type iEditorContribution = {
+  dispose: unit => unit,
+  saveViewState?: unit => string,  // 🛑 BROKEN — contains `any`
+  restoreViewState?: string => unit,  // 🛑 BROKEN — contains `any`
+}
 type bracketPairColorizationOptions = {
   enabled: bool,
   independentColorPoolPerBracketType: bool,
@@ -2649,7 +2654,7 @@ type iTextModel<'a> = {
   isAttachedToEditor: unit => bool,
 }
 type iComputedEditorOptions = {
-  get: string => JSON.t,  // 🛑 BROKEN — contains `unknown`
+  get: editorOption => JSON.t,
 }
 type iRulerOption = {
   column: float,
@@ -3167,11 +3172,11 @@ type iCodeEditor<'a> = {
   saveViewState: unit => Nullable.t<iCodeEditorViewState>,
   restoreViewState: Nullable.t<iCodeEditorViewState> => unit,
   hasWidgetFocus: unit => bool,
-  getContribution: string => string,  // 🛑 BROKEN — contains `unknown`
+  getContribution: string => Nullable.t<iEditorContribution>,
   getModel: unit => Nullable.t<iTextModel<'a>>,
   setModel: Nullable.t<iTextModel<'a>> => unit,
   getOptions: unit => iComputedEditorOptions,
-  getOption: string => JSON.t,  // 🛑 BROKEN — contains `unknown`
+  getOption: editorOption => JSON.t,
   getRawOptions: unit => iEditorOptions,
   getValue: option<editorICodeEditorGetValueConfig> => string,
   setValue: string => unit,
@@ -3428,10 +3433,10 @@ type editorGetMonacoViewModeOptionsConfig = {
   tabFocusMode?: bool,
   inlineCompletionsAccessibilityVerbose?: bool,
 }
-type iContextKey = {
-  set: string => unit,  // 🛑 BROKEN — contains `unknown`
+type iContextKeyLw6bo = {
+  set: CommonTypes.contextKeyValue => unit,
   reset: unit => unit,
-  get: unit => option<string>,  // 🛑 BROKEN — contains `unknown`
+  get: unit => option<CommonTypes.contextKeyValue>,
 }
 type iActionDescriptor<'a, 'b> = {
   id: string,
@@ -3624,11 +3629,16 @@ type codeEditorV2IStandaloneCodeEditorUpdateOptionsConfig = {
   theme?: string,
   autoDetectHighContrast?: bool,
 }
+type iContextKeyV12onz = {
+  set: string => unit,  // ⚪ loose — was `T`
+  reset: unit => unit,
+  get: unit => option<string>,  // ⚪ loose — was `T`
+}
 @unboxed type codeEditorV2IStandaloneCodeEditorExecuteEdits = SelectionArr(array<selection>) | Fn(array<iValidEditOperation> => Nullable.t<array<selection>>)
 type iStandaloneCodeEditor<'a, 'b> = {
   updateOptions: codeEditorV2IStandaloneCodeEditorUpdateOptionsConfig => unit,
   addCommand: (float, array<string> => unit, option<string>) => Nullable.t<string>,  // ⚪ loose — was `any`
-  createContextKey: (string, string) => iContextKey,  // 🛑 BROKEN — contains `unknown`
+  createContextKey: (string, CommonTypes.contextKeyValue) => iContextKeyV12onz,
   addAction: iActionDescriptor<'a, 'b> => iDisposable,
   onDidChangeModelContent: (iModelContentChangedEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
   onDidChangeModelLanguage: (iModelLanguageChangedEvent => string, option<string>) => iDisposable,  // 🛑 BROKEN — contains `any`
@@ -3665,11 +3675,11 @@ type iStandaloneCodeEditor<'a, 'b> = {
   saveViewState: unit => Nullable.t<iCodeEditorViewState>,
   restoreViewState: Nullable.t<iCodeEditorViewState> => unit,
   hasWidgetFocus: unit => bool,
-  getContribution: string => string,  // 🛑 BROKEN — contains `unknown`
+  getContribution: string => Nullable.t<iEditorContribution>,
   getModel: unit => Nullable.t<iTextModel<'a>>,
   setModel: Nullable.t<iTextModel<'a>> => unit,
   getOptions: unit => iComputedEditorOptions,
-  getOption: string => JSON.t,  // 🛑 BROKEN — contains `unknown`
+  getOption: editorOption => JSON.t,
   getRawOptions: unit => iEditorOptions,
   getValue: option<editorICodeEditorGetValueConfig> => string,
   setValue: string => unit,
@@ -3998,7 +4008,7 @@ type iDiffEditorOptions = {
 }
 type iStandaloneDiffEditor<'a, 'b> = {
   addCommand: (float, array<'a> => unit, option<string>) => Nullable.t<string>,
-  createContextKey: (string, string) => iContextKey,  // 🛑 BROKEN — contains `unknown`
+  createContextKey: (string, CommonTypes.contextKeyValue) => iContextKeyLw6bo,
   addAction: iActionDescriptor<'a, 'b> => iDisposable,
   getOriginalEditor: unit => iStandaloneCodeEditor<'a, 'b>,
   getModifiedEditor: unit => iStandaloneCodeEditor<'a, 'b>,
