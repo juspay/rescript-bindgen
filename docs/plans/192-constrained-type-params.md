@@ -1,8 +1,71 @@
 # Plan — #192: resolve constrained type-parameter bounds (soundly, without losing round-trips)
 
 Status: **DRAFT for review** — no non-doc code should merge until this is signed off.
-Branch: `agent/192-resolve-type-param-bound`
+Branch: `agent/192-constrained-type-params`
 Depends on: #190 (merged in #193) — the naming blocker that deferred this is now gone.
+
+---
+
+## 0. In plain English (read this first)
+
+**The one-line story:** when a library says *"you must hand me a string,"* our tool currently forgets
+that rule and tells ReScript *"hand me anything."* So ReScript happily lets you pass a **number**
+where the library demands a **string** — the code compiles, then breaks. This fixes that.
+
+### The issue — an everyday analogy
+Think of a generic type parameter as a **fill-in-the-blank** the library puts on a function:
+
+> `fnConstrained<T extends string>(x: T): T`  →  *"Give me some value of type **T**, where **T** must
+> be a string. I'll give you back the same **T**."*
+
+The `extends string` part is a **promise the library makes you keep** ("the blank can only be filled
+with a string"). Our tool throws that promise away and writes the ReScript blank as `'a` — ReScript's
+word for *"literally any type."* Result:
+
+- **What TypeScript allows:** `fnConstrained("hi")` ✅, `fnConstrained(42)` ❌ (rejected — 42 isn't a string).
+- **What our binding allows:** `fnConstrained("hi")` ✅, `fnConstrained(42)` ✅ **(wrongly compiles!)**.
+
+So the binding is **more permissive than the real library** — it green-lights calls the library will
+refuse. Our project's rulebook (`CLAUDE.md`) explicitly forbids this ("never emit a plausible-but-wrong
+type"). And it's **inconsistent**: the exact same TypeScript gets handled four different ways depending
+on whether it's a plain function, a method, a `static`, or a constructor.
+
+### The approach — honor the promise, with one careful exception
+1. **Honor the constraint.** When the library says `<T extends string>`, write the blank as `string`
+   (or, for `<T extends "a" | "b" | "c">`, the exact little set of allowed values) — **not** `'a`.
+   Now the binding refuses `42` just like the library does.
+2. **The one exception — "round-trips."** Sometimes a generic means *"whatever type you give me, I
+   give you back **the same type**"* — the value goes **in and comes back out unchanged**. Example:
+   `getSkeletonDefaults<T>(props: T, …): T`. Here `'a` ("any type") is actually the **right** answer,
+   because pinning it to a concrete type would force you to re-label a value whose type you already
+   knew. So: **resolve the constraint everywhere, EXCEPT when the value round-trips in-and-out — there
+   we keep `'a`.**
+3. **One rule for all four shapes** (function / method / static / constructor), so they stop
+   disagreeing.
+
+Rule of thumb: *`'a` ("anything") is only kept when the value genuinely goes in one end and out the
+other unchanged; otherwise use the real constraint.*
+
+### The expectation — before → after (real examples)
+```
+hono  c.text(...)   status argument
+  before:  ~status: string=?                     // 🛑 broken — "string" is a lie; the lib wants a status code
+  after:   ~status: CommonTypes.statusCode=?     // ✅ the actual set of allowed HTTP status codes
+
+hono  request.valid(target)
+  before:  ~target: string                       // 🛑 broken
+  after:   ~target: TypesTypes.typesTarget       // ✅ the real allowed values
+
+blend getSkeletonDefaults(props, defaults)        // T goes IN and comes back OUT (round-trips)
+  before:  ('a, …) => 'a                          // already correct
+  after:   ('a, …) => 'a                          // ✅ UNCHANGED — the exception protects it
+```
+**In one sentence:** functions that were marked *broken* because we faked a `string` become genuinely
+usable, and the one shape where `'a` was already right is deliberately left alone.
+
+**The single decision we need you to sign off (details in §3):** for that round-trip case, do we keep
+`'a` (recommended — preserves the in-and-out link, mildly over-permissive on the input) or force the
+constraint everywhere (stricter, but breaks the round-trip)? The plan recommends **keep `'a`**.
 
 ---
 
