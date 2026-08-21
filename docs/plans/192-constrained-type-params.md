@@ -1,7 +1,8 @@
 # Plan — #192: resolve constrained type-parameter bounds (soundly, without losing round-trips)
 
-Status: **DRAFT — research-reviewed (round 1 folded in)**; awaiting the crux sign-off (§3, decision 1).
-No non-doc code should merge until signed off.
+Status: **APPROACH SIGNED OFF** — the crux (§3 decision 1) is **decided: keep `'a` for round-trips**
+(the maintainer chose "`'a` only", 2026-08-21). Research review rounds 1–2 folded in. Ready to
+implement per §4 once the round-2 implementation gaps below are respected. No code has merged yet.
 Branch: `agent/192-constrained-type-params`
 Depends on: #190 (merged in #193) — the naming blocker that deferred this is now gone.
 ReScript-12 grounding: verified against the [v12 Type manual](https://rescript-lang.org/docs/manual/v12.0.0/type),
@@ -57,6 +58,29 @@ whether it's a plain function, a method, a `static`, or a constructor.
 Rule of thumb: *`'a` ("anything") is only kept when the value genuinely goes in one end and out the
 other unchanged; otherwise use the real constraint.*
 
+> ### "But why keep `'a` for round-trips — can't we just use the exact type?"
+> This is the counter-intuitive bit. For a value that **comes back out**, `'a` is actually the
+> **more precise** choice, and the "exact" type is the lossy one. Concretely — a library has
+> `pick<T extends string>(value: T): T` (*"give me a string-ish value, get the same one back"*), and
+> you have a specific type:
+> ```ts
+> type Size = "sm" | "md" | "lg"
+> let mySize: Size = "md"
+> let result = pick(mySize)   // TypeScript: result is still `Size`
+> ```
+> - **Bind it with the "exact" bound `string`:** `pick: string => string` → `result` is a plain
+>   **`string`**. You handed in a precise `Size` and got back a vague `string` — you now have to
+>   re-check "is it sm/md/lg?" even though you already knew. The exact type **threw your precision away.**
+> - **Keep `'a`:** `pick: 'a => 'a` → `result` is a **`Size`**. `'a` means *"the output is exactly the
+>   same type as the input"* — so it **hands your precise type straight back.**
+>
+> So `'a` here isn't "vague = anything useless" — it means *"exactly your type, preserved."* Swapping in
+> the bound `string` is the **downgrade**. The only price of `'a` is that ReScript would also let you
+> pass a number at the door (`pick(42)` compiles), but it never returns a wrong type — a number in
+> gives a number back. **We accept a slightly looser door to keep your exact type on the way out — but
+> ONLY when the value round-trips.** When the value is just consumed (`greet`), there's no output to
+> preserve, so we use the exact type and slam the door on `greet(42)`.
+
 ### The expectation — before → after (real examples)
 ```
 hono  c.text(...)   status argument
@@ -74,9 +98,10 @@ blend getSkeletonDefaults(props, defaults)        // T goes IN and comes back OU
 **In one sentence:** functions that were marked *broken* because we faked a `string` become genuinely
 usable, and the one shape where `'a` was already right is deliberately left alone.
 
-**The single decision we need you to sign off (details in §3):** for that round-trip case, do we keep
-`'a` (recommended — preserves the in-and-out link, mildly over-permissive on the input) or force the
-constraint everywhere (stricter, but breaks the round-trip)? The plan recommends **keep `'a`**.
+**The single decision — now DECIDED ✅:** for that round-trip case we **keep `'a`** (preserves the
+in-and-out link; slightly looser input than TS, never a wrong answer). Signed off 2026-08-21. So a
+round-tripping constrained param stays `'a`; every non-round-trip constrained param resolves to its
+bound. (Details in §3.)
 
 ---
 
@@ -177,12 +202,20 @@ in the return). This is decided by the generalised demotion pass in §4 — **af
 registered as `'a` and the IR is built, which is the only point the round-trip signal actually exists
 (see the §4 ordering-trap box):
 
-| `T` is… | round-trips? | mapping | rationale |
+The decision is **four-way** — it needs *both* the position pair (in a param? in the return?) **and**
+whether there's a constraint. All four facts are available post-registration (see §4):
+
+| `T` is… | position | mapping | rationale |
 |---|---|---|---|
-| unconstrained | yes | `'a` | genuine generic (unchanged) |
-| unconstrained | no (return-only) | flagged | rule #4, unchanged |
-| **constrained** | **yes** | **`'a`** | preserve the round-trip; the bound only over-widens the input, which `'a` already does soundly for the connection's sake |
-| **constrained** | **no** (param-only or return-only) | **resolve the bound** | sound, and there's no round-trip to lose — this is the core #192 win (hono `parseBody`, `valid`, `c.text` status, `send`) |
+| unconstrained | round-trips (param **and** return) | `'a` | genuine generic (unchanged) |
+| unconstrained | **param-only** | `'a` | genuine generic input; there is no bound to resolve to — unchanged (`f<T>(x:T):void` → `('a) => unit`) |
+| unconstrained | return-only | flagged | rule #4, unchanged (no round-trip, no bound) |
+| **constrained** | round-trips (param **and** return) | **`'a`** | preserve the round-trip; the bound only widens the input, which `'a` already does faithfully for the connection's sake |
+| **constrained** | **param-only** *or* return-only | **resolve the bound** | there's no round-trip to lose — the core #192 win (hono `parseBody`, `valid`, `c.text` status, `send`) |
+
+Note the two "param-only" rows differ **only** by whether the var is constrained — so "param-only"
+alone can't decide; the rule must branch on the constraint too (this is why §4's helper takes the
+position pair *and* the constraint, not just a `roundTrips` boolean).
 
 Net effect:
 - hono's broken methods still get fixed (they're param-only / return-only).
@@ -202,8 +235,8 @@ there is no third "constrained `'a`" to reach for. That is *why* the rule is a b
 "keep `'a` for round-trippers" is the best available answer there rather than a compromise.
 
 ### The three decisions — research-backed answers (verified against ReScript 12)
-1. **Accept the looser-than-TS input of `'a` for round-tripping constrained params? → YES (keep `'a`).**
-   ⭐ **This is the one crux for you to sign off.** A top-level `external`'s `'a` is genuine per-call-site
+1. **Accept the looser-than-TS input of `'a` for round-tripping constrained params? → ✅ DECIDED: YES, keep `'a`** (maintainer sign-off 2026-08-21).
+   A top-level `external`'s `'a` is genuine per-call-site
    (rank-1) polymorphism ([Scoped Polymorphic Types](https://rescript-lang.org/docs/manual/latest/scoped-polymorphic-types)),
    so `('a, …) => 'a` *faithfully* preserves the input↔output link. Resolving the bound in a round-trip
    position is strictly worse — it doesn't just widen the input, it **destroys** the "same value back"
@@ -231,12 +264,13 @@ detector — see the box below for why the "obvious" version doesn't work).
 > ### ⚠️ Why NOT "decide at registration time" — the ordering trap (research [BLOCKER], resolved)
 > The natural-sounding version — *"at registration, only emit `'a` for a param that round-trips;
 > leave the rest unmapped so `classify` resolves the bound"* — **is circular and cannot work.** The
-> round-trip signal is computed by `collectTypeVars` (§2310), which walks the **already-built IR
-> nodes** and recognises a `T` only by its `'a` name — i.e. **only *after* that `T` has been
-> registered** and run through `sigToMembers`. The registration decision happens *before* that, so it
-> cannot consult a signal that does not exist yet. (A true pre-registration detector — walking each
-> `sig.typeParameters` symbol's occurrences across the parameter and return TS type nodes — is
-> possible but is all-new code, not the "already-available" machinery the earlier draft claimed.)
+> round-trip signal is computed by `collectTypeVars` (defined §935, called from `demoteReturnOnly`
+> §2310), which walks the **already-built IR nodes** and recognises a `T` only by its `'a` name — i.e.
+> **only *after* that `T` has been registered** and run through `sigToMembers`. The registration
+> decision happens *before* that, so it cannot consult a signal that does not exist yet. (A true
+> pre-registration detector — walking each `sig.typeParameters` symbol's occurrences across the
+> parameter and return TS type nodes — is possible but is all-new code, not the "already-available"
+> machinery the earlier draft claimed.)
 
 **The register-all-then-demote design (reuses existing machinery):**
 
@@ -256,21 +290,45 @@ detector — see the box below for why the "obvious" version doesn't work).
    > The pass must therefore resolve-to-bound **only for *constrained* vars**, and must **not** touch
    > unconstrained param-only vars. This is precisely the split the §3 table draws — but it has to be
    > encoded deliberately, since "param-only" alone is not enough to decide.
+   >
+   > **⚠️ Param-node plumbing is mandatory (do not miss this).** Today `demoteReturnOnly` substitutes
+   > and returns **only the return node** (`retNode`, §2321/§2340), and the call sites reassign only the
+   > return (`const ret = demoteReturnOnly(...)` §2041; `raw.ret = …` §2469). The four *decision* facts
+   > it needs are already there — it builds the param-occurrence set `used` (§2309–2310) alongside
+   > `retVars` (§2311–2312), and `getConstraint()`/the registered name are in hand — so **no new
+   > ordering problem**. But demoting a **param-only** var means rewriting the **parameter** nodes:
+   > extend the pass to `substTypeVars` the param nodes too and change its return shape from `retNode`
+   > to `{ params, ret }`, then update **both** call sites to reassign params as well. If you extend
+   > only the subst-*decision* loop and keep returning just the return, the param-only demotion is a
+   > **silent no-op** — and worse, once the method-loop `.filter` (step 1) is dropped, a constrained
+   > method param that is *honestly flagged today* (`string`, via the classify-unknown branch) would
+   > register as `'a` and, without param rewriting, **stay an unsound `'a`** — a regression. The
+   > existing warnings at §2466–2468/§2472 are about exactly this failure mode.
 3. **`classify` TypeParameter branch (§4052–4068).** Its unmapped-TypeParameter case currently
    returns `{kind:'unknown'}` → flagged (its comment at §4055–4066 is the "deferred / rejected #177"
    note this change rewrites). Give it the same bound-resolution as step 2 so any TypeParameter that
    reaches `classify` still unmapped (ctor/static paths, or a var never registered) resolves its
    bound, falling back to `{kind:'unknown'}` only when there is genuinely no bound. This mirrors the
    existing `getConstraint()→classify` in `demoteReturnOnly` (§2317) — same call, different site.
-4. **Constructors / statics.** Route their signature type params through the same pass. Statics already
-   benefit via step 3; **constructors need wiring**. Note (research [SHOULD]): because `buildClassIR`
-   binds a first-slice class as an abstract `type t` (§2349) and a constructor returns `t`, a ctor
-   type param **can't round-trip into the opaque return** — so ctor params are param-only in practice
-   and always resolve the bound. The round-trip branch is effectively dead code for ctors: folding
-   them in is pure consistency win with no edge case.
-5. **One shared decision.** Factor the per-var choice into a single helper
-   (`typeParamMode(tp, roundTrips) → 'var' | 'resolve'`) so function/method/ctor/static cannot drift
-   apart again — the asymmetry in §1 is deleted by construction.
+4. **Statics** need the SAME register-all-then-demote wiring — **not** step 3 alone. The static path
+   (`sigToMembers(pt.getCallSignatures()[0], …)`, §2543–2549) today registers no per-signature type
+   params and never calls the demotion pass, so if statics relied only on step 3, `classify` — which
+   sees one type at a time and has **no round-trip signal** — would resolve a constrained var to its
+   bound in *both* positions, emitting `(string) => string` for a round-tripping static
+   `staticEcho<T extends string>(x: T): T`. That is the naïve resolve-everywhere the design rejects,
+   and it reintroduces exactly the function-vs-static asymmetry §1/§3 delete. So: register the static
+   signature's own type params and run the generalised pass at the §2548 call site, same as functions.
+5. **Constructors** need wiring too, but are the easy case. `buildClassIR` binds a first-slice class as
+   an abstract `type t` (§2349), and `ctor` keeps only `.params` (§2389, the return is `t`), so a ctor
+   type param **can't round-trip into the opaque return** — ctor params are always param-only, so
+   resolve-the-bound is correct with no round-trip branch to worry about. Pure consistency win.
+6. **One shared decision.** Factor the per-var choice into a single helper that takes the full
+   four-way input — the **position pair and the constraint**, not just a `roundTrips` bool (which
+   can't tell unconstrained-param-only `'a` from unconstrained-return-only flag):
+   `typeParamMode({ usedInParam, usedInReturn, hasConstraint }) → 'var' | 'resolve' | 'flag'`
+   (`'var'` = keep `'a`; `'resolve'` = demote to bound; `'flag'` = the existing return-only-unconstrained
+   rule #4). Route function/method/static/ctor through this one helper so they cannot drift apart
+   again — the §1 asymmetry is deleted by construction.
 
 Prior art that de-risks the whole change: `demoteReturnOnly` (§2317–2318) **already** does
 `tp.getConstraint()` → `classify(...)` with the `{kind:'unknown'}` fallback, and already handles the
@@ -315,5 +373,13 @@ param position. Step 2 is a generalisation of an existing pass, not a new mechan
   ([Scoped Polymorphic Types](https://rescript-lang.org/docs/manual/latest/scoped-polymorphic-types))
 - **Bound that itself references type params** (`T extends U`) or a recursive/self bound: rely on
   `classify`'s existing depth guards; the fixture should include a benign nested-bound case.
+- **`T` stuck inside a registered generic's tparams in a PARAM position** (`f<T extends string>(x: Box<T>): void`,
+  where `Box` is a registered generic record → `box<'a>`): `substTypeVars` can't reach the `'a` buried
+  in `Box`'s tparam string-array, so the param would survive as `box<'a>` with the constraint lost.
+  `demoteReturnOnly`'s `_demoteFailed` path (§2330–2339) handles the analogous *return* case by
+  discarding+flagging the whole return, but there is **no param analog** — so either add param-position
+  flag handling, or explicitly accept `box<'a>` as-is (a bounded generic buried in another generic is a
+  rare, low-value case). Decide and document; don't let it be a silent gap. The fixture should include
+  this shape so the golden pins whichever choice we make.
 - **`getConstraint()` on `T extends unknown`:** may return a non-null `unknown` type; resolving it lands
   on flagged (`unknown`), same as today — no regression, but note it.
