@@ -38,6 +38,11 @@ jobs:
 
       - run: npm ci
 
+      # Resolves + installs `@juspay/blend-design-system@beta` from the DEFAULT public registry with
+      # no auth — the same access the benchmark's sandbox `npm ci` already relies on (blend is
+      # published public). If blend ever becomes access-restricted, add an `npm config set
+      # //registry.npmjs.org/:_authToken` step with a scoped-read token; until then no secret is needed,
+      # and an unresolvable `@beta` correctly fails the gate closed rather than passing silently.
       - name: Run latest-blend gate
         run: node benchmark/run.mjs --latest-blend
 

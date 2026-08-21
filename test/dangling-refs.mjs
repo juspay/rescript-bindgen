@@ -119,6 +119,62 @@ check(
     'Gone.here lives inside a nested comment -> not a reference',
 )
 
+// --- SILENT: a char literal `'"'` must not open a phantom string ---------------
+// (external-review P2: ReScript HAS char literals — `'"'` is the double-quote char. If `'` were
+//  not handled, the inner `"` would open a phantom string that eats a later declaration -> FP.)
+check(
+    'a char literal containing a quote does not swallow a later declaration',
+    [
+        ['A.res', `let sep = '"'\n@module("pkg") external thing: int = "thing"\n`],
+        ['User.res', 'let x = A.thing\n'],
+    ],
+    none,
+    "the \" inside '\"' must not start a string; A.thing stays visible",
+)
+
+// --- SILENT: type variables ('a, 'b) are still code, not char literals ----------
+check(
+    "type variables are not mistaken for char literals",
+    [
+        ['R.res', 'let g: JsFn.t = JsFn.fromFn2(h)\n'],
+        ['JsFn.res', "type t\nexternal fromFn2: (('a, 'b) => 'c) => t = \"%identity\"\n"],
+    ],
+    none,
+    "JsFn.fromFn2 and the 'a/'b/'c type vars must resolve normally",
+)
+
+// --- TRIPS: a real ref inside a `${…}` template interpolation is scanned --------
+// (external-review: masking the whole template was a false NEGATIVE. Interpolations are code.)
+check(
+    'a dangling ref inside a template interpolation is caught',
+    [
+        ['W.res', 'let s = `hi ${Gone.member} there`\n'],
+        ['Gone.res', 'type kept = int\n'],
+    ],
+    (p) => p.length === 1 && /Gone\.member/.test(p[0]),
+    'Gone.member inside ${…} must be checked (Gone declares only kept)',
+)
+
+// --- SILENT: template LITERAL text is still masked -----------------------------
+check(
+    'a ref in template literal text (not an interpolation) is ignored',
+    [['W.res', 'let s = `see Gone.member here`\ntype t = int\n'], ['Gone.res', 'type kept = int\n']],
+    none,
+    'literal template text is not code',
+)
+
+// --- TRIPS: an orphaned JsFn member is caught even when JsFn.res exists ---------
+// (external-review: the old blanket `continue` on any JsFn ref skipped member checking.)
+check(
+    'JsFn.<bogus> is caught even when JsFn.res is present',
+    [
+        ['R.res', 'let x: JsFn.bogus = y\n'],
+        ['JsFn.res', 'type t\nexternal fromFn0: (unit => \'a) => t = "%identity"\n'],
+    ],
+    (p) => p.length === 1 && /JsFn\.bogus/.test(p[0]),
+    'JsFn.res declares no `bogus` -> must flag (it would compile-error)',
+)
+
 // --- SILENT: a valid cross-file type ref resolves -----------------------------
 check(
     'valid cross-file type ref resolves',

@@ -153,11 +153,16 @@ function verdictFor(metrics, baseline, diffProblems) {
  *  >0. Correct on the one subtlety that matters here: a prerelease is OLDER than its release
  *  (`0.0.38-beta.1` < `0.0.38`), and numeric prerelease identifiers compare numerically
  *  (`beta.2` < `beta.10`). */
+/** Semver precedence for the version strings we pin. Returns <0 / 0 / >0. Correct on the subtleties
+ *  that can arise: build metadata (`+sha`) is ignored (spec: not part of precedence); all numeric
+ *  release segments compare numerically (not just the first three); a prerelease is OLDER than its
+ *  release (`0.0.38-beta.1` < `0.0.38`); and numeric prerelease identifiers compare numerically
+ *  (`beta.2` < `beta.10`, `alpha` < `beta` < `rc`). */
 function cmpVersion(a, b) {
-    const split = (v) => { const i = v.indexOf('-'); return i < 0 ? [v, ''] : [v.slice(0, i), v.slice(i + 1)] }
+    const split = (v) => { const s = v.split('+')[0]; const i = s.indexOf('-'); return i < 0 ? [s, ''] : [s.slice(0, i), s.slice(i + 1)] }
     const [ma, pa] = split(a), [mb, pb] = split(b)
     const na = ma.split('.').map(Number), nb = mb.split('.').map(Number)
-    for (let i = 0; i < 3; i++) if ((na[i] || 0) !== (nb[i] || 0)) return (na[i] || 0) - (nb[i] || 0)
+    for (let i = 0; i < Math.max(na.length, nb.length); i++) if ((na[i] || 0) !== (nb[i] || 0)) return (na[i] || 0) - (nb[i] || 0)
     if (!pa && !pb) return 0
     if (!pa) return 1 // a is the release -> newer than any prerelease of it
     if (!pb) return -1
@@ -172,16 +177,22 @@ function cmpVersion(a, b) {
     return 0
 }
 
+/** Slug for a package's baseline dir, shared by the main loop AND the latest-blend gate so the
+ *  scheme lives in ONE place: a name pinned at multiple versions gets a version-qualified slug; a
+ *  single-version name keeps its bare slug. */
+function slugForPkg(pkg, allPackages) {
+    const multiVersion = allPackages.filter((p) => p.name === pkg.name).length > 1
+    return slugOf(multiVersion ? `${pkg.name}@${pkg.version}` : pkg.name)
+}
+
 /** Pick the newest pinned blend baseline to diff a floating latest build against — informational
  *  only; a newer version legitimately differs from every pin. */
 function newestPinnedBlendSlug(allPackages) {
     const blends = allPackages.filter((p) => p.name === BLEND_PKG)
     if (!blends.length) return null
     blends.sort((a, b) => cmpVersion(a.version, b.version))
-    const newest = blends[blends.length - 1]
-    return slugOf(nameCountHas(allPackages, newest.name) ? `${newest.name}@${newest.version}` : newest.name)
+    return slugForPkg(blends[blends.length - 1], allPackages)
 }
-const nameCountHas = (all, name) => all.filter((p) => p.name === name).length > 1
 
 /** #203 pre-release gate: resolve the LATEST blend beta and prove the shipped checkout generates
  *  non-empty output that compiles on ReScript 12. Fails on crash / empty output / compile break —
@@ -198,7 +209,7 @@ function runLatestBlendGate(allPackages) {
     }
     const pkg = { name: BLEND_PKG, version, flags: ['--webapi'] }
     const label = `${pkg.name}@${version} (latest beta)`
-    const slug = slugOf(`${pkg.name}@${version}`)
+    const slug = slugForPkg(pkg, allPackages)
     const workDir = join(WORK, 'latest-blend')
     const sandbox = join(workDir, 'sandbox')
     mkdirSync(workDir, { recursive: true })
@@ -260,9 +271,7 @@ if (LATEST_BLEND) runLatestBlendGate(allPackages)
 // Two pinned versions of the SAME package (blend 0.0.36 stable + the 0.0.37 beta line that
 // blend-rescript actually regenerates from) need separate baselines — a duplicated name gets a
 // version-qualified slug; single-version packages keep their existing baseline dirs.
-const nameCount = new Map()
-for (const p of allPackages) nameCount.set(p.name, (nameCount.get(p.name) || 0) + 1)
-const slugFor = (p) => slugOf(nameCount.get(p.name) > 1 ? `${p.name}@${p.version}` : p.name)
+const slugFor = (p) => slugForPkg(p, allPackages)
 const packages = allPackages.filter((p) => !ONLY || slugFor(p) === ONLY || slugOf(p.name) === ONLY || p.name === ONLY)
 if (!packages.length) {
     console.error(RED(`no package matches --only ${ONLY}`))

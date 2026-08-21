@@ -27,15 +27,21 @@
 
 /** Blank out comments and string literals (to spaces, newlines preserved) so a module-looking
  *  token inside a `@module(...)`/`@as(...)` string arg, a line or block comment, or a backtick
- *  template is never mistaken for a real cross-module reference. A single left-to-right pass —
- *  NOT ordered regex replaces — so the three interact correctly: a line-comment marker inside a
- *  string does not start a comment, a quote inside a comment does not start a string, block
- *  comments nest, and backslash escapes inside strings are respected. (`'a` is a ReScript type
- *  variable, never a char literal, so a single quote is not a string delimiter.) */
+ *  template is never mistaken for a real cross-module reference. A single left-to-right state
+ *  machine — NOT ordered regex replaces — so the contexts interact correctly:
+ *   - a line-comment marker inside a string does not start a comment, and vice versa;
+ *   - block comments nest; backslash escapes inside strings/chars are respected;
+ *   - a ReScript CHAR literal (`'x'`, `'\n'`, and critically `'"'`) is masked as a unit, so the
+ *     quote inside it can NEVER open a phantom string that eats real code to EOF — while a type
+ *     VARIABLE (`'a`, `'b`: a quote with no closing quote right after) is left as code;
+ *   - inside a `` `…` `` template, the literal text is masked but a `${ … }` interpolation is
+ *     scanned as CODE, so a real `Module.ref` there is still seen (no false negative). */
 function stripNoise(content) {
     const n = content.length
     let out = ''
-    let block = 0 // block-comment nesting depth
+    let block = 0 // block-comment nesting depth (0 = not in a block comment)
+    let tmpl = false // inside a `…` template literal, masking its literal text
+    const interp = [] // brace depth of each open `${ … }` interpolation being scanned as code
     for (let i = 0; i < n; ) {
         const c = content[i], d = i + 1 < n ? content[i + 1] : ''
         if (block > 0) {
@@ -43,18 +49,37 @@ function stripNoise(content) {
             if (c === '*' && d === '/') { block--; out += '  '; i += 2; continue }
             out += c === '\n' ? '\n' : ' '; i++; continue
         }
+        if (tmpl) { // template literal text: mask, but hand a `${` back to code scanning
+            if (c === '\\') { out += '  '; i += 2; continue }
+            if (c === '`') { tmpl = false; out += ' '; i++; continue }
+            if (c === '$' && d === '{') { interp.push(1); tmpl = false; out += '  '; i += 2; continue }
+            out += c === '\n' ? '\n' : ' '; i++; continue
+        }
+        // --- CODE context (top level, or inside a `${ … }` interpolation) ---
         if (c === '/' && d === '*') { block = 1; out += '  '; i += 2; continue }
         if (c === '/' && d === '/') { while (i < n && content[i] !== '\n') { out += ' '; i++ } continue }
-        if (c === '"' || c === '`') {
-            const quote = c
+        if (c === '"') { // regular string literal
             out += ' '; i++
             while (i < n) {
                 const e = content[i]
-                if (e === '\\') { out += '  '; i += 2; continue } // escaped char (incl. \" \`)
-                if (e === quote) { out += ' '; i++; break }
+                if (e === '\\') { out += '  '; i += 2; continue }
+                if (e === '"') { out += ' '; i++; break }
                 out += e === '\n' ? '\n' : ' '; i++
             }
             continue
+        }
+        if (c === '`') { tmpl = true; out += ' '; i++; continue } // enter a template literal
+        if (c === "'") { // char literal vs type variable
+            if (d === '\\' && content[i + 3] === "'") { out += '    '; i += 4; continue } // '\n' '\'' etc.
+            if (d !== '\\' && d !== '' && content[i + 2] === "'") { out += '   '; i += 3; continue } // 'x'
+            out += c; i++; continue // type variable ('a, 'b) — leave as code
+        }
+        if (interp.length) { // track braces so we know when the interpolation closes back to text
+            if (c === '{') { interp[interp.length - 1]++; out += c; i++; continue }
+            if (c === '}') {
+                if (--interp[interp.length - 1] === 0) { interp.pop(); tmpl = true; out += ' '; i++; continue }
+                out += c; i++; continue
+            }
         }
         out += c; i++
     }
@@ -109,8 +134,11 @@ export function findDanglingRefs(files) {
         const seen = new Set() // de-dupe identical (module, member) misses within one file
         for (const m of src.matchAll(refRe)) {
             const [, mod, member] = m
-            if (mod === 'JsFn') {
-                if (!hasJsFn && !seen.has('JsFn.' + member)) {
+            if (mod === 'JsFn' && !hasJsFn) {
+                // No JsFn.res at all: any `JsFn.<x>` is orphaned (the #197 failure). When JsFn.res IS
+                // present we fall through to the general check below, so a `JsFn.bogus` that JsFn.res
+                // does not declare is still caught (it would be a compile error just the same).
+                if (!seen.has('JsFn.' + member)) {
                     seen.add('JsFn.' + member)
                     problems.push(`${name} — references \`JsFn.${member}\` but no JsFn.res was emitted (orphaned JsFn handle, #197 class)`)
                 }
