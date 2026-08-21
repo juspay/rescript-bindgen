@@ -149,10 +149,6 @@ function verdictFor(metrics, baseline, diffProblems) {
     return { verdict: 'PASS', reason: '' }
 }
 
-/** Semver precedence for the version strings we pin (`0.0.37`, `0.0.38-beta.1`, …). Returns <0 / 0 /
- *  >0. Correct on the one subtlety that matters here: a prerelease is OLDER than its release
- *  (`0.0.38-beta.1` < `0.0.38`), and numeric prerelease identifiers compare numerically
- *  (`beta.2` < `beta.10`). */
 /** Semver precedence for the version strings we pin. Returns <0 / 0 / >0. Correct on the subtleties
  *  that can arise: build metadata (`+sha`) is ignored (spec: not part of precedence); all numeric
  *  release segments compare numerically (not just the first three); a prerelease is OLDER than its
