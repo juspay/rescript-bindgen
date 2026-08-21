@@ -118,9 +118,19 @@ type chatInputResponsiveChatInputTokensTypeSmTopQueriesScrollContainerConfig = {
   backgroundColor: string,
   scrollbarColor: string,
 }
+type __typeQ3l8y = {
+  default: string,
+  hover: string,
+  active: string,
+  disabled: string,
+}
+type __typeV1wg7a = {
+  default: string,
+  disabled: string,
+}
 type chatInputResponsiveChatInputTokensTypeSmTopQueriesItemConfig = {
-  backgroundColor: string,  // ⚪ loose — was `{ default: BackgroundColor; hover: BackgroundColor; active: BackgroundColor; disabled: BackgroundColor; }`
-  color: string,  // ⚪ loose — was `{ default: Color; hover: Color; active: Color; disabled: Color; }`
+  backgroundColor: __typeQ3l8y,
+  color: __typeQ3l8y,
   fontSize: string,
   fontWeight: string,
   paddingX: string,
@@ -128,7 +138,7 @@ type chatInputResponsiveChatInputTokensTypeSmTopQueriesItemConfig = {
   border: string,
   transition: string,
   cursor: string,
-  opacity: string,  // ⚪ loose — was `{ default: Opacity; disabled: Opacity; }`
+  opacity: __typeV1wg7a,
 }
 type chatInputResponsiveChatInputTokensTypeSmTopQueriesConfig = {
   container: chatInputResponsiveChatInputTokensTypeSmTopQueriesContainerConfig,

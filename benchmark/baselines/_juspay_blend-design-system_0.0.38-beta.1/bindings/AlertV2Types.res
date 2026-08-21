@@ -38,10 +38,35 @@ type alertV2AlertV2TokensTypeGapConfig = {
 type alertV2AlertV2TokensTypeSlotConfig = {
   maxHeight: string,
 }
+type alertV2UseThemeTextContainerHeadingColorConfig = {
+  primary: string,
+  success: string,
+  warning: string,
+  error: string,
+  purple: string,
+  orange: string,
+  neutral: string,
+}
+type alertV2UseThemeTextContainerHeadingConfig = {
+  color: alertV2UseThemeTextContainerHeadingColorConfig,
+  fontWeight: string,
+  fontSize: string,
+  lineHeight: string,
+}
+type alertV2UseThemeTextContainerConfig = {
+  gap: string,
+  heading: alertV2UseThemeTextContainerHeadingConfig,
+  description: alertV2UseThemeTextContainerHeadingConfig,
+}
+type alertV2UseThemeActionContainerConfig = {
+  gap: string,
+  primaryAction: alertV2UseThemeTextContainerHeadingConfig,
+  secondaryAction: alertV2UseThemeTextContainerHeadingConfig,
+}
 type alertV2AlertV2TokensTypeMainContainerContentConfig = {
-  gap: string,  // ⚪ loose — was `{ bottom: Gap<number | (string & {})>; right: Gap<number | (string & {})>; }`
-  textContainer: string,  // ⚪ loose — was `{ gap: Gap<number | (string & {})>; heading: { color: { primary: Color; success: Color; warning: Color; error:`
-  actionContainer: string,  // ⚪ loose — was `{ gap: Gap<number | (string & {})>; primaryAction: { color: { primary: Color; success: Color; warning: Color; `
+  gap: alertV2AlertV2TokensTypeGapConfig,
+  textContainer: alertV2UseThemeTextContainerConfig,
+  actionContainer: alertV2UseThemeActionContainerConfig,
 }
 type alertV2AlertV2TokensTypeMainContainerCloseButtonConfig = {
   color: string,  // ⚪ loose — was `{ primary: Color; success: Color; warning: Color; error: Color; purple: Color; orange: Color; neutral: Color; `

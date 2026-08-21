@@ -19,12 +19,16 @@ type switch_SwitchTokensTypeSwitchContainerThumbBorderConfig = {
   color: string,
   width: string,
 }
+type __typeMkypc = {
+  active: string,
+  inactive: string,
+}
 type switch_SwitchTokensTypeSwitchContainerThumbSizeSmConfig = {
   width: string,
   height: string,
   top: string,
   left: string,
-  offset: string,  // ⚪ loose — was `{ active: Left<number | (string & {})>; inactive: Left<number | (string & {})>; }`
+  offset: __typeMkypc,
 }
 type switch_SwitchTokensTypeSwitchContainerThumbSizeConfig = {
   sm: switch_SwitchTokensTypeSwitchContainerThumbSizeSmConfig,

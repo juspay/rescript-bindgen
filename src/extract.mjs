@@ -1082,10 +1082,72 @@ function makeProgram(entryFiles, augment = []) {
 }
 
 /**
+ * The csstype CSS-wide keyword set (`Globals`), a member of EVERY csstype
+ * `Property.*` value union. `-moz-initial` is a csstype-unique fingerprint — no
+ * first-party union enumerates it — so a union carrying the whole set is a
+ * csstype value however it was reached. Used by the structural fallback below.
+ */
+const CSS_GLOBALS = ['-moz-initial', 'inherit', 'initial', 'unset']
+
+/** Is `t` a GENUINE foreign arm inside a would-be CSS union — a real record, dict, array, or callable
+ *  that would be SILENTLY DROPPED if the union collapsed to `string`? A csstype `Property.*` value is
+ *  built only from globals/keyword literals, `number`/`TLength`, and the `(string & {})` open arm; the
+ *  open arm's object forms (`string & {}`, or its mapped `{ readonly [x:number]: string; charAt?; … }`
+ *  apparent object) reduce to the primitive and carry NO data, so they are NOT foreign. ANYTHING else
+ *  object-shaped — a record (`{ custom }`), a dict (`{ [k]: V }`, no named props), an array (`V[]`), a
+ *  callable — IS foreign: its presence blocks the collapse so both arms survive, flagged. Erring toward
+ *  "foreign" is the safe direction (flag-don't-fake): a rare mislabelled csstype value stays flagged
+ *  rather than a real arm being dropped to an unflagged `string`. */
+function isForeignArm(t) {
+    if (!t) return false
+    if (t.isUnion && t.isUnion()) return t.types.some(isForeignArm)
+    if (!(t.flags & ts.TypeFlags.Object)) return false // primitives, literals, the `(string & {})` intersection
+    if (t.getCallSignatures && t.getCallSignatures().length) return true // a function arm
+    // The `(string & {})` / `(number & {})` open arm, MAPPED form: `DeepPartial<>` rewrites it into the
+    // primitive's apparent object — `string`'s (`{ [x:number]: string; charAt?; charCodeAt?; … }`) or
+    // `number`'s (`{ toFixed?; toExponential?; valueOf?; … }`). It reduces to the primitive and carries
+    // NO data, so it is NOT foreign. Recognise it by a prototype fingerprint (`charCodeAt` unique to
+    // String, `toFixed` unique to Number). This MUST precede the record/dict/array checks below, since
+    // the apparent object also has properties and a numeric index.
+    const names = new Set(((t.getProperties && t.getProperties()) || []).map((p) => p.getName && p.getName()))
+    if (names.has('charCodeAt') || names.has('toFixed')) return false
+    // Everything else object-shaped is a real arm to preserve: a record (named props), an ARRAY / tuple
+    // (array methods → props), or a DICT (`{ [k]: V }` — no named props but a string/number index type).
+    if (names.size) return true
+    const idx = (t.getNumberIndexType && t.getNumberIndexType()) || (t.getStringIndexType && t.getStringIndexType())
+    return !!idx
+}
+
+/** The string-literal values in a union (flattening nested union members — a csstype union often
+ *  keeps its `Globals` arm as an un-inlined alias: `Globals | "aliceblue" | …`). Returns null when
+ *  the union carries a genuine foreign arm, so `isCssType` never collapses a union that would drop a
+ *  real record/callable. */
+function unionStringLiterals(type) {
+    if (!(type.isUnion && type.isUnion())) return null
+    if (type.types.some(isForeignArm)) return null
+    const out = new Set()
+    const add = (t) => {
+        if (t.isStringLiteral && t.isStringLiteral()) out.add(t.value)
+        else if (t.isUnion && t.isUnion()) t.types.forEach(add)
+    }
+    type.types.forEach(add)
+    return out
+}
+
+/**
  * Does this type come from the `csstype` package? Those are CSS property values
  * (e.g. `Width<number | (string & {})>`, `JustifyContent`) which are correctly
- * `string` in ReScript — a precise mapping, not a loose fallback. Detected by the
- * declaration's source file path.
+ * `string` in ReScript — a precise mapping, not a loose fallback.
+ *
+ * Primary signal: the declaration's source-file path. That path is LOST when the
+ * value is reached through a homomorphic mapped type — blend's
+ * `ComponentTokenOverrides = DeepPartial<ComponentTokenType>` re-projects each
+ * property, so the checker hands back an alias-less synthesized union with no
+ * csstype declaration (#205 record→string ghosts, #206 enumerated `@unboxed`
+ * bodies + CSS-keyword constructor leakage). The structural fallback recovers it:
+ * a union whose string literals include the entire csstype `Globals` set IS a CSS
+ * value union. Tight enough that no first-party union matches (all four globals,
+ * incl. the `-moz-initial` fingerprint, must be present).
  * @param {ts.Type} type
  * @returns {boolean}
  */
@@ -1095,7 +1157,10 @@ function isCssType(type) {
     const decls = sym && sym.getDeclarations && sym.getDeclarations()
     const decl = decls && decls[0]
     const file = decl && decl.getSourceFile().fileName
-    return !!(file && /[\\/]csstype[\\/]/.test(file))
+    if (file && /[\\/]csstype[\\/]/.test(file)) return true
+    // Structural fallback for csstype reached through a mapped type (alias/path stripped).
+    const lits = unionStringLiterals(type)
+    return !!lits && CSS_GLOBALS.every((g) => lits.has(g))
 }
 
 /**
@@ -3135,6 +3200,13 @@ function relinkRegistered(t, byKey, seen, ownerDeps) {
     }
 }
 
+/** Object-nesting depth `healGhostRecords` will certify as bounded before accepting a rebuild that
+ *  registers new entries. Higher than the `PAST_BOUND_CAP` used mid-classify because the heal is a
+ *  one-shot recovery (no per-field chaining to bound), and blend's token configs nest several levels
+ *  (`trigger.text.title.fontSize`). Highcharts' option graph is cyclic, so `boundedPastDepth` returns
+ *  false at ANY budget (cycle-guarded), keeping the unbounded graph truncated. */
+const HEAL_BOUND_BUDGET = 12
+
 /**
  * Post-extraction healing pass (#33, probe I-4). A shared record whose FIRST encounter
  * was DEEP (a store/config object nested ≥ MAX_DEPTH levels inside a prop) had every
@@ -3146,12 +3218,14 @@ function relinkRegistered(t, byKey, seen, ownerDeps) {
  * CRITICAL BOUND: `MAX_DEPTH` deliberately truncates UNBOUNDED library graphs (Highcharts
  * options nest dozens of levels). A depth-0 re-resolve would defeat that and re-expand the
  * whole graph (28k lines + dangling `Point.t`/`NavigatorOptions.t` module refs). So a heal
- * is accepted ONLY when its re-resolve introduces ZERO new registry entries — i.e. every
- * field resolves to a builtin/leaf or a ref to an ALREADY-emitted type. That exactly
- * captures the genuine ghost (`setOpenConfig2`: its enum/records were already registered by
- * a shallow-resolved twin, so re-resolving adds nothing) while rejecting any record that
- * would pull fresh library graph (which always registers new entries -> rolled back, ghost
- * kept). The snapshot/rollback also undoes a rejected rebuild's registration side-effects.
+ * is accepted only when it is SAFE: either its re-resolve introduces ZERO new registry entries
+ * (`setOpenConfig2`: its enum/records were already registered by a shallow-resolved twin, so
+ * re-resolving adds nothing), OR the record's FIELDS are provably bounded (`healFieldsBounded`,
+ * which recurses `boundedPastDepth` per field with the record's own id pre-seeded) so its new
+ * entries form a finite subtree (blend's token configs, #205). A record that would pull fresh
+ * UNBOUNDED library graph (Highcharts options — cyclic, so the field recursion trips the cycle
+ * guard and returns false) still registers new entries, fails both tests, is
+ * rolled back, and stays truncated. The snapshot/rollback undoes a rejected rebuild's side-effects.
  */
 function healGhostRecords(shared) {
     const fallbacks = (fields) => fields.filter((f) => irHasImperfection(f.type)).length
@@ -3170,9 +3244,20 @@ function healGhostRecords(shared) {
         let rebuilt
         try { rebuilt = buildRecordFields(type, { ...ctx, visiting: new Set() }, 0) } catch { rebuilt = null }
         const newEntries = shared.entries.length - entriesLen
-        // Accept only a self-contained improvement: strictly fewer fallbacks AND zero new
-        // entries (no fresh library graph, so no possibility of a dangling module ref).
-        const accept = rebuilt && fallbacks(rebuilt.fields) < bad && newEntries === 0
+        // The strict `newEntries === 0` gate recovers only a ghost whose whole subtree was ALREADY
+        // registered by a shallow twin. It rejects blend's token configs — first reached deep through
+        // `DeepPartial<ComponentTokenType>`, their leaves (`FontSize`, `Color`, …) re-resolve to fresh
+        // entries — so 350 records stayed all-`string` ghosts (#205). Relax to also accept a rebuild
+        // whose new entries form a PROVABLY-BOUNDED subtree (`healFieldsBounded` — the record's fields
+        // recurse through `boundedPastDepth` with the record's own id pre-seeded): a finite token tree
+        // heals, while Highcharts' cyclic option graph trips the cycle/budget guard → `false` → rejected
+        // → truncated, keeping the MAX_DEPTH bound intact. Boundedness here means FINITE, not minimal —
+        // `boundedPastDepth` treats an array/tuple as a leaf without inspecting its element, so the
+        // depth-0 rebuild can re-expand that element up to MAX_DEPTH (still finite, never dangling —
+        // past-bound links are record-only). Checking the FIELDS, not the record, is essential: the
+        // ghost's own entry is registered, so `boundedPastDepth(type)` would short-circuit to `true`.
+        const bounded = healFieldsBounded(type, ctx, ctx.checker, HEAL_BOUND_BUDGET)
+        const accept = rebuilt && fallbacks(rebuilt.fields) < bad && (newEntries === 0 || bounded)
         if (!accept) { trial.rollback(); continue }
         e.fields = rebuilt.fields
         e.spread = rebuilt.spread
@@ -3623,6 +3708,30 @@ function isBareFunction(type) {
     return ['apply', 'call', 'bind'].every((n) => props.has(n))
 }
 
+/** Is the RECORD `type`'s subtree provably bounded (finite, non-cyclic) for a depth-0 heal rebuild?
+ *  `boundedPastDepth(type, …)` can't answer this directly: `type` is the ghost's own registered entry,
+ *  so it hits the "registered → link" short-circuit and returns `true` unconditionally. Instead recurse
+ *  through the record's FIELDS with the record's id pre-seeded into the cycle guard. A field that links
+ *  to an already-registered entry is zero-growth (safe, `true` via the same short-circuit); a field that
+ *  the rebuild would REGISTER anew is not yet keyed, so it gets the real structural check — a finite
+ *  token subtree passes, a cyclic/too-deep graph (Highcharts) trips the cycle/budget guard → `false`. */
+function healFieldsBounded(type, ctx, checker, budget) {
+    if (!type || type.id == null) return false
+    const props = (type.getProperties && type.getProperties()) || []
+    if (!props.length) return false
+    const seen = new Set([type.id])
+    return props.every((p) => {
+        // `DeepPartial<>` yields SYNTHESIZED property symbols with no declaration node, so
+        // `getTypeOfSymbolAtLocation` can't be used; `getTypeOfSymbol` reads a synthetic symbol's type
+        // directly. (The object-branch of `boundedPastDepth` bails on such props, but this heal root is
+        // exactly the DeepPartial-projected record, so it must resolve them.)
+        const d = p.valueDeclaration || (p.declarations && p.declarations[0])
+        let ft
+        try { ft = checker.getNonNullableType(d ? checker.getTypeOfSymbolAtLocation(p, d) : checker.getTypeOfSymbol(p)) } catch { return false }
+        return boundedPastDepth(ft, ctx, checker, budget - 1, seen)
+    })
+}
+
 function boundedPastDepth(t, ctx, checker, budget, seen) {
     if (!t) return false
     const f = t.flags
@@ -3844,18 +3953,19 @@ function classify(type, ctx, propName = '', depth = 0) {
             type.types.every((a) => boundedPastDepth(checker.getNonNullableType(a), ctx, checker, PAST_BOUND_CAP, new Set()))) {
             return unionNode(type, ctx, propName, depth)
         }
-        // A NAMED, provably-BOUNDED record materializes past the bound instead of truncating to
-        // `string` — recovers deep option records first reached past MAX_DEPTH (Highcharts'
-        // `XAxisLabelsOptions`; `yAxisLabelsOptions` already resolved shallowly). NAMED only: an
-        // anonymous `{…}`/intersection would proliferate order-churny `…Config2/3` names (#90 lesson).
-        // The budget-capped, cycle-guarded `boundedPastDepth` gate keeps the unbounded graph bounded;
-        // `pastBoundBudget` blocks chaining so each escape adds a bounded subtree, not the whole graph.
+        // A provably-BOUNDED record materializes past the bound instead of truncating to `string` —
+        // recovers deep option records first reached past MAX_DEPTH (Highcharts' `XAxisLabelsOptions`;
+        // `yAxisLabelsOptions` already resolved shallowly). Also recovers blend's token configs, which
+        // a homomorphic mapped type (`DeepPartial<ComponentTokenType>`) reaches deep AND renames to an
+        // ANONYMOUS `{…}` — the original name is stripped, so a name-only gate left ~185 of them as
+        // `string` ghosts (#205). Anonymous is safe now: names are path-scoped (`<home><Path>Config`,
+        // #90/#63), not an order-churny global `…Config2/3` counter, so the same shape gets one stable
+        // name. The budget-capped, cycle-guarded `boundedPastDepth` gate keeps the unbounded (cyclic)
+        // graph truncated; `pastBoundBudget` blocks chaining so each escape adds a bounded subtree.
         if (ctx.shared && type.id != null && type.getProperties?.().length &&
             !type.getCallSignatures().length && !checker.getIndexInfoOfType?.(type, ts.IndexKind.String)) {
-            const sym = type.getSymbol?.() || type.aliasSymbol
-            const named = sym && sym.getName && sym.getName() && sym.getName() !== '__type'
             const budget = ctx.pastBoundBudget ?? PAST_BOUND_CAP
-            if (named && budget > 0 && boundedPastDepth(type, ctx, checker, budget, new Set())) {
+            if (budget > 0 && boundedPastDepth(type, ctx, checker, budget, new Set())) {
                 const prev = ctx.pastBoundBudget ?? PAST_BOUND_CAP
                 ctx.pastBoundBudget = prev - 1
                 try { return recordNode(type, ctx, propName, MAX_DEPTH, typeName(type)) }

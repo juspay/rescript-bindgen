@@ -5,9 +5,14 @@ type modalModalTokensTypeHeaderPaddingConfig = {
   x: string,
   y: string,
 }
+type __typeV1y6we = {
+  color: string,
+  fontSize: string,
+  fontWeight: string,
+}
 type modalModalTokensTypeHeaderTextConfig = {
-  title: string,  // ⚪ loose — was `{ color: Color; fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; }`
-  subtitle: string,  // ⚪ loose — was `{ color: Color; fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; }`
+  title: __typeV1y6we,
+  subtitle: __typeV1y6we,
 }
 type modalModalTokensTypeHeaderConfig = {
   padding: modalModalTokensTypeHeaderPaddingConfig,

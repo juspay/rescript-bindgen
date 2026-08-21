@@ -64,16 +64,11 @@ type tabsV2TabsV2TokensTypeTabListTriggerBackgroundColorConfig = {
   underline: tabsV2TabsV2TokensTypeTabListTriggerBackgroundColorBoxedConfig,
   pills: tabsV2TabsV2TokensTypeTabListTriggerBackgroundColorBoxedConfig,
 }
-type tabsV2TabsV2TokensTypeTabListTriggerPaddingSmConfig = {
-  boxed: tabsV2TabsV2TokensTypeTabListPaddingSmBoxedConfig,
-  floating: tabsV2TabsV2TokensTypeTabListPaddingSmBoxedConfig,
-  underline: tabsV2TabsV2TokensTypeTabListPaddingSmBoxedConfig,
-  pills: tabsV2TabsV2TokensTypeTabListPaddingSmBoxedConfig,
-}
-type tabsV2TabsV2TokensTypeTabListTriggerPaddingConfig = {
-  sm: tabsV2TabsV2TokensTypeTabListTriggerPaddingSmConfig,
-  md: tabsV2TabsV2TokensTypeTabListTriggerPaddingSmConfig,
-  lg: tabsV2TabsV2TokensTypeTabListTriggerPaddingSmConfig,
+type tabsV2TabsV2TokensTypeTabListTriggerTextColorConfig = {
+  boxed: tabsV2TabsV2TokensTypeTabListTriggerBackgroundColorBoxedConfig,
+  floating: tabsV2TabsV2TokensTypeTabListTriggerBackgroundColorBoxedConfig,
+  underline: tabsV2TabsV2TokensTypeTabListTriggerBackgroundColorBoxedConfig,
+  pills: tabsV2TabsV2TokensTypeTabListTriggerBackgroundColorBoxedConfig,
 }
 type tabsV2TabsV2TokensTypeTabListTriggerTextFontSizeConfig = {
   sm: string,
@@ -81,7 +76,7 @@ type tabsV2TabsV2TokensTypeTabListTriggerTextFontSizeConfig = {
   lg: string,
 }
 type tabsV2TabsV2TokensTypeTabListTriggerTextConfig = {
-  color: tabsV2TabsV2TokensTypeTabListTriggerPaddingSmConfig,
+  color: tabsV2TabsV2TokensTypeTabListTriggerTextColorConfig,
   fontSize: tabsV2TabsV2TokensTypeTabListTriggerTextFontSizeConfig,
   fontWeight: tabsV2TabsV2TokensTypeTabListTriggerTextFontSizeConfig,
 }
@@ -96,7 +91,7 @@ type tabsV2TabsV2TokensTypeTabListTriggerConfig = {
   backgroundColor: tabsV2TabsV2TokensTypeTabListTriggerBackgroundColorConfig,
   borderRadius: tabsV2TabsV2TokensTypeTabListBorderRadiusConfig,
   border: tabsV2TabsV2TokensTypeTabListBackgroundColorConfig,
-  padding: tabsV2TabsV2TokensTypeTabListTriggerPaddingConfig,
+  padding: tabsV2TabsV2TokensTypeTabListPaddingConfig,
   text: tabsV2TabsV2TokensTypeTabListTriggerTextConfig,
   closeButton: tabsV2TabsV2TokensTypeTabListTriggerCloseButtonConfig,
   transition: string,

@@ -172,6 +172,9 @@ type chartsBlendChartPropsConstructorType =
   | @as("innerR") InnerR
   | @as("longArc") LongArc
   | @as("r") R
+type chartsAxisPointBreakEventObjectType =
+  | @as("pointBreak") PointBreak
+  | @as("pointInBreak") PointInBreak
 type chartsChartTokensTypeHeaderPaddingConfig = {
   x: string,
   y: string,

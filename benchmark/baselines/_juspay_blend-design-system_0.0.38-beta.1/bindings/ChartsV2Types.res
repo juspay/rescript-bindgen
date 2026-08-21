@@ -9,20 +9,52 @@ type chartsV2ChartV2TokensTypeHeaderConfig = {
   backgroundColor: string,
   borderBottom: string,
 }
+type __typeP6m40 = {
+  width: string,
+  height: string,
+  borderRadius: string,
+}
+type __typeV1xgem = {
+  fontSize: string,
+  fontWeight: string,
+  lineHeight: string,
+  color: string,
+}
+type __typeV1kdcq = {
+  color: string,
+  width: string,
+  height: string,
+}
+type __typeTqkig = {
+  gap: string,
+  name: __typeV1xgem,
+  value: __typeV1xgem,
+  separator: __typeV1kdcq,
+}
 type chartsV2ChartV2TokensTypeLegendsLegendItemConfig = {
   gap: string,
-  shape: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; height: Height<number | (string & {})>; borderRadius: BorderRadius<num`
-  text: string,  // ⚪ loose — was `{ gap: Gap<number | (string & {})>; name: { fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight`
+  shape: __typeP6m40,
+  text: __typeTqkig,
 }
 type chartsV2ChartV2TokensTypeLegendsConfig = {
   gap: string,
   legendItem: chartsV2ChartV2TokensTypeLegendsLegendItemConfig,
 }
+type __typeV1vw5b = {
+  fontSize: string,
+  color: string,
+  fontWeight: string,
+  lineHeight: string,
+}
+type __typeV1agq42 = {
+  width: string,
+  color: string,
+}
 type chartsV2ChartV2TokensTypeChartXAxisConfig = {
-  title: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; color: Color; fontWeight: FontWeight; lineHeight: LineHeight<num`
-  labels: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; color: Color; fontWeight: FontWeight; lineHeight: LineHeight<num`
-  line: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; color: Color; }`
-  gridLine: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; color: Color; }`
+  title: __typeV1vw5b,
+  labels: __typeV1vw5b,
+  line: __typeV1agq42,
+  gridLine: __typeV1agq42,
 }
 type chartsV2ChartV2TokensTypeChartConfig = {
   backgroundColor: string,

@@ -8,11 +8,31 @@ type statCardV2ChangeType =
 type statCardV2ArrowDirection =
   | @as("up") Up
   | @as("down") Down
+type __typeV1h18p = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+  lineHeight: string,
+}
+type __typeV1bifo = {
+  default: string,
+  hover: string,
+}
+type __typeV136nr = {
+  width: string,
+  height: string,
+  color: __typeV1bifo,
+}
+type __typeV1ge6o = {
+  gap: string,
+  title: __typeV1h18p,
+  helpIcon: __typeV136nr,
+}
 type statCardV2StatCardV2TokensTypeTopContainerDataContainerConfig = {
   gap: string,
-  titleContainer: string,  // ⚪ loose — was `{ gap: Gap<number | (string & {})>; title: { fontSize: FontSize<number | (string & {})>; fontWeight: FontWeigh`
+  titleContainer: __typeV1ge6o,
   statsContainer: string,  // ⚪ loose — was `{ gap: Gap<number | (string & {})>; value: { chart: { fontSize: FontSize<number | (string & {})>; fontWeight: `
-  subtitle: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: Color; lineHeight: LineHeight<num`
+  subtitle: __typeV1h18p,
 }
 type statCardV2StatCardV2TokensTypeTopContainerConfig = {
   gap: string,

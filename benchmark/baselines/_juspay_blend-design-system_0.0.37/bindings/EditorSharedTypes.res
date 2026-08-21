@@ -2167,6 +2167,13 @@ type iCursorSelectionChangedEvent = {
   source: string,
   reason: cursorChangeReason,
 }
+type __typeV1ia5a = {
+  scheme?: string,
+  authority?: Nullable.t<string>,
+  path?: Nullable.t<string>,
+  query?: Nullable.t<string>,
+  fragment?: Nullable.t<string>,
+}
 type uriComponents = {
   scheme: string,
   authority?: string,
@@ -2181,7 +2188,7 @@ type rec uri = {
   query: string,
   fragment: string,
   fsPath: string,
-  @as("with") with_: string => uri,  // ⚪ loose — was `{ scheme?: string; authority?: string; path?: string; query?: string; fragment?: string; }`
+  @as("with") with_: __typeV1ia5a => uri,
   toString: option<bool> => string,
   toJSON: unit => uriComponents,
 }

@@ -46,8 +46,14 @@ type dateRangePickerDateRangePickerPopoverConfigAlign =
   | @as("center") Center
   | @as("end") End
   | @as("start") Start
+type __typeV1sjik = {
+  topLeft: string,
+  topRight: string,
+  bottomLeft: string,
+  bottomRight: string,
+}
 type dateRangePickerCalendarTokenTypeTriggerQuickSelectorConfig = {
-  borderRadius: string,  // ⚪ loose — was `{ topLeft: BorderTopLeftRadius<number | (string & {})>; topRight: BorderTopRightRadius<number | (string & {})>`
+  borderRadius: __typeV1sjik,
   backgroundColor: string,
   gap: string,
   padding: string,  // ⚪ loose — was `{ sm: { x: Padding<number | (string & {})>; y: Padding<number | (string & {})>; }; md: { x: Padding<number | (`
@@ -55,8 +61,12 @@ type dateRangePickerCalendarTokenTypeTriggerQuickSelectorConfig = {
   text: string,  // ⚪ loose — was `{ color: Color; fontWeight: FontWeight; fontSize: { sm: FontSize<number | (string & {})>; md: FontSize<number `
   iconSize: string,
 }
+type __typeSo6ld = {
+  withQuickSelector: string,
+  withoutQuickSelector: string,
+}
 type dateRangePickerCalendarTokenTypeTriggerDateInputConfig = {
-  borderRadius: string,  // ⚪ loose — was `{ withQuickSelector: BorderRadius<number | (string & {})>; withoutQuickSelector: BorderRadius<number | (string`
+  borderRadius: __typeSo6ld,
   padding: string,  // ⚪ loose — was `{ sm: { x: Padding<number | (string & {})>; y: Padding<number | (string & {})>; }; md: { x: Padding<number | (`
   text: string,  // ⚪ loose — was `{ color: Color; fontSize: { sm: FontSize<number | (string & {})>; md: FontSize<number | (string & {})>; lg: Fo`
   border: string,  // ⚪ loose — was `{ disabled: Border<number | (string & {})>; active: Border<number | (string & {})>; default: Border<number | (`
@@ -68,17 +78,52 @@ type dateRangePickerCalendarTokenTypeTriggerConfig = {
   quickSelector: dateRangePickerCalendarTokenTypeTriggerQuickSelectorConfig,
   dateInput: dateRangePickerCalendarTokenTypeTriggerDateInputConfig,
 }
+type __typeV1okzr = {
+  x: string,
+  y: string,
+}
+type __typeV1y6we2 = {
+  color: string,
+  fontSize: string,
+  fontWeight: string,
+}
+type __typeL5w9t = {
+  gap: string,
+  label: __typeV1y6we2,
+}
 type dateRangePickerCalendarTokenTypeCalendarHeaderConfig = {
-  padding: string,  // ⚪ loose — was `{ x: Padding<number | (string & {})>; y: Padding<number | (string & {})>; }`
-  dateInput: string,  // ⚪ loose — was `{ gap: Gap<number | (string & {})>; label: { color: Color; fontSize: FontSize<number | (string & {})>; fontWei`
+  padding: __typeV1okzr,
+  dateInput: __typeL5w9t,
+}
+type __typeMi4d5 = {
+  fontSize: string,
+  fontWeight: string,
+  color: string,
+  padding: __typeV1okzr,
+  gap: string,
+}
+type __typeYy6kg = {
+  header: __typeMi4d5,
+}
+type __typeV17xsx2 = {
+  gap: string,
+}
+type __typeYk8pw = {
+  gap: string,
+  fontSize: string,
+  fontWeight: string,
+  boxShadow: string,
+  color: string,
+  padding: __typeV1okzr,
+  row: __typeV17xsx2,
 }
 type dateRangePickerCalendarTokenTypeCalendarCalendarGridConfig = {
-  month: string,  // ⚪ loose — was `{ header: { fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: Color; padding: { x: Pa`
-  week: string,  // ⚪ loose — was `{ gap: Gap<number | (string & {})>; fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; boxSha`
+  month: __typeYy6kg,
+  week: __typeYk8pw,
   day: string,  // ⚪ loose — was `{ cell: { padding: { x: Padding<number | (string & {})>; y: Padding<number | (string & {})>; }; fontWeight: Fo`
 }
 type dateRangePickerCalendarTokenTypeCalendarFooterConfig = {
-  padding: string,  // ⚪ loose — was `{ x: Padding<number | (string & {})>; y: Padding<number | (string & {})>; }`
+  padding: __typeV1okzr,
   borderTop: string,
   gap: string,
 }

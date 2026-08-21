@@ -4,16 +4,26 @@ type radioSize =
 type radioResponsiveRadioTokensSmGroupConfig = {
   gap: string,
 }
+type radioUseThemeBackgroundColorConfigV2arva = {
+  disabled: string,
+  default: string,
+  hover: string,
+  error: string,
+}
 type radioResponsiveRadioTokensSmIndicatorActiveConfig = {
-  backgroundColor: string,  // ⚪ loose — was `{ disabled: BackgroundColor; default: BackgroundColor; hover: BackgroundColor; error: BackgroundColor; }`
-  borderColor: string,  // ⚪ loose — was `{ disabled: BorderColor; default: BorderColor; hover: BorderColor; error: BorderColor; }`
+  backgroundColor: radioUseThemeBackgroundColorConfigV2arva,
+  borderColor: radioUseThemeBackgroundColorConfigV2arva,
 }
 type radioResponsiveRadioTokensSmIndicatorConfig = {
   active: radioResponsiveRadioTokensSmIndicatorActiveConfig,
   inactive: radioResponsiveRadioTokensSmIndicatorActiveConfig,
 }
+type radioUseThemeBackgroundColorConfigQe6zv = {
+  disabled: string,
+  default: string,
+}
 type radioResponsiveRadioTokensSmActiveIndicatorActiveConfig = {
-  backgroundColor: string,  // ⚪ loose — was `{ disabled: BackgroundColor; default: BackgroundColor; }`
+  backgroundColor: radioUseThemeBackgroundColorConfigQe6zv,
 }
 type radioResponsiveRadioTokensSmActiveIndicatorConfig = {
   active: radioResponsiveRadioTokensSmActiveIndicatorActiveConfig,
@@ -24,18 +34,18 @@ type radioResponsiveRadioTokensSmContentLabelConfig = {
   fontSize: string,  // ⚪ loose — was `{ sm: FontSize<number | (string & {})>; md: FontSize<number | (string & {})>; }`
   fontWeight: string,  // ⚪ loose — was `{ sm: FontWeight; md: FontWeight; }`
 }
+type radioResponsiveRadioTokensSmHeightConfig = {
+  sm: string,
+  md: string,
+}
 type radioResponsiveRadioTokensSmContentSublabelConfig = {
-  color: string,  // ⚪ loose — was `{ disabled: Color; default: Color; hover: Color; error: Color; }`
-  fontSize: string,  // ⚪ loose — was `{ sm: FontSize<number | (string & {})>; md: FontSize<number | (string & {})>; }`
-  fontWeight: string,  // ⚪ loose — was `{ sm: FontWeight; md: FontWeight; }`
+  color: radioUseThemeBackgroundColorConfigV2arva,
+  fontSize: radioResponsiveRadioTokensSmHeightConfig,
+  fontWeight: radioResponsiveRadioTokensSmHeightConfig,
 }
 type radioResponsiveRadioTokensSmContentConfig = {
   label: radioResponsiveRadioTokensSmContentLabelConfig,
   sublabel: radioResponsiveRadioTokensSmContentSublabelConfig,
-}
-type radioResponsiveRadioTokensSmHeightConfig = {
-  sm: string,
-  md: string,
 }
 type radioResponsiveRadioTokensSmBorderWidthActiveConfig = {
   disabled: float,

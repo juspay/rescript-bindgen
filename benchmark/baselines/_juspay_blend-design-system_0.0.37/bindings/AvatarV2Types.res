@@ -49,18 +49,18 @@ type avatarV2AvatarV2TokensTypeContainerStatusBackgroundColorConfig = {
   away: string,
   busy: string,
 }
-type avatarV2GetStatusPositionStylesConfig = {
+type __typeX42gq = {
   top?: string,
   right?: string,
   bottom?: string,
   left?: string,
 }
 type avatarV2AvatarV2TokensTypeContainerStatusPositionCircularConfig = {
-  sm: avatarV2GetStatusPositionStylesConfig,
-  regular: avatarV2GetStatusPositionStylesConfig,
-  md: avatarV2GetStatusPositionStylesConfig,
-  lg: avatarV2GetStatusPositionStylesConfig,
-  xl: avatarV2GetStatusPositionStylesConfig,
+  sm: __typeX42gq,
+  regular: __typeX42gq,
+  md: __typeX42gq,
+  lg: __typeX42gq,
+  xl: __typeX42gq,
 }
 type avatarV2AvatarV2TokensTypeContainerStatusPositionConfig = {
   circular: avatarV2AvatarV2TokensTypeContainerStatusPositionCircularConfig,

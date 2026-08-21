@@ -40,10 +40,16 @@ type buttonV2ResponsiveButtonV2TokensSmFocusRingConfig = {
   danger: buttonV2ResponsiveButtonV2TokensSmFocusRingPrimaryConfig,
   success: buttonV2ResponsiveButtonV2TokensSmFocusRingPrimaryConfig,
 }
+type buttonV2UseThemeDefaultConfig = {
+  default: string,
+  hover: string,
+  active: string,
+  disabled: string,
+}
 type buttonV2ResponsiveButtonV2TokensSmBackgroundColorPrimaryConfig = {
-  default: string,  // ⚪ loose — was `{ default: Background<string | number>; hover: Background<string | number>; active: Background<string | number`
-  iconOnly: string,  // ⚪ loose — was `{ default: Background<string | number>; hover: Background<string | number>; active: Background<string | number`
-  inline: string,  // ⚪ loose — was `{ default: Background<string | number>; hover: Background<string | number>; active: Background<string | number`
+  default: buttonV2UseThemeDefaultConfig,
+  iconOnly: buttonV2UseThemeDefaultConfig,
+  inline: buttonV2UseThemeDefaultConfig,
 }
 type buttonV2ResponsiveButtonV2TokensSmBackgroundColorConfig = {
   primary: buttonV2ResponsiveButtonV2TokensSmBackgroundColorPrimaryConfig,

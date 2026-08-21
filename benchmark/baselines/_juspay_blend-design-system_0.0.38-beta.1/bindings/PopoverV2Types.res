@@ -22,12 +22,17 @@ type popoverV2PopoverV2TokenTypePaddingConfig = {
   top: popoverV2PopoverV2TokenTypeGapConfig,
   bottom: popoverV2PopoverV2TokenTypeGapConfig,
 }
+type popoverV2UseThemeIconSizeConfig = {
+  sm: string,  // ⚠️ REVIEW — was `string | number | RuleSet<any> | StyledObject<BaseObject> | StyleFunction<BaseObject>` — match the real type by hand
+  md: string,  // ⚠️ REVIEW — was `string | number | RuleSet<any> | StyledObject<BaseObject> | StyleFunction<BaseObject>` — match the real type by hand
+  lg: string,  // ⚠️ REVIEW — was `string | number | RuleSet<any> | StyledObject<BaseObject> | StyleFunction<BaseObject>` — match the real type by hand
+}
 type popoverV2PopoverV2TokenTypeTopContainerHeadingConfig = {
   color: string,
-  fontSize: string,  // ⚪ loose — was `{ sm: FontSize<number | (string & {})>; md: FontSize<number | (string & {})>; lg: FontSize<number | (string & `
-  fontWeight: string,  // ⚪ loose — was `{ sm: FontWeight; md: FontWeight; lg: FontWeight; }`
-  lineHeight: string,  // ⚪ loose — was `{ sm: LineHeight<number | (string & {})>; md: LineHeight<number | (string & {})>; lg: LineHeight<number | (str`
-  @as("IconSize") iconSize: string,  // ⚪ loose — was `{ sm: string | number | RuleSet<any> | StyledObject<BaseObject> | StyleFunction<BaseObject>; md: string | numb`
+  fontSize: popoverV2PopoverV2TokenTypeGapConfig,
+  fontWeight: popoverV2PopoverV2TokenTypeGapConfig,
+  lineHeight: popoverV2PopoverV2TokenTypeGapConfig,
+  @as("IconSize") iconSize: popoverV2UseThemeIconSizeConfig,
 }
 type popoverV2PopoverV2TokenTypeTopContainerDescriptionConfig = {
   color: string,

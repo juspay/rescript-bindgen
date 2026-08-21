@@ -25,10 +25,16 @@ type buttonButtonTokensTypeSlotMaxHeightConfig = {
   md: string,
   lg: string,
 }
+type buttonUseThemeDefaultConfig = {
+  default: string,
+  hover: string,
+  active: string,
+  disabled: string,
+}
 type buttonButtonTokensTypeBackgroundColorPrimaryConfig = {
-  default: string,  // ⚪ loose — was `{ default: Background<number | (string & {})>; hover: Background<number | (string & {})>; active: Background<n`
-  iconOnly: string,  // ⚪ loose — was `{ default: Background<number | (string & {})>; hover: Background<number | (string & {})>; active: Background<n`
-  inline: string,  // ⚪ loose — was `{ default: Background<number | (string & {})>; hover: Background<number | (string & {})>; active: Background<n`
+  default: buttonUseThemeDefaultConfig,
+  iconOnly: buttonUseThemeDefaultConfig,
+  inline: buttonUseThemeDefaultConfig,
 }
 type buttonButtonTokensTypeBackgroundColorConfig = {
   primary: buttonButtonTokensTypeBackgroundColorPrimaryConfig,
@@ -36,11 +42,16 @@ type buttonButtonTokensTypeBackgroundColorConfig = {
   danger: buttonButtonTokensTypeBackgroundColorPrimaryConfig,
   success: buttonButtonTokensTypeBackgroundColorPrimaryConfig,
 }
+type buttonUseThemePrimaryConfig = {
+  default: buttonUseThemeDefaultConfig,
+  iconOnly: buttonUseThemeDefaultConfig,
+  inline: buttonUseThemeDefaultConfig,
+}
 type buttonButtonTokensTypeBorderRadiusSmConfig = {
-  primary: string,  // ⚪ loose — was `{ default: { default: BorderRadius<number | (string & {})>; hover: BorderRadius<number | (string & {})>; activ`
-  secondary: string,  // ⚪ loose — was `{ default: { default: BorderRadius<number | (string & {})>; hover: BorderRadius<number | (string & {})>; activ`
-  danger: string,  // ⚪ loose — was `{ default: { default: BorderRadius<number | (string & {})>; hover: BorderRadius<number | (string & {})>; activ`
-  success: string,  // ⚪ loose — was `{ default: { default: BorderRadius<number | (string & {})>; hover: BorderRadius<number | (string & {})>; activ`
+  primary: buttonUseThemePrimaryConfig,
+  secondary: buttonUseThemePrimaryConfig,
+  danger: buttonUseThemePrimaryConfig,
+  success: buttonUseThemePrimaryConfig,
 }
 type buttonButtonTokensTypeBorderRadiusConfig = {
   sm: buttonButtonTokensTypeBorderRadiusSmConfig,

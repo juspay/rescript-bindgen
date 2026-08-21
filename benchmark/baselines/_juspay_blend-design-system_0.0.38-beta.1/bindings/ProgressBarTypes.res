@@ -22,10 +22,13 @@ type progressBarProgressBarTokenTypeLinearFillConfig = {
   backgroundColor: progressBarProgressBarTokenTypeLinearBorderRadiusConfig,
   borderRadius: progressBarProgressBarTokenTypeLinearBorderRadiusConfig,
 }
+type __typeV1syf9 = {
+  segmented: string,
+}
 type progressBarProgressBarTokenTypeLinearEmptyConfig = {
   backgroundColor: string,  // ⚪ loose — was `{ solid: BackgroundColor; segmented: BackgroundColor; }`
-  backgroundImage: string,  // ⚪ loose — was `{ segmented: BackgroundImage; }`
-  backgroundSize: string,  // ⚪ loose — was `{ segmented: BackgroundSize<number | (string & {})>; }`
+  backgroundImage: __typeV1syf9,
+  backgroundSize: __typeV1syf9,
 }
 type progressBarProgressBarTokenTypeLinearConfig = {
   height: progressBarProgressBarTokenTypeLinearHeightConfig,

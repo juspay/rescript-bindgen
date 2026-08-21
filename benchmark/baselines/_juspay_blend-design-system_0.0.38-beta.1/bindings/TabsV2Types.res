@@ -18,10 +18,13 @@ type tabsV2TabsV2TokensTypeTabListBorderRadiusConfig = {
   md: tabsV2TabsV2TokensTypeTabListBackgroundColorConfig,
   lg: tabsV2TabsV2TokensTypeTabListBackgroundColorConfig,
 }
+type __typeN52nn = {
+  bottom: string,
+}
 type tabsV2TabsV2TokensTypeTabListActiveIndicatorConfig = {
   height: string,
   color: string,
-  position: string,  // ⚪ loose — was `{ bottom: Bottom<number | (string & {})>; }`
+  position: __typeN52nn,
   transition: string,
   zIndex: string,
 }
@@ -29,9 +32,12 @@ type tabsV2TabsV2TokensTypeTabListStickyHeaderConfig = {
   boxShadow: string,
   zIndex: string,
 }
+type __typeV75sq = {
+  maxWidth: string,
+}
 type tabsV2TabsV2TokensTypeTabListTriggerConfig = {
   gap: string,
-  icon: string,  // ⚪ loose — was `{ maxWidth: MaxWidth<number | (string & {})>; }`
+  icon: __typeV75sq,
   backgroundColor: string,  // ⚪ loose — was `{ boxed: { disabled: BackgroundColor; active: BackgroundColor; default: BackgroundColor; hover: BackgroundColo`
   borderRadius: string,  // ⚪ loose — was `{ sm: { boxed: BorderRadius<number | (string & {})>; floating: BorderRadius<number | (string & {})>; underline`
   border: string,  // ⚪ loose — was `{ boxed: Border<number | (string & {})>; floating: Border<number | (string & {})>; underline: Border<number | `

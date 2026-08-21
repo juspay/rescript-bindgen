@@ -13,20 +13,43 @@ type stepperStepperTokensTypeContainerDefaultConfig = {
 type stepperStepperTokensTypeContainerConfig = {
   default: stepperStepperTokensTypeContainerDefaultConfig,
 }
+type stepperUseThemeCompletedDisabledConfig = {
+  backgroundColor: string,
+  borderColor: string,
+  borderWidth: string,
+  borderRadius: string,
+  size: string,
+  transition: string,
+  outline: string,
+  outlineOffset: string,
+}
+type stepperUseThemeCompletedConfig = {
+  disabled: stepperUseThemeCompletedDisabledConfig,
+  default: stepperUseThemeCompletedDisabledConfig,
+  hover: stepperUseThemeCompletedDisabledConfig,
+  focus: stepperUseThemeCompletedDisabledConfig,
+}
 type stepperStepperTokensTypeStepCircleConfig = {
-  completed: string,  // ⚪ loose — was `{ disabled: { backgroundColor: BackgroundColor; borderColor: BorderColor; borderWidth: BorderWidth<number | (s`
-  current: string,  // ⚪ loose — was `{ disabled: { backgroundColor: BackgroundColor; borderColor: BorderColor; borderWidth: BorderWidth<number | (s`
-  pending: string,  // ⚪ loose — was `{ disabled: { backgroundColor: BackgroundColor; borderColor: BorderColor; borderWidth: BorderWidth<number | (s`
-  disabled: string,  // ⚪ loose — was `{ disabled: { backgroundColor: BackgroundColor; borderColor: BorderColor; borderWidth: BorderWidth<number | (s`
-  skipped: string,  // ⚪ loose — was `{ disabled: { backgroundColor: BackgroundColor; borderColor: BorderColor; borderWidth: BorderWidth<number | (s`
+  completed: stepperUseThemeCompletedConfig,
+  current: stepperUseThemeCompletedConfig,
+  pending: stepperUseThemeCompletedConfig,
+  disabled: stepperUseThemeCompletedConfig,
+  skipped: stepperUseThemeCompletedConfig,
 }
 type stepperStepperTokensTypeStepConfig = {
   circle: stepperStepperTokensTypeStepCircleConfig,
   icon: stepperStepperTokensTypeStepCircleConfig,
 }
+type __typeV103g7 = {
+  color: string,
+  height: string,
+}
+type __typeV4pel9 = {
+  default: __typeV103g7,
+}
 type stepperStepperTokensTypeConnectorLineConfig = {
-  active: string,  // ⚪ loose — was `{ default: { color: Color; height: Height<number | (string & {})>; }; }`
-  inactive: string,  // ⚪ loose — was `{ default: { color: Color; height: Height<number | (string & {})>; }; }`
+  active: __typeV4pel9,
+  inactive: __typeV4pel9,
 }
 type stepperStepperTokensTypeConnectorConfig = {
   line: stepperStepperTokensTypeConnectorLineConfig,

@@ -18,7 +18,7 @@ type snackbarResponsiveSnackbarTokensSmInfoIconColorConfig = {
 }
 type snackbarResponsiveSnackbarTokensSmInfoIconConfig = {
   color: snackbarResponsiveSnackbarTokensSmInfoIconColorConfig,
-  height: string,  // ⚪ loose — was `number | (string & {}) | "-moz-initial" | "inherit" | "initial" | "revert" | "revert-layer" | "unset" | "-moz-`
+  height: string,
 }
 type snackbarResponsiveSnackbarTokensSmContentTextContainerConfig = {
   gap: string,
@@ -35,8 +35,8 @@ type snackbarResponsiveSnackbarTokensSmActionsPrimaryActionConfig = {
   fontWeight: string,
 }
 type snackbarResponsiveSnackbarTokensSmActionsCloseButtonConfig = {
-  height: string,  // ⚪ loose — was `number | (string & {}) | "-moz-initial" | "inherit" | "initial" | "revert" | "revert-layer" | "unset" | "-moz-`
-  color: snackbarResponsiveSnackbarTokensSmInfoIconColorConfig,
+  height: string,
+  color: string,  // ⚪ loose — was `{ info: Color; success: Color; warning: Color; error: Color; }`
 }
 type snackbarResponsiveSnackbarTokensSmActionsConfig = {
   primaryAction: snackbarResponsiveSnackbarTokensSmActionsPrimaryActionConfig,

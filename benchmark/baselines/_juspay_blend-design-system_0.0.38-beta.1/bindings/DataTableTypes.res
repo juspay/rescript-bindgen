@@ -149,11 +149,20 @@ type dataTableHeaderTypeTitleRowConfig = {
 type dataTableHeaderTypeDescriptionRowConfig = {
   marginTop: string,
 }
+type __typeV44l1h = {
+  width: string,
+  height: string,
+}
+type __typeC0bwm = {
+  width: string,
+  height: string,
+  color: string,
+}
 type dataTableHeaderTypeActionIconsConfig = {
   gap: string,
-  searchIcon: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; height: Height<number | (string & {})>; }`
-  filterIcon: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; height: Height<number | (string & {})>; }`
-  columnManagerIcon: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; height: Height<number | (string & {})>; color: Color; }`
+  searchIcon: __typeV44l1h,
+  filterIcon: __typeV44l1h,
+  columnManagerIcon: __typeC0bwm,
   columnManagerTrigger?: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; opacity: string | number | RuleSet<any> | StyledObject<BaseObject> | Style`
 }
 type headerType = {
@@ -174,6 +183,12 @@ type headerType = {
   descriptionRow: dataTableHeaderTypeDescriptionRowConfig,
   actionIcons: dataTableHeaderTypeActionIconsConfig,
 }
+type __typeF0sm8 = {
+  fontSize: string,
+  fontWeight: string,
+  flex?: string,
+  color: string,
+}
 type bulkActionsType = {
   top: string,
   left: string,
@@ -191,8 +206,114 @@ type bulkActionsType = {
   width?: string,
   maxWidth?: string,
   border: string,
-  selectText: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; flex?: Flex<number | (string & {})>; col`
+  selectText: __typeF0sm8,
   height: string,
+}
+type __typeV139hr = {
+  backgroundColor: string,
+}
+type __typeV1dql9 = {
+  height: string,
+  @as("&:hover") __hover: __typeV139hr,
+}
+type __typeCwezu = {
+  padding: string,
+  textAlign: string,
+  fontWeight: string,
+  color: string,
+  fontSize: string,
+  width?: string,
+  backgroundColor?: string,
+}
+type __typeV9f1li = {
+  cursor: string,
+  userSelect: string,
+}
+type __typeV182le = {
+  padding: string,
+  borderRadius: string,
+  hoverBackground: string,
+  iconColor: string,
+  textColor: string,
+  fontSize: string,
+  fontWeight: string,
+}
+type __typeH87hy = {
+  backgroundColor: string,
+  borderRadius: string,
+  border: string,
+  cursor: string,
+  textColor: string,
+  maxHeight: string,
+  overflowY: string,
+  gap: string,
+  sortOption: __typeV182le,
+  selectedBackground: string,
+  hoverBackground: string,
+  selectedTextColor: string,
+  normalTextColor: string,
+  selectedFontWeight: string,
+  normalFontWeight: string,
+  itemPadding: string,
+  itemGap: string,
+  itemBorderRadius: string,
+  itemFontSize: string,
+  groupLabelFontSize: string,
+  groupLabelFontWeight: string,
+  groupLabelColor: string,
+  groupLabelPadding: string,
+  groupLabelTextTransform: string,
+  separatorHeight: string,
+  separatorColor: string,
+}
+type __typeV1v8bo = {
+  backgroundColor: string,
+  borderBottom: string,
+  height: string,
+  row: __typeV1dql9,
+  cell: __typeCwezu,
+  sortable: __typeV9f1li,
+  filter: __typeH87hy,
+}
+type __typeYye8b = {
+  fontSize: string,
+  color: string,
+}
+type __typeAn4co = {
+  gap: string,
+  padding: string,
+  borderRadius: string,
+  display: string,
+  alignItems: string,
+  backgroundColor: string,
+  border: string,
+  background: string,
+  cursor: string,
+  color: string,
+  fontSize: string,
+  hoverColor: string,
+}
+type __typeV17xsx = {
+  gap: string,
+}
+type __typeAthka = {
+  pageText: __typeYye8b,
+  pageSizeSelector: __typeAn4co,
+  pageNavigation: __typeV17xsx,
+}
+type __typeKoc7l = {
+  display: string,
+  justifyContent: string,
+  alignItems: string,
+  padding: string,
+  borderTop: string,
+  height: string,
+  position: string,
+  bottom: string,
+  backgroundColor: string,
+  zIndex: string,
+  flexShrink: string,
+  pagination: __typeAthka,
 }
 type dataTableTableTokenTypeDataTableTableConfig = {
   width: string,
@@ -201,9 +322,9 @@ type dataTableTableTokenTypeDataTableTableConfig = {
   borderSpacing: string,
   position: string,
   minWidth: string,
-  header: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; borderBottom: BorderBottom<number | (string & {})>; height: Height<number `
+  header: __typeV1v8bo,
   body: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; borderTop: BorderTop<number | (string & {})>; row: { height: Height<number`
-  footer: string,  // ⚪ loose — was `{ display: Display; justifyContent: JustifyContent; alignItems: AlignItems; padding: Padding<number | (string `
+  footer: __typeKoc7l,
 }
 type dataTableTableTokenTypeDataTableConfig = {
   borderRadius: string,

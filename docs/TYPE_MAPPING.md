@@ -904,12 +904,15 @@ Fixture: [`cross-component-dedup`](../test/golden/cases/cross-component-dedup). 
 **Deep-record healing.** A record first reached at the `MAX_DEPTH` boundary registers, but its
 fields (one level deeper) overflow the budget and all come back opaque — an all-`string` "ghost"
 (`setOpenConfig2` with `cancel: string`). A post-extraction pass re-resolves any mostly-fallback
-record at depth 0 and keeps the result **only when it introduces zero new registry entries** — so a
-genuine small config (whose field types were already registered by a shallow-resolved twin) heals to
-its real types (`cancel: unit => unit`), while an unbounded library graph (Highcharts options) would
-register hundreds of new entries, gets rolled back, and stays safely truncated. Locked by base-ui's
-`setOpenConfig2` in the benchmark baseline (the depth boundary is too fragile to pin in a synthetic
-golden).
+record at depth 0 and keeps the result when it is **safe** — either it introduces **zero new registry
+entries** (its field types were already registered by a shallow-resolved twin, e.g. `cancel: unit =>
+unit`), **or** the record is **provably bounded** (`boundedPastDepth`), so any new entries it registers
+form a finite, self-contained subtree with no dangling module ref. The bounded relaxation recovers
+blend's token configs: reached deep through `DeepPartial<ComponentTokenType>`, their leaves (`FontSize`,
+`Color`, …) re-resolve to fresh entries, so the strict zero-new-entries rule alone left ~350 of them as
+`string` ghosts (#205). An unbounded library graph (Highcharts options) is cyclic → `boundedPastDepth`
+is `false` at any budget → still rolled back and safely truncated. Locked by base-ui's `setOpenConfig2`
+in the benchmark baseline (the depth boundary is too fragile to pin in a synthetic golden).
 
 **`~ref` synthesis for forwardRef surfaces (#98).** A component typed
 `ForwardRefExoticComponent<P & RefAttributes<R>>` gets a synthesized `~ref` prop — the `ref` symbol
@@ -960,13 +963,41 @@ reference it, and the module aliases it (`type t = moduleName_t`) — zero-cost,
 [`this-typed-callback`](../test/golden/cases/this-typed-callback) (`Widget` cycle),
 [`deep-generic-selfref`](../test/golden/cases/deep-generic-selfref) (`chart.options` in-progress link). (#98, #110, #115)
 
+**csstype values map to `string` even through a mapped type (#205/#206).** A csstype `Property.*` value
+(`Color`, `FontSize<…>`, the CSS-wide `Globals` keywords) is `string` in ReScript — a precise mapping,
+not a loose fallback. Detection is normally by the declaration's **source-file path** (`/csstype/`), but
+that path is **lost** when the value is reached through a homomorphic mapped type: blend's
+`ComponentTokenOverrides = DeepPartial<ComponentTokenType>` re-projects each property, so the checker
+hands back an **alias-less synthesized union** with no csstype declaration. Left unrecognised, that union
+was enumerated into a giant `@unboxed` variant (CSS-keyword constructors leaking into shared modules,
+#206) and, one level up, deepened the graph enough to ghost the wrapping token record to `string` (#205).
+A **structural fallback** recovers it: a union whose string literals include the entire csstype `Globals`
+set (`-moz-initial | inherit | initial | unset` — `-moz-initial` is a csstype-unique fingerprint no
+first-party union enumerates) IS a CSS value union → `string`, however it was reached. An **over-match
+guard** (`isForeignArm`) protects a union that ALSO carries a genuine arm — a record, a dict
+(`{ [k]: V }`), an array, or a callable (blend's chart `ColorString | GradientColorObject | PatternObject`,
+or a responsive `T | { [breakpoint]: T }`): that arm blocks the collapse so it survives (opaque module or
+a flagged `⚪ loose`) instead of being dropped to a bare `string`. The `(string & {})` / `(number & {})`
+autocomplete open arms are recognised (prototype fingerprint) and do NOT block, since they reduce to the
+primitive. This collapse fixes #206 and also removes the pre-existing SILENT drop of those chart record
+arms. Fixture: [`csstype-deeppartial-widening`](../test/golden/cases/csstype-deeppartial-widening)
+(csstype leaf, DeepPartial leaf, and the record/dict/array over-match cases). (#205, #206)
+
 **Bounded records/unions materialize past the bound (#115 item 1).** A type FIRST reached past
 `MAX_DEPTH` (never registered) used to truncate to `string`. Now, when it is **provably bounded** —
 `boundedPastDepth`: every field a leaf / already-registered link / container / function / bounded
 sub-record within a small nesting budget, cycle-guarded — it materializes instead of truncating:
-(a) a **NAMED bounded record** becomes a real record (Highcharts' `xAxisOptions.labels` →
-`xAxisLabelsOptions<'b>`; `yAxis` already resolved shallowly) — NAMED only, so an anonymous `{…}`
-can't proliferate order-churny `…Config2/3` names; (b) a **past-bound UNION** whose arms are all
+(a) a **bounded record** becomes a real record (Highcharts' `xAxisOptions.labels` →
+`xAxisLabelsOptions<'b>`; `yAxis` already resolved shallowly). This now covers **anonymous** `{…}`
+records too, not just named ones: blend's `DeepPartial<ComponentTokenType>` re-projects each token
+config into an anonymous mapped-type object (the original name is stripped), so a name-only gate left
+~185 of them as `string` ghosts (#205). Anonymous is safe because names are path-scoped
+(`<home><Path>Config`, #90/#63), not an order-churny global `…Config2/3` counter — the same shape gets
+one stable name. Lifting the name gate applies to **every** package, not just blend: any anonymous
+record that is provably bounded now materializes rather than truncating — Highcharts' shared-types
+graph grows accordingly (bounded option records that were flagged `string` become real records; the
+`boundedPastDepth` cycle guard still truncates the genuinely cyclic ones), which is a fidelity gain
+(fewer flags, verified 0 dangling refs), not new unbounded expansion; (b) a **past-bound UNION** whose arms are all
 bounded is split through `unionNode` instead of truncated wholesale — `tooltipOptions.shadow`
 (`boolean | ShadowOptionsObject`) → `@unboxed Bool | ShadowOptionsObject`, `seriesXrangeOptions.dataLabels`
 (`A | A[]`) → `@unboxed One(a) | Many(array<a>)`, `tooltipOptions.style` (`CSSObject | TooltipStyleOptions`)

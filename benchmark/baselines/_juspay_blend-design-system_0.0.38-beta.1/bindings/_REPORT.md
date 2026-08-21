@@ -4,7 +4,7 @@
 
 **263** function binding(s) → `BlendDesignSystemBindings.res`.
 
-**4132** shared types deduplicated into **82** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**4492** shared types deduplicated into **82** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 🔤 Constructor name collisions
 
@@ -17,36 +17,32 @@ A bare constant, an identity payload and a `@tag`-injected object are different 
 | Module | Constructor | Conflicting runtime representations | Renamed to |
 |---|---|---|---|
 | `ContextSharedTypes` | `Alt` | `6` / `"alt"` | `AltCursorModifier`, `AltKeyCode` |
-| `ContextSharedTypes` | `Center` | `"center"` / `2` | `CenterMarginLane`, `CenterMenuAlignment`, `CenterV2Alignment`, `CenterRevertEtc1mkx8`, `CenterRevertEtc1w3ez`, `CenterRevertEtc2zoye`, `CenterRevertEtcoic7x` |
-| `ContextSharedTypes` | `ContextMenu` | `"context-menu"` / `58` | `ContextMenuKeyCode`, `ContextMenuRevertEtcop7hp` |
+| `ContextSharedTypes` | `Center` | `"center"` / `2` | `CenterMarginLane`, `CenterMenuAlignment`, `CenterV2Alignment` |
 | `ContextSharedTypes` | `CRLF` | `2` / `1` | `CRLFOfLine`, `CRLFLinePreference`, `CRLFLineSequence` |
-| `ContextSharedTypes` | `End` | `"end"` / `13` | `EndKeyCode`, `EndMenuAlignment`, `EndV2Alignment`, `EndRevertEtc1w3ez`, `EndRevertEtcoic7x` |
+| `ContextSharedTypes` | `End` | `"end"` / `13` | `EndKeyCode`, `EndMenuAlignment`, `EndV2Alignment` |
 | `ContextSharedTypes` | `Explicit` | `3` / `"explicit"` | `ExplicitCaretAnimation`, `ExplicitChangeReason` |
-| `ContextSharedTypes` | `Highlight` | `"Highlight"` / `"highlight"` | `HighlightSelectionStyle`, `HighlightRevertEtc1270i`, `HighlightRevertEtc1i3k7`, `HighlightRevertEtc1mkx8`, `HighlightRevertEtc1yz1q`, `HighlightRevertEtcgjquu`, `HighlightRevertEtcsclw8` |
 | `ContextSharedTypes` | `Hover` | `"hover"` / `69` | `HoverActivatedOn`, `HoverEditorOption`, `HoverStateV2`, `HoverSelectionStates` |
 | `ContextSharedTypes` | `Insert` | `19` / `"insert"` | `InsertInsertMode`, `InsertKeyCode` |
 | `ContextSharedTypes` | `Item` | `{type: "item", …}` / `"item"` | `ItemFlatRow`, `ItemItemType` |
 | `ContextSharedTypes` | `Label` | `{type: "label", …}` / `"label"` | `LabelFlatRow`, `LabelItemType` |
-| `ContextSharedTypes` | `Left` | `"left"` / `0` / `1` | `LeftOutsidePosition`, `LeftMarginLane`, `LeftMenuSide`, `LeftV2Side`, `LeftRevertEtc1mkx8`, `LeftRevertEtc1w3ez`, `LeftRevertEtc2zoye`, `LeftV2Direction`, `LeftPositionAffinity`, `LeftDropdownPosition` |
+| `ContextSharedTypes` | `Left` | `"left"` / `0` / `1` | `LeftOutsidePosition`, `LeftMarginLane`, `LeftMenuSide`, `LeftV2Side`, `LeftV2Direction`, `LeftPositionAffinity`, `LeftDropdownPosition` |
 | `ContextSharedTypes` | `LF` | `1` / `0` | `LFOfLine`, `LFLinePreference`, `LFLineSequence` |
-| `ContextSharedTypes` | `None` | `"none"` / `0` / `2` | `NoneOptionsAutohide`, `NoneAutoIndent`, `NoneLineHighlight`, `NoneRenderWhitespace`, `NoneSnippetSuggestions`, `NoneWrappingIndent`, `NoneRevertEtc1i3k7`, `NoneRevertEtc1mkx8`, `NoneRevertEtc1ufa7`, `NoneRevertEtc1x0av`, `NoneRevertEtc1yz1q`, `NoneRevertEtc2zoye`, `NoneRevertEtcc55tl`, `NoneRevertEtcop7hp`, `NoneRevertEtcsclw8`, `NoneRevertEtcydel2`, `NoneRevertEtcz3a4s`, `NonePositionAffinity`, `NoneRenderMinimap` |
-| `ContextSharedTypes` | `Right` | `"right"` / `1` / `3` | `RightOutsidePosition`, `RightMarginLane`, `RightMenuSide`, `RightV2Side`, `RightRevertEtc1mkx8`, `RightRevertEtc1w3ez`, `RightRevertEtc2zoye`, `RightV2Direction`, `RightPositionAffinity`, `RightDropdownPosition` |
-| `ContextSharedTypes` | `Scrollbar` | `"Scrollbar"` / `117` | `ScrollbarEditorOption`, `ScrollbarRevertEtc1270i`, `ScrollbarRevertEtc1i3k7`, `ScrollbarRevertEtc1mkx8`, `ScrollbarRevertEtc1yz1q`, `ScrollbarRevertEtcgjquu`, `ScrollbarRevertEtcsclw8` |
+| `ContextSharedTypes` | `None` | `0` / `"none"` / `2` | `NoneOptionsAutohide`, `NoneAutoIndent`, `NoneLineHighlight`, `NoneRenderWhitespace`, `NoneSnippetSuggestions`, `NoneWrappingIndent`, `NonePositionAffinity`, `NoneRenderMinimap` |
+| `ContextSharedTypes` | `Right` | `"right"` / `1` / `3` | `RightOutsidePosition`, `RightMarginLane`, `RightMenuSide`, `RightV2Side`, `RightV2Direction`, `RightPositionAffinity`, `RightDropdownPosition` |
 | `ContextSharedTypes` | `Separator` | `{type: "separator", …}` / `"separator"` | `SeparatorFlatRow`, `SeparatorItemType` |
 | `ContextSharedTypes` | `Smooth` | `"smooth"` / `0` | `SmoothCursorBlinking`, `SmoothScrollType` |
-| `ContextSharedTypes` | `Space` | `"space"` / `10` | `SpaceKeyCode`, `SpaceRevertEtc1mkx8` |
-| `ContextSharedTypes` | `Text` | `"text"` / `1` | `TextMouseStyle`, `TextRevertEtcop7hp`, `TextTagType`, `TextRenderMinimap` |
+| `ContextSharedTypes` | `Text` | `1` / `"text"` | `TextMouseStyle`, `TextTagType`, `TextRenderMinimap` |
 | `ContextSharedTypes` | `WordWrapColumn` | `152` / `"wordWrapColumn"` | `WordWrapColumnWordWrap`, `WordWrapColumnEditorOption` |
 | `DataTableTypes` | `DateRange` | `"date_range"` / `"dateRange"` | `DateRangeColumnType`, `DateRangeTypeType`, `DateRangeFilterComponent` |
 | `ChartsSharedTypes` | `Point` | `"point"` / `"Point"` | `PointConstructorType`, `PointObjectScope` |
 | `HighchartsSharedTypes` | `Solid` | `"Solid"` / `"solid"` | `SolidStyleValue`, `SolidShapeValue` |
 | `HighchartsSharedTypes` | `Value` | `""` / `"!="` / `"value"` | `ValueAnnotationDraggable`, `ValueOptionsCompare`, `ValueGapUnit`, `ValueOptionsOperator` |
 
-### Left as-is — same name, same runtime representation (393)
+### Left as-is — same name, same runtime representation (152)
 
 These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
 
-- `ContextSharedTypes`: `AccentColor`, `AccentColorText`, `Action`, `ActiveBorder`, `ActiveCaption`, `ActiveText`, `Advanced`, `Aliceblue`, `All`, `Always`, `Antiquewhite`, `AppWorkspace`, `Aqua`, `Aquamarine`, `Auto`, `Azure`, `Background`, `Beige`, `Bisque`, `Black`, `Blanchedalmond`, `Block`, `Blue`, `Blueviolet`, `Bool`, `BorderBox`, `Bottom`, `Brackets`, `Brown`, `Burlywood` … +241 more
+- `ContextSharedTypes`: `Action`, `Advanced`, `All`, `Always`, `Auto`, `Bool`, `Bottom`, `Brackets`, `Danger`, `Default`, `Disabled`, `Error`, `EXACT`, `Fn`, `Focus`, `Full`, `LanguageDefined`, `Line`, `Mouseover`, `Never`, `Num`, `Off`, `On`, `Primary`, `Selection`, `SelectionArr`, `Start`, `Str`, `Top`, `Trailing`
 - `CommonTypes`: `Arr`, `Auto`, `Bool`, `Fn`, `Interval`, `N0`, `N1`, `N2`, `N3`, `N4`, `Num`, `Off`, `On`, `Relative`, `Str`, `StrArr`
 - `TagsTypes`: `Lg`, `Md`, `Sm`, `Xs`
 - `InputsTypes`: `Left`, `Lg`, `Md`, `Right`, `Sm`
@@ -608,7 +604,7 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 |------|-----------------|
 | `chartRef` | `chartRef?: RefObject<ChartV2ReactRefObject \| null>;` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
 | `chartRefs` | `chartRefs?: ReadonlyArray<RefObject<ChartV2ReactRefObject \| null>>;` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
-| `renderItem` | `renderItem?: (params: { item: ChartV2LegendItem; name: string; visible: boolean; color: string; value?: string \| number; onClick: () => void; }) => ReactNode;` — binds, but references shared field(s) `seriesPieDataLabelsOptionsObject.animation` (`review`), `seriesPieDataLabelsOptionsObject.connectorShape` (`review`), `seriesNetworkgraphDataLabelsOptionsObject.animation` (`review`), `seriesPackedBubbleDataLabelsOptionsObject.animation` (`review`) emitted as `string` |
+| `renderItem` | `renderItem?: (params: { item: ChartV2LegendItem; name: string; visible: boolean; color: string; value?: string \| number; onClick: () => void; }) => ReactNode;` — binds, but references shared field(s) `seriesPieDataLabelsOptionsObject.connectorShape` (`review`), `seriesSunburstDataLabelsOptionsObject.connectorShape` (`review`), `seriesLineDataDragDropOptions.guideBox` (`review`), `partialRbka3.easing` (`review`) emitted as `string` |
 
 ### CoreChart
 
