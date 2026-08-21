@@ -24,6 +24,7 @@ import { join, dirname } from 'path'
 import { tmpdir } from 'os'
 import { fileURLToPath } from 'url'
 import { GREEN, RED, DIM, readDir, diffDirs } from './lib/diff.mjs'
+import { findDanglingRefs } from '../src/validate.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const ROOT = dirname(HERE)
@@ -96,6 +97,10 @@ for (const name of names) {
     // Drop nothing — every emitted file is part of the snapshot.
     const problems = []
     checkNoStrayIdentity(actual, name, problems)
+    // #202: post-emit dangling-reference guard — hard-fail here (controlled output must
+    // be clean). Catches a `Module.type` / `JsFn.t` reference whose declaration an
+    // incomplete reachability sweep dropped, without needing a ReScript compile.
+    for (const p of findDanglingRefs(actual)) problems.push(`${name}/${p}`)
 
     if (UPDATE) {
         rmSync(expectedDir, { recursive: true, force: true })

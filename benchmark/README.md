@@ -41,6 +41,21 @@ The job exits 1 (red check) only on FAIL.
 | `npm run bench` | verify all packages against baselines (what CI runs) |
 | `npm run bench:update` | regenerate `baselines/<slug>/{bindings/,metrics.json,package-lock.json}` |
 | `node benchmark/run.mjs --only react-markdown` | debug one package (slug or name) |
+| `npm run bench:latest-blend` | **pre-release gate (#203):** resolve the LATEST `@juspay/blend-design-system@beta` and prove it still generates + compiles |
+
+## The latest-blend gate (#203)
+
+The pins above are frozen, but blend — the primary downstream target — moves faster than them.
+Twice a regression compiled on the pins yet broke on a newer real blend (#110, #198; the latter a
+**crash-before-emit**, invisible to any compile gate because there is no output to compile). The
+latest-blend gate closes that gap: it resolves the live `@juspay/blend-design-system@beta` dist-tag
+(not a pin), generates with this checkout, and **fails** on a crash, empty output, or a compile
+break. It also prints an informational diff vs the newest pinned blend baseline.
+
+Run it **before cutting any release** (`npm run bench:latest-blend`). CI runs it weekly and on
+demand via `.github/workflows/latest-blend-gate.yml` — deliberately *not* a per-PR required check,
+since the version floats. Complements pinning the exact failing version as a permanent regression
+lock (as `0.0.38-beta.1` is): the pin catches *that* case forever; this gate catches the *next* one.
 
 ## Accepting an intentional output change (WARN → PASS)
 

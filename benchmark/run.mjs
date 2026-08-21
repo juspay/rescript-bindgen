@@ -38,6 +38,13 @@ const WORK = join(HERE, '.work')
 const UPDATE = process.argv.includes('--update')
 const onlyIx = process.argv.indexOf('--only')
 const ONLY = onlyIx === -1 ? null : process.argv[onlyIx + 1]
+// #203: the pre-release gate — resolve the LATEST blend beta dist-tag (not a pinned version) and
+// prove the shipped checkout still generates + compiles it. blend is the primary downstream target
+// and moves faster than our pins; twice a regression compiled on the pins but broke on the newer
+// real one (#110, #198 — the latter a crash-before-emit that compile gates can't see, since there
+// is no output to compile). Only running the LATEST catches that class before it ships.
+const LATEST_BLEND = process.argv.includes('--latest-blend')
+const BLEND_PKG = '@juspay/blend-design-system'
 
 const YELLOW = (s) => `\x1b[33m${s}\x1b[0m`
 const slugOf = (name) => name.replace(/[@/]/g, '_') // "@s/p" -> "_s_p" (a leading @ already becomes _)
@@ -54,7 +61,7 @@ function sh(cmd, cwd) {
  * the committed lockfile. node_modules is kept across runs and only reinstalled
  * when the lockfile stamp changes (so CI can cache it).
  */
-function setupSandbox(pkg, slug, sandbox) {
+function setupSandbox(pkg, slug, sandbox, { freshInstall = false } = {}) {
     mkdirSync(sandbox, { recursive: true })
     const tpl = JSON.parse(readFileSync(join(TEMPLATE, 'package.json'), 'utf-8'))
     tpl.dependencies[pkg.name] = pkg.version // exact pin, no range
@@ -62,8 +69,9 @@ function setupSandbox(pkg, slug, sandbox) {
     cpSync(join(TEMPLATE, 'rescript.json'), join(sandbox, 'rescript.json'))
 
     const committedLock = join(BASELINES, slug, 'package-lock.json')
-    if (UPDATE) {
-        // Fresh resolve; the resulting lockfile becomes the committed baseline.
+    if (UPDATE || freshInstall) {
+        // Fresh resolve. Under --update the resulting lockfile becomes the committed baseline; under
+        // --latest-blend (fresh) the version floats and has no committed lockfile to reuse anyway.
         rmSync(join(sandbox, 'package-lock.json'), { force: true })
         const r = sh('npm install --silent --no-audit --no-fund', sandbox)
         if (!r.ok) throw new Error(`npm install failed:\n${r.out.slice(0, 2000)}`)
@@ -141,14 +149,125 @@ function verdictFor(metrics, baseline, diffProblems) {
     return { verdict: 'PASS', reason: '' }
 }
 
+/** Semver precedence for the version strings we pin. Returns <0 / 0 / >0. Correct on the subtleties
+ *  that can arise: build metadata (`+sha`) is ignored (spec: not part of precedence); all numeric
+ *  release segments compare numerically (not just the first three); a prerelease is OLDER than its
+ *  release (`0.0.38-beta.1` < `0.0.38`); and numeric prerelease identifiers compare numerically
+ *  (`beta.2` < `beta.10`, `alpha` < `beta` < `rc`). */
+function cmpVersion(a, b) {
+    const split = (v) => { const s = v.split('+')[0]; const i = s.indexOf('-'); return i < 0 ? [s, ''] : [s.slice(0, i), s.slice(i + 1)] }
+    const [ma, pa] = split(a), [mb, pb] = split(b)
+    const na = ma.split('.').map(Number), nb = mb.split('.').map(Number)
+    for (let i = 0; i < Math.max(na.length, nb.length); i++) if ((na[i] || 0) !== (nb[i] || 0)) return (na[i] || 0) - (nb[i] || 0)
+    if (!pa && !pb) return 0
+    if (!pa) return 1 // a is the release -> newer than any prerelease of it
+    if (!pb) return -1
+    const ia = pa.split('.'), ib = pb.split('.')
+    for (let i = 0; i < Math.max(ia.length, ib.length); i++) {
+        const x = ia[i], y = ib[i]
+        if (x === undefined) return -1
+        if (y === undefined) return 1
+        if (/^\d+$/.test(x) && /^\d+$/.test(y)) { const dv = Number(x) - Number(y); if (dv) return dv }
+        else if (x !== y) return x < y ? -1 : 1
+    }
+    return 0
+}
+
+/** Slug for a package's baseline dir, shared by the main loop AND the latest-blend gate so the
+ *  scheme lives in ONE place: a name pinned at multiple versions gets a version-qualified slug; a
+ *  single-version name keeps its bare slug. */
+function slugForPkg(pkg, allPackages) {
+    const multiVersion = allPackages.filter((p) => p.name === pkg.name).length > 1
+    return slugOf(multiVersion ? `${pkg.name}@${pkg.version}` : pkg.name)
+}
+
+/** Pick the newest pinned blend baseline to diff a floating latest build against — informational
+ *  only; a newer version legitimately differs from every pin. */
+function newestPinnedBlendSlug(allPackages) {
+    const blends = allPackages.filter((p) => p.name === BLEND_PKG)
+    if (!blends.length) return null
+    blends.sort((a, b) => cmpVersion(a.version, b.version))
+    return slugForPkg(blends[blends.length - 1], allPackages)
+}
+
+/** #203 pre-release gate: resolve the LATEST blend beta and prove the shipped checkout generates
+ *  non-empty output that compiles on ReScript 12. Fails on crash / empty output / compile break —
+ *  the three ways a "compiles on pinned, breaks on latest" regression shows up. Diff vs the newest
+ *  pinned blend baseline is surfaced for review but never fails the gate (a newer version differs). */
+function runLatestBlendGate(allPackages) {
+    const ver = sh(`npm view ${BLEND_PKG}@beta version`)
+    // sh() merges stderr, so an `npm notice`/warning line can precede the value — take the LAST line
+    // that looks like a version, not blindly the last line. Still fails closed (empty -> exit 1).
+    const version = (ver.ok ? ver.out.trim().split('\n').map((s) => s.trim()) : []).reverse().find((l) => /^\d+\.\d+\.\d+/.test(l)) || ''
+    if (!/^\d+\.\d+\.\d+/.test(version)) {
+        console.error(RED(`✗ could not resolve ${BLEND_PKG}@beta version:\n${ver.out.slice(0, 500)}`))
+        process.exit(1)
+    }
+    const pkg = { name: BLEND_PKG, version, flags: ['--webapi'] }
+    const label = `${pkg.name}@${version} (latest beta)`
+    const slug = slugForPkg(pkg, allPackages)
+    const workDir = join(WORK, 'latest-blend')
+    const sandbox = join(workDir, 'sandbox')
+    mkdirSync(workDir, { recursive: true })
+    console.error(DIM(`── ${label} ──`))
+
+    const pinnedSlug = newestPinnedBlendSlug(allPackages)
+    const alreadyPinned = allPackages.some((p) => p.name === BLEND_PKG && p.version === version)
+    if (alreadyPinned) console.error(DIM(`  (latest beta ${version} is already pinned in packages.json — the benchmark covers it; this gate re-verifies the LATEST regardless)`))
+
+    let res
+    try {
+        setupSandbox(pkg, slug, sandbox, { freshInstall: true })
+        const gen = generate(pkg, sandbox, workDir)
+        const generated = readDir(join(sandbox, 'src'))
+        const hasRes = [...generated.keys()].some((f) => f.endsWith('.res'))
+        const cmp = compile(sandbox, workDir, hasRes)
+
+        const failures = []
+        if (gen.exit !== 0) failures.push(`generator exited ${gen.exit} (crash-before-emit — invisible to compile gates)`)
+        if (!hasRes || generated.size === 0) failures.push('no output produced')
+        if (hasRes && !cmp.ok) failures.push('generated bindings do not compile on ReScript 12')
+
+        // Informational diff vs the newest pinned blend baseline.
+        let diff = []
+        if (pinnedSlug && existsSync(join(BASELINES, pinnedSlug, 'bindings'))) {
+            diff = diffDirs(readDir(join(BASELINES, pinnedSlug, 'bindings')), generated).map(stripAnsi)
+        }
+        const metrics = {
+            resolvedVersion: version, generatorExit: gen.exit, compileOk: cmp.ok, warnings: cmp.warnings,
+            files: generated.size, buckets: gen.summary?.components ?? null,
+        }
+        const verdict = failures.length ? 'FAIL' : 'PASS'
+        res = { pkg: label, slug, verdict, reason: failures.join('; '), metrics, diffVsPinned: pinnedSlug, diff, compileErrors: cmp.errors }
+        const color = verdict === 'PASS' ? GREEN : RED
+        console.error(color(`${verdict === 'PASS' ? '✓' : '✗'} ${label}${res.reason ? ' — ' + res.reason : ''}`))
+        if (verdict === 'PASS') console.error(DIM(`  generated ${generated.size} file(s), compiled clean${diff.length ? `; ${diff.filter((d) => !d.startsWith('  ')).length} diff(s) vs pinned ${pinnedSlug}` : ''}`))
+    } catch (e) {
+        console.error(RED(`✗ ${label} — ${e.message.split('\n')[0]}`))
+        res = { pkg: label, slug, verdict: 'FAIL', reason: e.message.split('\n')[0], metrics: null, diff: [] }
+    }
+
+    mkdirSync(WORK, { recursive: true })
+    writeFileSync(join(WORK, 'latest-blend.json'), JSON.stringify(res, null, 2) + '\n')
+    const md = [`## Latest-blend gate: ${res.verdict === 'PASS' ? '✅ PASS' : '❌ FAIL'}`, '', `- Resolved \`${BLEND_PKG}@beta\` → \`${res.metrics?.resolvedVersion || '?'}\``,
+        `- Generator exit: ${res.metrics?.generatorExit ?? '—'} · Compiles: ${res.metrics ? (res.metrics.compileOk ? '✅' : '❌') : '—'} · Files: ${res.metrics?.files ?? '—'}`,
+        res.reason ? `- **Failure:** ${res.reason}` : '', res.diff?.length ? `- Diff vs pinned \`${res.diffVsPinned}\`: ${res.diff.filter((d) => !d.startsWith('  ')).length} file(s) changed (informational)` : '']
+    if (res.compileErrors) md.push('', '```', res.compileErrors, '```')
+    writeFileSync(join(WORK, 'latest-blend.md'), md.filter(Boolean).join('\n') + '\n')
+
+    console.error('')
+    if (res.verdict === 'FAIL') { console.error(RED(`❌ latest-blend gate FAILED — ${res.reason}`)); process.exit(1) }
+    console.error(GREEN(`✅ latest-blend gate PASS — ${BLEND_PKG}@${version} generates + compiles`))
+    process.exit(0)
+}
+
 // ── main ────────────────────────────────────────────────────────────────────
 const allPackages = JSON.parse(readFileSync(join(HERE, 'packages.json'), 'utf-8'))
+if (LATEST_BLEND) runLatestBlendGate(allPackages)
 // Two pinned versions of the SAME package (blend 0.0.36 stable + the 0.0.37 beta line that
 // blend-rescript actually regenerates from) need separate baselines — a duplicated name gets a
 // version-qualified slug; single-version packages keep their existing baseline dirs.
-const nameCount = new Map()
-for (const p of allPackages) nameCount.set(p.name, (nameCount.get(p.name) || 0) + 1)
-const slugFor = (p) => slugOf(nameCount.get(p.name) > 1 ? `${p.name}@${p.version}` : p.name)
+const slugFor = (p) => slugForPkg(p, allPackages)
 const packages = allPackages.filter((p) => !ONLY || slugFor(p) === ONLY || slugOf(p.name) === ONLY || p.name === ONLY)
 if (!packages.length) {
     console.error(RED(`no package matches --only ${ONLY}`))

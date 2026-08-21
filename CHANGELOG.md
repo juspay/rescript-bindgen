@@ -5,6 +5,30 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Post-emit dangling-reference guard** (#202) — the reachability sweep's root/child allowlist fell
+  behind the emitter four times (#191, #195, #197 ×2), each shipping output where a `Module.type` or
+  `JsFn.t` reference pointed at a declaration the sweep had dropped — a ReScript **compile error**
+  caught only by manual review or downstream validation. A new allowlist-INDEPENDENT check
+  (`src/validate.mjs`) scans every written `.res` after generation and asserts each reference into one
+  of our own file-modules resolves to a real declaration (plus bare `JsFn.t` requires a written
+  `JsFn.res`). It **hard-fails** the golden suite (controlled output must be clean) and **warns**
+  (non-fatal) at generation time for real packages, so a text-parse edge case can never break a
+  user's build. Validated for zero false positives across every golden + benchmark baseline, and it
+  trips on a synthetic dangling ref (`test/dangling-refs.mjs`). It would have caught all four past
+  bugs mechanically — "the next reviewer finds it" becomes "CI finds it."
+
+- **Latest-blend pre-release gate** (#203) — the benchmark pins specific blend versions, but blend is
+  the primary downstream target and moves faster than the pins; twice a regression compiled on the
+  pins yet broke on a newer real blend (#110, and #198's crash-before-emit, invisible to compile
+  gates because there is no output to compile). `npm run bench:latest-blend` (and
+  `.github/workflows/latest-blend-gate.yml`, weekly + on demand) resolves the live
+  `@juspay/blend-design-system@beta` dist-tag, generates with the shipped checkout, and fails on a
+  crash, empty output, or a compile break — surfacing a diff vs the newest pinned baseline. Run it
+  before cutting any release. Complements pinning the exact failing version as a permanent regression
+  lock: the pin catches *that* case forever; this gate catches the *next* one.
+
 ## [1.4.0-beta.2] — 2026-08-20
 
 > **Upgrading: regenerate your bindings, and commit `.bindgen-manifest.json` alongside them.** #190
