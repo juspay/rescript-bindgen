@@ -246,7 +246,7 @@ there is no third "constrained `'a`" to reach for. That is *why* the rule is a b
    `getSkeletonDefaults` round-trip loss. **Plan recommends keep `'a`.**
 2. **Fold constructors in? → YES, low risk (research-confirmed).** All four kinds emit top-level
    externals with the same generalization. And because `buildClassIR` binds a first-slice class as an
-   abstract `type t` (§2349) and a constructor returns `t`, a ctor type param **can't round-trip into
+   abstract `type t` (the buildClassIR abstract-`t` pattern, doc-comment §2344–2350) and a constructor returns `t`, a ctor type param **can't round-trip into
    the opaque return** — so ctor params are always param-only → resolve the bound, with no round-trip
    edge case. Pure consistency win.
 3. **Return-position resolved bound = ⚪ loose (not 🛑)? → YES, confirmed.** A return-only `T extends U`
@@ -319,7 +319,7 @@ detector — see the box below for why the "obvious" version doesn't work).
    and it reintroduces exactly the function-vs-static asymmetry §1/§3 delete. So: register the static
    signature's own type params and run the generalised pass at the §2548 call site, same as functions.
 5. **Constructors** need wiring too, but are the easy case. `buildClassIR` binds a first-slice class as
-   an abstract `type t` (§2349), and `ctor` keeps only `.params` (§2389, the return is `t`), so a ctor
+   an abstract `type t` (the buildClassIR abstract-`t` pattern, doc-comment §2344–2350), and `ctor` keeps only `.params` (§2389, the return is `t`), so a ctor
    type param **can't round-trip into the opaque return** — ctor params are always param-only, so
    resolve-the-bound is correct with no round-trip branch to worry about. Pure consistency win.
 6. **One shared decision.** Factor the per-var choice into a single helper that takes the full
