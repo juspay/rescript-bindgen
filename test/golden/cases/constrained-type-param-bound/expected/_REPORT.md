@@ -2,11 +2,11 @@
 
 **0** components · ✅ **0** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**8** function binding(s) → `DemoBindings.res`.
+**10** function binding(s) → `DemoBindings.res`.
 
 **2** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**5** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**7** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -27,6 +27,8 @@ Standalone function exports, emitted as positional `@module external` bindings i
 - `boxParam`
 - `boxRoundTrip`
 - `arrParam`
+- `unionParam`
+- `unionRoundTrip`
 
 ## 🏛 Class modules
 

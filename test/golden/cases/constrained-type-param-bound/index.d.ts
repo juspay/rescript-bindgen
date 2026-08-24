@@ -50,3 +50,12 @@ interface Wrap<T> { v: T }
 export declare function boxParam<T extends string>(x: Wrap<T>): void; // -> flagged `string` (sound)
 export declare function boxRoundTrip<T extends string>(x: Wrap<T>): Wrap<T>; // round-trips -> stays wrap<'a>
 export declare function arrParam<T extends string>(xs: T[]): void; // reachable -> array<string>
+
+// SOUNDNESS (opaque-module union wrapper): a constrained param-only `T` inside a multi-type UNION
+// (`Wrap<T> | OtherArm`) classifies to an opaque `%identity` module whose `fromWrap: wrap<'a> => t`
+// accessor HIDES the `'a` from a shallow walk. The deep collector follows the module's members and
+// flags it — `unionParam` would otherwise leak an unsound `wrap<'a>` accessor. `unionRoundTrip`
+// round-trips, so its opaque module is correctly kept.
+interface OtherArm { o: number }
+export declare function unionParam<T extends string>(x: Wrap<T> | OtherArm): void; // -> flagged string (sound)
+export declare function unionRoundTrip<T extends string>(x: Wrap<T> | OtherArm): Wrap<T> | OtherArm; // round-trip -> opaque module kept

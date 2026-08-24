@@ -946,6 +946,33 @@ function collectTypeVars(t, out) {
     if (Array.isArray(t.fields)) t.fields.forEach((f) => collectTypeVars(f.type, out))
 }
 
+/** Like `collectTypeVars`, but ALSO follows every keyed ref into its registry entry (record fields,
+ *  unboxed / opaque-`%identity`-module members) and collects the vars there. A constrained param stuck
+ *  inside an opaque-module UNION (`Box<T> | Other` -> a module whose accessor is `fromBox: box<'a> => t`)
+ *  carries its `'a` in the module's MEMBERS, not the param node's `tparams`, so a shallow collect misses
+ *  it and the param would leak an unsound `'a`. Concrete instantiations get their own substituted entry
+ *  (#177), so following the ref never over-collects an unrelated generic's internal var. Cycle-safe via
+ *  `seenKeys`. (#192 review) */
+function collectStuckVars(node, ctx, out, seenKeys = new Set()) {
+    if (!node || typeof node !== 'object') return
+    if (node.kind === 'typeVar' && node.name) out.add(node.name)
+    if (node.kind === 'typeRef' && Array.isArray(node.tparams)) node.tparams.forEach((x) => out.add(x))
+    // STOP at a callback boundary: the caller PROVIDES the function, so a var buried in its params/return
+    // (hono's `~handler: (c, next) => HandlerTarget.t`, whose `HandlerTarget` module hides a constrained
+    // `'c`) is a callback-position concern, NOT a direct-wrapper leak — flagging the whole param there
+    // would turn a usable handler into an unusable `string`. Still collect its SHALLOW vars (a `wrap<'a>`
+    // ref carries `'a` in its tparams) for the round-trip signal, but don't deep-follow its refs. (#211)
+    if (node.kind === 'callback') { collectTypeVars(node, out); return }
+    const shared = ctx.shared
+    if (node.key && shared && shared.byKey.has(node.key) && !seenKeys.has(node.key)) {
+        seenKeys.add(node.key)
+        for (const child of entryChildTypes(shared.byKey.get(node.key))) collectStuckVars(child, ctx, out, seenKeys)
+    }
+    for (const k of ['of', 'ret', 'arg', 'thisArg', 'mapKey', 'mapVal']) if (node[k]) collectStuckVars(node[k], ctx, out, seenKeys)
+    if (Array.isArray(node.params)) node.params.forEach((p) => collectStuckVars(p, ctx, out, seenKeys))
+    if (Array.isArray(node.fields)) node.fields.forEach((f) => collectStuckVars(f.type, ctx, out, seenKeys))
+}
+
 /**
  * React/DOM event types -> their ReScript equivalents. Matched by the type's
  * name so a callback param like `MouseEvent` becomes `ReactEvent.Mouse.t`.
@@ -2332,10 +2359,12 @@ function typeParamMode({ usedInParam, usedInReturn, hasConstraint }) {
  * @returns {{params: object[], ret: object}}
  */
 function demoteNonRoundTrip(retNode, paramNodes, sig, ctx, typeVars) {
+    // DEEP collects (follow refs into opaque-module / record entries): a `T` buried in an opaque-`%identity`
+    // union module is invisible to a shallow walk, so it would look used-nowhere and wrongly stay `'a`.
     const used = new Set()
-    for (const p of paramNodes) collectTypeVars(p, used)
+    for (const p of paramNodes) collectStuckVars(p, ctx, used)
     const retVars = new Set()
-    collectTypeVars(retNode, retVars)
+    collectStuckVars(retNode, ctx, retVars)
     const subst = {}
     const returnOnly = new Set() // vars resolved BECAUSE they are return-only (rule #4 guard target)
     for (const tp of (sig.typeParameters || [])) {
@@ -2368,15 +2397,16 @@ function demoteNonRoundTrip(retNode, paramNodes, sig, ctx, typeVars) {
         const sub = substTypeVars(node, subst)
         if (!paramOnlyResolved.length) return sub
         const survivors = new Set()
-        collectTypeVars(sub, survivors)
-        // A constrained param-only var STUCK inside a generic wrapper's `tparams` (`box<'a>`) that
-        // `substTypeVars` can't reach would keep an unsound `'a` — the caller constructs the wrapper and
-        // the library reads its field at the bound type (`f<T extends string>(x: Box<T>)` accepting
+        collectStuckVars(sub, ctx, survivors) // follows opaque-module / record refs, not just tparams
+        // A constrained param-only var STUCK inside a wrapper — a generic record's `tparams` (`box<'a>`)
+        // OR an opaque-`%identity` union module's accessors (`fromBox: box<'a> => t`), both found by the
+        // DEEP `collectStuckVars` — would keep an unsound `'a`: the caller constructs the wrapper and the
+        // library reads its field at the bound type (`f<T extends string>(x: Box<T>)` accepting
         // `f({v: 42})`, compiler-verified). ReScript 12 has no bounded type variable, and resolving the
         // bound in place (`box<'a>` -> concrete `{v: string}`) needs TS type instantiation the extractor
-        // doesn't do; so degrade the stuck param to a sound flagged placeholder. Tracked for the shaped
-        // upgrade (#211). Localised to the stuck param; direct (`x: T`), reachable (`x: T[]`), and
-        // round-trip params are unaffected.
+        // doesn't do; so degrade the stuck param to a sound flagged placeholder. The SHAPED upgrade is
+        // tracked in #211. Localised to the stuck param; direct (`x: T`), reachable (`x: T[]`), and
+        // round-trip params (incl. round-trip unions) are unaffected.
         return paramOnlyResolved.some((n) => survivors.has(n)) ? { kind: 'unknown' } : sub
     })
     const leftInRet = new Set()
