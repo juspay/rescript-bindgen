@@ -58,3 +58,5 @@ type truncatedTextWithTooltipV2Props = {
 }
 @unboxed type stringOrNumberOrStringOrNumberArray = Str(string) | Num(float) | Arr(array<stringOrNumber>)
 @unboxed type numberOrValueOrStringOrNumberArray = Num(float) | Obj(Dict.t<JSON.t>) | Arr(array<stringOrNumber>)
+@unboxed type contextKeyValue = Bool(bool) | Str(string) | Num(float) | Arr(array<boolOrStringOrNumber>) | Dict(Dict.t<boolOrStringOrNumber>)
+type boolOrStringOrNumberOrBoolOrStringOrNumberArrayOrValue = contextKeyValue

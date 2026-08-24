@@ -80,7 +80,7 @@ type rec options = {
 }
 and state = {
   all: MdastTypes.Nodes.t => array<string>,  // ⚪ loose — was `ElementContent`
-  applyData: (MdastTypes.Nodes.t, string) => string,  // 🛑 BROKEN — contains `unknown` — was `Element | Type`
+  applyData: (MdastTypes.Nodes.t, string) => string,  // ⚠️ REVIEW — was `Element | Type` — match the real type by hand
   definitionById: Map.t<string, string>,  // ⚪ loose — was `Definition`
   footnoteById: Map.t<string, string>,  // ⚪ loose — was `FootnoteDefinition`
   footnoteCounts: Map.t<string, float>,

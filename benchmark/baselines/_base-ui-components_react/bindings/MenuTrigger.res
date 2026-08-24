@@ -4,7 +4,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, TriggerTypes.contextMenuTr
 type props<'a> = {
   children?: React.element,
   disabled?: bool,
-  handle?: RootSharedTypes.menuHandleV1w2kt<'a>,
+  handle?: RootSharedTypes.menuHandleV1o4z6<'a>,
   payload?: 'a,
   delay?: float,
   closeDelay?: float,

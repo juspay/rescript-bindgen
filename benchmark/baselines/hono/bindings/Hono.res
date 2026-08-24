@@ -1,26 +1,16 @@
 type t = InstanceTypes.hono
 @new @module("hono") external make: (~options: TypesTypes.honoOptions=?, unit) => t = "Hono"
-// ⚠️ REVIEW: `get` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
-@send external get: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => string) => t = "get"
-// ⚠️ REVIEW: `post` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
-@send external post: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => string) => t = "post"
-// ⚠️ REVIEW: `put` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
-@send external put: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => string) => t = "put"
-// ⚠️ REVIEW: `delete` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
-@send external delete: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => string) => t = "delete"
-// ⚠️ REVIEW: `options` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
-@send external options: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => string) => t = "options"
-// ⚠️ REVIEW: `patch` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
-@send external patch: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => string) => t = "patch"
-// ⚠️ REVIEW: `all` couldn't be auto-typed exactly — `string` placeholder(s) emitted. Match the real type by hand.
-@send external all: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => string) => t = "all"
-// 🛑 BROKEN: `on` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
-@send external on: (t, ~method: string, ~path: string, ~handler: (InstanceTypes.context, unit => promise<unit>) => string) => t = "on"
+@send external get: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => TypesTypes.HandlerTarget.t) => t = "get"
+@send external post: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => TypesTypes.HandlerTarget.t) => t = "post"
+@send external put: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => TypesTypes.HandlerTarget.t) => t = "put"
+@send external delete: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => TypesTypes.HandlerTarget.t) => t = "delete"
+@send external options: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => TypesTypes.HandlerTarget.t) => t = "options"
+@send external patch: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => TypesTypes.HandlerTarget.t) => t = "patch"
+@send external all: (t, ~handler: (InstanceTypes.context, unit => promise<unit>) => TypesTypes.HandlerTarget.t) => t = "all"
+@send external on: (t, ~method: string, ~path: string, ~handler: (InstanceTypes.context, unit => promise<unit>) => TypesTypes.HandlerTarget2.t) => t = "on"
 @send @variadic external use: (t, array<(InstanceTypes.context, unit => promise<unit>) => promise<option<WebTypes.response>>>) => t = "use"
 @send external getPath: (t, ~request: WebTypes.request, ~options: TypesTypes.typesHonoOptionsGetPathConfig=?, unit) => string = "getPath"
-// 🛑 BROKEN: `route` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
 @send external route: (t, ~path: string, ~app: t) => t = "route"
-// 🛑 BROKEN: `basePath` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
 @send external basePath: (t, ~path: string) => t = "basePath"
 @send external onError: (t, ~handler: (TypesTypes.TypesHandler.t, InstanceTypes.context) => promise<WebTypes.response>) => t = "onError"
 @send external notFound: (t, ~handler: InstanceTypes.context => promise<WebTypes.response>) => t = "notFound"

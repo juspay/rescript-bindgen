@@ -128,7 +128,7 @@ type localize = {
   month: (CommonTypes.month, option<localizeFnOptions>) => string,
   day: (CommonTypes.day, option<localizeFnOptions>) => string,
   dayPeriod: (localeDayPeriod, option<localizeFnOptions>) => string,
-  preprocessor?: (string, array<formatPart>) => array<formatPart>,  // 🛑 BROKEN — contains `unknown`
+  preprocessor?: (Date.t, array<formatPart>) => array<formatPart>,
 }
 type formatLongFnOptions = {
   width?: formatLongWidth,
@@ -217,7 +217,7 @@ and dayPickerLocale = {
   labels?: dayPickerLocaleLabels,
   code: string,
   formatDistance: (formatDistanceToken, float, option<formatDistanceFnOptions>) => string,
-  formatRelative: (formatRelativeToken, string, string, option<formatRelativeFnOptions>) => string,  // 🛑 BROKEN — contains `unknown`
+  formatRelative: (formatRelativeToken, Date.t, Date.t, option<formatRelativeFnOptions>) => string,
   localize: localize,
   formatLong: formatLong,
   match: match,
@@ -565,7 +565,7 @@ type classesLocaleConfig = {
   labels?: dayPickerLocaleLabels,
   code?: string,
   formatDistance?: (formatDistanceToken, float, option<formatDistanceFnOptions>) => string,
-  formatRelative?: (formatRelativeToken, string, string, option<formatRelativeFnOptions>) => string,  // 🛑 BROKEN — contains `unknown`
+  formatRelative?: (formatRelativeToken, Date.t, Date.t, option<formatRelativeFnOptions>) => string,
   localize?: localize,
   formatLong?: formatLong,
   match?: match,
@@ -793,7 +793,7 @@ type dayPickerProps = {
   excludeDisabled?: bool,
   resetOnSelect?: bool,
 }
-type dayPickerContextV1ijk6 = {
+type dayPickerContextV1yi4l = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,
@@ -809,7 +809,7 @@ type dayPickerContextV1ijk6 = {
   formatters: formatters,
   dayPickerProps: dayPickerProps,
 }
-type dayPickerContextTp9tz = {
+type dayPickerContextV1rlz6 = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,

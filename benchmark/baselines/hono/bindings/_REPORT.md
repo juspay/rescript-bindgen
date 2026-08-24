@@ -4,16 +4,17 @@
 
 **3** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**37** shared types deduplicated into **6** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**41** shared types deduplicated into **6** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 🔤 Constructor name collisions
 
 ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
 
-### Left as-is — same name, same runtime representation (60)
+### Left as-is — same name, same runtime representation (66)
 
 These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
 
+- `TypesTypes`: `Cookie`, `Form`, `Header`, `Json`, `Param`, `Query`
 - `CommonTypes`: `N_1`, `N100`, `N102`, `N103`, `N200`, `N201`, `N202`, `N203`, `N206`, `N207`, `N208`, `N226`, `N300`, `N301`, `N302`, `N303`, `N305`, `N306`, `N307`, `N308`, `N400`, `N401`, `N402`, `N403`, `N404`, `N405`, `N406`, `N407`, `N408`, `N409` … +30 more
 
 ## 📦 Dependencies

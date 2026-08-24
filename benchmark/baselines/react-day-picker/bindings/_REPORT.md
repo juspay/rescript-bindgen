@@ -132,7 +132,7 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 | `components` | `components?: Partial<CustomComponents>;` — binds, but references shared field(s) `dateLib2.getDigitMap` (`any`), `dateLib2.replaceDigits` (`any`), `dateLibOptions.in` (`review`), `interval.start` (`review`) emitted as `string` |
 | `labels` | `labels?: Partial<Labels>;` — binds, but references shared field(s) `dateLibOptions.in` (`review`), `dateLib2.getDigitMap` (`any`), `dateLib2.replaceDigits` (`any`), `interval.start` (`review`) emitted as `string` |
 | `formatters` | `formatters?: Partial<Formatters>;` — binds, but references shared field(s) `dateLibOptions.in` (`review`), `dateLib2.getDigitMap` (`any`), `dateLib2.replaceDigits` (`any`), `interval.start` (`review`) emitted as `string` |
-| `locale` | `locale?: Partial<DayPickerLocale> \| undefined;` — binds, but references shared field(s) `classesLocaleConfig.formatRelative` (`unknown`), `localize.preprocessor` (`unknown`), `dateLibOptions.in` (`review`), `dayPickerLocale.formatRelative` (`unknown`) emitted as `string` |
+| `locale` | `locale?: Partial<DayPickerLocale> \| undefined;` — binds, but references shared field(s) `dateLibOptions.in` (`review`) emitted as `string` |
 | `dateLib` | `dateLib?: Partial<typeof DateLib.prototype> \| undefined;` — binds, but references shared field(s) `dateLibOptions.in` (`review`), `interval.start` (`review`), `interval.end` (`review`), `endOfWeekOptions.in` (`review`) emitted as `string` |
 
 ### Month

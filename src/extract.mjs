@@ -946,6 +946,33 @@ function collectTypeVars(t, out) {
     if (Array.isArray(t.fields)) t.fields.forEach((f) => collectTypeVars(f.type, out))
 }
 
+/** Like `collectTypeVars`, but ALSO follows every keyed ref into its registry entry (record fields,
+ *  unboxed / opaque-`%identity`-module members) and collects the vars there. A constrained param stuck
+ *  inside an opaque-module UNION (`Box<T> | Other` -> a module whose accessor is `fromBox: box<'a> => t`)
+ *  carries its `'a` in the module's MEMBERS, not the param node's `tparams`, so a shallow collect misses
+ *  it and the param would leak an unsound `'a`. Concrete instantiations get their own substituted entry
+ *  (#177), so following the ref never over-collects an unrelated generic's internal var. Cycle-safe via
+ *  `seenKeys`. (#192 review) */
+function collectStuckVars(node, ctx, out, seenKeys = new Set()) {
+    if (!node || typeof node !== 'object') return
+    if (node.kind === 'typeVar' && node.name) out.add(node.name)
+    if (node.kind === 'typeRef' && Array.isArray(node.tparams)) node.tparams.forEach((x) => out.add(x))
+    // STOP at a callback boundary: the caller PROVIDES the function, so a var buried in its params/return
+    // (hono's `~handler: (c, next) => HandlerTarget.t`, whose `HandlerTarget` module hides a constrained
+    // `'c`) is a callback-position concern, NOT a direct-wrapper leak — flagging the whole param there
+    // would turn a usable handler into an unusable `string`. Still collect its SHALLOW vars (a `wrap<'a>`
+    // ref carries `'a` in its tparams) for the round-trip signal, but don't deep-follow its refs. (#211)
+    if (node.kind === 'callback') { collectTypeVars(node, out); return }
+    const shared = ctx.shared
+    if (node.key && shared && shared.byKey.has(node.key) && !seenKeys.has(node.key)) {
+        seenKeys.add(node.key)
+        for (const child of entryChildTypes(shared.byKey.get(node.key))) collectStuckVars(child, ctx, out, seenKeys)
+    }
+    for (const k of ['of', 'ret', 'arg', 'thisArg', 'mapKey', 'mapVal']) if (node[k]) collectStuckVars(node[k], ctx, out, seenKeys)
+    if (Array.isArray(node.params)) node.params.forEach((p) => collectStuckVars(p, ctx, out, seenKeys))
+    if (Array.isArray(node.fields)) node.fields.forEach((f) => collectStuckVars(f.type, ctx, out, seenKeys))
+}
+
 /**
  * React/DOM event types -> their ReScript equivalents. Matched by the type's
  * name so a callback param like `MouseEvent` becomes `ReactEvent.Mouse.t`.
@@ -2036,9 +2063,13 @@ function buildFunctionIR(checker, sym, source, importName, from, opts) {
     // rebuild that costs a second pass and fixes nothing. The METHOD path's rollback DOES work and is
     // kept. (#189 r3, tracked separately)
     const { params, ret: rawRet } = sigToMembers(sig, ctx, 0, collapseAmbiguity(allSigs))
-    // A type parameter used ONLY in the return doesn't round-trip, so `'a` there is unsound
-    // (rule #4) — demote it to its constraint (`nanoid<T extends string>(): T` -> string).
-    const ret = demoteReturnOnly(rawRet, params.map((p) => p.type), sig, ctx, typeVars)
+    // #192: demote every NON-round-tripping type parameter to its bound — a constrained param-only
+    // var (`greet<T extends string>(x: T): void` -> `(string) => unit`) or any return-only var
+    // (`nanoid<T extends string>(): T` -> string). A round-tripping var and an unconstrained
+    // param-only var keep `'a`. Rewrites BOTH the params and the return.
+    const dem = demoteNonRoundTrip(rawRet, params.map((p) => p.type), sig, ctx, typeVars)
+    params.forEach((p, i) => { p.type = dem.params[i] })
+    const ret = dem.ret
 
     return {
         module: importName,
@@ -2298,46 +2329,127 @@ function substTypeVars(node, subst) {
 }
 
 /**
- * Demote RETURN-ONLY type variables to their constraint. A type parameter that appears only
- * in the return (never in a parameter) does NOT round-trip, so emitting it as `'a` is unsound
- * (contract rule #4): `nanoid<T extends string>(): T` as `=> 'a` lets a caller pick any `T`
- * while the runtime value is a string. Replace each such var with its constraint type
- * (`extends string` -> `string`), or `unknown` (-> flagged) when there's no constraint.
- * @returns {object} the return IR, with return-only vars substituted
+ * How ONE signature type parameter should be bound, from where it appears and whether it has a
+ * bound (#192, see docs/plans/192-constrained-type-params.md). The decision is genuinely four-way:
+ *   - round-trips (in a param AND the return)      -> 'var'     (keep `'a`; preserves the in=out link)
+ *   - return-only                                  -> 'resolve' (rule #4: bound, or unknown -> flagged)
+ *   - param-only, constrained                      -> 'resolve' (the core #192 win — honor the bound)
+ *   - param-only, unconstrained                    -> 'var'     (a genuine generic input; no bound anyway)
+ *   - appears in neither                           -> 'var'     (phantom; nothing to demote)
+ * `'var'` = keep the type variable; `'resolve'` = demote to its constraint. A single `roundTrips`
+ * boolean is NOT enough — param-only splits on the constraint — so it takes the full position pair.
  */
-function demoteReturnOnly(retNode, paramNodes, sig, ctx, typeVars) {
+function typeParamMode({ usedInParam, usedInReturn, hasConstraint }) {
+    if (usedInParam && usedInReturn) return 'var'
+    if (usedInReturn) return 'resolve'
+    if (usedInParam) return hasConstraint ? 'resolve' : 'var'
+    return 'var'
+}
+
+/**
+ * Demote every NON-round-tripping type variable to its constraint (#192). A constrained param-only
+ * var, and ANY return-only var, is resolved to its bound (`extends string` -> `string`), or to
+ * `unknown` (-> flagged) when unbounded; a round-tripping var and an unconstrained param-only var
+ * stay `'a`. Substitutes BOTH the parameter and return nodes and returns `{ params, ret }`. A
+ * constrained param-only var buried inside a generic wrapper's `tparams` (`box<'a>`) that
+ * `substTypeVars` can't reach is degraded to a sound flagged placeholder rather than kept as an
+ * unsound `'a` (shaped in-place resolution tracked in #211). (Generalises the earlier
+ * return-only-only pass; `'a` stays exactly where CLAUDE.md wants it — a genuine generic that
+ * round-trips.)
+ * @returns {{params: object[], ret: object}}
+ */
+function demoteNonRoundTrip(retNode, paramNodes, sig, ctx, typeVars) {
+    // DEEP collects (follow refs into opaque-module / record entries): a `T` buried in an opaque-`%identity`
+    // union module is invisible to a shallow walk, so it would look used-nowhere and wrongly stay `'a`.
     const used = new Set()
-    for (const p of paramNodes) collectTypeVars(p, used)
+    for (const p of paramNodes) collectStuckVars(p, ctx, used)
     const retVars = new Set()
-    collectTypeVars(retNode, retVars)
+    collectStuckVars(retNode, ctx, retVars)
     const subst = {}
+    const returnOnly = new Set() // vars resolved BECAUSE they are return-only (rule #4 guard target)
     for (const tp of (sig.typeParameters || [])) {
         const name = tp.symbol && typeVars.get(tp.symbol)
-        if (!name || !retVars.has(name) || used.has(name)) continue
+        if (!name) continue
+        const usedInParam = used.has(name), usedInReturn = retVars.has(name)
         const c = tp.getConstraint && tp.getConstraint()
+        if (typeParamMode({ usedInParam, usedInReturn, hasConstraint: !!c }) !== 'resolve') continue
         subst[name] = c ? classify(c, ctx, '', 0) : { kind: 'unknown' }
+        if (usedInReturn && !usedInParam) returnOnly.add(name)
     }
-    if (!Object.keys(subst).length) return retNode
-    const out = substTypeVars(retNode, subst)
+    if (!Object.keys(subst).length) return { params: paramNodes, ret: retNode, stuck: null }
+    const ret = substTypeVars(retNode, subst)
     // `substTypeVars` rewrites `typeVar` NODES only — it cannot reach a var carried in a `typeRef`'s
-    // `tparams` (which is an array of NAME STRINGS, not nodes). `collectTypeVars` does see them, so a
-    // return-only var behind a registered generic record was DETECTED, substituted nowhere, and the
-    // guard silently passed: `json<T>(): Box<T>` emitted `=> box<'a>` with an unflagged `v: 'a`, letting
-    // the caller pick the type of a value the LIBRARY controls. Compiled proof — `asInt` and `asBool`
-    // both type-check against the same external, and `asInt(r).v + 1` compiles to integer arithmetic on
-    // arbitrary JSON. That is exactly the unsoundness rule #4 exists to prevent, so if any substituted
-    // var survives, the return is FLAGGED rather than faked. (#189 review)
-    const left = new Set()
-    collectTypeVars(out, left)
-    // `_demoteFailed` lets a caller UNDO the work that produced this dead end. Discarding the return
-    // typeRef strands whatever `classify` registered while building it: `jsonBoxed<T>(): BoxOf<T>` left an
-    // unreferenced `type boxOf<'a>` in the shared file AND renamed a correctly-bound sibling
-    // (`readBox(): BoxOf<string>` went from `boxOf` to `boxOfV1hnll`, since the orphan now occupies the
-    // bare name). The SKILL names that exact failure — a speculative build that bails must un-register.
-    // Signalled rather than rolled back HERE because this function has no trial of its own and is shared
-    // with `buildFunctionIR`; the method path owns the snapshot. (#189 review round 2)
-    if (Object.keys(subst).some((n) => left.has(n))) return { kind: 'unknown', _demoteFailed: true }
-    return out
+    // `tparams` (an array of NAME STRINGS, not nodes). `collectTypeVars` DOES see them, so a resolved
+    // var stuck behind a registered generic (`box<'a>`) is detected here and must NOT be emitted as
+    // `'a` — in EITHER position:
+    //  - RETURN (rule #4): a return-only `'a` lets the caller pick the type of a value the library
+    //    controls (`json<T>(): Box<T>` -> `=> box<'a>`; `asInt(r).v + 1` would do integer arithmetic
+    //    on arbitrary JSON). The whole return is flagged (`_demoteFailed`).
+    //  - PARAM: a param-only-resolved `'a` is ALSO unsound — the caller CONSTRUCTS the wrapper and the
+    //    library reads the field at the bound type, so `f<T extends string>(x: Box<T>) -> (box<'a>)`
+    //    accepts `f({v: 42})` though `T extends string` forbids it (compiler-verified). We report the
+    //    stuck param(s) so the caller re-classifies them with the var UNREGISTERED — classify then
+    //    resolves the bound in place and the concrete-instantiation path builds a shaped, sound record
+    //    (`box<'a>` -> `{v: string}`, `parameters<'a,'c>` -> `{state: Dict.t<JSON.t>, …}`), which is
+    //    far better than a coarse flagged `string`. (#192; docs/plans/192-*.md)
+    const paramOnlyResolved = Object.keys(subst).filter((n) => !returnOnly.has(n))
+    const params = paramNodes.map((node) => {
+        const sub = substTypeVars(node, subst)
+        if (!paramOnlyResolved.length) return sub
+        const survivors = new Set()
+        collectStuckVars(sub, ctx, survivors) // follows opaque-module / record refs, not just tparams
+        // A constrained param-only var STUCK inside a wrapper — a generic record's `tparams` (`box<'a>`)
+        // OR an opaque-`%identity` union module's accessors (`fromBox: box<'a> => t`), both found by the
+        // DEEP `collectStuckVars` — would keep an unsound `'a`: the caller constructs the wrapper and the
+        // library reads its field at the bound type (`f<T extends string>(x: Box<T>)` accepting
+        // `f({v: 42})`, compiler-verified). ReScript 12 has no bounded type variable, and resolving the
+        // bound in place (`box<'a>` -> concrete `{v: string}`) needs TS type instantiation the extractor
+        // doesn't do; so degrade the stuck param to a sound flagged placeholder. The SHAPED upgrade is
+        // tracked in #211. Localised to the stuck param; direct (`x: T`), reachable (`x: T[]`), and
+        // round-trip params (incl. round-trip unions) are unaffected.
+        return paramOnlyResolved.some((n) => survivors.has(n)) ? { kind: 'unknown' } : sub
+    })
+    const leftInRet = new Set()
+    collectTypeVars(ret, leftInRet)
+    if (returnOnly.size && [...returnOnly].some((n) => leftInRet.has(n))) return { params, ret: { kind: 'unknown', _demoteFailed: true } }
+    return { params, ret }
+}
+
+/**
+ * Build one CLASS-MEMBER signature's `{params, ret}` with #192 type-parameter handling, shared by
+ * instance methods, statics and constructors so all four signature kinds decide identically. Register
+ * every type param of `sig` as a fresh `'a` in `ctx.typeVars` (under a registry trial so a dead end
+ * un-registers cleanly), run the `demoteNonRoundTrip` pass, and — if a return-only var dead-ends
+ * (`_demoteFailed`) — roll the registry back and rebuild with NO vars registered (return flagged, no
+ * orphan entry, sibling names preserved). Type vars are SCOPED PER SIGNATURE and deleted after, so one
+ * member's `T` never captures the next member's unrelated `T`; letters continue from the map's current
+ * size so a class-level / already-allocated var is never shadowed.
+ */
+function buildMemberSig(sig, ctx, overloadSigs) {
+    const trial = registryTrial(ctx)
+    const TVN = ['a', 'b', 'c', 'd', 'e', 'f']
+    const added = []
+    for (const tp of (sig.typeParameters || [])) {
+        const s = tp.symbol
+        if (!s || ctx.typeVars.has(s)) continue
+        ctx.typeVars.set(s, "'" + (TVN[ctx.typeVars.size] || `t${ctx.typeVars.size}`))
+        added.push(s)
+    }
+    let built
+    try {
+        const raw = sigToMembers(sig, ctx, 0, collapseAmbiguity(overloadSigs))
+        // Must run INSIDE this scope: it resolves each type param via `typeVars.get(tp.symbol)`, so
+        // running it after `finally` clears the member's entries would be a silent no-op.
+        const dem = demoteNonRoundTrip(raw.ret, raw.params.map((p) => p.type), sig, ctx, ctx.typeVars)
+        raw.params.forEach((p, i) => { p.type = dem.params[i] })
+        raw.ret = dem.ret
+        built = raw
+    } finally { for (const s of added) ctx.typeVars.delete(s) }
+    if (built.ret && built.ret._demoteFailed) {
+        trial.rollback()
+        built = sigToMembers(sig, ctx, 0, collapseAmbiguity(overloadSigs))
+    }
+    return built
 }
 
 /**
@@ -2386,7 +2498,10 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
         try {
             // Overloaded CONSTRUCTORS collapse the same way instance methods do — `new Ctor("dynamic")`
             // was a hard compile error with no diagnostic when overload 1 pinned `kind: 'fast'`. (#189 r3)
-            ctor = { params: sigToMembers(ctors[0], ctx, 0, collapseAmbiguity(ctors)).params }
+            // #192: through `buildMemberSig` too. A ctor returns the abstract `t`, so its type params
+            // can't round-trip into the return — they are always param-only, so a constrained ctor param
+            // resolves to its bound (the ret from the helper is ignored; a ctor has only params).
+            ctor = { params: buildMemberSig(ctors[0], ctx, ctors).params }
         } catch (error) {
             if (!isUnsupportedRestError(error)) throw error
             skippedMembers.push({ name: 'constructor', reason: error.message })
@@ -2431,54 +2546,15 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
                 // the shared map would let one method's `'a` capture the next method's unrelated `T`,
                 // silently unifying two independent generics. Letters continue from the map's current
                 // size so a class-level or already-allocated var is never shadowed. (#177)
-                // ONLY AN UNCONSTRAINED PARAMETER BECOMES A TYPE VARIABLE. `'a` accepts anything, so
-                // using it for `T extends string` (hono's `c.text<T extends string>`) would emit
-                // `~text: 'b` and let a consumer pass `42` where TS requires a string — accepting code
-                // the library rejects, which is the "plausible-but-wrong" failure the contract forbids.
-                // A CONSTRAINED parameter is left unmapped, and what that means concretely is that it
-                // stays FLAGGED: `classify`'s unmapped-TypeParameter branch returns `{kind:'unknown'}`
-                // and does NOT consult the bound, so `T extends string` becomes a 🛑 `string`
-                // placeholder, not a clean `string`. Resolving the bound there was implemented and
-                // reverted — see that branch for why (a ~60-member union name). Deliberately flagged
-                // rather than silently narrowed OR silently widened; unconstrained `T` keeps the type
-                // variable, which is the case `'a` exists for.
-                // Snapshot BEFORE the type vars are registered. `registryTrial` restores `ctx.typeVars`
-                // too, so a snapshot taken AFTER registration would put the method's vars BACK on
-                // rollback — the rebuild below would then re-derive the same generic return with no
-                // demotion pass, i.e. emit the exact unsound `box<'a>` this is meant to avoid. (Observed:
-                // the first cut did precisely that.)
-                const mTrial = registryTrial(ctx)
-                const tpSyms = (sig0.typeParameters || [])
-                    .filter((tp) => !(tp.getConstraint && tp.getConstraint()))
-                    .map((tp) => tp.symbol).filter(Boolean)
-                const TVN = ['a', 'b', 'c', 'd', 'e', 'f']
-                const added = []
-                for (const s of tpSyms) {
-                    if (ctx.typeVars.has(s)) continue
-                    const i = ctx.typeVars.size
-                    ctx.typeVars.set(s, "'" + (TVN[i] || `t${i}`))
-                    added.push(s)
-                }
-                let built
-                try {
-                    const raw = sigToMembers(sig0, ctx, 0, collapseAmbiguity(pt.getCallSignatures()))
-                    // `demoteReturnOnly` must run INSIDE this scope: it resolves each type parameter via
-                    // `typeVars.get(tp.symbol)`, so calling it after the `finally` below cleared the
-                    // method's entries made it a silent no-op — `promise<'a>` survived and the fix looked
-                    // applied while doing nothing. Caught only by re-generating hono and looking.
-                    raw.ret = demoteReturnOnly(raw.ret, raw.params.map((p) => p.type), sig0, ctx, ctx.typeVars)
-                    built = raw
-                } finally { for (const s of added) ctx.typeVars.delete(s) }
-                // A return-only var that survived substitution means registering this method's type vars
-                // was a dead end: the return has to be flagged, and every entry minted for it is now
-                // unreachable. Roll the registry back and rebuild with NO vars registered — which is
-                // exactly what this method did before the type-var mapping existed, so the record is
-                // reachable again with its own flagged field, no orphan, and the sibling keeps its name.
-                if (built.ret && built.ret._demoteFailed) {
-                    mTrial.rollback()
-                    built = sigToMembers(sig0, ctx, 0, collapseAmbiguity(pt.getCallSignatures()))
-                }
-                const { params, ret } = built
+                // #192: ALL of a method's type parameters register as type variables (previously only
+                // UNCONSTRAINED ones did, leaving a constrained param flagged `string`). The shared
+                // `buildMemberSig` then decides per var — a round-tripping or unconstrained-param-only
+                // var keeps `'a` (hono's `c.json<T>(data: T): TypedResponse<T>` connects payload-in to
+                // payload-out), while a constrained param-only var (`c.text<T extends string>`) resolves
+                // to its bound instead of the old flagged `string`. Function/method/static/ctor all run
+                // through this one helper (registry trial + demote + rollback-on-dead-end), so the same
+                // TS shape can no longer get four different answers.
+                const { params, ret } = buildMemberSig(sig0, ctx, pt.getCallSignatures())
                 // RETURN-ONLY vars are demoted, exactly as `buildFunctionIR` does at its own
                 // `sigToMembers` call. A type parameter appearing only in the return does NOT
                 // round-trip, so `'a` there is unsound (contract rule #4, `docs/TYPE_MAPPING.md`
@@ -2545,7 +2621,10 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
                 // STATICS collapse overloads exactly as instance methods do, and were missed entirely by
                 // the earlier per-site re-flag — `static digit(name:'2'):'set-two' / (name:string):'set-other'`
                 // emitted `(~name: string) => [#"set-two"]`. (#189 r3)
-                const { params, ret } = sigToMembers(pt.getCallSignatures()[0], ctx, 0, collapseAmbiguity(pt.getCallSignatures()))
+                // #192: statics go through the SAME `buildMemberSig` as instance methods — they register
+                // no type params on their own, so relying on `classify` alone would resolve a bound in
+                // BOTH positions and drop the round-trip carve-out for `staticEcho<T extends string>(x:T):T`.
+                const { params, ret } = buildMemberSig(pt.getCallSignatures()[0], ctx, pt.getCallSignatures())
                 staticMethods.push({ jsName: pname, params, ret })
             } catch (error) {
                 if (!isUnsupportedRestError(error)) throw error
@@ -4052,18 +4131,16 @@ function classify(type, ctx, propName = '', depth = 0) {
     if (flags & ts.TypeFlags.TypeParameter) {
         const tv = ctx.typeVars && ctx.typeVars.get(type.symbol)
         if (tv) return { kind: 'typeVar', name: tv }
-        // A CONSTRAINED unmapped param stays flagged. Resolving it through its declared bound was tried
-        // and rejected here (#177): it is sound in principle — the bound is what the library promises
-        // about `T` — but hono's `U extends ContentfulStatusCode` resolves to a ~60-member numeric
-        // literal union whose generated name is
-        // `v100OrV102OrV103Or…OrV511OrV1`, pasted into every signature that mentions a status. That is
-        // technically more faithful and practically unusable, so the bound path needs the large-union
-        // NAMING problem solved first and belongs in its own change.
-        //
-        // A type VARIABLE is deliberately not used for a constrained param either: `'a` accepts
-        // anything, so emitting it for `T extends string` would let a consumer pass `42` where TS
-        // requires a string — accepting code the library rejects. `'a` stays reserved for a genuinely
-        // UNCONSTRAINED generic (CLAUDE.md), which is what the method-level mapping above registers.
+        // #192: an unmapped constrained param resolves to its declared BOUND — the promise the library
+        // makes about `T` (`T extends string` -> `string`; hono's `U extends ContentfulStatusCode` ->
+        // the union, now the readable `CommonTypes.contentfulStatusCode` since #190 fixed the naming
+        // blocker that deferred this). This is the FALLBACK: a registered param returns its type
+        // variable above and the demote pass decides its fate — only a param that reached classify
+        // unmapped (a bound that itself mentions a param, or a path with no registration) lands here.
+        // Unbounded -> flagged, unchanged. The `constraint !== type` guard avoids a degenerate
+        // self-bound loop; classify's depth guards cover deeper recursion.
+        const constraint = type.getConstraint && type.getConstraint()
+        if (constraint && constraint !== type) return classify(constraint, ctx, propName, depth)
         return { kind: 'unknown' }
     }
 

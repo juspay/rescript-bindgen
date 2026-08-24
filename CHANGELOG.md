@@ -5,6 +5,23 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Constrained generic type parameters now honor their bound instead of accepting anything** (#192) —
+  a `<T extends string>` parameter used to emit `('a) => …`, and `'a` accepts *anything*, so
+  `fnConstrained(42)` compiled even though TypeScript rejects it — the binding accepted code the
+  library refuses. Worse, the same TS shape got four different answers across standalone functions,
+  methods, statics, and constructors. Now one shared rule decides all four: a constrained parameter
+  resolves to its **bound** (`T extends string` → `string`, `T extends "a"|"b"` → the polyvar union,
+  hono's `U extends ContentfulStatusCode` → the readable `CommonTypes.contentfulStatusCode`) **unless
+  the parameter round-trips** — appears in a parameter *and* the return — where the type variable `'a`
+  is kept so the caller's exact type is preserved in and back out (`echo<T extends string>(x: T): T`
+  stays `('a) => 'a`; blend's `getSkeletonDefaults` is unchanged). Return-only vars stay demoted (rule
+  #4). hono's `c.text`/`c.json` status, `request.valid`, `parseBody` and several blend editor methods
+  flip from 🛑 broken `string` to usable typed bindings. The naming blocker that deferred this
+  (a ~60-member union name) was fixed by #190. Design + ReScript-12 grounding in
+  `docs/plans/192-constrained-type-params.md`.
+
 ### Added
 
 - **Post-emit dangling-reference guard** (#202) — the reachability sweep's root/child allowlist fell

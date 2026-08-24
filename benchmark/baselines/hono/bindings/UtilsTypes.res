@@ -292,3 +292,7 @@ type requestHeader =
   | @as("Want-Content-Digest") WantContentDigest
   | @as("Want-Digest") WantDigest
   | @as("Want-Repr-Digest") WantReprDigest
+type utilsValueConfig = {
+  all?: bool,
+  dot?: bool,
+}

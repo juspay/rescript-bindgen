@@ -6,8 +6,8 @@ type t = InstanceTypes.honoRequest
 @send external query: (t, ~key: string) => string = "query"
 @send external queries: (t, ~key: string) => array<string> = "queries"
 @send external header: (t, ~name: UtilsTypes.requestHeader) => string = "header"
-// 🛑 BROKEN: `parseBody` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
-@send external parseBody: (t, ~options: string=?, unit) => promise<string> = "parseBody"
+// ⚪ loose: `parseBody` has a param/return widened to `string`.
+@send external parseBody: (t, ~options: UtilsTypes.utilsValueConfig=?, unit) => promise<Dict.t<string>> = "parseBody"
 // 🛑 BROKEN: `json` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
 @send external json: (t) => promise<string> = "json"
 @send external text: (t) => promise<string> = "text"
@@ -18,8 +18,8 @@ type t = InstanceTypes.honoRequest
 @send external blob: (t) => promise<WebTypes.blob> = "blob"
 @send external formData: (t) => promise<Webapi.FormData.t> = "formData"
 @send external addValidatedData: (t, ~target: TypesTypes.typesTarget, ~data: JSON.t) => unit = "addValidatedData"
-// 🛑 BROKEN: `valid` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
-@send external valid: (t, ~target: string) => string = "valid"
+// ⚪ loose: `valid` has a param/return widened to `string`.
+@send external valid: (t, ~target: TypesTypes.typesValue) => string = "valid"
 @get external raw: t => WebTypes.request = "raw"
 @get external routeIndex: t => float = "routeIndex"
 @get external path: t => string = "path"

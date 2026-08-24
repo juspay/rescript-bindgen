@@ -1,0 +1,2 @@
+type registry
+type boxed
