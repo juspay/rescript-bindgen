@@ -35,7 +35,18 @@ export declare class Registry {
 // A generic class: its constructor parameter is `T` (class-level). Because the class binds as an
 // abstract `t` and the constructor returns `t`, `T` cannot round-trip into the return, so it is
 // param-only -> resolves to its bound `string`.
-export declare class Box<T extends string> {
+export declare class Boxed<T extends string> {
   constructor(value: T);
   readonly size: number;
 }
+
+// SOUNDNESS: a constrained param-only `T` buried inside a generic WRAPPER (`Wrap<T>`) can't be reached
+// by the type-var substitution (it sits in the wrapper's type args), so keeping `'a` there would be
+// UNSOUND — `boxParam({v: 42})` would compile though `T extends string` forbids it. The stuck param is
+// degraded to a sound flagged `string` (ReScript 12 has no bounded generic, and resolving the bound in
+// place -> a concrete `{v: string}` needs TS type instantiation the extractor doesn't do; that shaped
+// upgrade is #211). A callback/array param, by contrast, IS reachable and resolves cleanly.
+interface Wrap<T> { v: T }
+export declare function boxParam<T extends string>(x: Wrap<T>): void; // -> flagged `string` (sound)
+export declare function boxRoundTrip<T extends string>(x: Wrap<T>): Wrap<T>; // round-trips -> stays wrap<'a>
+export declare function arrParam<T extends string>(xs: T[]): void; // reachable -> array<string>

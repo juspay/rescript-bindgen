@@ -1,2 +1,2 @@
 type registry
-type box
+type boxed

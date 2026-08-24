@@ -2323,9 +2323,12 @@ function typeParamMode({ usedInParam, usedInReturn, hasConstraint }) {
  * Demote every NON-round-tripping type variable to its constraint (#192). A constrained param-only
  * var, and ANY return-only var, is resolved to its bound (`extends string` -> `string`), or to
  * `unknown` (-> flagged) when unbounded; a round-tripping var and an unconstrained param-only var
- * stay `'a`. Substitutes BOTH the parameter and return nodes and returns `{ params, ret }`.
- * (Generalises the earlier return-only-only pass; `'a` stays exactly where CLAUDE.md wants it — a
- * genuine generic that round-trips.)
+ * stay `'a`. Substitutes BOTH the parameter and return nodes and returns `{ params, ret }`. A
+ * constrained param-only var buried inside a generic wrapper's `tparams` (`box<'a>`) that
+ * `substTypeVars` can't reach is degraded to a sound flagged placeholder rather than kept as an
+ * unsound `'a` (shaped in-place resolution tracked in #211). (Generalises the earlier
+ * return-only-only pass; `'a` stays exactly where CLAUDE.md wants it — a genuine generic that
+ * round-trips.)
  * @returns {{params: object[], ret: object}}
  */
 function demoteNonRoundTrip(retNode, paramNodes, sig, ctx, typeVars) {
@@ -2344,20 +2347,41 @@ function demoteNonRoundTrip(retNode, paramNodes, sig, ctx, typeVars) {
         subst[name] = c ? classify(c, ctx, '', 0) : { kind: 'unknown' }
         if (usedInReturn && !usedInParam) returnOnly.add(name)
     }
-    if (!Object.keys(subst).length) return { params: paramNodes, ret: retNode }
-    const params = paramNodes.map((p) => substTypeVars(p, subst))
+    if (!Object.keys(subst).length) return { params: paramNodes, ret: retNode, stuck: null }
     const ret = substTypeVars(retNode, subst)
     // `substTypeVars` rewrites `typeVar` NODES only — it cannot reach a var carried in a `typeRef`'s
-    // `tparams` (an array of NAME STRINGS, not nodes). `collectTypeVars` does see them. The RULE #4
-    // unsoundness guard applies to the RETURN only: a return-only var that survives as `'a` in the
-    // return lets the caller pick the type of a value the LIBRARY controls (`json<T>(): Box<T>` ->
-    // `=> box<'a>` — `asInt(r).v + 1` would compile to integer arithmetic on arbitrary JSON). So if a
-    // return-only-resolved var survives in the return, the return is FLAGGED. A param-only var stuck
-    // the same way (`f<T extends string>(x: Box<T>)` -> `box<'a>`) is merely looser-input, never
-    // unsound, so it is accepted as-is (docs/plans/192 risks). (#189 review / #192)
+    // `tparams` (an array of NAME STRINGS, not nodes). `collectTypeVars` DOES see them, so a resolved
+    // var stuck behind a registered generic (`box<'a>`) is detected here and must NOT be emitted as
+    // `'a` — in EITHER position:
+    //  - RETURN (rule #4): a return-only `'a` lets the caller pick the type of a value the library
+    //    controls (`json<T>(): Box<T>` -> `=> box<'a>`; `asInt(r).v + 1` would do integer arithmetic
+    //    on arbitrary JSON). The whole return is flagged (`_demoteFailed`).
+    //  - PARAM: a param-only-resolved `'a` is ALSO unsound — the caller CONSTRUCTS the wrapper and the
+    //    library reads the field at the bound type, so `f<T extends string>(x: Box<T>) -> (box<'a>)`
+    //    accepts `f({v: 42})` though `T extends string` forbids it (compiler-verified). We report the
+    //    stuck param(s) so the caller re-classifies them with the var UNREGISTERED — classify then
+    //    resolves the bound in place and the concrete-instantiation path builds a shaped, sound record
+    //    (`box<'a>` -> `{v: string}`, `parameters<'a,'c>` -> `{state: Dict.t<JSON.t>, …}`), which is
+    //    far better than a coarse flagged `string`. (#192; docs/plans/192-*.md)
+    const paramOnlyResolved = Object.keys(subst).filter((n) => !returnOnly.has(n))
+    const params = paramNodes.map((node) => {
+        const sub = substTypeVars(node, subst)
+        if (!paramOnlyResolved.length) return sub
+        const survivors = new Set()
+        collectTypeVars(sub, survivors)
+        // A constrained param-only var STUCK inside a generic wrapper's `tparams` (`box<'a>`) that
+        // `substTypeVars` can't reach would keep an unsound `'a` — the caller constructs the wrapper and
+        // the library reads its field at the bound type (`f<T extends string>(x: Box<T>)` accepting
+        // `f({v: 42})`, compiler-verified). ReScript 12 has no bounded type variable, and resolving the
+        // bound in place (`box<'a>` -> concrete `{v: string}`) needs TS type instantiation the extractor
+        // doesn't do; so degrade the stuck param to a sound flagged placeholder. Tracked for the shaped
+        // upgrade (#211). Localised to the stuck param; direct (`x: T`), reachable (`x: T[]`), and
+        // round-trip params are unaffected.
+        return paramOnlyResolved.some((n) => survivors.has(n)) ? { kind: 'unknown' } : sub
+    })
     const leftInRet = new Set()
     collectTypeVars(ret, leftInRet)
-    if ([...returnOnly].some((n) => leftInRet.has(n))) return { params, ret: { kind: 'unknown', _demoteFailed: true } }
+    if (returnOnly.size && [...returnOnly].some((n) => leftInRet.has(n))) return { params, ret: { kind: 'unknown', _demoteFailed: true } }
     return { params, ret }
 }
 

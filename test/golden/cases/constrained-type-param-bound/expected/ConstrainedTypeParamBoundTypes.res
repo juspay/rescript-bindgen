@@ -5,3 +5,6 @@ type constrainedTypeParamBoundSetSize =
 type constrainedTypeParamBoundValue =
   | @as("on") On
   | @as("off") Off
+type wrap<'a> = {
+  v: 'a,
+}

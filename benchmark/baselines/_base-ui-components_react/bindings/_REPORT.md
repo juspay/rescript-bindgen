@@ -4,7 +4,7 @@
 
 **13** function binding(s) → `ReactBindings.res`.
 
-**561** shared types deduplicated into **58** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**559** shared types deduplicated into **57** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 🔤 Constructor name collisions
 

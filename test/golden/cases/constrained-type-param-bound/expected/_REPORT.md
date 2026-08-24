@@ -2,11 +2,11 @@
 
 **0** components · ✅ **0** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**5** function binding(s) → `DemoBindings.res`.
+**8** function binding(s) → `DemoBindings.res`.
 
 **2** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**4** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**5** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -24,6 +24,9 @@ Standalone function exports, emitted as positional `@module external` bindings i
 - `echo`
 - `identity`
 - `make`
+- `boxParam`
+- `boxRoundTrip`
+- `arrParam`
 
 ## 🏛 Class modules
 
@@ -32,7 +35,7 @@ Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new
 | Class | Constructor | Methods | Properties |
 |-------|-------------|---------|------------|
 | `Registry` | ✓ | 2 | 0 |
-| `Box` | ✓ | 0 | 1 |
+| `Boxed` | ✓ | 0 | 1 |
 
 ## ✅ Usable
 

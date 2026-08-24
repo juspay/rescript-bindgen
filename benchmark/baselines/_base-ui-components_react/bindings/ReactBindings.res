@@ -15,5 +15,5 @@
 @module("@base-ui-components/react") external mergeClassNames: (string, string) => string = "mergeClassNames"
 @module("@base-ui-components/react") external useToastManager: unit => RootSharedTypes.useToastManagerReturnValue = "useToastManager"
 @module("@base-ui-components/react") external createToastManager: unit => RootSharedTypes.toastManager = "createToastManager"
-// ⚪ loose: `useRender` has a param/return widened to `string`.
-@module("@base-ui-components/react") external useRender: (UseRenderTypes.parameters<'a, 'c>) => string = "useRender"
+// 🛑 BROKEN: `useRender` has an `unknown`/`any` in its signature — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
+@module("@base-ui-components/react") external useRender: (string) => string = "useRender"

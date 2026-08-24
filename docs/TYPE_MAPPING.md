@@ -1113,6 +1113,14 @@ ContentfulStatusCode` → the **readable** `CommonTypes.contentfulStatusCode` (t
 that once made this "faithful but unusable" is fixed by #190, which unblocked resolving bounds at all).
 Constructors return the abstract `t`, so a ctor type param can't round-trip → it's always param-only →
 resolves to its bound. A resolved bound in a *return* position is an honest ⚪ *loose* widening.
+
+A constrained param-only var resolves cleanly when it is **direct** (`greet<T extends string>(name: T)`
+→ `string`) or **reachable** (`fArr<T extends string>(xs: T[])` → `array<string>`). When it is buried
+inside a generic **wrapper**'s type args (`f<T extends string>(x: Box<T>)`), the substitution can't
+reach the `'a` inside `box<'a>`, and keeping it would be unsound (`f({v: 42})`); ReScript 12 has no
+bounded generic and resolving the bound in place (→ a concrete `{v: string}`) needs TS type
+instantiation the extractor doesn't do, so the stuck param degrades to a sound flagged `string`. The
+shaped upgrade (`box<'a>` → `{v: string}`) is tracked in **#211**.
 Fixtures: [`generic-instantiation-distinct`](../test/golden/cases/generic-instantiation-distinct) (the
 round-trip cases), [`constrained-type-param-bound`](../test/golden/cases/constrained-type-param-bound)
 (the param-only-resolve cases across all four kinds). (#177, #192)
