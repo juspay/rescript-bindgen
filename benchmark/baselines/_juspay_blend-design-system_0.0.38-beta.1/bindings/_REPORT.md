@@ -4,7 +4,7 @@
 
 **263** function binding(s) → `BlendDesignSystemBindings.res`.
 
-**4495** shared types deduplicated into **82** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**4656** shared types deduplicated into **76** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 🔤 Constructor name collisions
 
@@ -16,48 +16,50 @@ A bare constant, an identity payload and a `@tag`-injected object are different 
 
 | Module | Constructor | Conflicting runtime representations | Renamed to |
 |---|---|---|---|
-| `ContextSharedTypes` | `Alt` | `6` / `"alt"` | `AltCursorModifier`, `AltKeyCode` |
-| `ContextSharedTypes` | `Center` | `"center"` / `2` | `CenterMarginLane`, `CenterMenuAlignment`, `CenterV2Alignment` |
-| `ContextSharedTypes` | `CRLF` | `2` / `1` | `CRLFOfLine`, `CRLFLinePreference`, `CRLFLineSequence` |
-| `ContextSharedTypes` | `End` | `"end"` / `13` | `EndKeyCode`, `EndMenuAlignment`, `EndV2Alignment` |
-| `ContextSharedTypes` | `Explicit` | `3` / `"explicit"` | `ExplicitCaretAnimation`, `ExplicitChangeReason` |
-| `ContextSharedTypes` | `Hover` | `"hover"` / `69` | `HoverActivatedOn`, `HoverEditorOption`, `HoverStateV2`, `HoverSelectionStates` |
-| `ContextSharedTypes` | `Insert` | `19` / `"insert"` | `InsertInsertMode`, `InsertKeyCode` |
-| `ContextSharedTypes` | `Item` | `{type: "item", …}` / `"item"` | `ItemFlatRow`, `ItemItemType` |
-| `ContextSharedTypes` | `Label` | `{type: "label", …}` / `"label"` | `LabelFlatRow`, `LabelItemType` |
-| `ContextSharedTypes` | `Left` | `"left"` / `0` / `1` | `LeftOutsidePosition`, `LeftMarginLane`, `LeftMenuSide`, `LeftV2Side`, `LeftV2Direction`, `LeftPositionAffinity`, `LeftDropdownPosition` |
-| `ContextSharedTypes` | `LF` | `1` / `0` | `LFOfLine`, `LFLinePreference`, `LFLineSequence` |
-| `ContextSharedTypes` | `None` | `0` / `"none"` / `2` | `NoneOptionsAutohide`, `NoneAutoIndent`, `NoneLineHighlight`, `NoneRenderWhitespace`, `NoneSnippetSuggestions`, `NoneWrappingIndent`, `NonePositionAffinity`, `NoneRenderMinimap` |
-| `ContextSharedTypes` | `Right` | `"right"` / `1` / `3` | `RightOutsidePosition`, `RightMarginLane`, `RightMenuSide`, `RightV2Side`, `RightV2Direction`, `RightPositionAffinity`, `RightDropdownPosition` |
-| `ContextSharedTypes` | `Separator` | `{type: "separator", …}` / `"separator"` | `SeparatorFlatRow`, `SeparatorItemType` |
-| `ContextSharedTypes` | `Smooth` | `"smooth"` / `0` | `SmoothCursorBlinking`, `SmoothScrollType` |
-| `ContextSharedTypes` | `Text` | `1` / `"text"` | `TextMouseStyle`, `TextTagType`, `TextRenderMinimap` |
-| `ContextSharedTypes` | `WordWrapColumn` | `152` / `"wordWrapColumn"` | `WordWrapColumnWordWrap`, `WordWrapColumnEditorOption` |
+| `HighchartsSharedTypes` | `Alt` | `"alt"` / `6` | `AltMultiCursorModifier`, `AltKeyCode`, `AltOptionsKeyValue`, `AltPanKeyValue` |
+| `HighchartsSharedTypes` | `Center` | `"center"` / `2` | `CenterAlignValue`, `CenterPopoverConfigAlign`, `CenterGlyphMarginLane`, `CenterMenuAlignment`, `CenterMenuV2Alignment`, `CenterPlacementStrategyValue`, `CenterRotationOriginValue`, `CenterOptionsStepValue`, `CenterTextAlignValue` |
+| `HighchartsSharedTypes` | `ContextMenu` | `"context-menu"` / `58` | `ContextMenuCursorValue`, `ContextMenuKeyCode` |
+| `HighchartsSharedTypes` | `CRLF` | `2` / `1` | `CRLFOfLine`, `CRLFLinePreference`, `CRLFLineSequence` |
+| `HighchartsSharedTypes` | `Ctrl` | `"ctrl"` / `5` | `CtrlKeyCode`, `CtrlOptionsKeyValue`, `CtrlPanKeyValue` |
+| `HighchartsSharedTypes` | `End` | `"end"` / `13` | `EndConfigAlign`, `EndKeyCode`, `EndMenuAlignment`, `EndV2Alignment`, `EndOriginValue` |
+| `HighchartsSharedTypes` | `Explicit` | `3` / `"explicit"` | `ExplicitCaretAnimation`, `ExplicitChangeReason` |
+| `HighchartsSharedTypes` | `Hover` | `"hover"` / `69` | `HoverActivatedOn`, `HoverEditorOption`, `HoverStateV2`, `HoverSelectionStates` |
+| `HighchartsSharedTypes` | `Insert` | `19` / `"insert"` | `InsertInsertMode`, `InsertKeyCode` |
+| `HighchartsSharedTypes` | `Item` | `{type: "item", …}` / `"item"` | `ItemFlatRow`, `ItemItemType` |
+| `HighchartsSharedTypes` | `Label` | `{type: "label", …}` / `"label"` | `LabelFlatRow`, `LabelItemType` |
+| `HighchartsSharedTypes` | `Left` | `"left"` / `0` / `1` | `LeftAlignValue`, `LeftEditorOutsidePosition`, `LeftPopoverConfigSide`, `LeftGlyphMarginLane`, `LeftMenuSide`, `LeftMenuV2Side`, `LeftInputV2Direction`, `LeftOptionsStepValue`, `LeftTextAlignValue`, `LeftPositionAffinity`, `LeftV2DropdownPosition` |
+| `HighchartsSharedTypes` | `LF` | `1` / `0` | `LFOfLine`, `LFLinePreference`, `LFLineSequence` |
+| `HighchartsSharedTypes` | `Meta` | `"meta"` / `57` | `MetaKeyCode`, `MetaOptionsKeyValue`, `MetaPanKeyValue` |
+| `HighchartsSharedTypes` | `None` | `"none"` / `0` / `2` | `NoneOptionsAutohide`, `NoneAutoIndent`, `NoneLineHighlight`, `NoneRenderWhitespace`, `NoneSnippetSuggestions`, `NoneWrappingIndent`, `NoneCursorValue`, `NoneApproximationValue`, `NoneEndValue`, `NonePositionAffinity`, `NoneRenderMinimap` |
+| `HighchartsSharedTypes` | `Right` | `"right"` / `1` / `3` | `RightAlignValue`, `RightEditorOutsidePosition`, `RightPopoverConfigSide`, `RightGlyphMarginLane`, `RightMenuSide`, `RightMenuV2Side`, `RightInputV2Direction`, `RightOptionsStepValue`, `RightTextAlignValue`, `RightPositionAffinity`, `RightV2DropdownPosition` |
+| `HighchartsSharedTypes` | `Separator` | `{type: "separator", …}` / `"separator"` | `SeparatorFlatRow`, `SeparatorItemType` |
+| `HighchartsSharedTypes` | `Shift` | `"shift"` / `4` | `ShiftKeyCode`, `ShiftOptionsKeyValue`, `ShiftPanKeyValue` |
+| `HighchartsSharedTypes` | `Smooth` | `"smooth"` / `0` | `SmoothCursorBlinking`, `SmoothScrollType` |
+| `HighchartsSharedTypes` | `Solid` | `"Solid"` / `"solid"` | `SolidCursorBlinking`, `SolidStyleValue`, `SolidShapeValue` |
+| `HighchartsSharedTypes` | `Text` | `"text"` / `1` | `TextMouseStyle`, `TextCursorValue`, `TextTagType`, `TextRenderMinimap` |
+| `HighchartsSharedTypes` | `Value` | `""` / `"!="` / `"value"` | `ValueAnnotationDraggable`, `ValueOptionsCompare`, `ValueGapUnit`, `ValueOptionsOperator` |
+| `HighchartsSharedTypes` | `WordWrapColumn` | `152` / `"wordWrapColumn"` | `WordWrapColumnWordWrap`, `WordWrapColumnEditorOption` |
 | `DataTableTypes` | `DateRange` | `"date_range"` / `"dateRange"` | `DateRangeColumnType`, `DateRangeTypeType`, `DateRangeFilterComponent` |
 | `ChartsSharedTypes` | `Point` | `"point"` / `"Point"` | `PointConstructorType`, `PointObjectScope` |
-| `HighchartsSharedTypes` | `Solid` | `"Solid"` / `"solid"` | `SolidStyleValue`, `SolidShapeValue` |
-| `HighchartsSharedTypes` | `Value` | `""` / `"!="` / `"value"` | `ValueAnnotationDraggable`, `ValueOptionsCompare`, `ValueGapUnit`, `ValueOptionsOperator` |
 
-### Left as-is — same name, same runtime representation (152)
+### Left as-is — same name, same runtime representation (151)
 
 These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
 
-- `ContextSharedTypes`: `Action`, `Advanced`, `All`, `Always`, `Auto`, `Bool`, `Bottom`, `Brackets`, `Danger`, `Default`, `Disabled`, `Error`, `EXACT`, `Fn`, `Focus`, `Full`, `LanguageDefined`, `Line`, `Mouseover`, `Never`, `Num`, `Off`, `On`, `Primary`, `Selection`, `SelectionArr`, `Start`, `Str`, `Top`, `Trailing`
+- `HighchartsSharedTypes`: `Action`, `Advanced`, `All`, `Allow`, `Always`, `AnnotationMockPointOptionsObject`, `Arc`, `Area`, `Arr`, `Auto`, `Bool`, `Bottom`, `Brackets`, `C`, `Callout`, `Category`, `Chart`, `Circle`, `Close`, `Copy`, `CssObject`, `Custom`, `Danger`, `Day`, `Default`, `Diamond`, `Disabled`, `Error`, `EXACT`, `First` … +47 more
 - `CommonTypes`: `Arr`, `Auto`, `Bool`, `Fn`, `Interval`, `N0`, `N1`, `N2`, `N3`, `N4`, `Num`, `Off`, `On`, `Relative`, `Str`, `StrArr`
 - `TagsTypes`: `Lg`, `Md`, `Sm`, `Xs`
 - `InputsTypes`: `Left`, `Lg`, `Md`, `Right`, `Sm`
 - `TooltipTypes`: `Left`, `Right`
 - `ButtonTypes`: `Default`
 - `DataTableTypes`: `Avatar`, `Custom`, `Date`, `Decimal`, `Dropdown`, `Error`, `Multiselect`, `Number`, `Percentage`, `Primary`, `Progress`, `ReactElement`, `Secondary`, `Select`, `Slider`, `Success`, `Tag`, `Text`, `Warning`
-- `DateRangePickerTypes`: `Custom`
 - `ProgressBarTypes`: `Segmented`, `Solid`
-- `ChartsSharedTypes`: `Chart`, `End`, `Hover`, `Inactive`, `Normal`, `Offset`, `Right`, `Select`, `Top`, `Value`
+- `ChartsSharedTypes`: `Chart`, `End`, `Hover`, `Inactive`, `Long`, `Narrow`, `Normal`, `Numeric`, `Offset`, `Right`, `Select`, `Short`, `Top`, `V2Digit`, `Value`
 - `SkeletonTypes`: `Circle`
 - `UploadTypes`: `Error`, `Success`
 - `ButtonV2Types`: `Default`, `Disabled`
 - `TooltipV2Types`: `Left`, `Right`
 - `SliderTypes`: `Bottom`, `Inline`, `Top`
-- `HighchartsSharedTypes`: `All`, `Allow`, `Alt`, `AnnotationMockPointOptionsObject`, `Arc`, `Area`, `Arr`, `Auto`, `Bool`, `Callout`, `Category`, `Center`, `Chart`, `Circle`, `Close`, `CssObject`, `Ctrl`, `Day`, `Diamond`, `Fn`, `High`, `Horizontal`, `Inside`, `Justify`, `Left`, `Linear`, `Logarithmic`, `Low`, `Meta`, `Middle` … +22 more
 
 ## 📦 Dependencies
 
@@ -580,9 +582,9 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `ref` | `Ref<HighchartsReactRefObject>` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
+| `ref` | `Ref<HighchartsReactRefObject>` — binds, but references shared field(s) `axis.setExtremes` (`any`), `navigatorXAxisCurrentDateIndicatorEventsOptions.click` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mousemove` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mouseout` (`review`) emitted as `string` |
 | `options` | `Options` — binds, but references shared field(s) `options.defs` (`review`), `accessibilityOptions.customComponents` (`any`), `accessibilityOptions.highContrastTheme` (`any`), `accessibilityOptions.linkedDescription` (`review`) emitted as `string` |
-| `callback` | `ChartCallbackFunction` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
+| `callback` | `ChartCallbackFunction` — binds, but references shared field(s) `axis.setExtremes` (`any`), `navigatorXAxisCurrentDateIndicatorEventsOptions.click` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mousemove` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mouseout` (`review`) emitted as `string` |
 
 ### Charts
 
@@ -595,16 +597,16 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 | Prop | Real TypeScript |
 |------|-----------------|
 | `options` | `options?: Highcharts.Options;` — binds, but references shared field(s) `options.defs` (`review`), `accessibilityOptions.customComponents` (`any`), `accessibilityOptions.highContrastTheme` (`any`), `accessibilityOptions.linkedDescription` (`review`) emitted as `string` |
-| `callback` | `callback?: Highcharts.ChartCallbackFunction;` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
-| `ref` | `Ref<HighchartsReactRefObject>` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
+| `callback` | `callback?: Highcharts.ChartCallbackFunction;` — binds, but references shared field(s) `axis.setExtremes` (`any`), `navigatorXAxisCurrentDateIndicatorEventsOptions.click` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mousemove` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mouseout` (`review`) emitted as `string` |
+| `ref` | `Ref<HighchartsReactRefObject>` — binds, but references shared field(s) `axis.setExtremes` (`any`), `navigatorXAxisCurrentDateIndicatorEventsOptions.click` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mousemove` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mouseout` (`review`) emitted as `string` |
 
 ### ChartV2Legend
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `chartRef` | `chartRef?: RefObject<ChartV2ReactRefObject \| null>;` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
-| `chartRefs` | `chartRefs?: ReadonlyArray<RefObject<ChartV2ReactRefObject \| null>>;` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
-| `renderItem` | `renderItem?: (params: { item: ChartV2LegendItem; name: string; visible: boolean; color: string; value?: string \| number; onClick: () => void; }) => ReactNode;` — binds, but references shared field(s) `seriesPieDataLabelsOptionsObject.connectorShape` (`review`), `seriesSunburstDataLabelsOptionsObject.connectorShape` (`review`), `seriesLineDataDragDropOptions.guideBox` (`review`), `partialRbka3.easing` (`review`) emitted as `string` |
+| `chartRef` | `chartRef?: RefObject<ChartV2ReactRefObject \| null>;` — binds, but references shared field(s) `axis.setExtremes` (`any`), `navigatorXAxisCurrentDateIndicatorEventsOptions.click` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mousemove` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mouseout` (`review`) emitted as `string` |
+| `chartRefs` | `chartRefs?: ReadonlyArray<RefObject<ChartV2ReactRefObject \| null>>;` — binds, but references shared field(s) `axis.setExtremes` (`any`), `navigatorXAxisCurrentDateIndicatorEventsOptions.click` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mousemove` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mouseout` (`review`) emitted as `string` |
+| `renderItem` | `renderItem?: (params: { item: ChartV2LegendItem; name: string; visible: boolean; color: string; value?: string \| number; onClick: () => void; }) => ReactNode;` — binds, but references shared field(s) `point.optionsToObject` (`any`), `point.setNestedProperty` (`unknown`), `seriesPieDataLabelsOptionsObject.connectorShape` (`review`), `seriesSunburstDataLabelsOptionsObject.connectorShape` (`review`) emitted as `string` |
 
 ### CoreChart
 

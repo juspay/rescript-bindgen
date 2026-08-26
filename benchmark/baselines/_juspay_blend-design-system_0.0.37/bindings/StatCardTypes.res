@@ -44,10 +44,19 @@ type statCardStatCardTokenTypeTextContainerStatsTitleValueConfig = {
   bar: statCardStatCardTokenTypeTextContainerHeaderTitleConfig,
   number: statCardStatCardTokenTypeTextContainerHeaderTitleConfig,
 }
+type statCardStatCardTokenTypeChartColorsLineConfig = {
+  increase: string,
+  decrease: string,
+}
+type statCardTextConfig = {
+  fontSize: string,
+  fontWeight: string,
+  color: statCardStatCardTokenTypeChartColorsLineConfig,
+}
 type statCardStatCardTokenTypeTextContainerStatsTitleChangeConfig = {
   margin: string,
   arrow: statCardStatCardTokenTypeTextContainerHeaderTitleIconConfig,
-  text: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: { increase: Color; decrease: Colo`
+  text: statCardTextConfig,
 }
 type statCardStatCardTokenTypeTextContainerStatsTitleConfig = {
   gap: string,
@@ -63,10 +72,6 @@ type statCardStatCardTokenTypeTextContainerConfig = {
   gap: string,
   header: statCardStatCardTokenTypeTextContainerHeaderConfig,
   stats: statCardStatCardTokenTypeTextContainerStatsConfig,
-}
-type statCardStatCardTokenTypeChartColorsLineConfig = {
-  increase: string,
-  decrease: string,
 }
 type statCardStatCardTokenTypeChartColorsGradientConfig = {
   end: string,

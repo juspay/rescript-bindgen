@@ -28,15 +28,15 @@ type radioResponsiveRadioTokensSmActiveIndicatorActiveConfig = {
 type radioResponsiveRadioTokensSmActiveIndicatorConfig = {
   active: radioResponsiveRadioTokensSmActiveIndicatorActiveConfig,
 }
-type radioResponsiveRadioTokensSmContentLabelConfig = {
-  gap: string,
-  color: string,  // ⚪ loose — was `{ disabled: Color; default: Color; hover: Color; error: Color; }`
-  fontSize: string,  // ⚪ loose — was `{ sm: FontSize<number | (string & {})>; md: FontSize<number | (string & {})>; }`
-  fontWeight: string,  // ⚪ loose — was `{ sm: FontWeight; md: FontWeight; }`
-}
 type radioResponsiveRadioTokensSmHeightConfig = {
   sm: string,
   md: string,
+}
+type radioResponsiveRadioTokensSmContentLabelConfig = {
+  gap: string,
+  color: radioUseThemeBackgroundColorConfigV2arva,
+  fontSize: radioResponsiveRadioTokensSmHeightConfig,
+  fontWeight: radioResponsiveRadioTokensSmHeightConfig,
 }
 type radioResponsiveRadioTokensSmContentSublabelConfig = {
   color: radioUseThemeBackgroundColorConfigV2arva,

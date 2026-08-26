@@ -33,7 +33,6 @@
 @unboxed type boolOrAlways = Bool(bool) | @as("always") Always
 @unboxed type boolOrInUntrustedWorkspace = Bool(bool) | @as("inUntrustedWorkspace") InUntrustedWorkspace
 @unboxed type v0OrV1OrV2 = @as(0) N0 | @as(1) N1 | @as(2) N2
-@unboxed type v0OrV1OrV2OrV3OrV4 = @as(0) N0 | @as(1) N1 | @as(2) N2 | @as(3) N3 | @as(4) N4
 @unboxed type editorGetMonacoViewModeOptionsLineNumbers = @as("relative") Relative | @as("off") Off | @as("on") On | @as("interval") Interval | Fn(float => string)
 @unboxed type editorIStandaloneCodeEditorUpdateOptionsLineNumbers = @as("relative") Relative | @as("off") Off | @as("on") On | @as("interval") Interval | Fn(float => string)
 @unboxed type boolOrConfiguredByTheme = Bool(bool) | @as("configuredByTheme") ConfiguredByTheme

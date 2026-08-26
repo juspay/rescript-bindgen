@@ -10,7 +10,7 @@ type props<'a> = {
   trackCursorAxis?: RootSharedTypes.rootTrackCursorAxis,
   actionsRef?: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>,
   disabled?: bool,
-  handle?: RootSharedTypes.tooltipHandleV122qg<'a>,
+  handle?: RootSharedTypes.tooltipHandleBiyhb<'a>,
   children?: React.element,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
   triggerId?: Nullable.t<string>,
   defaultTriggerId?: Nullable.t<string>,

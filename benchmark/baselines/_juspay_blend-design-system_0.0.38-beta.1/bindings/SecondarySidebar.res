@@ -1,8 +1,8 @@
 type props = {
   id: string,
-  secondarySidebar?: SidebarV2Types.secondarySidebarInfo,
+  secondarySidebar?: HighchartsSharedTypes.secondarySidebarInfo,
   isExpanded?: bool,
-  tokens: SidebarV2Types.sidebarV2TokensType,
+  tokens: HighchartsSharedTypes.sidebarV2TokensType,
 }
 
 @module("@juspay/blend-design-system")

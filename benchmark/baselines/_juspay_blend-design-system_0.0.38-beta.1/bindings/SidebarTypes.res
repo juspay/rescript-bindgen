@@ -11,11 +11,16 @@ type sidebarSidebarTokenTypeLeftPanelPaddingConfig = {
   x: string,
   y: string,
 }
+type sidebarUseThemeBorderConfig = {
+  active: string,
+  default: string,
+  hover: string,
+}
 type sidebarSidebarTokenTypeLeftPanelItemConfig = {
   width: string,
   borderRadius: string,
-  border: string,  // ⚪ loose — was `{ active: Border<number | (string & {})>; default: Border<number | (string & {})>; hover: Border<number | (str`
-  backgroundColor: string,  // ⚪ loose — was `{ active: BackgroundColor; default: BackgroundColor; hover: BackgroundColor; }`
+  border: sidebarUseThemeBorderConfig,
+  backgroundColor: sidebarUseThemeBorderConfig,
 }
 type sidebarSidebarTokenTypeLeftPanelConfig = {
   width: string,
@@ -26,7 +31,7 @@ type sidebarSidebarTokenTypeLeftPanelConfig = {
   item: sidebarSidebarTokenTypeLeftPanelItemConfig,
 }
 type sidebarSidebarTokenTypeHeaderToggleButtonConfig = {
-  backgroundColor: string,  // ⚪ loose — was `{ active: BackgroundColor; default: BackgroundColor; hover: BackgroundColor; }`
+  backgroundColor: sidebarUseThemeBorderConfig,
   width: string,
 }
 type sidebarSidebarTokenTypeHeaderConfig = {
@@ -72,6 +77,10 @@ type sidebarMobileNavigationTokenTypeDrawerConfig = {
   borderRadius: string,
   borderTop: string,
 }
+type sidebarUseThemeBackgroundColorConfig = {
+  active: string,
+  default: string,
+}
 type __typeHdipr = {
   width: string,
   height: string,
@@ -88,8 +97,8 @@ type sidebarMobileNavigationTokenTypeRowItemConfig = {
   height: string,
   borderRadius: string,
   gap: string,
-  backgroundColor: string,  // ⚪ loose — was `{ active: BackgroundColor; default: BackgroundColor; }`
-  color: string,  // ⚪ loose — was `{ active: Color; default: Color; }`
+  backgroundColor: sidebarUseThemeBackgroundColorConfig,
+  color: sidebarUseThemeBackgroundColorConfig,
   fontWeight: string,
   icon: __typeHdipr,
   text: __typeNl3f3,

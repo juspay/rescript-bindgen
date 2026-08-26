@@ -157,7 +157,7 @@ type dateRangePickerCalendarTokenTypeCalendarCalendarGridDayCellConfig = {
   fontWeight: string,
   fontSize: string,
   lineHeight: string,
-  border: string,  // ⚪ loose — was `{ active: Border<number | (string & {})>; default: Border<number | (string & {})>; hover: Border<number | (str`
+  border: dateRangePickerCalendarTokenTypeTriggerDateInputBorderConfig,
   borderRadius: string,
 }
 type __typeV12m5i = {

@@ -40,12 +40,17 @@ type codeBlockCodeBlockTokenTypeHeaderConfig = {
   icon: codeBlockCodeBlockTokenTypeHeaderIconConfig,
   text: codeBlockCodeBlockTokenTypeHeaderTextConfig,
 }
+type codeBlockUseThemeBackgroundColorConfig = {
+  added: string,
+  removed: string,
+  unchanged: string,
+}
 type codeBlockCodeBlockTokenTypeBodyGutterConfig = {
   width: string,
   color: string,
-  backgroundColor: string,  // ⚪ loose — was `{ added: BackgroundColor; removed: BackgroundColor; unchanged: BackgroundColor; }`
-  borderLeft: string,  // ⚪ loose — was `{ added: BorderLeft<number | (string & {})>; removed: BorderLeft<number | (string & {})>; unchanged: BorderLef`
-  borderColor: string,  // ⚪ loose — was `{ added: Color; removed: Color; unchanged: Color; }`
+  backgroundColor: codeBlockUseThemeBackgroundColorConfig,
+  borderLeft: codeBlockUseThemeBackgroundColorConfig,
+  borderColor: codeBlockUseThemeBackgroundColorConfig,
 }
 type __typeV1ap9j = {
   left: string,
@@ -60,11 +65,6 @@ type codeBlockCodeBlockTokenTypeBodyCodeConfig = {
   fontSize: string,
   lineHeight: string,
   padding: __typeOodha,
-}
-type codeBlockUseThemeBackgroundColorConfig = {
-  added: string,
-  removed: string,
-  unchanged: string,
 }
 type codeBlockCodeBlockTokenTypeBodyHighlightedLineConfig = {
   backgroundColor: codeBlockUseThemeBackgroundColorConfig,

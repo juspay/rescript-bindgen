@@ -193,11 +193,11 @@ type inputsOTPInputTokensTypeInputContainerInputConfig = {
   width: string,
   fontSize: string,
   fontWeight: string,
-  color: string,  // ⚪ loose — was `{ default: Color; hover: Color; focus: Color; error: Color; disabled: Color; }`
+  color: inputsSearchInputTokensTypeLabelColorConfig,
   borderRadius: string,
   boxShadow: string,
-  border: string,  // ⚪ loose — was `{ default: Border<number | (string & {})>; hover: Border<number | (string & {})>; focus: Border<number | (stri`
-  backgroundColor: string,  // ⚪ loose — was `{ default: BackgroundColor; hover: BackgroundColor; focus: BackgroundColor; error: BackgroundColor; disabled: `
+  border: inputsSearchInputTokensTypeLabelColorConfig,
+  backgroundColor: inputsSearchInputTokensTypeLabelColorConfig,
 }
 type inputsOTPInputTokensTypeInputContainerConfig = {
   gap: string,

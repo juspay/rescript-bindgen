@@ -10,7 +10,7 @@ type props<'a> = {
   modal?: CommonTypes.boolOrTrapFocus,
   triggerId?: Nullable.t<string>,
   defaultTriggerId?: Nullable.t<string>,
-  handle?: RootSharedTypes.popoverHandleV1fwu2<'a>,
+  handle?: RootSharedTypes.popoverHandleV1evpk<'a>,
   children?: React.element,  // ⓘ function form: wrap with `childrenFn` (zero-cost)
 }
 

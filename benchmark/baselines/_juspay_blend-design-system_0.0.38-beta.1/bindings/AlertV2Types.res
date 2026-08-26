@@ -69,7 +69,7 @@ type alertV2AlertV2TokensTypeMainContainerContentConfig = {
   actionContainer: alertV2UseThemeActionContainerConfig,
 }
 type alertV2AlertV2TokensTypeMainContainerCloseButtonConfig = {
-  color: string,  // ⚪ loose — was `{ primary: Color; success: Color; warning: Color; error: Color; purple: Color; orange: Color; neutral: Color; `
+  color: alertV2UseThemeTextContainerHeadingColorConfig,
   height: string,
   width: string,
 }

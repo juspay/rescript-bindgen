@@ -14,6 +14,11 @@ type timePickerTimePickerTokensTypeDropdownColumnConfig = {
   separator: string,
   header: __typeV1s6yg,
 }
+type timePickerUseThemeFontSizeConfig = {
+  sm: string,
+  md: string,
+  lg: string,
+}
 type __typeV102ib = {
   default: string,
   selected: string,
@@ -29,7 +34,7 @@ type timePickerTimePickerTokensTypeDropdownOptionConfig = {
   height: string,
   paddingX: string,
   borderRadius: string,
-  fontSize: string,  // ⚪ loose — was `{ sm: FontSize<number | (string & {})>; md: FontSize<number | (string & {})>; lg: FontSize<number | (string & `
+  fontSize: timePickerUseThemeFontSizeConfig,
   fontWeight: string,
   color: __typeV102ib,
   backgroundColor: __typeV1912q,

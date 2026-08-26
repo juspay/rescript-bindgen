@@ -22,10 +22,23 @@ type accordionV2AccordionV2TokensTypeTriggerBackgroundColorConfig = {
   border: accordionV2AccordionV2TokensTypeChevronColorConfig,
   noBorder: accordionV2AccordionV2TokensTypeChevronColorConfig,
 }
+type accordionV2UseThemeTitleConfig = {
+  fontSize: string,
+  fontWeight: string,
+  lineHeight: string,
+  color: accordionV2AccordionV2TokensTypeChevronColorConfig,
+}
+type accordionV2UseThemeSubtextConfig = {
+  fontSize: string,
+  fontWeight: string,
+  lineHeight: string,
+  gap: string,
+  color: accordionV2AccordionV2TokensTypeChevronColorConfig,
+}
 type accordionV2AccordionV2TokensTypeTriggerTextConfig = {
   gap: string,
-  title: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; lineHeight: LineHeight<number | (string `
-  subtext: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; lineHeight: LineHeight<number | (string `
+  title: accordionV2UseThemeTitleConfig,
+  subtext: accordionV2UseThemeSubtextConfig,
 }
 type accordionV2AccordionV2TokensTypeTriggerSlotConfig = {
   height: string,

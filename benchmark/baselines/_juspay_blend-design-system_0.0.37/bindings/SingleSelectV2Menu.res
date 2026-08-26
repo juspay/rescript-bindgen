@@ -1,12 +1,12 @@
 type props = {
-  items: array<EditorSharedTypes.singleSelectV2GroupType>,
+  items: array<HighchartsSharedTypes.singleSelectV2GroupType>,
   selected: string,
   onSelect: string => unit,
   trigger: React.element,
-  menuDimensions?: EditorSharedTypes.selectV2MenuDimensions,
-  search?: EditorSharedTypes.selectV2SearchConfig,
+  menuDimensions?: HighchartsSharedTypes.selectV2MenuDimensions,
+  search?: HighchartsSharedTypes.selectV2SearchConfig,
   disabled?: bool,
-  menuPosition?: EditorSharedTypes.selectV2MenuPosition,
+  menuPosition?: HighchartsSharedTypes.selectV2MenuPosition,
   collisionBoundary?: ChatInputTypes.ChatInputOverflowMenuPropsCollisonBoundaryRef.t,  // ⓘ was `Element | Element[]` — opaque; build with ChatInputOverflowMenuPropsCollisonBoundaryRef.fromElement / ChatInputOverflowMenuPropsCollisonBoundaryRef.fromElements
   @as("open") open_: bool,
   onOpenChange: bool => unit,

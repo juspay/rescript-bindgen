@@ -1,5 +1,5 @@
 type props = {
-  tokens: EditorSharedTypes.multiSelectV2TokensType,
+  tokens: HighchartsSharedTypes.multiSelectV2TokensType,
   showSearch: bool,
   itemsCount: float,
   searchValue: string,
@@ -10,8 +10,8 @@ type props = {
   showSelectAll: bool,
   selected: array<string>,
   availableValues: array<string>,
-  filteredItems: array<EditorSharedTypes.multiSelectV2GroupType>,
-  onSelectAll?: (bool, array<EditorSharedTypes.multiSelectV2GroupType>) => unit,
+  filteredItems: array<HighchartsSharedTypes.multiSelectV2GroupType>,
+  onSelectAll?: (bool, array<HighchartsSharedTypes.multiSelectV2GroupType>) => unit,
   selectAllText?: string,
   disabled?: bool,
 }

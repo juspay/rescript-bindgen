@@ -7,7 +7,7 @@ type props = {
   disabled?: bool,
   @as("open") open_?: bool,
   actionsRef?: React.ref<Nullable.t<RootSharedTypes.autocompleteRootActions>>,
-  handle?: RootSharedTypes.menuHandleV5x0sp,
+  handle?: RootSharedTypes.menuHandleV1vz2h,
   defaultOpen?: bool,
   onOpenChangeComplete?: bool => unit,
   triggerId?: Nullable.t<string>,

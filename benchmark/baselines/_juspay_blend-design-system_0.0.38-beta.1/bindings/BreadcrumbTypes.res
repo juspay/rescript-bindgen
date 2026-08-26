@@ -1,7 +1,12 @@
+type breadcrumbUseThemeColorConfig = {
+  active: string,
+  default: string,
+  hover: string,
+}
 type breadcrumbBreadcrumbTokenTypeItemTextConfig = {
   fontSize: string,
   fontWeight: string,
-  color: string,  // ⚪ loose — was `{ active: Color; default: Color; hover: Color; }`
+  color: breadcrumbUseThemeColorConfig,
 }
 type breadcrumbBreadcrumbTokenTypeItemConfig = {
   padding: string,

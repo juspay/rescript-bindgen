@@ -1,7 +1,7 @@
 type props = {
   children: React.element,
   className?: string,
-  direction?: DateRangePickerTypes.dateRangePickerDateRangePickerPopoverConfigSide,
+  direction?: HighchartsSharedTypes.dateRangePickerDateRangePickerPopoverConfigSide,
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 

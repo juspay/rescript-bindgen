@@ -1,9 +1,9 @@
 type props = {
-  item: ContextSharedTypes.menuV2ItemType,
+  item: HighchartsSharedTypes.menuV2ItemType,
   index: int,
   maxHeight?: string,
-  selectionStyle?: ContextSharedTypes.menuSelectionStyle,
-  selectionMode?: ContextSharedTypes.menuSelectionMode,
+  selectionStyle?: HighchartsSharedTypes.menuSelectionStyle,
+  selectionMode?: HighchartsSharedTypes.menuSelectionMode,
 }
 
 @module("@juspay/blend-design-system")

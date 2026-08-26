@@ -1,10 +1,10 @@
 type props = {
-  filteredItems: array<ContextSharedTypes.multiSelectV2GroupType>,
-  allItemsFlat: array<ContextSharedTypes.multiSelectV2ItemType>,
+  filteredItems: array<HighchartsSharedTypes.multiSelectV2GroupType>,
+  allItemsFlat: array<HighchartsSharedTypes.multiSelectV2ItemType>,
   selected: array<string>,
   onSelect: string => unit,
   maxSelections?: float,
-  tokens: ContextSharedTypes.multiSelectV2TokensType,
+  tokens: HighchartsSharedTypes.multiSelectV2TokensType,
   size: SelectV2Types.selectV2Size,
   variant: SelectV2Types.selectV2Variant,
   focusIdentityEnabled?: bool,

@@ -81,10 +81,10 @@ type singleSelectSingleSelectTokensTypeMenuItemConfig = {
   margin: string,
   borderRadius: string,
   gap: string,
-  backgroundColor: string,  // ⚪ loose — was `{ disabled: BackgroundColor; active: BackgroundColor; default: BackgroundColor; hover: BackgroundColor; focus:`
-  optionsLabel: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: { disabled: Color; active: Color;`
-  option: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: { disabled: Color; active: Color;`
-  description: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: { disabled: Color; active: Color;`
+  backgroundColor: singleSelectSingleSelectTokensTypeLabelColorConfig,
+  optionsLabel: singleSelectSingleSelectTokensTypeLabelConfig,
+  option: singleSelectSingleSelectTokensTypeLabelConfig,
+  description: singleSelectSingleSelectTokensTypeLabelConfig,
   seperator: __typeXfhe52,
 }
 type singleSelectSingleSelectTokensTypeMenuConfig = {

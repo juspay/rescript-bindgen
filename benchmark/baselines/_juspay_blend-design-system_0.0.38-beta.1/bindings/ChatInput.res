@@ -20,7 +20,7 @@ type props = {
   attachButtonIcon?: React.element,
   voiceButtonIcon?: React.element,
   sendButtonIcon?: React.element,
-  overflowMenuProps?: ContextSharedTypes.menuOverflowMenuPropsConfig,
+  overflowMenuProps?: HighchartsSharedTypes.menuOverflowMenuPropsConfig,
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 

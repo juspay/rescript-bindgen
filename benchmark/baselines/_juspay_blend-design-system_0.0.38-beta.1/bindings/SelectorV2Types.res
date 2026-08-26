@@ -28,8 +28,8 @@ type selectorV2SwitchV2TokensTypeSwitchBackgroundColorConfig = {
 type selectorV2SwitchV2TokensTypeSwitchThumbConfig = {
   backgroundColor: string,
   border: string,
-  width: string,  // ⚪ loose — was `{ sm: Width<number | (string & {})>; md: Width<number | (string & {})>; lg: Width<number | (string & {})>; }`
-  height: string,  // ⚪ loose — was `{ sm: Height<number | (string & {})>; md: Height<number | (string & {})>; lg: Height<number | (string & {})>; `
+  width: selectorV2SwitchV2TokensTypeSwitchHeightConfig,
+  height: selectorV2SwitchV2TokensTypeSwitchHeightConfig,
   outline: string,
 }
 type selectorV2SwitchV2TokensTypeSwitchConfig = {

@@ -5,7 +5,7 @@ type selectListV2BaseProps = {
   disabled?: bool,
   size?: SelectV2Types.selectV2Size,
   variant?: SelectV2Types.selectV2Variant,
-  search?: ContextSharedTypes.selectV2SearchConfig,
+  search?: HighchartsSharedTypes.selectV2SearchConfig,
   maxHeight?: float,
   enableVirtualization?: bool,
   virtualListItemHeight?: float,

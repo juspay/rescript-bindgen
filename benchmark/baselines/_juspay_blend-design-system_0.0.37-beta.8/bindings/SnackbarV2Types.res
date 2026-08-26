@@ -22,7 +22,7 @@ type snackbarV2SnackbarV2TokensTypeSlotConfig = {
   color: snackbarV2SnackbarV2TokensTypeSlotColorConfig,
 }
 type snackbarV2SnackbarV2TokensTypeMainContainerContentTextContainerHeaderConfig = {
-  color: string,  // ⚪ loose — was `{ info: Color; success: Color; warning: Color; error: Color; }`
+  color: snackbarV2SnackbarV2TokensTypeSlotColorConfig,
   fontSize: string,
   fontWeight: string,
   lineHeight: string,

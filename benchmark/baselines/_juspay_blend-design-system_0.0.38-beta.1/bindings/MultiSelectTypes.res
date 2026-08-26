@@ -85,10 +85,10 @@ type multiSelectMultiSelectTokensTypeMenuItemConfig = {
   margin: string,
   borderRadius: string,
   gap: string,
-  backgroundColor: string,  // ⚪ loose — was `{ disabled: BackgroundColor; active: BackgroundColor; default: BackgroundColor; hover: BackgroundColor; focus:`
-  optionsLabel: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: { disabled: Color; active: Color;`
-  option: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: { disabled: Color; active: Color;`
-  description: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: { disabled: Color; active: Color;`
+  backgroundColor: multiSelectMultiSelectTokensTypeLabelColorConfig,
+  optionsLabel: multiSelectMultiSelectTokensTypeLabelConfig,
+  option: multiSelectMultiSelectTokensTypeLabelConfig,
+  description: multiSelectMultiSelectTokensTypeLabelConfig,
   seperator: __typeXfhe5,
 }
 type multiSelectMultiSelectTokensTypeMenuConfig = {

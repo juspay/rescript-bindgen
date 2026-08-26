@@ -26,7 +26,7 @@ type __typeV1syf9 = {
   segmented: string,
 }
 type progressBarProgressBarTokenTypeLinearEmptyConfig = {
-  backgroundColor: string,  // ⚪ loose — was `{ solid: BackgroundColor; segmented: BackgroundColor; }`
+  backgroundColor: progressBarProgressBarTokenTypeLinearBorderRadiusConfig,
   backgroundImage: __typeV1syf9,
   backgroundSize: __typeV1syf9,
 }

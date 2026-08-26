@@ -2,7 +2,7 @@
 external renderFn: ((PositionerSharedTypes.htmlProps, TriggerTypes.contextMenuTriggerState) => React.element) => React.element = "%identity"
 
 type props<'a> = {
-  handle?: RootSharedTypes.tooltipHandleT5ku6<'a>,
+  handle?: RootSharedTypes.tooltipHandleV1u90t<'a>,
   payload?: 'a,
   delay?: float,
   closeDelay?: float,

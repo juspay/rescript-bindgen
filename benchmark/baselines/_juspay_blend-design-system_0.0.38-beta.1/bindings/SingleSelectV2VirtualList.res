@@ -1,8 +1,8 @@
 type props = {
-  ...ContextSharedTypes.menuListSharedProps,
-  flattenedItems: array<ContextSharedTypes.flattenedItem>,
+  ...HighchartsSharedTypes.menuListSharedProps,
+  flattenedItems: array<HighchartsSharedTypes.flattenedItem>,
   virtualViewportHeight: float,
-  virtualItems: array<ContextSharedTypes.virtualItemShape>,
+  virtualItems: array<HighchartsSharedTypes.virtualItemShape>,
   totalSize: float,
   measureElement: Nullable.t<Dom.element> => unit,
   loadingComponent?: React.element,

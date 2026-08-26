@@ -1,6 +1,6 @@
 type props = {
   ...HtmlAttrs.textareaHTMLAttributesOmitAutoFocusClassNameColsDisabledOnBlurOnChangeOnFocusPlaceholderRequiredRowsStyleValue,
-  size?: ContextSharedTypes.inputSizeV2,
+  size?: HighchartsSharedTypes.inputSizeV2,
   value: string,
   placeholder: string,
   disabled?: bool,
@@ -14,7 +14,7 @@ type props = {
   hintText?: string,
   helpIconText?: string,
   required?: bool,
-  error?: ContextSharedTypes.inputsV2ErrorConfig,
+  error?: HighchartsSharedTypes.inputsV2ErrorConfig,
   resize?: InputsTypes.inputsResize,
   ref?: React.ref<Nullable.t<Dom.element>>,
 }

@@ -7,6 +7,23 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **Partially-degraded `DeepPartial<>` token records are recovered** (#208) — blend's theme-token
+  configs are mostly-good records with a few `DeepPartial`-deepened fields, but the deep-record heal
+  only attempted records that were ≥80% fallbacks, so ~71 partially-degraded records stayed flat
+  `string` ghosts. The heal now attempts any record with a fallback field (the accept gate already only
+  lands a rebuild with strictly fewer fallbacks, so this only turns ghosts into better records). The
+  `_heal` handle now **snapshots** the `noPolyTag` suppression flag (and `produced`) — it was a live
+  `ctx` reference, so the flag was stale at heal time and a deliberately-flagged ambiguous-overload
+  field (#177) would be re-resolved into a fake exact polytag; the snapshot re-suppresses it, so #177
+  holds by construction (a suppressed field stays a fallback → the rebuild is rejected →
+  byte-identical). blend `0.0.38-beta.1` loose fields drop ~394 → ~182 (recovered as real records);
+  everything still compiles.
+- **`@set_index` setter no longer breaks a `type rec … and …` chain that carries `@unboxed` members**
+  (#208 fallout) — a record with a TS string index signature that is mutually recursive with an
+  `@unboxed` union emitted its `@set_index external` *between* the record type and the `@unboxed and`
+  member, a syntax error. The setter is now deferred past the `@unboxed and …` members to after the
+  whole chain. (Latent; surfaced once #208's heal recovered such a record, e.g. blend's `svgAttributes`.)
+
 - **Constrained generic type parameters now honor their bound instead of accepting anything** (#192) —
   a `<T extends string>` parameter used to emit `('a) => …`, and `'a` accepts *anything*, so
   `fnConstrained(42)` compiled even though TypeScript rejects it — the binding accepted code the
