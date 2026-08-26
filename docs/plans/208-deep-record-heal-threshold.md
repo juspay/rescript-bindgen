@@ -1,7 +1,8 @@
 # Plan — #208: recover partially-degraded DeepPartial token ghosts (without regressing #177)
 
-Status: **DRAFT — design-reviewed (round 1 folded in)**; awaiting maintainer sign-off. No non-doc code
-should merge until signed off. Root cause verified against source; approach confirmed sound + complete.
+Status: **FINALIZED — design-reviewed (2 rounds, clean)**; awaiting maintainer sign-off. No non-doc code
+should merge until signed off. Root cause verified against source; approach confirmed sound + complete
+(the `noPolyTag`+`produced` snapshot is the complete set — co-gating audit found no missed flag).
 Branch: `agent/208-deep-record-heal-threshold`
 Follows: #205/#206 (recovered 350 → 111 of blend's record→`string` token ghosts).
 
@@ -40,9 +41,10 @@ while the ambiguous slot is being built and restored to `false` immediately afte
 `false`, so the rebuild re-resolves the once-suppressed field **without** suppression → the fake tag.
 
 ### The approach
-1. **Make `_heal` an actual snapshot of the suppression state** — capture `noPolyTag: ctx.noPolyTag`
-   at `_heal` time and re-apply it in the rebuild. Now the repair re-suppresses exactly the fields
-   that were suppressed originally: the deliberately-flagged `_format` stays `string`, #177 holds.
+1. **Make `_heal` an actual snapshot of the suppression state** — capture the reading-flags
+   (`noPolyTag`, plus `produced` for safety) at `_heal` time and re-apply them in the rebuild. Now the
+   repair re-suppresses exactly the fields that were suppressed originally: the deliberately-flagged
+   `_format` stays `string`, #177 holds.
 2. **Then lower the threshold** so partially-degraded records are repaired too. The accept gate already
    only lands a rebuild that has *fewer* junk fields and a provably-bounded subtree, so lowering the
    pre-filter can only turn ghosts into better records — never regress a good one.
@@ -115,12 +117,14 @@ unmappable floor), and total loose from ~843 → ~168 (per #208's instrumentatio
 ## 3. The approach + decisions to review
 
 ### The proposed fix (snapshot the suppression, then lower the threshold)
-1. **Snapshot `noPolyTag` in `_heal`** (`:6571`): `entry._heal = { type, ctx, depth, noPolyTag: !!ctx.noPolyTag }`.
-2. **Re-apply it in the rebuild** (`:3324`): `buildRecordFields(type, { ...ctx, visiting: new Set(), noPolyTag: e._heal.noPolyTag }, 0)`.
+1. **Snapshot the reading-flags in `_heal`** (`:6571`) — `noPolyTag` (required) and `produced` (per the
+   audit below): `entry._heal = { type, ctx, depth, noPolyTag: !!ctx.noPolyTag, produced: ctx.produced }`.
+2. **Re-apply them in the rebuild** (`:3324`): `buildRecordFields(type, { ...ctx, visiting: new Set(), noPolyTag: e._heal.noPolyTag, produced: e._heal.produced }, 0)`.
    Now a suppressed field re-suppresses on rebuild → stays flagged; #177 holds by construction.
-3. **Lower the pre-filter threshold** (`:3314`) from `bad < len*0.8` to `bad < 1` (i.e. attempt any
-   record with ≥1 fallback field). The **accept gate is unchanged** (`:3339`): a rebuild only lands if
-   it has *strictly fewer* fallbacks **and** (`newEntries===0 || healFieldsBounded`) — so lowering the
+3. **Lower the pre-filter threshold** (`:3314`) — drop the `bad < len*0.8` term so the guard is just
+   `if (!bad) continue` (attempt any record with ≥1 fallback field). The **accept gate is unchanged**
+   (`:3339`): a rebuild only lands if it has *strictly fewer* fallbacks **and**
+   (`newEntries===0 || healFieldsBounded`) — so lowering the
    pre-filter only widens *what is attempted*, never what is *accepted*. A good record either produces
    an equal-or-worse rebuild (rejected, rolled back) or an identical one (no-op).
 
@@ -184,9 +188,6 @@ All in `src/extract.mjs`.
 
 The accept gate (`:3339`), the `registryTrial` sandbox/rollback, and `healFieldsBounded`/`boundedPastDepth`
 are untouched.
-
-The accept gate, the `registryTrial` sandbox/rollback, and `healFieldsBounded`/`boundedPastDepth` are
-untouched.
 
 ---
 
