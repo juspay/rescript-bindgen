@@ -1,6 +1,7 @@
 # Plan — #208: recover partially-degraded DeepPartial token ghosts (without regressing #177)
 
-Status: **DRAFT for review** — no non-doc code should merge until this is signed off.
+Status: **DRAFT — design-reviewed (round 1 folded in)**; awaiting maintainer sign-off. No non-doc code
+should merge until signed off. Root cause verified against source; approach confirmed sound + complete.
 Branch: `agent/208-deep-record-heal-threshold`
 Follows: #205/#206 (recovered 350 → 111 of blend's record→`string` token ghosts).
 
@@ -86,10 +87,19 @@ residual **111** record ghosts after #205.
   so it lands. Golden `generic-instantiation-distinct` asserts `OrderDep.ambiguous._format` stays
   flagged `string` — lowering the threshold today flips it to a faked `[#"ordCt"]` (flag-don't-fake
   violation) and merges the ambiguous/unambiguous records.
-- A prior attempt to skip records with a suppressed field via `f.type.relinkNp` failed because a
-  suppressed **string-literal** field is a bare `{kind:'string'}` — the `relinkNp` marker is only set
-  on **opaque** (deep-truncated) nodes (`:4063`), not on suppressed literals. So the top-level field
-  carries no marker the heal can see.
+- **A suppressed literal is `{kind:'opaque'}`, not `{kind:'string'}`.** Under `noPolyTag` the polytag
+  branch at `:4715` is skipped and control falls through to `:4719-4720` `return {kind:'opaque', text}`
+  (the golden renders `ordTagged…._format` as `string, // ⚪ loose — was ` + "`ordCt`" + `). Two
+  consequences: (a) an opaque field **is** an imperfection (`irHasImperfection`, `:~3700`), so the
+  ambiguous record `ordTagged…` has `bad=1` at 50% degraded — skipped at the 80% bar today but
+  **attempted** at `!bad`. Without the fix the rebuild re-resolves `_format` opaque→polytag,
+  `fallbacks(rebuilt)=0 < bad=1` → **accepted** → the fake lands and merges with the unsuppressed
+  twin. With the `noPolyTag` snapshot, `_format` stays opaque, `fallbacks(rebuilt)=1`, **not** `< 1`
+  → **rejected** → rolled back → byte-identical. #177 holds *by construction*. (b) A prior attempt to
+  skip suppressed fields via `f.type.relinkNp` failed by **marker-parity**: `relinkNp` is stamped only
+  at the past-bound truncation site (`:4063`), **never** at the `:4715` suppression fall-through — so a
+  suppressed opaque field is indistinguishable from a genuinely-deep opaque field; the heal has no
+  field-level marker to tell them apart.
 
 ---
 
@@ -114,12 +124,27 @@ unmappable floor), and total loose from ~843 → ~168 (per #208's instrumentatio
    pre-filter only widens *what is attempted*, never what is *accepted*. A good record either produces
    an equal-or-worse rebuild (rejected, rolled back) or an identical one (no-op).
 
-### Why snapshot only `noPolyTag` (not the whole ctx)
-The current heal already rebuilds with the live `ctx` and works for the ≥80% case — so `produced`,
-`selfId`, `path`, etc. being live is already tolerated. The **only** flag whose staleness causes a
-*correctness* regression is `noPolyTag` (it flips flag→fake). Snapshotting just it is the minimal,
-targeted fix; the `_heal` comment's promise of "a ctx snapshot" is finally made true for the one flag
-that needs it. (Open question 1 — is any *other* reading-flag load-bearing across a heal? see §6.)
+### Which reading-flags to snapshot (the completeness argument)
+Every mutable `ctx` reading-flag is stale-to-ambient at heal time (the `_heal.ctx` live reference).
+The question is which of them can flip a heal **honest→fake** at a record's top-level field. Audited:
+- **`noPolyTag`** — flips honest→fake at `:4715` (literal → polytag) with **no co-gate**, AND changes
+  the per-read entry key (`entryKey`/`keyOf`, `:4937-4948`, `keyOf(id, np)`) so the suppressed record
+  is a distinct entry from its unsuppressed twin. **Must snapshot.** (The staleness is *not* "tolerated"
+  today — it simply doesn't surface because the ≥80% healed set contains no suppressed fields; lowering
+  the threshold removes that accident, which is the whole point.)
+- **`produced`** (input/output polarity) — its three fake-producing sites are each **co-gated**:
+  `fieldVarOk` (`:4115`, output `any` → unsound `'a`) by `ctx.inArrayElem`; the union→construct-only
+  views module (`:5925/:5931`) and the receive-guard (`:5020`) by `ctx.inFnReturn`. Both co-gates are
+  transient `finally`-restored flags that are reliably `false` at a heal record's top and re-established
+  correctly *inside* the rebuild's own recursion — so `produced`-staleness alone cannot flip a top-level
+  field. It is therefore not strictly required. **We snapshot it anyway** (symmetric, cheap, faithful to
+  the record's original polarity, and future-proofs against a later edit loosening the `inArrayElem`/
+  `inFnReturn` co-gates and silently reopening the hole).
+- **`constValue`** (`:4157`) can't go stale — it lives on the separate const-value ctx (`:2108`), set
+  once, never toggled. **No snapshot needed.**
+
+So: snapshot **`noPolyTag` (required) + `produced` (belt-and-suspenders)**; the `_heal` comment's
+promise of "a ctx snapshot" is finally made true for the flags that matter.
 
 ### Alternative considered — field-level heal (#208 option 2)
 Re-resolve only the individual opaque (depth-truncated, non-suppressed) fields, leaving suppressed and
@@ -128,27 +153,37 @@ because it duplicates field-resolution logic outside `buildRecordFields` and wou
 gate; the snapshot approach reuses the existing, tested rebuild + accept machinery. Kept as a fallback
 if the snapshot proves insufficient.
 
-### Decisions for the reviewer
-1. **Threshold value.** Lower to `bad < 1` (attempt any record with a fallback), or a softer bar (e.g.
-   `bad < len*0.2`)? `bad < 1` is simplest and the accept gate makes it safe; the only cost is more
-   *attempts* (each a sandboxed rebuild + rollback). Perf: 406 attempts on blend, all rolled back if
-   rejected — measure the bench wall-clock delta. **Recommend `bad < 1`** unless bench regresses.
-2. **Is `noPolyTag` the complete suppression state?** Confirm no *other* per-read flag (e.g. a nested
-   `produced` polarity) can flip a heal from honest→fake. (Verified target for the research review.)
-3. **Snapshot vs re-suppress-marker.** Snapshot on `_heal` (proposed) vs marking each suppressed field
-   so the heal preserves it field-wise. Snapshot is coarser (whole-record re-read) but reuses the
-   rebuild; field-marking is surgical but needs the marker plumbed onto suppressed literals. Snapshot
-   recommended.
+### Decisions — resolved by the design review
+1. **Threshold value → drop the 0.8 term (attempt any record with a fallback).** The accept gate is the
+   real guard, so a percentage bar only arbitrarily excludes a fully-healable but lightly-degraded
+   record. The one cost is *attempts*: ~406 sandboxed rebuild+rollbacks on blend — measured against
+   bench wall-clock in §5; fall back to `bad < len*0.2` only if that regresses.
+2. **Is `noPolyTag` the complete suppression state? → Yes, plus `produced` for safety.** Verified: only
+   `noPolyTag` flips honest→fake at a top-level field with no co-gate; `produced`'s fake sites are all
+   co-gated by `inArrayElem`/`inFnReturn` (false at heal), `constValue` can't go stale. We snapshot both
+   `noPolyTag` (required) and `produced` (belt-and-suspenders / future-proofs the co-gate). See the
+   audit above.
+3. **Snapshot on `_heal` over field-level heal.** Field-level can't distinguish a suppressed opaque
+   field from a genuinely-deep one without the *same* marker plumbing (marker-parity), and would
+   duplicate per-field context derivation — harder to get right than reusing the tested record-level
+   rebuild + accept gate. Snapshot chosen.
 
 ---
 
 ## 4. Implementation sketch
 
 All in `src/extract.mjs`.
-1. `:6571` — `entry._heal = { type, ctx, depth, noPolyTag: !!ctx.noPolyTag }`.
-2. `:3324` — thread the snapshot into the rebuild ctx (`noPolyTag: e._heal.noPolyTag`).
-3. `:3314` — lower the threshold to `bad < 1`.
-4. Update the misleading `:6568-6570` comment ("a ctx snapshot") to say what is and isn't snapshotted.
+1. `:6571` — snapshot the reading-flags: `entry._heal = { type, ctx, depth, noPolyTag: !!ctx.noPolyTag, produced: ctx.produced }`.
+2. `:3324` — thread the snapshot into the rebuild ctx: `buildRecordFields(type, { ...ctx, visiting: new Set(), noPolyTag: e._heal.noPolyTag, produced: e._heal.produced }, 0)`.
+3. `:3314` — lower the pre-filter to attempt any record with a fallback. The guard already has `!bad`
+   (`bad===0` → skip); `bad < 1` is redundant with it, so the clean edit is to **drop the
+   `bad < e.fields.length * 0.8` term** — the condition becomes `if (!bad) continue`.
+4. Update the misleading `:6568-6570` comment ("a ctx snapshot") to say exactly which flags are
+   snapshotted and why (`noPolyTag` required to preserve #177 suppression; `produced` for polarity
+   fidelity / co-gate future-proofing).
+
+The accept gate (`:3339`), the `registryTrial` sandbox/rollback, and `healFieldsBounded`/`boundedPastDepth`
+are untouched.
 
 The accept gate, the `registryTrial` sandbox/rollback, and `healFieldsBounded`/`boundedPastDepth` are
 untouched.
@@ -159,8 +194,11 @@ untouched.
 
 - **New golden fixture** `deeppartial-partial-heal`: pins BOTH mechanisms so they can't regress each
   other — (a) a partially-degraded `DeepPartial<>` token record whose good fields recover to real types
-  while a genuinely-deep field stays `⚪` flagged; (b) an ambiguous-overload record whose suppressed
-  field stays flagged `string` even though its sibling fields are healable.
+  while a genuinely-deep field stays `⚪` flagged; (b) — **THE key guard** — a *partially-degraded
+  ambiguous-overload* record: its suppressed field stays flagged `string` while a healable **sibling**
+  field recovers. This is the exact shape that exercises the snapshot (partial recovery, suppression
+  intact) rather than an all-or-nothing reject, and is the case that would catch a `produced`-style miss
+  if the co-gating analysis is ever wrong.
 - **`generic-instantiation-distinct`** must stay byte-identical (the #177 contract) — the key
   regression guard.
 - `npm test`, `npm run test:compile` (all goldens compile), `npm run bench` — blend record ghosts
@@ -173,10 +211,18 @@ untouched.
 
 ## 6. Risks
 
-- **Suppression completeness.** If a reading-flag other than `noPolyTag` also flips a heal honest→fake,
-  the snapshot must include it. Mitigation: the research/design review audits every mutable `ctx` flag
-  read during `buildRecordFields`; the `generic-instantiation-distinct` golden + a new suppressed-field
-  golden catch a miss.
+- **Count-based accept over wholesale replacement (the general class).** The accept gate guarantees the
+  *total* fallback count drops; it does **not** guarantee each individually-good field is preserved. The
+  `noPolyTag` bug was one instance of "trade a fallback for a confident-but-wrong non-fallback, count
+  drops, gate accepts." The snapshot closes that specific instance, but a rebuild that recovers a
+  genuinely-deep field while silently re-resolving some *other* field to a subtly-different confident
+  type remains possible, and lowering the threshold *widens* exposure to it. Caught only by golden +
+  bench diff review (accept only ghost→typed moves) — which §5 prescribes. This is the real residual
+  risk, not the (now-closed) suppression-completeness one.
+- **Suppression completeness — resolved.** `noPolyTag` is the sole reading-flag that flips honest→fake
+  at a top-level field with no co-gate; `produced`'s fake sites are co-gated (false at heal) and it is
+  snapshotted anyway; `constValue` can't go stale. The new partial-ambiguous golden (below) is the
+  guard that would catch any miss in this analysis.
 - **Perf.** `bad < 1` turns ~406 blend records into sandboxed rebuild attempts (most rolled back). Each
   is a `registryTrial` snapshot + `buildRecordFields` + rollback. Measure `npm run bench` wall-clock; if
   material, use a softer threshold (`bad < len*0.2`) — the accept gate keeps either safe.
