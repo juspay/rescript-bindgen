@@ -22,7 +22,7 @@ type props<'b, 'c, 'd, 't6, 'a> = {
   highlightItemOnHover?: bool,
   onItemHighlighted?: ('d, RootSharedTypes.highlightEventDetails) => unit,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   inputRef?: React.ref<Nullable.t<Dom.element>>,
-  filteredItems?: array<PositionerSharedTypes.RootFilteredItems.t>,
+  filteredItems?: array<PositionerSharedTypes.RootFilteredItems.t>,  // ⓘ was `readonly any[] | readonly Group<any>[]` — opaque; build with RootFilteredItems.fromTypeVar / RootFilteredItems.fromGroup
   itemToStringValue?: 't6 => string,  // ⓘ a parameter type could not be modelled — received as a type variable; annotate at the call site
   virtualized?: bool,
   limit?: float,

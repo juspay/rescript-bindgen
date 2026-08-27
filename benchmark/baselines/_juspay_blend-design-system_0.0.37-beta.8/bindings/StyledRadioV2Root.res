@@ -82,8 +82,8 @@ type props<'a> = {
   @as("$isChecked") _isChecked: bool,
   @as("$error") _error?: bool,
   @as("$tokens") _tokens: SelectorV2Types.radioV2TokensType,
-  @as("as") as_?: SelectorV2Types.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromSelectorV2AsConfig / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
-  forwardedAs?: SelectorV2Types.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromSelectorV2AsConfig / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
+  @as("as") as_?: DistTypes.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromString / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
+  forwardedAs?: DistTypes.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromString / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 

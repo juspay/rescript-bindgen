@@ -167,9 +167,6 @@ type selectorV2MaxLengthConfig = {
   label?: float,
   subLabel?: float,
 }
-type selectorV2AsConfig = {
-  ...JsxDOM.domProps,
-}
 type selectorV2GetCheckboxTextPropsConfig = {
   fontSize: string,
   fontWeight: string,
@@ -191,16 +188,4 @@ type selectorV2GetAccessibilityAttributesConfig = {
   @as("aria-checked") ariaChecked?: string,
   @as("aria-labelledby") ariaLabelledby: string,
   @as("aria-describedby") ariaDescribedby: string,
-}
-module WebTarget = {
-  type t
-  external fromTag: [#"symbol" | #"object" | #"body" | #"small" | #"code" | #"slot" | #"form" | #"pattern" | #"text" | #"search" | #"sub" | #"sup" | #"label" | #"button" | #"input" | #"header" | #"footer" | #"option" | #"menu" | #"ruby" | #"table" | #"clipPath" | #"filter" | #"marker" | #"mask" | #"map" | #"meter" | #"textarea" | #"progress" | #"circle" | #"embed" | #"pre" | #"caption" | #"line" | #"area" | #"legend" | #"section" | #"time" | #"switch" | #"image" | #"article" | #"dialog" | #"figure" | #"img" | #"main" | #"path" | #"polygon" | #"linearGradient" | #"radialGradient" | #"select" | #"a" | #"q" | #"s" | #"textPath" | #"data" | #"rect" | #"stop" | #"html" | #"div" | #"h2" | #"h3" | #"li" | #"nav" | #"ol" | #"p" | #"span" | #"svg" | #"ul" | #"abbr" | #"address" | #"aside" | #"audio" | #"b" | #"bdi" | #"bdo" | #"blockquote" | #"br" | #"canvas" | #"cite" | #"col" | #"colgroup" | #"datalist" | #"dd" | #"del" | #"details" | #"dfn" | #"dl" | #"dt" | #"em" | #"fieldset" | #"figcaption" | #"h1" | #"h4" | #"h5" | #"h6" | #"hgroup" | #"hr" | #"i" | #"iframe" | #"ins" | #"kbd" | #"mark" | #"optgroup" | #"output" | #"picture" | #"rp" | #"rt" | #"samp" | #"strong" | #"summary" | #"template" | #"tbody" | #"td" | #"tfoot" | #"th" | #"thead" | #"tr" | #"u" | #"var" | #"video" | #"wbr" | #"defs" | #"ellipse" | #"feBlend" | #"feColorMatrix" | #"feComponentTransfer" | #"feComposite" | #"feConvolveMatrix" | #"feDiffuseLighting" | #"feDisplacementMap" | #"feDistantLight" | #"feDropShadow" | #"feFlood" | #"feFuncA" | #"feFuncB" | #"feFuncG" | #"feFuncR" | #"feGaussianBlur" | #"feImage" | #"feMerge" | #"feMergeNode" | #"feMorphology" | #"feOffset" | #"fePointLight" | #"feSpecularLighting" | #"feSpotLight" | #"feTile" | #"feTurbulence" | #"foreignObject" | #"g" | #"polyline" | #"tspan" | #"use"] => t = "%identity"
-  external fromSelectorV2AsConfig: selectorV2AsConfig => t = "%identity"
-  external asSelectorV2AsConfig: t => (selectorV2AsConfig) = "%identity"
-  external fromExoticComponentWithDisplayName: ('a => React.element) => t = "%identity"
-  external asExoticComponentWithDisplayName: t => ('a => React.element) = "%identity"
-  external fromComponentClass: React.component<'b> => t = "%identity"
-  external asComponentClass: t => (React.component<'b>) = "%identity"
-  external fromFunctionComponent: React.component<'b> => t = "%identity"
-  external asFunctionComponent: t => (React.component<'b>) = "%identity"
 }

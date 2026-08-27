@@ -52,8 +52,8 @@ type props = {
   onScroll?: ReactEvent.UI.t => unit,
   onWheel?: ReactEvent.Wheel.t => unit,
   @as("$tabsToken") _tabsToken: TabsV2Types.tabsV2TokensType,
-  @as("as") as_?: SelectorV2Types.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromSelectorV2AsConfig / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
-  forwardedAs?: SelectorV2Types.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromSelectorV2AsConfig / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
+  @as("as") as_?: DistTypes.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromString / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
+  forwardedAs?: DistTypes.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromString / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 

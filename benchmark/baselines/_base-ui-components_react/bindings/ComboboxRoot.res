@@ -10,14 +10,14 @@ type props<'a, 'b, 'c> = {
   modal?: bool,
   defaultOpen?: bool,
   onOpenChangeComplete?: bool => unit,
-  items?: array<PositionerSharedTypes.RootFilteredItems.t>,
+  items?: array<PositionerSharedTypes.RootFilteredItems.t>,  // ⓘ was `readonly any[] | readonly Group<any>[]` — opaque; build with RootFilteredItems.fromTypeVar / RootFilteredItems.fromGroup
   required?: bool,
   readOnly?: bool,
   openOnInputClick?: bool,
   inputValue?: CommonTypes.stringOrNumberOrStringArray,
   defaultInputValue?: CommonTypes.stringOrNumberOrStringArray,
   inputRef?: React.ref<Nullable.t<Dom.element>>,
-  filteredItems?: array<PositionerSharedTypes.RootFilteredItems.t>,
+  filteredItems?: array<PositionerSharedTypes.RootFilteredItems.t>,  // ⓘ was `readonly any[] | readonly Group<any>[]` — opaque; build with RootFilteredItems.fromTypeVar / RootFilteredItems.fromGroup
   virtualized?: bool,
   limit?: float,
   locale?: string,  // ⓘ Intl.LocalesArgument — pass a BCP-47 tag ("en-US"); Intl.Locale objects not modelled

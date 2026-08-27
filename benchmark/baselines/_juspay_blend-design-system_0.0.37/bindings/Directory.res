@@ -7,8 +7,8 @@ type props<'a> = {
   iconOnlyMode?: bool,
   showHierarchyLines?: bool,
   hierarchyLineBorderRadius?: string,
-  expandedItems?: DirectoryTypes.DirectoryExpandedItems.t,
-  defaultExpandedItems?: DirectoryTypes.DirectoryExpandedItems.t,
+  expandedItems?: DirectoryTypes.DirectoryExpandedItems.t,  // ⓘ was `DirectoryExpandedItems` — opaque; build with DirectoryExpandedItems.fromArray / DirectoryExpandedItems.fromSet
+  defaultExpandedItems?: DirectoryTypes.DirectoryExpandedItems.t,  // ⓘ was `DirectoryExpandedItems` — opaque; build with DirectoryExpandedItems.fromArray / DirectoryExpandedItems.fromSet
   onExpandedItemsChange?: array<string> => unit,
   onItemExpand?: (DirectoryTypes.navbarItem, string) => 'a,
   enableVirtualization?: bool,

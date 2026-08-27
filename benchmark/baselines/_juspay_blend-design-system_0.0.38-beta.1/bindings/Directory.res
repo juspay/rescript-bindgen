@@ -7,8 +7,8 @@ type props<'a> = {
   iconOnlyMode?: bool,
   showHierarchyLines?: bool,
   hierarchyLineBorderRadius?: string,
-  expandedItems?: HighchartsSharedTypes.DirectoryExpandedItems.t,
-  defaultExpandedItems?: HighchartsSharedTypes.DirectoryExpandedItems.t,
+  expandedItems?: HighchartsSharedTypes.DirectoryExpandedItems.t,  // ⓘ was `DirectoryExpandedItems` — opaque; build with DirectoryExpandedItems.fromArray / DirectoryExpandedItems.fromSet
+  defaultExpandedItems?: HighchartsSharedTypes.DirectoryExpandedItems.t,  // ⓘ was `DirectoryExpandedItems` — opaque; build with DirectoryExpandedItems.fromArray / DirectoryExpandedItems.fromSet
   onExpandedItemsChange?: array<string> => unit,
   onItemExpand?: (HighchartsSharedTypes.navbarItem, string) => 'a,
   onEndReached?: unit => 'a,

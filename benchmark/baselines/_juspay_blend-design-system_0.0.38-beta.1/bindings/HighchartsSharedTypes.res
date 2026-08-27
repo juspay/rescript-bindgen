@@ -4578,10 +4578,6 @@ type contextComponentTokensTIMELINEConfig = {
   sm?: contextComponentTokensTIMELINESmConfig,
   lg?: contextComponentTokensTIMELINESmConfig,
 }
-type contextComponentTokensBUTTONV2SmGapConfig = {
-  ...JsxDOM.domProps,
-}
-@unboxed type stringOrNumberOrContextComponentTokensBUTTONV2SmGapConfig = Str(string) | Num(float) | ContextComponentTokensBUTTONV2SmGapConfig(contextComponentTokensBUTTONV2SmGapConfig)
 type contextComponentTokensBUTTONV2SmSlotMaxHeightConfig = {
   sm?: CommonTypes.stringOrNumber,
   md?: CommonTypes.stringOrNumber,
@@ -4599,10 +4595,10 @@ type contextComponentTokensBUTTONV2SmFocusRingConfig = {
   success?: contextComponentTokensBUTTONV2SmFocusRingPrimaryConfig,
 }
 type contextComponentTokensBUTTONV2SmBackgroundColorPrimaryDefaultConfig = {
-  default?: stringOrNumberOrContextComponentTokensBUTTONV2SmGapConfig,
-  hover?: stringOrNumberOrContextComponentTokensBUTTONV2SmGapConfig,
-  active?: stringOrNumberOrContextComponentTokensBUTTONV2SmGapConfig,
-  disabled?: stringOrNumberOrContextComponentTokensBUTTONV2SmGapConfig,
+  default?: CommonTypes.stringOrNumber,
+  hover?: CommonTypes.stringOrNumber,
+  active?: CommonTypes.stringOrNumber,
+  disabled?: CommonTypes.stringOrNumber,
 }
 type contextComponentTokensBUTTONV2SmBackgroundColorPrimaryConfig = {
   default?: contextComponentTokensBUTTONV2SmBackgroundColorPrimaryDefaultConfig,
@@ -4616,9 +4612,9 @@ type contextComponentTokensBUTTONV2SmBackgroundColorConfig = {
   success?: contextComponentTokensBUTTONV2SmBackgroundColorPrimaryConfig,
 }
 type contextComponentTokensBUTTONV2SmBorderRadiusSmPrimaryConfig = {
-  default?: stringOrNumberOrContextComponentTokensBUTTONV2SmGapConfig,
-  iconOnly?: stringOrNumberOrContextComponentTokensBUTTONV2SmGapConfig,
-  inline?: stringOrNumberOrContextComponentTokensBUTTONV2SmGapConfig,
+  default?: CommonTypes.stringOrNumber,
+  iconOnly?: CommonTypes.stringOrNumber,
+  inline?: CommonTypes.stringOrNumber,
 }
 type contextComponentTokensBUTTONV2SmBorderRadiusSmConfig = {
   primary?: contextComponentTokensBUTTONV2SmBorderRadiusSmPrimaryConfig,
@@ -4631,30 +4627,36 @@ type contextComponentTokensBUTTONV2SmBorderRadiusConfig = {
   md?: contextComponentTokensBUTTONV2SmBorderRadiusSmConfig,
   lg?: contextComponentTokensBUTTONV2SmBorderRadiusSmConfig,
 }
+type contextComponentTokensBUTTONV2SmPaddingTopSmPrimaryConfig = {
+  default?: CommonTypes.stringOrNumber,
+  iconOnly?: CommonTypes.stringOrNumber,
+  inline?: CommonTypes.stringOrNumber,
+}
+type contextComponentTokensBUTTONV2SmPaddingTopSmConfig = {
+  primary?: contextComponentTokensBUTTONV2SmPaddingTopSmPrimaryConfig,
+  secondary?: contextComponentTokensBUTTONV2SmPaddingTopSmPrimaryConfig,
+  danger?: contextComponentTokensBUTTONV2SmPaddingTopSmPrimaryConfig,
+  success?: contextComponentTokensBUTTONV2SmPaddingTopSmPrimaryConfig,
+}
+type contextComponentTokensBUTTONV2SmPaddingTopConfig = {
+  sm?: contextComponentTokensBUTTONV2SmPaddingTopSmConfig,
+  md?: contextComponentTokensBUTTONV2SmPaddingTopSmConfig,
+  lg?: contextComponentTokensBUTTONV2SmPaddingTopSmConfig,
+}
 type contextComponentTokensBUTTONV2SmPaddingConfig = {
-  top?: contextComponentTokensBUTTONV2SmBorderRadiusConfig,
-  right?: contextComponentTokensBUTTONV2SmBorderRadiusConfig,
-  bottom?: contextComponentTokensBUTTONV2SmBorderRadiusConfig,
-  left?: contextComponentTokensBUTTONV2SmBorderRadiusConfig,
-}
-type contextComponentTokensBUTTONV2SmTextFontSizeConfig = {
-  sm?: stringOrNumberOrContextComponentTokensBUTTONV2SmGapConfig,
-  md?: stringOrNumberOrContextComponentTokensBUTTONV2SmGapConfig,
-  lg?: stringOrNumberOrContextComponentTokensBUTTONV2SmGapConfig,
-}
-type contextComponentTokensBUTTONV2SmTextLineHeightConfig = {
-  sm?: string,  // ⚪ loose — was `string | number | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; in`
-  md?: string,  // ⚪ loose — was `string | number | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; in`
-  lg?: string,  // ⚪ loose — was `string | number | { readonly [x: number]: string; toString?: {}; charAt?: {}; charCodeAt?: {}; concat?: {}; in`
+  top?: contextComponentTokensBUTTONV2SmPaddingTopConfig,
+  right?: contextComponentTokensBUTTONV2SmPaddingTopConfig,
+  bottom?: contextComponentTokensBUTTONV2SmPaddingTopConfig,
+  left?: contextComponentTokensBUTTONV2SmPaddingTopConfig,
 }
 type contextComponentTokensBUTTONV2SmTextConfig = {
   color?: contextComponentTokensBUTTONSmBackgroundColorConfig,
-  fontSize?: contextComponentTokensBUTTONV2SmTextFontSizeConfig,
+  fontSize?: contextComponentTokensBUTTONV2SmSlotMaxHeightConfig,
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
-  lineHeight?: contextComponentTokensBUTTONV2SmTextLineHeightConfig,
+  lineHeight?: contextComponentTokensBUTTONV2SmSlotMaxHeightConfig,
 }
 type contextComponentTokensBUTTONV2SmConfig = {
-  gap?: stringOrNumberOrContextComponentTokensBUTTONV2SmGapConfig,
+  gap?: CommonTypes.stringOrNumber,
   slotMaxHeight?: contextComponentTokensBUTTONV2SmSlotMaxHeightConfig,
   focusRing?: contextComponentTokensBUTTONV2SmFocusRingConfig,
   backgroundColor?: contextComponentTokensBUTTONV2SmBackgroundColorConfig,
@@ -5482,12 +5484,17 @@ type contextComponentTokensPOPOVERV2SmPaddingConfig = {
   top?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   bottom?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
 }
+type contextComponentTokensPOPOVERV2SmTopContainerHeadingIconSizeConfig = {
+  sm?: string,  // ⚠️ REVIEW — was `string | number | RuleSet<any> | { [x: string]: string | number | RuleSet<any> | ... | {}; accentColor?: Globa` — match the real type by hand
+  md?: string,  // ⚠️ REVIEW — was `string | number | RuleSet<any> | { [x: string]: string | number | RuleSet<any> | ... | {}; accentColor?: Globa` — match the real type by hand
+  lg?: string,  // ⚠️ REVIEW — was `string | number | RuleSet<any> | { [x: string]: string | number | RuleSet<any> | ... | {}; accentColor?: Globa` — match the real type by hand
+}
 type contextComponentTokensPOPOVERV2SmTopContainerHeadingConfig = {
   color?: string,
   fontSize?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   fontWeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
   lineHeight?: contextComponentTokensTEXTAREAV2SmTopContainerLabelFontSizeConfig,
-  @as("IconSize") iconSize?: contextComponentTokensBUTTONV2SmTextLineHeightConfig,
+  @as("IconSize") iconSize?: contextComponentTokensPOPOVERV2SmTopContainerHeadingIconSizeConfig,
 }
 type contextComponentTokensPOPOVERV2SmTopContainerDescriptionConfig = {
   color?: string,

@@ -21,9 +21,6 @@ type distInputPropsPreventDefault =
   | @as("click") Click
   | @as("keydown") Keydown
   | @as("all") All
-type spacings = {
-  ...JsxDOM.domProps,
-}
 type itemStyles = {
   activeFillColor?: CommonTypes.stringOrStringArray,
   activeStrokeColor?: CommonTypes.stringOrStringArray,
@@ -43,8 +40,8 @@ type sharedProps = {
   readOnly?: bool,
   highlightOnlySelected?: bool,
   orientation?: orientation,
-  spaceInside?: spacings,
-  spaceBetween?: spacings,
+  spaceInside?: string,
+  spaceBetween?: string,
   radius?: sizes,
   itemStyles?: itemStyles,
   id?: string,
