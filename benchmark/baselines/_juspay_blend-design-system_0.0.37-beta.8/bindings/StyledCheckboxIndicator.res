@@ -54,8 +54,8 @@ type props = {
   onWheel?: ReactEvent.Wheel.t => unit,
   asChild?: bool,
   size: SelectorV2Types.selectorV2Size,
-  @as("as") as_?: SelectorV2Types.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromSelectorV2AsConfig / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
-  forwardedAs?: SelectorV2Types.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromSelectorV2AsConfig / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
+  @as("as") as_?: DistTypes.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromString / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
+  forwardedAs?: DistTypes.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromString / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 

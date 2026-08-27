@@ -66,8 +66,8 @@ type props<'a> = {
   @as("$size") _size: TabsV2Types.tabsV2Size,
   @as("$tabsToken") _tabsToken: TabsV2Types.tabsV2TokensType,
   @as("$isOverlay") _isOverlay?: bool,
-  @as("as") as_?: SelectorV2Types.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromSelectorV2AsConfig / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
-  forwardedAs?: SelectorV2Types.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromSelectorV2AsConfig / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
+  @as("as") as_?: DistTypes.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromString / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
+  forwardedAs?: DistTypes.WebTarget.t,  // ⓘ was `WebTarget` — opaque; build with WebTarget.fromTag / WebTarget.fromString / WebTarget.fromExoticComponentWithDisplayName / WebTarget.fromComponentClass / WebTarget.fromFunctionComponent
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 

@@ -4,7 +4,7 @@
 
 **263** function binding(s) → `BlendDesignSystemBindings.res`.
 
-**4656** shared types deduplicated into **76** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**4655** shared types deduplicated into **76** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 🔤 Constructor name collisions
 
@@ -638,7 +638,7 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `componentTokens` | `componentTokens?: ComponentTokenOverrides;` — binds, but references shared field(s) `contextComponentTokensTABLESmHeaderActionIconsColumnManagerTriggerConfig.opacity` (`review`) emitted as `string` |
+| `componentTokens` | `componentTokens?: ComponentTokenOverrides;` — binds, but references shared field(s) `contextComponentTokensTABLESmHeaderActionIconsColumnManagerTriggerConfig.opacity` (`review`), `contextComponentTokensPOPOVERV2SmTopContainerHeadingIconSizeConfig.sm` (`review`), `contextComponentTokensPOPOVERV2SmTopContainerHeadingIconSizeConfig.md` (`review`), `contextComponentTokensPOPOVERV2SmTopContainerHeadingIconSizeConfig.lg` (`review`) emitted as `string` |
 
 ## 🛑 Broken — needs serious component change
 

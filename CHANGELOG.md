@@ -7,6 +7,19 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **`(string & {})` / `(number & {})` open-literal idiom reduces to `string` / `float`, not a
+  `{ ...JsxDOM.domProps }` bag** (#210) — the `& {}` "keep autocomplete" escape carries no data and is
+  semantically just the primitive, but outside a csstype union it was routed to the record builder, where
+  `hasHtml` misfired on `String`'s lib.es prototype and minted a confident-but-wrong spread-only DOM bag
+  (e.g. a `gap`/`spacing` token, and any such arm inside an opaque-module union). It now reduces to the
+  primitive at every depth — standalone, union arm, record field — covering both the raw intersection and
+  its `DeepPartial`-projected apparent object. Branded primitives (`string & { __brand }`) keep their
+  nominal `@unboxed` variant; csstype value-unions are unchanged. In a mixed union the redundant idiom arm
+  is dropped so `string | number | (string & {})` resolves to `stringOrNumber` (previously the two
+  string-bucket members bailed the whole union to a loose `string`, dropping `number`). blend/react-rating
+  `{ ...JsxDOM.domProps }` junk records fall accordingly; buckets and compile status unchanged. Fixture:
+  `open-string-idiom`.
+
 - **Partially-degraded `DeepPartial<>` token records are recovered** (#208) — blend's theme-token
   configs are mostly-good records with a few `DeepPartial`-deepened fields, but the deep-record heal
   only attempted records that were ≥80% fallbacks, so ~71 partially-degraded records stayed flat

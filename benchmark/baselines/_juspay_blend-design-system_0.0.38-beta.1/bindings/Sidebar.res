@@ -30,8 +30,8 @@ type props<'a> = {
   onHoveringChange?: bool => unit,
   showHierarchyLines?: bool,
   hierarchyLineBorderRadius?: string,
-  expandedItems?: HighchartsSharedTypes.DirectoryExpandedItems.t,
-  defaultExpandedItems?: HighchartsSharedTypes.DirectoryExpandedItems.t,
+  expandedItems?: HighchartsSharedTypes.DirectoryExpandedItems.t,  // ⓘ was `DirectoryExpandedItems` — opaque; build with DirectoryExpandedItems.fromArray / DirectoryExpandedItems.fromSet
+  defaultExpandedItems?: HighchartsSharedTypes.DirectoryExpandedItems.t,  // ⓘ was `DirectoryExpandedItems` — opaque; build with DirectoryExpandedItems.fromArray / DirectoryExpandedItems.fromSet
   onExpandedItemsChange?: array<string> => unit,
   onItemExpand?: (HighchartsSharedTypes.navbarItem, string) => 'a,
   enableVirtualization?: bool,

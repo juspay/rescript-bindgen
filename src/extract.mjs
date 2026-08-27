@@ -1240,6 +1240,84 @@ function brandedPrimitivePayload(type) {
     return primitive === 'number' ? { kind: 'number', _float: true } : { kind: primitive }
 }
 
+// The complete own-prototype member sets of `String` and `Number` (lib.es5 + es2015/2017/2020/2022
+// additions). Used to CORROBORATE the apparent-object form of the open-literal idiom (#210): the genuine
+// `string`/`number` apparent object contains ONLY these; a real record owning a `toFixed`/`charCodeAt`
+// method also carries members OUTSIDE the set, so it is excluded. A conservative (incomplete) set is
+// safe — an unlisted member just makes `openPrimitiveIdiom` return null (falls back to the faithful
+// record/union), never a fake. `length`/`valueOf`/`toString`/`[Symbol.iterator]` included.
+const STRING_PROTOTYPE_MEMBERS = new Set([
+    'toString', 'charAt', 'charCodeAt', 'codePointAt', 'concat', 'indexOf', 'lastIndexOf', 'localeCompare',
+    'match', 'matchAll', 'normalize', 'padEnd', 'padStart', 'repeat', 'replace', 'replaceAll', 'search',
+    'slice', 'split', 'startsWith', 'endsWith', 'includes', 'substring', 'substr', 'toLowerCase',
+    'toLocaleLowerCase', 'toUpperCase', 'toLocaleUpperCase', 'trim', 'trimStart', 'trimEnd', 'trimLeft',
+    'trimRight', 'at', 'length', 'valueOf', 'anchor', 'big', 'blink', 'bold', 'fixed', 'fontcolor',
+    'fontsize', 'italics', 'link', 'small', 'strike', 'sub', 'sup',
+])
+const NUMBER_PROTOTYPE_MEMBERS = new Set([
+    'toString', 'toFixed', 'toExponential', 'toPrecision', 'toLocaleString', 'valueOf',
+])
+
+/**
+ * The `(string & {})` / `(number & {})` OPEN-LITERAL idiom — "any string/number, but keep the named
+ * literal suggestions in autocomplete". It is semantically JUST the primitive (the `& {}` is a
+ * compile-time-only widening guard) and carries NO data. Returns `'string' | 'float' | null`. (#210)
+ *
+ * Distinct from a BRANDED primitive (`string & { __brand }`), which DOES carry a marker prop and stays
+ * its nominal `@unboxed` variant — `brandedPrimitivePayload` handles that and runs FIRST; here we
+ * require the object parts to contribute ZERO own props, so the two are mutually exclusive.
+ *
+ * TS presents the idiom two ways:
+ *   (a) the RAW intersection `string & {}` — a `String`/`Number` part + object parts with no own props;
+ *   (b) its APPARENT object after a homomorphic mapped projection (`DeepPartial<>`): the primitive's
+ *       prototype — `{ readonly [x:number]: string; charAt?; charCodeAt?; … }` (String) or
+ *       `{ toFixed?; toExponential?; … }` (Number). Recognised by the same `charCodeAt`/`toFixed`
+ *       fingerprint `isForeignArm` (:1128) already trusts (`charCodeAt` unique to String, `toFixed`
+ *       to Number).
+ *
+ * Without this, the non-csstype union arm (blend's `gap: string | number | (string & {})`) is routed
+ * to `recordNode`, where `hasHtml` misfires on String's lib.es prototype and mints a bogus spread-only
+ * `{ ...JsxDOM.domProps }` record — a confident-but-wrong DOM bag. (csstype unions already collapse via
+ * `isCssType`; this covers the open idiom EVERYWHERE else, depth-invariantly.)
+ */
+function openPrimitiveIdiom(type) {
+    // (b) apparent-object form — the primitive's prototype. A single method-name match (`charCodeAt` /
+    // `toFixed`) is NOT enough: a real record that merely OWNS such a member — a money/decimal type
+    // (`{ toFixed(); plus(); currency; … }`, decimal.js / bignumber.js) or `{ charCodeAt(); label }` —
+    // would be collapsed to a bare primitive, silently dropping its data (a flag-don't-fake violation,
+    // #210 review). Corroborate: the genuine `string`/`number` apparent object consists of NOTHING BUT
+    // that primitive's prototype members, so require the distinctive method AND that EVERY own property
+    // is in the known prototype set. Declaration-independent (survives a `DeepPartial<>` mapped
+    // projection, whose props are synthesized) and errs SAFE — an unrecognised member (a newer lib.es
+    // addition, or a real field) yields `null` → the type keeps its faithful record/union, never a fake.
+    if (type.flags & ts.TypeFlags.Object) {
+        // Ignore SYMBOL-keyed members (`__@iterator@14`, `__@toPrimitive`) — always built-in well-known
+        // symbols carried by the primitive's apparent object, never first-party data; a real record is
+        // still caught by its string-NAMED own fields (`currency`, `label`). The TS-internal name also
+        // carries an unstable `@<id>` suffix, so it could never match a fixed allow-set anyway.
+        const names = ((type.getProperties && type.getProperties()) || [])
+            .map((p) => (p.getName && p.getName()) || '')
+            .filter((n) => !n.startsWith('__@'))
+        if (!names.length) return null
+        if (names.includes('charCodeAt') && names.every((n) => STRING_PROTOTYPE_MEMBERS.has(n))) return 'string'
+        if (names.includes('toFixed') && names.every((n) => NUMBER_PROTOTYPE_MEMBERS.has(n))) return 'float'
+        return null
+    }
+    // (a) raw intersection — exactly one primitive part + object parts that add ZERO own props.
+    if (!(type.flags & ts.TypeFlags.Intersection)) return null
+    let primitive = null
+    let ownProps = 0
+    for (const part of type.types || []) {
+        if (part.flags & ts.TypeFlags.String) { if (primitive && primitive !== 'string') return null; primitive = 'string'; continue }
+        if (part.flags & ts.TypeFlags.Number) { if (primitive && primitive !== 'float') return null; primitive = 'float'; continue }
+        // Any non-primitive part must be a plain, non-callable object contributing no own props; a
+        // marker prop (brand) or a call signature disqualifies the idiom.
+        if (!(part.flags & ts.TypeFlags.Object) || (part.getCallSignatures && part.getCallSignatures().length)) return null
+        ownProps += (part.getProperties && part.getProperties().length) || 0
+    }
+    return (primitive && ownProps === 0) ? primitive : null
+}
+
 /** Register a branded primitive as a nominal, single-constructor `@unboxed`
  * variant. ReScript keeps the aliases distinct statically while erasing the
  * constructor at runtime, so JS still receives the original primitive. */
@@ -3928,6 +4006,15 @@ function classify(type, ctx, propName = '', depth = 0) {
     // recovered separately as `Nullable.t` from the syntactic node. (#175)
     if (flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined)) return { kind: 'unit' }
 
+    // The `(string & {})` / `(number & {})` OPEN-LITERAL idiom is JUST the primitive (no data). Reduce it
+    // HERE — with `brandedPrimitiveNode` above, before the depth/object paths — so it can never be routed
+    // to `recordNode` and mint a bogus `{ ...JsxDOM.domProps }` bag (`hasHtml` misfires on String's lib.es
+    // prototype). Depth-invariant → every position (union arm, opaque-module union, record field, array
+    // element) is covered at once. Branded primitives ran first, so a real marker is never swallowed. (#210)
+    const openIdiom = openPrimitiveIdiom(type)
+    if (openIdiom === 'string') return { kind: 'string' }
+    if (openIdiom === 'float') return { kind: 'number', _float: true }
+
     // depth / cycle guards — complex library types resolve to deep self-referential object graphs;
     // beyond a few levels we emit opaque + flag (truncates UNBOUNDED NEW expansion).
     if (depth > MAX_DEPTH) {
@@ -5170,10 +5257,20 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     if (deps.size) home = depHome(deps, ctx.shared, home) // prefer a non-sink dep's home so a sink never gains an out-edge (#115 pkg)
     // Note telling the caller how to build this opaque value (the `from*` ctors),
     // since the prop only shows `<Module>.t`. Mirrors the Dom-node note convention.
-    const ctorName = (m) => m.tagSet ? `${name}.fromTag` : m.literal ? `${name}.${lower(pascal(m.literal))}` : m.none ? `${name}.none` : `${name}.from${pascal(m.name)}`
-    const note = members.every((m) => m.name)
-        ? `was \`${checker.typeToString(type).replace(/ \| (null|undefined)\b/g, '')}\` — opaque; build with ${members.map(ctorName).join(' / ')}`
-        : undefined
+    // Name each constructor exactly as emit's `fromName` (emit.mjs) does, so the "build with …" hint is
+    // always correct — INCLUDING an UNNAMED primitive arm (`fromString` for a `(string & {})` idiom
+    // reduced to `string`, #210). Emit uses simple `titleCase` (capitalize first char) for an unnamed
+    // member's kind/res, NOT full `pascal`; mirror that so `string` → `fromString`. Previously the note
+    // required EVERY member to carry a `.name`, so one unnamed arm silently dropped the whole hint from
+    // the prop (e.g. styled-components' `as` → `WebTarget.t`).
+    const titleCase = (s) => String(s).charAt(0).toUpperCase() + String(s).slice(1)
+    const ctorName = (m) =>
+        m.tagSet ? `${name}.fromTag`
+            : m.literal ? `${name}.${lower(pascal(m.literal))}`
+                : m.none ? `${name}.none`
+                    : m.name ? `${name}.from${pascal(m.name)}`
+                        : `${name}.from${titleCase(m.type && (m.type.kind === 'typeRef' ? String(m.type.to).replace(/\.t$/, '') : (m.type.res || m.type.kind)) || 'value')}`
+    const note = `was \`${checker.typeToString(type).replace(/ \| (null|undefined)\b/g, '')}\` — opaque; build with ${members.map(ctorName).join(' / ')}`
     // Fill the already-registered entry in place (it is what the self-reference points at).
     // `_construct`/`_coversNullish` were set at registration — both depend only on `opts`/the member
     // TYPES, so they are known before the build and must be visible to a self-referential re-entry.
@@ -5435,6 +5532,27 @@ function unionNodeCore(type, ctx, propName, depth = 0) {
     const prims = parts.map(primOf)
     if (prims.every(Boolean) && new Set(prims).size === 1) {
         return { kind: prims[0] } // 'string' | 'number' | 'boolean' | 'bigint' — all valid IR kinds
+    }
+
+    // Drop a `(string & {})` / `(number & {})` OPEN-LITERAL idiom arm that is REDUNDANT with a bare
+    // `string`/`number` arm in the SAME union — `gap: string | number | (string & {})`. The idiom adds
+    // no runtime type (only an editor autocomplete nudge, §#210), but the @unboxed builder below would
+    // see TWO string-bucket members (bare `string` + the idiom, now reduced to `string` by classify),
+    // fail its one-broad-type-per-`typeof`-bucket discriminability check, and bail the WHOLE union to a
+    // loose `string` — silently dropping the `number` arm. Removing the redundant arm lets it resolve to
+    // the clean `string | number` → `stringOrNumber`. A PURE-LITERAL open union (`"a" | "b" | (string &
+    // {})`, no bare `string`) has no bare primitive to be redundant with, so it is untouched here and the
+    // literal-variant path below still handles it (dropping the escape into a clean `@as` variant). (#210)
+    const barePrims = new Set(parts.filter((t) => !(t.flags & ts.TypeFlags.Intersection)).map(primOf).filter(Boolean))
+    if (barePrims.size) {
+        const kept = parts.filter((t) => {
+            const idiom = openPrimitiveIdiom(t) // 'string' | 'float' | null (null for brands & real records)
+            return !idiom || !barePrims.has(idiom === 'float' ? 'number' : 'string')
+        })
+        if (kept.length !== parts.length) {
+            parts = kept
+            if (parts.length === 1) return classify(parts[0], ctx, propName, depth + 1)
+        }
     }
 
     // Union of FIXED tuples over ONE primitive — `[boolean] | [boolean, boolean] | [boolean,

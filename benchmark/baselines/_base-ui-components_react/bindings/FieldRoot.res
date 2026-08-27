@@ -4,7 +4,7 @@ external renderFn: ((PositionerSharedTypes.htmlProps, RootSharedTypes.fieldRootS
 type props<'a> = {
   disabled?: bool,
   name?: string,
-  validate?: (JSON.t, Dict.t<'a>) => CommonTypes.ValidateTarget.t,
+  validate?: (JSON.t, Dict.t<'a>) => CommonTypes.ValidateTarget.t,  // ⓘ was `string | string[] | Promise<string | string[]>` — opaque; build with ValidateTarget.fromString / ValidateTarget.fromArray / ValidateTarget.fromPromise / ValidateTarget.none
   validationMode?: FormTypes.formValidationMode,
   validationDebounceTime?: float,
   invalid?: bool,
