@@ -37,19 +37,43 @@ type avatarV2AvatarV2TokensTypeContainerImageConfig = {
 }
 type avatarV2AvatarV2TokensTypeContainerFallbackTextConfig = {
   border: string,
-  fontSize: string,  // ⚪ loose — was `{ sm: FontSize<number | (string & {})>; regular: FontSize<number | (string & {})>; md: FontSize<number | (stri`
-  fontWeight: string,  // ⚪ loose — was `{ sm: FontWeight; regular: FontWeight; md: FontWeight; lg: FontWeight; xl: FontWeight; }`
-  lineHeight: string,  // ⚪ loose — was `{ sm: LineHeight<number | (string & {})>; regular: LineHeight<number | (string & {})>; md: LineHeight<number |`
+  fontSize: avatarV2AvatarV2TokensTypeContainerWidthConfig,
+  fontWeight: avatarV2AvatarV2TokensTypeContainerWidthConfig,
+  lineHeight: avatarV2AvatarV2TokensTypeContainerWidthConfig,
   color: string,
 }
+type avatarV2UseThemeBackgroundColorConfig = {
+  none: string,
+  online: string,
+  offline: string,
+  away: string,
+  busy: string,
+}
+type avatarV2GetStatusPositionStylesConfig = {
+  top?: string,
+  right?: string,
+  bottom?: string,
+  left?: string,
+}
+type avatarV2UseThemePositionCircularConfig = {
+  sm: avatarV2GetStatusPositionStylesConfig,
+  regular: avatarV2GetStatusPositionStylesConfig,
+  md: avatarV2GetStatusPositionStylesConfig,
+  lg: avatarV2GetStatusPositionStylesConfig,
+  xl: avatarV2GetStatusPositionStylesConfig,
+}
+type avatarV2UseThemePositionConfig = {
+  circular: avatarV2UseThemePositionCircularConfig,
+  rounded: avatarV2UseThemePositionCircularConfig,
+}
 type avatarV2AvatarV2TokensTypeContainerStatusConfig = {
-  width: string,  // ⚪ loose — was `{ sm: Width<number | (string & {})>; regular: Width<number | (string & {})>; md: Width<number | (string & {})>`
-  height: string,  // ⚪ loose — was `{ sm: Height<number | (string & {})>; regular: Height<number | (string & {})>; md: Height<number | (string & {`
-  border: string,  // ⚪ loose — was `{ sm: Border<number | (string & {})>; regular: Border<number | (string & {})>; md: Border<number | (string & {`
+  width: avatarV2AvatarV2TokensTypeContainerWidthConfig,
+  height: avatarV2AvatarV2TokensTypeContainerWidthConfig,
+  border: avatarV2AvatarV2TokensTypeContainerWidthConfig,
   borderRadius: string,
-  backgroundColor: string,  // ⚪ loose — was `{ none: BackgroundColor; online: BackgroundColor; offline: BackgroundColor; away: BackgroundColor; busy: Backg`
+  backgroundColor: avatarV2UseThemeBackgroundColorConfig,
   boxShadow: string,
-  position: string,  // ⚪ loose — was `{ circular: { sm: { top?: Top<number | (string & {})>; right?: Right<number | (string & {})>; bottom?: Bottom<`
+  position: avatarV2UseThemePositionConfig,
 }
 type avatarV2AvatarV2TokensTypeContainerConfig = {
   backgroundColor: string,
@@ -84,12 +108,6 @@ type avatarV2SkeletonConfig = {
 type avatarV2Dimensions = {
   width?: string,
   height?: string,
-}
-type avatarV2GetStatusPositionStylesConfig = {
-  top?: string,
-  right?: string,
-  bottom?: string,
-  left?: string,
 }
 type avatarV2DEFAULTPOSITIONConfig = {
   top: string,

@@ -3311,7 +3311,12 @@ function healGhostRecords(shared) {
     for (const e of [...shared.entries]) { // copy: a heal appends entries we must not re-scan
         if (e.kind !== 'record' || !e._heal || !e.fields.length) continue
         const bad = fallbacks(e.fields)
-        if (!bad || bad < e.fields.length * 0.8) continue
+        // Attempt ANY record with a fallback field (#208). The old `bad < len*0.8` pre-filter held back
+        // ~71 blend `DeepPartial<>` token records that are only PARTIALLY degraded (a few deep fields
+        // among many good ones) — they stayed all-`string` ghosts. The accept gate below is the real
+        // guard: a rebuild only lands if it has STRICTLY fewer fallbacks and a bounded subtree, so
+        // widening what's ATTEMPTED can only turn ghosts into better records, never regress a good one.
+        if (!bad) continue
         const { type, ctx } = e._heal
         // Sandboxed rebuild via the SHARED trial (#174 review): this call site predates
         // `registryTrial` and hand-rolled a partial snapshot — entries/byKey/bySig only. It missed
@@ -3321,7 +3326,16 @@ function healGhostRecords(shared) {
         const entriesLen = shared.entries.length
         const trial = registryTrial(ctx)
         let rebuilt
-        try { rebuilt = buildRecordFields(type, { ...ctx, visiting: new Set() }, 0) } catch { rebuilt = null }
+        // Re-apply the READING-FLAGS captured at `_heal` time (#208). `_heal.ctx` is a live reference, so
+        // its mutable flags have been restored to ambient by now — crucially `noPolyTag` (the #177
+        // ambiguous-overload suppression), which is `false` here, so a naïve rebuild would re-resolve a
+        // deliberately-flagged literal into a FAKE exact polytag (`_format: string` -> `[#"ordCt"]`),
+        // and the count-based accept gate would land it. Restoring `noPolyTag` re-suppresses that field
+        // (it stays an `opaque`/flagged fallback, so `fallbacks(rebuilt)` doesn't drop below `bad` for a
+        // suppression-only record -> rejected -> byte-identical). `produced` is restored for the same
+        // reason (polarity fidelity; belt-and-suspenders — its fake sites are co-gated but a future edit
+        // could loosen that). See docs/plans/208-*.md.
+        try { rebuilt = buildRecordFields(type, { ...ctx, visiting: new Set(), noPolyTag: e._heal.noPolyTag, produced: e._heal.produced }, 0) } catch { rebuilt = null }
         const newEntries = shared.entries.length - entriesLen
         // The strict `newEntries === 0` gate recovers only a ghost whose whole subtree was ALREADY
         // registered by a shallow twin. It rejects blend's token configs — first reached deep through
@@ -6565,10 +6579,14 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
             { key, kind: 'record', name: uniqueName(sharedBase, ctx.shared), base: sharedBase, home, deps: new Set(), spread: undefined, fields: [] },
             type, ctx, 'record', sharedBase, home,
         )
-        // Heal handle (#33): keep the ts.Type + a ctx snapshot so a post-extraction pass
-        // can RE-resolve fields with a fresh `visiting` set if this record was first built
-        // in a degraded (mid-cycle) context and cached as an all-`string` ghost.
-        entry._heal = { type, ctx, depth }
+        // Heal handle (#33): keep the ts.Type + the ctx so a post-extraction pass can RE-resolve fields
+        // with a fresh `visiting` set if this record was first built in a degraded (mid-cycle) context
+        // and cached as an all-`string` ghost. `ctx` is a LIVE reference (its mutable flags drift), so
+        // SNAPSHOT the reading-flags that would otherwise be stale at heal time and mis-resolve a field:
+        // `noPolyTag` (the #177 ambiguous-overload suppression — required, or the heal fakes an exact
+        // polytag where the field was deliberately flagged) and `produced` (polarity, belt-and-suspenders).
+        // (#208 — full audit in docs/plans/208-*.md; `noPolyTag`+`produced` is the complete set.)
+        entry._heal = { type, ctx, depth, noPolyTag: !!ctx.noPolyTag, produced: ctx.produced }
         ctx.shared.byKey.set(key, entry)
         ctx.shared.entries.push(entry)
         if (type.id != null) ctx.visiting?.add(type.id)

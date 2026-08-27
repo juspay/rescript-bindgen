@@ -1,9 +1,9 @@
 type props = {
-  item: ContextSharedTypes.multiSelectV2ItemType,
+  item: HighchartsSharedTypes.multiSelectV2ItemType,
   onSelect: string => unit,
   selected: array<string>,
   maxSelections?: float,
-  allItems?: array<ContextSharedTypes.multiSelectV2ItemType>,
+  allItems?: array<HighchartsSharedTypes.multiSelectV2ItemType>,
   index?: int,
   focusIdentityEnabled?: bool,
 }

@@ -3,13 +3,13 @@ type props = {
   value: string,
   label?: string,
   subLabel?: string,
-  size?: EditorSharedTypes.inputSizeV2,
-  error?: EditorSharedTypes.inputsV2ErrorConfig,
+  size?: HighchartsSharedTypes.inputSizeV2,
+  error?: HighchartsSharedTypes.inputsV2ErrorConfig,
   hintText?: string,
   helpIconText?: string,
-  dropdown?: EditorSharedTypes.InputsV2Dropdown.t,  // ⓘ was `TextInputV2Dropdown | TextInputV2Dropdown[]` — opaque; build with InputsV2Dropdown.fromTextInputV2Dropdown / InputsV2Dropdown.fromTextInputV2Dropdowns
-  leftSlot?: EditorSharedTypes.inputsV2LeftSlotConfig,
-  rightSlot?: EditorSharedTypes.inputsV2LeftSlotConfig,
+  dropdown?: HighchartsSharedTypes.InputsV2Dropdown.t,  // ⓘ was `TextInputV2Dropdown | TextInputV2Dropdown[]` — opaque; build with InputsV2Dropdown.fromTextInputV2Dropdown / InputsV2Dropdown.fromTextInputV2Dropdowns
+  leftSlot?: HighchartsSharedTypes.inputsV2LeftSlotConfig,
+  rightSlot?: HighchartsSharedTypes.inputsV2LeftSlotConfig,
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 

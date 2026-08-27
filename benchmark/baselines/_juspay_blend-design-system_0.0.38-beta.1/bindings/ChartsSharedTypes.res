@@ -179,6 +179,22 @@ type chartsBlendChartPropsConstructorType =
   | @as("context") Context
   | @as("innerR") InnerR
   | @as("longArc") LongArc
+type chartsDay =
+  | @as("numeric") Numeric
+  | @as("2-digit") V2Digit
+type chartsEra =
+  | @as("long") Long
+  | @as("short") Short
+  | @as("narrow") Narrow
+type chartsMonth =
+  | @as("long") Long
+  | @as("short") Short
+  | @as("narrow") Narrow
+  | @as("numeric") Numeric
+  | @as("2-digit") V2Digit
+type chartsTimeZoneName =
+  | @as("long") Long
+  | @as("short") Short
 type chartsAxisPointBreakEventObjectType =
   | @as("pointBreak") PointBreak
   | @as("pointInBreak") PointInBreak
@@ -199,10 +215,22 @@ type chartsChartTokensTypeHeaderConfig = {
 type __typeSfat4 = {
   maxHeight: string,
 }
+type chartsUseThemeItemColorConfig = {
+  active: string,
+  default: string,
+  hover: string,
+  total: string,
+}
+type chartsUseThemeItemConfig = {
+  gap: string,
+  color: chartsUseThemeItemColorConfig,
+  fontSize: string,
+  fontWeight: string,
+}
 type chartsChartTokensTypeContentLegendConfig = {
   gap: string,
   dropdown: __typeSfat4,
-  item: string,  // ⚪ loose — was `{ gap: Gap<number | (string & {})>; color: { active: Color; default: Color; hover: Color; total: Color; }; fon`
+  item: chartsUseThemeItemConfig,
 }
 type chartsChartTokensTypeContentPaddingConfig = {
   top: string,

@@ -1,7 +1,7 @@
 type props = {
-  tokens: EditorSharedTypes.multiSelectV2TokensType,
-  primaryAction?: EditorSharedTypes.multiSelectV2PrimaryActionConfig,
-  secondaryAction?: EditorSharedTypes.multiSelectV2SecondaryActionConfig,
+  tokens: HighchartsSharedTypes.multiSelectV2TokensType,
+  primaryAction?: HighchartsSharedTypes.multiSelectV2PrimaryActionConfig,
+  secondaryAction?: HighchartsSharedTypes.multiSelectV2SecondaryActionConfig,
   selected: array<string>,
   onClose: unit => unit,
 }

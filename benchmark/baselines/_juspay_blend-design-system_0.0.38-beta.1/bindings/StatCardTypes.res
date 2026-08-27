@@ -24,25 +24,54 @@ type __typeUx2o0 = {
 type __typeQklzj = {
   width: string,
 }
+type statCardUseThemeHelpIconColorConfig = {
+  default: string,
+  hover: string,
+}
+type statCardUseThemeHelpIconConfig = {
+  width: string,
+  color: statCardUseThemeHelpIconColorConfig,
+}
 type statCardStatCardTokenTypeTextContainerHeaderConfig = {
   gap: string,
   title: __typeUx2o0,
   titleIcon: __typeQklzj,
-  helpIcon: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; color: { default: Color; hover: Color; }; }`
+  helpIcon: statCardUseThemeHelpIconConfig,
+}
+type statCardUseThemeTitleValueConfig = {
+  line: __typeUx2o0,
+  progress: __typeUx2o0,
+  bar: __typeUx2o0,
+  number: __typeUx2o0,
+}
+type __typeSmi8o = {
+  increase: string,
+  decrease: string,
+}
+type statCardUseThemeTitleChangeTextConfig = {
+  fontSize: string,
+  fontWeight: string,
+  color: __typeSmi8o,
+}
+type statCardUseThemeTitleChangeConfig = {
+  margin: string,
+  arrow: __typeQklzj,
+  text: statCardUseThemeTitleChangeTextConfig,
+}
+type statCardUseThemeTitleConfig = {
+  gap: string,
+  value: statCardUseThemeTitleValueConfig,
+  change: statCardUseThemeTitleChangeConfig,
 }
 type statCardStatCardTokenTypeTextContainerStatsConfig = {
   gap: string,
-  title: string,  // ⚪ loose — was `{ gap: Gap<number | (string & {})>; value: { line: { fontSize: FontSize<number | (string & {})>; fontWeight: F`
+  title: statCardUseThemeTitleConfig,
   subtitle: __typeUx2o0,
 }
 type statCardStatCardTokenTypeTextContainerConfig = {
   gap: string,
   header: statCardStatCardTokenTypeTextContainerHeaderConfig,
   stats: statCardStatCardTokenTypeTextContainerStatsConfig,
-}
-type __typeSmi8o = {
-  increase: string,
-  decrease: string,
 }
 type __typeV16qvn = {
   end: string,
@@ -67,7 +96,7 @@ type statCardStatCardTokenTypeChartBarConfig = {
   borderTopLeftRadius: string,
   borderBottomRightRadius: string,
   borderBottomLeftRadius: string,
-  fill: string,  // ⚪ loose — was `{ default: Fill; hover: Fill; }`
+  fill: statCardUseThemeHelpIconColorConfig,
 }
 type __typeQlu7n = {
   color: string,

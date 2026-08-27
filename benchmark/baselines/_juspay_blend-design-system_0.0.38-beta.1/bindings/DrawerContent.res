@@ -1,6 +1,6 @@
 type props = {
   ...DrawerTypes.drawerContentProps,
-  direction?: DateRangePickerTypes.dateRangePickerDateRangePickerPopoverConfigSide,
+  direction?: HighchartsSharedTypes.dateRangePickerDateRangePickerPopoverConfigSide,
   showHandle?: bool,
   handle?: React.element,
   hasSnapPoints?: bool,

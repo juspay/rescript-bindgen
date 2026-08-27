@@ -4,7 +4,7 @@
 
 **55** function binding(s) → `BlendDesignSystemBindings.res`.
 
-**2961** shared types deduplicated into **64** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**3029** shared types deduplicated into **64** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 🔤 Constructor name collisions
 
@@ -21,7 +21,7 @@ A bare constant, an identity payload and a `@tag`-injected object are different 
 | `HighchartsSharedTypes` | `Value` | `""` / `"!="` / `"value"` | `ValueAnnotationDraggable`, `ValueOptionsCompare`, `ValueGapUnit`, `ValueOptionsOperator` |
 | `DataTableTypes` | `DateRange` | `"date_range"` / `"dateRange"` | `DateRangeColumnType`, `DateRangeTypeType`, `DateRangeFilterComponent` |
 
-### Left as-is — same name, same runtime representation (109)
+### Left as-is — same name, same runtime representation (115)
 
 These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
 
@@ -30,8 +30,8 @@ These produce the same runtime shape whichever definition wins, so renaming them
 - `CommonTypes`: `Arr`, `Auto`, `Bool`, `Fn`, `Num`, `Str`, `StrArr`
 - `TagsTypes`: `Lg`, `Md`, `Sm`, `Xs`
 - `TooltipTypes`: `Left`, `Right`
-- `ChartsTypes`: `Chart`, `End`, `Hover`, `Inactive`, `Normal`, `Offset`, `Select`, `Top`, `Value`
-- `HighchartsSharedTypes`: `All`, `Allow`, `Alt`, `AnnotationMockPointOptionsObject`, `Arc`, `Area`, `Arr`, `Auto`, `Bool`, `Callout`, `Category`, `Center`, `Chart`, `Circle`, `Close`, `CssObject`, `Ctrl`, `Day`, `Diamond`, `Fn`, `High`, `Horizontal`, `Inside`, `Justify`, `Left`, `Linear`, `Logarithmic`, `Low`, `Meta`, `Middle` … +22 more
+- `ChartsTypes`: `Chart`, `End`, `Hover`, `Inactive`, `Long`, `Narrow`, `Normal`, `Numeric`, `Offset`, `Select`, `Short`, `Top`, `V2Digit`, `Value`
+- `HighchartsSharedTypes`: `All`, `Allow`, `Alt`, `AnnotationMockPointOptionsObject`, `Arc`, `Area`, `Arr`, `Auto`, `Bool`, `Callout`, `Category`, `Center`, `Chart`, `Circle`, `Close`, `CssObject`, `Ctrl`, `Day`, `Diamond`, `Fn`, `High`, `Horizontal`, `Inside`, `Justify`, `Left`, `Linear`, `Logarithmic`, `Low`, `Meta`, `Middle` … +23 more
 - `DateRangePickerTypes`: `Custom`
 - `InputsTypes`: `Left`, `Lg`, `Md`, `Right`, `Sm`
 - `DataTableTypes`: `Avatar`, `Custom`, `Date`, `Decimal`, `Dropdown`, `Error`, `Multiselect`, `Number`, `Percentage`, `Primary`, `Progress`, `ReactElement`, `Secondary`, `Select`, `Slider`, `Success`, `Tag`, `Text`, `Warning`
@@ -229,25 +229,25 @@ A multi-type prop couldn't be auto-discriminated at runtime (e.g. two object sha
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `ref` | `Ref<HighchartsReactRefObject>` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
+| `ref` | `Ref<HighchartsReactRefObject>` — binds, but references shared field(s) `axis.setExtremes` (`any`), `navigatorXAxisCurrentDateIndicatorEventsOptions.click` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mousemove` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mouseout` (`review`) emitted as `string` |
 | `options` | `Options` — binds, but references shared field(s) `options.defs` (`review`), `accessibilityOptions.customComponents` (`any`), `accessibilityOptions.highContrastTheme` (`any`), `accessibilityOptions.linkedDescription` (`review`) emitted as `string` |
-| `callback` | `ChartCallbackFunction` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
+| `callback` | `ChartCallbackFunction` — binds, but references shared field(s) `axis.setExtremes` (`any`), `navigatorXAxisCurrentDateIndicatorEventsOptions.click` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mousemove` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mouseout` (`review`) emitted as `string` |
 
 ### ChartV2
 
 | Prop | Real TypeScript |
 |------|-----------------|
 | `options` | `options?: Highcharts.Options;` — binds, but references shared field(s) `options.defs` (`review`), `accessibilityOptions.customComponents` (`any`), `accessibilityOptions.highContrastTheme` (`any`), `accessibilityOptions.linkedDescription` (`review`) emitted as `string` |
-| `callback` | `callback?: Highcharts.ChartCallbackFunction;` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
-| `ref` | `Ref<HighchartsReactRefObject>` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
+| `callback` | `callback?: Highcharts.ChartCallbackFunction;` — binds, but references shared field(s) `axis.setExtremes` (`any`), `navigatorXAxisCurrentDateIndicatorEventsOptions.click` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mousemove` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mouseout` (`review`) emitted as `string` |
+| `ref` | `Ref<HighchartsReactRefObject>` — binds, but references shared field(s) `axis.setExtremes` (`any`), `navigatorXAxisCurrentDateIndicatorEventsOptions.click` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mousemove` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mouseout` (`review`) emitted as `string` |
 
 ### ChartV2Legend
 
 | Prop | Real TypeScript |
 |------|-----------------|
-| `chartRef` | `chartRef?: RefObject<ChartV2ReactRefObject \| null>;` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
-| `chartRefs` | `chartRefs?: ReadonlyArray<RefObject<ChartV2ReactRefObject \| null>>;` — binds, but references shared field(s) `axis.crosshair` (`review`), `axis.addPlotBand` (`review`), `axis.getPlotBandPath` (`review`), `axis.setExtremes` (`any`) emitted as `string` |
-| `renderItem` | `renderItem?: (params: { item: ChartV2LegendItem; name: string; visible: boolean; color: string; value?: string \| number; onClick: () => void; }) => ReactNode;` — binds, but references shared field(s) `seriesPieDataLabelsOptionsObject.connectorShape` (`review`), `seriesSunburstDataLabelsOptionsObject.connectorShape` (`review`), `seriesLineDataDragDropOptions.guideBox` (`review`), `partialRbka3.easing` (`review`) emitted as `string` |
+| `chartRef` | `chartRef?: RefObject<ChartV2ReactRefObject \| null>;` — binds, but references shared field(s) `axis.setExtremes` (`any`), `navigatorXAxisCurrentDateIndicatorEventsOptions.click` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mousemove` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mouseout` (`review`) emitted as `string` |
+| `chartRefs` | `chartRefs?: ReadonlyArray<RefObject<ChartV2ReactRefObject \| null>>;` — binds, but references shared field(s) `axis.setExtremes` (`any`), `navigatorXAxisCurrentDateIndicatorEventsOptions.click` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mousemove` (`review`), `navigatorXAxisCurrentDateIndicatorEventsOptions.mouseout` (`review`) emitted as `string` |
+| `renderItem` | `renderItem?: (params: { item: ChartV2LegendItem; name: string; visible: boolean; color: string; value?: string \| number; onClick: () => void; }) => ReactNode;` — binds, but references shared field(s) `point.optionsToObject` (`any`), `point.setNestedProperty` (`unknown`), `seriesPieDataLabelsOptionsObject.connectorShape` (`review`), `seriesSunburstDataLabelsOptionsObject.connectorShape` (`review`) emitted as `string` |
 
 ### DataTable
 

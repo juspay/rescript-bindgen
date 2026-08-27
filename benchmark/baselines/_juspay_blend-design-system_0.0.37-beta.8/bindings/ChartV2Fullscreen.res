@@ -1,5 +1,5 @@
 type props = {
-  children: ChartsV2Types.chartV2FullscreenControls => React.element,
+  children: HighchartsSharedTypes.chartV2FullscreenControls => React.element,
 }
 
 @module("@juspay/blend-design-system")

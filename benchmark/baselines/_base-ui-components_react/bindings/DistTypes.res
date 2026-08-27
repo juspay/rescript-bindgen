@@ -1,3 +1,19 @@
+type placement =
+  | @as("left") Left
+  | @as("right") Right
+  | @as("bottom") Bottom
+  | @as("top") Top
+  | @as("left-end") LeftEnd
+  | @as("left-start") LeftStart
+  | @as("right-end") RightEnd
+  | @as("right-start") RightStart
+  | @as("bottom-end") BottomEnd
+  | @as("bottom-start") BottomStart
+  | @as("top-end") TopEnd
+  | @as("top-start") TopStart
+type strategy =
+  | @as("fixed") Fixed
+  | @as("absolute") Absolute
 type distVirtualElementGetBoundingClientRectConfig = {
   x: float,
   y: float,
@@ -56,4 +72,11 @@ module Boundary = {
   external asElements: t => (array<Dom.element>) = "%identity"
   external fromDistCollisionBoundaryConfig: distCollisionBoundaryConfig => t = "%identity"
   external asDistCollisionBoundaryConfig: t => (distCollisionBoundaryConfig) = "%identity"
+}
+module ReferenceType = {
+  type t
+  external fromElement: Dom.element => t = "%identity"
+  external asElement: t => (Dom.element) = "%identity"
+  external fromVirtualElement: virtualElement => t = "%identity"
+  external asVirtualElement: t => (virtualElement) = "%identity"
 }

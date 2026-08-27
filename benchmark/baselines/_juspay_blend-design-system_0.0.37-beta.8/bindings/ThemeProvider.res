@@ -1,6 +1,6 @@
 type props = {
   foundationTokens?: TokensTypes.foundationTokenType,
-  componentTokens?: EditorSharedTypes.componentTokenType,
+  componentTokens?: HighchartsSharedTypes.componentTokenType,
   breakpoints?: BreakpointsTypes.breakpointType,
   theme?: CommonTypes.themeOrString,
   children: React.element,

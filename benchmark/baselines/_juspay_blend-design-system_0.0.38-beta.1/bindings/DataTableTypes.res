@@ -158,12 +158,23 @@ type __typeC0bwm = {
   height: string,
   color: string,
 }
+type dataTableUseThemeColumnManagerTriggerFocusVisibleConfig = {
+  outline: string,
+  outlineOffset: string,
+  borderRadius: string,
+  boxShadow: string,
+}
+type dataTableUseThemeColumnManagerTriggerConfig = {
+  backgroundColor: string,
+  opacity: string,  // ⚠️ REVIEW — was `string | number | RuleSet<any> | StyledObject<BaseObject> | StyleFunction<BaseObject>` — match the real type by hand
+  focusVisible: dataTableUseThemeColumnManagerTriggerFocusVisibleConfig,
+}
 type dataTableHeaderTypeActionIconsConfig = {
   gap: string,
   searchIcon: __typeV44l1h,
   filterIcon: __typeV44l1h,
   columnManagerIcon: __typeC0bwm,
-  columnManagerTrigger?: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; opacity: string | number | RuleSet<any> | StyledObject<BaseObject> | Style`
+  columnManagerTrigger?: dataTableUseThemeColumnManagerTriggerConfig,
 }
 type headerType = {
   display: string,
@@ -275,9 +286,56 @@ type __typeV1v8bo = {
   sortable: __typeV9f1li,
   filter: __typeH87hy,
 }
+type dataTableUseThemeBodyRowHoverConfig = {
+  backgroundColor: string,
+  cursor: string,
+}
+type dataTableUseThemeBodyRowConfig = {
+  height: string,
+  @as("&:hover") __hover: dataTableUseThemeBodyRowHoverConfig,
+  backgroundColor: string,
+}
 type __typeYye8b = {
   fontSize: string,
   color: string,
+}
+type dataTableUseThemeBodyCellExpandableExpandButtonHoverConfig = {
+  backgroundColor: string,
+  color: string,
+}
+type dataTableUseThemeBodyCellExpandableExpandButtonConfig = {
+  display: string,
+  alignItems: string,
+  justifyContent: string,
+  width: string,
+  height: string,
+  borderRadius: string,
+  backgroundColor: string,
+  cursor: string,
+  transition: string,
+  color: string,
+  border: string,
+  @as("&:hover") __hover: dataTableUseThemeBodyCellExpandableExpandButtonHoverConfig,
+}
+type dataTableUseThemeBodyCellExpandableConfig = {
+  padding: string,
+  borderTop: string,
+  expandButton: dataTableUseThemeBodyCellExpandableExpandButtonConfig,
+}
+type dataTableUseThemeBodyCellConfig = {
+  padding: string,
+  fontWeight: string,
+  color: string,
+  fontSize: string,
+  borderTop: string,
+  dateLabel: __typeYye8b,
+  expandable: dataTableUseThemeBodyCellExpandableConfig,
+}
+type dataTableUseThemeBodyConfig = {
+  backgroundColor: string,
+  borderTop: string,
+  row: dataTableUseThemeBodyRowConfig,
+  cell: dataTableUseThemeBodyCellConfig,
 }
 type __typeAn4co = {
   gap: string,
@@ -323,7 +381,7 @@ type dataTableTableTokenTypeDataTableTableConfig = {
   position: string,
   minWidth: string,
   header: __typeV1v8bo,
-  body: string,  // ⚪ loose — was `{ backgroundColor: BackgroundColor; borderTop: BorderTop<number | (string & {})>; row: { height: Height<number`
+  body: dataTableUseThemeBodyConfig,
   footer: __typeKoc7l,
 }
 type dataTableTableTokenTypeDataTableConfig = {

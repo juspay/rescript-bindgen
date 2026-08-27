@@ -823,8 +823,14 @@ function renderUnboxed(unboxed, lines, cfg) {
  *  way to express a cycle that runs through an `@unboxed` (a record field `x?: labelGrid` whose
  *  variant in turn references the record), which ReScript otherwise rejects as a forward reference. */
 function renderRecGroupWithUnboxed(records, unboxed, lines, cfg) {
-    renderRecordGroup(records, lines, cfg, true, false) // a cross-record/unboxed cycle is always recursive
+    // a cross-record/unboxed cycle is always recursive. DEFER the records' `@set_index` setters: they
+    // are `external`s and cannot sit between the `type rec` members, and the `@unboxed and …` members
+    // below are still part of that chain — so the setters must land AFTER them, not after just the
+    // records (which is what put `@set_index` between `type rec svgAttributes` and `@unboxed and
+    // stringOrSvgAttributes`, a syntax error surfaced once #208's heal recovered such a record).
+    renderRecordGroup(records, lines, cfg, true, false, true)
     for (const u of unboxed || []) lines.push(`@unboxed and ${unboxedBody(u, cfg)}`)
+    renderIndexSetters(records, lines, cfg)
     renderCompatAliases([...(records || []), ...(unboxed || [])], lines)
 }
 
@@ -1076,7 +1082,21 @@ function renderTagVariant(v, lines, cfg, kw) {
     }
 }
 
-function renderRecordGroup(records, lines, cfg, isRec, includeCompat = true) {
+/** #119: a record that carried a TS string index signature keeps its named fields typed AND preserves
+ *  the index sig via a `@set_index` setter — `obj->fooSet("zIndex", v)` writes a FLAT key, so un-named
+ *  keys are reachable without an unsafe cast. Emitted AFTER the whole `type rec … and …` chain (an
+ *  `external` cannot live between `and` clauses), so when the chain also carries `@unboxed and …`
+ *  members these setters must be deferred past them too (`renderRecGroupWithUnboxed`, #208 fallout). */
+function renderIndexSetters(records, lines, cfg) {
+    for (const r of records || []) {
+        if (!r.indexValue) continue
+        const tp = r.tparams && r.tparams.length ? `<${r.tparams.join(', ')}>` : ''
+        const vt = renderType(r.indexValue, 'value', cfg)
+        lines.push(`@set_index external ${r.name}Set: (${r.name}${tp}, string, ${vt}) => unit = ""`)
+    }
+}
+
+function renderRecordGroup(records, lines, cfg, isRec, includeCompat = true, deferIndexSetters = false) {
     ;(records || []).forEach((r, i) => {
         const tp = r.tparams && r.tparams.length ? `<${r.tparams.join(', ')}>` : '' // generic: foo<'a>
         const kw = i === 0 ? (isRec ? 'type rec' : 'type') : 'and'
@@ -1099,16 +1119,10 @@ function renderRecordGroup(records, lines, cfg, isRec, includeCompat = true) {
         }
         lines.push('}')
     })
-    // #119: a record that carried a TS string index signature keeps its named fields typed AND
-    // preserves the index sig via a `@set_index` setter — `obj->fooSet("zIndex", v)` writes a FLAT
-    // key (`obj["zIndex"] = v`), so un-named keys are reachable without an unsafe cast. Emitted after
-    // the group (an `external` can't live between `and` clauses of a `type rec`).
-    for (const r of records || []) {
-        if (!r.indexValue) continue
-        const tp = r.tparams && r.tparams.length ? `<${r.tparams.join(', ')}>` : ''
-        const vt = renderType(r.indexValue, 'value', cfg)
-        lines.push(`@set_index external ${r.name}Set: (${r.name}${tp}, string, ${vt}) => unit = ""`)
-    }
+    // `@set_index` setters go after the group — but when this group is part of a `type rec … and …`
+    // that also carries `@unboxed and …` members, the caller defers them past those too (see
+    // `renderIndexSetters`).
+    if (!deferIndexSetters) renderIndexSetters(records, lines, cfg)
     if (includeCompat) renderCompatAliases(records, lines)
 }
 

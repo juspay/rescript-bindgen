@@ -66,12 +66,12 @@ type nativeButtonProps = {
 }
 type utilsFloatingRootStoreSetOpenConfig = {
   reason: string,
-  event: LibTypes.event,
+  event: Dom.event,
   cancel: unit => unit,
   allowPropagation: unit => unit,
   isCanceled: bool,
   isPropagationAllowed: bool,
-  trigger?: string,  // ⚪ loose — was `Element`
+  trigger?: Dom.element,
 }
 type group<'f> = {
   value: JSON.t,

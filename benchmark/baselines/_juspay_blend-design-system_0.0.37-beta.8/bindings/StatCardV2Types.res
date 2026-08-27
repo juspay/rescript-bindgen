@@ -33,10 +33,25 @@ type statCardV2StatCardV2TokensTypeTopContainerDataContainerStatsContainerValueC
   progress: statCardV2StatCardV2TokensTypeTopContainerDataContainerTitleContainerTitleConfig,
   number: statCardV2StatCardV2TokensTypeTopContainerDataContainerTitleContainerTitleConfig,
 }
+type statCardV2ChangeColorConfig = {
+  increase: string,
+  decrease: string,
+}
+type statCardV2ChangeConfig = {
+  fontSize: string,
+  fontWeight: string,
+  color: statCardV2ChangeColorConfig,
+  lineHeight: string,
+}
+type statCardV2ArrowConfig = {
+  width: string,
+  height: string,
+  color: statCardV2ChangeColorConfig,
+}
 type statCardV2StatCardV2TokensTypeTopContainerDataContainerStatsContainerChangeContainerConfig = {
   gap: string,
-  change: string,  // ⚪ loose — was `{ fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; color: { increase: Color; decrease: Colo`
-  arrow: string,  // ⚪ loose — was `{ width: Width<number | (string & {})>; height: Height<number | (string & {})>; color: { increase: Color; decr`
+  change: statCardV2ChangeConfig,
+  arrow: statCardV2ArrowConfig,
 }
 type statCardV2StatCardV2TokensTypeTopContainerDataContainerStatsContainerConfig = {
   gap: string,

@@ -19,11 +19,26 @@ type __typeV1kknn = {
   color: string,
   width: string,
 }
+type switch_UseThemeSizeSmOffsetConfig = {
+  active: string,
+  inactive: string,
+}
+type switch_UseThemeSizeSmConfig = {
+  width: string,
+  height: string,
+  top: string,
+  left: string,
+  offset: switch_UseThemeSizeSmOffsetConfig,
+}
+type switch_UseThemeSizeConfig = {
+  sm: switch_UseThemeSizeSmConfig,
+  md: switch_UseThemeSizeSmConfig,
+}
 type switch_SwitchTokensTypeSwitchContainerThumbConfig = {
   backgroundColor: string,
   border: __typeV1kknn,
-  borderRadius: string,  // ⚪ loose — was `{ sm: BorderRadius<number | (string & {})>; md: BorderRadius<number | (string & {})>; }`
-  size: string,  // ⚪ loose — was `{ sm: { width: Width<number | (string & {})>; height: Height<number | (string & {})>; top: Top<number | (strin`
+  borderRadius: switch_SwitchTokensTypeSwitchContainerHeightConfig,
+  size: switch_UseThemeSizeConfig,
   outline: string,
   outlineOffset: string,
   boxShadow: string,
@@ -36,9 +51,9 @@ type switch_SwitchTokensTypeSwitchContainerConfig = {
   thumb: switch_SwitchTokensTypeSwitchContainerThumbConfig,
 }
 type switch_SwitchTokensTypeContentLabelConfig = {
-  color: string,  // ⚪ loose — was `{ disabled: Color; default: Color; hover: Color; error: Color; }`
-  fontSize: string,  // ⚪ loose — was `{ sm: FontSize<number | (string & {})>; md: FontSize<number | (string & {})>; }`
-  fontWeight: string,  // ⚪ loose — was `{ sm: FontWeight; md: FontWeight; }`
+  color: switch_UseThemeActiveConfig,
+  fontSize: switch_SwitchTokensTypeSwitchContainerHeightConfig,
+  fontWeight: switch_SwitchTokensTypeSwitchContainerHeightConfig,
   gap: string,
 }
 type switch_SwitchTokensTypeContentSubtextConfig = {

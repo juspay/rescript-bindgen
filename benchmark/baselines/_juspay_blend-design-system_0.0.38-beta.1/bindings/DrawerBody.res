@@ -4,7 +4,7 @@ type props = {
   overflowY?: DrawerTypes.drawerOverflowY,
   noPadding?: bool,
   hasFooter?: bool,
-  direction?: DateRangePickerTypes.dateRangePickerDateRangePickerPopoverConfigSide,
+  direction?: HighchartsSharedTypes.dateRangePickerDateRangePickerPopoverConfigSide,
   ref?: React.ref<Nullable.t<Dom.element>>,
 }
 

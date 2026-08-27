@@ -15,5 +15,6 @@
 @unboxed type dataTableRowActionConfigDisabled<'a> = Bool(bool) | Fn(('a, float) => bool)
 @unboxed type dataTableRowActionConfigHidden<'a> = Bool(bool) | Fn(('a, float) => bool)
 @unboxed type themeOrString = @as("light") Light | @as("dark") Dark | Custom(string)
+@unboxed type v1OrV2OrV3 = @as(1) N1 | @as(2) N2 | @as(3) N3
 @unboxed type stringOrNumberOrStringOrNumberArray = Str(string) | Num(float) | Arr(array<stringOrNumber>)
 @unboxed type numberOrValueOrStringOrNumberArray = Num(float) | Obj(Dict.t<JSON.t>) | Arr(array<stringOrNumber>)

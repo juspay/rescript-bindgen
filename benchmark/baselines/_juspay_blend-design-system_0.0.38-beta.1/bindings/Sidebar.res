@@ -2,7 +2,7 @@ type props<'a> = {
   ref?: React.ref<Nullable.t<Dom.element>>,
   showLeftPanel?: bool,
   children: React.element,
-  data: array<DirectoryTypes.directoryData>,
+  data: array<HighchartsSharedTypes.directoryData>,
   leftPanel?: SharedTypes.leftPanelInfo,
   topbar: React.element,
   footer?: React.element,
@@ -30,12 +30,12 @@ type props<'a> = {
   onHoveringChange?: bool => unit,
   showHierarchyLines?: bool,
   hierarchyLineBorderRadius?: string,
-  expandedItems?: DirectoryTypes.DirectoryExpandedItems.t,
-  defaultExpandedItems?: DirectoryTypes.DirectoryExpandedItems.t,
+  expandedItems?: HighchartsSharedTypes.DirectoryExpandedItems.t,
+  defaultExpandedItems?: HighchartsSharedTypes.DirectoryExpandedItems.t,
   onExpandedItemsChange?: array<string> => unit,
-  onItemExpand?: (DirectoryTypes.navbarItem, string) => 'a,
+  onItemExpand?: (HighchartsSharedTypes.navbarItem, string) => 'a,
   enableVirtualization?: bool,
-  virtualization?: DirectoryTypes.directoryVirtualizationConfig,
+  virtualization?: HighchartsSharedTypes.directoryVirtualizationConfig,
 }
 
 @module("@juspay/blend-design-system")

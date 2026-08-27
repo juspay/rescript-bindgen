@@ -106,7 +106,7 @@ type localeOptions = {
 }
 type rec localeFormatRelativeFnOptionsLocaleConfig = {
   options?: localeOptions,
-  formatRelative: (formatRelativeToken, string, string, option<formatRelativeFnOptions>) => string,  // ⚪ loose — was `DateType`
+  formatRelative: (formatRelativeToken, Date.t, Date.t, option<formatRelativeFnOptions>) => string,
 }
 and formatRelativeFnOptions = {
   weekStartsOn?: CommonTypes.day,
@@ -793,7 +793,7 @@ type dayPickerProps = {
   excludeDisabled?: bool,
   resetOnSelect?: bool,
 }
-type dayPickerContextV1yi4l = {
+type dayPickerContextV10vwj = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,
@@ -809,7 +809,7 @@ type dayPickerContextV1yi4l = {
   formatters: formatters,
   dayPickerProps: dayPickerProps,
 }
-type dayPickerContextV1rlz6 = {
+type dayPickerContextV1lgyc = {
   months: array<calendarMonth2>,
   nextMonth?: Date.t,
   previousMonth?: Date.t,

@@ -36,9 +36,9 @@ type popoverV2PopoverV2TokenTypeTopContainerHeadingConfig = {
 }
 type popoverV2PopoverV2TokenTypeTopContainerDescriptionConfig = {
   color: string,
-  fontSize: string,  // ⚪ loose — was `{ sm: FontSize<number | (string & {})>; md: FontSize<number | (string & {})>; lg: FontSize<number | (string & `
-  fontWeight: string,  // ⚪ loose — was `{ sm: FontWeight; md: FontWeight; lg: FontWeight; }`
-  lineHeight: string,  // ⚪ loose — was `{ sm: LineHeight<number | (string & {})>; md: LineHeight<number | (string & {})>; lg: LineHeight<number | (str`
+  fontSize: popoverV2PopoverV2TokenTypeGapConfig,
+  fontWeight: popoverV2PopoverV2TokenTypeGapConfig,
+  lineHeight: popoverV2PopoverV2TokenTypeGapConfig,
 }
 type popoverV2PopoverV2TokenTypeTopContainerConfig = {
   gap: popoverV2PopoverV2TokenTypeGapConfig,

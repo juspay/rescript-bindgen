@@ -5,7 +5,7 @@ type props = {
   showCopyButton: bool,
   isCopied: bool,
   onCopy: unit => unit,
-  tokens: ContextSharedTypes.codeEditorV2Tokens,
+  tokens: HighchartsSharedTypes.codeEditorV2Tokens,
 }
 
 @module("@juspay/blend-design-system")

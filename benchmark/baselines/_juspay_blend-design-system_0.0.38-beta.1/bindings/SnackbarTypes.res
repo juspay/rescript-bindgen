@@ -20,23 +20,34 @@ type snackbarResponsiveSnackbarTokensSmInfoIconConfig = {
   color: snackbarResponsiveSnackbarTokensSmInfoIconColorConfig,
   height: string,
 }
+type snackbarUseThemeHeaderConfig = {
+  color: snackbarResponsiveSnackbarTokensSmInfoIconColorConfig,
+  fontSize: string,
+  fontWeight: string,
+  lineHeight: string,
+}
+type snackbarUseThemeDescriptionConfig = {
+  color: snackbarResponsiveSnackbarTokensSmInfoIconColorConfig,
+  fontSize: string,
+  fontWeight: string,
+}
 type snackbarResponsiveSnackbarTokensSmContentTextContainerConfig = {
   gap: string,
-  header: string,  // ⚪ loose — was `{ color: { info: Color; success: Color; warning: Color; error: Color; }; fontSize: FontSize<number | (string &`
-  description: string,  // ⚪ loose — was `{ color: { info: Color; success: Color; warning: Color; error: Color; }; fontSize: FontSize<number | (string &`
+  header: snackbarUseThemeHeaderConfig,
+  description: snackbarUseThemeDescriptionConfig,
 }
 type snackbarResponsiveSnackbarTokensSmContentConfig = {
   gap: string,
   textContainer: snackbarResponsiveSnackbarTokensSmContentTextContainerConfig,
 }
 type snackbarResponsiveSnackbarTokensSmActionsPrimaryActionConfig = {
-  color: string,  // ⚪ loose — was `{ info: Color; success: Color; warning: Color; error: Color; }`
+  color: snackbarResponsiveSnackbarTokensSmInfoIconColorConfig,
   fontSize: string,
   fontWeight: string,
 }
 type snackbarResponsiveSnackbarTokensSmActionsCloseButtonConfig = {
   height: string,
-  color: string,  // ⚪ loose — was `{ info: Color; success: Color; warning: Color; error: Color; }`
+  color: snackbarResponsiveSnackbarTokensSmInfoIconColorConfig,
 }
 type snackbarResponsiveSnackbarTokensSmActionsConfig = {
   primaryAction: snackbarResponsiveSnackbarTokensSmActionsPrimaryActionConfig,

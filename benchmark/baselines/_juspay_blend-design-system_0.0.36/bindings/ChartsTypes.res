@@ -169,6 +169,26 @@ type chartsBlendChartPropsConstructorType =
   | @as("innerR") InnerR
   | @as("longArc") LongArc
   | @as("r") R
+type chartsDay =
+  | @as("numeric") Numeric
+  | @as("2-digit") V2Digit
+type chartsEra =
+  | @as("long") Long
+  | @as("short") Short
+  | @as("narrow") Narrow
+type chartsHour12 =
+  | @as("auto") Auto
+  | @as("always") Always
+  | @as("never") Never
+type chartsMonth =
+  | @as("numeric") Numeric
+  | @as("long") Long
+  | @as("short") Short
+  | @as("narrow") Narrow
+  | @as("2-digit") V2Digit
+type chartsTimeZoneName =
+  | @as("long") Long
+  | @as("short") Short
 type chartsAxisPointBreakEventObjectType =
   | @as("pointBreak") PointBreak
   | @as("pointInBreak") PointInBreak

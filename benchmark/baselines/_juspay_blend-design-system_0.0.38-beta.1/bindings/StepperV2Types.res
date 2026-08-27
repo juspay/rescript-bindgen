@@ -78,11 +78,24 @@ type __typeXq4kl = {
   icon: __typeV12ovp3,
   width: string,
 }
+type __typeV1y6we5 = {
+  color: string,
+  fontSize: string,
+  fontWeight: string,
+}
+type stepperV2UseThemeTextConfigV7oi3d = {
+  default: __typeV1y6we5,
+  completed: __typeV1y6we5,
+  current: __typeV1y6we5,
+  pending: __typeV1y6we5,
+  disabled: __typeV1y6we5,
+  skipped: __typeV1y6we5,
+}
 type stepperV2StepperV2TokensTypeContainerSubConnectorConfig = {
   line: __typeV103g72,
   dot: __typeE1x6s,
   expander: __typeXq4kl,
-  text: string,  // ⚪ loose — was `{ default: { color: Color; fontSize: FontSize<number | (string & {})>; fontWeight: FontWeight; }; completed: {`
+  text: stepperV2UseThemeTextConfigV7oi3d,
 }
 type stepperV2UseThemeTextDefaultDisabledConfig = {
   color: string,
@@ -100,7 +113,7 @@ type stepperV2UseThemeTextDefaultConfig = {
   hover: stepperV2UseThemeTextDefaultDisabledConfig,
   focus: stepperV2UseThemeTextDefaultDisabledConfig,
 }
-type stepperV2UseThemeTextConfig = {
+type stepperV2UseThemeTextConfigV1tr37 = {
   default: stepperV2UseThemeTextDefaultConfig,
   completed: stepperV2UseThemeTextDefaultConfig,
   current: stepperV2UseThemeTextDefaultConfig,
@@ -109,12 +122,7 @@ type stepperV2UseThemeTextConfig = {
   skipped: stepperV2UseThemeTextDefaultConfig,
 }
 type stepperV2StepperV2TokensTypeContainerTitleConfig = {
-  text: stepperV2UseThemeTextConfig,
-}
-type __typeV1y6we5 = {
-  color: string,
-  fontSize: string,
-  fontWeight: string,
+  text: stepperV2UseThemeTextConfigV1tr37,
 }
 type stepperV2StepperV2TokensTypeContainerDescriptionConfig = {
   text: __typeV1y6we5,

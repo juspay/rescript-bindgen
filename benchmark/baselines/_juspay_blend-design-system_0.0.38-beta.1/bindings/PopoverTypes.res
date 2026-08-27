@@ -21,9 +21,9 @@ type popoverPopoverTokenTypePaddingConfig = {
 }
 type popoverPopoverTokenTypeHeaderContainerHeadingConfig = {
   color: string,
-  fontSize: string,  // ⚪ loose — was `{ small: FontSize<number | (string & {})>; medium: FontSize<number | (string & {})>; }`
-  fontWeight: string,  // ⚪ loose — was `{ small: FontWeight; medium: FontWeight; }`
-  lineHeight: string,  // ⚪ loose — was `{ small: LineHeight<number | (string & {})>; medium: LineHeight<number | (string & {})>; }`
+  fontSize: popoverPopoverTokenTypeGapConfig,
+  fontWeight: popoverPopoverTokenTypeGapConfig,
+  lineHeight: popoverPopoverTokenTypeGapConfig,
 }
 type popoverPopoverTokenTypeHeaderContainerConfig = {
   heading: popoverPopoverTokenTypeHeaderContainerHeadingConfig,
