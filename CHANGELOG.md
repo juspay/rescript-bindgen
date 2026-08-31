@@ -7,6 +7,21 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **A constrained type parameter buried in a generic record wrapper resolves to a shaped concrete
+  record, not a flagged `string`** (#211, follow-up to #192) — `f<T extends string>(x: Box<T>)` (where
+  `interface Box<T>{v:T}`) degraded the whole param to a broken `string` because the type-var
+  substitution couldn't reach the `'a` inside `box<'a>`. It now re-classifies the param with the stuck
+  var UNREGISTERED — resolving each occurrence to its bound in place — producing `{v: string}`
+  (`boxString`); base-ui's `useRender(params: Parameters<State extends Record<string,unknown>,
+  RenderedElementType extends Element, …>)` becomes the shaped `{state: Dict.t<JSON.t>, ref:
+  React.ref<Dom.element>, props: Dict.t<JSON.t>, enabled: bool, …}` instead of a flat `string`. The
+  concrete record is keyed under a boolean `resolveBound` reading dimension so it COEXISTS with the
+  generic `box<'a>` that round-trip siblings (`boxRoundTrip<T>(x:Box<T>):Box<T>`) still need; `bySig`
+  merges identical concrete shapes. Recurses through nested and self-referential wrappers (`type rec`);
+  an enum field reuses the generic enum (no duplicate); a union/overload-shaped wrapper keeps the flagged
+  fallback (v1 scope); a return-only buried bound stays flagged (rule #4). Blend is unchanged (its
+  constrained generics round-trip); the win lands in base-ui. Fixture: `constrained-type-param-bound`.
+
 - **`(string & {})` / `(number & {})` open-literal idiom reduces to `string` / `float`, not a
   `{ ...JsxDOM.domProps }` bag** (#210) — the `& {}` "keep autocomplete" escape carries no data and is
   semantically just the primitive, but outside a csstype union it was routed to the record builder, where

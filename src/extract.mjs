@@ -252,7 +252,7 @@ function publicAnchor(type, ctx, _kind, fallbackBase, _originHome) {
         const sourceSlot = declaration ? `decl:${declaration}` : `slot:${String(fallbackBase)}`
         subject = `path:${path}|${sourceSlot}${composition}`
     }
-    return `${file}|${subject}${ctx.noPolyTag ? '|reading:no-poly-tag' : ''}`
+    return `${file}|${subject}${ctx.noPolyTag ? '|reading:no-poly-tag' : ''}${ctx.resolveBound ? '|reading:resolve-bound' : ''}`
 }
 
 /** Stable use-site projection, used only when one named upstream identity legitimately materializes
@@ -2445,6 +2445,7 @@ function demoteNonRoundTrip(retNode, paramNodes, sig, ctx, typeVars) {
     collectStuckVars(retNode, ctx, retVars)
     const subst = {}
     const returnOnly = new Set() // vars resolved BECAUSE they are return-only (rule #4 guard target)
+    const nameToSym = new Map() // resolved var name -> its TS type-param symbol (#211 rebuild deletes it)
     for (const tp of (sig.typeParameters || [])) {
         const name = tp.symbol && typeVars.get(tp.symbol)
         if (!name) continue
@@ -2452,6 +2453,7 @@ function demoteNonRoundTrip(retNode, paramNodes, sig, ctx, typeVars) {
         const c = tp.getConstraint && tp.getConstraint()
         if (typeParamMode({ usedInParam, usedInReturn, hasConstraint: !!c }) !== 'resolve') continue
         subst[name] = c ? classify(c, ctx, '', 0) : { kind: 'unknown' }
+        nameToSym.set(name, tp.symbol)
         if (usedInReturn && !usedInParam) returnOnly.add(name)
     }
     if (!Object.keys(subst).length) return { params: paramNodes, ret: retNode, stuck: null }
@@ -2471,26 +2473,133 @@ function demoteNonRoundTrip(retNode, paramNodes, sig, ctx, typeVars) {
     //    (`box<'a>` -> `{v: string}`, `parameters<'a,'c>` -> `{state: Dict.t<JSON.t>, …}`), which is
     //    far better than a coarse flagged `string`. (#192; docs/plans/192-*.md)
     const paramOnlyResolved = Object.keys(subst).filter((n) => !returnOnly.has(n))
-    const params = paramNodes.map((node) => {
+    const params = paramNodes.map((node, i) => {
         const sub = substTypeVars(node, subst)
         if (!paramOnlyResolved.length) return sub
         const survivors = new Set()
         collectStuckVars(sub, ctx, survivors) // follows opaque-module / record refs, not just tparams
+        const stuck = paramOnlyResolved.filter((n) => survivors.has(n))
+        if (!stuck.length) return sub
         // A constrained param-only var STUCK inside a wrapper — a generic record's `tparams` (`box<'a>`)
-        // OR an opaque-`%identity` union module's accessors (`fromBox: box<'a> => t`), both found by the
-        // DEEP `collectStuckVars` — would keep an unsound `'a`: the caller constructs the wrapper and the
-        // library reads its field at the bound type (`f<T extends string>(x: Box<T>)` accepting
-        // `f({v: 42})`, compiler-verified). ReScript 12 has no bounded type variable, and resolving the
-        // bound in place (`box<'a>` -> concrete `{v: string}`) needs TS type instantiation the extractor
-        // doesn't do; so degrade the stuck param to a sound flagged placeholder. The SHAPED upgrade is
-        // tracked in #211. Localised to the stuck param; direct (`x: T`), reachable (`x: T[]`), and
-        // round-trip params (incl. round-trip unions) are unaffected.
-        return paramOnlyResolved.some((n) => survivors.has(n)) ? { kind: 'unknown' } : sub
+        // OR an opaque-`%identity` union module's accessors — would keep an unsound `'a`: the caller
+        // constructs the wrapper and the library reads its field at the bound type (`f<T extends
+        // string>(x: Box<T>)` accepting `f({v: 42})`, compiler-verified). ReScript 12 has no bounded type
+        // variable, so resolve the bound IN PLACE (#211): re-classify the param's TS type with the stuck
+        // var(s) UNREGISTERED — classify's TypeParameter branch then resolves each to its bound — under
+        // the `resolveBound` reading KEY so the shaped concrete record (`box<'a>` -> `{v: string}`,
+        // `parameters<'a,'c>` -> `{state: Dict.t<JSON.t>, …}`) COEXISTS with the generic `box<'a>` that
+        // round-trip siblings still need. GATED to record/tagVariant wrappers; a union/overload (`t:`)
+        // wrapper, an unresolvable rebuild, or a var that survives the rebuild falls back to the sound
+        // flagged `{kind:'unknown'}` (unchanged from #192). Direct (`x: T`), reachable (`x: T[]`), and
+        // round-trip params are never reached here. (#211; docs/plans/211-*.md)
+        return rebuildStuckParam(sig, i, stuck, subst, nameToSym, ctx) || { kind: 'unknown' }
     })
     const leftInRet = new Set()
     collectTypeVars(ret, leftInRet)
     if (returnOnly.size && [...returnOnly].some((n) => leftInRet.has(n))) return { params, ret: { kind: 'unknown', _demoteFailed: true } }
     return { params, ret }
+}
+
+/** A stable, readable name token for a resolved bound IR node — the suffix that turns `box` into
+ *  `boxString` under the #211 concrete rebuild. Cosmetic (a collision only draws a counter); correctness
+ *  of coexistence is the `|rb` key. Multi-var wrappers concatenate positionally. */
+function boundNameToken(ir) {
+    if (!ir) return 'Bound'
+    switch (ir.kind) {
+        case 'string': return 'String'
+        case 'number': return ir._float ? 'Float' : 'Number'
+        case 'boolean': return 'Bool'
+        case 'dict': return 'Dict'
+        case 'reactElement': return 'ReactElement'
+        case 'typeRef': return pascal(String(ir.to || '').replace(/\.t$/, '')) || 'Bound'
+        case 'raw': return pascal(String(ir.res || '').replace(/<.*$/, '')) || 'Bound' // `Dom.element` -> `DomElement`
+        default: return 'Bound'
+    }
+}
+
+/** Is `node` a ref to a RECORD entry? The #211 concrete rebuild accepts only a top-level RECORD wrapper
+ *  (v1 scope). A union/overload (`t:`) wrapper AND a heterogeneous-discriminated-union `tagVariant`
+ *  wrapper are BOTH excluded: their deep case bottoms out in a GENERIC-accessor opaque module
+ *  (`from*<'a>`) — the same `'a`-escape hatch — so accepting them risks an unsound leak; they keep the
+ *  flagged fallback. (A homogeneous discriminated union collapses to a record and IS concretized; a
+ *  tagVariant reached as a FIELD inside a record wrapper is still built — the closure-walk gate + the
+ *  tagVariant `_heal` handle keep that sound.) (#211 review — jagguji) */
+function isRecordishRef(node, ctx) {
+    if (!node || node.kind !== 'typeRef' || !node.key || !ctx.shared) return false
+    const e = ctx.shared.byKey.get(node.key)
+    return !!(e && e.kind === 'record')
+}
+
+/**
+ * #211: re-classify parameter `paramIndex` of `sig` with the stuck constrained var(s) resolved to their
+ * bound IN PLACE, minting a shaped concrete record (`{v: string}`) under the `resolveBound` reading key
+ * so it coexists with the generic `wrap<'a>`. Returns the concrete IR node, or `null` to fall back to
+ * the flagged `{kind:'unknown'}` (unresolvable, a `t:` union/overload wrapper, or a var that survives).
+ */
+function rebuildStuckParam(sig, paramIndex, stuckNames, subst, nameToSym, ctx) {
+    const pp = (sig.getParameters() || [])[paramIndex]
+    if (!pp) return null
+    let pt; try { pt = ctx.checker.getTypeOfSymbolAtLocation(pp, ctx.decl) } catch { return null }
+    if (!pt) return null
+    // A stable name suffix from the resolved bounds, in signature order (positional for multi-var).
+    const order = [...nameToSym.keys()].filter((n) => stuckNames.includes(n))
+    const suffix = order.map((n) => boundNameToken(subst[n])).join('') || 'Bound'
+    const trial = registryTrial(ctx)
+    // Delete ONLY the stuck vars (siblings — round-trip / other params — stay registered as `'a`).
+    const savedTv = new Map()
+    for (const n of stuckNames) {
+        const sym = nameToSym.get(n)
+        if (sym && ctx.typeVars && ctx.typeVars.has(sym)) { savedTv.set(sym, ctx.typeVars.get(sym)); ctx.typeVars.delete(sym) }
+    }
+    const prevRb = ctx.resolveBound, prevRbName = ctx.resolveBoundName, prevRbVars = ctx.resolveBoundVars
+    ctx.resolveBound = true; ctx.resolveBoundName = suffix
+    // Record which var symbols were unregistered, so a `|rb` record captured as a ghost mid-rebuild can
+    // re-delete them at HEAL time — else the heal re-resolves a boundary-truncated `v: T` field via the
+    // still-mapped typeVar to a bare `'a`, an unsound leaf in a concrete record (#211 review 2). (#211)
+    ctx.resolveBoundVars = new Set([...savedTv.keys()])
+    let node = null
+    try { node = classify(pt, ctx, '', 0) } catch { node = null }
+    ctx.resolveBound = prevRb; ctx.resolveBoundName = prevRbName; ctx.resolveBoundVars = prevRbVars
+    for (const [sym, name] of savedTv) ctx.typeVars.set(sym, name)
+    // Accept only a clean record/tagVariant, else roll back and keep the flagged fallback.
+    if (!isRecordishRef(node, ctx)) { trial.rollback(); return null }
+    // SOUNDNESS gate — reject a concrete build that reaches the GENERIC twin (`box<'a>`) of a wrapper.
+    // Past MAX_DEPTH, when a round-trip sibling pre-registered the wrapper generically, the deep-boundary
+    // link resolves the entryKey with a stale `resolveBound=false` and dedups into `id:N` (generic)
+    // instead of `id:N|rb`. That twin is usually still a GHOST here — its `'a` is stamped later by the
+    // heal + `syncRefTparams` post-pass — so the per-var `collectStuckVars` check below can't see it yet.
+    // Walk the rebuild's record-ref closure and reject on a reached record that is (a) NOT a `|rb` entry
+    // AND (b) GENERIC AT THE SOURCE (its instantiation carries a type-parameter arg — the `Box<T>` twin),
+    // falling back to the sound flagged `string` (exactly the #192 / no-sibling behaviour). A legitimate
+    // NON-generic shared record (base-ui `useRender`'s helper records) is keyed without `|rb` too but is
+    // NOT source-generic, so it is kept — checking the SOURCE type, not the not-yet-stamped `tparams`, is
+    // what keeps the shallow win while closing the deep leak. Enums hold no var (kind-gated). (#211 review)
+    const checker = ctx.checker
+    const srcGeneric = (e) => {
+        if (e.tparams && e.tparams.length) return true
+        const t = e._heal && e._heal.type
+        if (!t) return false
+        const args = (checker.getTypeArguments && (t.objectFlags & ts.ObjectFlags.Reference) ? checker.getTypeArguments(t) : null) || t.aliasTypeArguments || []
+        return args.some((a) => a && (a.flags & ts.TypeFlags.TypeParameter))
+    }
+    const reach = new Set()
+    collectAllRefKeys(node, reach, new Set())
+    const walked = new Set(); const frontier = [...reach]
+    while (frontier.length) {
+        const k = frontier.pop()
+        if (walked.has(k)) continue
+        walked.add(k)
+        const e = ctx.shared && ctx.shared.byKey.get(k)
+        if (!e) continue
+        if ((e.kind === 'record' || e.kind === 'tagVariant') && !/\|rb\b/.test(String(e.key)) && srcGeneric(e)) { trial.rollback(); return null }
+        const kids = new Set()
+        for (const ct of entryChildTypes(e)) collectAllRefKeys(ct, kids, new Set())
+        for (const ck of kids) if (!walked.has(ck)) frontier.push(ck)
+    }
+    const leftover = new Set()
+    collectStuckVars(node, ctx, leftover)
+    if (stuckNames.some((n) => leftover.has(n))) { trial.rollback(); return null }
+    return node
 }
 
 /**
@@ -3335,17 +3444,17 @@ function relinkRegistered(t, byKey, seen, ownerDeps) {
     if (!t || typeof t !== 'object' || seen.has(t)) return
     seen.add(t)
     if (t.kind === 'opaque' && t.relinkId != null) {
-        const e = byKey.get(keyOf(t.relinkId, t.relinkNp))
+        const e = byKey.get(keyOf(t.relinkId, t.relinkNp, t.relinkRb))
         if (e && e.kind === 'record') {
             const r = refTo(e)
-            delete t.text; delete t.relinkId; delete t.relinkNp
+            delete t.text; delete t.relinkId; delete t.relinkNp; delete t.relinkRb
             Object.assign(t, r)
             // Register the NEW cross-reference on the owning entry, so planSharedModules sees the
             // edge and homes/orders the target correctly (else a `Module.t`/type-rec ordering miss).
             if (ownerDeps && e.key) ownerDeps.add(e.key)
             return
         }
-        delete t.relinkId; delete t.relinkNp // never registered → stays the honest opaque/string fallback
+        delete t.relinkId; delete t.relinkNp; delete t.relinkRb // never registered → stays the honest opaque/string fallback
         return
     }
     for (const k in t) {
@@ -3413,7 +3522,17 @@ function healGhostRecords(shared) {
         // suppression-only record -> rejected -> byte-identical). `produced` is restored for the same
         // reason (polarity fidelity; belt-and-suspenders — its fake sites are co-gated but a future edit
         // could loosen that). See docs/plans/208-*.md.
-        try { rebuilt = buildRecordFields(type, { ...ctx, visiting: new Set(), noPolyTag: e._heal.noPolyTag, produced: e._heal.produced }, 0) } catch { rebuilt = null }
+        // A `|rb` (concrete-bound, #211) record must heal with the stuck constrained param-only vars STILL
+        // UNREGISTERED — else `classify(T)` re-resolves a boundary-truncated `v: T` field via the mapped
+        // typeVar to a bare `'a`, an unsound leaf in a concrete record (`c7String<'a> = {v:'a}` accepting
+        // an `int` where `T extends string`). Rebuild the heal's `typeVars` without those symbols so the
+        // field resolves to its BOUND instead. (#211 review 2)
+        let healTv = ctx.typeVars
+        if (e._heal.resolveBoundVars && e._heal.resolveBoundVars.size && ctx.typeVars) {
+            healTv = new Map(ctx.typeVars)
+            for (const sym of e._heal.resolveBoundVars) healTv.delete(sym)
+        }
+        try { rebuilt = buildRecordFields(type, { ...ctx, visiting: new Set(), typeVars: healTv, noPolyTag: e._heal.noPolyTag, produced: e._heal.produced, resolveBound: e._heal.resolveBound, resolveBoundName: e._heal.resolveBoundName }, 0) } catch { rebuilt = null }
         const newEntries = shared.entries.length - entriesLen
         // The strict `newEntries === 0` gate recovers only a ghost whose whole subtree was ALREADY
         // registered by a shallow twin. It rejects blend's token configs — first reached deep through
@@ -4161,7 +4280,7 @@ function classify(type, ctx, propName = '', depth = 0) {
             // `relinkNp` records WHICH reading of the type this node was truncated under, because
             // `relinkRegistered` runs post-traversal with no ctx and would otherwise relink a
             // suppression-built node to the un-suppressed entry, defeating the suppression on that path.
-            return { kind: 'opaque', text: checker.typeToString(type), relinkId: type.id, ...(ctx.noPolyTag ? { relinkNp: true } : {}) }
+            return { kind: 'opaque', text: checker.typeToString(type), relinkId: type.id, ...(ctx.noPolyTag ? { relinkNp: true } : {}), ...(ctx.resolveBound ? { relinkRb: true } : {}) }
         }
         return { kind: 'opaque', text: checker.typeToString(type) }
     }
@@ -5036,7 +5155,7 @@ function literalUnionOpenNode(literals, baseName, ctx, propName) {
  * @returns {string}
  */
 function entryKey(ctx, type) {
-    return keyOf(type.id, ctx.noPolyTag)
+    return keyOf(type.id, ctx.noPolyTag, ctx.resolveBound)
 }
 
 /** The one formatter for a registry key. `entryKey` covers every read that has a `ctx`; this lower-level
@@ -5044,8 +5163,16 @@ function entryKey(ctx, type) {
  *  the node instead. Both go through here so a future dimension is added in ONE place — the alternative
  *  is a second hand-built key, which is the "keyed one way, read another" shape that caused the
  *  order-dependence bug. (#189 r5) */
-function keyOf(id, np) {
-    return 'id:' + id + (np ? '|np' : '')
+function keyOf(id, np, rb) {
+    return 'id:' + id + (np ? '|np' : '') + (rb ? '|rb' : '')
+}
+
+/** Name suffix for a record built under a concrete-bound rebuild (`ctx.resolveBound`, #211) — appended
+ *  to the base so `Box` -> `boxString` (not a counter-suffixed `box2`, since the generic `box<'a>` wants
+ *  base `box` too). Empty in the normal (non-rebuild) case -> every existing base unchanged. Cosmetic:
+ *  correctness of coexistence comes from the `|rb` KEY dimension; a name clash only draws a counter. */
+function rbNameSuffix(ctx) {
+    return ctx.resolveBound && ctx.resolveBoundName ? ctx.resolveBoundName : ''
 }
 
 /**
@@ -5055,7 +5182,12 @@ function keyOf(id, np) {
  * @returns {object} the typeRef (when reused) — see registerEntry for new ones
  */
 function registerNamed(ctx, type, kind, base, data) {
-    const key = entryKey(ctx, type)
+    // An ENUM shape never contains a type variable, so a concrete-bound rebuild (`ctx.resolveBound`, #211)
+    // must REUSE the generic enum entry -- keying it under the resolve-bound dimension would mint a
+    // byte-identical duplicate (`flag`/`flag2`, the double-registration trap), because enums have no
+    // `bySig` structural merge. Records/tagVariants DO carry the dimension (they may hold the var, and
+    // `bySig` still merges identical concrete shapes). (#211 review)
+    const key = kind === 'enum' ? keyOf(type.id, ctx.noPolyTag, false) : entryKey(ctx, type)
     if (ctx.shared.byKey.has(key)) return refTo(ctx.shared.byKey.get(key))
     const home = homeOf(type, ctx)
     const entry = seedPublicAnchor(
@@ -6564,11 +6696,15 @@ function tagVariantNode(type, parts, ctx, propName, depth, typeName = null) {
         const key = entryKey(ctx, type)
         if (shared.byKey.has(key)) return refTo(shared.byKey.get(key)) // cycle re-entry or already built
         const home = homeOf(type, ctx)
-        const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pathPascal + 'Config'
+        const sharedBase = (typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pathPascal + 'Config') + rbNameSuffix(ctx)
         entry = seedPublicAnchor(
             { key, kind: 'tagVariant', name: uniqueName(sharedBase, shared), base: sharedBase, home, deps: new Set(), tag, branches: [] },
             type, ctx, 'tagVariant', sharedBase, home,
         )
+        // #211: NOT healed (`healGhostRecords` is record-only), but carry the source `type` so the concrete
+        // rebuild's `srcGeneric` closure-walk can detect a GENERIC tagVariant twin reached as a field
+        // inside a record wrapper — symmetric with `recordNode`'s `_heal.type`. (#211 review — jagguji)
+        entry._heal = { type }
         shared.byKey.set(key, entry)
         shared.entries.push(entry)
     } else {
@@ -6692,7 +6828,7 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         // type keeps its own name (per the user's "follow the library" rule, #62). (#63 naming)
         // The path segments (`pathPascal`, #90) make the per-home base distinct by location, so the
         // disambiguation counter is now a last-resort tiebreak for genuine same-home/same-path clashes.
-        const sharedBase = typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pathPascal + 'Config'
+        const sharedBase = (typeName ? lower(typeName) : lower(home.replace(/Types$/, '')) + pathPascal + 'Config') + rbNameSuffix(ctx)
         const entry = seedPublicAnchor(
             { key, kind: 'record', name: uniqueName(sharedBase, ctx.shared), base: sharedBase, home, deps: new Set(), spread: undefined, fields: [] },
             type, ctx, 'record', sharedBase, home,
@@ -6702,9 +6838,12 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         // and cached as an all-`string` ghost. `ctx` is a LIVE reference (its mutable flags drift), so
         // SNAPSHOT the reading-flags that would otherwise be stale at heal time and mis-resolve a field:
         // `noPolyTag` (the #177 ambiguous-overload suppression — required, or the heal fakes an exact
-        // polytag where the field was deliberately flagged) and `produced` (polarity, belt-and-suspenders).
-        // (#208 — full audit in docs/plans/208-*.md; `noPolyTag`+`produced` is the complete set.)
-        entry._heal = { type, ctx, depth, noPolyTag: !!ctx.noPolyTag, produced: ctx.produced }
+        // polytag where the field was deliberately flagged), `produced` (polarity, belt-and-suspenders),
+        // and `resolveBound`/`resolveBoundName` (the #211 concrete-bound reading — required for SOUNDNESS:
+        // a concrete `|rb` record healed past MAX_DEPTH would otherwise re-resolve under the ambient
+        // `resolveBound=false` and link its deep field to the GENERIC `<'a>`-carrying twin, reintroducing
+        // the exact caller-pickable `'a` unsoundness #211 removes). (#208/#211 — audit in docs/plans/208,211-*.md)
+        entry._heal = { type, ctx, depth, noPolyTag: !!ctx.noPolyTag, produced: ctx.produced, resolveBound: ctx.resolveBound, resolveBoundName: ctx.resolveBoundName, resolveBoundVars: ctx.resolveBoundVars }
         ctx.shared.byKey.set(key, entry)
         ctx.shared.entries.push(entry)
         if (type.id != null) ctx.visiting?.add(type.id)
