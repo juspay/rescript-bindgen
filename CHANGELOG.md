@@ -3,9 +3,30 @@
 All notable changes to `@juspay/rescript-bindgen` are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.4.0-beta.3] — 2026-09-02
+
+> **Upgrading: regenerate your bindings.** No call-site changes are required — this release only
+> tightens types that were previously widened to `string`. blend `0.0.38-beta.1` loose fields drop
+> from ~844 to ~179 and the longest generated type name from 2,453 to 114 characters; the emitted
+> JS shape is unchanged throughout.
 
 ### Fixed
+
+- **csstype values and token records reached through `DeepPartial<>` are recovered instead of
+  widened to `string`** (#205, #206) — blend `0.0.38-beta.1` added
+  `ComponentTokenOverrides = DeepPartial<ComponentTokenType>`, a homomorphic mapped type that
+  re-projects csstype `Property.*` values and **strips their alias + declaration-file provenance**,
+  so the path-based `isCssType` no longer recognised them. Two consequences, one root cause: (#206)
+  csstype value-unions were enumerated into giant `@unboxed` bodies with CSS-keyword constructors
+  (`Aliceblue`, `AccentColor`, …) leaking into shared modules; (#205) the wrapping token records
+  deepened the graph, were first reached past `MAX_DEPTH`, and truncated to all-`string` "ghost"
+  records — silently downgrading ~350 previously-structured token config fields (`AccordionV2`'s
+  `title`/`subtext`, and dozens more) to bare `string`, even though the blend source for those
+  components was byte-identical to `0.0.38-beta.0`. A live TS-compiler probe now recognises a
+  `DeepPartial<>`-projected csstype value by shape and restores the mapping, so the records resolve
+  fully and the CSS-keyword leak is gone. Confirmed against blend `0.0.38-beta.1` (record→`string`
+  widenings 350 → 0, `Aliceblue`-style leaks → 0) and `0.0.38-beta.2`; both compile.
+
 
 - **A constrained type parameter buried in a generic record wrapper resolves to a shaped concrete
   record, not a flagged `string`** (#211, follow-up to #192) — `f<T extends string>(x: Box<T>)` (where
