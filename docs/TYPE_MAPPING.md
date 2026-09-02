@@ -1117,14 +1117,20 @@ resolves to its bound. A resolved bound in a *return* position is an honest ⚪ 
 
 A constrained param-only var resolves cleanly when it is **direct** (`greet<T extends string>(name: T)`
 → `string`) or **reachable** (`fArr<T extends string>(xs: T[])` → `array<string>`). When it is buried
-inside a generic **wrapper**'s type args (`f<T extends string>(x: Box<T>)`), the substitution can't
-reach the `'a` inside `box<'a>`, and keeping it would be unsound (`f({v: 42})`); ReScript 12 has no
-bounded generic and resolving the bound in place (→ a concrete `{v: string}`) needs TS type
-instantiation the extractor doesn't do, so the stuck param degrades to a sound flagged `string`. The
-shaped upgrade (`box<'a>` → `{v: string}`) is tracked in **#211**.
+inside a generic **record wrapper**'s type args (`f<T extends string>(x: Box<T>)`), the substitution
+can't reach the `'a` inside `box<'a>`, and keeping it would be unsound (`f({v: 42})`). ReScript 12 has
+no bounded generic, so **#211** resolves the bound **in place**: the param is re-classified with the
+stuck var UNREGISTERED, producing a shaped concrete record — `Box<T extends string>` → `{v: string}`
+(`boxString`), base-ui's `Parameters<State extends Record<string,unknown>, RenderedElementType extends
+Element, …>` → `{state: Dict.t<JSON.t>, ref: React.ref<Dom.element>, props: Dict.t<JSON.t>, …}`. It is
+registered under a boolean `resolveBound` reading key so the concrete `boxString` COEXISTS with the
+generic `box<'a>` that round-trip siblings (`boxRoundTrip`) still need; `bySig` merges identical concrete
+shapes. Recurses through nested/self-referential wrappers (`type rec`); an ENUM field reuses the generic
+enum (no `flag`/`flag2`); a **union/overload** (`t:`-keyspace) wrapper stays the flagged `string` (v1
+scope). Return-only buried bounds stay flagged (rule #4 — never concretize a library-controlled value).
 Fixtures: [`generic-instantiation-distinct`](../test/golden/cases/generic-instantiation-distinct) (the
 round-trip cases), [`constrained-type-param-bound`](../test/golden/cases/constrained-type-param-bound)
-(the param-only-resolve cases across all four kinds). (#177, #192)
+(the param-only-resolve + buried-wrapper cases across all four kinds). (#177, #192, #211)
 
 An **erased** generic — a `forwardRef`/`memo` export that pins the parameter to a placeholder
 (`Record<string, unknown>`) — is *re-genericized*: the placeholder is recovered as `'a`, `unknown`

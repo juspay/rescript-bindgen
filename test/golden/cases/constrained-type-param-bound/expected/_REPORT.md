@@ -2,11 +2,30 @@
 
 **0** components · ✅ **0** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**10** function binding(s) → `DemoBindings.res`.
+**25** function binding(s) → `DemoBindings.res`.
 
 **2** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**7** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**28** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+
+## 🔤 Constructor name collisions
+
+ReScript scopes variant constructors to the **module**, not to their type, so one `*Types.res` can define the same name twice. Where the expected type is known from context ReScript picks correctly; where it **isn't**, it binds the *last* definition in the file — with no error or warning.
+
+### Renamed — the same name carried DIFFERENT runtime representations
+
+A bare constant, an identity payload and a `@tag`-injected object are different shapes at runtime. Left alone, an unannotated use would have compiled cleanly and produced the **wrong one**. Each colliding definition is suffixed with the tail of its owning type's name.
+
+| Module | Constructor | Conflicting runtime representations | Renamed to |
+|---|---|---|---|
+| `ConstrainedTypeParamBoundTypes` | `A` | `"a"` / `{tag: "a", …}` | `AParamVTag`, `ATVString` |
+| `ConstrainedTypeParamBoundTypes` | `B` | `"b"` / `{tag: "b", …}` | `BParamVTag`, `BTVString` |
+
+### Left as-is — same name, same runtime representation (2)
+
+These produce the same runtime shape whichever definition wins, so renaming them would churn every consumer for no correctness gain. Listed because the ambiguity is still there to read.
+
+- `ConstrainedTypeParamBoundTypes`: `Off`, `On`
 
 ## 📦 Dependencies
 
@@ -26,7 +45,22 @@ Standalone function exports, emitted as positional `@module external` bindings i
 - `make`
 - `boxParam`
 - `boxRoundTrip`
+- `boxBoth`
 - `arrParam`
+- `useRenderLike`
+- `mixed`
+- `nestedParam`
+- `selfParam`
+- `flaggedParam`
+- `setFlag`
+- `deepParam`
+- `d7RT`
+- `boundaryParam`
+- `tvParam`
+- `tvRoundTrip`
+- `homoParam`
+- `recTvParam`
+- `mkBox`
 - `unionParam`
 - `unionRoundTrip`
 

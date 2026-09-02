@@ -4,10 +4,27 @@
 @module("demo") external identity: ('a) => unit = "identity"
 // 🛑 BROKEN: `make` has an `unknown`/`any` in its signature — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
 @module("demo") external make: unit => string = "make"
-// 🛑 BROKEN: `boxParam` has an `unknown`/`any` in its signature — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
-@module("demo") external boxParam: (string) => unit = "boxParam"
+@module("demo") external boxParam: (ConstrainedTypeParamBoundTypes.wrapString) => unit = "boxParam"
 @module("demo") external boxRoundTrip: (ConstrainedTypeParamBoundTypes.wrap<'a>) => ConstrainedTypeParamBoundTypes.wrap<'a> = "boxRoundTrip"
+@module("demo") external boxBoth: (ConstrainedTypeParamBoundTypes.wrap<'a>) => ConstrainedTypeParamBoundTypes.wrap<'a> = "boxBoth"
 @module("demo") external arrParam: (array<string>) => unit = "arrParam"
+@module("demo") external useRenderLike: (ConstrainedTypeParamBoundTypes.parametersDictDomElement) => unit = "useRenderLike"
+@module("demo") external mixed: (ConstrainedTypeParamBoundTypes.wrapString, 'b) => 'b = "mixed"
+@module("demo") external nestedParam: (ConstrainedTypeParamBoundTypes.outerString) => unit = "nestedParam"
+@module("demo") external selfParam: (ConstrainedTypeParamBoundTypes.selfWrapString) => unit = "selfParam"
+@module("demo") external flaggedParam: (ConstrainedTypeParamBoundTypes.flaggedString) => unit = "flaggedParam"
+@module("demo") external setFlag: (ConstrainedTypeParamBoundTypes.flag) => unit = "setFlag"
+// 🛑 BROKEN: `deepParam` has an `unknown`/`any` in its signature — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
+@module("demo") external deepParam: (string) => unit = "deepParam"
+@module("demo") external d7RT: (ConstrainedTypeParamBoundTypes.d7<'a>) => ConstrainedTypeParamBoundTypes.d7<'a> = "d7RT"
+@module("demo") external boundaryParam: (ConstrainedTypeParamBoundTypes.e1String) => unit = "boundaryParam"
+// 🛑 BROKEN: `tvParam` has an `unknown`/`any` in its signature — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
+@module("demo") external tvParam: (string) => unit = "tvParam"
+@module("demo") external tvRoundTrip: (ConstrainedTypeParamBoundTypes.TV.t) => ConstrainedTypeParamBoundTypes.TV.t = "tvRoundTrip"
+@module("demo") external homoParam: (ConstrainedTypeParamBoundTypes.constrainedTypeParamBoundHomoParamConfigString) => unit = "homoParam"
+@module("demo") external recTvParam: (ConstrainedTypeParamBoundTypes.recWithTVString) => unit = "recTvParam"
+// 🛑 BROKEN: `mkBox` has an `unknown`/`any` in its signature — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
+@module("demo") external mkBox: unit => string = "mkBox"
 // 🛑 BROKEN: `unionParam` has an `unknown`/`any` in its signature — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.
 @module("demo") external unionParam: (string) => unit = "unionParam"
 @module("demo") external unionRoundTrip: (ConstrainedTypeParamBoundTypes.ConstrainedTypeParamBoundUnionRoundTripX.t) => ConstrainedTypeParamBoundTypes.ConstrainedTypeParamBoundUnionRoundTripX.t = "unionRoundTrip"
