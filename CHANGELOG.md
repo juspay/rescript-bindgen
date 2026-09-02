@@ -5,8 +5,20 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.0-beta.3] — 2026-09-02
+
 ### Fixed
 
+- **csstype values and token records reached through `DeepPartial<>` are recovered** (#205, #206) —
+  blend `0.0.38-beta.1` added `ComponentTokenOverrides = DeepPartial<ComponentTokenType>`, a homomorphic
+  mapped type that re-projects csstype `Property.*` values and **strips their alias/declaration-file
+  provenance**, so the path-based `isCssType` missed them. Two regressions followed on identical source:
+  csstype value-unions were **enumerated** into ~872 giant `@unboxed` bodies with CSS-keyword
+  constructors (`Aliceblue`, `AccentColor`, …) leaking into shared modules (#206), and the wrapping token
+  records — first reached past `MAX_DEPTH` — truncated to ~310 all-`string` "ghost" records (#205). Fixed
+  with a **structural `isCssType` fallback** (a union whose string literals include the whole `Globals`
+  set → `string`) that recovers the mapping no matter how the value was reached; the ghost records are
+  then re-resolved by the depth-0 heal. (This is the base #208 then built on.)
 - **A constrained type parameter buried in a generic record wrapper resolves to a shaped concrete
   record, not a flagged `string`** (#211, follow-up to #192) — `f<T extends string>(x: Box<T>)` (where
   `interface Box<T>{v:T}`) degraded the whole param to a broken `string` because the type-var
