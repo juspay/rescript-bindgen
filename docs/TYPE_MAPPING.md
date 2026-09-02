@@ -210,6 +210,17 @@ merged home is then pinned by the manifest lock so it never churns again. Every 
 path keeps resolving. Prior homes accumulate in each row's `formerModules`. Executable contract:
 [`test/module-move-compat.mjs`](../test/module-move-compat.mjs).
 
+The `+ SharedTypes` naming strips an **existing** `SharedTypes` suffix before re-appending, so when the
+locked merged home is itself the largest member of a later, grown SCC it stays `HighchartsSharedTypes`
+rather than compounding to `HighchartsSharedSharedTypes` (the #35 rule applied to its own prior output
+under #190 locking). Cold runs never hit this (the largest member is a real `*Types` type there). Two
+bounded edges remain: (a) if the SCC later absorbs a domain *larger* than the locked merged home, the
+merged module renames to that larger member's `*SharedTypes` (one rename, then stable; the compat
+re-export keeps old qualified paths resolving) — preferring the incumbent locked home regardless of size
+is a possible follow-up; (b) a manifest that already locked a doubled `…SharedSharedTypes` from a prior
+buggy run keeps that name (the #190 freeze treats any public-name rename as a break) — heal it by editing
+that row's `module` by hand if desired. (#220)
+
 Keep the manifest with generated bindings (and version-control it when the bindings are versioned).
 Legacy manifests containing only `files` bootstrap this registry on their first run. `--clean` does not
 delete it. An upstream declaration rename/move is a new identity and removal is recorded, but a bindgen

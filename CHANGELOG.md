@@ -5,6 +5,18 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **A #190-locked merged SCC home no longer double-suffixes to `…SharedSharedTypes`** (#220) — #35 names
+  a merged dependency-cycle home `<largest member>.replace(/Types$/,'') + 'SharedTypes'`. #190 then locks
+  that merged name as the entries' home, so when the SCC later grows (blend `0.0.38-beta.1`'s DeepPartial
+  recovery pulled `ContextSharedTypes` into the Highcharts cycle) the largest member is the *locked merged
+  name itself* — and the rule produced `HighchartsShared` + `SharedTypes` = `HighchartsSharedSharedTypes`,
+  pushing every `HighchartsSharedTypes.*` reference behind a compat shim. The naming now strips an
+  existing `SharedTypes` suffix before re-appending, so a locked merged home that remains its SCC's
+  largest member keeps its name. Cold runs were never affected (the largest member is a real `*Types`
+  type there). Regression pinned in `test/module-move-compat.mjs`.
+
 ## [1.4.0-beta.3] — 2026-09-02
 
 ### Fixed
