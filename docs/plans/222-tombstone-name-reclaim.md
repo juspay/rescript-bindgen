@@ -37,11 +37,12 @@ For a live entry whose public name carries a counter suffix (`<base>2`, `<base>3
 by an **inactive tombstone in the same module**, decide by a structural **proof**:
 
 ```
-reclaimed  →  the live entry takes the clean <base> name;
+reclaimed  →  the LIVE entry's row takes the clean <base> name and records `<base>N` in its `aliases`;
               `<base>N` is kept as a transparent compatibility alias:  type <base>N = <base>
-              the matched tombstone is DOWNGRADED to an alias identity of the live entry (active stays false;
-              it no longer squats the name — the live entry now owns it, the tombstone's id is recorded as an
-              alias so an old annotation binds correctly).
+              the matched tombstone row is LEFT INERT (active:false, aliases:[]) — it no longer squats the
+              name because the live row now owns `<base>` via its own row (and `ownsReserved` keeps it on
+              later runs), and staying a genuine reservation is both correct and idempotent (flipping it
+              active oscillated every no-op regen). An old `<base>` annotation binds to the live entry.
 refused    →  the live entry KEEPS `<base>N`; NO alias is emitted; the old `<base>` path stays intentionally
               broken (the tombstone denotes a genuinely-different, upstream-DELETED type).
 ```
