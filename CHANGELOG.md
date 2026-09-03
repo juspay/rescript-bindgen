@@ -7,6 +7,24 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **A structurally-identical live type reclaims a clean name that an inactive tombstone was squatting**
+  (#222) — #190 reserves a removed identity's public name forever with an `active:false` tombstone, so an
+  old annotation can never silently re-bind to a *different* type. But when the tombstone and a live
+  newcomer have the SAME ReScript shape, the reservation protected nothing and instead broke every consumer
+  of the clean name permanently: in blend-rescript, `CommonTypes.stringOrNumber` (the most-used union in the
+  output) was pushed to `stringOrNumber2` — 1,239 references wearing a meaningless suffix that could never
+  heal. A live entry whose locked name is a counter suffix `<base>N` now RECLAIMS `<base>` when `<base>` is
+  held exclusively by an inactive tombstone in the same scope (no live identity holds it) **and** the tombstone's shape (recovered from the prior `.res` on
+  disk — tombstones aren't emitted, and the signature is usually absent) is a *proven* structural match. The
+  match tolerates exactly the two asymmetries real upgrades produce — deliberate constructor renames
+  (compare `@as` payloads, not constructor identifiers) and the narrow `string`+degrade-flag → structured
+  improvement direction — and refuses everything else (a `{...JsxDOM.domProps}` bag never matches a
+  structured record, and a genuinely different type keeps its suffix with **no** forwarding alias — the #190
+  guarantee). The shipped suffixed name survives as a transparent `type <base>N = <base>` alias, so a
+  consumer pinned to it still compiles. Reclaims and refusals are surfaced on stderr and in `--json-summary`
+  (`nameReclaims`). Cold runs (no prior manifest) are unaffected. A refusal is NOT a churn regression: the
+  refused case is an upstream deletion — the old identity is genuinely gone.
+
 - **A #190-locked merged SCC home no longer double-suffixes to `…SharedSharedTypes`** (#220) — #35 names
   a merged dependency-cycle home `<largest member>.replace(/Types$/,'') + 'SharedTypes'`. #190 then locks
   that merged name as the entries' home, so when the SCC later grows (blend `0.0.38-beta.1`'s DeepPartial
