@@ -57,7 +57,9 @@ function writeSources({ cycle, leftLocalDep = false, third = false }) {
 
 function run(shape) {
     writeSources(shape)
-    const r = spawnSync('node', [CLI, '--dir', pkg, '--out', out, '--from', 'demo', '--no-install'], { encoding: 'utf-8' })
+    const args = [CLI, '--dir', pkg, '--out', out, '--from', 'demo', '--no-install']
+    if (shape.clean) args.push('--clean') // #221: exercises the scan-BEFORE-clean ordering
+    const r = spawnSync('node', args, { encoding: 'utf-8' })
     if (r.status !== 0) throw new Error(`CLI failed (exit ${r.status}):\n${r.stderr}`)
     return { manifest: JSON.parse(readFileSync(manifestPath, 'utf-8')), stderr: r.stderr }
 }
@@ -169,6 +171,33 @@ try {
     assert(rowOf(grownM, 'mid').module === grown,
         `the third (mid) type is homed into the same merged module (${grown})`)
     compileOut('SCC grows around a locked merged home (#220)')
+
+    // 8. #221: a home move across a PRE-#190 boundary (previous manifest has no `publicTypes`) recovers
+    //    the former home from the prior `.res` on disk — and does so UNDER `--clean`, which deletes that
+    //    prior output first, so the scan MUST run before the clean. (blend-rescript's `generate:raw`
+    //    always passes `--clean`.) The scan is scoped to `*Types.res` shared modules, so the per-component
+    //    `View.res` `props` leaf is never a former-home candidate (no noise, no false shim).
+    rmSync(out, { recursive: true, force: true })
+    run({ cycle: false })                                  // beta.1-style: `left` in LeftTypes, `right` in RightTypes
+    const legacy = JSON.parse(readFileSync(manifestPath, 'utf-8'))
+    delete legacy.publicTypes; delete legacy.schemaVersion // simulate a legacy files-only (pre-#190) manifest
+    writeFileSync(manifestPath, JSON.stringify(legacy, null, 2) + '\n')
+    const boot = run({ cycle: true, clean: true })         // warm + --clean: both relocate to the merged home
+    const mergedB = rowOf(boot.manifest, 'left').module
+    assert(mergedB !== 'LeftTypes' && mergedB === rowOf(boot.manifest, 'right').module,
+        'the shared types relocated to the merged home across the legacy boundary')
+    assert((rowOf(boot.manifest, 'left').formerModules || []).includes('LeftTypes') &&
+           (rowOf(boot.manifest, 'right').formerModules || []).includes('RightTypes'),
+        'former homes recovered from prior .res (no manifest registry) and recorded in the manifest (#221)')
+    assert(existsSync(join(out, 'LeftTypes.res')) &&
+           readFileSync(join(out, 'LeftTypes.res'), 'utf-8').includes(`type left = ${mergedB}.left`),
+        'the former home re-export is emitted under --clean (scan ran BEFORE the clean deleted LeftTypes.res)')
+    assert(/recovered \d+ former home/.test(boot.stderr), 'the disk-recovered relocation is surfaced in the logs')
+    compileOut('legacy bootstrap under --clean (#221)')
+    // Idempotent: the manifest now carries publicTypes+formerModules, so a second --clean run is byte-identical.
+    const snap2 = readFileSync(manifestPath, 'utf-8')
+    run({ cycle: true, clean: true })
+    assert(readFileSync(manifestPath, 'utf-8') === snap2, 'idempotent after bootstrap — no churn on the next run (#221)')
 
     console.log('\n✅ cycle-forced module-move compatibility invariants hold')
 } finally {
