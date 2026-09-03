@@ -801,6 +801,7 @@ function applyPublicNameRegistry(shared, prior = {}) {
             if (rec) { e._reclaim = rec; claim(base, e, 'reclaimed name'); continue }
         }
         const candidate = allocFree(e, desired.get(e))
+        if (e._reclaimRefused) e._reclaimRefused.name = candidate // the new identity actually gets this suffix
         desired.set(e, candidate)
         claim(candidate, e, 'new canonical name')
     }

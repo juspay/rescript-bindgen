@@ -1,16 +1,14 @@
 // #222 unit tests for the tombstone-reclaim structural match (src/name-reclaim.mjs).
-// Each case mirrors one of the 8 real blend-rescript shapes: 7 must reclaim, 1 must refuse, plus the
-// load-bearing `{...domProps}`-bag boundary.
-import { parseResBody, canonLive, reclaimable, stripCounter, splitCounter } from '../src/name-reclaim.mjs'
+// Bodies use the EXACT shapes real emit produces — multi-line records with a `// …` comment AFTER the
+// comma, string `@as("…")` discriminants, clean cross-type refs — so the tests guard real inputs (an
+// earlier version passed only because it used single-line block-comment records + numeric-only @as).
+import { parseResBody, canonLive, reclaimable, splitCounter } from '../src/name-reclaim.mjs'
 
 let pass = 0
 const ok = (cond, msg) => { if (!cond) throw new Error('FAIL: ' + msg); console.log('✓ ' + msg); pass++ }
 
-// stripCounter / splitCounter
-ok(stripCounter('stringOrNumber2') === 'stringOrNumber', 'stripCounter drops a trailing counter')
-ok(stripCounter('sankeyLink') === 'sankeyLink', 'stripCounter leaves a counter-free name')
-ok(splitCounter('chartsHeaderConfig2')?.base === 'chartsHeaderConfig' && splitCounter('foo')?.base === undefined,
-    'splitCounter separates base/n and returns null without a counter')
+ok(splitCounter('stringOrNumber2')?.base === 'stringOrNumber' && splitCounter('foo')?.base === undefined,
+    'splitCounter separates a trailing counter and returns null without one')
 
 // 1. variant identical (stringOrNumber) — scalar payloads, no @as.
 {
@@ -19,44 +17,61 @@ ok(splitCounter('chartsHeaderConfig2')?.base === 'chartsHeaderConfig' && splitCo
     ok(reclaimable(old, live), 'RECLAIM: identical @unboxed variant (stringOrNumber)')
 }
 
-// 2. constructor rename, identical @as payloads (positionAffinity).
+// 2. constructor rename, identical NUMERIC @as (positionAffinity).
 {
     const old = parseResBody('type positionAffinity =\n  | @as(0) LeftPositionAffinity\n  | @as(1) RightPositionAffinity')
     const live = canonLive({ kind: 'enum', members: [{ ctor: 'Left', as: 0 }, { ctor: 'Right', as: 1 }] })
-    ok(reclaimable(old, live), 'RECLAIM: ctor renamed but @as payloads identical (positionAffinity)')
+    ok(reclaimable(old, live), 'RECLAIM: ctor renamed but numeric @as identical (positionAffinity)')
 }
 
-// 3. record referencing OTHER cluster members that were counter-suffixed (headerConfig).
+// 2b. string @as("…") discriminant — disk is quoted, live IR is unquoted (Finding 3 regression).
 {
-    const old = parseResBody('type chartsHeaderConfig = { padding?: chartsHeaderPaddingConfig2, slots?: chartsHeaderSlotsConfig2 }')
+    const old = parseResBody('type resp =\n  | @as("json") JsonResp\n  | @as("text") TextResp')
+    const live = canonLive({ kind: 'enum', members: [{ ctor: 'Json', as: 'json' }, { ctor: 'Text', as: 'text' }] })
+    ok(reclaimable(old, live), 'RECLAIM: string @as("json"/"text") on disk matches the live unquoted discriminant')
+}
+
+// 3. record referencing OTHER cluster members — CLEAN refs on both sides (the proof body predates the
+//    rename, so its refs are the clean base names; the live IR's typeRef.to is the extraction base too).
+{
+    const old = parseResBody('type chartsHeaderConfig = {\n  padding?: chartsHeaderPaddingConfig,\n  slots?: chartsHeaderSlotsConfig,\n}')
     const live = canonLive({ kind: 'record', fields: [
         { name: 'padding', optional: true, type: { kind: 'typeRef', to: 'chartsHeaderPaddingConfig' } },
         { name: 'slots', optional: true, type: { kind: 'typeRef', to: 'chartsHeaderSlotsConfig' } },
     ] })
-    ok(reclaimable(old, live), 'RECLAIM: record refs normalise cluster-wide (headerConfig → paddingConfig/slotsConfig)')
+    ok(reclaimable(old, live), 'RECLAIM: record with clean cross-type refs (headerConfig)')
 }
 
-// 4. improvement direction: old degraded `string // ⚪ loose`, new structured (legendConfig.dropdown).
+// 4. improvement direction, REAL multi-line record with a trailing `// …` comment AFTER the comma.
 {
-    const old = parseResBody('type chartsLegendConfig = { dropdown: string /* ⚪ loose */, gap?: float }')
+    const old = parseResBody('type chartsLegendConfig = {\n  dropdown: string,  // ⚠️ REVIEW — was `{ maxHeight: … }`\n  gap?: float,\n}')
+    ok(old.fields.length === 2 && old.fields[0].name === 'dropdown' && old.fields[0].flagged && old.fields[1].name === 'gap',
+        'PARSE: a flagged field with a trailing comment keeps its flag AND the next field is not dropped (Finding 2)')
     const live = canonLive({ kind: 'record', fields: [
         { name: 'dropdown', optional: false, type: { kind: 'typeRef', to: 'chartsDropdownConfig' } },
         { name: 'gap', optional: true, type: { kind: 'number', _float: true } },
     ] })
-    ok(reclaimable(old, live), 'RECLAIM: old `string`+⚪loose → new structured (legendConfig)')
+    ok(reclaimable(old, live), 'RECLAIM: old `string`+flag → new structured, real multi-line record (legendConfig)')
 }
 
-// 5. REFUSE — the domProps-bag trap: old `{...JsxDOM.domProps}` bag, new strict field record.
+// 5. REFUSE — the domProps-bag trap: old `{ ...JsxDOM.domProps }` bag, new strict field record.
 {
-    const old = parseResBody('type dateTimeFormatOptionsLib = { ...JsxDOM.domProps }')
+    const old = parseResBody('type dateTimeFormatOptionsLib = {\n  ...JsxDOM.domProps,\n}')
     const live = canonLive({ kind: 'record', fields: [
         { name: 'day', optional: true, type: { kind: 'typeRef', to: 'chartsDay' } },
         { name: 'month', optional: true, type: { kind: 'typeRef', to: 'chartsMonth' } },
     ] })
-    ok(!reclaimable(old, live), 'REFUSE: {...domProps} bag never matches a structured record (the trap)')
+    ok(old.spread === 'domProps' && !reclaimable(old, live), 'REFUSE: {...domProps} bag never matches a structured record (the trap)')
 }
 
-// 6. REFUSE — genuinely different variant payload (stringOrDateTimeFormatOptions: Lib vs Highcharts).
+// 6. REFUSE — genuinely different referenced type (Finding 1: vec2 vs vec3 must NOT collapse).
+{
+    const old = parseResBody('type shape = {\n  basis?: vec2,\n}')
+    const live = canonLive({ kind: 'record', fields: [{ name: 'basis', optional: true, type: { kind: 'typeRef', to: 'vec3' } }] })
+    ok(!reclaimable(old, live), 'REFUSE: a ref that differs only by a trailing digit (vec2 vs vec3) is NOT a match')
+}
+
+// 6b. REFUSE — genuinely different variant payload (Lib vs Highcharts).
 {
     const old = parseResBody('@unboxed type stringOrDateTimeFormatOptions = Str(string) | DateTimeFormatOptions(dateTimeFormatOptionsLib)')
     const live = canonLive({ kind: 'unboxed', members: [
@@ -68,7 +83,7 @@ ok(splitCounter('chartsHeaderConfig2')?.base === 'chartsHeaderConfig' && splitCo
 
 // 7. REFUSE — a new structured field NOT present in the old shape (field-set differs).
 {
-    const old = parseResBody('type chartsFoo = { a?: int }')
+    const old = parseResBody('type chartsFoo = {\n  a?: int,\n}')
     const live = canonLive({ kind: 'record', fields: [
         { name: 'a', optional: true, type: { kind: 'number' } },
         { name: 'b', optional: true, type: { kind: 'string' } },
@@ -78,13 +93,9 @@ ok(splitCounter('chartsHeaderConfig2')?.base === 'chartsHeaderConfig' && splitCo
 
 // 8. REFUSE — improvement direction does NOT run backwards (old structured → new placeholder).
 {
-    const old = parseResBody('type chartsBar = { x: chartsPoint }')
+    const old = parseResBody('type chartsBar = {\n  x: chartsPoint,\n}')
     const live = canonLive({ kind: 'record', fields: [{ name: 'x', optional: false, type: { kind: 'unknown', text: 'Foo' } }] })
     ok(!reclaimable(old, live), 'REFUSE: new-side placeholder is not the tolerated direction')
 }
-
-// 9. unparseable / non-reclaimable shapes → null → refuse.
-ok(parseResBody('type t = SomeOpaque.t') === null || !reclaimable(parseResBody('type t = SomeOpaque.t'), canonLive({ kind: 'record', fields: [] })),
-    'REFUSE: an opaque/module body is not a reclaim candidate')
 
 console.log(`\n✅ name-reclaim match: ${pass} assertions hold`)

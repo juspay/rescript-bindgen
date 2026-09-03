@@ -63,10 +63,15 @@ explicitly so the one refusal does not read as a regression.
 
 Comparing each live type to its tombstone's **beta.1 emitted body** (recovered from disk, §3):
 
-- **5/8 are byte-identical — but ONLY after normalising counter suffixes cluster-wide.** A record whose
-  fields reference *other* renamed types (`padding: …HeaderPaddingConfig2`) looks "different" if you normalise
-  only the type's own name. The cluster renames together, so normalise every `<base>N`→`<base>` across the
-  whole reclaim set *before* comparing. (Normalising just the own-name is the trap that mis-scores 5 as 3.)
+- **5/8 are byte-identical after aligning cross-type references.** A record whose fields reference *other*
+  renamed cluster members compares equal because **both sides already carry the clean base name**: the
+  tombstone's proof body is recovered from the generation where its base was still LIVE (so its refs are the
+  clean names), and a live entry's IR `typeRef.to` is the extraction-time base, not the manifest-locked
+  counter. So referenced types are compared by **exact name** — NOT by stripping a trailing counter.
+  (Blanket counter-stripping was an early draft and is *unsound*: it collapses `vec2`/`vec3`, `mat3`/`mat4`,
+  `int8`/`int16` into false matches — the referenced type's structure is never re-compared, only its name.
+  Adversarial review caught this end-to-end; the fix is exact-name comparison, pinned by a `vec2`≠`vec3`
+  refuse test.)
 - **2/8 are the same identity our own generator IMPROVED between versions**, and strict equality would refuse
   them forever:
   - `legendConfig` — beta.1 `dropdown: string  // ⚪ loose` (was an unresolved `{maxHeight:…}`), today

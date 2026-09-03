@@ -16,15 +16,16 @@
 // canonicalised from its IR. Both reduce to a small `{kind, members|fields}` shape with type references
 // normalised to their counter-free base, so the whole rename cluster compares consistently.
 
-/** Strip a trailing allocFree counter suffix (`fooConfig2` → `fooConfig`, `stringOrNumber2` →
- *  `stringOrNumber`). Applied IDENTICALLY to both sides, so an over-strip (`int32` → `int`) stays
- *  consistent; a real reclaim still needs full structural equality AND a tombstone holding the base, so a
- *  coincidental base collision can never alone force a wrong reclaim. */
-export function stripCounter(name) {
-    return String(name || '').replace(/([A-Za-z_])\d+$/, '$1')
-}
+// NOTE on referenced-type names: we compare them by EXACT name, never counter-stripped. Stripping a
+// trailing counter off every ref (an earlier draft) conflated genuinely-different types whose leaves
+// differ only by a digit — `vec2` vs `vec3`, `mat3` vs `mat4`, `int8`/`int16` — into a false match. It is
+// also unnecessary: the tombstone's proof body is recovered from the generation where its base name was
+// still LIVE, so its refs are the clean base names; and a live entry's IR `typeRef.to` is the
+// extraction-time base, not the manifest-locked counter. So both sides already carry the clean base and
+// exact comparison matches the real rename cluster while keeping `vec2`/`vec3` distinct.
 
-/** Split a `<base>N` public name into `{ base, n }`, or null if it carries no counter. */
+/** Split a `<base>N` public name into `{ base, n }`, or null if it carries no counter. This is the
+ *  entry's OWN allocFree-minted public name (the reclaim trigger), not a referenced type. */
 export function splitCounter(name) {
     const m = /^(.*[A-Za-z_])(\d+)$/.exec(String(name || ''))
     return m ? { base: m[1], n: Number(m[2]) } : null
@@ -46,8 +47,8 @@ export function canonTypeIR(t) {
     switch (t.kind) {
         case 'string': case 'bool': case 'unit': return t.kind
         case 'number': return t._float ? 'float' : 'int'
-        case 'typeRef': return 'ref:' + stripCounter(t.to || (t.key || '').split(/[|:]/).pop() || '?')
-        case 'classRef': return 'ref:' + stripCounter(t.to || '?')
+        case 'typeRef': return 'ref:' + (t.to || (t.key || '').split(/[|:]/).pop() || '?')
+        case 'classRef': return 'ref:' + (t.to || '?')
         case 'array': return 'array<' + canonTypeIR(t.of) + '>'
         case 'option': return 'option<' + canonTypeIR(t.of) + '>'
         case 'nullable': return 'null<' + canonTypeIR(t.of) + '>'
@@ -87,40 +88,75 @@ function canonTypeText(raw) {
         return w + '<' + canonTypeText(s) + '>'
     }
     if (SCALARS.has(s)) return s
-    // qualified or bare ref → counter-free leaf
+    // qualified or bare ref → leaf (drop the module qualifier so `CommonTypes.foo` aligns with the live
+    // IR's bare `foo`; the counter is NOT stripped — see the note by splitCounter).
     const leaf = s.replace(/<.*$/, '').split('.').pop()
-    if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(leaf)) return 'ref:' + stripCounter(leaf)
+    if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(leaf)) return 'ref:' + leaf
     return '?'
 }
 
 /** Parse a recovered `type <name> = …` body → `{ kind:'variant'|'record', members?|fields? }` or null.
- *  `body` is the full declaration text (head + RHS, possibly multi-line). */
+ *  `body` is the full declaration text (head + RHS, possibly multi-line). Real emit writes a flagged
+ *  field's marker as a `// …` comment AFTER the comma, one field per LINE, so records are parsed
+ *  line-by-line: capture each line's flag first, then strip the comment before splitting. */
 export function parseResBody(body) {
     const text = String(body || '')
     const eq = text.indexOf('=')
     if (eq < 0) return null
     const head = text.slice(0, eq)
-    let rhs = text.slice(eq + 1).trim()
+    const rhs = text.slice(eq + 1)
     const isVariantHead = /@unboxed|@tag\(/.test(head)
 
-    // record: `{ a?: T, b: U // ⚪ loose }`
-    if (rhs.startsWith('{') && !isVariantHead) {
-        const inner = rhs.replace(/^\{/, '').replace(/\}\s*$/, '')
-        if (/\.\.\./.test(inner)) {
-            // a `{ ...Spread }` bag: capture the spread so a bag never structurally equals a real record.
-            const spreads = (inner.match(/\.\.\.[A-Za-z_][\w.]*/g) || []).map((x) => x.replace(/^\.\.\./, '').split('.').pop())
-            const fields = splitTopLevel(inner.replace(/\.\.\.[A-Za-z_][\w.]*,?/g, '')).map(parseField).filter(Boolean)
-            return { kind: 'record', spread: spreads.sort().join('+'), fields }
-        }
-        const fields = splitTopLevel(inner).map(parseField).filter(Boolean)
-        return { kind: 'record', spread: '', fields }
+    // record: `{\n  a?: T,\n  b: string,  // ⚪ loose\n}` — take the balanced `{ … }`.
+    const brace = rhs.trimStart().startsWith('{')
+    if (brace && !isVariantHead) {
+        const inner = braceInner(rhs)
+        if (inner == null) return null
+        return { kind: 'record', ...parseRecordFields(inner) }
     }
-    // variant: `Str(string) | Num(float)` or `| @as(0) Left | @as(1) Right`
-    if (isVariantHead || /(^|\s)\|/.test(rhs) || /\)\s*\|/.test(rhs)) {
-        const arms = splitTopLevel(rhs.replace(/^\|/, ''), '|').map(parseArm).filter(Boolean)
+    // variant: `Str(string) | Num(float)` or `| @as(0) Left | @as("json") Json` — strip line comments
+    // (per line) BEFORE splitting on `|`, so a trailing `// …` never glues onto the next arm.
+    const code = stripLineComments(rhs).trim().replace(/^\|/, '')
+    if (isVariantHead || /(^|\n|\s)\|/.test('\n' + code) || /\)\s*(\||$)/.test(code) || /\bStr?\(|@as\(/.test(code)) {
+        const arms = splitTopLevel(code, '|').map(parseArm).filter(Boolean)
         if (arms.length) return { kind: 'variant', members: arms }
     }
     return null
+}
+
+/** Remove `//` line comments (per line) and `/* … *​/` block comments. */
+const stripLineComments = (s) => String(s).split('\n').map((l) => l.replace(/\/\/.*$/, '')).join('\n').replace(/\/\*[\s\S]*?\*\//g, '')
+
+/** Content of the first balanced `{ … }` in `s`, or null if there's no `{`. */
+function braceInner(s) {
+    const i = s.indexOf('{')
+    if (i < 0) return null
+    let depth = 0
+    for (let j = i; j < s.length; j++) {
+        if (s[j] === '{') depth++
+        else if (s[j] === '}' && --depth === 0) return s.slice(i + 1, j)
+    }
+    return s.slice(i + 1)
+}
+
+/** Parse a record's inner text into `{ fields, spread }`, line-aware: each line's `// …` comment sets that
+ *  line's fields' `flagged` bit, then is stripped; a `...Spread` line contributes to `spread` (so a
+ *  `{ ...bag }` can never structurally equal a real field record). */
+function parseRecordFields(inner) {
+    const fields = [], spreads = []
+    for (const rawLine of String(inner).split('\n')) {
+        const flagged = FLAG_RE.test(rawLine)
+        const codeLine = rawLine.replace(/\/\/.*$/, '').replace(/\/\*[\s\S]*?\*\//g, '')
+        for (const seg of splitTopLevel(codeLine)) {
+            const t = seg.trim().replace(/,\s*$/, '')
+            if (!t) continue
+            const sp = /^\.\.\.\s*([A-Za-z_][\w.]*)/.exec(t)
+            if (sp) { spreads.push(sp[1].split('.').pop()); continue }
+            const f = parseField(t, flagged)
+            if (f) fields.push(f)
+        }
+    }
+    return { fields, spread: spreads.sort().join('+') }
 }
 
 /** Split on a top-level separator (`,` for records, `|` for variants), respecting `<…>`/`(…)`/`{…}`. */
@@ -136,24 +172,26 @@ function splitTopLevel(s, sep = ',') {
     return out
 }
 
-function parseField(raw) {
-    const s = String(raw).trim()
+/** Parse one record field segment (comment already stripped; `flagged` passed in). */
+function parseField(raw, flagged) {
+    const s = String(raw).trim().replace(/,\s*$/, '')
     if (!s) return null
-    const flagged = FLAG_RE.test(s)
-    const noComment = s.replace(/\/\/.*$/, '').replace(/\/\*[\s\S]*?\*\//g, '').trim().replace(/,$/, '')
-    const m = /^(?:@as\([^)]*\)\s*)?([A-Za-z_][\w]*)(\?)?\s*:\s*(.+)$/.exec(noComment)
+    const m = /^(?:@as\([^)]*\)\s*)?([A-Za-z_][\w]*)(\?)?\s*:\s*(.+)$/.exec(s)
     if (!m) return null
-    return { name: m[1], optional: !!m[2], type: canonTypeText(m[3]), flagged }
+    return { name: m[1], optional: !!m[2], type: canonTypeText(m[3]), flagged: !!flagged }
 }
 
 function parseArm(raw) {
-    const s = String(raw).trim().replace(/\/\/.*$/, '').trim()
+    const s = String(raw).replace(/\/\/.*$/, '').trim()
     if (!s) return null
     const asM = /@as\(([^)]*)\)/.exec(s)
+    // Normalise the discriminant: strip surrounding quotes so a string `@as("json")` (disk) equals the
+    // live IR's unquoted `json`; numeric `@as(0)` is unaffected. (Constructor identifiers are ignored.)
+    const asVal = asM ? asM[1].trim().replace(/^["']|["']$/g, '') : undefined
     const rest = s.replace(/@as\([^)]*\)/, '').trim()
     const ctorM = /^([A-Za-z_][\w]*)\s*(?:\((.+)\))?$/.exec(rest)
     if (!ctorM) return null
-    return { as: asM ? asM[1].trim() : undefined, ctor: ctorM[1], type: ctorM[2] ? canonTypeText(ctorM[2]) : undefined }
+    return { as: asVal, ctor: ctorM[1], type: ctorM[2] ? canonTypeText(ctorM[2]) : undefined }
 }
 
 // ---- the predicate ---------------------------------------------------------------------------------
