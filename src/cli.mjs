@@ -938,8 +938,10 @@ async function main() {
                 : {}),
             // #222: clean names reclaimed from a structurally-identical tombstone, and refusals (a genuinely
             // different type that kept its suffix — the #190 guarantee earning its keep). The audit trail a
-            // consumer diffs to understand exactly which public names changed and why. Omitted when empty.
-            ...(nameReclaims.reclaimed.length || nameReclaims.refused.length ? { nameReclaims } : {}),
+            // consumer diffs to understand exactly which public names changed and why. ALWAYS emitted (even
+            // empty) so a run is never indistinguishable from "feature absent" — a `reclaimed:[] refused:[]`
+            // says "considered nothing", not "the feature didn't run".
+            nameReclaims,
         }
         writeFileSync(opts.jsonSummary, JSON.stringify(summary, null, 2) + '\n')
         console.error(`[bindgen] 📊 json summary written to ${opts.jsonSummary}`)

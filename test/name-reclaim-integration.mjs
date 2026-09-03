@@ -114,36 +114,61 @@ try {
     assert(/@unboxed type stringOrNumber = /.test(commonRes(C)) && !/stringOrNumber2/.test(commonRes(C)),
         'the new identity takes the clean base directly (no stringOrNumber2 minted)')
 
-    // ---- RELOCATION (the real blend case): tombstone in a FORMER module, live in the current one -----
-    // The suffix was minted when the type landed in a NEW home while its old home's tombstone kept the clean
-    // name — so the tombstone's module ≠ the live entry's current module. The trigger must fire on the home
-    // LINEAGE (current ∪ formerModules), not same-module. (blend: 8/8 had moved modules → 0/8 fired before.)
-    const R = join(root, 'relocated'); scaffold(R)
+    // ---- THE REAL BLEND SHAPE: a DISTINCT tombstone identity in a DIFFERENT module, same scope, no
+    //      formerModules (nothing moved — the tombstone is a different source anchor that minted the same
+    //      leaf name and then retired). The trigger is scope-wide by name, NOT same-module or home-lineage
+    //      (both fired 0/8 on blend because these are distinct identities, formerModules null). --------------
+    const R = join(root, 'distinct-diff-module'); scaffold(R)
     gen(R)                                                   // clean `stringOrNumber` body on disk (CommonTypes)
     {
         const p = join(R, 'out', '.bindgen-manifest.json'); const m = JSON.parse(readFileSync(p, 'utf-8'))
-        for (const r of Object.values(m.publicTypes)) if (r.name === 'stringOrNumber') { r.name = 'stringOrNumber2'; r.formerModules = ['LegacyTypes'] }
-        m.publicTypes['scope:demo|old.d.ts|named:DEAD_RELOC'] = { kind: 'unboxed', module: 'LegacyTypes', name: 'stringOrNumber', aliases: [], active: false }
-        writeFileSync(p, JSON.stringify(m, null, 2) + '\n')  // tombstone lives in a FORMER home, not the current one
+        for (const r of Object.values(m.publicTypes)) if (r.name === 'stringOrNumber') r.name = 'stringOrNumber2' // no formerModules — nothing moved
+        m.publicTypes['scope:demo|old.d.ts|path:Other.thing|members[2]'] = { kind: 'unboxed', module: 'ChartsSharedTypes', name: 'stringOrNumber', aliases: [], active: false }
+        writeFileSync(p, JSON.stringify(m, null, 2) + '\n')  // a DIFFERENT identity, DIFFERENT module, same scope, no lineage link
     }
     const errR = gen(R, ['--json-summary', join(R, 'out', 'sum.json')])
-    assert(/reclaimed 1 clean type name/.test(errR), 'a tombstone in a FORMER module (not the current one) still triggers the reclaim (the real relocation case)')
+    assert(/reclaimed 1 clean type name/.test(errR), 'a distinct tombstone identity in a DIFFERENT module (same scope, no lineage link) triggers the reclaim (the real blend shape)')
     assert(/@unboxed type stringOrNumber = /.test(commonRes(R)) && /type stringOrNumber2 = stringOrNumber\b/.test(commonRes(R)),
-        'relocation: clean name reclaimed + suffixed alias kept')
+        'real blend shape: clean name reclaimed + suffixed alias kept')
+    compileOut(R, 'real blend shape reclaim')
+    const snapR = readFileSync(join(R, 'out', '.bindgen-manifest.json'), 'utf-8')
+    const errR2 = gen(R)
+    assert(!/reclaimed \d+ clean type name/.test(errR2) && readFileSync(join(R, 'out', '.bindgen-manifest.json'), 'utf-8') === snapR,
+        'the cross-module reclaim is idempotent — a second run neither re-fires nor churns')
 
-    // ---- lineage-guard NEGATIVE: a same-leaf tombstone in an UNRELATED module is NOT raided -----------
-    const U = join(root, 'unrelated'); scaffold(U)
-    gen(U)
+    // ---- NEGATIVE 1: a CROSS-SCOPE tombstone is NOT reclaimed (a different package's name never collides) -
+    const X = join(root, 'crossscope'); scaffold(X)
+    gen(X)
     {
-        const p = join(U, 'out', '.bindgen-manifest.json'); const m = JSON.parse(readFileSync(p, 'utf-8'))
-        for (const r of Object.values(m.publicTypes)) if (r.name === 'stringOrNumber') r.name = 'stringOrNumber2' // NO formerModules
-        m.publicTypes['scope:demo|x.d.ts|named:UNRELATED'] = { kind: 'unboxed', module: 'UnrelatedTypes', name: 'stringOrNumber', aliases: [], active: false }
-        writeFileSync(p, JSON.stringify(m, null, 2) + '\n')  // tombstone in a module the live entry never lived in
+        const p = join(X, 'out', '.bindgen-manifest.json'); const m = JSON.parse(readFileSync(p, 'utf-8'))
+        for (const r of Object.values(m.publicTypes)) if (r.name === 'stringOrNumber') r.name = 'stringOrNumber2'
+        m.publicTypes['scope:OTHERPKG|z.d.ts|named:FOREIGN'] = { kind: 'unboxed', module: 'CommonTypes', name: 'stringOrNumber', aliases: [], active: false }
+        writeFileSync(p, JSON.stringify(m, null, 2) + '\n')  // tombstone in a DIFFERENT scope
     }
-    const errU = gen(U, ['--json-summary', join(U, 'out', 'sum.json')])
-    assert(!/reclaimed \d+ clean type name/.test(errU), 'a same-leaf tombstone in an UNRELATED module (not in the home lineage) is NOT reclaimed')
-    assert(/type stringOrNumber2 =/.test(commonRes(U)) && !/type stringOrNumber = stringOrNumber2/.test(commonRes(U)),
-        'lineage-guard negative: the suffix is kept, no alias')
+    const errX = gen(X, ['--json-summary', join(X, 'out', 'sum.json')])
+    assert(!/reclaimed \d+ clean type name/.test(errX), 'a tombstone in a DIFFERENT scope is NOT reclaimed (reservation is per-scope)')
+
+    // ---- NEGATIVE 2 (the crucial safety guard): a base a LIVE identity legitimately holds is NEVER stolen -
+    const L = join(root, 'liveheld'); scaffold(L)
+    gen(L)
+    {
+        const p = join(L, 'out', '.bindgen-manifest.json'); const m = JSON.parse(readFileSync(p, 'utf-8'))
+        for (const r of Object.values(m.publicTypes)) if (r.name === 'stringOrNumber') r.name = 'stringOrNumber2'
+        // BOTH an inactive tombstone AND a LIVE (active) row hold `stringOrNumber` — the live one owns it,
+        // and it sits in a DIFFERENT module to prove the guard is scope-wide, not module-scoped.
+        m.publicTypes['scope:demo|q.d.ts|named:LIVE_OWNER'] = { kind: 'unboxed', module: 'ChartsTypes', name: 'stringOrNumber', aliases: [], active: true }
+        m.publicTypes['scope:demo|q.d.ts|named:DEAD_TOO'] = { kind: 'unboxed', module: 'CommonTypes', name: 'stringOrNumber', aliases: [], active: false }
+        writeFileSync(p, JSON.stringify(m, null, 2) + '\n')
+    }
+    const errL = gen(L, ['--json-summary', join(L, 'out', 'sum.json')])
+    assert(!/reclaimed \d+ clean type name/.test(errL), 'a clean name a LIVE identity holds (even in another module) is NEVER reclaimed (the suffix is correct)')
+
+    // ---- visibility: --json-summary always carries nameReclaims, even when nothing was considered ---------
+    const V = join(root, 'visible'); scaffold(V)
+    gen(V, ['--json-summary', join(V, 'out', 'sum.json')])   // cold, no tombstone → nothing considered
+    const vs = JSON.parse(readFileSync(join(V, 'out', 'sum.json'), 'utf-8'))
+    assert(vs.nameReclaims && Array.isArray(vs.nameReclaims.reclaimed) && Array.isArray(vs.nameReclaims.refused) && vs.nameReclaims.reclaimed.length === 0,
+        'nameReclaims is ALWAYS present (even empty) so a run is never indistinguishable from "feature absent"')
 
     console.log('\n✅ #222 tombstone-name-reclaim invariants hold')
 } finally {

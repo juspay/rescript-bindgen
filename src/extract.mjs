@@ -620,29 +620,30 @@ function finalizePublicIds(shared, prior = {}) {
  * visibility layer can explain the retained suffix — an upstream-deleted, genuinely-different type) and
  * returns null. A counter name with no such tombstone base is an ordinary #96 disambiguation → null, silent.
  */
-function findTombstone(base, modules, priorRows) {
+/**
+ * Find the inactive tombstone that reserves `base` in this scope — the reservation that minted the suffix.
+ *
+ * LOCALITY IS SCOPE-WIDE, NOT PER-MODULE. On a real package the tombstone and the live counterpart are
+ * frequently DISTINCT identities (different source anchors) that merely minted the same leaf name, one now
+ * retired — so there is no recorded module relationship (`formerModules` is null; nothing moved). Blend: all
+ * 8 pairs are distinct identities, so both a same-module gate (0/8) and a home-lineage gate (0/8) refuse
+ * every one. Name reservation is itself scope-wide by leaf name (see `reserved`), so the tombstone that
+ * caused the suffix is any inactive scope row with this name; the STRUCTURAL PROOF (name-reclaim.mjs) carries
+ * the soundness. This is safe because a tombstone is never emitted — reclaiming only heals a DANGLING name
+ * to a structurally-identical live type; it can never re-point a working annotation.
+ *
+ * CRUCIAL GUARD: if ANY LIVE (active) scope row holds `base`, return null — that name is legitimately owned
+ * by a live identity and must never be stolen (the suffix is correct). Only a name held *exclusively* by
+ * tombstone(s) is reclaimable.
+ */
+function findTombstone(base, scopePrefix, priorRows) {
+    let tomb = null
     for (const [id, row] of Object.entries(priorRows)) {
-        if (row && typeof row === 'object' && row.active === false && row.name === base && modules.has(row.module)) return { id, row }
+        if (!row || typeof row !== 'object' || !id.startsWith(scopePrefix) || row.name !== base) continue
+        if (row.active !== false) return null // base is a LIVE identity's name — never reclaim it
+        if (!tomb) tomb = { id, row }
     }
-    return null
-}
-/** The set of modules this identity's public name has lived in: its current home + every module and
- *  `formerModules` recorded for its ids in the prior manifest. The name collision that minted the suffix is
- *  module-INDEPENDENT (reservation is scope-wide by name), and on an SCC-churning package the matching
- *  tombstone sits in the type's FORMER home (a #221 relocation), NOT its current one — so gating the reclaim
- *  on "same module" never fires for a relocated type (0/8 on real blend). The home lineage captures exactly
- *  "this identity's name followed it across a relocation" while still excluding an unrelated same-leaf
- *  tombstone in an unrelated module. The structural proof carries the actual soundness. */
-function homeLineage(e, currentModule, priorRows) {
-    const lineage = new Set([currentModule])
-    for (const id of e.publicIds || []) {
-        const r = priorRows[id]
-        if (r && typeof r === 'object') {
-            if (typeof r.module === 'string') lineage.add(r.module)
-            for (const fm of r.formerModules || []) if (typeof fm === 'string') lineage.add(fm)
-        }
-    }
-    return lineage
+    return tomb
 }
 /** Prove (or refuse) that live entry `e` is the same type as the `base` tombstone `{ id, row }`, and
  *  record the outcome. `from` is the name `e` would otherwise carry (`<base>N` for a locked counter, or
@@ -662,13 +663,12 @@ function proveReclaim(e, base, from, tomb, shared) {
     }
     return null
 }
-/** Locked path: `e` is frozen to a counter name `<base>N` whose `<base>` a tombstone holds — anywhere in
- *  this identity's home lineage (its current module OR a former one — a relocated type carries the suffix
- *  across the move, so the tombstone is usually in the FORMER home). */
-function tryReclaimBase(e, chosen, currentModule, priorRows, shared) {
+/** Locked path: `e` is frozen to a counter name `<base>N` whose clean `<base>` is held (only) by a tombstone
+ *  in the same scope. */
+function tryReclaimBase(e, chosen, scopePrefix, priorRows, shared) {
     const sc = splitCounter(chosen)
     if (!sc) return null
-    const tomb = findTombstone(sc.base, homeLineage(e, currentModule, priorRows), priorRows)
+    const tomb = findTombstone(sc.base, scopePrefix, priorRows)
     return tomb ? proveReclaim(e, sc.base, chosen, tomb, shared) : null
 }
 
@@ -710,7 +710,7 @@ function applyPublicNameRegistry(shared, prior = {}) {
             // is squatted by a STRUCTURALLY-IDENTICAL inactive tombstone reclaims the base — the
             // reservation protected nothing (same runtime shape) and only broke the clean path for every
             // consumer. The old counter name becomes a transparent alias below (row.name !== chosen).
-            const reclaim = tryReclaimBase(e, chosen, locks[0].row.module || e.home, priorRows, shared)
+            const reclaim = tryReclaimBase(e, chosen, scopePrefix, priorRows, shared)
             if (reclaim) { chosen = reclaim.base; e._reclaim = reclaim }
             // A frozen leaf name carries fixed casing, but ReScript ties casing to REPRESENTATION: an
             // opaque entry is a `module Name` (upper-case), every other kind is a lowercase `type name`.
@@ -816,7 +816,7 @@ function applyPublicNameRegistry(shared, prior = {}) {
         // name held by a DEAD identity: `findTombstone` requires `active:false`, and `!claimed.has(base)`
         // means no live entry wants it.
         if (reserved.has(base) && !ownsReserved(e, base) && !claimed.has(base)) {
-            const tomb = findTombstone(base, homeLineage(e, e.home, priorRows), priorRows)
+            const tomb = findTombstone(base, scopePrefix, priorRows)
             const rec = tomb && proveReclaim(e, base, base, tomb, shared)
             if (rec) { e._reclaim = rec; claim(base, e, 'reclaimed name'); continue }
         }

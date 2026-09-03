@@ -14,7 +14,7 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   of the clean name permanently: in blend-rescript, `CommonTypes.stringOrNumber` (the most-used union in the
   output) was pushed to `stringOrNumber2` — 1,239 references wearing a meaningless suffix that could never
   heal. A live entry whose locked name is a counter suffix `<base>N` now RECLAIMS `<base>` when `<base>` is
-  held by a same-module inactive tombstone **and** the tombstone's shape (recovered from the prior `.res` on
+  held exclusively by an inactive tombstone in the same scope (no live identity holds it) **and** the tombstone's shape (recovered from the prior `.res` on
   disk — tombstones aren't emitted, and the signature is usually absent) is a *proven* structural match. The
   match tolerates exactly the two asymmetries real upgrades produce — deliberate constructor renames
   (compare `@as` payloads, not constructor identifiers) and the narrow `string`+degrade-flag → structured
