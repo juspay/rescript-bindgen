@@ -183,9 +183,25 @@ suffix normalisation), unit-tested against all 8 blend shapes in `test/name-recl
    from, tombstoneId}], refused:[{name, base, reason}] }`, plus a stderr note per reclaim/refusal. Same
    rationale as #221's `relocations[]`: roshan reads "N clean, M stays suffixed because its tombstone is a
    genuinely different (upstream-deleted) type" as OUTPUT, not a reverse-engineered build failure.
-6. **Signature going forward** — deferred as a follow-up: the disk-body proof already covers the
-   signatureless majority (41/57), and the fast-accept path uses a recorded `signature` when one is
-   present, so recording signatures for every reserved name is an optimisation, not a correctness need.
+6. **Signature-at-retirement — the follow-up that closes a KNOWN LIMITATION, not a mere optimisation.**
+   The disk-body proof has a **one-generation evidence window**, and that window is exactly how blend ended
+   up with 8 permanently-stuck names:
+   - gen N: an identity retires → a signatureless tombstone is minted → the live newcomer takes `<base>N`.
+     The prior output on disk *still* contains the clean name as a live decl, so a regen **right now** can
+     prove the match and reclaim.
+   - gen N+1: that output has been regenerated and committed; the clean name is emitted nowhere, so the
+     proof body is gone from disk — it survives only in git history.
+
+   So a disk-proof reclaim is possible only on the generation *immediately following* the retirement. Miss
+   it once and the name is stuck permanently (no path back but a hand-edit or a regen against an
+   archaeological tree — literally blend's situation: the 8 clean names live only at `fcea59a`).
+
+   Recording a `signature` on a row **when it is retired** removes the window: the proof travels in the
+   manifest, durable across regenerations, so a match can be proven at any later generation. This turns #222
+   from "works if you regenerate at the right moment" into "works". It lands as its **own next PR** (not
+   "someday"): it is manifest-wide, and it cannot retroactively help the 41 already-signatureless tombstones.
+   When it lands: a signatured tombstone and a pre-existing signatureless one must **coexist indefinitely** —
+   the disk path stays as the fallback for the latter (this is a permanent dual-source, not a migration).
 
 ## §6 Tests / acceptance matrix (reproduce the blend session's 6 targets verbatim)
 
