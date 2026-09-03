@@ -27,7 +27,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   a shared type whose leaf is **unique** there and now homes elsewhere gets its former-home re-export
   automatically — then recorded into the manifest, so it is identity-based from the next run on. Scoped to
   `*Types.res` (never per-component `props`/modules) and gated on leaf uniqueness, so it cannot
-  mis-attribute. The recovery is surfaced in the logs. Cold runs with no prior output are unaffected.
+  mis-attribute. The recovery is surfaced in the logs (capped at 20 lines) and, in full, as a
+  `relocations[]` audit trail in `--json-summary`. Cold runs with no prior output are unaffected.
 
 ## [1.4.0-beta.3] — 2026-09-02
 

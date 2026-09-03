@@ -194,9 +194,18 @@ try {
         'the former home re-export is emitted under --clean (scan ran BEFORE the clean deleted LeftTypes.res)')
     assert(/recovered \d+ former home/.test(boot.stderr), 'the disk-recovered relocation is surfaced in the logs')
     compileOut('legacy bootstrap under --clean (#221)')
-    // Idempotent: the manifest now carries publicTypes+formerModules, so a second --clean run is byte-identical.
+    // 9. #221 NEGATIVE — a RECORDED home is authoritative; the disk scan must NOT re-fire. The bootstrap
+    //    (step 8) just wrote publicTypes+formerModules into the manifest, so the SAME relocation is now
+    //    known from the registry. A second run must recover it from the manifest — NOT the disk — so it
+    //    emits NO `recovered … from prior output` note, and is byte-identical. This pins the `priorHomes
+    //    .size === 0` gate: a refactor moving that check after `priorHomes.delete(newModule)` (which empties
+    //    the set for an already-recorded home) would silently turn every warm regen back into a disk
+    //    re-scan/shim-emitter — this contrast (fires on the legacy manifest, SILENT on the recorded one)
+    //    catches it. (blend-rescript scenario B; teammate-requested.)
     const snap2 = readFileSync(manifestPath, 'utf-8')
-    run({ cycle: true, clean: true })
+    const warm = run({ cycle: true, clean: true })
+    assert(!/recovered \d+ former home/.test(warm.stderr),
+        'a manifest that already records the home does NOT re-trigger the disk-scan bootstrap (#221 negative)')
     assert(readFileSync(manifestPath, 'utf-8') === snap2, 'idempotent after bootstrap — no churn on the next run (#221)')
 
     console.log('\n✅ cycle-forced module-move compatibility invariants hold')

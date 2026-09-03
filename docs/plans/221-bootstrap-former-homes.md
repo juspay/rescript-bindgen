@@ -81,9 +81,12 @@ placed after `--clean` silently finds nothing and looks like a no-op fix. **A re
    an entry with an EMPTY `priorHomes`, add the unique legacy module for its leaf name(s) when it differs
    from `newModule`. (Never overrides a manifest-derived home; only fills the gap.)
 3. **Record** — already flows via `e._formerModules` into the written manifest.
-4. **`_REPORT.md`** — a "relocated without a prior registry (former home inferred from disk)" section
-   listing each `<oldModule>.<leaf> → <newModule>` so release notes carry a migration table. Also emit
-   the same list to stderr as a note.
+4. **Surface the recovery.** Two channels (the `_REPORT.md` section from the first draft was dropped in
+   favour of the machine-readable one, which is where a consumer actually diffs a suspect shim):
+   - **stderr note** — `recovered N former home(s) from prior output …` with each `<oldModule>.<leaf> →
+     <newModule>`, **capped at 20** lines (`… and N more`) to keep a 1,396-row blend regen legible.
+   - **`--json-summary` `relocations[]`** — the FULL, uncapped list (`{name, from, to}`, sorted), so
+     CI/audit tooling has the complete migration table the capped stderr can't carry. Omitted when empty.
 
 ## §5 Tests
 
@@ -104,6 +107,16 @@ Extend `test/module-move-compat.mjs` (it drives the real CLI across generations 
 - **`--clean` ordering** (§3) — the whole fix hinges on scanning before deletion. Pinned by a `--clean`
   test.
 - **Leaf ambiguity** — mitigated by the uniqueness gate; a duplicated leaf is skipped, never mis-shimmed.
+- **Delete + same-leaf re-add across one boundary (bounded, not closed)** — the uniqueness gate matches
+  on NAME, not identity. If shared type A named `foo` in module X is deleted in the same version bump that
+  an UNRELATED shared type B named `foo` is added in module Y, the scan sees `foo` uniquely at X (B didn't
+  exist in the prior output) and mints `X.foo = Y.foo` onto B's identity. Contained by three facts: it
+  requires a delete AND a same-leaf re-add of *shared* types across ONE bump; it surfaces as a consumer
+  COMPILE error (B's shape ≠ the old A-shape the consumer annotated), not silent unsoundness; and the
+  `--json-summary` `relocations[]` audit trail lets a consumer diff the offending pair (this is exactly how
+  blend-rescript exhaustively cleared all 1,396 real relocations — 0 occurrences). The only sound closure
+  is shape-gating (parse the former-home declaration body and require a runtime-signature match); deferred
+  as machinery disproportionate to a case with zero real occurrences, to be revisited if it's ever observed.
 - **Hand-written files in a manifest-less cold scan** — scanning `<out>/*.res` could read a hand-written
   file; the uniqueness gate + name-based match keep this from producing a wrong shim (worst case: a
   spurious former-home candidate that fails uniqueness → skipped). Prefer the manifest `files` list when

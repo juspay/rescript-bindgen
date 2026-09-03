@@ -560,6 +560,12 @@ async function main() {
             // disk (scanned above, before --clean): if this shared type's public leaf is UNIQUE across the
             // prior `*Types` output and was declared in a DIFFERENT module than it now homes to, that
             // module is a former home. Recorded into this run's manifest below → identity-based next run.
+            // Residual edge (bounded, not closed): the uniqueness gate matches on NAME, not identity — a
+            // shared type deleted from module X in the same boundary that an UNRELATED same-leaf shared type
+            // is added in module Y would mint a shim `X.leaf = Y.leaf` onto the wrong identity. It needs a
+            // delete + same-leaf re-add across ONE version bump (zero occurrences across blend's 1,396 real
+            // relocations), and surfaces as a consumer COMPILE error (shape mismatch), not silent unsoundness;
+            // shape-gating it (parsing the former-home body) is deferred until it's observed. See docs §6.
             if (priorHomes.size === 0 && legacyHomeIndex.size) {
                 const found = new Set()
                 for (const nm of [e.name, ...(e.compatNames || [])]) {
@@ -884,6 +890,12 @@ async function main() {
             functions: functions.length,
             classes: classes.length,
             files: written.size,
+            // #221: the FULL disk-recovered former-home list (the stderr note caps at 20). This is the
+            // audit trail for a cross-version regen: a consumer who suspects a shim points at the wrong
+            // identity can diff `<from>.<name> → <to>` here. Omitted when nothing was recovered.
+            ...(bootstrappedRelocations.length
+                ? { relocations: [...bootstrappedRelocations].sort((a, b) => a.from.localeCompare(b.from) || a.name.localeCompare(b.name)) }
+                : {}),
         }
         writeFileSync(opts.jsonSummary, JSON.stringify(summary, null, 2) + '\n')
         console.error(`[bindgen] 📊 json summary written to ${opts.jsonSummary}`)
