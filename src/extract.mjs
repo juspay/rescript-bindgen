@@ -615,16 +615,34 @@ function finalizePublicIds(shared, prior = {}) {
  * `<base>`? Only when `<base>` is held by an INACTIVE tombstone in the SAME module AND that tombstone's
  * shape is a PROVEN structural match for `e`. A tombstone is never emitted, so its proof body is recovered
  * from the prior `.res` on disk (a generation where the identity was still live) — see name-reclaim.mjs.
- * Returns `{ base, from, tombstoneId }` on a proven reclaim. When a same-module tombstone base exists but
- * the shapes are NOT proven equal, records the decision on `e._reclaimRefused` (so the visibility layer can
- * explain the retained suffix — an upstream-deleted, genuinely-different type) and returns null. A counter
- * name with no tombstone base is an ordinary #96 disambiguation, not a reclaim scenario → null, silent.
+ * Returns `{ base, from, tombstoneId }` on a proven reclaim. When a tombstone base exists in the identity's
+ * home lineage but the shapes are NOT proven equal, records the decision on `e._reclaimRefused` (so the
+ * visibility layer can explain the retained suffix — an upstream-deleted, genuinely-different type) and
+ * returns null. A counter name with no such tombstone base is an ordinary #96 disambiguation → null, silent.
  */
-function findTombstone(base, module, priorRows) {
+function findTombstone(base, modules, priorRows) {
     for (const [id, row] of Object.entries(priorRows)) {
-        if (row && typeof row === 'object' && row.active === false && row.name === base && row.module === module) return { id, row }
+        if (row && typeof row === 'object' && row.active === false && row.name === base && modules.has(row.module)) return { id, row }
     }
     return null
+}
+/** The set of modules this identity's public name has lived in: its current home + every module and
+ *  `formerModules` recorded for its ids in the prior manifest. The name collision that minted the suffix is
+ *  module-INDEPENDENT (reservation is scope-wide by name), and on an SCC-churning package the matching
+ *  tombstone sits in the type's FORMER home (a #221 relocation), NOT its current one — so gating the reclaim
+ *  on "same module" never fires for a relocated type (0/8 on real blend). The home lineage captures exactly
+ *  "this identity's name followed it across a relocation" while still excluding an unrelated same-leaf
+ *  tombstone in an unrelated module. The structural proof carries the actual soundness. */
+function homeLineage(e, currentModule, priorRows) {
+    const lineage = new Set([currentModule])
+    for (const id of e.publicIds || []) {
+        const r = priorRows[id]
+        if (r && typeof r === 'object') {
+            if (typeof r.module === 'string') lineage.add(r.module)
+            for (const fm of r.formerModules || []) if (typeof fm === 'string') lineage.add(fm)
+        }
+    }
+    return lineage
 }
 /** Prove (or refuse) that live entry `e` is the same type as the `base` tombstone `{ id, row }`, and
  *  record the outcome. `from` is the name `e` would otherwise carry (`<base>N` for a locked counter, or
@@ -644,11 +662,13 @@ function proveReclaim(e, base, from, tomb, shared) {
     }
     return null
 }
-/** Locked path: `e` is frozen to a counter name `<base>N` whose `<base>` a tombstone holds. */
-function tryReclaimBase(e, chosen, module, priorRows, shared) {
+/** Locked path: `e` is frozen to a counter name `<base>N` whose `<base>` a tombstone holds — anywhere in
+ *  this identity's home lineage (its current module OR a former one — a relocated type carries the suffix
+ *  across the move, so the tombstone is usually in the FORMER home). */
+function tryReclaimBase(e, chosen, currentModule, priorRows, shared) {
     const sc = splitCounter(chosen)
     if (!sc) return null
-    const tomb = findTombstone(sc.base, module, priorRows)
+    const tomb = findTombstone(sc.base, homeLineage(e, currentModule, priorRows), priorRows)
     return tomb ? proveReclaim(e, sc.base, chosen, tomb, shared) : null
 }
 
@@ -796,7 +816,7 @@ function applyPublicNameRegistry(shared, prior = {}) {
         // name held by a DEAD identity: `findTombstone` requires `active:false`, and `!claimed.has(base)`
         // means no live entry wants it.
         if (reserved.has(base) && !ownsReserved(e, base) && !claimed.has(base)) {
-            const tomb = findTombstone(base, e.home, priorRows)
+            const tomb = findTombstone(base, homeLineage(e, e.home, priorRows), priorRows)
             const rec = tomb && proveReclaim(e, base, base, tomb, shared)
             if (rec) { e._reclaim = rec; claim(base, e, 'reclaimed name'); continue }
         }

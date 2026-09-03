@@ -132,11 +132,28 @@ the opposite: it must fire WARM, with the committed manifest present**, because 
 committed manifest. Reusing `scanPriorHomes` must NOT drag along its gate. #222's trigger is independent:
 
 > a live entry whose assigned public name is `<base>N` (numeric counter) AND whose `<base>` is held by an
-> inactive tombstone in the same module — evaluated whether or not a manifest is present.
+> inactive tombstone anywhere in this identity's **home lineage** — its current module OR any module/
+> `formerModules` its ids recorded in the prior manifest — evaluated whether or not a manifest is present.
 
 The disk scan supplies the tombstone body as evidence; the *trigger* is the counter-name × live-tombstone
-collision, not the absence of a manifest home. Its own predicate, not a branch of #221's gate. The
-warm-on-committed acceptance case (§6.6) pins that it fires with a manifest present.
+collision, not the absence of a manifest home. Its own predicate, not a branch of #221's gate.
+
+**NOT same-module (make-or-break — from blend validation).** The name collision that mints the suffix is
+scope-wide by NAME, module-independent; and on an SCC-churning package the matching tombstone sits in the
+type's FORMER home, because the suffix was minted when the type RELOCATED into a new home while its old
+home's tombstone kept the clean name. All 8 real blend cases had moved modules (`ChartsSharedTypes →
+ChartsTypes`, `ContextSharedTypes → EditorTypes`, …), so a `same-module` gate fired 0/8. The home-lineage
+gate (current ∪ `formerModules`, which #221 already records) captures exactly "this identity's name followed
+it across a relocation" while still excluding an unrelated same-leaf tombstone in an unrelated module; the
+structural proof carries the real soundness. Pinned by a relocation test (tombstone in a former module → fires)
+AND a negative (tombstone in an unrelated module → refused).
+
+**Evidence availability.** The proof body must be recoverable — i.e. the run must scan a tree where the
+clean `<base>` name was still emitted (before it became a tombstone). For blend's 8 existing signatureless
+tombstones, the clean names are absent from the current tree, so a one-time regen must point the scan at an
+older output (where they were live). Recording a `signature` on a row when it is retired would make this
+self-sufficient going forward — a deferred follow-up (§5.6); it cannot retroactively help already-
+signatureless tombstones.
 
 ## §5 Implementation (src/*.mjs) — AS BUILT
 
