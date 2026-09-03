@@ -611,16 +611,6 @@ function finalizePublicIds(shared, prior = {}) {
 }
 
 /**
- * #222 — may a live entry `e`, whose LOCKED public name is a counter suffix `<base>N`, RECLAIM the clean
- * `<base>`? Only when `<base>` is held by an INACTIVE tombstone in the SAME module AND that tombstone's
- * shape is a PROVEN structural match for `e`. A tombstone is never emitted, so its proof body is recovered
- * from the prior `.res` on disk (a generation where the identity was still live) — see name-reclaim.mjs.
- * Returns `{ base, from, tombstoneId }` on a proven reclaim. When a tombstone base exists in the identity's
- * home lineage but the shapes are NOT proven equal, records the decision on `e._reclaimRefused` (so the
- * visibility layer can explain the retained suffix — an upstream-deleted, genuinely-different type) and
- * returns null. A counter name with no such tombstone base is an ordinary #96 disambiguation → null, silent.
- */
-/**
  * Find the inactive tombstone that reserves `base` in this scope — the reservation that minted the suffix.
  *
  * LOCALITY IS SCOPE-WIDE, NOT PER-MODULE. On a real package the tombstone and the live counterpart are

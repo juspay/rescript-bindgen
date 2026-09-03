@@ -269,3 +269,13 @@ Two adversarial-review rounds hardened the match to refuse-on-any-doubt. What re
 - **The improvement carve-out is record-only.** Variant arm payloads are compared by exact `@as`+type
   equality; a variant whose arm went degraded-placeholder → structured false-refuses (safe — keeps the
   suffix). None of the real cases need it (payload-free discriminants, or a refuse anyway).
+- **Proof body is keyed by leaf name, not `module.leaf`.** `scanPriorHomes` indexes bodies by leaf
+  (first-occurrence-wins across sorted `*Types.res`), so if two `*Types` modules declared the same leaf with
+  different shapes the proof could be taken from the other module — affecting only the *fire/refuse decision*,
+  never what `base` resolves to (a reclaimed `base` always denotes the LIVE entry's real emitted shape; the
+  tombstone body only gates yes/no). So the worst case is a spurious refuse (safe) or a fire against a
+  coincidentally-matching body (still type-safe). Bounded by the same leaf-uniqueness `normRef` leans on (0
+  collisions in blend's 3,684 `*Types` leaves). NOT tightened to per-`module.leaf` deliberately: a relocated
+  type's disk body can legitimately sit in a different module than the tombstone row's recorded one, so the
+  leaf-keyed finder is the more robust one for *firing* — per-module keying would trade a type-safe
+  imprecision for a real under-fire risk. (adversarial review V4)
