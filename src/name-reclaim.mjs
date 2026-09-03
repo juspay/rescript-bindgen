@@ -43,7 +43,15 @@ const SCALARS = new Set(['string', 'bool', 'unit', 'int', 'float'])
 /** Drop a shared-types module qualifier (`CommonTypes.foo` → `foo`, `WebTypes.file` → `file`) so the
  *  disk's qualified ref aligns with the live IR's bare local ref, but KEEP a non-`*Types` qualifier
  *  (`React.element`, `Js.x`) so an external-module leaf can never be conflated with a package-local leaf
- *  of the same name. Any `<…>` type arguments are dropped (compared by base). */
+ *  of the same name. Any `<…>` type arguments are dropped (compared by base).
+ *
+ *  ASSUMPTION (bounded, not a structural guarantee): dropping the `*Types` qualifier means two same-leaf
+ *  types in DIFFERENT shared modules (`CommonTypes.foo` vs `HighchartsSharedTypes.foo`) collapse to one
+ *  token. This leans on public leaf names being unique across the `*Types` modules — the SAME uniqueness
+ *  #221's disk-scan gate already assumes (blend: 3,684 distinct `*Types` leaves, 0 collisions). If a
+ *  package ever reuses one leaf across two shared modules, a reclaim would additionally need the full-shape
+ *  match + a same-module tombstone, so the residual is narrow — but it is a package property, unlike the
+ *  `vec2`/`vec3` distinctness which is structural. */
 function normRef(qualified) {
     const parts = String(qualified).replace(/<.*$/, '').split('.')
     const leaf = parts.pop()
@@ -283,6 +291,10 @@ export function reclaimable(old, live) {
         // An unmodelled arm payload (`?`) is unprovable → refuse the whole variant (same reason as the
         // record `?` block: two different `?` payloads must not silently equate).
         if ([...(old.members || []), ...(live.members || [])].some((a) => a.type === '?')) return false
+        // DELIBERATE: the improvement carve-out (`typeMatches`, old degraded-placeholder → new structured)
+        // is RECORD-ONLY. Arm payloads are compared by exact `@as`+type equality below, so a variant whose
+        // arm was a flagged `string` and is now structured FALSE-REFUSES. That's the safe direction (keep
+        // the suffix), and none of the real cases need it (payload-free discriminants, or a refuse anyway).
         const key = (arms) => arms.map((a) => (a.as !== undefined ? '@as(' + a.as + ')' : '') + (a.type || '')).sort()
         const ok = key(old.members || []), lk = key(live.members || [])
         if (ok.length !== lk.length) return false

@@ -220,4 +220,9 @@ Two adversarial-review rounds hardened the match to refuse-on-any-doubt. What re
   over-match bounded by the full-shape + same-module-tombstone gates; revisit if observed.
 - **Module qualifier**: a `*Types` shared qualifier is dropped (so `CommonTypes.foo` aligns with the live
   bare `foo`), a non-`*Types` one is kept (so external `React.element` can't be conflated with a local
-  `element`).
+  `element`). This collapses two same-leaf types in DIFFERENT shared modules onto one token — bounded by
+  public-leaf uniqueness across `*Types` (the same assumption #221's disk-scan gate leans on; blend has 0
+  collisions across 3,684 leaves). A package property, not a structural guarantee — noted at `normRef`.
+- **The improvement carve-out is record-only.** Variant arm payloads are compared by exact `@as`+type
+  equality; a variant whose arm went degraded-placeholder → structured false-refuses (safe — keeps the
+  suffix). None of the real cases need it (payload-free discriminants, or a refuse anyway).
