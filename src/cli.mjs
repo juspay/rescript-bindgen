@@ -190,15 +190,23 @@ function readBindgenManifest(path) {
  * relocation is a shared-type/SCC-merge phenomenon; per-component modules (their `props` leaf, plus
  * component-owned leaves) never relocate, and scanning them would add a spurious 235-way `props`
  * collision that the uniqueness gate then has to eat. Reads TOP-LEVEL declarations only.
- * @returns {Map<string, Set<string>>} leaf name -> the module(s) it was declared in
+ *
+ * Also captures each leaf's full top-level declaration BODY (#222): a tombstone's shape is not in the
+ * CURRENT manifest (signatureless) and a tombstone is never emitted, but its body is still on disk from a
+ * prior generation where the identity was live — that body is the structural proof a live counter-named
+ * type needs to reclaim the tombstone's clean name.
+ * @returns {{ homes: Map<string, Set<string>>, bodies: Map<string, string> }}
+ *   homes: leaf name -> the module(s) it was declared in;  bodies: leaf name -> its declaration text.
  */
 function scanPriorHomes(dirs, priorFiles) {
-    const index = new Map()
+    const homes = new Map()
+    const bodies = new Map()
     const seen = new Set()
     const isTypesModule = (f) => /Types\.res$/.test(f)
     // Prefer the manifest's own file list (guaranteed ours); else every `*Types.res` in the dirs.
     const listed = (priorFiles || []).filter(isTypesModule)
     const decl = /^(?:@unboxed\s+|@tag\([^)]*\)\s+)?(?:type(?:\s+rec)?|and|module)\s+([A-Za-z_][A-Za-z0-9_]*)/
+    const braceDelta = (s) => (s.match(/[{([]/g) || []).length - (s.match(/[})\]]/g) || []).length
     const add = (dir, f) => {
         const abs = join(dir, f)
         if (seen.has(abs)) return
@@ -206,19 +214,34 @@ function scanPriorHomes(dirs, priorFiles) {
         const module = basename(f).replace(/\.res$/, '')
         let text
         try { text = readFileSync(abs, 'utf-8') } catch { return }
-        for (const line of text.split('\n')) {
-            const m = decl.exec(line)
-            if (!m) continue
-            if (!index.has(m[1])) index.set(m[1], new Set())
-            index.get(m[1]).add(module)
+        // Walk lines, accumulating each top-level declaration into a block: a block runs from its `decl`
+        // line to the next `decl` line or a blank line at brace-depth 0, so a multi-line record/variant is
+        // captured whole. First occurrence of a leaf wins (deterministic, dirs iterate sorted).
+        let curLeaf = null, curLines = [], depth = 0
+        const flush = () => {
+            if (curLeaf && !bodies.has(curLeaf)) bodies.set(curLeaf, curLines.join('\n').trim())
+            curLeaf = null; curLines = []; depth = 0
         }
+        for (const line of text.split('\n')) {
+            const m = depth <= 0 ? decl.exec(line) : null
+            if (m) {
+                flush()
+                if (!homes.has(m[1])) homes.set(m[1], new Set())
+                homes.get(m[1]).add(module)
+                curLeaf = m[1]; curLines = [line]; depth = braceDelta(line)
+            } else if (curLeaf) {
+                if (line.trim() === '' && depth <= 0) flush()
+                else { curLines.push(line); depth += braceDelta(line) }
+            }
+        }
+        flush()
     }
     for (const dir of new Set(dirs)) {
         if (!dir || !existsSync(dir)) continue
         const files = listed.length ? listed.map((f) => basename(f)) : readdirSync(dir).filter(isTypesModule)
         for (const f of [...new Set(files)].sort()) if (existsSync(join(dir, f))) add(dir, f)
     }
-    return index
+    return { homes, bodies }
 }
 
 /**
@@ -340,7 +363,9 @@ async function main() {
     // home and re-export it. Covers both `outDir` and the `--types-dir` split (the same dirs `--clean`
     // clears). A no-op (empty index) when there's no prior output.
     const priorTypesDir = opts.typesDir ? join(outDir, opts.typesDir) : outDir
-    const legacyHomeIndex = scanPriorHomes([outDir, priorTypesDir], priorManifest.files)
+    const priorScan = scanPriorHomes([outDir, priorTypesDir], priorManifest.files)
+    const legacyHomeIndex = priorScan.homes  // #221: leaf -> former home module(s)
+    const priorBodies = priorScan.bodies      // #222: leaf -> prior declaration body (tombstone reclaim proof)
 
     const roots = []
     if (opts.nm) roots.push(pathResolve(opts.nm))
@@ -394,7 +419,7 @@ async function main() {
     } else {
         const res = extractModule(entry, {
             from, entries, webapi, htmlAttrs: opts.htmlAttrs, augment: opts.augment,
-            variantProps: opts.variantProps, publicTypes: priorPublicTypes,
+            variantProps: opts.variantProps, publicTypes: priorPublicTypes, priorBodies,
         })
         units = res.components
         functions = res.functions || []
@@ -774,6 +799,7 @@ async function main() {
         if (id.startsWith(scopePrefix)) base.active = shared ? false : base.active !== false
         return [id, base]
     }))
+    const nameReclaims = { reclaimed: [], refused: [] } // #222 audit trail (→ --json-summary)
     if (shared && plan) {
         for (const entry of shared.entries) {
             const row = {
@@ -788,7 +814,21 @@ async function main() {
                 active: true,
             }
             for (const id of entry.publicIds || []) publicTypes[id] = row
+            // #222: a reclaimed clean name. The live identity now OWNS `<base>` via its own row above, so an
+            // old `<base>` annotation binds to it and `ownsReserved` keeps it on later runs — the matched
+            // tombstone stays an inert `active:false` row (a dead identity is dead) without re-squatting, and
+            // the suffixed name survives as a transparent alias via `entry.compatNames` (row.aliases). Audit
+            // it; do NOT flip the tombstone active (that would oscillate every no-op regen).
+            if (entry._reclaim) nameReclaims.reclaimed.push({ name: entry.name, from: entry._reclaim.from, tombstoneId: entry._reclaim.tombstoneId })
+            if (entry._reclaimRefused) nameReclaims.refused.push({ name: entry._reclaimRefused.name, base: entry._reclaimRefused.base, reason: entry._reclaimRefused.reason })
         }
+    }
+    // #222: surface reclaims/refusals so a cross-version regen's public-name changes are OUTPUT, not a
+    // reverse-engineered build error. A refusal is intentional (an upstream-deleted, genuinely-different
+    // type keeps its suffix) — say so, and note it is NOT a churn regression: the old identity is gone.
+    if (nameReclaims.reclaimed.length || nameReclaims.refused.length) {
+        if (nameReclaims.reclaimed.length) console.error(`[bindgen] note: reclaimed ${nameReclaims.reclaimed.length} clean type name(s) from a structurally-identical tombstone (suffixed name kept as a compat alias): ${nameReclaims.reclaimed.slice(0, 12).map((r) => `${r.from}→${r.name}`).join(', ')}${nameReclaims.reclaimed.length > 12 ? '…' : ''}`)
+        for (const r of nameReclaims.refused) console.error(`[bindgen] note: kept '${r.name}' suffixed — its base '${r.base}' is a genuinely different (upstream-deleted) type; not reclaimed (${r.reason}).`)
     }
     const sortedPublicTypes = Object.fromEntries(Object.entries(publicTypes).sort(([a], [b]) => a.localeCompare(b)))
     // Atomic write: the manifest is the permanent public-name registry, so a half-written file (a
@@ -896,6 +936,10 @@ async function main() {
             ...(bootstrappedRelocations.length
                 ? { relocations: [...bootstrappedRelocations].sort((a, b) => a.from.localeCompare(b.from) || a.name.localeCompare(b.name)) }
                 : {}),
+            // #222: clean names reclaimed from a structurally-identical tombstone, and refusals (a genuinely
+            // different type that kept its suffix — the #190 guarantee earning its keep). The audit trail a
+            // consumer diffs to understand exactly which public names changed and why. Omitted when empty.
+            ...(nameReclaims.reclaimed.length || nameReclaims.refused.length ? { nameReclaims } : {}),
         }
         writeFileSync(opts.jsonSummary, JSON.stringify(summary, null, 2) + '\n')
         console.error(`[bindgen] 📊 json summary written to ${opts.jsonSummary}`)

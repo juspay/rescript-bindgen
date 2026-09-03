@@ -165,7 +165,17 @@ home-module heuristics, and record-vs-variant decisions. On every later run:
 - all prior names are emitted as aliases when a representation supports them;
 - removed or moved/renamed upstream declarations become inactive tombstones instead of freeing names;
 - a new identity that requests a reserved name takes a suffix; it never renumbers the existing type;
-- a removed identity that reappears recovers its assignment.
+- a removed identity that reappears recovers its assignment;
+- **but** a live entry forced to a counter suffix `<base>N` by a same-module inactive tombstone
+  RECLAIMS the clean `<base>` when the tombstone is a **proven structural match** — the reservation
+  protected nothing (same runtime shape) and only broke the clean path (#222). The tombstone's shape is
+  recovered from the prior `.res` on disk (a tombstone is never emitted, and its signature is usually
+  absent); the match normalises counter suffixes cluster-wide, compares `@as` payloads + field-name sets
+  (never constructor identifiers, which are renamed on purpose), and tolerates ONLY the narrow
+  `string`+degrade-flag → structured improvement direction — so a `{...JsxDOM.domProps}` bag or a
+  genuinely different type keeps its suffix, with **no** forwarding alias. The shipped `<base>N` survives
+  as a transparent `type <base>N = <base>` alias; reclaims/refusals appear in `--json-summary`
+  (`nameReclaims`). Refusing is not a churn regression — the refused base is an upstream deletion.
 
 If two **genuinely-distinct** types still collapse onto one source anchor+projection — the anchor
 couldn't separate them, as with blend's `DeepPartial<ComponentTokenType>` mapping `SEARCH_INPUT`'s and

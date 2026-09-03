@@ -20,6 +20,7 @@ import { dirname, relative } from 'path'
 import { DOM_ELEMENT_BY_LOWER, DOM_PROPS_FIELDS, RESCRIPT_RESERVED } from './stdlib-types.mjs'
 import { TS_NAME_TO_GROUP, chainFields } from './html-attrs.mjs'
 import { label } from './emit.mjs'
+import { splitCounter, parseResBody, canonLive, reclaimable } from './name-reclaim.mjs'
 
 /** Map a TS DOM element name to the exact built-in Dom type, e.g.
  *  `HTMLDivElement` -> `Dom.htmlDivElement`; falls back to `Dom.element`. */
@@ -609,6 +610,48 @@ function finalizePublicIds(shared, prior = {}) {
     }
 }
 
+/**
+ * #222 — may a live entry `e`, whose LOCKED public name is a counter suffix `<base>N`, RECLAIM the clean
+ * `<base>`? Only when `<base>` is held by an INACTIVE tombstone in the SAME module AND that tombstone's
+ * shape is a PROVEN structural match for `e`. A tombstone is never emitted, so its proof body is recovered
+ * from the prior `.res` on disk (a generation where the identity was still live) — see name-reclaim.mjs.
+ * Returns `{ base, from, tombstoneId }` on a proven reclaim. When a same-module tombstone base exists but
+ * the shapes are NOT proven equal, records the decision on `e._reclaimRefused` (so the visibility layer can
+ * explain the retained suffix — an upstream-deleted, genuinely-different type) and returns null. A counter
+ * name with no tombstone base is an ordinary #96 disambiguation, not a reclaim scenario → null, silent.
+ */
+function findTombstone(base, module, priorRows) {
+    for (const [id, row] of Object.entries(priorRows)) {
+        if (row && typeof row === 'object' && row.active === false && row.name === base && row.module === module) return { id, row }
+    }
+    return null
+}
+/** Prove (or refuse) that live entry `e` is the same type as the `base` tombstone `{ id, row }`, and
+ *  record the outcome. `from` is the name `e` would otherwise carry (`<base>N` for a locked counter, or
+ *  `base` itself for a new identity). */
+function proveReclaim(e, base, from, tomb, shared) {
+    const live = canonLive(e)
+    const body = shared.priorBodies && shared.priorBodies.get(base)
+    const old = body ? parseResBody(body) : null
+    // Fast-accept when both carry a recorded structural signature and they're equal (exact-shape identity);
+    // else the disk-body structural match (handles the signatureless majority + the narrow improvement dir).
+    const sigMatch = tomb.row.signature && e.publicSignature && tomb.row.signature === e.publicSignature
+    if (sigMatch || (old && live && reclaimable(old, live))) return { base, from, tombstoneId: tomb.id }
+    e._reclaimRefused = {
+        name: from, base, tombstoneId: tomb.id,
+        reason: !old ? 'no prior on-disk body to prove the shapes match' : 'shapes differ — a genuinely different type reused the name (upstream deletion)',
+        oldShape: body ? String(body).replace(/\s+/g, ' ').slice(0, 160) : null,
+    }
+    return null
+}
+/** Locked path: `e` is frozen to a counter name `<base>N` whose `<base>` a tombstone holds. */
+function tryReclaimBase(e, chosen, module, priorRows, shared) {
+    const sc = splitCounter(chosen)
+    if (!sc) return null
+    const tomb = findTombstone(sc.base, module, priorRows)
+    return tomb ? proveReclaim(e, sc.base, chosen, tomb, shared) : null
+}
+
 /** Reuse permanent name assignments from a previous `.bindgen-manifest.json`. A lock applies even
  *  when marked inactive (a removed type that later reappears recovers its old name). New identities
  *  may never steal a locked canonical name or alias; they receive a suffix instead. */
@@ -642,7 +685,13 @@ function applyPublicNameRegistry(shared, prior = {}) {
         e._generatedHome = e.home
         if (locks.length) {
             locks.sort((a, b) => (Number(b.row.active !== false) - Number(a.row.active !== false)) || a.id.localeCompare(b.id))
-            const chosen = locks[0].row.name
+            let chosen = locks[0].row.name
+            // #222: a locked counter-suffixed name (`stringOrNumber2`) whose clean base (`stringOrNumber`)
+            // is squatted by a STRUCTURALLY-IDENTICAL inactive tombstone reclaims the base — the
+            // reservation protected nothing (same runtime shape) and only broke the clean path for every
+            // consumer. The old counter name becomes a transparent alias below (row.name !== chosen).
+            const reclaim = tryReclaimBase(e, chosen, locks[0].row.module || e.home, priorRows, shared)
+            if (reclaim) { chosen = reclaim.base; e._reclaim = reclaim }
             // A frozen leaf name carries fixed casing, but ReScript ties casing to REPRESENTATION: an
             // opaque entry is a `module Name` (upper-case), every other kind is a lowercase `type name`.
             // When representation flips across bindgen versions (record ⇄ opaque), reusing the frozen
@@ -740,6 +789,17 @@ function applyPublicNameRegistry(shared, prior = {}) {
     // Allocate only NEW identities around every permanent/tombstoned name. Existing identities are
     // never moved to make room; the newcomer takes the suffix.
     for (const e of entries.filter((x) => !lockedEntries.has(x))) {
+        const base = desired.get(e)
+        // #222: a NEW identity whose clean name is squatted ONLY by a structurally-identical inactive
+        // tombstone (nothing live claims it) reclaims it instead of taking a suffix — same proof as the
+        // locked path, but there's no shipped `<base>N` to keep as an alias. Guarded so it can only take a
+        // name held by a DEAD identity: `findTombstone` requires `active:false`, and `!claimed.has(base)`
+        // means no live entry wants it.
+        if (reserved.has(base) && !ownsReserved(e, base) && !claimed.has(base)) {
+            const tomb = findTombstone(base, e.home, priorRows)
+            const rec = tomb && proveReclaim(e, base, base, tomb, shared)
+            if (rec) { e._reclaim = rec; claim(base, e, 'reclaimed name'); continue }
+        }
         const candidate = allocFree(e, desired.get(e))
         desired.set(e, candidate)
         claim(candidate, e, 'new canonical name')
@@ -2919,6 +2979,7 @@ export function extractModule(entryFile, opts = {}) {
         sourceRoot: dirname(entries[0].entry),
         publicScope: opts.from || entries[0].from || '<module>',
         priorPublicTypes: opts.publicTypes || {},
+        priorBodies: opts.priorBodies || new Map(), // #222: prior `.res` declaration bodies (tombstone reclaim proof)
     }
 
     // Accumulators shared across entries. `seen`/`componentBySym` dedup a symbol re-exported from
