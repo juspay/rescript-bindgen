@@ -1449,7 +1449,12 @@ export function planSharedModules(shared) {
             const sink = comp.find((h) => SINK_HOMES.has(h))
             if (sink) (shared.sinkMergeWarnings || (shared.sinkMergeWarnings = [])).push(`${sink} pulled into SCC {${comp.join(', ')}}`)
             const largest = [...comp].sort((a, b) => (sizeOf.get(b) || 0) - (sizeOf.get(a) || 0) || a.localeCompare(b))[0]
-            fm = largest.replace(/Types$/, '') + 'SharedTypes'
+            // Strip an existing `SharedTypes` suffix (not merely `Types`) before re-appending, so a
+            // #190-LOCKED merged home that is now the largest member of its own grown SCC keeps its name
+            // (`HighchartsSharedTypes` → base `Highcharts` → `HighchartsSharedTypes`) instead of
+            // compounding to `HighchartsSharedSharedTypes`. Cold runs are unaffected (the largest member
+            // there is a real `*Types` type, never the merged name). (#220 — #35 rule under #190 locking)
+            fm = largest.replace(/(?:Shared)?Types$/, '') + 'SharedTypes'
         }
         for (const h of comp) finalOf.set(h, fm)
     }

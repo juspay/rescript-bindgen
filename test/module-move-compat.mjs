@@ -30,18 +30,29 @@ mkdirSync(join(pkg, 'components', 'right'), { recursive: true })
 // `cycle` toggles whether Right refers back to Left (the SCC edge). `leftLocalDep` makes Left
 // additionally reference a NEW type declared in the LEFT home — so after a move, that home is live
 // AND depended on by the merged module (the compat-re-export-cycle hazard).
-function writeSources({ cycle, leftLocalDep = false }) {
+// `third` (for #220) adds a Mid type in its OWN home that mutually cycles with Left, so on a warm run
+// where Left/Right are already merged+locked into one home, the SCC grows to {mergedHome, MidTypes} and
+// the largest member is the LOCKED merged home itself — the exact double-suffix trigger.
+function writeSources({ cycle, leftLocalDep = false, third = false }) {
+    const leftImports = leftLocalDep ? [`export interface NewThing { v: number }`] : [`import { Right } from '../right/types'`]
+    const leftFields = ['name: string', leftLocalDep ? 'n?: NewThing' : 'r?: Right']
+    if (third) { leftImports.push(`import { Mid } from '../mid/types'`); leftFields.push('m?: Mid') }
     writeFileSync(join(pkg, 'components', 'left', 'types.d.ts'),
-        (leftLocalDep ? `export interface NewThing { v: number }\n` : `import { Right } from '../right/types'\n`) +
-        `export interface Left { name: string; ${leftLocalDep ? 'n?: NewThing' : 'r?: Right'} }\n`)
+        leftImports.join('\n') + `\nexport interface Left { ${leftFields.join('; ')} }\n`)
     writeFileSync(join(pkg, 'components', 'right', 'types.d.ts'),
         cycle
             ? `import { Left } from '../left/types'\nexport interface Right { name: string; l?: Left }\n`
             : `export interface Right { name: string }\n`)
+    if (third) {
+        mkdirSync(join(pkg, 'components', 'mid'), { recursive: true })
+        writeFileSync(join(pkg, 'components', 'mid', 'types.d.ts'),
+            `import { Left } from '../left/types'\nexport interface Mid { name: string; l?: Left }\n`)
+    }
     writeFileSync(join(pkg, 'index.d.ts'),
         `import { Left } from './components/left/types'\nimport { Right } from './components/right/types'\n` +
+        (third ? `import { Mid } from './components/mid/types'\n` : '') +
         `type JsxElement = { __brand: 'element' }\n` +
-        `export declare const View: (props: { left?: Left; right?: Right }) => JsxElement\n`)
+        `export declare const View: (props: { left?: Left; right?: Right${third ? '; mid?: Mid' : ''} }) => JsxElement\n`)
 }
 
 function run(shape) {
@@ -139,6 +150,25 @@ try {
     assert(/former-home compatibility re-export\(s\) skipped/.test(swap.stderr),
         'mutually cross-pointing former-home re-exports skip the cycle-forming one')
     compileOut('mutual cross-pointing former homes')
+
+    // 7. #220: a #190-LOCKED merged home that becomes the LARGEST member of a GROWN SCC must KEEP its
+    //    name, not compound to `…SharedSharedTypes` (the #35 `+SharedTypes` rule applied to an already-
+    //    merged name). Fresh out dir: form + lock the Left/Right merge, then add a third home that cycles
+    //    into it so the SCC grows with the locked merged home as its largest member.
+    rmSync(out, { recursive: true, force: true })
+    run({ cycle: true })                                   // form the merge
+    const merged7 = rowOf(run({ cycle: true }).manifest, 'left').module // now locked
+    assert(/SharedTypes$/.test(merged7) && !/SharedSharedTypes$/.test(merged7),
+        `baseline merged home is a single-Shared name (${merged7})`)
+    const grownM = run({ cycle: true, third: true }).manifest
+    const grown = rowOf(grownM, 'left').module
+    assert(grown === merged7,
+        `locked merged home keeps its name when the SCC grows (stayed ${merged7})`)
+    assert(!/SharedSharedTypes$/.test(grown),
+        `merged home does not compound to a doubled …SharedSharedTypes (got ${grown})`)
+    assert(rowOf(grownM, 'mid').module === grown,
+        `the third (mid) type is homed into the same merged module (${grown})`)
+    compileOut('SCC grows around a locked merged home (#220)')
 
     console.log('\n✅ cycle-forced module-move compatibility invariants hold')
 } finally {
