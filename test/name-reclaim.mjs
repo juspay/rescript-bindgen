@@ -138,4 +138,26 @@ ok(splitCounter('stringOrNumber2')?.base === 'stringOrNumber' && splitCounter('f
     ok(reclaimable(shOld, shLive), 'RECLAIM: a *Types qualifier drops so CommonTypes.foo matches the live bare foo')
 }
 
+// 13. [round-3 #1] REFUSE — a `?` NESTED inside a wrapper is still unprovable; `array<?>`==`array<?>`
+//     must NOT match (different tuple arities inside the array are genuinely different types).
+{
+    const old = parseResBody('type series = {\n  points: array<(float, float)>,\n  label?: string,\n}')
+    const live = canonLive({ kind: 'record', fields: [
+        { name: 'points', optional: false, type: { kind: 'array', of: { kind: 'tuple', params: [{ kind: 'number', _float: true }, { kind: 'number', _float: true }, { kind: 'number', _float: true }] } } },
+        { name: 'label', optional: true, type: { kind: 'string' } },
+    ] })
+    ok(old.fields[0].type === '?' && !reclaimable(old, live),
+        'REFUSE: nested `?` propagates up — array<(f,f)> vs array<(f,f,f)> is NOT a match (round-3 ship-blocker)')
+}
+
+// 13b. RECLAIM still works for a wrapper around a MODELLED inner type (array<string>, option<ref>).
+{
+    const old = parseResBody('type box = {\n  tags?: array<string>,\n  child?: option<childConfig>,\n}')
+    const live = canonLive({ kind: 'record', fields: [
+        { name: 'tags', optional: true, type: { kind: 'array', of: { kind: 'string' } } },
+        { name: 'child', optional: true, type: { kind: 'option', of: { kind: 'typeRef', to: 'childConfig' } } },
+    ] })
+    ok(reclaimable(old, live), 'RECLAIM: wrappers around modelled inner types still match (array<string>, option<ref>)')
+}
+
 console.log(`\n✅ name-reclaim match: ${pass} assertions hold`)

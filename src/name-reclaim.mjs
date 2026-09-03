@@ -53,7 +53,8 @@ function normRef(qualified) {
 
 /** Canonicalise a live IR type node → token string. `flagged`-ness is reported separately by the caller
  *  (an opaque/review/unknown field IS the flagged placeholder). Unknown kinds → `?`, which the predicate
- *  treats as UNPROVABLE and refuses (never a match — not even `?`==`?`). */
+ *  treats as UNPROVABLE and refuses (never a match — not even `?`==`?`, nor `array<?>`==`array<?>`). */
+const wrapIR = (name, of) => { const c = canonTypeIR(of); return c === '?' ? '?' : name + '<' + c + '>' }
 export function canonTypeIR(t) {
     if (!t || typeof t !== 'object') return '?'
     switch (t.kind) {
@@ -65,11 +66,13 @@ export function canonTypeIR(t) {
         case 'number': return 'num'
         case 'typeRef': return 'ref:' + normRef(t.to || (t.key || '').split(/[|:]/).pop() || '?')
         case 'classRef': return 'ref:' + normRef((t.home ? t.home + '.' : '') + (t.to || '?'))
-        case 'array': return 'array<' + canonTypeIR(t.of) + '>'
-        case 'option': return 'option<' + canonTypeIR(t.of) + '>'
-        case 'nullable': return 'null<' + canonTypeIR(t.of) + '>'
-        case 'dict': return 'dict<' + canonTypeIR(t.of) + '>'
-        case 'promise': return 'promise<' + canonTypeIR(t.of) + '>'
+        // A wrapper around an UNPROVABLE inner type is itself unprovable: propagate `?` up so the
+        // top-level `?` block refuses (else `array<?>`==`array<?>` would match two different inner types).
+        case 'array': return wrapIR('array', t.of)
+        case 'option': return wrapIR('option', t.of)
+        case 'nullable': return wrapIR('null', t.of)
+        case 'dict': return wrapIR('dict', t.of)
+        case 'promise': return wrapIR('promise', t.of)
         // opaque / review / unknown / any all EMIT the `string` placeholder — the degraded shape.
         case 'opaque': case 'review': case 'unknown': case 'any': return 'placeholder'
         default: return '?'
@@ -101,7 +104,9 @@ function canonTypeText(raw) {
         (w = wrap(/^Js\.null<(.+)>$/, 'null')) || (w = wrap(/^Nullable\.t<(.+)>$/, 'null')) ||
         (w = wrap(/^dict<(.+)>$/, 'dict')) || (w = wrap(/^Js\.Dict\.t<(.+)>$/, 'dict')) ||
         (w = wrap(/^Dict\.t<(.+)>$/, 'dict')) || (w = wrap(/^promise<(.+)>$/, 'promise'))) {
-        return w + '<' + canonTypeText(s) + '>'
+        // A wrapper around an unprovable inner type is itself unprovable (mirrors canonTypeIR/wrapIR).
+        const inner = canonTypeText(s)
+        return inner === '?' ? '?' : w + '<' + inner + '>'
     }
     if (s === 'int' || s === 'float') return 'num' // see canonTypeIR('number') — int/float unified
     if (SCALARS.has(s)) return s
