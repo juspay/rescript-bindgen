@@ -40,15 +40,31 @@ export function splitCounter(name) {
 
 const SCALARS = new Set(['string', 'bool', 'unit', 'int', 'float'])
 
+/** Drop a shared-types module qualifier (`CommonTypes.foo` → `foo`, `WebTypes.file` → `file`) so the
+ *  disk's qualified ref aligns with the live IR's bare local ref, but KEEP a non-`*Types` qualifier
+ *  (`React.element`, `Js.x`) so an external-module leaf can never be conflated with a package-local leaf
+ *  of the same name. Any `<…>` type arguments are dropped (compared by base). */
+function normRef(qualified) {
+    const parts = String(qualified).replace(/<.*$/, '').split('.')
+    const leaf = parts.pop()
+    const mod = parts.pop()
+    return (mod && !/Types$/.test(mod) ? mod + '.' : '') + leaf
+}
+
 /** Canonicalise a live IR type node → token string. `flagged`-ness is reported separately by the caller
- *  (an opaque/review/unknown field IS the flagged placeholder). Unknown kinds → `?` (blocks the match). */
+ *  (an opaque/review/unknown field IS the flagged placeholder). Unknown kinds → `?`, which the predicate
+ *  treats as UNPROVABLE and refuses (never a match — not even `?`==`?`). */
 export function canonTypeIR(t) {
     if (!t || typeof t !== 'object') return '?'
     switch (t.kind) {
         case 'string': case 'bool': case 'unit': return t.kind
-        case 'number': return t._float ? 'float' : 'int'
-        case 'typeRef': return 'ref:' + (t.to || (t.key || '').split(/[|:]/).pop() || '?')
-        case 'classRef': return 'ref:' + (t.to || '?')
+        // TS `number` renders as `int` OR `float` by a name heuristic; the live IR node here may not carry
+        // that choice, so canonicalise both to `num` (the disk's rendered `int`/`float` maps to `num` too).
+        // The heuristic is deterministic per field name, so a same-named field resolves identically across
+        // versions — this masks nothing real, it just avoids a spurious int/float false-refusal.
+        case 'number': return 'num'
+        case 'typeRef': return 'ref:' + normRef(t.to || (t.key || '').split(/[|:]/).pop() || '?')
+        case 'classRef': return 'ref:' + normRef((t.home ? t.home + '.' : '') + (t.to || '?'))
         case 'array': return 'array<' + canonTypeIR(t.of) + '>'
         case 'option': return 'option<' + canonTypeIR(t.of) + '>'
         case 'nullable': return 'null<' + canonTypeIR(t.of) + '>'
@@ -84,14 +100,15 @@ function canonTypeText(raw) {
     if ((w = wrap(/^option<(.+)>$/, 'option')) || (w = wrap(/^array<(.+)>$/, 'array')) ||
         (w = wrap(/^Js\.null<(.+)>$/, 'null')) || (w = wrap(/^Nullable\.t<(.+)>$/, 'null')) ||
         (w = wrap(/^dict<(.+)>$/, 'dict')) || (w = wrap(/^Js\.Dict\.t<(.+)>$/, 'dict')) ||
-        (w = wrap(/^promise<(.+)>$/, 'promise'))) {
+        (w = wrap(/^Dict\.t<(.+)>$/, 'dict')) || (w = wrap(/^promise<(.+)>$/, 'promise'))) {
         return w + '<' + canonTypeText(s) + '>'
     }
+    if (s === 'int' || s === 'float') return 'num' // see canonTypeIR('number') — int/float unified
     if (SCALARS.has(s)) return s
-    // qualified or bare ref → leaf (drop the module qualifier so `CommonTypes.foo` aligns with the live
-    // IR's bare `foo`; the counter is NOT stripped — see the note by splitCounter).
-    const leaf = s.replace(/<.*$/, '').split('.').pop()
-    if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(leaf)) return 'ref:' + leaf
+    // qualified or bare ref → base leaf, keeping a non-`*Types` qualifier (see normRef). The counter is
+    // NOT stripped — see the note by splitCounter.
+    const ref = normRef(s)
+    if (/^[A-Za-z_][A-Za-z0-9_.]*$/.test(ref)) return 'ref:' + ref
     return '?'
 }
 
@@ -124,8 +141,18 @@ export function parseResBody(body) {
     return null
 }
 
-/** Remove `//` line comments (per line) and `/* … *​/` block comments. */
-const stripLineComments = (s) => String(s).split('\n').map((l) => l.replace(/\/\/.*$/, '')).join('\n').replace(/\/\*[\s\S]*?\*\//g, '')
+/** Strip a `//` line comment, but NOT a `//` inside a string literal — `@as("http://x")` is real emit. */
+function stripLineComment(line) {
+    let inStr = false
+    for (let i = 0; i < line.length; i++) {
+        const c = line[i]
+        if (c === '"' && line[i - 1] !== '\\') inStr = !inStr
+        else if (!inStr && c === '/' && line[i + 1] === '/') return line.slice(0, i)
+    }
+    return line
+}
+/** Remove `//` line comments (string-aware, per line) and `/* … *​/` block comments. */
+const stripLineComments = (s) => String(s).split('\n').map(stripLineComment).join('\n').replace(/\/\*[\s\S]*?\*\//g, '')
 
 /** Content of the first balanced `{ … }` in `s`, or null if there's no `{`. */
 function braceInner(s) {
@@ -146,7 +173,7 @@ function parseRecordFields(inner) {
     const fields = [], spreads = []
     for (const rawLine of String(inner).split('\n')) {
         const flagged = FLAG_RE.test(rawLine)
-        const codeLine = rawLine.replace(/\/\/.*$/, '').replace(/\/\*[\s\S]*?\*\//g, '')
+        const codeLine = stripLineComment(rawLine).replace(/\/\*[\s\S]*?\*\//g, '')
         for (const seg of splitTopLevel(codeLine)) {
             const t = seg.trim().replace(/,\s*$/, '')
             if (!t) continue
@@ -182,7 +209,7 @@ function parseField(raw, flagged) {
 }
 
 function parseArm(raw) {
-    const s = String(raw).replace(/\/\/.*$/, '').trim()
+    const s = String(raw).trim() // comments are already string-aware-stripped by the caller
     if (!s) return null
     const asM = /@as\(([^)]*)\)/.exec(s)
     // Normalise the discriminant: strip surrounding quotes so a string `@as("json")` (disk) equals the
@@ -217,12 +244,17 @@ export function canonLive(e) {
  *  (a non-placeholder). NOTHING else is tolerated — a `{...spread}` bag on the old side parses as a
  *  record field-set, not a placeholder, so it never qualifies here. */
 function typeMatches(oldF, newF) {
+    // A `?` is an UNMODELLED type kind (callback, tuple, union, nested record, intersection, …). It is
+    // UNPROVABLE, so it blocks the match — crucially even `?`==`?`, or two genuinely-different callback
+    // types would silently reclaim (both canonicalise to `?`). This is the soundness line: refuse unless
+    // we can positively model and equate both sides.
+    if (oldF.type === '?' || newF.type === '?') return false
     if (oldF.type === newF.type) return true
     // The ONLY tolerated asymmetry: old side was a flagged degraded placeholder (`string`+⚪/🔍/broken, or
-    // an opaque), new side is now a structured type. A `?`/`string`/`placeholder` on the NEW side is not
+    // an opaque), new side is now a structured type. A `string`/`placeholder` on the NEW side is not
     // "structured" and never satisfies it.
     const oldIsDegradedPlaceholder = oldF.type === 'placeholder' || (oldF.type === 'string' && oldF.flagged)
-    const newIsStructured = newF.type !== 'placeholder' && newF.type !== '?' && newF.type !== 'string'
+    const newIsStructured = newF.type !== 'placeholder' && newF.type !== 'string'
     return oldIsDegradedPlaceholder && newIsStructured
 }
 
@@ -243,6 +275,9 @@ export function reclaimable(old, live) {
         return true
     }
     if (old.kind === 'variant') {
+        // An unmodelled arm payload (`?`) is unprovable → refuse the whole variant (same reason as the
+        // record `?` block: two different `?` payloads must not silently equate).
+        if ([...(old.members || []), ...(live.members || [])].some((a) => a.type === '?')) return false
         const key = (arms) => arms.map((a) => (a.as !== undefined ? '@as(' + a.as + ')' : '') + (a.type || '')).sort()
         const ok = key(old.members || []), lk = key(live.members || [])
         if (ok.length !== lk.length) return false

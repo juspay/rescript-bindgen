@@ -204,3 +204,20 @@ Plus focused fixtures:
   body must be captured whole. Deterministic (sorted scan, pure function of prior output).
 - **Idempotency** — once reclaimed, the live row owns `<base>` with `<base>N` aliased; the next run sees no
   counter collision and is a strict no-op. Pinned by §6.5.
+
+### Accepted residuals (all fail SAFE — a false-refusal keeps the suffix; never a wrong reclaim)
+Two adversarial-review rounds hardened the match to refuse-on-any-doubt. What remains is bounded and safe:
+- **Unmodelled field/arm types (`callback`, `tuple`, `union`, nested inline `record`, intersection) →
+  `?`, which BLOCKS the match** (even `?`==`?`), so a record/variant carrying one can never reclaim. This
+  is the soundness line (round-2 ship-blocker fix): we refuse unless both sides are positively modelled and
+  equal. Consequence: a reclaimable type with, say, a `formatter?: … => …` field false-refuses — safe, and
+  emit tends to hoist nested records so the common shapes (scalars, refs, option/array/dict wrappers,
+  placeholders) are covered.
+- **`int`/`float` unified to `num`** — the numeric heuristic is deterministic per field name, so a
+  same-named field renders identically across versions; unifying avoids a spurious refusal without masking a
+  real difference.
+- **Generic type arguments dropped** (`Foo<'a>` and `Foo<'b>` both compare as `ref:Foo`) — a narrow
+  over-match bounded by the full-shape + same-module-tombstone gates; revisit if observed.
+- **Module qualifier**: a `*Types` shared qualifier is dropped (so `CommonTypes.foo` aligns with the live
+  bare `foo`), a non-`*Types` one is kept (so external `React.element` can't be conflated with a local
+  `element`).

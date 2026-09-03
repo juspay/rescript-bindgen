@@ -98,4 +98,44 @@ ok(splitCounter('stringOrNumber2')?.base === 'stringOrNumber' && splitCounter('f
     ok(!reclaimable(old, live), 'REFUSE: new-side placeholder is not the tolerated direction')
 }
 
+// 9. [round-2 #1] REFUSE — unmodelled (callback/tuple/nested) field types canon to `?` and BLOCK the
+//    match, even `?`==`?` (else two genuinely-different callbacks would silently reclaim).
+{
+    const old = parseResBody('type cfg = {\n  formatter?: (string, string, bool) => float,\n  gap?: float,\n}')
+    const live = canonLive({ kind: 'record', fields: [
+        { name: 'formatter', optional: true, type: { kind: 'callback', params: [{ kind: 'string' }], ret: { kind: 'string' } } },
+        { name: 'gap', optional: true, type: { kind: 'number', _float: true } },
+    ] })
+    ok(old.fields.length === 2 && old.fields[0].type === '?' && !reclaimable(old, live),
+        'REFUSE: a `?` (unmodelled callback) field blocks the match — not `?`==`?` (round-2 ship-blocker)')
+}
+
+// 10. [round-2 #2] RECLAIM — a bare `number` field unifies int/float to `num` (no spurious refusal).
+{
+    const old = parseResBody('type sizes = {\n  gap?: float,\n  count?: int,\n}')
+    const live = canonLive({ kind: 'record', fields: [
+        { name: 'gap', optional: true, type: { kind: 'number' } },              // no _float
+        { name: 'count', optional: true, type: { kind: 'number', _float: false } },
+    ] })
+    ok(reclaimable(old, live), 'RECLAIM: number fields unify int/float to `num`')
+}
+
+// 11. [round-2 #3] RECLAIM — `//` inside @as("http://…") is NOT treated as a comment.
+{
+    const old = parseResBody('type url =\n  | @as("http://a") HttpA\n  | @as("https://b") HttpsB')
+    const live = canonLive({ kind: 'enum', members: [{ ctor: 'A', as: 'http://a' }, { ctor: 'B', as: 'https://b' }] })
+    ok(old.members.length === 2 && reclaimable(old, live), 'RECLAIM: `//` inside an @as string literal is not a comment')
+}
+
+// 12. [round-2 #4] external `React.element` does NOT conflate with a package-local `element`; a `*Types`
+//     qualifier DOES drop so a shared-type ref aligns with the live bare ref.
+{
+    const extOld = parseResBody('type node = {\n  el?: React.element,\n}')
+    const extLive = canonLive({ kind: 'record', fields: [{ name: 'el', optional: true, type: { kind: 'typeRef', to: 'element' } }] })
+    ok(!reclaimable(extOld, extLive), 'REFUSE: external React.element vs package-local element are not conflated')
+    const shOld = parseResBody('type row = {\n  v?: CommonTypes.stringOrNumber,\n}')
+    const shLive = canonLive({ kind: 'record', fields: [{ name: 'v', optional: true, type: { kind: 'typeRef', to: 'stringOrNumber' } }] })
+    ok(reclaimable(shOld, shLive), 'RECLAIM: a *Types qualifier drops so CommonTypes.foo matches the live bare foo')
+}
+
 console.log(`\n✅ name-reclaim match: ${pass} assertions hold`)
