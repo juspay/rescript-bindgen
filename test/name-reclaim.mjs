@@ -160,4 +160,14 @@ ok(splitCounter('stringOrNumber2')?.base === 'stringOrNumber' && splitCounter('f
     ok(reclaimable(old, live), 'RECLAIM: wrappers around modelled inner types still match (array<string>, option<ref>)')
 }
 
+// 14. [blend #4] a truncated `{` inside a `// ⚪ loose — was `{…` comment must NOT run the brace scan past
+//     the record's real `}` and swallow the following declaration's fields.
+{
+    const body = 'type legendConfig = {\n  item: string, // ⚪ loose — was `{ gap: number; color: { active: Color; fo\n  gap?: float,\n}\ntype nextThing = { x: int, y: int }'
+    const old = parseResBody(body)
+    ok(old && old.kind === 'record' && old.fields.length === 2 && old.fields[0].name === 'item' && old.fields[0].flagged && old.fields[1].name === 'gap'
+        && !old.fields.some((f) => f.name === 'x' || f.name === 'y'),
+        'PARSE: an unbalanced `{` in a loose comment stops at the real `}` — next decl NOT swallowed, flag kept (blend #4)')
+}
+
 console.log(`\n✅ name-reclaim match: ${pass} assertions hold`)

@@ -163,6 +163,19 @@ try {
     const errL = gen(L, ['--json-summary', join(L, 'out', 'sum.json')])
     assert(!/reclaimed \d+ clean type name/.test(errL), 'a clean name a LIVE identity holds (even in another module) is NEVER reclaimed (the suffix is correct)')
 
+    // ---- PARSER (blend #4): a truncated `{` in a `⚪ loose` comment on an EARLIER decl must not swallow
+    //      the `stringOrNumber` decl that follows it in the same *Types.res (→ "no prior on-disk body"). ----
+    const P = join(root, 'poison'); scaffold(P)
+    gen(P)
+    {
+        const cp = join(P, 'out', 'CommonTypes.res')
+        const poison = 'type poisonRecord = {\n  item: string, // ⚪ loose — was `{ gap: number; color: { active: int\n}\n'
+        writeFileSync(cp, poison + readFileSync(cp, 'utf-8')) // a loose-brace-comment record BEFORE stringOrNumber
+        squat(P)
+    }
+    const errP = gen(P, ['--json-summary', join(P, 'out', 'sum.json')])
+    assert(/reclaimed 1 clean type name/.test(errP), 'a truncated `{` in a loose-field comment does NOT swallow the following decl — stringOrNumber is still indexed and reclaimed (blend #4)')
+
     // ---- visibility: --json-summary always carries nameReclaims, even when nothing was considered ---------
     const V = join(root, 'visible'); scaffold(V)
     gen(V, ['--json-summary', join(V, 'out', 'sum.json')])   // cold, no tombstone → nothing considered

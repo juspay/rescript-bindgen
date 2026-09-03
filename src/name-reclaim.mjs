@@ -167,14 +167,23 @@ function stripLineComment(line) {
 /** Remove `//` line comments (string-aware, per line) and `/* … *​/` block comments. */
 const stripLineComments = (s) => String(s).split('\n').map(stripLineComment).join('\n').replace(/\/\*[\s\S]*?\*\//g, '')
 
-/** Content of the first balanced `{ … }` in `s`, or null if there's no `{`. */
+/** Content of the first balanced `{ … }` in `s`, or null if there's no `{`. Braces inside a `//` line
+ *  comment or a string literal are IGNORED — a truncated `// ⚪ loose — was \`{…` preview (standard emit for
+ *  a degraded record field) has unbalanced braces that would otherwise run the scan past the real closing
+ *  `}` and swallow the following declarations. Returns the RAW inner (comments intact) so `parseRecordFields`
+ *  can still read each field's flag. */
 function braceInner(s) {
     const i = s.indexOf('{')
     if (i < 0) return null
-    let depth = 0
+    let depth = 0, inStr = false, inComment = false
     for (let j = i; j < s.length; j++) {
-        if (s[j] === '{') depth++
-        else if (s[j] === '}' && --depth === 0) return s.slice(i + 1, j)
+        const c = s[j]
+        if (inComment) { if (c === '\n') inComment = false; continue }
+        if (inStr) { if (c === '"' && s[j - 1] !== '\\') inStr = false; continue }
+        if (c === '"') inStr = true
+        else if (c === '/' && s[j + 1] === '/') inComment = true
+        else if (c === '{') depth++
+        else if (c === '}' && --depth === 0) return s.slice(i + 1, j)
     }
     return s.slice(i + 1)
 }

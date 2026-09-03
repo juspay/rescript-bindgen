@@ -206,7 +206,12 @@ function scanPriorHomes(dirs, priorFiles) {
     // Prefer the manifest's own file list (guaranteed ours); else every `*Types.res` in the dirs.
     const listed = (priorFiles || []).filter(isTypesModule)
     const decl = /^(?:@unboxed\s+|@tag\([^)]*\)\s+)?(?:type(?:\s+rec)?|and|module)\s+([A-Za-z_][A-Za-z0-9_]*)/
-    const braceDelta = (s) => (s.match(/[{([]/g) || []).length - (s.match(/[})\]]/g) || []).length
+    // Brace balance for block boundaries, IGNORING braces inside a `//` comment or string literal: a
+    // truncated `// ⚪ loose — was `{…` preview (standard emit for a degraded record field) otherwise leaves
+    // an unbalanced `{` that runs the block past its real end and swallows the next declaration (→ that leaf
+    // is never indexed, so a #222 reclaim of it fails with "no prior on-disk body"). #222.
+    const codeOf = (s) => { let inStr = false; for (let i = 0; i < s.length; i++) { const c = s[i]; if (c === '"' && s[i - 1] !== '\\') inStr = !inStr; else if (!inStr && c === '/' && s[i + 1] === '/') return s.slice(0, i) } return s }
+    const braceDelta = (s) => { const c = codeOf(s); return (c.match(/[{([]/g) || []).length - (c.match(/[})\]]/g) || []).length }
     const add = (dir, f) => {
         const abs = join(dir, f)
         if (seen.has(abs)) return
