@@ -221,6 +221,13 @@ is a possible follow-up; (b) a manifest that already locked a doubled `…Shared
 buggy run keeps that name (the #190 freeze treats any public-name rename as a break) — heal it by editing
 that row's `module` by hand if desired. (#220)
 
+When the *previous* generation predates the #190 registry (bindgen ≤ 1.4.0-beta.1) or was cold, it has no
+`publicTypes` to read former homes from — so a home move across that boundary is recovered by scanning the
+prior shared `*Types.res` output **on disk** (snapshotted before `--clean` deletes it): a shared type
+whose leaf name is *unique* there and now homes elsewhere gets its former-home re-export, then recorded in
+the manifest (identity-based thereafter). Scoped to `*Types.res` and uniqueness-gated so a per-component
+`props` leaf never mis-attributes. (#221)
+
 Keep the manifest with generated bindings (and version-control it when the bindings are versioned).
 Legacy manifests containing only `files` bootstrap this registry on their first run. `--clean` does not
 delete it. An upstream declaration rename/move is a new identity and removal is recorded, but a bindgen

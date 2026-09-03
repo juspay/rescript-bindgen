@@ -181,6 +181,47 @@ function readBindgenManifest(path) {
 }
 
 /**
+ * Build a `leaf public name -> Set<module>` index from the PRIOR `.res` output on disk, so a run whose
+ * previous manifest predates the #190 registry (no `publicTypes`) — or a cold run — can still recover the
+ * FORMER HOME of a shared type that has since moved module, and emit its compatibility re-export. (#221)
+ *
+ * MUST be called BEFORE `--clean` deletes the prior `.res` (blend-rescript's `generate:raw` passes
+ * `--clean` every run). Scope is the SHARED `*Types.res` modules the SCC planner owns — former-home
+ * relocation is a shared-type/SCC-merge phenomenon; per-component modules (their `props` leaf, plus
+ * component-owned leaves) never relocate, and scanning them would add a spurious 235-way `props`
+ * collision that the uniqueness gate then has to eat. Reads TOP-LEVEL declarations only.
+ * @returns {Map<string, Set<string>>} leaf name -> the module(s) it was declared in
+ */
+function scanPriorHomes(dirs, priorFiles) {
+    const index = new Map()
+    const seen = new Set()
+    const isTypesModule = (f) => /Types\.res$/.test(f)
+    // Prefer the manifest's own file list (guaranteed ours); else every `*Types.res` in the dirs.
+    const listed = (priorFiles || []).filter(isTypesModule)
+    const decl = /^(?:@unboxed\s+|@tag\([^)]*\)\s+)?(?:type(?:\s+rec)?|and|module)\s+([A-Za-z_][A-Za-z0-9_]*)/
+    const add = (dir, f) => {
+        const abs = join(dir, f)
+        if (seen.has(abs)) return
+        seen.add(abs)
+        const module = basename(f).replace(/\.res$/, '')
+        let text
+        try { text = readFileSync(abs, 'utf-8') } catch { return }
+        for (const line of text.split('\n')) {
+            const m = decl.exec(line)
+            if (!m) continue
+            if (!index.has(m[1])) index.set(m[1], new Set())
+            index.get(m[1]).add(module)
+        }
+    }
+    for (const dir of new Set(dirs)) {
+        if (!dir || !existsSync(dir)) continue
+        const files = listed.length ? listed.map((f) => basename(f)) : readdirSync(dir).filter(isTypesModule)
+        for (const f of [...new Set(files)].sort()) if (existsSync(join(dir, f))) add(dir, f)
+    }
+    return index
+}
+
+/**
  * Parse `process.argv` flags into an options object.
  * @param {string[]} argv  args after `node cli.mjs`
  * @returns {{out:string, install:boolean, report:boolean, pkg?:string, file?:string, dir?:string, from?:string, only?:string, stdout?:boolean, nm?:string, project?:string, webapi?:boolean, yes?:boolean, help?:boolean}}
@@ -294,6 +335,12 @@ async function main() {
     const outDir = pathResolve(opts.out)
     const manifestPath = join(outDir, '.bindgen-manifest.json')
     const priorManifest = readBindgenManifest(manifestPath)
+    // #221: snapshot the prior `.res` shared-type homes NOW — BEFORE `--clean` (below) deletes them — so a
+    // legacy (pre-#190, no `publicTypes`) or cold generation can still recover a moved shared type's former
+    // home and re-export it. Covers both `outDir` and the `--types-dir` split (the same dirs `--clean`
+    // clears). A no-op (empty index) when there's no prior output.
+    const priorTypesDir = opts.typesDir ? join(outDir, opts.typesDir) : outDir
+    const legacyHomeIndex = scanPriorHomes([outDir, priorTypesDir], priorManifest.files)
 
     const roots = []
     if (opts.nm) roots.push(pathResolve(opts.nm))
@@ -497,6 +544,7 @@ async function main() {
     // reappearing home recovers its file. Keyed by former module -> the moved entries + their new home.
     const liveModules = plan ? new Set(plan.byModule.keys()) : new Set()
     const formerHomeReexports = new Map()
+    const bootstrappedRelocations = [] // #221: former homes recovered from prior `.res`, not the manifest
     if (plan) {
         for (const e of shared.entries) {
             const newModule = plan.finalOf.get(e.home) || e.home
@@ -507,6 +555,26 @@ async function main() {
                 if (typeof row.module === 'string') priorHomes.add(row.module)
                 for (const fm of row.formerModules || []) if (typeof fm === 'string') priorHomes.add(fm)
             }
+            // #221: no prior-MANIFEST home for this identity — the previous generation predates the #190
+            // registry (no `publicTypes`) or was cold. Recover the former home from the prior `.res` on
+            // disk (scanned above, before --clean): if this shared type's public leaf is UNIQUE across the
+            // prior `*Types` output and was declared in a DIFFERENT module than it now homes to, that
+            // module is a former home. Recorded into this run's manifest below → identity-based next run.
+            // Residual edge (bounded, not closed): the uniqueness gate matches on NAME, not identity — a
+            // shared type deleted from module X in the same boundary that an UNRELATED same-leaf shared type
+            // is added in module Y would mint a shim `X.leaf = Y.leaf` onto the wrong identity. It needs a
+            // delete + same-leaf re-add across ONE version bump (zero occurrences across blend's 1,396 real
+            // relocations), and surfaces as a consumer COMPILE error (shape mismatch), not silent unsoundness;
+            // shape-gating it (parsing the former-home body) is deferred until it's observed. See docs §6.
+            if (priorHomes.size === 0 && legacyHomeIndex.size) {
+                const found = new Set()
+                for (const nm of [e.name, ...(e.compatNames || [])]) {
+                    const mods = nm && legacyHomeIndex.get(nm)
+                    if (mods && mods.size === 1) found.add([...mods][0])
+                }
+                found.delete(newModule)
+                for (const fm of found) { priorHomes.add(fm); bootstrappedRelocations.push({ name: e.name, from: fm, to: newModule }) }
+            }
             priorHomes.delete(newModule)
             e._formerModules = [...priorHomes].sort()
             for (const fm of e._formerModules) {
@@ -514,6 +582,14 @@ async function main() {
                 formerHomeReexports.get(fm).push({ entry: e, newModule })
             }
         }
+    }
+    // #221: surface what the disk scan recovered (a former home the manifest didn't know), so a cross-
+    // version regen's migration is visible in the logs (and the manifest now records it going forward).
+    if (bootstrappedRelocations.length) {
+        const sorted = [...bootstrappedRelocations].sort((a, b) => a.from.localeCompare(b.from) || a.name.localeCompare(b.name))
+        console.error(`[bindgen] note: recovered ${sorted.length} former home(s) from prior output (no manifest registry existed) — compatibility re-exports emitted and now recorded in the manifest:`)
+        for (const r of sorted.slice(0, 20)) console.error(`[bindgen]   - ${r.from}.${r.name} → ${r.to}`)
+        if (sorted.length > 20) console.error(`[bindgen]   … and ${sorted.length - 20} more`)
     }
     // Re-export lines for one moved identity at a former home, targeting its new module. EVERY name
     // (canonical + every compatibility alias) is re-exported, case-aware and threading params, so all
@@ -814,6 +890,12 @@ async function main() {
             functions: functions.length,
             classes: classes.length,
             files: written.size,
+            // #221: the FULL disk-recovered former-home list (the stderr note caps at 20). This is the
+            // audit trail for a cross-version regen: a consumer who suspects a shim points at the wrong
+            // identity can diff `<from>.<name> → <to>` here. Omitted when nothing was recovered.
+            ...(bootstrappedRelocations.length
+                ? { relocations: [...bootstrappedRelocations].sort((a, b) => a.from.localeCompare(b.from) || a.name.localeCompare(b.name)) }
+                : {}),
         }
         writeFileSync(opts.jsonSummary, JSON.stringify(summary, null, 2) + '\n')
         console.error(`[bindgen] 📊 json summary written to ${opts.jsonSummary}`)

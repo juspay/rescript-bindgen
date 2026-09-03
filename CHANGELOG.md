@@ -16,6 +16,19 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   existing `SharedTypes` suffix before re-appending, so a locked merged home that remains its SCC's
   largest member keeps its name. Cold runs were never affected (the largest member is a real `*Types`
   type there). Regression pinned in `test/module-move-compat.mjs`.
+- **Former module homes are recovered from the prior `.res` output when the previous manifest predates
+  the #190 registry (or the run is cold)** (#221) — #190 derives a moved shared type's `formerModules`
+  (and thus its compatibility re-export) *only* from the previous manifest's `publicTypes`. A generation
+  produced by bindgen ≤ 1.4.0-beta.1 (before that registry existed) has none, so a type that changed home
+  across that boundary got zero re-exports even though the prior output on disk said exactly where it
+  lived — in blend-rescript, 45 blend Charts types moved `HighchartsSharedTypes` → `ChartsSharedTypes` and
+  every `HighchartsSharedTypes.chartType`/… path silently stopped resolving. The run now snapshots a
+  `leaf → module` index from the prior shared `*Types.res` modules **before `--clean` deletes them**, and
+  a shared type whose leaf is **unique** there and now homes elsewhere gets its former-home re-export
+  automatically — then recorded into the manifest, so it is identity-based from the next run on. Scoped to
+  `*Types.res` (never per-component `props`/modules) and gated on leaf uniqueness, so it cannot
+  mis-attribute. The recovery is surfaced in the logs (capped at 20 lines) and, in full, as a
+  `relocations[]` audit trail in `--json-summary`. Cold runs with no prior output are unaffected.
 
 ## [1.4.0-beta.3] — 2026-09-02
 
