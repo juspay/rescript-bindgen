@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.0-beta.4] — 2026-09-04
+
 ### Fixed
 
 - **A cold run (no prior `.bindgen-manifest.json`) no longer silently discards the #190 name/home lock**
