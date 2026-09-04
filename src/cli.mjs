@@ -406,17 +406,18 @@ async function main() {
     // #219: a COLD run (no prior `publicTypes` registry) silently UNLOCKS every public name + module home —
     // no locked names, no compat re-exports, SCC homes recomputed. Warn loudly when the run is about to
     // DISCARD an existing generation (prior output on disk), not on a legitimate first-ever run. Checked
-    // BEFORE `--clean` deletes the prior output, mirroring #221's before-clean discipline.
+    // BEFORE `--clean` deletes the prior output, mirroring #221's before-clean discipline. Skipped under
+    // `--stdout`, which writes neither files nor a manifest — the lock warnings don't apply to it.
     const coldStart = Object.keys(priorManifest.publicTypes).length === 0
     const priorOutputExists = priorScan.homes.size > 0 || (existsSync(outDir) && readdirSync(outDir).some((f) => f.endsWith('.res')))
-    if (coldStart && priorOutputExists) {
+    if (!opts.stdout && coldStart && priorOutputExists) {
         console.error('[bindgen] ⚠ no prior .bindgen-manifest.json registry — public names and module homes are UNLOCKED')
         console.error('[bindgen]   for this run; nothing from the previous generation can be preserved (no compatibility')
         console.error('[bindgen]   re-exports, SCC homes recomputed). Commit .bindgen-manifest.json next to the output and')
         console.error('[bindgen]   regenerate THROUGH it, or public names churn every run. (#190/#219)')
     }
     // #219: the exact blend-rescript misconfig — generated .res committed to git, manifest gitignored/untracked.
-    const gitCheck = detectManifestGitMisconfig(outDir, manifestPath)
+    const gitCheck = opts.stdout ? { misconfig: false } : detectManifestGitMisconfig(outDir, manifestPath)
     if (gitCheck.misconfig) {
         const advice = `${gitCheck.reason} — so every fresh checkout regenerates COLD and diverges from the committed output. Track & commit .bindgen-manifest.json (remove it from .gitignore). (#190/#219)`
         if (opts.requireManifest) { console.error(`[bindgen] ✖ ${advice}`); process.exit(1) }
