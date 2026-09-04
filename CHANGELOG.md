@@ -7,6 +7,19 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **A cold run (no prior `.bindgen-manifest.json`) no longer silently discards the #190 name/home lock**
+  (#219) — the manifest is the permanent public-name/home registry, but it only preserves anything when it
+  is present on the next run. When absent (a *cold* run — e.g. a CI checkout that gitignores it), every
+  identity was treated as new: no locked names, no compatibility re-exports, SCC homes recomputed — and the
+  tool said nothing, so a developer's warm local run and CI produced two different public APIs for the same
+  inputs (the exact churn #190 exists to end). bindgen now (a) prints a loud cold-run warning when a run
+  would discard an existing generation (a genuine first run stays quiet); (b) detects the specific
+  misconfiguration where generated `.res` are committed to git but the manifest is gitignored/untracked
+  beside them, warning by default and failing under the new `--require-manifest` flag (for CI); (c)
+  documents the manifest as a committed source-of-truth input in the README; and (d) records `coldStart`
+  and `compatModulesWritten` in `--json-summary` so CI can assert on them. Generated `.res` output is
+  unchanged — this is diagnostics + one opt-in flag only.
+
 - **A structurally-identical live type reclaims a clean name that an inactive tombstone was squatting**
   (#222) — #190 reserves a removed identity's public name forever with an `active:false` tombstone, so an
   old annotation can never silently re-bind to a *different* type. But when the tombstone and a live

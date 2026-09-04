@@ -25,6 +25,7 @@ import { RESCRIPT_RESERVED } from './stdlib-types.mjs'
 import { writeFileSync, mkdirSync, existsSync, readFileSync, readdirSync, unlinkSync, renameSync } from 'fs'
 import { join, resolve as pathResolve, basename, dirname, relative } from 'path'
 import { createInterface } from 'readline'
+import { execFileSync } from 'child_process'
 
 // The shared `JsFn.res` module (#120): the honest, zero-cost handle for a bare untyped global
 // `Function` (no call signature to model). A `.res` file IS its module, so the body is top-level —
@@ -108,6 +109,32 @@ function confirm(question, defaultVal) {
         const t = a.trim().toLowerCase()
         res(t === '' ? defaultVal : t === 'y' || t === 'yes')
     }))
+}
+
+/**
+ * #219 — detect the exact misconfiguration that makes every CI regen a silent cold run: the generated
+ * `.res` output is committed to git, but `.bindgen-manifest.json` (the #190 lock) is gitignored or
+ * untracked beside it. Returns `{ misconfig, reason }`; `misconfig:false` when not in a git work tree, git
+ * is unavailable, or the manifest is properly tracked. Every `git` call is wrapped — any failure degrades to
+ * "no misconfig detected" so this can NEVER break generation; it only ever surfaces a warning (or a fail
+ * under the explicit `--require-manifest` opt-in).
+ * @param {string} outDir  the resolved --out directory
+ * @param {string} manifestPath  absolute path to .bindgen-manifest.json
+ */
+function detectManifestGitMisconfig(outDir, manifestPath) {
+    const git = (...args) => execFileSync('git', ['-C', outDir, ...args], { stdio: ['ignore', 'pipe', 'ignore'], encoding: 'utf-8' })
+    const tryGit = (...args) => { try { return { ok: true, out: git(...args) } } catch { return { ok: false, out: '' } } }
+    // Not a git work tree (or no git) → nothing to guard.
+    if (!existsSync(outDir) || !tryGit('rev-parse', '--is-inside-work-tree').ok) return { misconfig: false }
+    // Are any sibling `.res` files TRACKED? (If output isn't committed, there's no divergence risk.)
+    const resTracked = tryGit('ls-files', '--', '*.res').out.trim().length > 0
+    if (!resTracked) return { misconfig: false }
+    // Is the manifest gitignored, or simply not tracked?
+    const ignored = tryGit('check-ignore', '-q', manifestPath).ok // exit 0 ⇒ path is ignored
+    const tracked = tryGit('ls-files', '--error-unmatch', '--', manifestPath).ok // exit 0 ⇒ tracked
+    if (ignored) return { misconfig: true, reason: `.bindgen-manifest.json is gitignored while generated .res files are committed` }
+    if (!tracked) return { misconfig: true, reason: `.bindgen-manifest.json is untracked while generated .res files are committed` }
+    return { misconfig: false }
 }
 
 /** Read the generated-file list and permanent public-name registry from a previous run. Legacy
@@ -283,6 +310,7 @@ function parseArgs(argv) {
         else if (a === '--record-props') { /* default behaviour since #155 */ }
         else if (a === '--yes' || a === '-y') o.yes = true
         else if (a === '--clean') o.clean = true
+        else if (a === '--require-manifest') o.requireManifest = true
         else if (a === '--help' || a === '-h') o.help = true
     }
     return o
@@ -327,6 +355,9 @@ Options:
   --no-html-attrs  disable the shared HtmlAttrs.res spread for components extending
                  *HTMLAttributes — every attribute is inlined as a labeled arg (legacy)
   --yes, -y      assume "yes" to dependency prompts (non-interactive)
+  --require-manifest  fail (non-zero) if generated .res are committed to git but
+                 .bindgen-manifest.json (the #190 name/home lock) is gitignored or
+                 untracked beside them — a cold-run misconfig (default: warn only) (#219)
   --clean        remove existing *.res / *.resi / _REPORT.md in --out before
                  generating (avoids stale "orphan" files from a previous run or a
                  different generator). Use only when --out is entirely generated.
@@ -371,6 +402,27 @@ async function main() {
     const priorScan = scanPriorHomes([outDir, priorTypesDir], priorManifest.files)
     const legacyHomeIndex = priorScan.homes  // #221: leaf -> former home module(s)
     const priorBodies = priorScan.bodies      // #222: leaf -> prior declaration body (tombstone reclaim proof)
+
+    // #219: a COLD run (no prior `publicTypes` registry) silently UNLOCKS every public name + module home —
+    // no locked names, no compat re-exports, SCC homes recomputed. Warn loudly when the run is about to
+    // DISCARD an existing generation (prior output on disk), not on a legitimate first-ever run. Checked
+    // BEFORE `--clean` deletes the prior output, mirroring #221's before-clean discipline. Skipped under
+    // `--stdout`, which writes neither files nor a manifest — the lock warnings don't apply to it.
+    const coldStart = Object.keys(priorManifest.publicTypes).length === 0
+    const priorOutputExists = priorScan.homes.size > 0 || (existsSync(outDir) && readdirSync(outDir).some((f) => f.endsWith('.res')))
+    if (!opts.stdout && coldStart && priorOutputExists) {
+        console.error('[bindgen] ⚠ no prior .bindgen-manifest.json registry — public names and module homes are UNLOCKED')
+        console.error('[bindgen]   for this run; nothing from the previous generation can be preserved (no compatibility')
+        console.error('[bindgen]   re-exports, SCC homes recomputed). Commit .bindgen-manifest.json next to the output and')
+        console.error('[bindgen]   regenerate THROUGH it, or public names churn every run. (#190/#219)')
+    }
+    // #219: the exact blend-rescript misconfig — generated .res committed to git, manifest gitignored/untracked.
+    const gitCheck = opts.stdout ? { misconfig: false } : detectManifestGitMisconfig(outDir, manifestPath)
+    if (gitCheck.misconfig) {
+        const advice = `${gitCheck.reason} — so every fresh checkout regenerates COLD and diverges from the committed output. Track & commit .bindgen-manifest.json (remove it from .gitignore). (#190/#219)`
+        if (opts.requireManifest) { console.error(`[bindgen] ✖ ${advice}`); process.exit(1) }
+        console.error(`[bindgen] ⚠ ${advice}`)
+    }
 
     const roots = []
     if (opts.nm) roots.push(pathResolve(opts.nm))
@@ -566,6 +618,7 @@ async function main() {
     // Every `.res` this run writes, relative to outDir — recorded in a manifest so the
     // NEXT run can delete only the files WE previously generated (never hand-written ones).
     const written = new Set()
+    let compatModulesWritten = 0 // #219: standalone former-home compat modules written this run (→ json-summary)
 
     // #190 Blocker 2: an SCC merge (#35) FORCES a locked home to move (LeftTypes+RightTypes ⇄ cycle
     // -> LeftSharedTypes) — a circular module dep is otherwise uncompilable. The qualified module is
@@ -699,6 +752,7 @@ async function main() {
         }
         if (cycleSkipped) console.error(`[bindgen] ⚠ ${cycleSkipped} former-home compatibility re-export(s) skipped — the prior home is now live and depends on the merged module, so re-exporting would create a module cycle (#190)`)
         console.error(`[bindgen] wrote ${plan.byModule.size} shared type module(s) (${shared.entries.length} unique types) to ${typesDir}`)
+        compatModulesWritten = compatFiles
         if (compatFiles) console.error(`[bindgen] wrote ${compatFiles} former-home compatibility module(s) — a dependency cycle moved locked types to a merged module (#190)`)
     }
 
@@ -935,6 +989,11 @@ async function main() {
             functions: functions.length,
             classes: classes.length,
             files: written.size,
+            // #219: whether this run ran COLD (no prior #190 registry → names/homes unlocked) and how many
+            // standalone former-home compat modules it wrote, so CI can assert on them (e.g. fail a sync job
+            // when `coldStart` is true — the warm/cold divergence #219 is about).
+            coldStart,
+            compatModulesWritten,
             // #221: the FULL disk-recovered former-home list (the stderr note caps at 20). This is the
             // audit trail for a cross-version regen: a consumer who suspects a shim points at the wrong
             // identity can diff `<from>.<name> → <to>` here. Omitted when nothing was recovered.
