@@ -155,6 +155,16 @@ cleanup, it is the permanent public-name registry: once an upstream declaration 
 qualified type name, later bindgen versions reuse it exactly. Removed declarations become inactive tombstones,
 so a new type cannot steal their names; a declaration that reappears gets its old name back.
 
+> **⚠ Commit `.bindgen-manifest.json` and regenerate *through* it — it is a source-of-truth input, not a
+> scratch artifact.** It is the lock that keeps public type names and module homes stable across runs. If it
+> is **absent** when you regenerate — a *cold* run — bindgen has nothing to preserve: every identity is a
+> newcomer, no compatibility re-exports are emitted, and module homes are recomputed from scratch, so the
+> public API can churn even when your inputs didn't. This bites hardest in CI: a fresh checkout that
+> **gitignores or doesn't commit** the manifest regenerates cold on every run and diverges from a
+> developer's warm local output. bindgen now warns loudly on a cold run and detects the committed-output /
+> ignored-manifest misconfiguration; pass `--require-manifest` to turn that misconfiguration into a hard
+> build failure in CI. Do **not** add `.bindgen-manifest.json` to `.gitignore`.
+
 | Flag | Meaning |
 |------|---------|
 | `--pkg <name[@ver]>` | npm package (auto-installed to a scratch cache if absent). A bare name resolves the `latest` dist-tag, so prerelease-only packages work |
@@ -167,6 +177,7 @@ so a new type cannot steal their names; a declaration that reappears gets its ol
 | `--stdout` | print to stdout instead of writing files (single component) |
 | `--webapi` | emit `Webapi.*` types for `File` / `FileList` / `FormData` |
 | `--clean` | remove stale generated files in `--out` before writing |
+| `--require-manifest` | fail the build if generated `.res` are committed to git but `.bindgen-manifest.json` is gitignored/untracked beside them — the cold-run misconfig (default: warn) |
 | `--no-install` | don't auto-install a missing `--pkg` |
 
 > Untyped JS packages produce only loose skeleton bindings — the tool is type-driven.
