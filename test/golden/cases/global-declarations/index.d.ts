@@ -27,6 +27,8 @@ declare var DemoGizmoUsage: DemoGizmoUsage;
 interface DemoRoot {
   readonly version: string;
   makeGizmo(descriptor: DemoGizmoDescriptor): DemoGizmo;
+  // Promise<T | null> — mirrors navigator.gpu.requestAdapter(); the null MUST survive as Nullable.t (#194 review).
+  requestGizmo(descriptor: DemoGizmoDescriptor): Promise<DemoGizmo | null>;
 }
 
 interface Navigator {

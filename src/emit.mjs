@@ -643,7 +643,8 @@ export function emitClass(ir, options = {}) {
     // `type t` aliases the class's abstract instance type in the sink module, so the sink
     // is the single canonical definition everything points at (breaks class↔types cycles).
     const sinkSelf = cfg.resolveRef && ir.sinkName ? cfg.resolveRef({ to: ir.sinkName, home: 'InstanceTypes' }) : null
-    lines.push(sinkSelf ? `type t = ${sinkSelf}` : 'type t')
+    // #194: a const-namespace global has no instances — emit only its `@val @scope` consts, no `type t`.
+    if (!ir.namespaceOnly) lines.push(sinkSelf ? `type t = ${sinkSelf}` : 'type t')
 
     // Labeled-arg segment for a param list: `~id: type` (+ `=?` when optional), plus a
     // trailing `unit` sentinel when the LAST param is optional (ReScript requires it so the

@@ -4,7 +4,7 @@
 
 **4** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**5** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**4** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -19,9 +19,9 @@ Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new
 
 | Class | Constructor | Methods | Properties |
 |-------|-------------|---------|------------|
-| `DemoGizmo` | — | 2 | 1 |
+| `DemoGizmo` | ✓ | 2 | 1 |
 | `DemoGizmoUsage` | — | 0 | 0 |
-| `DemoRoot` | — | 1 | 1 |
+| `DemoRoot` | — | 2 | 1 |
 | `HTMLCanvasElement` | — | 1 | 0 |
 
 ## ✅ Usable

@@ -16,7 +16,7 @@
 // ============================================================================
 
 import ts from 'typescript'
-import { dirname, relative } from 'path'
+import { dirname, relative, sep } from 'path'
 import { DOM_ELEMENT_BY_LOWER, DOM_PROPS_FIELDS, RESCRIPT_RESERVED } from './stdlib-types.mjs'
 import { TS_NAME_TO_GROUP, chainFields } from './html-attrs.mjs'
 import { label } from './emit.mjs'
@@ -2317,7 +2317,23 @@ function returnNode(sig, ctx, depth = 0) {
         if (hasVoid && hasPromise) return { kind: 'typeVar', name: "'a" }
     }
     const retVoid = !!(retType.flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined))
-    return retVoid ? { kind: 'unit' } : classify(retType, ctx, '', depth + 1)
+    if (retVoid) return { kind: 'unit' }
+    // #194 review (blocker): strictNullChecks is OFF (extract.mjs:1159), so a resolved `T | null` return
+    // collapses to bare `T` — a class/global METHOD would then emit a plausible-but-WRONG non-null type
+    // (violates "flag, don't fake"). Recover the null/undefined from the SYNTACTIC return node, exactly like
+    // the nested-callback return path. Only fires on an explicit `| null`/`| undefined`, so module-mode
+    // methods without one are byte-identical.
+    const retNode = sig.declaration && sig.declaration.type
+    const nb = syntacticNullability(retNode)
+    let ret = classify(retType, ctx, '', depth + 1)
+    ret = applyNullable(applyOptionalValue(ret, nb), nb)
+    // `Promise<T | null>` (`navigator.gpu.requestAdapter()`): the resolved type-arg already dropped null, so
+    // recover it from the syntactic Promise type-arg node and wrap the promise payload.
+    if (ret.kind === 'promise' && retNode && ts.isTypeReferenceNode(retNode) && retNode.typeArguments && retNode.typeArguments.length) {
+        const argNb = syntacticNullability(retNode.typeArguments[0])
+        if (argNb && (argNb.hasNull || argNb.hasUndef || argNb.hasVoid)) ret.of = applyNullable(applyOptionalValue(ret.of, argNb), argNb)
+    }
+    return ret
 }
 
 /**
@@ -2755,7 +2771,8 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
     // `getContext` has 5 lib sigs + 1 in-package `"webgpu"`) must pick the in-package signature, not `[0]`.
     const globalMode = !!opts.globalMode
     const pkgDir = opts.pkgDir || null
-    const declInPkg = (d) => { const f = d && d.getSourceFile && d.getSourceFile().fileName; return !!(f && pkgDir && f.startsWith(pkgDir)) }
+    // Path-boundary check so `.../@webgpu/types` doesn't also match a sibling `.../@webgpu/types-extra`.
+    const declInPkg = (d) => { const f = d && d.getSourceFile && d.getSourceFile().fileName; return !!(f && pkgDir && (f === pkgDir || f.startsWith(pkgDir + sep))) }
     const symInPkg = (p) => (p.declarations || []).some(declInPkg)
     const pickSig = (sigs) => (globalMode ? (sigs.find((s) => s.declaration && declInPkg(s.declaration)) || sigs[0]) : sigs[0])
 
@@ -2763,6 +2780,7 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
     // tuple rest removes only `make`; the abstract class type + usable methods still emit.
     const skippedMembers = []
     const ctors = staticType.getConstructSignatures()
+    const pickedCtor = ctors.length ? pickSig(ctors) : null
     let ctor = null
     if (ctors.length) {
         try {
@@ -2771,17 +2789,23 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
             // #192: through `buildMemberSig` too. A ctor returns the abstract `t`, so its type params
             // can't round-trip into the return — they are always param-only, so a constrained ctor param
             // resolves to its bound (the ret from the helper is ignored; a ctor has only params).
-            ctor = { params: buildMemberSig(pickSig(ctors), ctx, ctors).params }
+            ctor = { params: buildMemberSig(pickedCtor, ctx, ctors).params }
         } catch (error) {
             if (!isUnsupportedRestError(error)) throw error
             skippedMembers.push({ name: 'constructor', reason: error.message })
         }
     }
-    // #194: in global mode the `new(): never` signal for an instanceof-ONLY constructor is erased by the
-    // lib.dom merge (the merged sig reports `new(): GPUBuffer`), so the in-package construct sig is the
-    // discriminator: `pickSig` selected it, and a param-less one is instanceof-only → don't invent a `make`.
-    // A genuinely-constructible global (`new GPUValidationError(msg)`) has params and keeps its `@new`.
-    if (globalMode && ctor && !ctor.params.length) { ctor = null; skippedMembers.push({ name: 'constructor', reason: 'instanceof-only global (no in-package construct params)' }) }
+    // #194: an instanceof-ONLY global constructor is written `new (): never` in the package — that `never`
+    // RETURN is the precise signal (unlike param count, which would wrongly drop a genuine 0-arg global
+    // ctor). `pickSig` selected the IN-PACKAGE construct sig, so read its return; `never` → don't invent a
+    // `make`. A genuinely-constructible global (`new GPUValidationError(msg)`) returns the object and keeps
+    // its `@new`. (#194 review) Fallback to param-count only if the merge left no readable in-package `never`.
+    if (globalMode && ctor && pickedCtor) {
+        let neverRet = false
+        try { neverRet = !!(pickedCtor.getReturnType().flags & ts.TypeFlags.Never) } catch { /* unreadable */ }
+        if (neverRet) { ctor = null; skippedMembers.push({ name: 'constructor', reason: 'instanceof-only global (`new (): never`)' }) }
+        else if (!ctor.params.length && !(pickedCtor.declaration && declInPkg(pickedCtor.declaration))) { ctor = null; skippedMembers.push({ name: 'constructor', reason: 'instanceof-only global (no in-package construct signature)' }) }
+    }
 
     // Instance members. A property whose type has a call signature is a method (-> @send);
     // anything else is a data property / getter (-> @get). Inherited lib/@types members and
@@ -2930,6 +2954,9 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
         sinkName: (opts.classSink && opts.classSink.get(importName)) || lower(importName),
         ctor, methods, getters, setters, staticMethods, staticValues, skippedMembers,
         global: globalMode, // #194: emitClass drops @module on ctor/statics for a global binding
+        // #194: a const-namespace global (`GPUBufferUsage`) has only `@val @scope` consts and no instances,
+        // so it needs no abstract `type t` (and no `InstanceTypes` sink) — skip both.
+        namespaceOnly: globalMode && opts.globalKind === 'namespace',
     }
 }
 
@@ -2998,6 +3025,7 @@ const GLOBAL_SINGLETONS = { Navigator: 'navigator', WorkerNavigator: 'navigator'
 function extractGlobals(checker, source, from, opts, shared, acc) {
     const { classes, classTypes, classSink, skipped, globalEntries } = acc
     const pkgDir = dirname(source.fileName)
+    const declInPkg = (d) => { const f = d && d.getSourceFile && d.getSourceFile().fileName; return !!(f && (f === pkgDir || f.startsWith(pkgDir + sep))) }
     // Map each in-package `declare var X: T` → does T have construct signatures? (class vs const-namespace)
     const vars = new Map()
     for (const st of source.statements) {
@@ -3010,7 +3038,6 @@ function extractGlobals(checker, source, from, opts, shared, acc) {
         }
     }
     const common = { ...opts, shared, classTypes, classSink, globalMode: true, pkgDir }
-    const declInPkg = (d) => { const f = d && d.getSourceFile && d.getSourceFile().fileName; return !!(f && f.startsWith(pkgDir)) }
     const symInPkg = (p) => (p.declarations || []).some(declInPkg)
     // A genuine RUNTIME OBJECT (worth a `<Name>.res` handle module): it has a `declare var` (a constructor
     // object or a flag namespace) OR an in-package METHOD. A pure-DATA interface (a descriptor/dict — only
@@ -3031,11 +3058,15 @@ function extractGlobals(checker, source, from, opts, shared, acc) {
     // an inline record, not a phantom `.t`. Singletons are reached via scoped entries, so excluded.
     for (const st of source.statements) {
         if (!ts.isInterfaceDeclaration(st) || GLOBAL_SINGLETONS[st.name.text]) continue
+        const nm = st.name.text
         const s = checker.getSymbolAtLocation(st.name)
-        if (!s || !isRuntimeObject(st.name.text, s)) continue
-        classTypes.set(s, st.name.text)
+        if (!s || !isRuntimeObject(nm, s)) continue
+        // A const-namespace (has a var, no construct sig) has no instance handle — don't seed a sink/`.t`.
+        const vv = vars.get(nm)
+        if (vv && !vv.construct) continue
+        classTypes.set(s, nm)
         const inst = checker.getDeclaredTypeOfSymbol(s)?.symbol
-        if (inst) classTypes.set(inst, st.name.text)
+        if (inst) classTypes.set(inst, nm)
     }
     // Seed the dependency-free `InstanceTypes` sink for each global runtime object, so `<Name>.res`'s
     // `type t = InstanceTypes.<sink>` resolves and the sink module is actually emitted. Identical to module
