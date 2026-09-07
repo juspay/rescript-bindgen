@@ -2,9 +2,9 @@
 
 **0** components · ✅ **0** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**4** class module(s) → `@new`/`@send`/`@get` bindings.
+**5** class module(s) → `@new`/`@send`/`@get` bindings.
 
-**4** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
+**5** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
 ## 📦 Dependencies
 
@@ -21,6 +21,7 @@ Each class binds to its own `<Name>.res` module with an abstract `type t` (`@new
 |-------|-------------|---------|------------|
 | `DemoGizmo` | ✓ | 2 | 1 |
 | `DemoGizmoUsage` | — | 0 | 0 |
+| `DemoHandle` | — | 1 | 1 |
 | `DemoRoot` | — | 2 | 1 |
 | `HTMLCanvasElement` | — | 1 | 0 |
 

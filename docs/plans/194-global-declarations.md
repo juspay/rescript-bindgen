@@ -180,9 +180,18 @@ non-trivial). Static flag interfaces (`GPUBufferUsage`) → `@val @scope` consts
 - end-to-end `--pkg @webgpu/types` gets past extraction, a representative slice compiles, **no runtime import**;
 - **module + ambient fixtures byte-identical** (global mode is the additive 3024 branch).
 
-**Phase 2 (edges):** `@new` constructors (in-package construct-sig discriminator; ≥1-param bind, flag the
-rest); hybrid-package global REPORTING (§3.4); `--file` global input (extractComponent:2946). Deferred so v1
-lands the usable happy path first.
+**Phase 2 (edges) — TRACKED FOLLOW-UPS (deferred with the reviewer's sign-off, roshan confirms scope):**
+- **`--webapi` alias for augmentation-target DOM handles** — `HTMLCanvasElement`/`OffscreenCanvas` root as
+  abstract handles with no generated producer; alias `type t` to `Webapi.Dom.*` under `--webapi` so a real
+  canvas can be passed (mirrors the File/FileList fallback). v1 emits an honest header note on every
+  non-constructible handle ("obtain a `t` from an API return or your own Webapi/DOM binding; not constructed
+  here"), so no consumer is pushed toward an unsafe cast. → file a Phase-2 issue.
+- **Hybrid module+global reporting (§3.4)** — a package with BOTH module exports and `declare global`
+  augmentations: report the dropped globals (the issue's "report unsupported globals" AC for the hybrid case).
+  Pure-global packages (the issue's target, `@webgpu/types`) already report fully via `skipped[]`. → file a
+  Phase-2 issue so the AC isn't silently dropped.
+- `@new` constructors were LANDED in v1 (in-package `new (): never` discriminator). `--file` global input
+  (extractComponent:2946) remains deferred.
 
 ## §6 Risks
 - **Global-script vs broken entry** — detect real top-level global decls before entering the mode; otherwise

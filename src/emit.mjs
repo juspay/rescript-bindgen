@@ -643,6 +643,13 @@ export function emitClass(ir, options = {}) {
     // `type t` aliases the class's abstract instance type in the sink module, so the sink
     // is the single canonical definition everything points at (breaks class↔types cycles).
     const sinkSelf = cfg.resolveRef && ir.sinkName ? cfg.resolveRef({ to: ir.sinkName, home: 'InstanceTypes' }) : null
+    // #194: an abstract global handle you can't construct here (no `@new make` — obtained from an API return,
+    // or, for a host/DOM global like a canvas, your own Webapi/DOM binding). Say so honestly so a consumer
+    // reaches for a real value, not an unsafe cast. (A `--webapi` alias for DOM handles is a tracked follow-up.)
+    if (glob && !ir.namespaceOnly && !ir.ctor) {
+        lines.push('// #194: abstract handle — obtain a `t` from an API call that returns it (or your own')
+        lines.push('// Webapi/DOM binding for a host global); this module does not construct one.')
+    }
     // #194: a const-namespace global has no instances — emit only its `@val @scope` consts, no `type t`.
     if (!ir.namespaceOnly) lines.push(sinkSelf ? `type t = ${sinkSelf}` : 'type t')
 
