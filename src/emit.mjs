@@ -612,6 +612,13 @@ export function emitClass(ir, options = {}) {
         allowSelfT: true, // we're inside the class's own file -> a self-classRef may be bare `t`
     }
     const lines = []
+    // #194: GLOBAL mode (a global-only `.d.ts` — no runtime module to import) roots the ctor and statics
+    // WITHOUT `@module`: `@new` binds the browser global constructor directly and a static uses `@val
+    // @scope(...)`. Instance `@send`/`@get`/`@set` are already import-free, so they're identical in both
+    // modes. Module mode (the default) is unchanged — no module-path caller sets `ir.global`.
+    const glob = ir.global === true
+    const rootMod = glob ? '' : ` @module(${JSON.stringify(cfg.from)})`
+    const staticRoot = glob ? '@val' : `@module(${JSON.stringify(cfg.from)})`
 
     // Local type prologue — identical ordering to emit(); empty in module mode (types shared).
     const prim = (ir.unboxed || []).filter((u) => !isObjectUnboxed(u))
@@ -671,7 +678,7 @@ export function emitClass(ir, options = {}) {
         const paramStr = !segs.length ? 'unit'
             : (hasRest && segs.length === 1) ? segs[0]
                 : `(${segs.join(', ')})`
-        lines.push(`@new @module(${JSON.stringify(cfg.from)})${hasRest ? ' @variadic' : ''} external make: ${paramStr} => t = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
+        lines.push(`@new${rootMod}${hasRest ? ' @variadic' : ''} external make: ${paramStr} => t = ${JSON.stringify(ir.import.jsName || ir.import.name)}`)
     }
     for (const m of ir.methods) {
         const c = flag(m.jsName, [m.ret, ...m.params.map((p) => p.type)])
@@ -715,14 +722,47 @@ export function emitClass(ir, options = {}) {
         if (c) lines.push(c)
         const segs = argSegs(m.params)
         const paramStr = segs.length ? `(${segs.join(', ')})` : 'unit'
-        lines.push(`@module(${JSON.stringify(cfg.from)})${scope} external ${staticId(m.jsName)}: ${paramStr} => ${renderType(m.ret, '', cfg)} = ${JSON.stringify(m.jsName)}`)
+        lines.push(`${staticRoot}${scope} external ${staticId(m.jsName)}: ${paramStr} => ${renderType(m.ret, '', cfg)} = ${JSON.stringify(m.jsName)}`)
     }
     for (const v of ir.staticValues || []) {
         const c = flag(v.jsName, [v.type])
         if (c) lines.push(c)
-        lines.push(`@module(${JSON.stringify(cfg.from)})${scope} external ${staticId(v.jsName)}: ${renderType(v.type, '', cfg)} = ${JSON.stringify(v.jsName)}`)
+        lines.push(`${staticRoot}${scope} external ${staticId(v.jsName)}: ${renderType(v.type, '', cfg)} = ${JSON.stringify(v.jsName)}`)
     }
 
+    return lines.join('\n')
+}
+
+/**
+ * #194: top-level scoped global ENTRY POINTS (e.g. `navigator.gpu`) from a global-only `.d.ts`. Each is a
+ * `@val @scope("<global>")` external — import-free — resolving referenced types through the shared registry
+ * via `options.resolveRef`, exactly like the shared/class modules.
+ */
+export function emitGlobalEntries(entries, options = {}) {
+    const cfg = {
+        from: '', refType: options.refType || 'React.ref<Nullable.t<Dom.element>>',
+        opaqueFallback: options.opaqueFallback || 'string', resolveRef: options.resolveRef || null,
+    }
+    const render1 = (p) => (p.type.kind === 'event' ? p.type.res : renderType(p.type, p.name, cfg))
+    const argSegs = (params) => {
+        const segs = params.map((p) => p.rest ? render1(p) : `~${label(p.name).id}: ${render1(p)}${p.optional ? '=?' : ''}`)
+        if (params.length && params[params.length - 1].optional) segs.push('unit')
+        return segs
+    }
+    const seen = new Set()
+    const lines = ['// #194: global entry points — reach these package globals through the runtime object named', '// in each `@scope(...)`; no module is imported. (e.g. `navigator.gpu`)']
+    for (const e of entries) {
+        let id = label(e.jsName).id
+        while (seen.has(id)) id += '_'
+        seen.add(id)
+        const scope = ` @scope(${JSON.stringify(e.scope)})`
+        if (e.kind === 'method') {
+            const segs = argSegs(e.params)
+            lines.push(`@val${scope} external ${id}: ${segs.length ? `(${segs.join(', ')})` : 'unit'} => ${renderType(e.ret, '', cfg)} = ${JSON.stringify(e.jsName)}`)
+        } else {
+            lines.push(`@val${scope} external ${id}: ${renderType(e.type, '', cfg)} = ${JSON.stringify(e.jsName)}`)
+        }
+    }
     return lines.join('\n')
 }
 
