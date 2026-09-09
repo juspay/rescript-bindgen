@@ -5,6 +5,27 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Global-only declaration packages (e.g. `@webgpu/types`)** (#194) — a global-augmentation `.d.ts` with no
+  module symbol is no longer skipped; its top-level globals bind import-free (`@val`/`@new`/`@send`/`@get`/
+  `@set`/`@val @scope`, never `@module`). Runtime-object interfaces → `<Name>.res` handles; pure-data
+  descriptors → records; flag-const namespaces → `@val @scope` consts; DOM singleton augmentations
+  (`navigator.gpu`) → scoped entry points in `<Pkg>Globals.res`. `@webgpu/types` now generates 45 compiling
+  handle modules with zero imports. Module/component/ambient modes are unchanged.
+
+### Fixed
+
+- **Nullable function/method returns are recovered instead of silently emitting a non-null type** (#194
+  return-path fix) — with strictNullChecks off, a return typed `T | null` / `T | undefined` resolved to bare
+  `T`, so the binding claimed a value is always present when the function can return null/undefined. The
+  return is now recovered from the syntactic node: `| undefined` → `option<T>`, `| null` → `Nullable.t<T>`
+  (including inside `Promise<…>`). **This is a breaking signature change** for any call site that treated such
+  a return as non-null (the previous type was unsound) — it affects standalone function exports and class
+  methods alike (16 blend functions, e.g. `getButtonHeight(): string | undefined` → `option<string>`,
+  `filterMenuV2Item(): … | null` → `Nullable.t<…>`). It fires only on an explicit syntactic `| null`/`|
+  undefined`, so a genuinely non-null return is never wrapped. Covered by the `nullable-return` golden.
+
 ## [1.4.0-beta.4] — 2026-09-04
 
 ### Fixed
