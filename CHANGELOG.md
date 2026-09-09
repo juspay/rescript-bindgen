@@ -22,9 +22,17 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   return is now recovered from the syntactic node: `| undefined` → `option<T>`, `| null` → `Nullable.t<T>`
   (including inside `Promise<…>`). **This is a breaking signature change** for any call site that treated such
   a return as non-null (the previous type was unsound) — it affects standalone function exports and class
-  methods alike (16 blend functions, e.g. `getButtonHeight(): string | undefined` → `option<string>`,
-  `filterMenuV2Item(): … | null` → `Nullable.t<…>`). It fires only on an explicit syntactic `| null`/`|
-  undefined`, so a genuinely non-null return is never wrapped. Covered by the `nullable-return` golden.
+  methods alike. Fixing a call site is a local unwrap; reach for the combinator matching the wrapper:
+  - **`| null` → `Nullable.t<…>`** (use `Nullable.toOption` / a `switch`): `filterMenuV2Item`,
+    `filterSingleSelectV2Item`, `getFilteredMenuItem`.
+  - **`| undefined` → `option<…>`** (use `Option.getOr` / a `switch`): `getButtonHeight`, `getAccessibleName`,
+    `getSubtextId`, `getAriaLiveValue`, `getButtonGroupPosition`, `toCssValue`, `createKeyboardHandler`,
+    `createAvatarKeyboardHandler`, `mergeCheckboxV2AriaDescribedBy`, `mergeSingleSelectV2AriaDescribedBy`,
+    `getMenuItemBackgroundColor`, `getMenuItemOptionColor`, `getMenuItemDescriptionColor`.
+
+  (`null` vs `undefined` is preserved deliberately — `option` can't distinguish them and both occur.) It
+  fires only on an explicit syntactic `| null`/`| undefined`, so a genuinely non-null return is never
+  wrapped. Covered by the `nullable-return` golden.
 
 ## [1.4.0-beta.4] — 2026-09-04
 
