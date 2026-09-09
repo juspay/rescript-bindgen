@@ -3,9 +3,9 @@ type t = InstanceTypes.honoRequest
 @new @module("hono") external make: (~request: WebTypes.request, ~path: string=?, ~matchResult: string=?, unit) => t = "HonoRequest"
 // ⚪ loose: `param` has a param/return widened to `string`.
 @send external param: (t, ~key: string) => string = "param"
-@send external query: (t, ~key: string) => string = "query"
-@send external queries: (t, ~key: string) => array<string> = "queries"
-@send external header: (t, ~name: UtilsTypes.requestHeader) => string = "header"
+@send external query: (t, ~key: string) => option<string> = "query"
+@send external queries: (t, ~key: string) => option<array<string>> = "queries"
+@send external header: (t, ~name: UtilsTypes.requestHeader) => option<string> = "header"
 // ⚪ loose: `parseBody` has a param/return widened to `string`.
 @send external parseBody: (t, ~options: UtilsTypes.utilsValueConfig=?, unit) => promise<Dict.t<string>> = "parseBody"
 // 🛑 BROKEN: `json` has an `unknown`/`any` — emitted with `string` placeholder(s) and WON'T WORK. Needs a concrete type upstream.

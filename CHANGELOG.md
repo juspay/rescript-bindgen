@@ -5,6 +5,43 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Global-only declaration packages (e.g. `@webgpu/types`)** (#194) — a global-augmentation `.d.ts` with no
+  module symbol is no longer skipped; its top-level globals bind import-free (`@val`/`@new`/`@send`/`@get`/
+  `@set`/`@val @scope`, never `@module`). Runtime-object interfaces → `<Name>.res` handles; pure-data
+  descriptors → records; flag-const namespaces → `@val @scope` consts; DOM singleton augmentations
+  (`navigator.gpu`) → scoped entry points in `<Pkg>Globals.res`. `@webgpu/types` now generates 45 compiling
+  handle modules with zero imports. The global-mode *routing* is purely additive — module/component/ambient
+  routing is unchanged (see the nullable-return fix below for a separate, cross-cutting return-type correction
+  that does affect module-mode signatures).
+
+### Fixed
+
+- **Nullable function/method returns are recovered instead of silently emitting a non-null type** (#194
+  return-path fix) — with strictNullChecks off, a return typed `T | null` / `T | undefined` resolved to bare
+  `T`, so the binding claimed a value is always present when the function can return null/undefined. The
+  return is now recovered from the syntactic node: `| undefined` → `option<T>`, `| null` → `Nullable.t<T>`
+  (including inside `Promise<…>`). **This is a breaking signature change** for any call site that treated such
+  a return as non-null (the previous type was unsound) — it affects standalone function exports and class
+  methods alike. Fixing a call site is a local unwrap; reach for the combinator matching the wrapper:
+  - **`| null` → `Nullable.t<…>`** (use `Nullable.toOption` / a `switch`): `filterMenuV2Item`,
+    `filterSingleSelectV2Item`, `getFilteredMenuItem`.
+  - **`| undefined` → `option<…>`** (use `Option.getOr` / a `switch`): `getButtonHeight`, `getAccessibleName`,
+    `getSubtextId`, `getAriaLiveValue`, `getButtonGroupPosition`, `toCssValue`, `createKeyboardHandler`,
+    `createAvatarKeyboardHandler`, `mergeCheckboxV2AriaDescribedBy`, `mergeSingleSelectV2AriaDescribedBy`,
+    `getMenuItemBackgroundColor`, `getMenuItemOptionColor`, `getMenuItemDescriptionColor`.
+
+  (`null` vs `undefined` is preserved deliberately — `option` can't distinguish them and both occur.) The
+  recovery also reaches **callback/method returns inside shared type modules** and two syntactic edges a
+  later review surfaced: a **parenthesized** `(T | null)` return (e.g. Highcharts `inClass(): (boolean |
+  undefined)` → `option<bool>`) and a **`Promise<T | null>`** return (`promise<Nullable.t<T>>`), including in
+  a callback-typed field. A handful of anonymous derived type names (`partial…`) shift as a shape-hash
+  consequence of a nested return changing — a warm run preserves them via the #190 lock. It fires only on an
+  explicit syntactic `| null`/`| undefined`, so a genuinely non-null return is never wrapped. Covered by the
+  `nullable-return` golden (top-level, parenthesized, `Promise<…>`, callback-`Promise<…>`, and a non-nullable
+  control that must stay bare).
+
 ## [1.4.0-beta.4] — 2026-09-04
 
 ### Fixed

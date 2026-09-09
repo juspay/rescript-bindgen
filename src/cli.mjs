@@ -16,7 +16,7 @@
 // ============================================================================
 
 import { extractComponent, extractModule } from './extract.mjs'
-import { emit, emitFunction, emitClass, emitNamespace, report, planSharedModules, emitSharedModule, makeResolveRef } from './emit.mjs'
+import { emit, emitFunction, emitClass, emitNamespace, emitGlobalEntries, report, planSharedModules, emitSharedModule, makeResolveRef } from './emit.mjs'
 import { resolveInput } from './resolve.mjs'
 import { writeReport } from './report.mjs'
 import { findDanglingRefs } from './validate.mjs'
@@ -468,6 +468,7 @@ async function main() {
     let functions = [] // [{ name, ir }] — standalone function/const-fn exports (generic TS)
     let classes = []   // [{ name, ir }] — class exports -> `@new`/`@send`/`@get` modules
     let namespaces = [] // [{ name, members }] — `export * as NS` -> alias modules (#25)
+    let globalEntries = [] // [{ scope, jsName, kind, ... }] — #194 scoped global entry points
     let skipped = []
     let shared = null // module-level shared-type registry (multi-component runs only)
     if (single) {
@@ -482,6 +483,7 @@ async function main() {
         functions = res.functions || []
         classes = res.classes || []
         namespaces = res.namespaces || []
+        globalEntries = res.globalEntries || []
         skipped = res.skipped
         shared = res.shared
         if (opts.only) {
@@ -495,8 +497,8 @@ async function main() {
         }
     }
 
-    if (!units.length && !functions.length && !classes.length) {
-        console.error('[bindgen] No React components, functions, or classes found to generate.')
+    if (!units.length && !functions.length && !classes.length && !globalEntries.length) {
+        console.error('[bindgen] No React components, functions, classes, or global declarations found to generate.')
         if (skipped.length) console.error('[bindgen] skipped: ' + skipped.slice(0, 20).map((s) => `${s.name}(${s.reason})`).join(', '))
         process.exit(1)
     }
@@ -812,6 +814,15 @@ async function main() {
         written.add(`${name}.res`)
     }
     if (classes.length) console.error(`[bindgen] wrote ${classes.length} class module(s): ${classes.map((c) => `${c.name}.res`).join(', ')}`)
+
+    // #194: a global-only package contributes scoped entry-point bindings (`navigator.gpu`) with NO module
+    // import — write them to one `<Pkg>Globals.res`.
+    if (globalEntries.length) {
+        const gname = from.replace(/^@/, '').split(/[^a-zA-Z0-9]+/).filter(Boolean).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('') + 'Globals'
+        writeFileSync(join(outDir, `${gname}.res`), emitGlobalEntries(globalEntries, compRef) + '\n')
+        written.add(`${gname}.res`)
+        console.error(`[bindgen] wrote global entry module ${gname}.res — ${globalEntries.length} scoped binding(s) (#194)`)
+    }
 
     // Manifest-based orphan cleanup: remove files a PREVIOUS bindgen run wrote that this run
     // no longer produces (e.g. a component renamed/dropped upstream). Only ever touches files

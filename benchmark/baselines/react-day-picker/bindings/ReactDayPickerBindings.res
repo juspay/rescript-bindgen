@@ -21,7 +21,7 @@
 @module("react-day-picker") external labelYearDropdown: (~_options: ClassesSharedTypes.dateLibOptions=?, unit) => string = "labelYearDropdown"
 @module("react-day-picker") external useDayPicker: unit => ClassesSharedTypes.dayPickerContextV10vwj = "useDayPicker"
 @module("react-day-picker") external dayPickerContext: React.Context.t<ClassesSharedTypes.dayPickerContextV1lgyc> = "dayPickerContext"
-@module("react-day-picker") external addToRange: (Date.t, ClassesSharedTypes.dateRange, ~min: float=?, ~max: float=?, ~required: bool=?, ~dateLib: ClassesSharedTypes.dateLib2=?, unit) => ClassesSharedTypes.dateRange = "addToRange"
+@module("react-day-picker") external addToRange: (Date.t, ClassesSharedTypes.dateRange, ~min: float=?, ~max: float=?, ~required: bool=?, ~dateLib: ClassesSharedTypes.dateLib2=?, unit) => option<ClassesSharedTypes.dateRange> = "addToRange"
 @module("react-day-picker") external dateMatchModifiers: (Date.t, ClassesSharedTypes.CjsDisabled.t, ~dateLib: ClassesSharedTypes.dateLib2=?, unit) => bool = "dateMatchModifiers"
 @module("react-day-picker") external rangeContainsDayOfWeek: (UtilsTypes.utilsRangeContainsDayOfWeekRangeConfig, CommonTypes.numberOrNumberArray, ~dateLib: ClassesSharedTypes.dateLib2=?, unit) => bool = "rangeContainsDayOfWeek"
 @module("react-day-picker") external rangeContainsModifiers: (UtilsTypes.utilsRangeContainsDayOfWeekRangeConfig, ClassesSharedTypes.CjsDisabled.t, ~dateLib: ClassesSharedTypes.dateLib2=?, unit) => bool = "rangeContainsModifiers"
