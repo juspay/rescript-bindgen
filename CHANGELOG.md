@@ -32,9 +32,15 @@ This project adheres to [Semantic Versioning](https://semver.org/).
     `createAvatarKeyboardHandler`, `mergeCheckboxV2AriaDescribedBy`, `mergeSingleSelectV2AriaDescribedBy`,
     `getMenuItemBackgroundColor`, `getMenuItemOptionColor`, `getMenuItemDescriptionColor`.
 
-  (`null` vs `undefined` is preserved deliberately — `option` can't distinguish them and both occur.) It
-  fires only on an explicit syntactic `| null`/`| undefined`, so a genuinely non-null return is never
-  wrapped. Covered by the `nullable-return` golden.
+  (`null` vs `undefined` is preserved deliberately — `option` can't distinguish them and both occur.) The
+  recovery also reaches **callback/method returns inside shared type modules** and two syntactic edges a
+  later review surfaced: a **parenthesized** `(T | null)` return (e.g. Highcharts `inClass(): (boolean |
+  undefined)` → `option<bool>`) and a **`Promise<T | null>`** return (`promise<Nullable.t<T>>`), including in
+  a callback-typed field. A handful of anonymous derived type names (`partial…`) shift as a shape-hash
+  consequence of a nested return changing — a warm run preserves them via the #190 lock. It fires only on an
+  explicit syntactic `| null`/`| undefined`, so a genuinely non-null return is never wrapped. Covered by the
+  `nullable-return` golden (top-level, parenthesized, `Promise<…>`, callback-`Promise<…>`, and a non-nullable
+  control that must stay bare).
 
 ## [1.4.0-beta.4] — 2026-09-04
 

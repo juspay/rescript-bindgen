@@ -2323,13 +2323,23 @@ function returnNode(sig, ctx, depth = 0) {
     // (violates "flag, don't fake"). Recover the null/undefined from the SYNTACTIC return node, exactly like
     // the nested-callback return path. Only fires on an explicit `| null`/`| undefined`, so module-mode
     // methods without one are byte-identical.
-    const retNode = sig.declaration && sig.declaration.type
+    // #194 review: unwrap a parenthesized RETURN `(T | null)` so its nullability is recovered. Scoped to the
+    // return site (NOT inside syntacticNullability, which record-field classification also uses — unwrapping
+    // there restructures unrelated field types).
+    let retNode = sig.declaration && sig.declaration.type
+    while (retNode && ts.isParenthesizedTypeNode(retNode)) retNode = retNode.type
     const nb = syntacticNullability(retNode)
     let ret = classify(retType, ctx, '', depth + 1)
     ret = applyNullable(applyOptionalValue(ret, nb), nb)
-    // `Promise<T | null>` (`navigator.gpu.requestAdapter()`): the resolved type-arg already dropped null, so
-    // recover it from the syntactic Promise type-arg node and wrap the promise payload.
-    if (ret.kind === 'promise' && retNode && ts.isTypeReferenceNode(retNode) && retNode.typeArguments && retNode.typeArguments.length) {
+    return recoverPromiseArgNullable(ret, retNode)
+}
+
+/** `Promise<T | null>` / `Promise<T | undefined>`: the RESOLVED type-arg already dropped the null/undefined
+ *  (strictNullChecks off), so recover it from the SYNTACTIC `Promise<…>` type-arg node and wrap the promise
+ *  payload — `promise<Nullable.t<T>>` / `promise<option<T>>`. Shared by `returnNode` (method/function/global
+ *  returns) AND `functionNode` (a callback-typed prop `() => Promise<T | null>`), so neither drops null. */
+function recoverPromiseArgNullable(ret, retNode) {
+    if (ret && ret.kind === 'promise' && retNode && ts.isTypeReferenceNode(retNode) && retNode.typeArguments && retNode.typeArguments.length) {
         const argNb = syntacticNullability(retNode.typeArguments[0])
         if (argNb && (argNb.hasNull || argNb.hasUndef || argNb.hasVoid)) ret.of = applyNullable(applyOptionalValue(ret.of, argNb), argNb)
     }
@@ -3099,6 +3109,10 @@ function extractGlobals(checker, source, from, opts, shared, acc) {
                 const seenEntry = new Set(globalEntries.map((e) => `${e.scope}.${e.jsName}`)) // dedup: Navigator + WorkerNavigator both add `.gpu`
                 for (const g of ir.getters) if (!seenEntry.has(`${scope}.${g.jsName}`)) globalEntries.push({ scope, jsName: g.jsName, kind: 'value', type: g.type })
                 for (const m of ir.methods) if (!seenEntry.has(`${scope}.${m.jsName}`)) globalEntries.push({ scope, jsName: m.jsName, kind: 'method', params: m.params, ret: m.ret })
+                // #194 review: a MUTABLE prop added to a singleton global (e.g. `navigator.foo = …`) — a
+                // scoped-global `@set` has no clean external form without binding the object handle, so flag
+                // it rather than silently emit a read-only binding. (Rare: WebGPU's `navigator.gpu` is readonly.)
+                for (const s of ir.setters || []) skipped.push({ name: `${scope}.${s.jsName}`, reason: 'settable singleton-global prop not bound (scoped `@set` unsupported) — read via the getter; report if needed' })
             } catch (e) { skipped.push({ name, reason: 'global-singleton-extract-error: ' + e.message.split('\n')[0].slice(0, 60) }) }
             continue
         }
@@ -6737,7 +6751,8 @@ function functionNode(sig, ctx, propName, depth = 0) {
             // An explicit `| null` in the return is REAL coverage the consumer must be
             // able to produce, but strictNullChecks-off absorbs it from the resolved
             // type — recover it from the SYNTACTIC return node (the I-5 technique).
-            const retNode = sig.declaration && sig.declaration.type
+            let retNode = sig.declaration && sig.declaration.type
+            while (retNode && ts.isParenthesizedTypeNode(retNode)) retNode = retNode.type // #194 review: `(T | null)`
             const retNb = syntacticNullability(retNode)
             const synNull = !!(retNb && retNb.hasNull)
             const prev = ctx.inFnReturn, prevNull = ctx.retSynNull, prevProd = ctx.produced
@@ -6749,6 +6764,9 @@ function functionNode(sig, ctx, propName, depth = 0) {
             // then preserve an independent null arm outside it (`Nullable.t<option<T>>`). A views
             // module that already exposes `none` marks itself so neither wrapper is duplicated.
             ret = applyNullable(applyOptionalValue(ret, retNb), retNb)
+            // #194 review: a callback whose return is `Promise<T | null>` also needs the inner promise-arg
+            // null recovered (the top-level `applyNullable` above only sees the `Promise<…>` node, not a union).
+            ret = recoverPromiseArgNullable(ret, retNode)
             ctx.inFnReturn = prev
             ctx.retSynNull = prevNull
             ctx.produced = prevProd

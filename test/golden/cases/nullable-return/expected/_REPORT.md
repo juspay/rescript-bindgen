@@ -2,7 +2,7 @@
 
 **0** components · ✅ **0** usable · 🔍 **0** need review · 🛑 **0** broken
 
-**4** function binding(s) → `DemoBindings.res`.
+**6** function binding(s) → `DemoBindings.res`.
 
 **2** shared types deduplicated into **2** `*Types.res` modules (referenced qualified — no per-file redeclaration).
 
@@ -21,6 +21,8 @@ Standalone function exports, emitted as positional `@module external` bindings i
 - `findThing`
 - `toCssValue`
 - `requiredLabel`
+- `parenFind`
+- `subscribe`
 
 ## ✅ Usable
 

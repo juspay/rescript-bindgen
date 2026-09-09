@@ -2,3 +2,5 @@
 @module("demo") external findThing: (array<NullableReturnTypes.thing>, string) => Nullable.t<NullableReturnTypes.thing> = "findThing"
 @module("demo") external toCssValue: (~value: CommonTypes.stringOrNumber=?, unit) => option<string> = "toCssValue"
 @module("demo") external requiredLabel: (string) => string = "requiredLabel"
+@module("demo") external parenFind: (string) => Nullable.t<NullableReturnTypes.thing> = "parenFind"
+@module("demo") external subscribe: (unit => promise<Nullable.t<NullableReturnTypes.thing>>) => unit = "subscribe"
