@@ -12,7 +12,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   `@set`/`@val @scope`, never `@module`). Runtime-object interfaces → `<Name>.res` handles; pure-data
   descriptors → records; flag-const namespaces → `@val @scope` consts; DOM singleton augmentations
   (`navigator.gpu`) → scoped entry points in `<Pkg>Globals.res`. `@webgpu/types` now generates 45 compiling
-  handle modules with zero imports. Module/component/ambient modes are unchanged.
+  handle modules with zero imports. The global-mode *routing* is purely additive — module/component/ambient
+  routing is unchanged (see the nullable-return fix below for a separate, cross-cutting return-type correction
+  that does affect module-mode signatures).
 
 ### Fixed
 
