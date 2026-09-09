@@ -192,6 +192,20 @@ non-trivial). Static flag interfaces (`GPUBufferUsage`) → `@val @scope` consts
   Phase-2 issue so the AC isn't silently dropped.
 - `@new` constructors were LANDED in v1 (in-package `new (): never` discriminator). `--file` global input
   (extractComponent:2946) remains deferred.
+- **Nullable-return recovery is scoped to RETURN sites only** (`returnNode` + the callback-return
+  `functionNode` path). The paren-unwrap for a `(T | null)` node lives at those two sites, deliberately NOT in
+  the shared `syntacticNullability` helper. Two tracked residuals from the rescript-bindgen-review sign-off on
+  `7b310ae` (both narrow + pre-existing, deferred with the reviewer's agreement):
+  1. **Parenthesized `(T | null)` in a DATA FIELD or a PARAM still silently drops null.** `syntacticNullability`
+     is also the field/param path (extract.mjs:2038, 6725, 6997, 7324); scoping the paren-unwrap to returns
+     leaves a purely-syntactic inconsistency — `foo: T | null` recovers but `foo: (T | null)` doesn't. Fine to
+     defer; fix would extend the unwrap into `syntacticNullability` guarded so it can't restructure records.
+  2. **The record-field nullable path mishandles a recovered `(T | null)` DATA field independent of parens.**
+     When the paren-unwrap was first (wrongly) put in `syntacticNullability`, a recovered nullable data field
+     materialized a *spurious opaque module + type* in HighchartsSharedTypes — i.e. a plain object-typed
+     `foo: T | null` field hits the same mishandling, which is the real reason the field case is not a
+     one-liner. A future fixer needs this breadcrumb before touching the shared helper. → fold both into the
+     Phase-2 issue when filed.
 
 ## §6 Risks
 - **Global-script vs broken entry** — detect real top-level global decls before entering the mode; otherwise
