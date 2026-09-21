@@ -1,0 +1,3 @@
+type thing = {
+  id: string,
+}

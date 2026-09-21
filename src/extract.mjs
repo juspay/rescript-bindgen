@@ -16,7 +16,7 @@
 // ============================================================================
 
 import ts from 'typescript'
-import { dirname, relative } from 'path'
+import { dirname, relative, sep } from 'path'
 import { DOM_ELEMENT_BY_LOWER, DOM_PROPS_FIELDS, RESCRIPT_RESERVED } from './stdlib-types.mjs'
 import { TS_NAME_TO_GROUP, chainFields } from './html-attrs.mjs'
 import { label } from './emit.mjs'
@@ -2317,7 +2317,33 @@ function returnNode(sig, ctx, depth = 0) {
         if (hasVoid && hasPromise) return { kind: 'typeVar', name: "'a" }
     }
     const retVoid = !!(retType.flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined))
-    return retVoid ? { kind: 'unit' } : classify(retType, ctx, '', depth + 1)
+    if (retVoid) return { kind: 'unit' }
+    // #194 review (blocker): strictNullChecks is OFF (extract.mjs:1159), so a resolved `T | null` return
+    // collapses to bare `T` — a class/global METHOD would then emit a plausible-but-WRONG non-null type
+    // (violates "flag, don't fake"). Recover the null/undefined from the SYNTACTIC return node, exactly like
+    // the nested-callback return path. Only fires on an explicit `| null`/`| undefined`, so module-mode
+    // methods without one are byte-identical.
+    // #194 review: unwrap a parenthesized RETURN `(T | null)` so its nullability is recovered. Scoped to the
+    // return site (NOT inside syntacticNullability, which record-field classification also uses — unwrapping
+    // there restructures unrelated field types).
+    let retNode = sig.declaration && sig.declaration.type
+    while (retNode && ts.isParenthesizedTypeNode(retNode)) retNode = retNode.type
+    const nb = syntacticNullability(retNode)
+    let ret = classify(retType, ctx, '', depth + 1)
+    ret = applyNullable(applyOptionalValue(ret, nb), nb)
+    return recoverPromiseArgNullable(ret, retNode)
+}
+
+/** `Promise<T | null>` / `Promise<T | undefined>`: the RESOLVED type-arg already dropped the null/undefined
+ *  (strictNullChecks off), so recover it from the SYNTACTIC `Promise<…>` type-arg node and wrap the promise
+ *  payload — `promise<Nullable.t<T>>` / `promise<option<T>>`. Shared by `returnNode` (method/function/global
+ *  returns) AND `functionNode` (a callback-typed prop `() => Promise<T | null>`), so neither drops null. */
+function recoverPromiseArgNullable(ret, retNode) {
+    if (ret && ret.kind === 'promise' && retNode && ts.isTypeReferenceNode(retNode) && retNode.typeArguments && retNode.typeArguments.length) {
+        const argNb = syntacticNullability(retNode.typeArguments[0])
+        if (argNb && (argNb.hasNull || argNb.hasUndef || argNb.hasVoid)) ret.of = applyNullable(applyOptionalValue(ret.of, argNb), argNb)
+    }
+    return ret
 }
 
 /**
@@ -2747,10 +2773,24 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
         identityRoot: importName,
     }
 
+    // #194 GLOBAL mode: a global-only `.d.ts` (no runtime module). Member/signature selection switches
+    // from module mode's lib-blocklist to an OWN-PACKAGE allowlist, because TS's own lib.dom already
+    // ships the whole API (e.g. WebGPU): every GPU* interface is a MERGED lib+package symbol, so we must
+    // keep only declarations whose source file is inside the package dir — `.some(inPkg)`, since
+    // `declarations[0]` is frequently the lib.dom one. And overloaded augmentation members (canvas
+    // `getContext` has 5 lib sigs + 1 in-package `"webgpu"`) must pick the in-package signature, not `[0]`.
+    const globalMode = !!opts.globalMode
+    const pkgDir = opts.pkgDir || null
+    // Path-boundary check so `.../@webgpu/types` doesn't also match a sibling `.../@webgpu/types-extra`.
+    const declInPkg = (d) => { const f = d && d.getSourceFile && d.getSourceFile().fileName; return !!(f && pkgDir && (f === pkgDir || f.startsWith(pkgDir + sep))) }
+    const symInPkg = (p) => (p.declarations || []).some(declInPkg)
+    const pickSig = (sigs) => (globalMode ? (sigs.find((s) => s.declaration && declInPkg(s.declaration)) || sigs[0]) : sigs[0])
+
     // Constructor: first construct signature (overloads collapse to the first). An unsupported
     // tuple rest removes only `make`; the abstract class type + usable methods still emit.
     const skippedMembers = []
     const ctors = staticType.getConstructSignatures()
+    const pickedCtor = ctors.length ? pickSig(ctors) : null
     let ctor = null
     if (ctors.length) {
         try {
@@ -2759,11 +2799,22 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
             // #192: through `buildMemberSig` too. A ctor returns the abstract `t`, so its type params
             // can't round-trip into the return — they are always param-only, so a constrained ctor param
             // resolves to its bound (the ret from the helper is ignored; a ctor has only params).
-            ctor = { params: buildMemberSig(ctors[0], ctx, ctors).params }
+            ctor = { params: buildMemberSig(pickedCtor, ctx, ctors).params }
         } catch (error) {
             if (!isUnsupportedRestError(error)) throw error
             skippedMembers.push({ name: 'constructor', reason: error.message })
         }
+    }
+    // #194: an instanceof-ONLY global constructor is written `new (): never` in the package — that `never`
+    // RETURN is the precise signal (unlike param count, which would wrongly drop a genuine 0-arg global
+    // ctor). `pickSig` selected the IN-PACKAGE construct sig, so read its return; `never` → don't invent a
+    // `make`. A genuinely-constructible global (`new GPUValidationError(msg)`) returns the object and keeps
+    // its `@new`. (#194 review) Fallback to param-count only if the merge left no readable in-package `never`.
+    if (globalMode && ctor && pickedCtor) {
+        let neverRet = false
+        try { neverRet = !!(pickedCtor.getReturnType().flags & ts.TypeFlags.Never) } catch { /* unreadable */ }
+        if (neverRet) { ctor = null; skippedMembers.push({ name: 'constructor', reason: 'instanceof-only global (`new (): never`)' }) }
+        else if (!ctor.params.length && !(pickedCtor.declaration && declInPkg(pickedCtor.declaration))) { ctor = null; skippedMembers.push({ name: 'constructor', reason: 'instanceof-only global (no in-package construct signature)' }) }
     }
 
     // Instance members. A property whose type has a call signature is a method (-> @send);
@@ -2782,14 +2833,17 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
     const methods = []
     const getters = []
     const setters = [] // #109.4: `set value(v)` accessors -> `@set external`
-    for (const p of instanceType.getProperties()) {
+    // #194: a const-NAMESPACE global (`interface GPUBufferUsage {readonly MAP_READ:number}` + `declare var
+    // GPUBufferUsage: GPUBufferUsage`) has no instances — its members bind as `@val @scope` statics below,
+    // NOT as instance getters on a phantom `t`. Skip the instance side for it.
+    for (const p of (globalMode && opts.globalKind === 'namespace') ? [] : instanceType.getProperties()) {
         const pname = p.getName()
         if (pname === 'constructor' || pname === 'prototype') continue
-        if (isInherited(p) || isHidden(p)) continue
+        if ((globalMode ? !symInPkg(p) : isInherited(p)) || isHidden(p)) continue
         const pt = checker.getTypeOfSymbolAtLocation(p, decl)
         if (pt.getCallSignatures().length) {
             try {
-                const sig0 = pt.getCallSignatures()[0]
+                const sig0 = pickSig(pt.getCallSignatures())
                 // A METHOD's own type parameters become ReScript type variables, exactly as
                 // `buildFunctionIR` already does for a standalone `function map<T, U>(…)` and
                 // `buildComponentIR` for generic props. Without this a method generic had no entry in
@@ -2868,11 +2922,16 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
     // members — Function.prototype members (`call`/`apply`/`bind`/`length`/`name`) are lib-inherited.
     const staticMethods = []
     const staticValues = []
-    for (const p of staticType.getProperties()) {
+    // #194: in global mode, statics come from a constructor object's / namespace var's OWN in-package
+    // members (`GPUBufferUsage.MAP_READ`) — these are NOT `ModifierFlags.Static` (that's for class
+    // `static`), so the module-mode gate would drop them. Use the own-package allowlist instead. A pure
+    // instance type ('instance', no `declare var`) has no statics to bind.
+    for (const p of (globalMode && opts.globalKind === 'instance') ? [] : staticType.getProperties()) {
         const pname = p.getName()
         if (pname === 'prototype') continue
         const d = p.declarations && p.declarations[0]
-        if (!d || !(ts.getCombinedModifierFlags(d) & ts.ModifierFlags.Static) || isHidden(p)) continue
+        const keep = globalMode ? symInPkg(p) : (d && (ts.getCombinedModifierFlags(d) & ts.ModifierFlags.Static))
+        if (!keep || isHidden(p)) continue
         const pt = checker.getTypeOfSymbolAtLocation(p, decl)
         if (pt.getCallSignatures().length) {
             try {
@@ -2882,7 +2941,7 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
                 // #192: statics go through the SAME `buildMemberSig` as instance methods — they register
                 // no type params on their own, so relying on `classify` alone would resolve a bound in
                 // BOTH positions and drop the round-trip carve-out for `staticEcho<T extends string>(x:T):T`.
-                const { params, ret } = buildMemberSig(pt.getCallSignatures()[0], ctx, pt.getCallSignatures())
+                const { params, ret } = buildMemberSig(pickSig(pt.getCallSignatures()), ctx, pt.getCallSignatures())
                 staticMethods.push({ jsName: pname, params, ret })
             } catch (error) {
                 if (!isUnsupportedRestError(error)) throw error
@@ -2904,6 +2963,10 @@ function buildClassIR(checker, sym, source, importName, from, opts) {
         // The class's own abstract type in the sink — emit aliases `type t = InstanceTypes.<sinkName>`.
         sinkName: (opts.classSink && opts.classSink.get(importName)) || lower(importName),
         ctor, methods, getters, setters, staticMethods, staticValues, skippedMembers,
+        global: globalMode, // #194: emitClass drops @module on ctor/statics for a global binding
+        // #194: a const-namespace global (`GPUBufferUsage`) has only `@val @scope` consts and no instances,
+        // so it needs no abstract `type t` (and no `InstanceTypes` sink) — skip both.
+        namespaceOnly: globalMode && opts.globalKind === 'namespace',
     }
 }
 
@@ -2956,6 +3019,118 @@ export function extractComponent(entryFile, opts = {}) {
     return buildComponentIR(checker, exp, source, importName, from, opts)
 }
 
+// #194: known DOM singleton globals. An in-package augmentation that adds a member to one of these
+// (`Navigator.gpu`) binds the added member as a top-level `@val @scope("navigator")` ENTRY POINT — you
+// don't hold a `Navigator` value, you reach it through the lowercase runtime global.
+const GLOBAL_SINGLETONS = { Navigator: 'navigator', WorkerNavigator: 'navigator', Window: 'window', Document: 'document' }
+
+/**
+ * #194 — extract a GLOBAL-only declaration file (no module symbol: a global-augmentation script such as
+ * `@webgpu/types`). Roots are the package's OWN top-level `interface` / `declare var` declarations; every
+ * binding uses `@val`/`@new`/`@send`/`@get`/`@set`/`@val @scope`, NEVER `@module`. Reuses `buildClassIR` in
+ * global mode (own-package provenance on members + signatures) and pushes results onto the same `classes`
+ * accumulator (`ir.global` flips emit to the import-free rooting); singleton augmentations become scoped
+ * entry points in `globalEntries`. Referenced types self-register in `shared` exactly as in module mode.
+ */
+function extractGlobals(checker, source, from, opts, shared, acc) {
+    const { classes, classTypes, classSink, skipped, globalEntries } = acc
+    const pkgDir = dirname(source.fileName)
+    const declInPkg = (d) => { const f = d && d.getSourceFile && d.getSourceFile().fileName; return !!(f && (f === pkgDir || f.startsWith(pkgDir + sep))) }
+    // Map each in-package `declare var X: T` → does T have construct signatures? (class vs const-namespace)
+    const vars = new Map()
+    for (const st of source.statements) {
+        if (!ts.isVariableStatement(st)) continue
+        for (const d of st.declarationList.declarations) {
+            if (!ts.isIdentifier(d.name)) continue
+            const s = checker.getSymbolAtLocation(d.name)
+            if (!s) continue
+            try { vars.set(d.name.text, { construct: checker.getTypeOfSymbolAtLocation(s, d).getConstructSignatures().length > 0 }) } catch { vars.set(d.name.text, { construct: false }) }
+        }
+    }
+    const common = { ...opts, shared, classTypes, classSink, globalMode: true, pkgDir }
+    const symInPkg = (p) => (p.declarations || []).some(declInPkg)
+    // A genuine RUNTIME OBJECT (worth a `<Name>.res` handle module): it has a `declare var` (a constructor
+    // object or a flag namespace) OR an in-package METHOD. A pure-DATA interface (a descriptor/dict — only
+    // data properties, no var, no methods, e.g. `GPUBufferDescriptor`) is NOT rooted: it classifies as a
+    // record when a method references it (via the shared registry, exactly like module mode), so rooting it
+    // would wrongly emit an abstract `type t` with `@get`ters for a value you CONSTRUCT.
+    const isRuntimeObject = (name, sym) => {
+        if (vars.has(name)) return true
+        const t = checker.getDeclaredTypeOfSymbol(sym)
+        return t.getProperties().some((p) => {
+            if (!symInPkg(p)) return false
+            try { return checker.getTypeOfSymbolAtLocation(p, p.declarations[0]).getCallSignatures().length > 0 } catch { return false }
+        })
+    }
+    // Pre-pass: register every in-package global RUNTIME-OBJECT interface's instance-type symbol → its
+    // module name, so a member typed as another global (`GPU.requestAdapter(): Promise<GPUAdapter|null>`)
+    // resolves to `GPUAdapter.t`. A pure-data interface is deliberately NOT registered — it must resolve to
+    // an inline record, not a phantom `.t`. Singletons are reached via scoped entries, so excluded.
+    for (const st of source.statements) {
+        if (!ts.isInterfaceDeclaration(st) || GLOBAL_SINGLETONS[st.name.text]) continue
+        const nm = st.name.text
+        const s = checker.getSymbolAtLocation(st.name)
+        if (!s || !isRuntimeObject(nm, s)) continue
+        // A const-namespace (has a var, no construct sig) has no instance handle — don't seed a sink/`.t`.
+        const vv = vars.get(nm)
+        if (vv && !vv.construct) continue
+        classTypes.set(s, nm)
+        const inst = checker.getDeclaredTypeOfSymbol(s)?.symbol
+        if (inst) classTypes.set(inst, nm)
+    }
+    // Seed the dependency-free `InstanceTypes` sink for each global runtime object, so `<Name>.res`'s
+    // `type t = InstanceTypes.<sink>` resolves and the sink module is actually emitted. Identical to module
+    // mode's class sink pass — MUST run before the build loop so `classSink.get(name)` is populated.
+    for (const cn of new Set(classTypes.values())) {
+        const key = 'class:' + cn
+        let entry = shared.byKey.get(key)
+        if (!entry) {
+            const base = lower(cn)
+            entry = seedSyntheticAnchor({ key, kind: 'nominal', name: uniqueName(base, shared), base, home: INSTANCE_MODULE, deps: new Set() }, `nominal|${INSTANCE_MODULE}|class:${cn}`)
+            shared.byKey.set(key, entry)
+            shared.entries.push(entry)
+        }
+        classSink.set(cn, entry.name)
+    }
+    const built = new Set()
+    for (const st of source.statements) {
+        if (!ts.isInterfaceDeclaration(st)) continue
+        const name = st.name.text
+        if (built.has(name)) continue // an interface merged across several statements: build once
+        built.add(name)
+        const sym = checker.getSymbolAtLocation(st.name)
+        if (!sym) continue
+        // Singleton augmentation → scoped entry points (navigator.gpu). Read the in-package-added members
+        // via an 'instance' build, then re-root them as `@val @scope("<global>")`.
+        if (GLOBAL_SINGLETONS[name]) {
+            try {
+                const ir = buildClassIR(checker, sym, source, name, from, { ...common, globalKind: 'instance' })
+                const scope = GLOBAL_SINGLETONS[name]
+                const seenEntry = new Set(globalEntries.map((e) => `${e.scope}.${e.jsName}`)) // dedup: Navigator + WorkerNavigator both add `.gpu`
+                for (const g of ir.getters) if (!seenEntry.has(`${scope}.${g.jsName}`)) globalEntries.push({ scope, jsName: g.jsName, kind: 'value', type: g.type })
+                for (const m of ir.methods) if (!seenEntry.has(`${scope}.${m.jsName}`)) globalEntries.push({ scope, jsName: m.jsName, kind: 'method', params: m.params, ret: m.ret })
+                // #194 review: a MUTABLE prop added to a singleton global (e.g. `navigator.foo = …`) — a
+                // scoped-global `@set` has no clean external form without binding the object handle, so flag
+                // it rather than silently emit a read-only binding. (Rare: WebGPU's `navigator.gpu` is readonly.)
+                for (const s of ir.setters || []) skipped.push({ name: `${scope}.${s.jsName}`, reason: 'settable singleton-global prop not bound (scoped `@set` unsupported) — read via the getter; report if needed' })
+            } catch (e) { skipped.push({ name, reason: 'global-singleton-extract-error: ' + e.message.split('\n')[0].slice(0, 60) }) }
+            continue
+        }
+        // Only root a genuine runtime object; a pure-data descriptor/dict is left to classify as a record
+        // when a method references it (never a phantom `<Name>.t` handle module).
+        if (!isRuntimeObject(name, sym)) { continue }
+        const v = vars.get(name)
+        const globalKind = !v ? 'instance' : (v.construct ? 'class' : 'namespace')
+        try {
+            const ir = buildClassIR(checker, sym, source, name, from, { ...common, globalKind })
+            const has = ir.ctor || ir.methods.length || ir.getters.length || (ir.setters || []).length || (ir.staticMethods || []).length || (ir.staticValues || []).length
+            if (!has) { skipped.push({ name, reason: 'global interface with no in-package members' }); continue }
+            classes.push({ name, ir })
+            for (const mm of ir.skippedMembers || []) skipped.push({ name: `${name}.${mm.name}`, reason: mm.reason })
+        } catch (e) { skipped.push({ name, reason: 'global-extract-error: ' + e.message.split('\n')[0].slice(0, 60) }) }
+    }
+}
+
 /**
  * Extract EVERY exported React component from a package's entry `.d.ts` (e.g.
  * its `index.d.ts`), plus standalone function/const-with-call-signature exports
@@ -3005,6 +3180,7 @@ export function extractModule(entryFile, opts = {}) {
     const functions = []
     const classes = []
     const skipped = []
+    const globalEntries = [] // #194: scoped global entry points (e.g. `navigator.gpu`) from global-only .d.ts
     const seen = new Set()
     const firstSym = new Map() // export name -> the first resolved symbol bound under it (#147 shadow check)
     const componentBySym = new Map() // resolved symbol -> emitted module name (for NS alias files)
@@ -3021,7 +3197,13 @@ export function extractModule(entryFile, opts = {}) {
     if (!source) { skipped.push({ name: entryFile, reason: 'entry-source-not-loadable' }); continue }
 
     const moduleSymbol = entryModuleSymbol(checker, source, from)
-    if (!moduleSymbol) { skipped.push({ name: entryFile, reason: 'no-module-symbol (global/script-only .d.ts, no exports — see #194)' }); continue }
+    if (!moduleSymbol) {
+        // #194: a global-only/script `.d.ts` (no runtime module). Extract its OWN global declarations as
+        // import-free `@val`/`@new`/`@send`/… bindings instead of skipping. Purely additive — module and
+        // ambient entries never reach here, so their output is byte-identical.
+        extractGlobals(checker, source, from, opts, shared, { classes, classTypes, classSink, skipped, globalEntries })
+        continue
+    }
     const exports = checker.getExportsOfModule(moduleSymbol)
     // `export = value` describes `module.exports = value`: getExportsOfModule exposes the
     // assigned value's namespace/static members (`bind`, `prototype`, …) but NOT the root
@@ -3504,7 +3686,7 @@ export function extractModule(entryFile, opts = {}) {
     // tombstones; carry every old readable/legacy name as a compatibility alias.
     applyPublicNameRegistry(shared, shared.priorPublicTypes)
 
-    return { components, functions, classes, skipped, shared, namespaces }
+    return { components, functions, classes, skipped, shared, namespaces, globalEntries }
 }
 
 /** Re-link a past-bound `{kind:'opaque', relinkId}` node to the record entry that has since been
@@ -6569,7 +6751,8 @@ function functionNode(sig, ctx, propName, depth = 0) {
             // An explicit `| null` in the return is REAL coverage the consumer must be
             // able to produce, but strictNullChecks-off absorbs it from the resolved
             // type — recover it from the SYNTACTIC return node (the I-5 technique).
-            const retNode = sig.declaration && sig.declaration.type
+            let retNode = sig.declaration && sig.declaration.type
+            while (retNode && ts.isParenthesizedTypeNode(retNode)) retNode = retNode.type // #194 review: `(T | null)`
             const retNb = syntacticNullability(retNode)
             const synNull = !!(retNb && retNb.hasNull)
             const prev = ctx.inFnReturn, prevNull = ctx.retSynNull, prevProd = ctx.produced
@@ -6581,6 +6764,9 @@ function functionNode(sig, ctx, propName, depth = 0) {
             // then preserve an independent null arm outside it (`Nullable.t<option<T>>`). A views
             // module that already exposes `none` marks itself so neither wrapper is duplicated.
             ret = applyNullable(applyOptionalValue(ret, retNb), retNb)
+            // #194 review: a callback whose return is `Promise<T | null>` also needs the inner promise-arg
+            // null recovered (the top-level `applyNullable` above only sees the `Promise<…>` node, not a union).
+            ret = recoverPromiseArgNullable(ret, retNode)
             ctx.inFnReturn = prev
             ctx.retSynNull = prevNull
             ctx.produced = prevProd

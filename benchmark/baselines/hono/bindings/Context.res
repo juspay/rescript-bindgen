@@ -2,7 +2,7 @@ type t = InstanceTypes.context
 @new @module("hono") external make: (~req: WebTypes.request, ~options: TypesTypes.contextOptions=?, unit) => t = "Context"
 @send external render: (t, ~content: promise<string>) => promise<WebTypes.response> = "render"
 @send external setLayout: (t, ~layout: TypesTypes.typesLayoutConfig => 'a) => TypesTypes.typesLayoutConfig => 'a = "setLayout"
-@send external getLayout: (t) => TypesTypes.typesLayoutConfig => 'a = "getLayout"
+@send external getLayout: (t) => option<TypesTypes.typesLayoutConfig => 'a> = "getLayout"
 @send external setRenderer: (t, ~renderer: promise<string> => promise<WebTypes.response>) => unit = "setRenderer"
 // ⚪ loose: `header` has a param/return widened to `string`.
 @send external header: (t, ~name: string, ~value: UtilsTypes.baseMime=?, ~options: TypesTypes.setHeadersOptions=?, unit) => unit = "header"
