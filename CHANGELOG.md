@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.0-beta.5] — 2026-09-21
+
 ### Added
 
 - **Global-only declaration packages (e.g. `@webgpu/types`)** (#194) — a global-augmentation `.d.ts` with no
