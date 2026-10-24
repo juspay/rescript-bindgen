@@ -5,6 +5,18 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **A same-run declaration move no longer renames public types to `…2`** (#232) — when an upstream type kept
+  its exported name but its declaration moved (to another file that is still re-exported, or to a new
+  `members[N]` index because a sibling was inserted before it), the warm run suffixed the new identity
+  (`StepperV2Types.stepperV2Step` → `stepperV2Step2`) and dropped the clean name with no alias. The #222
+  reclaim trusted the prior manifest's `active:true` on the old row, although nothing in this run claimed it.
+  Liveness is now judged by the current run, so the clean name is reclaimed through the existing structural
+  proof in the same run, while the old body is still on disk (a later run could never heal it). A moved type
+  whose shape also changed still keeps its suffix with no alias. Cold output is unchanged (127 goldens and the
+  11-package benchmark are byte-identical).
+
 ## [1.4.0-beta.5] — 2026-09-21
 
 ### Added

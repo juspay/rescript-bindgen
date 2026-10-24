@@ -622,15 +622,22 @@ function finalizePublicIds(shared, prior = {}) {
  * the soundness. This is safe because a tombstone is never emitted — reclaiming only heals a DANGLING name
  * to a structurally-identical live type; it can never re-point a working annotation.
  *
- * CRUCIAL GUARD: if ANY LIVE (active) scope row holds `base`, return null — that name is legitimately owned
+ * CRUCIAL GUARD: if ANY LIVE scope row holds `base`, return null — that name is legitimately owned
  * by a live identity and must never be stolen (the suffix is correct). Only a name held *exclusively* by
  * tombstone(s) is reclaimable.
+ *
+ * "LIVE" MEANS LIVE IN THIS RUN (#232). The prior `active` flag describes the PREVIOUS run: when a declaration
+ * moves (re-homed to another file, or a sibling inserted before an anonymous `members[N]`), the old identity
+ * is still `active:true` in the prior manifest but nothing in this run claims its id — it dies in the same run
+ * the new identity is born. Trusting the stale flag suffixed the newcomer (`step` → `step2`) and, worse, the
+ * next run had no on-disk body left to prove against, so it could never heal. A row is live iff an entry of
+ * this run carries its id (`liveIds`); everything else is a tombstone whose reclaim the structural proof gates.
  */
-function findTombstone(base, scopePrefix, priorRows) {
+function findTombstone(base, scopePrefix, priorRows, liveIds) {
     let tomb = null
     for (const [id, row] of Object.entries(priorRows)) {
         if (!row || typeof row !== 'object' || !id.startsWith(scopePrefix) || row.name !== base) continue
-        if (row.active !== false) return null // base is a LIVE identity's name — never reclaim it
+        if (liveIds.has(id)) return null // base is a LIVE identity's name — never reclaim it
         if (!tomb) tomb = { id, row }
     }
     return tomb
@@ -655,10 +662,10 @@ function proveReclaim(e, base, from, tomb, shared) {
 }
 /** Locked path: `e` is frozen to a counter name `<base>N` whose clean `<base>` is held (only) by a tombstone
  *  in the same scope. */
-function tryReclaimBase(e, chosen, scopePrefix, priorRows, shared) {
+function tryReclaimBase(e, chosen, scopePrefix, priorRows, liveIds, shared) {
     const sc = splitCounter(chosen)
     if (!sc) return null
-    const tomb = findTombstone(sc.base, scopePrefix, priorRows)
+    const tomb = findTombstone(sc.base, scopePrefix, priorRows, liveIds)
     return tomb ? proveReclaim(e, sc.base, chosen, tomb, shared) : null
 }
 
@@ -684,6 +691,7 @@ function applyPublicNameRegistry(shared, prior = {}) {
         }
     }
 
+    const liveIds = new Set(entries.flatMap((e) => e.publicIds)) // #232: liveness is THIS run's, not the prior flag
     const desired = new Map()
     const compat = new Map()
     const priorOwned = new Map()
@@ -700,7 +708,7 @@ function applyPublicNameRegistry(shared, prior = {}) {
             // is squatted by a STRUCTURALLY-IDENTICAL inactive tombstone reclaims the base — the
             // reservation protected nothing (same runtime shape) and only broke the clean path for every
             // consumer. The old counter name becomes a transparent alias below (row.name !== chosen).
-            const reclaim = tryReclaimBase(e, chosen, scopePrefix, priorRows, shared)
+            const reclaim = tryReclaimBase(e, chosen, scopePrefix, priorRows, liveIds, shared)
             if (reclaim) { chosen = reclaim.base; e._reclaim = reclaim }
             // A frozen leaf name carries fixed casing, but ReScript ties casing to REPRESENTATION: an
             // opaque entry is a `module Name` (upper-case), every other kind is a lowercase `type name`.
@@ -803,10 +811,11 @@ function applyPublicNameRegistry(shared, prior = {}) {
         // #222: a NEW identity whose clean name is squatted ONLY by a structurally-identical inactive
         // tombstone (nothing live claims it) reclaims it instead of taking a suffix — same proof as the
         // locked path, but there's no shipped `<base>N` to keep as an alias. Guarded so it can only take a
-        // name held by a DEAD identity: `findTombstone` requires `active:false`, and `!claimed.has(base)`
-        // means no live entry wants it.
+        // name held by a DEAD identity: `findTombstone` requires no entry of THIS run to carry the holder's
+        // id (#232 — a same-run move kills the old id while the prior flag still says active), and
+        // `!claimed.has(base)` means no live entry wants it.
         if (reserved.has(base) && !ownsReserved(e, base) && !claimed.has(base)) {
-            const tomb = findTombstone(base, scopePrefix, priorRows)
+            const tomb = findTombstone(base, scopePrefix, priorRows, liveIds)
             const rec = tomb && proveReclaim(e, base, base, tomb, shared)
             if (rec) { e._reclaim = rec; claim(base, e, 'reclaimed name'); continue }
         }

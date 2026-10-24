@@ -176,6 +176,12 @@ home-module heuristics, and record-vs-variant decisions. On every later run:
   genuinely different type keeps its suffix, with **no** forwarding alias. The shipped `<base>N` survives
   as a transparent `type <base>N = <base>` alias; reclaims/refusals appear in `--json-summary`
   (`nameReclaims`). Refusing is not a churn regression — the refused base is an upstream deletion.
+- a tombstone is judged by **this run**, not the prior manifest's `active` flag (#232): a prior row that
+  no entry of the current run carries is dead, even if it was `active:true` last run. So a **same-run
+  declaration move** — `Step` re-homed from `stepper.types.d.ts` to `stepper.base.types.d.ts` but still
+  re-exported, or a sibling inserted before an anonymous member (`members[8]` → `members[9]`) — reclaims
+  the clean name (`step`, not `step2`) via the same structural proof, while the old body is still on disk.
+  A moved type whose shape also changed keeps its suffix with no alias, as above.
 
 If two **genuinely-distinct** types still collapse onto one source anchor+projection — the anchor
 couldn't separate them, as with blend's `DeepPartial<ComponentTokenType>` mapping `SEARCH_INPUT`'s and
