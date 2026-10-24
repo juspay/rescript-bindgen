@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.0-beta.6] — 2026-10-25
+
 ### Fixed
 
 - **A same-run declaration move no longer renames public types to `…2`** (#232) — when an upstream type kept
