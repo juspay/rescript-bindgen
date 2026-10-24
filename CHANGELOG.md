@@ -16,6 +16,14 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   proof in the same run, while the old body is still on disk (a later run could never heal it). A moved type
   whose shape also changed still keeps its suffix with no alias. Cold output is unchanged (127 goldens and the
   11-package benchmark are byte-identical).
+- **Lineage adoption keeps re-identified members' names** (#232) — an anonymous member re-identified by a
+  sibling insertion (`members[8]` → `members[9]`) or by its parent moving file now inherits its old name
+  (same file: like any lock; different file: only on a structural proof), even when a same-shape newcomer
+  now names it first. The newcomer's name becomes a transparent alias.
+- **The #222 structural proof no longer false-refuses** (#232) — records with a `bool`, `React.element`,
+  `JsxDOM.style`, `Date.t`, `Dom.element` or verbatim (`JSON.t`) field were always refused (the live IR kinds
+  `boolean`/`reactElement`/… were unmodelled), and a field whose target is spelled by a new alias name
+  mismatched its locked spelling on disk. Both now match exactly; nothing is loosened.
 
 ## [1.4.0-beta.5] — 2026-09-21
 

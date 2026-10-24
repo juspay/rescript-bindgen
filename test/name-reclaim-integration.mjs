@@ -217,18 +217,74 @@ try {
     assert(!/reclaimed \d+ clean type name/.test(gen(M)) && readFileSync(join(M, 'out', '.bindgen-manifest.json'), 'utf-8') === snapM,
         '#232: the move reclaim is idempotent — a re-run neither re-fires nor churns')
 
-    // Anonymous member: inserting a sibling shifts `members[N]` in the identity key of `inputContainer`'s type.
+    // Anonymous member: inserting a sibling shifts `members[N]` in the identity key of `inputContainer`'s type
+    // AND of its nested `fontSize` type, which the new `passwordToggle.iconSize` (same shape, encountered first)
+    // now dedups with under a NEW extraction name. Same file, same path → LINEAGE adoption keeps every old name
+    // (no proof needed: the same declaration), the newcomer's name becomes an additive alias.
     const N = join(root, 'members-shift'); setup(N)
-    const tokens = (extra) => `export type TokensType = { gap: string; ${extra}inputContainer: { padding: string; radius: number } }\n` +
+    const tokens = (extra) => `export type TokensType = { ${extra}inputContainer: { fontSize: { sm: string; md: string }; gap: string } }\n` +
         'export declare const Input: (props: { tokens?: TokensType }) => { __brand: "el" }\n'
     stepper(N, { 'index.d.ts': tokens('') }); gen(N)
-    assert(/^type pkgTokensTypeInputContainerConfig = \{/m.test(pkgRes(N)), 'cold gen names the anonymous member type cleanly')
-    stepper(N, { 'index.d.ts': tokens('passwordToggle: { color: string }; ') })
-    const errN = gen(N)
-    assert(/reclaimed 1 clean type name/.test(errN), '#232: a sibling inserted before an anonymous member (members[N] shift) reclaims its clean name')
-    assert(/^type pkgTokensTypeInputContainerConfig = \{/m.test(pkgRes(N)) && !/InputContainerConfig2/.test(pkgRes(N)),
+    assert(/^type pkgTokensTypeInputContainerConfig = \{/m.test(pkgRes(N)) && /^type pkgTokensTypeInputContainerFontSizeConfig = \{/m.test(pkgRes(N)),
+        'cold gen names the anonymous member types cleanly')
+    stepper(N, { 'index.d.ts': tokens('passwordToggle: { iconSize: { sm: string; md: string } }; ') })
+    gen(N)
+    const resN = pkgRes(N)
+    assert(/^type pkgTokensTypeInputContainerConfig = \{/m.test(resN) && !/InputContainerConfig2/.test(resN),
         '#232: the shifted anonymous member type keeps its clean name — no …Config2')
+    assert(/^type pkgTokensTypeInputContainerFontSizeConfig = \{/m.test(resN) && /fontSize: pkgTokensTypeInputContainerFontSizeConfig,/.test(resN),
+        '#232: its nested member (re-identified + renamed by a same-shape newcomer) keeps its old name too')
+    assert(/^type pkgTokensTypePasswordToggleIconSizeConfig = pkgTokensTypeInputContainerFontSizeConfig$/m.test(resN),
+        '#232: the newcomer\'s generated name is a transparent alias of the kept name')
     compileOut(N, '#232 members[N] shift')
+    const snapN = readFileSync(join(N, 'out', '.bindgen-manifest.json'), 'utf-8'); gen(N)
+    assert(readFileSync(join(N, 'out', '.bindgen-manifest.json'), 'utf-8') === snapN, '#232: lineage adoption is idempotent')
+
+    // Proof gap (a): a moved record with `bool` + `React.element` fields. extract emits `boolean`/`reactElement`,
+    // which the proof canonicalised to `?` (unprovable) — so it ALWAYS refused (blend's `stepperV2Step`).
+    const E = join(root, 'move-bool-element'); setup(E)
+    stepper(E, {
+        'stepper.types.d.ts': 'export type ReactElement = { __brand: "element" }\n' +
+            'export interface Step { id: string; disabled?: boolean; icon?: ReactElement }\nexport interface StepperProps { steps: Step[] }\n',
+        'index.d.ts': "export * from './stepper.types'\nimport { StepperProps, ReactElement } from './stepper.types'\n" +
+            'export declare const Stepper: (props: StepperProps) => ReactElement\n',
+    }); gen(E)
+    assert(/disabled\?: bool,/.test(pkgRes(E)) && /icon\?: React\.element,/.test(pkgRes(E)), 'cold gen emits the bool + React.element fields')
+    stepper(E, {
+        'stepper.base.types.d.ts': 'export type ReactElement = { __brand: "element" }\nexport interface Step { id: string; disabled?: boolean; icon?: ReactElement }\n',
+        'stepper.types.d.ts': "import { Step } from './stepper.base.types'\nexport * from './stepper.base.types'\nexport interface StepperProps { steps: Step[] }\n",
+    })
+    gen(E)
+    assert(/^type step = \{/m.test(pkgRes(E)) && !/step2/.test(pkgRes(E)), '#232 (a): a moved record with bool + React.element fields keeps its clean name')
+    compileOut(E, '#232 bool/element move')
+
+    // Proof gap (b) + nested cascade: `Step` moves file, so its anonymous `size` member is re-identified AND
+    // renamed (a same-shape newcomer `Aaa.dims` is now encountered first). The member adopts its old name on a
+    // structural proof; `step`'s own proof then needs its `size` ref spelled by that LOCKED name.
+    const C2 = join(root, 'move-cascade'); setup(C2)
+    stepper(C2, {
+        'stepper.types.d.ts': 'export interface Step { id: string; size?: { sm: string; md: string } }\n',
+        'index.d.ts': "export * from './stepper.types'\nimport { Step } from './stepper.types'\n" +
+            'export declare const Stepper: (props: { steps: Step[] }) => { __brand: "el" }\n',
+    }); gen(C2)
+    assert(/size\?: pkgStepSizeConfig,/.test(pkgRes(C2)), 'cold gen names the nested member pkgStepSizeConfig')
+    stepper(C2, {
+        'stepper.base.types.d.ts': 'export interface Step { id: string; size?: { sm: string; md: string } }\n',
+        'stepper.types.d.ts': "export * from './stepper.base.types'\n",
+        'index.d.ts': "export * from './stepper.types'\nimport { Step } from './stepper.types'\n" +
+            'export declare const Aaa: (props: { dims?: { sm: string; md: string } }) => { __brand: "el" }\n' +
+            'export declare const Stepper: (props: { steps: Step[] }) => { __brand: "el" }\n',
+    })
+    const errC2 = gen(C2)
+    const resC2 = pkgRes(C2)
+    assert(/reclaimed 2 clean type name/.test(errC2), '#232 (b): the nested member and its parent both reclaim, reported on stderr')
+    assert(/^type pkgStepSizeConfig = \{/m.test(resC2) && /^type pkgAaaPropsDimsConfig = pkgStepSizeConfig$/m.test(resC2),
+        '#232 (b): the re-identified nested member keeps its old name; the newcomer name is an alias')
+    assert(/^type step = \{/m.test(resC2) && !/step2/.test(resC2), '#232 (b): the moved parent proves via the locked ref spelling and keeps `step`')
+    compileOut(C2, '#232 nested cascade')
+    const snapC2 = readFileSync(join(C2, 'out', '.bindgen-manifest.json'), 'utf-8')
+    assert(!/reclaimed \d+ clean type name/.test(gen(C2)) && readFileSync(join(C2, 'out', '.bindgen-manifest.json'), 'utf-8') === snapC2,
+        '#232 (b): the cascade is idempotent')
 
     // NEGATIVE: the moved type ALSO changed shape — a genuinely different type, so the #190 guarantee holds:
     // it takes the suffix with NO alias, while its unchanged moved sibling still reclaims.
