@@ -2,7 +2,7 @@
 // Bodies use the EXACT shapes real emit produces — multi-line records with a `// …` comment AFTER the
 // comma, string `@as("…")` discriminants, clean cross-type refs — so the tests guard real inputs (an
 // earlier version passed only because it used single-line block-comment records + numeric-only @as).
-import { parseResBody, canonLive, reclaimable, splitCounter } from '../src/name-reclaim.mjs'
+import { parseResBody, canonLive, reclaimable, splitCounter, rekeyRefs } from '../src/name-reclaim.mjs'
 
 let pass = 0
 const ok = (cond, msg) => { if (!cond) throw new Error('FAIL: ' + msg); console.log('✓ ' + msg); pass++ }
@@ -168,6 +168,42 @@ ok(splitCounter('stringOrNumber2')?.base === 'stringOrNumber' && splitCounter('f
     ok(old && old.kind === 'record' && old.fields.length === 2 && old.fields[0].name === 'item' && old.fields[0].flagged && old.fields[1].name === 'gap'
         && !old.fields.some((f) => f.name === 'x' || f.name === 'y'),
         'PARSE: an unbalanced `{` in a loose comment stops at the real `}` — next decl NOT swallowed, flag kept (blend #4)')
+}
+
+// 15. [#232 (a)] the IR kinds extract REALLY emits — `boolean` (never `bool`), `reactElement`, JsxDOM style,
+//     verbatim `raw` — canonicalise to the disk spelling. Keying on `bool` made every bool-field record `?`.
+{
+    const old = parseResBody('type stepperV2Step = {\n  id: string,\n  disabled?: bool,\n  icon?: React.element,\n  style?: JsxDOM.style,\n  data?: JSON.t,\n}')
+    const live = canonLive({ kind: 'record', fields: [
+        { name: 'id', type: { kind: 'string' } },
+        { name: 'disabled', optional: true, type: { kind: 'boolean' } },
+        { name: 'icon', optional: true, type: { kind: 'reactElement' } },
+        { name: 'style', optional: true, type: { kind: 'style' } },
+        { name: 'data', optional: true, type: { kind: 'raw', res: 'JSON.t' } },
+    ] })
+    ok(reclaimable(old, live), 'RECLAIM: boolean/reactElement/style/raw fields match their emitted spelling (#232 a)')
+    const flipped = canonLive({ kind: 'record', fields: [
+        { name: 'id', type: { kind: 'string' } },
+        { name: 'disabled', optional: true, type: { kind: 'string' } }, // bool → string is a DIFFERENT type
+        { name: 'icon', optional: true, type: { kind: 'reactElement' } },
+        { name: 'style', optional: true, type: { kind: 'style' } },
+        { name: 'data', optional: true, type: { kind: 'raw', res: 'JSON.t' } },
+    ] })
+    ok(!reclaimable(old, flipped), 'REFUSE: a bool field that became string still refuses')
+    ok(canonLive({ kind: 'record', fields: [{ name: 'k', type: { kind: 'raw', res: '[#a | #b]' } }] }).fields[0].type === '?',
+        'a non-identifier raw spelling (poly-variant) stays unprovable `?`')
+}
+
+// 16. [#232 (b)] rekeyRefs rewrites refs (incl. inside wrappers) and leaves unknown names untouched.
+{
+    const old = parseResBody('type c = {\n  fontSize: lockedName,\n  sizes?: array<lockedName>,\n}')
+    const live = canonLive({ kind: 'record', fields: [
+        { name: 'fontSize', type: { kind: 'typeRef', to: 'freshName' } },
+        { name: 'sizes', optional: true, type: { kind: 'array', of: { kind: 'typeRef', to: 'freshName' } } },
+    ] })
+    ok(!reclaimable(old, live), 'REFUSE: a ref spelled by a different name does not match raw')
+    ok(reclaimable(old, rekeyRefs(live, (n) => (n === 'freshName' ? 'lockedName' : n))), 'RECLAIM: once spelled by its locked name, the same target matches (#232 b)')
+    ok(!reclaimable(old, rekeyRefs(live, (n) => n)), 'REFUSE: an identity mapping adds no equivalence')
 }
 
 console.log(`\n✅ name-reclaim match: ${pass} assertions hold`)

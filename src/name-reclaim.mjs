@@ -66,7 +66,19 @@ const wrapIR = (name, of) => { const c = canonTypeIR(of); return c === '?' ? '?'
 export function canonTypeIR(t) {
     if (!t || typeof t !== 'object') return '?'
     switch (t.kind) {
-        case 'string': case 'bool': case 'unit': return t.kind
+        case 'string': case 'unit': return t.kind
+        // Leaf kinds whose emit (emit.mjs renderType) is ONE fixed spelling canonicalise through the disk
+        // parser's own `canonTypeText` on that spelling, so both sides agree by construction. extract emits
+        // `boolean` (never `bool`) — keying on `bool` made every record with a boolean field `?` and so
+        // unreclaimable (#232: blend's `stepperV2Step` refused on `disabled`/`isExpanded`/`icon`).
+        case 'boolean': return canonTypeText('bool')
+        case 'reactElement': return canonTypeText('React.element')
+        case 'style': return canonTypeText('JsxDOM.style')
+        case 'date': return canonTypeText('Date.t')
+        case 'domElement': return canonTypeText('Dom.element')
+        // verbatim ReScript text: exactly what emit writes, so the same parser applies (a non-identifier
+        // spelling — a poly-variant, a function type — still canonicalises to `?` and refuses).
+        case 'raw': case 'event': return canonTypeText(t.res)
         // TS `number` renders as `int` OR `float` by a name heuristic; the live IR node here may not carry
         // that choice, so canonicalise both to `num` (the disk's rendered `int`/`float` maps to `num` too).
         // The heuristic is deterministic per field name, so a same-named field resolves identically across
@@ -259,6 +271,20 @@ export function canonLive(e) {
         return { kind: 'variant', members: e.members.map((m) => ({ as: m.as !== undefined ? String(m.as) : undefined, ctor: m.ctor, type: m.type ? canonTypeIR(m.type) : undefined })) }
     }
     return null
+}
+
+/** Rewrite every `ref:<name>` token in a canonical shape through `canonRef`.
+ *  #232: a live record's field can spell its target by its extraction-time name (`…PasswordToggleIconSize
+ *  Config`, emitted this run as an additive alias) while the disk body spells the SAME live identity by the
+ *  name it was LOCKED to last run (`…InputContainerFontSizeConfig`). The caller maps the live side's ref to
+ *  its target's locked name — "the same identity", stronger than the raw name coincidence it is tried after;
+ *  an unknown/ambiguous name is returned unchanged, so exact spelling is still required. */
+export function rekeyRefs(shape, canonRef) {
+    if (!shape || !canonRef) return shape
+    const tok = (s) => (typeof s === 'string' ? s.replace(/ref:([A-Za-z_][\w.]*)/g, (_, n) => 'ref:' + canonRef(n)) : s)
+    if (shape.fields) return { ...shape, fields: shape.fields.map((f) => ({ ...f, type: tok(f.type) })) }
+    if (shape.members) return { ...shape, members: shape.members.map((m) => ({ ...m, type: tok(m.type) })) }
+    return shape
 }
 
 /** Do a field's OLD (tombstone) and NEW (live) type match, allowing exactly the narrow improvement

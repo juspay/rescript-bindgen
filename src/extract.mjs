@@ -20,7 +20,7 @@ import { dirname, relative, sep } from 'path'
 import { DOM_ELEMENT_BY_LOWER, DOM_PROPS_FIELDS, RESCRIPT_RESERVED } from './stdlib-types.mjs'
 import { TS_NAME_TO_GROUP, chainFields } from './html-attrs.mjs'
 import { label } from './emit.mjs'
-import { splitCounter, parseResBody, canonLive, reclaimable } from './name-reclaim.mjs'
+import { splitCounter, parseResBody, canonLive, reclaimable, rekeyRefs } from './name-reclaim.mjs'
 
 /** Map a TS DOM element name to the exact built-in Dom type, e.g.
  *  `HTMLDivElement` -> `Dom.htmlDivElement`; falls back to `Dom.element`. */
@@ -622,15 +622,22 @@ function finalizePublicIds(shared, prior = {}) {
  * the soundness. This is safe because a tombstone is never emitted — reclaiming only heals a DANGLING name
  * to a structurally-identical live type; it can never re-point a working annotation.
  *
- * CRUCIAL GUARD: if ANY LIVE (active) scope row holds `base`, return null — that name is legitimately owned
+ * CRUCIAL GUARD: if ANY LIVE scope row holds `base`, return null — that name is legitimately owned
  * by a live identity and must never be stolen (the suffix is correct). Only a name held *exclusively* by
  * tombstone(s) is reclaimable.
+ *
+ * "LIVE" MEANS LIVE IN THIS RUN (#232). The prior `active` flag describes the PREVIOUS run: when a declaration
+ * moves (re-homed to another file, or a sibling inserted before an anonymous `members[N]`), the old identity
+ * is still `active:true` in the prior manifest but nothing in this run claims its id — it dies in the same run
+ * the new identity is born. Trusting the stale flag suffixed the newcomer (`step` → `step2`) and, worse, the
+ * next run had no on-disk body left to prove against, so it could never heal. A row is live iff an entry of
+ * this run carries its id (`liveIds`); everything else is a tombstone whose reclaim the structural proof gates.
  */
-function findTombstone(base, scopePrefix, priorRows) {
+function findTombstone(base, scopePrefix, priorRows, liveIds) {
     let tomb = null
     for (const [id, row] of Object.entries(priorRows)) {
         if (!row || typeof row !== 'object' || !id.startsWith(scopePrefix) || row.name !== base) continue
-        if (row.active !== false) return null // base is a LIVE identity's name — never reclaim it
+        if (liveIds.has(id)) return null // base is a LIVE identity's name — never reclaim it
         if (!tomb) tomb = { id, row }
     }
     return tomb
@@ -638,14 +645,21 @@ function findTombstone(base, scopePrefix, priorRows) {
 /** Prove (or refuse) that live entry `e` is the same type as the `base` tombstone `{ id, row }`, and
  *  record the outcome. `from` is the name `e` would otherwise carry (`<base>N` for a locked counter, or
  *  `base` itself for a new identity). */
-function proveReclaim(e, base, from, tomb, shared) {
+function provesSameType(e, base, row, shared) {
     const live = canonLive(e)
     const body = shared.priorBodies && shared.priorBodies.get(base)
     const old = body ? parseResBody(body) : null
     // Fast-accept when both carry a recorded structural signature and they're equal (exact-shape identity);
     // else the disk-body structural match (handles the signatureless majority + the narrow improvement dir).
-    const sigMatch = tomb.row.signature && e.publicSignature && tomb.row.signature === e.publicSignature
-    if (sigMatch || (old && live && reclaimable(old, live))) return { base, from, tombstoneId: tomb.id }
+    const sigMatch = row.signature && e.publicSignature && row.signature === e.publicSignature
+    // #232: retry with live refs spelled by their target's LOCKED name — the spelling last run's disk body used
+    // for that same identity (a target can now extract under a new name kept as an additive alias).
+    const proved = (lv) => old && lv && reclaimable(old, lv)
+    return { ok: !!(sigMatch || proved(live) || proved(rekeyRefs(live, shared._lockedRefName))), old, body }
+}
+function proveReclaim(e, base, from, tomb, shared) {
+    const { ok, old, body } = provesSameType(e, base, tomb.row, shared)
+    if (ok) return { base, from, tombstoneId: tomb.id }
     e._reclaimRefused = {
         name: from, base, tombstoneId: tomb.id,
         reason: !old ? 'no prior on-disk body to prove the shapes match' : 'shapes differ — a genuinely different type reused the name (upstream deletion)',
@@ -655,10 +669,10 @@ function proveReclaim(e, base, from, tomb, shared) {
 }
 /** Locked path: `e` is frozen to a counter name `<base>N` whose clean `<base>` is held (only) by a tombstone
  *  in the same scope. */
-function tryReclaimBase(e, chosen, scopePrefix, priorRows, shared) {
+function tryReclaimBase(e, chosen, scopePrefix, priorRows, liveIds, shared) {
     const sc = splitCounter(chosen)
     if (!sc) return null
-    const tomb = findTombstone(sc.base, scopePrefix, priorRows)
+    const tomb = findTombstone(sc.base, scopePrefix, priorRows, liveIds)
     return tomb ? proveReclaim(e, sc.base, chosen, tomb, shared) : null
 }
 
@@ -684,12 +698,74 @@ function applyPublicNameRegistry(shared, prior = {}) {
         }
     }
 
+    const liveIds = new Set(entries.flatMap((e) => e.publicIds)) // #232: liveness is THIS run's, not the prior flag
+    // #232 LINEAGE. An identity embeds its declaring FILE and, for an anonymous member, its positional
+    // `members[N]`, so a purely internal upstream refactor (a file move behind a re-export, a sibling inserted
+    // before a member) re-mints the identity: the old name sits on a now-dead row and vanished from the output
+    // (or the newcomer took `…2`). A live entry with NO lock of its own adopts the dead row whose id equals one
+    // of its own modulo file + member indices, exactly as an ordinary lock would:
+    //   - SAME file, only `members[N]` differs → the same declaration (same `path:` + property chain): adopt
+    //     outright (name kept even if the shape changed — identity is the declaration, #190);
+    //   - DIFFERENT file → two unrelated same-path types could exist, so adopt ONLY on the #222 structural
+    //     proof. Resolved to a fixpoint so nested members adopt first and their parents' proofs then see the
+    //     locked spelling (`step.size: pkgStepSizeConfig`).
+    // Never adopted: a dead row two live entries could claim (ambiguous), or a name a LIVE row holds.
+    const splitId = (id) => { const rest = id.slice(scopePrefix.length), i = rest.indexOf('|'); return i < 0 ? null : { file: rest.slice(0, i), tail: rest.slice(i + 1).replace(/members\[\d+\]/g, 'members[*]') } }
+    const liveHeld = (name) => [...(reserved.get(name) || [])].some((id) => liveIds.has(id))
+    const deadByTail = new Map()
+    for (const [id, row] of Object.entries(priorRows)) {
+        if (!row || typeof row !== 'object' || !row.name || !id.startsWith(scopePrefix) || liveIds.has(id) || liveHeld(row.name)) continue
+        const sp = splitId(id)
+        if (!sp) continue
+        if (!deadByTail.has(sp.tail)) deadByTail.set(sp.tail, [])
+        deadByTail.get(sp.tail).push({ id, file: sp.file })
+    }
+    const adopters = new Map() // dead id -> Map(live entry -> sameFile)
+    for (const e of entries) {
+        if (e.publicIds.some((id) => priorRows[id]?.name)) continue // already locked: its own rows win
+        for (const id of e.publicIds) {
+            const sp = id.startsWith(scopePrefix) && splitId(id)
+            if (!sp) continue
+            for (const dead of deadByTail.get(sp.tail) || []) {
+                if (!adopters.has(dead.id)) adopters.set(dead.id, new Map())
+                const m = adopters.get(dead.id)
+                m.set(e, m.get(e) || dead.file === sp.file)
+            }
+        }
+    }
+    const adopted = new Map() // live entry -> adopted dead ids
+    const adopt = (e, dead) => { if (!adopted.has(e)) adopted.set(e, []); adopted.get(e).push(dead) }
+    // #232: extraction-time name -> the name that identity is LOCKED to (proof-side ref spelling); live as adoption grows.
+    const byExtracted = new Map()
+    for (const e of entries) byExtracted.set(e.name, byExtracted.has(e.name) ? null : e) // ambiguous -> null
+    shared._lockedRefName = (n) => {
+        const e = byExtracted.get(n)
+        const lock = e && [...e.publicIds, ...(adopted.get(e) || [])].map((id) => priorRows[id]).filter((r) => r?.name)
+            .sort((a, b) => Number(b.active !== false) - Number(a.active !== false))[0]
+        return lock ? lock.name : n
+    }
+    const pending = []
+    for (const [dead, m] of adopters) {
+        if (m.size !== 1) continue
+        const [[e, sameFile]] = m
+        if (sameFile) adopt(e, dead); else pending.push({ e, dead })
+    }
+    for (let progress = true; progress && pending.length;) {
+        progress = false
+        for (let i = 0; i < pending.length; i++) {
+            const { e, dead } = pending[i], row = priorRows[dead]
+            if (!provesSameType(e, row.name, row, shared).ok) continue
+            adopt(e, dead)
+            e._reclaim = { base: row.name, from: e.name, tombstoneId: dead } // proof-gated: surfaced like a #222 reclaim
+            pending.splice(i--, 1); progress = true
+        }
+    }
     const desired = new Map()
     const compat = new Map()
     const priorOwned = new Map()
     const lockedEntries = new Set()
     for (const e of entries) {
-        const locks = e.publicIds.map((id) => ({ id, row: priorRows[id] })).filter((x) => x.row?.name)
+        const locks = [...e.publicIds, ...(adopted.get(e) || [])].map((id) => ({ id, row: priorRows[id] })).filter((x) => x.row?.name)
         const aliases = new Set(e.compatNames || [])
         const oldNames = new Set()
         e._generatedHome = e.home
@@ -700,7 +776,7 @@ function applyPublicNameRegistry(shared, prior = {}) {
             // is squatted by a STRUCTURALLY-IDENTICAL inactive tombstone reclaims the base — the
             // reservation protected nothing (same runtime shape) and only broke the clean path for every
             // consumer. The old counter name becomes a transparent alias below (row.name !== chosen).
-            const reclaim = tryReclaimBase(e, chosen, scopePrefix, priorRows, shared)
+            const reclaim = tryReclaimBase(e, chosen, scopePrefix, priorRows, liveIds, shared)
             if (reclaim) { chosen = reclaim.base; e._reclaim = reclaim }
             // A frozen leaf name carries fixed casing, but ReScript ties casing to REPRESENTATION: an
             // opaque entry is a `module Name` (upper-case), every other kind is a lowercase `type name`.
@@ -803,10 +879,11 @@ function applyPublicNameRegistry(shared, prior = {}) {
         // #222: a NEW identity whose clean name is squatted ONLY by a structurally-identical inactive
         // tombstone (nothing live claims it) reclaims it instead of taking a suffix — same proof as the
         // locked path, but there's no shipped `<base>N` to keep as an alias. Guarded so it can only take a
-        // name held by a DEAD identity: `findTombstone` requires `active:false`, and `!claimed.has(base)`
-        // means no live entry wants it.
+        // name held by a DEAD identity: `findTombstone` requires no entry of THIS run to carry the holder's
+        // id (#232 — a same-run move kills the old id while the prior flag still says active), and
+        // `!claimed.has(base)` means no live entry wants it.
         if (reserved.has(base) && !ownsReserved(e, base) && !claimed.has(base)) {
-            const tomb = findTombstone(base, scopePrefix, priorRows)
+            const tomb = findTombstone(base, scopePrefix, priorRows, liveIds)
             const rec = tomb && proveReclaim(e, base, base, tomb, shared)
             if (rec) { e._reclaim = rec; claim(base, e, 'reclaimed name'); continue }
         }

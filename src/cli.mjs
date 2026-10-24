@@ -897,7 +897,7 @@ async function main() {
     // reverse-engineered build error. A refusal is intentional (an upstream-deleted, genuinely-different
     // type keeps its suffix) — say so, and note it is NOT a churn regression: the old identity is gone.
     if (nameReclaims.reclaimed.length || nameReclaims.refused.length) {
-        if (nameReclaims.reclaimed.length) console.error(`[bindgen] note: reclaimed ${nameReclaims.reclaimed.length} clean type name(s) from a structurally-identical tombstone (suffixed name kept as a compat alias): ${nameReclaims.reclaimed.slice(0, 12).map((r) => `${r.from}→${r.name}`).join(', ')}${nameReclaims.reclaimed.length > 12 ? '…' : ''}`)
+        if (nameReclaims.reclaimed.length) console.error(`[bindgen] note: reclaimed ${nameReclaims.reclaimed.length} clean type name(s) from a structurally-identical tombstone (a shipped suffixed name is kept as a compat alias): ${nameReclaims.reclaimed.slice(0, 12).map((r) => r.from === r.name ? r.name : `${r.from}→${r.name}`).join(', ')}${nameReclaims.reclaimed.length > 12 ? '…' : ''}`)
         for (const r of nameReclaims.refused) console.error(`[bindgen] note: kept '${r.name}' suffixed — its base '${r.base}' is a genuinely different (upstream-deleted) type; not reclaimed (${r.reason}).`)
     }
     const sortedPublicTypes = Object.fromEntries(Object.entries(publicTypes).sort(([a], [b]) => a.localeCompare(b)))
