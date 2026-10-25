@@ -59,6 +59,7 @@ function run(shape) {
     writeSources(shape)
     const args = [CLI, '--dir', pkg, '--out', out, '--from', 'demo', '--no-install']
     if (shape.clean) args.push('--clean') // #221: exercises the scan-BEFORE-clean ordering
+    if (shape.extra) args.push(...shape.extra)
     const r = spawnSync('node', args, { encoding: 'utf-8' })
     if (r.status !== 0) throw new Error(`CLI failed (exit ${r.status}):\n${r.stderr}`)
     return { manifest: JSON.parse(readFileSync(manifestPath, 'utf-8')), stderr: r.stderr }
@@ -129,15 +130,27 @@ try {
         'former-home compatibility files persist after the cycle dissolves')
     compileOut('cycle dissolves')
 
-    // 5. A former home that becomes LIVE and depends on the merged module can't be re-exported into
-    //    without forming a new cycle — the unsafe re-export is skipped (warned), and output compiles. (P1a)
-    const res = run({ cycle: false, leftLocalDep: true })
-    assert(/former-home compatibility re-export\(s\) skipped/.test(res.stderr),
-        'a cycle-forming former-home re-export is skipped with a warning')
+    // 5. #235: a former home REVIVED by a brand-new type that the merged module references. Keeping the newcomer
+    //    in the former home would make the merged module depend on it, so the former home's compat re-exports
+    //    would close a cycle and ALL of them were skipped — every `LeftTypes.*` path removed on a purely additive
+    //    upstream change (blend 0.0.39-beta.1: 28 `DateRangePickerTypes.*`). The newcomer has no shipped path, so
+    //    it is homed into the merged module instead; the former home stays a pure compat file.
+    const sum5 = join(root, 'sum5.json')
+    const res = run({ cycle: false, leftLocalDep: true, extra: ['--json-summary', sum5] })
+    assert(!/former-home compatibility re-export\(s\) skipped/.test(res.stderr), '#235: no former-home re-export is skipped')
+    assert(/homed 1 new type\(s\) into \S+ instead of reviving former home LeftTypes/.test(res.stderr), '#235: the re-home is surfaced on stderr')
+    assert(rowOf(res.manifest, 'newThing').module === merged, `#235: the newcomer is homed into the merged module (${merged})`)
     const leftFile = readFileSync(join(out, 'LeftTypes.res'), 'utf-8')
-    assert(leftFile.includes('newThing') && !leftFile.includes(`= ${merged}.left`),
-        'the now-live former home keeps its live type and drops only the cycle-forming re-export')
-    compileOut('former home becomes live and depends on the merge')
+    assert(leftFile.includes(`type left = ${merged}.left`) && leftFile.includes(`type legacyLeft = ${merged}.legacyLeft`) && !/type newThing = \{/.test(leftFile),
+        '#235: the former home stays a pure compat file — LeftTypes.left / legacyLeft keep resolving')
+    const s5 = JSON.parse(readFileSync(sum5, 'utf-8'))
+    assert(Array.isArray(s5.removedPublicPaths) && s5.removedPublicPaths.length === 0 && s5.formerHomeRehomes.length === 1,
+        '#235: json-summary records removedPublicPaths=[] and the re-home')
+    compileOut('former home revived by a newcomer the merge references (#235)')
+    const snap5 = readFileSync(manifestPath, 'utf-8')
+    const res5b = run({ cycle: false, leftLocalDep: true })
+    assert(readFileSync(manifestPath, 'utf-8') === snap5 && !/homed \d+ new type/.test(res5b.stderr),
+        '#235: idempotent — next run the lock pins the newcomer in the merged module (no re-home, no churn)')
 
     // 6. Two former homes that re-export EACH OTHER must not close a cycle. The reachability guard
     //    folds each approved edge in, so the second (cycle-forming) re-export is skipped. (P1a sibling-edge)
@@ -148,9 +161,14 @@ try {
         if (v.name === 'right') { v.module = 'LeftTypes'; v.formerModules = ['RightTypes'] }
     }
     writeFileSync(manifestPath, JSON.stringify(mm, null, 2) + '\n')
-    const swap = run({ cycle: false })
+    const sum6 = join(root, 'sum6.json')
+    const swap = run({ cycle: false, extra: ['--json-summary', sum6] })
     assert(/former-home compatibility re-export\(s\) skipped/.test(swap.stderr),
         'mutually cross-pointing former-home re-exports skip the cycle-forming one')
+    // Residual (#235): SHIPPED types cause this cycle, so nothing may move — but the loss is never silent.
+    const s6 = JSON.parse(readFileSync(sum6, 'utf-8'))
+    assert(s6.removedPublicPaths.length > 0 && s6.removedPublicPaths.every((p) => swap.stderr.includes(`- ${p}`)),
+        `#235: every removed path is listed on stderr and in json-summary removedPublicPaths (${s6.removedPublicPaths.join(', ')})`)
     compileOut('mutual cross-pointing former homes')
 
     // 7. #220: a #190-LOCKED merged home that becomes the LARGEST member of a GROWN SCC must KEEP its
