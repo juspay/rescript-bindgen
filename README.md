@@ -192,6 +192,24 @@ review, and which are broken (`unknown`/`any`):
 npx @juspay/rescript-bindgen --pkg @mui/material --out generated --report
 ```
 
+### Gate CI on public-API breaks
+
+`--json-summary <file>` writes a machine-readable run summary. When you regenerate committed bindings
+in CI, gate on its **`removedPublicPaths`** field: the `Module.name` paths bindgen itself had to drop this
+run, because keeping a former home's compatibility re-export would have formed a module cycle (#235). It
+is **always present** (an empty array when bindgen dropped nothing), and its name and shape are a stable
+contract. It does **not** list types the upstream package deleted, or names that stayed suffixed because
+a reclaim was refused (those are in `nameReclaims.refused`), so a full API diff still needs your own
+before/after comparison.
+
+```bash
+npx @juspay/rescript-bindgen --pkg <pkg> --out src --json-summary summary.json
+node -e 'const p = require("./summary.json").removedPublicPaths; if (p.length) { console.error(p.join("\n")); process.exit(1) }'
+```
+
+`formerHomeRehomes` (`[{ from, to, names }]`) and `nameReclaims` (`{ reclaimed, refused }`) explain
+name and module decisions that kept a path alive.
+
 ---
 
 ## How it works

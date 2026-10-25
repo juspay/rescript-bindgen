@@ -15,7 +15,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   with only a warning. The newcomers, which have no shipped path, are now homed into the merged module
   instead, and the former home stays a pure compat file. Any path that must still be dropped (because a
   shipped type causes the cycle) is listed on stderr and in `--json-summary` as `removedPublicPaths`
-  (always emitted), alongside `formerHomeRehomes`.
+  (always emitted), alongside `formerHomeRehomes`. `removedPublicPaths` is a **stable public contract** for CI
+  gating: always present, an empty array when bindgen dropped no path. It covers only paths bindgen itself drops
+  (not upstream deletions or refused reclaims; see README, "Gate CI on public-API breaks").
 
 ## [1.4.0-beta.6] — 2026-10-25
 
