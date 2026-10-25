@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.0-beta.7] — 2026-10-25
+
 ### Fixed
 
 - **An additive upstream change no longer removes a former home's public paths** (#235). A cycle merge
