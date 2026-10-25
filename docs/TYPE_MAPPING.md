@@ -255,6 +255,17 @@ whose leaf name is *unique* there and now homes elsewhere gets its former-home r
 the manifest (identity-based thereafter). Scoped to `*Types.res` and uniqueness-gated so a per-component
 `props` leaf never mis-attributes. (#221)
 
+A **brand-new** type homed in a former home revives it. If the merged module references that newcomer,
+the former home's compat re-exports (`type x = Merged.x`) would close a module cycle and must be skipped,
+which would remove every `FormerHome.x` path on a purely additive upstream change (blend 0.0.39-beta.1
+added `RenderDayConfig` to DateRangePicker; 28 `DateRangePickerTypes.*` paths vanished). Instead the
+modules are re-planned: the former home's **newcomers**, which have no shipped path yet, are homed into the
+module its old identities moved to, so the former home stays a pure compat file. This happens only when the
+cycle would really form, only when nothing shipped lives in the former home, and only to a unique successor;
+the lock pins the newcomers there on the next run. If shipped types cause such a cycle, nothing can move.
+Every removed `Module.name` is then listed on stderr and in `--json-summary` `removedPublicPaths` (always
+emitted, so CI can gate on it being empty). (#235)
+
 Keep the manifest with generated bindings (and version-control it when the bindings are versioned).
 Legacy manifests containing only `files` bootstrap this registry on their first run. `--clean` does not
 delete it. An upstream declaration rename/move is a new identity and removal is recorded, but a bindgen

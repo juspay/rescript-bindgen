@@ -5,6 +5,20 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **An additive upstream change no longer removes a former home's public paths** (#235). A cycle merge
+  (#190) had moved DateRangePicker's 28 types into `HighchartsSharedSharedTypes`, leaving
+  `DateRangePickerTypes.res` as a compat file. When blend 0.0.39-beta.1 *added* `RenderDayConfig`, the
+  newcomer was homed in `DateRangePickerTypes`, and the merged module referenced it. The compat re-exports
+  would then have formed a cycle, so all 28 were skipped and every `DateRangePickerTypes.*` path vanished,
+  with only a warning. The newcomers, which have no shipped path, are now homed into the merged module
+  instead, and the former home stays a pure compat file. Any path that must still be dropped (because a
+  shipped type causes the cycle) is listed on stderr and in `--json-summary` as `removedPublicPaths`
+  (always emitted), alongside `formerHomeRehomes`. `removedPublicPaths` is a **stable public contract** for CI
+  gating: always present, an empty array when bindgen dropped no path. It covers only paths bindgen itself drops
+  (not upstream deletions or refused reclaims; see README, "Gate CI on public-API breaks").
+
 ## [1.4.0-beta.6] — 2026-10-25
 
 ### Fixed

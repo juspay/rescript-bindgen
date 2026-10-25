@@ -539,7 +539,44 @@ async function main() {
 
     // Module mode: plan per-domain type modules (SCC-merged). Component files then
     // reference types qualified (e.g. `MenuTypes.menuItemType`) instead of redeclaring.
-    const plan = shared ? planSharedModules(shared) : null
+    let plan = shared ? planSharedModules(shared) : null
+    // #235: a former home (a module whose shipped identities a cycle merge moved away, #190) is REVIVED when a
+    // brand-new type is homed there. If the merged module now references that newcomer, the former home's
+    // compat re-exports (`type x = Merged.x`) would close a module cycle, so they were all skipped — every
+    // `FormerHome.x` path vanished on a purely ADDITIVE upstream change (blend 0.0.39-beta.1: 28
+    // `DateRangePickerTypes.*` paths, revived by the new `RenderDayConfig`). Re-plan instead: home the former
+    // home's NEWCOMERS (no shipped name yet, so no public path to keep) into the module its old identities
+    // moved to; the former home stays a pure compat file. Only when the cycle would actually form, only when
+    // nothing shipped lives there, and only to a unique successor; next run the lock pins the new home.
+    if (plan) {
+        const isShipped = (e) => (e.publicIds || []).some((id) => priorPublicTypes?.[id]?.name)
+        for (let pass = 0; pass < 8; pass++) {
+            const finalHome = (e) => plan.finalOf.get(e.home) || e.home
+            const successors = new Map() // former home -> modules its shipped identities live in now
+            for (const e of shared.entries) for (const id of e.publicIds || []) {
+                const row = priorPublicTypes?.[id]
+                if (!row) continue
+                for (const fm of [row.module, ...(row.formerModules || [])]) {
+                    if (typeof fm !== 'string' || fm === finalHome(e)) continue
+                    if (!successors.has(fm)) successors.set(fm, new Set())
+                    successors.get(fm).add(finalHome(e))
+                }
+            }
+            const reaches = moduleReachFn(sharedModuleDeps(shared, plan))
+            let moved = 0
+            for (const [fm, succ] of successors) {
+                const residents = shared.entries.filter((e) => finalHome(e) === fm)
+                if (!residents.length || residents.some(isShipped) || succ.size !== 1) continue
+                const [to] = succ
+                if (!reaches(to, fm)) continue // no cycle: the live former home coexists with its compat re-exports
+                for (const e of residents) e.home = to
+                moved += residents.length
+                ;(shared.formerHomeRehomes || (shared.formerHomeRehomes = [])).push({ from: fm, to, names: residents.map((e) => e.name).sort() })
+            }
+            if (!moved) break
+            plan = planSharedModules(shared)
+        }
+    }
     // #171: constructor collisions, from the shared modules AND from every single-file emit. Declared
     // before both paths so `--file` renames are reported too — a silent rename is consumer-breaking.
     const collisions = []
@@ -690,35 +727,16 @@ async function main() {
     // `type x = N.x` into module M adds an M->N edge, which is unsafe iff N already reaches M. The
     // former-home re-exports are computed AFTER SCC planning, so their edges are invisible to the
     // planner — this reachability guard is what keeps them from producing a circular module dep. (#190 P1a)
-    const moduleDeps = new Map()
-    if (plan) {
-        const finalHome = (e) => plan.finalOf.get(e.home) || e.home
-        for (const e of shared.entries) {
-            const from = finalHome(e)
-            for (const depKey of e.deps || []) {
-                const dep = shared.byKey.get(depKey)
-                if (!dep) continue
-                const to = finalHome(dep)
-                if (to === from) continue
-                if (!moduleDeps.has(from)) moduleDeps.set(from, new Set())
-                moduleDeps.get(from).add(to)
-            }
-        }
-    }
-    const moduleReaches = (from, target) => {
-        const seen = new Set(); const stack = [from]
-        while (stack.length) {
-            const n = stack.pop()
-            if (n === target) return true
-            if (seen.has(n)) continue
-            seen.add(n)
-            for (const m of moduleDeps.get(n) || []) stack.push(m)
-        }
-        return false
-    }
+    const moduleDeps = plan ? sharedModuleDeps(shared, plan) : new Map()
+    const moduleReaches = moduleReachFn(moduleDeps)
     let cycleSkipped = 0
+    const removedPublicPaths = [] // #235: `FormerHome.name` paths a skipped re-export drops (→ stderr + json-summary)
     const safeReexports = (host, reexports) => reexports.filter((rx) => {
-        if (moduleReaches(rx.newModule, host)) { cycleSkipped++; return false } // host -> newModule -> ... -> host
+        if (moduleReaches(rx.newModule, host)) { // host -> newModule -> ... -> host
+            cycleSkipped++
+            for (const nm of new Set([rx.entry.name, ...(rx.entry.compatNames || [])])) if (nm) removedPublicPaths.push(`${host}.${nm}`)
+            return false
+        }
         // FOLD the approved edge into the graph: appending `type x = newModule.x` into `host` really
         // adds host -> newModule, so a SIBLING re-export (e.g. two former homes re-exporting each other)
         // is checked against it and can't silently close a cycle the static graph never saw.
@@ -752,7 +770,12 @@ async function main() {
             written.add(relative(outDir, p))
             compatFiles++
         }
-        if (cycleSkipped) console.error(`[bindgen] ⚠ ${cycleSkipped} former-home compatibility re-export(s) skipped — the prior home is now live and depends on the merged module, so re-exporting would create a module cycle (#190)`)
+        if (cycleSkipped) {
+            console.error(`[bindgen] ⚠ ${cycleSkipped} former-home compatibility re-export(s) skipped — the prior home is now live and depends on the merged module, so re-exporting would create a module cycle (#190). These public paths are REMOVED:`)
+            for (const p of removedPublicPaths.slice(0, 40)) console.error(`[bindgen]   - ${p}`)
+            if (removedPublicPaths.length > 40) console.error(`[bindgen]   … and ${removedPublicPaths.length - 40} more (see --json-summary removedPublicPaths)`)
+        }
+        for (const r of shared.formerHomeRehomes || []) console.error(`[bindgen] note: homed ${r.names.length} new type(s) into ${r.to} instead of reviving former home ${r.from} (its compat re-exports would form a cycle): ${r.names.slice(0, 8).join(', ')}${r.names.length > 8 ? '…' : ''}`)
         console.error(`[bindgen] wrote ${plan.byModule.size} shared type module(s) (${shared.entries.length} unique types) to ${typesDir}`)
         compatModulesWritten = compatFiles
         if (compatFiles) console.error(`[bindgen] wrote ${compatFiles} former-home compatibility module(s) — a dependency cycle moved locked types to a merged module (#190)`)
@@ -1017,6 +1040,11 @@ async function main() {
             // empty) so a run is never indistinguishable from "feature absent" — a `reclaimed:[] refused:[]`
             // says "considered nothing", not "the feature didn't run".
             nameReclaims,
+            // #235: public `FormerHome.name` paths a cycle-skipped compat re-export dropped this run, and the
+            // newcomers re-homed to avoid exactly that. ALWAYS emitted, so CI can gate on `removedPublicPaths`
+            // being empty without guessing whether the field exists.
+            removedPublicPaths: [...new Set(removedPublicPaths)].sort(),
+            formerHomeRehomes: shared?.formerHomeRehomes || [],
         }
         writeFileSync(opts.jsonSummary, JSON.stringify(summary, null, 2) + '\n')
         console.error(`[bindgen] 📊 json summary written to ${opts.jsonSummary}`)
@@ -1024,3 +1052,35 @@ async function main() {
 }
 
 main().catch((e) => { console.error('[bindgen] error: ' + e.message); process.exit(1) })
+
+/** Module-level dependency graph of the shared `*Types` modules under `plan` (edges between FINAL modules). */
+function sharedModuleDeps(shared, plan) {
+    const deps = new Map()
+    const finalHome = (e) => plan.finalOf.get(e.home) || e.home
+    for (const e of shared.entries) {
+        const from = finalHome(e)
+        for (const depKey of e.deps || []) {
+            const dep = shared.byKey.get(depKey)
+            if (!dep) continue
+            const to = finalHome(dep)
+            if (to === from) continue
+            if (!deps.has(from)) deps.set(from, new Set())
+            deps.get(from).add(to)
+        }
+    }
+    return deps
+}
+/** `(from, target) => bool` reachability over a (mutable) module dependency graph. */
+function moduleReachFn(deps) {
+    return (from, target) => {
+        const seen = new Set(); const stack = [from]
+        while (stack.length) {
+            const n = stack.pop()
+            if (n === target) return true
+            if (seen.has(n)) continue
+            seen.add(n)
+            for (const m of deps.get(n) || []) stack.push(m)
+        }
+        return false
+    }
+}
