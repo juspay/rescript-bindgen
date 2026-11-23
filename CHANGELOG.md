@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.0-beta.8] — 2026-11-23
+
 ### Fixed
 
 - **A reclaim that re-homes a type no longer drops its former module path** (#238). #232 restored the clean
