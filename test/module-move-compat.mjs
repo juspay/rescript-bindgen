@@ -36,6 +36,9 @@ mkdirSync(join(pkg, 'components', 'right'), { recursive: true })
 function writeSources({ cycle, leftLocalDep = false, third = false }) {
     const leftImports = leftLocalDep ? [`export interface NewThing { v: number }`] : [`import { Right } from '../right/types'`]
     const leftFields = ['name: string', leftLocalDep ? 'n?: NewThing' : 'r?: Right']
+    // #241: a string-literal union declared in the LEFT home — it moves with Left on the merge, and its
+    // constructors must stay reachable through the former home.
+    leftImports.push(`export type LeftSize = 'sm' | 'md'`); leftFields.push('size?: LeftSize')
     if (third) { leftImports.push(`import { Mid } from '../mid/types'`); leftFields.push('m?: Mid') }
     writeFileSync(join(pkg, 'components', 'left', 'types.d.ts'),
         leftImports.join('\n') + `\nexport interface Left { ${leftFields.join('; ')} }\n`)
@@ -76,12 +79,13 @@ const rowOf = (m, sourceName) => {
     return found
 }
 
-function compileOut(label) {
+function compileOut(label, consumer) {
     if (!CAN_COMPILE) { console.log(`• compile skipped (${label}): test/sandbox deps not installed`); return }
     const src = join(SANDBOX, 'src')
     for (const f of existsSync(src) ? readdirSync(src) : []) if (/\.res(\.mjs)?$/.test(f)) rmSync(join(src, f))
     if (!existsSync(src)) mkdirSync(src, { recursive: true })
     for (const f of readdirSync(out)) if (f.endsWith('.res')) writeFileSync(join(src, f), readFileSync(join(out, f)))
+    if (consumer) writeFileSync(join(src, 'Consumer241.res'), consumer)
     const r = spawnSync(join(SANDBOX, 'node_modules', '.bin', 'rescript'), ['build'], { cwd: SANDBOX, encoding: 'utf-8' })
     for (const f of readdirSync(src)) if (/\.res(\.mjs)?$/.test(f)) rmSync(join(src, f))
     assert(r.status === 0, `output compiles after ${label}\n${r.status !== 0 ? (r.stdout || '') + (r.stderr || '') : ''}`)
@@ -115,7 +119,11 @@ try {
         'the former home also re-exports the historical alias (LeftTypes.legacyLeft keeps resolving)')
     assert(readFileSync(join(out, 'RightTypes.res'), 'utf-8').includes(`type right = ${merged}.right`),
         'the former home re-exports the moved type (RightTypes.right keeps resolving)')
-    compileOut('cycle forms')
+    // #241: the moved enum is re-exported WITH its constructors, so `LeftTypes.Sm` and a consumer's own
+    // type equation against the former home both still compile (an abstract alias allowed neither).
+    assert(readFileSync(join(out, 'LeftTypes.res'), 'utf-8').includes(`type leftSize = ${merged}.leftSize =\n  | @as("sm") Sm\n  | @as("md") Md`),
+        '#241: the former home re-exports a moved enum with its constructors')
+    compileOut('cycle forms', `let viaFormerHome = LeftTypes.Sm\nlet typed: ${merged}.leftSize = viaFormerHome\ntype mine = LeftTypes.leftSize = | @as("sm") Sm | @as("md") Md\nlet own: mine = typed\n`)
 
     // 3. Idempotent: a re-run with the cycle still present changes nothing.
     const snap = readFileSync(manifestPath, 'utf-8')
