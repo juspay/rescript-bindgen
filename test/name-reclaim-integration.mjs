@@ -136,6 +136,78 @@ try {
     assert(!/reclaimed \d+ clean type name/.test(errR2) && readFileSync(join(R, 'out', '.bindgen-manifest.json'), 'utf-8') === snapR,
         'the cross-module reclaim is idempotent — a second run neither re-fires nor churns')
 
+    // ---- #238: a reclaim that RE-HOMES the type must keep the former MODULE path resolving ----------------
+    // #232 proved a reclaim-triggering move that keeps the SAME home module (PkgTypes/CommonTypes) preserves the
+    // clean NAME. When the move ALSO changes the home module, the reclaim restored the name but the old
+    // `FormerHome.<name>` MODULE path was silently dropped with NO compat re-export — and `removedPublicPaths`
+    // never saw it (nothing was cycle-skipped). Real case: blend 0.0.39-beta.4 re-homed
+    // `chartsBlendChartPropsConstructorType` ChartsSharedTypes → ChartsTypes (BlendChart.constructorType),
+    // breaking every `ChartsSharedTypes.*` / `HighchartsSharedTypes.*` consumer. Model it: the reclaimed type's
+    // tombstone records its prior home (ChartsSharedTypes) AND a deeper former home (HighchartsSharedTypes); the
+    // live identity now homes to CommonTypes. The tombstone's homes must be carried onto the live identity so
+    // the #190 machinery re-exports both old paths. (The tombstone home differs from the live home, unlike R.)
+    const F = join(root, 'rehome-238'); scaffold(F)
+    gen(F)                                                   // clean `stringOrNumber` union on disk in CommonTypes
+    {
+        const p = join(F, 'out', '.bindgen-manifest.json'); const m = JSON.parse(readFileSync(p, 'utf-8'))
+        for (const r of Object.values(m.publicTypes)) if (r.name === 'stringOrNumber') r.name = 'stringOrNumber2'
+        m.publicTypes['scope:demo|charts.d.ts|path:Chart.props.tone|members[1]'] =
+            { kind: 'unboxed', module: 'ChartsSharedTypes', name: 'stringOrNumber', aliases: [], active: false, formerModules: ['HighchartsSharedTypes'] }
+        writeFileSync(p, JSON.stringify(m, null, 2) + '\n')  // the type's PRIOR home (+ a deeper former home), now retired
+    }
+    const sumF = join(F, 'out', 'sum.json')
+    const errF = gen(F, ['--json-summary', sumF])
+    assert(/reclaimed 1 clean type name/.test(errF), '#238: the re-homed type reclaims its clean name (stringOrNumber)')
+    const liveF = Object.values(manifestOf(F).publicTypes).find((r) => r.name === 'stringOrNumber' && r.active)
+    assert(liveF.module === 'CommonTypes', '#238: the reclaimed type homes to CommonTypes (its new home)')
+    assert((liveF.formerModules || []).includes('ChartsSharedTypes') && (liveF.formerModules || []).includes('HighchartsSharedTypes'),
+        '#238: the move records the tombstone home AND its deeper former home in the manifest (persists next run)')
+    const csRes = join(F, 'out', 'ChartsSharedTypes.res'), hsRes = join(F, 'out', 'HighchartsSharedTypes.res')
+    assert(existsSync(csRes) && readFileSync(csRes, 'utf-8').includes('type stringOrNumber = CommonTypes.stringOrNumber'),
+        '#238: the former home re-exports the moved type — ChartsSharedTypes.stringOrNumber keeps resolving (THE FIX; pre-fix this file/line was absent)')
+    assert(existsSync(hsRes) && readFileSync(hsRes, 'utf-8').includes('type stringOrNumber = CommonTypes.stringOrNumber'),
+        '#238: the deeper former home also re-exports it — HighchartsSharedTypes.stringOrNumber keeps resolving')
+    const sF = JSON.parse(readFileSync(sumF, 'utf-8'))
+    assert(Array.isArray(sF.removedPublicPaths) && sF.removedPublicPaths.length === 0,
+        '#238: no public path is dropped — removedPublicPaths stays empty (the old paths are aliased, not lost)')
+    compileOut(F, '#238 reclaim-driven module move keeps former-home paths')
+    const snapF = readFileSync(join(F, 'out', '.bindgen-manifest.json'), 'utf-8')
+    const errF2 = gen(F)
+    assert(readFileSync(join(F, 'out', '.bindgen-manifest.json'), 'utf-8') === snapF && !/reclaimed \d+ clean type name/.test(errF2),
+        '#238: idempotent — the lock pins the new home + former-home re-exports (no re-reclaim, no churn)')
+
+    // ---- #238 NEGATIVE (the soundness gate): the former home held a DIFFERENT type under the same leaf, so
+    //      its old path must NOT be re-pointed at the reclaimed type (the #190 wrong-bind). The reclaim proof
+    //      matches `e` against the FIRST-sorted on-disk body for the leaf (`CommonTypes` < `ZzTypes`), i.e.
+    //      `e`'s OWN body — NOT `ZzTypes`'s divergent one — so the name still reclaims; but the module re-export
+    //      is gated on `ZzTypes`'s own prior shape, which diverges, so it is dropped and RECORDED (gateable),
+    //      never silently re-pointed.
+    const G = join(root, 'rehome-divergent-238'); scaffold(G)
+    gen(G)                                                   // clean `stringOrNumber = Str|Num` in CommonTypes on disk
+    {
+        const p = join(G, 'out', '.bindgen-manifest.json'); const m = JSON.parse(readFileSync(p, 'utf-8'))
+        for (const r of Object.values(m.publicTypes)) if (r.name === 'stringOrNumber') r.name = 'stringOrNumber2'
+        m.publicTypes['scope:demo|charts.d.ts|path:Chart.props.tone|members[1]'] =
+            { kind: 'unboxed', module: 'ZzTypes', name: 'stringOrNumber', aliases: [], active: false }
+        m.files = [...new Set([...(m.files || []), 'ZzTypes.res'])]           // so the disk scan reads ZzTypes.res
+        writeFileSync(p, JSON.stringify(m, null, 2) + '\n')
+        // ZzTypes's OWN prior body is a GENUINELY DIFFERENT type under the same leaf (sorts AFTER CommonTypes).
+        writeFileSync(join(G, 'out', 'ZzTypes.res'), 'type stringOrNumber = Foo(int) | Bar(bool)\n')
+    }
+    const sumG = join(G, 'out', 'sum.json')
+    const errG = gen(G, ['--json-summary', sumG])
+    assert(/reclaimed 1 clean type name/.test(errG), '#238 negative: the clean NAME still reclaims (proof matched the leaf, as before)')
+    assert(/reclaim-move former-home re-export\(s\) refused/.test(errG) && /#238/.test(errG),
+        '#238 negative: the refusal is reported on stderr with the RIGHT reason (not the module-cycle message)')
+    assert(!existsSync(join(G, 'out', 'ZzTypes.res')),
+        '#238 negative: NO compat re-export is written at the divergent former home — ZzTypes.stringOrNumber is NOT re-pointed at the Str|Num type (the #190 wrong-bind is refused)')
+    const liveG = Object.values(manifestOf(G).publicTypes).find((r) => r.name === 'stringOrNumber' && r.active)
+    assert(!(liveG.formerModules || []).includes('ZzTypes'), '#238 negative: the divergent former home is NOT recorded as a former module')
+    const sG = JSON.parse(readFileSync(sumG, 'utf-8'))
+    assert(sG.removedPublicPaths.includes('ZzTypes.stringOrNumber'),
+        '#238 negative: the dropped path is RECORDED in removedPublicPaths (gateable — not a silent loss)')
+    compileOut(G, '#238 negative divergent former home')
+
     // ---- NEGATIVE 1: a CROSS-SCOPE tombstone is NOT reclaimed (a different package's name never collides) -
     const X = join(root, 'crossscope'); scaffold(X)
     gen(X)

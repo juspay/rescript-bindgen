@@ -5,6 +5,27 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **A reclaim that re-homes a type no longer drops its former module path** (#238). #232 restored the clean
+  *name* when a same-run declaration move retired an identity to a tombstone and a structurally-identical
+  newcomer reclaimed it — but only when the type stayed in the same home module. When the move *also* changed
+  the home module (e.g. blend 0.0.39-beta.4 re-homed `chartsBlendChartPropsConstructorType`
+  `ChartsSharedTypes` → `ChartsTypes`, the type of `BlendChart`/`ChartV2`'s `constructorType` prop), the old
+  `FormerHome.<name>` path vanished with no compatibility re-export, silently breaking every consumer of it.
+  Because the reclaimed identity is a *new* manifest id, its prior home lived only on the retired tombstone,
+  so the #190 former-home machinery — which keys on the live identity's own prior rows — never saw the move,
+  and `removedPublicPaths` stayed empty (nothing was cycle-skipped). The reclaim now carries the tombstone's
+  home (and its own former homes) onto the live identity, so the existing #190 machinery writes the compat
+  re-export (`FormerHome.<name> = NewHome.<name>`, cycle-guarded) and records the move in the manifest
+  (`formerModules`) for the next run. Each former home is **shape-gated**: the reclaim proof matches the live
+  type against the first-sorted on-disk body for the leaf, which need not be the former home's *own* body, so
+  bindgen re-exports a former home only when its own prior declaration is absent, a pure re-export/abstract
+  alias, or a record/variant that structurally matches the live type (the same `reclaimable` proof). A former
+  home that historically held a genuinely different type under the same leaf is **not** re-pointed (that would
+  be the #190 wrong-bind); its path is dropped and listed in `removedPublicPaths` (gateable) instead of
+  silently redirected.
+
 ## [1.4.0-beta.7] — 2026-10-25
 
 ### Fixed
