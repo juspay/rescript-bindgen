@@ -98,4 +98,5 @@ module GenericInstantiationDistinctField = {
   external asNamedArmA: t => (namedArmA) = "%identity"
   external fromNamedArmB: namedArmB => t = "%identity"
   external asNamedArmB: t => (namedArmB) = "%identity"
+  @get external v: t => string = "v"
 }

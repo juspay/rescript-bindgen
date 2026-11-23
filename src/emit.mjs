@@ -1106,6 +1106,16 @@ function renderOpaque(t, lines, cfg, tAlias) {
             lines.push(`  external as${fn.slice(4)}: ${rt} => (${rendered}) = "%identity"`)
         }
     }
+    // #242: a field declared IDENTICALLY by every record arm (required, same type) is always safe to
+    // read off `t` — a real property read, not a `%identity` view — so consumers stop casting `t` to a
+    // one-field record. extract (`sharedArmGetters`) picks the sound set; here we skip any whose ident
+    // collides with a `from*`/`as*`/const already emitted above (they share the module namespace).
+    for (const g of t.sharedGetters || []) {
+        const { id } = label(g.name)
+        if (seen.has(id)) continue
+        seen.add(id)
+        lines.push(`  @get external ${id}: ${rt} => ${renderType(g.type, g.name, cfg)} = ${JSON.stringify(g.name)}`)
+    }
     lines.push(`}`)
 }
 
