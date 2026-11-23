@@ -845,7 +845,13 @@ async function main() {
             const reexports = safeReexports(fm, allReexports)
             if (!reexports.length) continue
             const p = join(typesDir, `${fm}.res`)
-            const body = reexports.flatMap((rx) => reexportLinesFor(rx)).join('\n')
+            // #241: two enums that shared this former home can relocate to DIFFERENT live modules and
+            // collide on a constructor name with different `@as` — #171 renames per-module, so it never
+            // co-analyzes them. Thread a per-file `hostCtors` (like the live-host path above) so the
+            // second colliding enum falls back to an abstract alias (a loud "constructor can't be found"),
+            // never a silent wrong-value shadow into this one compat file.
+            const hostCtors = new Set()
+            const body = reexports.flatMap((rx) => reexportLinesFor(rx, hostCtors)).join('\n')
             writeFileSync(p, `// #190: compatibility re-exports — these identities moved to another module when a\n// dependency cycle merged this home. Old \`${fm}.<name>\` annotations keep resolving, and enum constructors with them (#241).\n${body}\n`)
             written.add(relative(outDir, p))
             compatFiles++
