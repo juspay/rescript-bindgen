@@ -22,6 +22,7 @@ import { writeReport } from './report.mjs'
 import { findDanglingRefs } from './validate.mjs'
 import { planHtmlAttrs, HTML_ATTRS_PIN } from './html-attrs.mjs'
 import { RESCRIPT_RESERVED } from './stdlib-types.mjs'
+import { canonLive, parseResBody, reclaimable, rekeyRefs } from './name-reclaim.mjs' // #238: shape-gate a reclaim-move re-export
 import { writeFileSync, mkdirSync, existsSync, readFileSync, readdirSync, unlinkSync, renameSync } from 'fs'
 import { join, resolve as pathResolve, basename, dirname, relative } from 'path'
 import { createInterface } from 'readline'
@@ -228,6 +229,7 @@ function readBindgenManifest(path) {
 function scanPriorHomes(dirs, priorFiles) {
     const homes = new Map()
     const bodies = new Map()
+    const bodiesByHome = new Map() // #238: module -> (leaf -> its OWN prior body) — verify a former home's past shape
     const seen = new Set()
     const isTypesModule = (f) => /Types\.res$/.test(f)
     // Prefer the manifest's own file list (guaranteed ours); else every `*Types.res` in the dirs.
@@ -251,7 +253,14 @@ function scanPriorHomes(dirs, priorFiles) {
         // captured whole. First occurrence of a leaf wins (deterministic, dirs iterate sorted).
         let curLeaf = null, curLines = [], depth = 0
         const flush = () => {
-            if (curLeaf && !bodies.has(curLeaf)) bodies.set(curLeaf, curLines.join('\n').trim())
+            if (curLeaf) {
+                const body = curLines.join('\n').trim()
+                if (!bodies.has(curLeaf)) bodies.set(curLeaf, body) // leaf-keyed, first-wins (#222 reclaim proof)
+                // Per-home body (#238): a leaf's declaration in THIS specific module, so a former-home re-export
+                // can be gated on that home's OWN past shape (not just the first-sorted body `bodies` returns).
+                if (!bodiesByHome.has(module)) bodiesByHome.set(module, new Map())
+                if (!bodiesByHome.get(module).has(curLeaf)) bodiesByHome.get(module).set(curLeaf, body)
+            }
             curLeaf = null; curLines = []; depth = 0
         }
         for (const line of text.split('\n')) {
@@ -273,7 +282,7 @@ function scanPriorHomes(dirs, priorFiles) {
         const files = listed.length ? listed.map((f) => basename(f)) : readdirSync(dir).filter(isTypesModule)
         for (const f of [...new Set(files)].sort()) if (existsSync(join(dir, f))) add(dir, f)
     }
-    return { homes, bodies }
+    return { homes, bodies, bodiesByHome }
 }
 
 /**
@@ -402,6 +411,7 @@ async function main() {
     const priorScan = scanPriorHomes([outDir, priorTypesDir], priorManifest.files)
     const legacyHomeIndex = priorScan.homes  // #221: leaf -> former home module(s)
     const priorBodies = priorScan.bodies      // #222: leaf -> prior declaration body (tombstone reclaim proof)
+    const priorBodiesByHome = priorScan.bodiesByHome // #238: module -> (leaf -> its OWN body), to shape-gate a reclaim-move re-export
 
     // #219: a COLD run (no prior `publicTypes` registry) silently UNLOCKS every public name + module home —
     // no locked names, no compat re-exports, SCC homes recomputed. Warn loudly when the run is about to
@@ -667,6 +677,12 @@ async function main() {
     const liveModules = plan ? new Set(plan.byModule.keys()) : new Set()
     const formerHomeReexports = new Map()
     const bootstrappedRelocations = [] // #221: former homes recovered from prior `.res`, not the manifest
+    // `FormerHome.name` public paths bindgen drops. Two causes, tracked apart so each gets the RIGHT stderr
+    // reason, then merged into `--json-summary`'s `removedPublicPaths` so CI can gate on either:
+    //   - cycle-skipped former-home re-export (#235) — the prior home is live and would close a module cycle;
+    //   - reclaim-move refused (#238) — the former home declared a DIVERGENT type under the same leaf.
+    const removedPublicPaths = []   // #235 cycle-skips
+    const reclaimMoveRefused = []   // #238 divergent-former-home refusals
     if (plan) {
         for (const e of shared.entries) {
             const newModule = plan.finalOf.get(e.home) || e.home
@@ -676,6 +692,48 @@ async function main() {
                 if (!row) continue
                 if (typeof row.module === 'string') priorHomes.add(row.module)
                 for (const fm of row.formerModules || []) if (typeof fm === 'string') priorHomes.add(fm)
+            }
+            // #238: a RECLAIMED identity (#222/#232) carries a NEW manifest id, so the loop above — which keys
+            // on `e.publicIds` — finds no prior home: the type's prior home lives on the retired TOMBSTONE's
+            // row, not on any live id. When the reclaim also RE-HOMES the type (a same-run declaration move,
+            // e.g. `ChartsSharedTypes` → `ChartsTypes`), the old `FormerHome.<name>` path was silently dropped
+            // with no compat re-export, and `removedPublicPaths` never saw it (nothing was cycle-skipped). Fold
+            // the tombstone's home (and ITS former homes) in, so the #190 machinery below writes the compat
+            // re-export and records the move in the manifest (`formerModules`) for the next run. The tombstone
+            // id keys the prior registry (the row `findTombstone` proved against); a same-module reclaim is a
+            // no-op (skipped by `fm === newModule`, and `priorHomes.delete(newModule)` below).
+            //
+            // SHAPE-GATE (soundness): the reclaim proof matched `e` against the FIRST-sorted on-disk body for
+            // this leaf (`priorBodies` is leaf-keyed) — which need NOT be the former home's OWN body. So a former
+            // home that historically declared a DIFFERENT type under the same leaf must not be re-pointed at `e`
+            // (the exact #190 wrong-bind). Re-export a former home only when its OWN prior declaration is absent,
+            // a pure re-export / abstract alias (unparseable → not a divergent concrete shape), or a record/
+            // variant that structurally matches `e` (the same `reclaimable` proof, incl. #232's locked-ref retry).
+            // A divergent former home is NOT re-exported; its path is recorded (`reclaimMoveRefused`) so the drop
+            // is gateable (#235) — strictly better than the pre-fix SILENT drop.
+            if (e._reclaim && e._reclaim.tombstoneId) {
+                const tomb = priorPublicTypes[e._reclaim.tombstoneId]
+                if (tomb) {
+                    const liveShape = canonLive(e)
+                    const names = [...new Set([e.name, ...(e.compatNames || [])].filter(Boolean))]
+                    // Every historical name the re-export would cover is gated (not just the canonical leaf): a
+                    // former home that declared a divergent body under ANY of e's names must not be re-pointed.
+                    const homeKeepsShape = (fm) => {
+                        const home = priorBodiesByHome.get(fm)
+                        if (!home) return true                 // former home not on disk (absent / pure re-export) — safe to chain
+                        for (const nm of names) {
+                            const old = parseResBody(home.get(nm) ?? '')
+                            if (!old) continue                 // name absent here, or a re-export/abstract alias — not a divergent shape
+                            if (!(liveShape && (reclaimable(old, liveShape) || reclaimable(old, rekeyRefs(liveShape, shared._lockedRefName))))) return false
+                        }
+                        return true
+                    }
+                    for (const fm of [tomb.module, ...(tomb.formerModules || [])]) {
+                        if (typeof fm !== 'string' || fm === newModule) continue
+                        if (homeKeepsShape(fm)) priorHomes.add(fm)
+                        else for (const nm of names) reclaimMoveRefused.push(`${fm}.${nm}`)
+                    }
+                }
             }
             // #221: no prior-MANIFEST home for this identity — the previous generation predates the #190
             // registry (no `publicTypes`) or was cold. Recover the former home from the prior `.res` on
@@ -730,7 +788,6 @@ async function main() {
     const moduleDeps = plan ? sharedModuleDeps(shared, plan) : new Map()
     const moduleReaches = moduleReachFn(moduleDeps)
     let cycleSkipped = 0
-    const removedPublicPaths = [] // #235: `FormerHome.name` paths a skipped re-export drops (→ stderr + json-summary)
     const safeReexports = (host, reexports) => reexports.filter((rx) => {
         if (moduleReaches(rx.newModule, host)) { // host -> newModule -> ... -> host
             cycleSkipped++
@@ -774,6 +831,11 @@ async function main() {
             console.error(`[bindgen] ⚠ ${cycleSkipped} former-home compatibility re-export(s) skipped — the prior home is now live and depends on the merged module, so re-exporting would create a module cycle (#190). These public paths are REMOVED:`)
             for (const p of removedPublicPaths.slice(0, 40)) console.error(`[bindgen]   - ${p}`)
             if (removedPublicPaths.length > 40) console.error(`[bindgen]   … and ${removedPublicPaths.length - 40} more (see --json-summary removedPublicPaths)`)
+        }
+        if (reclaimMoveRefused.length) {
+            console.error(`[bindgen] ⚠ ${reclaimMoveRefused.length} reclaim-move former-home re-export(s) refused — the former home declared a DIFFERENT type under the same leaf, so re-pointing it at the reclaimed type would be a wrong-bind (#238). These public paths are REMOVED:`)
+            for (const p of reclaimMoveRefused.slice(0, 40)) console.error(`[bindgen]   - ${p}`)
+            if (reclaimMoveRefused.length > 40) console.error(`[bindgen]   … and ${reclaimMoveRefused.length - 40} more (see --json-summary removedPublicPaths)`)
         }
         for (const r of shared.formerHomeRehomes || []) console.error(`[bindgen] note: homed ${r.names.length} new type(s) into ${r.to} instead of reviving former home ${r.from} (its compat re-exports would form a cycle): ${r.names.slice(0, 8).join(', ')}${r.names.length > 8 ? '…' : ''}`)
         console.error(`[bindgen] wrote ${plan.byModule.size} shared type module(s) (${shared.entries.length} unique types) to ${typesDir}`)
@@ -1043,7 +1105,7 @@ async function main() {
             // #235: public `FormerHome.name` paths a cycle-skipped compat re-export dropped this run, and the
             // newcomers re-homed to avoid exactly that. ALWAYS emitted, so CI can gate on `removedPublicPaths`
             // being empty without guessing whether the field exists.
-            removedPublicPaths: [...new Set(removedPublicPaths)].sort(),
+            removedPublicPaths: [...new Set([...removedPublicPaths, ...reclaimMoveRefused])].sort(),
             formerHomeRehomes: shared?.formerHomeRehomes || [],
         }
         writeFileSync(opts.jsonSummary, JSON.stringify(summary, null, 2) + '\n')
