@@ -803,6 +803,25 @@ async function main() {
     // planner — this reachability guard is what keeps them from producing a circular module dep. (#190 P1a)
     const moduleDeps = plan ? sharedModuleDeps(shared, plan) : new Map()
     const moduleReaches = moduleReachFn(moduleDeps)
+    // #243: a `…FromFull` widening references the full record WITHOUT a planner edge (so it can never merge
+    // modules or move a public type). Keep it only if the full record survived the reachability sweep and,
+    // when it lives in another module, the reference closes no module cycle — then FOLD the edge into the
+    // graph so later checks (more widenings, the compat re-exports below) see it. A sink module stays
+    // edge-free. Anything else is dropped: a missed convenience, never a dangling ref or a cyclic dep.
+    if (plan) {
+        const finalHome = (e) => plan.finalOf.get(e.home) || e.home
+        const SINKS = new Set(['CommonTypes', 'InstanceTypes', 'WebTypes'])
+        for (const e of shared.entries) {
+            if (!e.widenFromKey) continue
+            const full = shared.byKey.get(e.widenFromKey)
+            const from = finalHome(e)
+            const to = full && finalHome(full)
+            if (!full || (to !== from && (SINKS.has(from) || moduleReaches(to, from)))) { delete e.widenFromKey; continue }
+            if (to === from) continue
+            if (!moduleDeps.has(from)) moduleDeps.set(from, new Set())
+            moduleDeps.get(from).add(to)
+        }
+    }
     let cycleSkipped = 0
     const safeReexports = (host, reexports) => reexports.filter((rx) => {
         if (moduleReaches(rx.newModule, host)) { // host -> newModule -> ... -> host

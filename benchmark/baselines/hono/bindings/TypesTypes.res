@@ -30,6 +30,7 @@ module TypesContextOptionsExecutionCtx = {
   external asFetchEventLike: t => (fetchEventLike) = "%identity"
   external fromExecutionContext: executionContext => t = "%identity"
   external asExecutionContext: t => (executionContext) = "%identity"
+  @get external passThroughOnException: t => unit => unit = "passThroughOnException"
 }
 type contextOptions = {
   env?: string,  // ⚪ loose — was `E["Bindings"]`

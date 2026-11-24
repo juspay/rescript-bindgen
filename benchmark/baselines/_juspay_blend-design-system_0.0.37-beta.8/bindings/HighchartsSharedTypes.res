@@ -38840,6 +38840,7 @@ module SeriesOptionsType = {
   external asSeriesXrangeOptions: t<'a, 'b, 'c> => (seriesXrangeOptions<'b, 'a, 'c>) = "%identity"
   external fromSeriesZigzagOptions: seriesZigzagOptions<'a, 'b, 'c> => t<'a, 'b, 'c> = "%identity"
   external asSeriesZigzagOptions: t<'a, 'b, 'c> => (seriesZigzagOptions<'a, 'b, 'c>) = "%identity"
+  @get external type_: t<'a, 'b, 'c> => string = "type"
 }
 module PointTarget = {
   type t = pointTarget_t
@@ -38847,6 +38848,7 @@ module PointTarget = {
   external asPoint: t => (point<'a, 'b, 'c>) = "%identity"
   external fromAnnotationMockPointOptionsObject: annotationMockPointOptionsObject => t = "%identity"
   external asAnnotationMockPointOptionsObject: t => (annotationMockPointOptionsObject) = "%identity"
+  @get external x: t => float = "x"
 }
 module ChartsLegendItemClickEventObjectLegendItem = {
   type t = chartsLegendItemClickEventObjectLegendItem_t
@@ -38863,6 +38865,12 @@ module ChartsLegendAllItems = {
   external asPoint: t => (point<'a, 'b, 'c>) = "%identity"
   external fromSeries: series<'a, 'b, 'c> => t = "%identity"
   external asSeries: t => (series<'a, 'b, 'c>) = "%identity"
+  @get external index: t => int = "index"
+  @get external name: t => string = "name"
+  @get external selected: t => bool = "selected"
+  @get external visible: t => bool = "visible"
+  @get external onMouseOut: t => unit => unit = "onMouseOut"
+  @get external setVisible: t => (option<bool>, option<bool>) => unit = "setVisible"
 }
 module AxisPlotLinesOptions = {
   type t = axisPlotLinesOptions_t
@@ -39506,6 +39514,8 @@ module IMouseTarget = {
   external asIMouseTargetOverviewRuler: t => (iMouseTargetUnknown) = "%identity"
   external fromIMouseTargetOutsideEditor: iMouseTargetOutsideEditor => t = "%identity"
   external asIMouseTargetOutsideEditor: t => (iMouseTargetOutsideEditor) = "%identity"
+  @get external element: t => string = "element"
+  @get external mouseColumn: t => float = "mouseColumn"
 }
 type iEditorMouseEvent = {
   event: iMouseEvent,
@@ -41781,3 +41791,4 @@ module InputsV2Dropdown = {
   external fromTextInputV2Dropdowns: array<textInputV2Dropdown> => t = "%identity"
   external asTextInputV2Dropdowns: t => (array<textInputV2Dropdown>) = "%identity"
 }
+external editorGetMonacoViewModeOptionsConfigFromFull: iEditorOptions => editorGetMonacoViewModeOptionsConfig = "%identity"

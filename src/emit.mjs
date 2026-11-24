@@ -1718,5 +1718,14 @@ export function emitSharedModule(mod, entries, finalOf, options = {}) {
     renderUnboxed(unboxed.filter((u) => !isObjectUnboxed(u)), lines, cfg) // primitive: before records
     // records + object-bearing variants + opaque-type modules in dependency order
     emitOrderedTypes(records, objUnboxed, opaque, idOf, depsOf, lines, cfg)
+    // #243: a `Partial`/`DeepPartial` record also accepts a FULL value. `linkPartialWidenings` proved
+    // (via TS assignability) that the source full record widens into it, so emit the zero-cost
+    // `<partial>FromFull: <full> => <partial> = "%identity"` — the cast then lives once here, checked
+    // against the `.d.ts`, instead of as an untyped `'a => 'b` in every consumer.
+    for (const e of entries) {
+        if (e.kind !== 'record' || !e.widenFromKey) continue
+        const fullTy = cfg.resolveRef({ kind: 'typeRef', key: e.widenFromKey })
+        lines.push(`external ${e.name}FromFull: ${fullTy} => ${e.name} = "%identity"`)
+    }
     return lines.join('\n') + '\n'
 }
