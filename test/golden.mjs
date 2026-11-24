@@ -52,16 +52,18 @@ function generate(caseDir, outDir, args) {
 
 /** Assert the contract invariant: no `%identity` except the allowed zero-cost views —
  *  `external from*` constructors (concrete -> opaque), `external as*` accessors (opaque ->
- *  concrete, e.g. the per-signature views of an overloaded function), or a `<prop>Fn`
- *  render-prop wrapper (`((…) => React.element) => React.element` — the function form of a
- *  render prop; an @unboxed Element|Fn cannot compile because React.element is abstract, #46). */
+ *  concrete, e.g. the per-signature views of an overloaded function), a `*FromFull` widening
+ *  (`<full> => <DeepPartial/Partial record>` — sound because TS deems the full value assignable
+ *  to the partial, #243), or a `<prop>Fn` render-prop wrapper (`((…) => React.element) =>
+ *  React.element` — the function form of a render prop; an @unboxed Element|Fn cannot compile
+ *  because React.element is abstract, #46). */
 function checkNoStrayIdentity(files, caseName, problems) {
     const renderFnWrapper = /external\s+\w+Fn:\s*\(.*=>\s*React\.element\)\s*=>\s*React\.element\s*=/
     for (const [name, content] of files) {
         if (!name.endsWith('.res')) continue // _REPORT.md mentions "%identity" in prose
         content.split('\n').forEach((line, i) => {
-            if (line.includes('%identity') && !/external\s+(from|as)\w+:/.test(line) && !renderFnWrapper.test(line)) {
-                problems.push(`${caseName}/${name}:${i + 1} — stray %identity outside an opaque-module from*/as* view or render-prop Fn wrapper: ${line.trim()}`)
+            if (line.includes('%identity') && !/external\s+(from|as)\w+:/.test(line) && !/external\s+\w+FromFull:/.test(line) && !renderFnWrapper.test(line)) {
+                problems.push(`${caseName}/${name}:${i + 1} — stray %identity outside an opaque-module from*/as* view, a *FromFull widening, or a render-prop Fn wrapper: ${line.trim()}`)
             }
         })
     }
