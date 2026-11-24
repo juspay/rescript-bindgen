@@ -3680,6 +3680,7 @@ export function extractModule(entryFile, opts = {}) {
             for (const g of c.ir.getters || []) if (g.type) relinkRegistered(g.type, bk, new Set(), null)
         }
     }
+    linkPartialWidenings(shared)
     propagateTypeParams(shared)
     // Component/function IR trees reference shared entries too — re-sync their refs to the
     // CONVERGED tparams. A refTo taken before propagation copies the entry's tparams of that
@@ -3887,6 +3888,39 @@ function healGhostRecords(shared) {
         const tvars = new Set()
         for (const f of rebuilt.fields) collectTypeVars(f.type, tvars)
         e.tparams = tvars.size ? [...tvars] : undefined
+    }
+}
+
+/** #243: pair each `Partial`/`DeepPartial` record with the FULL record it widens, so emit can add a
+ *  zero-cost `<partial>FromFull: <full> => <partial> = "%identity"` external. TS accepts a complete `T`
+ *  wherever `DeepPartial<T>` is expected (that is the documented way to theme in blend — take
+ *  `getButtonTokens(theme)`, adjust, pass to `ThemeProvider.componentTokens`), but the two generated
+ *  ReScript records are distinct types, forcing a consumer `%identity` on every component. Runs after
+ *  `healGhostRecords` (fields are final) and `relinkRegistered` (refs resolved). Each gate MUST hold:
+ *   (a) every field of the partial is OPTIONAL — it really is a partial (excludes `Required`/`Readonly`,
+ *       which are all-required/same and whose widening would be a no-op anyway);
+ *   (b) neither side is generic — a generic widening would need matching tparams (out of scope, rare);
+ *   (c) the source `T` materialized as its OWN record entry (else there is nothing to widen from);
+ *   (d) TS deems the full source ASSIGNABLE to the mapped type — the exact soundness condition for the
+ *       `%identity`, and it excludes an all-optional mapped type that rewrites field VALUES rather than
+ *       just adding `?` (e.g. `{ [P in keyof T]?: () => T[P] }`, assignable=false).
+ *  Only the full→partial direction is emitted; partial→full would be unsound. */
+function linkPartialWidenings(shared) {
+    for (const e of shared.entries) {
+        const src = e && e._widenFromType
+        if (!src || e.kind !== 'record' || !e._heal) continue
+        if (!e.fields.length || !e.fields.every((f) => f.optional)) continue   // (a)
+        if (e.tparams && e.tparams.length) continue                            // (b) partial not generic
+        let full = null
+        for (const k of ['id:' + src.id, 'id:' + src.id + '|np', 'id:' + src.id + '|rb', 'id:' + src.id + '|np|rb']) {
+            const x = shared.byKey.get(k)
+            if (x && x.kind === 'record' && x !== e && !(x.tparams && x.tparams.length)) { full = x; break } // (c)
+        }
+        if (!full) continue
+        const chk = e._heal.ctx && e._heal.ctx.checker
+        if (!chk || typeof chk.isTypeAssignableTo !== 'function' || !chk.isTypeAssignableTo(src, e._heal.type)) continue // (d)
+        e.widenFromKey = full.key
+        collectRefKeys({ kind: 'typeRef', to: full.name, key: full.key, home: full.home }, e.deps)
     }
 }
 
@@ -5487,6 +5521,21 @@ function literalUnionOpenNode(literals, baseName, ctx, propName) {
  */
 function entryKey(ctx, type) {
     return keyOf(type.id, ctx.noPolyTag, ctx.resolveBound)
+}
+
+/** #243: the SOURCE type `T` of a homomorphic mapped type `{ [P in keyof T]?: … }` (`DeepPartial<T>`,
+ *  `Partial<T>`, …). Its `constraintType` is `keyof T`; once TS has resolved that to a literal-key union,
+ *  the `keyof` index type is stashed on the union's (undocumented) `.origin`. Returns `T`, or null when
+ *  the type is not a mapped type or the source can't be recovered. Best-effort by design: a null result
+ *  only MISSES a widening — `linkPartialWidenings` still gates soundness on TS assignability, so an
+ *  unrecoverable or mis-recovered source can never produce an unsound `%identity`. */
+function mappedSource(type) {
+    if (!type || !(type.objectFlags & ts.ObjectFlags.Mapped)) return null
+    const ct = type.constraintType
+    if (!ct) return null
+    const idx = (ct.flags & ts.TypeFlags.Index) ? ct
+        : (ct.origin && (ct.origin.flags & ts.TypeFlags.Index) ? ct.origin : null)
+    return idx ? (idx.type || null) : null
 }
 
 /** The one formatter for a registry key. `entryKey` covers every read that has a `ctx`; this lower-level
@@ -7254,6 +7303,17 @@ function recordNode(type, ctx, propName, depth = 0, typeName = null) {
         const tvars = new Set()
         for (const f of built.fields) collectTypeVars(f.type, tvars)
         if (tvars.size) entry.tparams = [...tvars]
+
+        // #243: this record came from a homomorphic mapped type (`DeepPartial<T>`/`Partial<T>`), which
+        // TS accepts a full `T` for — but the generated partial record is a distinct ReScript type, so a
+        // consumer `%identity`-casts every `getXTokens(theme)` result. Stamp the recovered source `T` so
+        // `linkPartialWidenings` (post-heal) can pair it with `T`'s own record and emit a `…FromFull`
+        // widening. Stamped before structural dedup: a merged-away duplicate's stamp is dropped, but the
+        // surviving canonical carries its own (an identical shape has the same source relationship).
+        if (type.objectFlags & ts.ObjectFlags.Mapped) {
+            const src = mappedSource(type)
+            if (src && src.id != null && src.getProperties?.().length) entry._widenFromType = src
+        }
 
         // Structural dedup: many distinct TS generic instantiations widen to the SAME record
         // (e.g. Hono's 1728 `honoNNN`, all `{get: …, post: …}` after the generics collapse).

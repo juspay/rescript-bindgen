@@ -18,6 +18,19 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   a TYPE VARIABLE (generic record arms — `v: T` would emit `@get … : t => 'a`, the universal unsafe cast
   `as*` readers also refuse, #186) is left out. A reader whose ident would collide with an existing
   `from*`/`as*` member is skipped.
+- **`DeepPartial`/`Partial` records get a zero-cost full→partial widening** (#243). `DeepPartial<T>` is
+  materialized as a fresh record with every field optional, but TypeScript also accepts a complete `T`
+  wherever `DeepPartial<T>` is expected — the documented way to theme in blend is to take
+  `getButtonTokens(theme)` (a full `ResponsiveButtonTokens`), adjust it and pass it to
+  `ThemeProvider.componentTokens` (a `DeepPartial<...>`). The generated ReScript records are distinct
+  types, so this forced a consumer `%identity` on every component. When the full source materialized as
+  its own record, bindgen now emits `external <partial>FromFull: <full> => <partial> = "%identity"` next
+  to the partial, so the cast lives once in the package, checked against the `.d.ts`, instead of as an
+  untyped `'a => 'b` in each consumer. The widening is recovered at every level the partial is a named
+  record (blend's nested `contextComponentTokens<X>Config` each get one taking the full `responsive<X>Tokens`).
+  Only the full→partial direction is emitted (the only sound one), gated on TS assignability plus
+  all-fields-optional — so a non-widening mapped type gets nothing (`Required`/`Readonly` are not
+  all-optional; `{ [P in keyof T]?: () => T[P] }` is all-optional but a full `T` is not assignable to it).
 
 ### Fixed
 
