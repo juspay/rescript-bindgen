@@ -31,6 +31,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   Only the full→partial direction is emitted (the only sound one), gated on TS assignability plus
   all-fields-optional — so a non-widening mapped type gets nothing (`Required`/`Readonly` are not
   all-optional; `{ [P in keyof T]?: () => T[P] }` is all-optional but a full `T` is not assignable to it).
+  The widening is purely additive: it adds no dependency edge, so it never regroups a `type rec`, merges
+  modules or moves a public type. It is kept only when the full record is emitted and referencing it closes
+  no module cycle (else dropped). Benchmark baselines are refreshed for this and for #242's readers.
 
 ### Fixed
 

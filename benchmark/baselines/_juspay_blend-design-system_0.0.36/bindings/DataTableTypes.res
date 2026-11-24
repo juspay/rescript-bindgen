@@ -414,6 +414,8 @@ module ColumnDefinition = {
   external asDataTableColumnsReactElementConfig: t => (dataTableColumnsReactElementConfig<'a>) = "%identity"
   external fromDataTableColumnsFilterTypeConfig: dataTableColumnsFilterTypeConfig<'a> => t = "%identity"
   external asDataTableColumnsFilterTypeConfig: t => (dataTableColumnsFilterTypeConfig<'a>) = "%identity"
+  @get external field: t => string = "field"
+  @get external header: t => string = "header"
 }
 type dataTableDescriptionTooltipPropsConfig = {
   side?: TooltipTypes.tooltipSide,

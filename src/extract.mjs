@@ -3919,8 +3919,12 @@ function linkPartialWidenings(shared) {
         if (!full) continue
         const chk = e._heal.ctx && e._heal.ctx.checker
         if (!chk || typeof chk.isTypeAssignableTo !== 'function' || !chk.isTypeAssignableTo(src, e._heal.type)) continue // (d)
+        // Deliberately NOT added to `e.deps`: deps drive module SCC merging (planSharedModules) and
+        // in-module `type rec` grouping, so a widening edge could glue unrelated types into one rec group
+        // or merge modules and MOVE public types (#190). The `…FromFull` external is emitted after every
+        // type, and the CLI keeps it only if the full type survived the sweep and referencing it closes no
+        // module cycle — otherwise it is dropped: a safe miss, never a broken ref.
         e.widenFromKey = full.key
-        collectRefKeys({ kind: 'typeRef', to: full.name, key: full.key, home: full.home }, e.deps)
     }
 }
 

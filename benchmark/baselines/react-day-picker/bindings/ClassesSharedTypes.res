@@ -825,3 +825,9 @@ type dayPickerContextV1lgyc = {
   formatters: formatters,
   dayPickerProps: dayPickerProps,
 }
+external dayPickerLocaleLabelsFromFull: labels => dayPickerLocaleLabels = "%identity"
+external classesOverridesConfigFromFull: dateLib2 => classesOverridesConfig = "%identity"
+external typesComponentsConfigFromFull: customComponents => typesComponentsConfig = "%identity"
+external typesLabelsConfigFromFull: labels => typesLabelsConfig = "%identity"
+external typesFormattersConfigFromFull: formatters => typesFormattersConfig = "%identity"
+external classesLocaleConfigFromFull: dayPickerLocale => classesLocaleConfig = "%identity"
