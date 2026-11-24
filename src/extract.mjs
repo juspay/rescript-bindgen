@@ -5587,6 +5587,12 @@ function sharedArmGetters(members, shared) {
     const out = []
     for (const f of recs[0].fields) {
         if (f.optional) continue // required-in-all only (a bare `@get` on an absent prop is unsound)
+        // A field whose type carries a TYPE VARIABLE (generic record arms, e.g. `v: T` → `'a`) would
+        // emit `@get external v: t => 'a`, which unifies with ANY type at the call site — the universal
+        // unsafe cast emit's `as*` readers also refuse (#186). The opaque `t` doesn't bind the var, so
+        // leave such a field out. (The arm's own `from*`/`as*` already express the generic faithfully.)
+        const tv = new Set(); collectTypeVars(f.type, tv)
+        if (tv.size) continue
         const sig = sigOf(f.type)
         if (recs.every((re) => re.fields.some((g) => g.name === f.name && !g.optional && sigOf(g.type) === sig))) {
             out.push({ name: f.name, type: f.type })
