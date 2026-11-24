@@ -3901,7 +3901,7 @@ function entryChildTypes(e) {
     // re-sync tparams too, or a record that turns generic post-hoc renders bare
     // (`fromZAxisOptions: zAxisOptions => t` while the record is `zAxisOptions<'b>` — compile
     // break). (#110 fallout)
-    if (e.kind === 'opaque') return [...(e.members || []).map((m) => m.type), ...(e.sigs || []).map((s) => s.fn), ...(e.props || []).map((m) => m.fn || m.get)].filter(Boolean)
+    if (e.kind === 'opaque') return [...(e.members || []).map((m) => m.type), ...(e.sigs || []).map((s) => s.fn), ...(e.props || []).map((m) => m.fn || m.get), ...(e.sharedGetters || []).map((g) => g.type)].filter(Boolean) // #242: shared-arm readers
     return []
 }
 
@@ -5565,6 +5565,42 @@ function unionMembers(checker, u) {
  * typed (then the caller keeps it flagged).
  * @returns {{kind:'typeRef', to:string, home:string, key:string} | null}
  */
+/** #242: fields that EVERY record arm of an opaque-views union declares IDENTICALLY (same name,
+ *  same emitted type, required in all) are always safe to read off the opaque `t`, yet a consumer
+ *  otherwise `%identity`-casts `t` to a one-field record to read them (blend's `ColumnDefinition`:
+ *  20 arms all declare `field`/`header`). Return `[{name, type}]` for each such field so emit adds a
+ *  `@get` reader. Scope is deliberately tight for SOUNDNESS: only when every arm is a plain record
+ *  (a literal/bool/tagSet/none/array/fn arm has no fields to share → `[]`), and only REQUIRED fields
+ *  (a bare `@get` returning `T` is unsound for a maybe-absent prop — an all-optional field is left
+ *  out, not widened to `option`). A field whose type OR optionality differs across arms is left out.
+ *  A `from*`/`as*` ident collision is resolved at emit (the reader is skipped). */
+function sharedArmGetters(members, shared) {
+    if (members.length < 2) return []
+    const recs = []
+    for (const m of members) {
+        if (!m.type || m.type.kind !== 'typeRef' || !m.type.key) return []
+        const re = shared.byKey.get(m.type.key)
+        if (!re || re.kind !== 'record' || !Array.isArray(re.fields)) return []
+        recs.push(re)
+    }
+    const sigOf = (t) => structuralTypeSig(t, shared, new Set())
+    const out = []
+    for (const f of recs[0].fields) {
+        if (f.optional) continue // required-in-all only (a bare `@get` on an absent prop is unsound)
+        // A field whose type carries a TYPE VARIABLE (generic record arms, e.g. `v: T` → `'a`) would
+        // emit `@get external v: t => 'a`, which unifies with ANY type at the call site — the universal
+        // unsafe cast emit's `as*` readers also refuse (#186). The opaque `t` doesn't bind the var, so
+        // leave such a field out. (The arm's own `from*`/`as*` already express the generic faithfully.)
+        const tv = new Set(); collectTypeVars(f.type, tv)
+        if (tv.size) continue
+        const sig = sigOf(f.type)
+        if (recs.every((re) => re.fields.some((g) => g.name === f.name && !g.optional && sigOf(g.type) === sig))) {
+            out.push({ name: f.name, type: f.type })
+        }
+    }
+    return out
+}
+
 function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     if (!ctx.shared) return null // module mode only
     const key = 't:' + type.id
@@ -5741,6 +5777,10 @@ function opaqueUnion(ctx, type, memberTypes, propName, depth, opts = {}) {
     entry.members = members
     entry.deps = deps
     entry.note = note
+    // #242: readers for fields every record arm shares. Their field types become direct refs of this
+    // module, so add them to `deps` (drives both module planning and emit's intra-file ordering).
+    const getters = sharedArmGetters(members, ctx.shared)
+    if (getters.length) { entry.sharedGetters = getters; for (const g of getters) collectRefKeys(g.type, deps) }
     if (members.some((m) => isHighchartsSeriesOptionsNode(m.type))) entry._highchartsSeriesUnion = true
     // STRUCTURAL DEDUP, the last builder to get it (#180). Records and tag variants have always
     // collapsed an identical shape into one entry; `opaqueUnion` registered unconditionally, so two

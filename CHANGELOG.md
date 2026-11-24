@@ -5,6 +5,20 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Opaque-views modules expose readers for fields every arm shares** (#242). A union of object arms that
+  falls back to an opaque-views module (`from*`/`as*` per arm — e.g. blend's `DataTableTypes.ColumnDefinition`,
+  20 arms all declaring `field`/`header`) now also emits a `@get` reader for each field that EVERY arm
+  declares identically — same name, same emitted type, required in all. Reading such a field is always
+  safe, so consumers stop `%identity`-casting `t` to a one-field record just to read it. The gate is tight
+  for soundness: only when every arm is a plain record, only REQUIRED fields (a bare `@get` on a maybe-absent
+  prop is unsound — an all-optional field is left out, not widened to `option`), and a field whose type or
+  optionality differs across arms, or that only some arms declare, gets no reader. A field whose type carries
+  a TYPE VARIABLE (generic record arms — `v: T` would emit `@get … : t => 'a`, the universal unsafe cast
+  `as*` readers also refuse, #186) is left out. A reader whose ident would collide with an existing
+  `from*`/`as*` member is skipped.
+
 ### Fixed
 
 - **A former home re-exports a moved enum with its constructors** (#241). The #190 compatibility re-export
