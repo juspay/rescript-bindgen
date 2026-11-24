@@ -5,6 +5,21 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **A former home re-exports a moved enum with its constructors** (#241). The #190 compatibility re-export
+  was an abstract alias (`type size = New.size`), which kept annotations resolving but dropped
+  `FormerHome.Ctor` and made a consumer's own `type t = FormerHome.size = | …` fail with "Their kinds
+  differ". A plain enum is now re-exported as `type size = New.size = | @as("sm") Sm | …`. In a former home
+  that is live again, an enum sharing a constructor name with the module's own types stays an alias, so an
+  unannotated `Host.Ctor` keeps its type. The same guard now also protects a STANDALONE compat file: two
+  enums that shared a former home can relocate to different modules and collide on a constructor name with
+  different `@as` (#171 renames per-module, so it never co-analyzes them) — the second colliding enum falls
+  back to an abstract alias (a loud "constructor can't be found") rather than silently shadowing the first.
+  Records and `@unboxed`/`@tag` variants are unchanged (still aliases). On blend 0.0.39-beta.4 this restores
+  constructors for 172 enums across `ContextSharedTypes`, `HighchartsSharedTypes`, `DateRangePickerTypes`
+  and `InputsV2Types`; no other generated file changes.
+
 ## [1.4.0-beta.8] — 2026-11-23
 
 ### Fixed

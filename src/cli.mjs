@@ -774,12 +774,28 @@ async function main() {
     // Re-export lines for one moved identity at a former home, targeting its new module. EVERY name
     // (canonical + every compatibility alias) is re-exported, case-aware and threading params, so all
     // historical `<FormerHome>.<name>` paths keep resolving — not just the current canonical. (#190 P1b)
-    const reexportLinesFor = ({ entry: e, newModule }) => {
+    // #241: a plain enum is re-exported WITH its constructors (`type x = New.x = | @as("sm") Sm | …`).
+    // An abstract alias keeps annotations resolving but drops `FormerHome.Ctor` and breaks consumer
+    // type equations ("Their kinds differ"). The manifest is always the canonical name — a compat
+    // name is itself an alias in the new home. `hostCtors` are the constructors a LIVE host already
+    // declares: an enum sharing one stays an alias there, so an unannotated `Host.Ctor` keeps its type.
+    const reexportLinesFor = ({ entry: e, newModule }, hostCtors) => {
         const params = e.tparams && e.tparams.length ? `<${e.tparams.join(', ')}>` : ''
         const names = [...new Set([e.name, ...(e.compatNames || [])])].filter(Boolean)
+        const members = e.kind === 'enum' ? (e.members || []) : []
+        const withCtors = members.length > 0 && members.every((m) => m.ctor) && !(hostCtors && members.some((m) => hostCtors.has(m.ctor)))
+        if (withCtors && hostCtors) for (const m of members) hostCtors.add(m.ctor)
+        const body = withCtors ? members.map((m) => `\n  | @as(${m.num ? m.as : JSON.stringify(m.as)}) ${m.ctor}`).join('') : ''
         // An upper-case name is a module (opaque or a cross-kind module shim) -> module alias; a
         // lower-case name is a type -> type alias threading the entry's params.
-        return names.map((nm) => /^[A-Z]/.test(nm) ? `module ${nm} = ${newModule}.${nm}` : `type ${nm}${params} = ${newModule}.${nm}${params}`)
+        return names.map((nm) => /^[A-Z]/.test(nm) ? `module ${nm} = ${newModule}.${nm}`
+            : withCtors ? `type ${nm}${params} = ${newModule}.${e.name}${params} =${body}`
+                : `type ${nm}${params} = ${newModule}.${nm}${params}`)
+    }
+    const ctorsDeclaredIn = (entries) => {
+        const out = new Set()
+        for (const e of entries) for (const m of (e.kind === 'tagVariant' ? e.branches : e.members) || []) if (m.ctor) out.add(m.ctor)
+        return out
     }
     // Post-SCC module dependency graph, so a compat re-export never closes a NEW cycle: appending
     // `type x = N.x` into module M adds an M->N edge, which is unsafe iff N already reaches M. The
@@ -804,14 +820,21 @@ async function main() {
 
     // Write the shared `*Types.res` modules once.
     if (plan) {
+        // #241: every live module is rendered BEFORE any re-export line — #171 renames colliding
+        // constructors in place while a module is emitted, and a re-export repeats those names.
+        const rendered = new Map()
+        for (const [mod, entries] of plan.byModule) {
+            rendered.set(mod, emitSharedModule(mod, entries, plan.finalOf, { renames: shared.renames, byKey: shared.byKey, collisions }))
+        }
         for (const [mod, entries] of plan.byModule) {
             const p = join(typesDir, `${mod}.res`)
-            let content = emitSharedModule(mod, entries, plan.finalOf, { renames: shared.renames, byKey: shared.byKey, collisions })
+            let content = rendered.get(mod)
             // A former home REUSED as a live module (a fresh type homed to an orphaned name): append the
             // moved identities' re-exports into that live file rather than a colliding standalone one —
             // but only those that don't create a cycle back into this now-live module.
             const reexports = safeReexports(mod, formerHomeReexports.get(mod) || [])
-            if (reexports.length) content += '\n// #190: compatibility re-exports for identities that moved here previously\n' + reexports.flatMap(reexportLinesFor).join('\n') + '\n'
+            const hostCtors = reexports.length ? ctorsDeclaredIn(entries) : null
+            if (reexports.length) content += '\n// #190: compatibility re-exports for identities that moved here previously\n' + reexports.flatMap((rx) => reexportLinesFor(rx, hostCtors)).join('\n') + '\n'
             writeFileSync(p, content)
             written.add(relative(outDir, p))
         }
@@ -822,8 +845,14 @@ async function main() {
             const reexports = safeReexports(fm, allReexports)
             if (!reexports.length) continue
             const p = join(typesDir, `${fm}.res`)
-            const body = reexports.flatMap(reexportLinesFor).join('\n')
-            writeFileSync(p, `// #190: compatibility re-exports — these identities moved to another module when a\n// dependency cycle merged this home. Old \`${fm}.<name>\` annotations keep resolving.\n${body}\n`)
+            // #241: two enums that shared this former home can relocate to DIFFERENT live modules and
+            // collide on a constructor name with different `@as` — #171 renames per-module, so it never
+            // co-analyzes them. Thread a per-file `hostCtors` (like the live-host path above) so the
+            // second colliding enum falls back to an abstract alias (a loud "constructor can't be found"),
+            // never a silent wrong-value shadow into this one compat file.
+            const hostCtors = new Set()
+            const body = reexports.flatMap((rx) => reexportLinesFor(rx, hostCtors)).join('\n')
+            writeFileSync(p, `// #190: compatibility re-exports — these identities moved to another module when a\n// dependency cycle merged this home. Old \`${fm}.<name>\` annotations keep resolving, and enum constructors with them (#241).\n${body}\n`)
             written.add(relative(outDir, p))
             compatFiles++
         }
