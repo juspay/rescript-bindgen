@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.0-beta.9] — 2026-11-25
+
 ### Added
 
 - **Opaque-views modules expose readers for fields every arm shares** (#242). A union of object arms that
